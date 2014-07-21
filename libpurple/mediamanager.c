@@ -44,6 +44,9 @@
 #else
 #include <gst/interfaces/xoverlay.h>
 #endif
+#ifdef HAVE_MEDIA_APPLICATION
+#include <gst/app/app.h>
+#endif
 
 /** @copydoc _PurpleMediaOutputWindow */
 typedef struct _PurpleMediaOutputWindow PurpleMediaOutputWindow;
@@ -76,7 +79,21 @@ struct _PurpleMediaManagerPrivate
 	PurpleMediaElementInfo *video_sink;
 	PurpleMediaElementInfo *audio_src;
 	PurpleMediaElementInfo *audio_sink;
+
+	/* Application data streams */
+	GList *appdata_info; /* holds PurpleMediaAppDataInfo */
 };
+
+typedef struct {
+	PurpleMedia *media;
+	gchar *session_id;
+	gchar *participant;
+	PurpleMediaAppDataCallbacks *callbacks;
+	gpointer user_data;
+	GDestroyNotify notify;
+	GstAppSrc *appsrc;
+	GstAppSink *appsink;
+} PurpleMediaAppDataInfo;
 
 #define PURPLE_MEDIA_MANAGER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MEDIA_MANAGER, PurpleMediaManagerPrivate))
 #define PURPLE_MEDIA_ELEMENT_INFO_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MEDIA_ELEMENT_INFO, PurpleMediaElementInfoPrivate))
@@ -84,6 +101,7 @@ struct _PurpleMediaManagerPrivate
 static void purple_media_manager_class_init (PurpleMediaManagerClass *klass);
 static void purple_media_manager_init (PurpleMediaManager *media);
 static void purple_media_manager_finalize (GObject *object);
+static void free_appdata_info (PurpleMediaAppDataInfo *info);
 
 static GObjectClass *parent_class = NULL;
 
@@ -171,6 +189,7 @@ purple_media_manager_init (PurpleMediaManager *media)
 	media->priv->next_output_window_id = 1;
 #ifdef USE_VV
 	media->priv->backend_type = PURPLE_TYPE_MEDIA_BACKEND_FS2;
+	media->priv->appdata_info = NULL;
 #endif
 
 	purple_prefs_add_none("/purple/media");
@@ -199,6 +218,9 @@ purple_media_manager_finalize (GObject *media)
 	}
 	if (priv->video_caps)
 		gst_caps_unref(priv->video_caps);
+	if (priv->appdata_info)
+		g_list_free_full (priv->appdata_info, (GDestroyNotify) free_appdata_info);
+
 	parent_class->finalize(media);
 }
 #endif
@@ -483,6 +505,76 @@ purple_media_manager_remove_private_media(PurpleMediaManager *manager,
 	remove_media (manager, media, TRUE);
 }
 
+static void
+free_appdata_info (PurpleMediaAppDataInfo *info)
+{
+	if (info->notify)
+		info->notify (info->user_data);
+
+	g_free (info->session_id);
+	g_free (info->participant);
+	g_object_unref (info->media);
+	g_slice_free (PurpleMediaAppDataInfo, info);
+}
+
+static PurpleMediaAppDataInfo *
+get_app_data_info (PurpleMedia *media, const gchar *session_id,
+	const gchar *participant)
+{
+	PurpleMediaManager *manager = purple_media_manager_get ();
+	GList *i;
+
+	for (i = manager->priv->appdata_info; i; i = i->next) {
+		PurpleMediaAppDataInfo *info = i->data;
+
+		if (info->media == media &&
+			g_strcmp0 (info->session_id, session_id) == 0 &&
+			g_strcmp0 (info->participant, participant) == 0) {
+			return info;
+		}
+	}
+
+	return NULL;
+}
+
+static PurpleMediaAppDataInfo *
+ensure_app_data_info (PurpleMedia *media, const gchar *session_id,
+	const gchar *participant)
+{
+	PurpleMediaAppDataInfo * info = get_app_data_info (media,
+		session_id, participant);
+
+	if (info == NULL) {
+		PurpleMediaManager *manager = purple_media_manager_get ();
+
+		info = g_slice_new0 (PurpleMediaAppDataInfo);
+		info->media = g_object_ref (media);
+		info->session_id = g_strdup (session_id);
+		info->participant = g_strdup (participant);
+		manager->priv->appdata_info = g_list_prepend (
+			manager->priv->appdata_info, info);
+	}
+
+	return info;
+}
+
+static void
+destroy_app_data_info (PurpleMedia *media, const gchar *session_id,
+	const gchar *participant)
+{
+	PurpleMediaAppDataInfo * info = get_app_data_info (media,
+		session_id, participant);
+
+	if (info) {
+		PurpleMediaManager *manager = purple_media_manager_get ();
+
+		manager->priv->appdata_info = g_list_remove (
+			manager->priv->appdata_info, info);
+		free_appdata_info (info);
+	}
+}
+
+
 #ifdef USE_VV
 static void
 request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
@@ -567,6 +659,150 @@ purple_media_manager_get_video_caps(PurpleMediaManager *manager)
 #endif
 }
 
+#ifdef HAVE_MEDIA_APPLICATION
+static void
+appsrc_need_data (GstAppSrc *appsrc, guint length, gpointer user_data)
+{
+	g_debug ("********** appsrc need data ************");
+}
+
+static void
+appsrc_enough_data (GstAppSrc *appsrc, gpointer user_data)
+{
+	g_debug ("********** appsrc enough data ************");
+}
+
+static gboolean
+appsrc_seek_data (GstAppSrc *appsrc, guint64 offset, gpointer user_data)
+{
+	g_debug ("********** appsrc seek data ************");
+	return FALSE;
+}
+
+static void
+appsrc_destroyed (PurpleMediaAppDataInfo *info)
+{
+	// TODO: mutex everything!
+	info->appsrc = NULL;
+}
+
+static GstElement *
+create_send_appsrc(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
+{
+	PurpleMediaAppDataInfo * info = ensure_app_data_info (media,
+		session_id, participant);
+	GstElement *appsrc = NULL;
+
+	if (info->appsrc == NULL) {
+		GstAppSrcCallbacks callbacks = {appsrc_need_data, appsrc_enough_data,
+										appsrc_seek_data, {NULL}};
+
+		appsrc = gst_element_factory_make("appsrc", NULL);
+
+		g_debug ("********** appsrc created ************");
+		info->appsrc = (GstAppSrc *)appsrc;
+		// TODO : need to configure it
+		gst_app_src_set_callbacks (info->appsrc,
+			&callbacks, info, (GDestroyNotify) appsrc_destroyed);
+	}
+
+	return appsrc;
+}
+
+static void
+appsink_eos (GstAppSink *appsink, gpointer user_data)
+{
+	g_debug ("********** appsink EOS ************");
+}
+
+static GstFlowReturn
+appsink_new_preroll (GstAppSink *appsink, gpointer user_data)
+{
+	g_debug ("********** appsink has new preroll ************");
+	return GST_FLOW_OK;
+}
+
+static GstFlowReturn
+appsink_new_sample (GstAppSink *appsink, gpointer user_data)
+{
+	g_debug ("********** appsink has new sample ************");
+	return GST_FLOW_OK;
+}
+
+static void
+appsink_destroyed (PurpleMediaAppDataInfo *info)
+{
+	// TODO: mutex everything!
+	info->appsink = NULL;
+}
+
+static GstElement *
+create_recv_appsink(PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
+{
+	PurpleMediaAppDataInfo * info = ensure_app_data_info (media,
+		session_id, participant);
+	GstElement *appsink = NULL;
+
+	if (info->appsink == NULL) {
+		GstAppSinkCallbacks callbacks = {appsink_eos, appsink_new_preroll,
+										 appsink_new_sample, {NULL}};
+
+		appsink = gst_element_factory_make("appsink", NULL);
+
+		g_debug ("********** appsink created ************");
+		info->appsink = (GstAppSink *)appsink;
+		// TODO : need to configure it
+		gst_app_sink_set_callbacks (info->appsink,
+			&callbacks, info, (GDestroyNotify) appsink_destroyed);
+
+	}
+
+	return appsink;
+}
+
+static PurpleMediaElementInfo *
+get_send_application_element_info ()
+{
+	static PurpleMediaElementInfo *info = NULL;
+
+#ifdef HAVE_MEDIA_APPLICATION
+	if (info == NULL) {
+		info = g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "pidginappsrc",
+			"name", "Pidgin Application Source",
+			"type", PURPLE_MEDIA_ELEMENT_APPLICATION
+					| PURPLE_MEDIA_ELEMENT_SRC
+					| PURPLE_MEDIA_ELEMENT_ONE_SRC,
+			"create-cb", create_send_appsrc, NULL);
+	}
+#endif
+
+	return info;
+}
+#endif
+
+static PurpleMediaElementInfo *
+get_recv_application_element_info ()
+{
+	static PurpleMediaElementInfo *info = NULL;
+
+#ifdef HAVE_MEDIA_APPLICATION
+	if (info == NULL) {
+		info = g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "pidginappsink",
+			"name", "Pidgin Application Sink",
+			"type", PURPLE_MEDIA_ELEMENT_APPLICATION
+					| PURPLE_MEDIA_ELEMENT_SINK
+					| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+			"create-cb", create_recv_appsink, NULL);
+	}
+#endif
+
+	return info;
+}
+
 GstElement *
 purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
@@ -585,6 +821,10 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 		info = manager->priv->video_src;
 	else if (type & PURPLE_MEDIA_RECV_VIDEO)
 		info = manager->priv->video_sink;
+	else if (type & PURPLE_MEDIA_SEND_APPLICATION)
+		info = get_send_application_element_info ();
+	else if (type & PURPLE_MEDIA_RECV_APPLICATION)
+		info = get_recv_application_element_info ();
 
 	if (info == NULL)
 		return NULL;
@@ -1128,6 +1368,62 @@ purple_media_manager_get_backend_type(PurpleMediaManager *manager)
 #endif
 }
 
+void
+purple_media_manager_set_application_data_callbacks(PurpleMediaManager *manager,
+		PurpleMedia *media, const gchar *session_id,
+		const gchar *participant, PurpleMediaAppDataCallbacks *callbacks,
+		gpointer user_data, GDestroyNotify notify)
+{
+#ifdef USE_VV
+	PurpleMediaAppDataInfo * info = ensure_app_data_info (media,
+		session_id, participant);
+
+	if (info->notify)
+		info->notify (info->user_data);
+
+	info->callbacks = callbacks;
+	info->user_data = user_data;
+	info->notify = notify;
+#endif
+}
+
+gint
+purple_media_manager_send_application_data (
+	PurpleMediaManager *manager, PurpleMedia *media, const gchar *session_id,
+	const gchar *participant, gpointer buffer, guint size, gboolean blocking)
+{
+#ifdef USE_VV
+	PurpleMediaAppDataInfo * info = get_app_data_info (media, session_id,
+		participant);
+
+	if (info) {
+		return size;
+	}
+	return -1;
+#else
+	return -1;
+#endif
+}
+
+gint
+purple_media_manager_receive_application_data (
+	PurpleMediaManager *manager, PurpleMedia *media, const gchar *session_id,
+	const gchar *participant, gpointer buffer, guint max_size,
+	gboolean blocking)
+{
+#ifdef USE_VV
+	PurpleMediaAppDataInfo * info = get_app_data_info (media, session_id,
+		participant);
+
+	if (info) {
+		return max_size;
+	}
+	return -1;
+#else
+	return -1;
+#endif
+}
+
 #ifdef USE_GSTREAMER
 
 /*
@@ -1175,6 +1471,8 @@ purple_media_element_type_get_type()
 				"PURPLE_MEDIA_ELEMENT_SRC", "src" },
 			{ PURPLE_MEDIA_ELEMENT_SINK,
 				"PURPLE_MEDIA_ELEMENT_SINK", "sink" },
+			{ PURPLE_MEDIA_ELEMENT_APPLICATION,
+				"PURPLE_MEDIA_ELEMENT_APPLICATION", "application" },
 			{ 0, NULL, NULL }
 		};
 		type = g_flags_register_static(
@@ -1403,6 +1701,7 @@ purple_media_element_info_call_create(PurpleMediaElementInfo *info,
 #endif
 	return NULL;
 }
+
 
 #endif /* USE_GSTREAMER */
 

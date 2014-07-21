@@ -1186,6 +1186,31 @@ fi
 AM_CONDITIONAL(USE_VV, test "x$enable_vv" != "xno")
 
 dnl #######################################################################
+dnl # Check for Raw data streams support in Farstream 
+dnl #######################################################################
+AS_IF([test "enable_vv" != xno],
+        [
+                 AC_MSG_CHECKING(for raw data support in Farstream)
+                 PREV_CFLAGS="$CFLAGS"
+                 CFLAGS="$CFLAGS $FARSTREAM_CFLAGS"
+		 AC_COMPILE_IFELSE(
+                        [AC_LANG_PROGRAM([[#include <farstream/fs-conference.h>]],[[return FS_MEDIA_TYPE_APPLICATION]])],
+			[
+                        
+				PKG_CHECK_MODULES(GSTAPP, [gstreamer-app-1.0], [
+					AC_DEFINE(USE_GSTAPP, 1, [Use GStreamer Video Overlay support])
+					AC_SUBST(GSTAPP_CFLAGS)
+					AC_SUBST(GSTAPP_LIBS)
+					AC_DEFINE(HAVE_MEDIA_APPLICATION, 1, [Define if we have support for application media type.])
+					AC_MSG_RESULT(yes)
+					], [AC_MSG_RESULT(no)])
+			],
+			[AC_MSG_RESULT(no)]
+	 	 )
+                 CFLAGS="$PREV_CFLAGS"
+	])
+
+dnl #######################################################################
 dnl # Check for Internationalized Domain Name support
 dnl #######################################################################
 
