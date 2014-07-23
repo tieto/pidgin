@@ -96,7 +96,7 @@ typedef struct {
 	GDestroyNotify notify;
 	GstAppSrc *appsrc;
 	GstAppSink *appsink;
-	gboolean readable;
+	gint num_samples;
 	gboolean writable;
 } PurpleMediaAppDataInfo;
 #endif
@@ -671,33 +671,41 @@ purple_media_manager_get_video_caps(PurpleMediaManager *manager)
 }
 
 #ifdef HAVE_MEDIA_APPLICATION
+static gboolean
+appsrc_writable (gpointer user_data)
+{
+	PurpleMediaManager *manager = purple_media_manager_get ();
+	PurpleMediaAppDataInfo *info = user_data;
+
+	if (info->callbacks.writable)
+		info->callbacks.writable (manager, info->media, info->session_id,
+			info->participant, info->writable, info->user_data);
+	return FALSE;
+}
+
 static void
 appsrc_need_data (GstAppSrc *appsrc, guint length, gpointer user_data)
 {
-	PurpleMediaManager *manager = purple_media_manager_get ();
 	PurpleMediaAppDataInfo *info = user_data;
 
 	g_debug ("********** appsrc need data ************");
 	if (!info->writable) {
 		info->writable = TRUE;
 		if (info->callbacks.writable)
-			info->callbacks.writable (manager, info->media, info->session_id,
-				info->participant, info->writable, info->user_data);
+			g_main_context_invoke (NULL, appsrc_writable, info);
 	}
 }
 
 static void
 appsrc_enough_data (GstAppSrc *appsrc, gpointer user_data)
 {
-	PurpleMediaManager *manager = purple_media_manager_get ();
 	PurpleMediaAppDataInfo *info = user_data;
 
 	g_debug ("********** appsrc enough data ************");
 	if (info->writable) {
 		info->writable = FALSE;
 		if (info->callbacks.writable)
-			info->callbacks.writable (manager, info->media, info->session_id,
-				info->participant, info->writable, info->user_data);
+			g_main_context_invoke (NULL, appsrc_writable, info);
 	}
 }
 
@@ -711,15 +719,12 @@ appsrc_seek_data (GstAppSrc *appsrc, guint64 offset, gpointer user_data)
 static void
 appsrc_destroyed (PurpleMediaAppDataInfo *info)
 {
-	PurpleMediaManager *manager = purple_media_manager_get ();
-
 	// TODO: mutex everything!
 	info->appsrc = NULL;
 	if (info->writable) {
 		info->writable = FALSE;
 		if (info->callbacks.writable)
-			info->callbacks.writable (manager, info->media, info->session_id,
-				info->participant, info->writable, info->user_data);
+			g_main_context_invoke (NULL, appsrc_writable, info);
 	}
 }
 
@@ -750,10 +755,7 @@ create_send_appsrc(PurpleMedia *media,
 static void
 appsink_eos (GstAppSink *appsink, gpointer user_data)
 {
-	PurpleMediaAppDataInfo *info = user_data;
-
 	g_debug ("********** appsink EOS ************");
-	info->readable = FALSE;
 }
 
 static GstFlowReturn
@@ -763,18 +765,33 @@ appsink_new_preroll (GstAppSink *appsink, gpointer user_data)
 	return GST_FLOW_OK;
 }
 
-static GstFlowReturn
-appsink_new_sample (GstAppSink *appsink, gpointer user_data)
+static gboolean
+appsink_readable (gpointer user_data)
 {
 	PurpleMediaManager *manager = purple_media_manager_get ();
 	PurpleMediaAppDataInfo *info = user_data;
 
+	/* We need to signal readable until there are no more samples */
+	while (info->num_samples > 0) {
+		if (info->callbacks.readable)
+			info->callbacks.readable (manager, info->media, info->session_id,
+				info->participant, info->user_data);
+	}
+	return FALSE;
+}
+
+static GstFlowReturn
+appsink_new_sample (GstAppSink *appsink, gpointer user_data)
+{
+	PurpleMediaAppDataInfo *info = user_data;
+
 	g_debug ("********** appsink has new sample ************");
 
-	info->readable = TRUE;
+	g_atomic_int_inc (&info->num_samples);
+	/* The signal can come from the source's thread, we need to send this from
+	 * our main thread */
 	if (info->callbacks.readable)
-		info->callbacks.readable (manager, info->media, info->session_id,
-			info->participant, info->user_data);
+		g_main_context_invoke (NULL, appsink_readable, info);
 	return GST_FLOW_OK;
 }
 
@@ -783,7 +800,7 @@ appsink_destroyed (PurpleMediaAppDataInfo *info)
 {
 	// TODO: mutex everything!
 	info->appsink = NULL;
-	info->readable = FALSE;
+	g_atomic_int_set (&info->num_samples, 0);
 }
 
 static GstElement *
@@ -1486,7 +1503,12 @@ purple_media_manager_receive_application_data (
 	if (info && info->appsink) {
 		GstSample *sample = gst_app_sink_pull_sample (info->appsink);
 		if (sample) {
+			/* TODO: if we don't read the entire buffer, we need to keep it
+			* stored with the offset that we've read into */
+			/* TODO: if blocking, we must wait until there are new samples */
 			GstBuffer *gstbuffer = gst_sample_get_buffer (sample);
+
+			g_atomic_int_dec_and_test (&info->num_samples);
 			if (gstbuffer) {
 				GstMapInfo mapinfo;
 				guint bytes_to_copy;
