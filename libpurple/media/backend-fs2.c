@@ -1787,6 +1787,15 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	session->session = fs_conference_new_session(priv->conference,
 			session_type_to_fs_media_type(type), &err);
 
+#ifdef HAVE_MEDIA_APPLICATION
+	if (type == PURPLE_MEDIA_APPLICATION) {
+		GstCaps *caps;
+
+		caps = gst_caps_from_string ("application/octet-stream");
+		fs_session_set_allowed_caps (session->session, caps, caps, NULL);
+		gst_caps_unref (caps);
+	}
+#endif
 	if (err != NULL) {
 		purple_media_error(priv->media,
 				_("Error creating session: %s"),

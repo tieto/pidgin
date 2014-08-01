@@ -555,7 +555,8 @@ get_app_data_info (PurpleMedia *media, const gchar *session_id,
 
 		if (info->media == media &&
 			g_strcmp0 (info->session_id, session_id) == 0 &&
-			g_strcmp0 (info->participant, participant) == 0) {
+			(participant == NULL ||
+				g_strcmp0 (info->participant, participant) == 0)) {
 			return info;
 		}
 	}
@@ -677,6 +678,7 @@ appsrc_writable (gpointer user_data)
 	PurpleMediaManager *manager = purple_media_manager_get ();
 	PurpleMediaAppDataInfo *info = user_data;
 
+	g_debug ("******** appsrc writable %d ********", info->writable);
 	if (info->callbacks.writable)
 		info->callbacks.writable (manager, info->media, info->session_id,
 			info->participant, info->writable, info->user_data);
@@ -1478,8 +1480,14 @@ purple_media_manager_send_application_data (
 			size);
 		if (gst_app_src_push_buffer (info->appsrc, gstbuffer) == GST_FLOW_OK) {
 			if (blocking) {
-				gst_element_query (GST_ELEMENT (info->appsrc),
-					gst_query_new_drain ());
+				GstPad *srcpad;
+
+				srcpad = gst_element_get_static_pad (GST_ELEMENT (info->appsrc),
+					"src");
+				if (srcpad) {
+					gst_pad_peer_query (srcpad, gst_query_new_drain ());
+					gst_object_unref (srcpad);
+				}
 			}
 			return size;
 		}
