@@ -119,6 +119,7 @@ enum {
 	NEW_CANDIDATE,
 	STATE_CHANGED,
 	STREAM_INFO,
+	CANDIDATE_PAIR_ESTABLISHED,
 	LAST_SIGNAL
 };
 static guint purple_media_signals[LAST_SIGNAL] = {0};
@@ -255,6 +256,11 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 purple_smarshal_VOID__ENUM_STRING_STRING_BOOLEAN,
 					 G_TYPE_NONE, 4, PURPLE_MEDIA_TYPE_INFO_TYPE,
 					 G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
+	purple_media_signals[CANDIDATE_PAIR_ESTABLISHED] = g_signal_new("candidate-pair-established", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 purple_smarshal_VOID__POINTER_POINTER_OBJECT_OBJECT,
+					 G_TYPE_NONE, 4, G_TYPE_POINTER, G_TYPE_POINTER,
+					 PURPLE_TYPE_MEDIA_CANDIDATE, PURPLE_TYPE_MEDIA_CANDIDATE);
 	g_type_class_add_private(klass, sizeof(PurpleMediaPrivate));
 }
 
@@ -1029,6 +1035,8 @@ purple_media_candidate_pair_established_cb(PurpleMediaBackend *backend,
 				purple_media_candidate_copy(
 				remote_candidate));
 
+	g_signal_emit(media, purple_media_signals[CANDIDATE_PAIR_ESTABLISHED],
+		0, sess_id, name, local_candidate, remote_candidate);
 	purple_debug_info("media", "candidate pair established\n");
 }
 
