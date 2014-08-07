@@ -357,6 +357,8 @@ void purple_media_manager_set_application_data_callbacks(
  * @blocking: Whether to block until the data was send or not.
  *
  * Sends a buffer of data to a #PURPLE_MEDIA_APPLICATION session.
+ * If @blocking is set, unless an error occured, the function will not return
+ * until the data has been flushed into the network.
  *
  * Returns: Number of bytes sent or -1 in case of error.
  */
@@ -376,6 +378,8 @@ gint purple_media_manager_send_application_data (
  * with currently available data.
  *
  * Receive a buffer of data from a #PURPLE_MEDIA_APPLICATION session.
+ * If @blocking is set, unless an error occured, the function will not return
+ * until @max_size bytes are read.
  *
  * Returns: Number of bytes received or -1 in case of error.
  */

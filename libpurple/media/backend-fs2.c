@@ -1791,7 +1791,7 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	if (type == PURPLE_MEDIA_APPLICATION) {
 		GstCaps *caps;
 
-		caps = gst_caps_from_string ("application/octet-stream");
+		caps = gst_caps_new_empty_simple ("application/octet-stream");
 		fs_session_set_allowed_caps (session->session, caps, caps, NULL);
 		gst_caps_unref (caps);
 	}
