@@ -744,7 +744,7 @@ appsrc_writable (gpointer user_data)
 	media = g_object_ref (info->media);
 	session_id = g_strdup (info->session_id);
 	participant = g_strdup (info->participant);
-	writable = info->writable;
+	writable = info->writable && info->connected;
 	cb_data = info->user_data;
 
     g_source_destroy (info->writable_source);
@@ -1681,7 +1681,7 @@ purple_media_manager_send_application_data (
 	PurpleMediaAppDataInfo * info = get_app_data_info_and_lock (manager,
 		media, session_id, participant);
 
-	if (info && info->appsrc) {
+	if (info && info->appsrc && info->connected) {
 		GstBuffer *gstbuffer = gst_buffer_new_wrapped (g_memdup (buffer, size),
 			size);
 		if (gst_app_src_push_buffer (info->appsrc, gstbuffer) == GST_FLOW_OK) {
