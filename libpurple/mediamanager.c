@@ -1756,7 +1756,7 @@ purple_media_manager_receive_application_data (
 			}
 
 			/* If blocking, wait until there's an available sample */
-			while (blocking &&
+			while (bytes_read < max_size && blocking &&
 				info->current_sample == NULL && info->num_samples == 0) {
 				g_cond_wait (&info->readable_cond, &manager->priv->appdata_mutex);
 
