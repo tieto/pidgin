@@ -1795,7 +1795,6 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 		caps = gst_caps_new_empty_simple ("application/octet-stream");
 		fs_session_set_allowed_caps (session->session, caps, caps, NULL);
 		gst_caps_unref (caps);
-		g_debug ("******** Setting probation to 0");
 		g_object_get (session->session, "internal-session", &rtpsession, NULL);
 		if (rtpsession) {
 			g_object_set (rtpsession, "probation", 0, NULL);

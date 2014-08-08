@@ -734,7 +734,6 @@ appsrc_writable (gpointer user_data)
 	gpointer cb_data;
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
-	g_debug ("******** appsrc writable %d ********", info->writable);
 	if (g_source_is_destroyed (g_main_current_source ())) {
 		/* Avoided a race condition */
 		g_mutex_unlock (&manager->priv->appdata_mutex);
@@ -793,7 +792,6 @@ appsrc_need_data (GstAppSrc *appsrc, guint length, gpointer user_data)
 	PurpleMediaManager *manager = purple_media_manager_get ();
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
-	g_debug ("********** appsrc need data ************");
 	if (!info->writable) {
 		info->writable = TRUE;
 		/* Only signal writable if we also established a connection */
@@ -810,7 +808,6 @@ appsrc_enough_data (GstAppSrc *appsrc, gpointer user_data)
 	PurpleMediaManager *manager = purple_media_manager_get ();
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
-	g_debug ("********** appsrc enough data ************");
 	if (info->writable) {
 		info->writable = FALSE;
 		call_appsrc_writable_locked (info);
@@ -821,7 +818,6 @@ appsrc_enough_data (GstAppSrc *appsrc, gpointer user_data)
 static gboolean
 appsrc_seek_data (GstAppSrc *appsrc, guint64 offset, gpointer user_data)
 {
-	g_debug ("********** appsrc seek data ************");
 	return FALSE;
 }
 
@@ -871,7 +867,6 @@ create_send_appsrc(PurpleMedia *media,
 
 		appsrc = gst_element_factory_make("appsrc", NULL);
 
-		g_debug ("********** appsrc created ************");
 		info->appsrc = (GstAppSrc *)appsrc;
 
 		gst_app_src_set_caps (info->appsrc, caps);
@@ -889,13 +884,11 @@ create_send_appsrc(PurpleMedia *media,
 static void
 appsink_eos (GstAppSink *appsink, gpointer user_data)
 {
-	g_debug ("********** appsink EOS ************");
 }
 
 static GstFlowReturn
 appsink_new_preroll (GstAppSink *appsink, gpointer user_data)
 {
-	g_debug ("********** appsink has new preroll ************");
 	return GST_FLOW_OK;
 }
 
@@ -970,7 +963,6 @@ appsink_new_sample (GstAppSink *appsink, gpointer user_data)
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
 	info->num_samples++;
-	g_debug ("********** appsink has new sample %d ************", info->num_samples);
 	call_appsink_readable_locked (info);
 	g_mutex_unlock (&manager->priv->appdata_mutex);
 
@@ -1004,7 +996,6 @@ create_recv_appsink(PurpleMedia *media,
 
 		appsink = gst_element_factory_make("appsink", NULL);
 
-		g_debug ("********** appsink created ************");
 		info->appsink = (GstAppSink *)appsink;
 
 		gst_app_sink_set_caps (info->appsink, caps);
