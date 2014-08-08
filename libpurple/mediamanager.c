@@ -1717,22 +1717,19 @@ purple_media_manager_receive_application_data (
 		media, session_id, participant);
 	guint bytes_read = 0;
 
-	if (info && info->appsink) {
+	if (info) {
 		/* If we are in a blocking read, we need to loop until max_size data
 		 * is read into the buffer, if we're not, then we need to read as much
 		 * data as possible
 		 */
 		do {
-			if (info->current_sample == NULL) {
+			if (info->current_sample == NULL && info->appsink) {
 				info->current_sample = gst_app_sink_pull_sample (info->appsink);
 				info->sample_offset = 0;
 				if (info->current_sample)
 					info->num_samples--;
 			}
 
-			/* TODO: use g_atomic_int on the num_samples and only store the
-			   sample and offset at the end ? would allow new-samples to reach us
-			   while we're reading.. */
 			if (info->current_sample) {
 				GstBuffer *gstbuffer = gst_sample_get_buffer (
 					info->current_sample);
@@ -1784,8 +1781,8 @@ purple_media_manager_receive_application_data (
 					return bytes_read;
 				}
 			}
-		} while ((blocking && bytes_read < max_size) ||
-			(!blocking && info->num_samples > 0));
+		} while (bytes_read < max_size &&
+			(blocking || info->num_samples > 0));
 
 		g_mutex_unlock (&manager->priv->appdata_mutex);
 		return bytes_read;
