@@ -1298,6 +1298,20 @@ purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id)
 }
 
 gboolean
+purple_media_set_send_rtcp_mux(PurpleMedia *media, const gchar *sess_id,
+                               const gchar *participant, gboolean send_rtcp_mux)
+{
+#ifdef USE_VV
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
+
+	return purple_media_backend_set_send_rtcp_mux(media->priv->backend,
+			sess_id, participant, send_rtcp_mux);
+#else
+	return FALSE;
+#endif
+}
+
+gboolean
 purple_media_is_initiator(PurpleMedia *media,
 		const gchar *sess_id, const gchar *participant)
 {

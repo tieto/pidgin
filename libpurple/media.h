@@ -406,6 +406,19 @@ gboolean purple_media_set_decryption_parameters(PurpleMedia *media,
 gboolean purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id);
 
 /**
+ * purple_media_set_send_rtcp_mux:
+ * @media: The media object to find the session in.
+ * @sess_id: The session id of the session find the stream in.
+ * @participant: The name of the remote user to set the rtcp-mux for.
+ * @send_rtcp_mux: Whether to enable the rtcp-mux option
+ *
+ * Sets the rtcp-mux option for the stream.
+ *
+ * Returns: %TRUE RTCP-Mux was set successfully, or %FALSE otherwise.
+ */
+gboolean purple_media_set_send_rtcp_mux(PurpleMedia *media,
+		const gchar *sess_id, const gchar *participant, gboolean send_rtcp_mux);
+/**
  * purple_media_is_initiator:
  * @media: The media instance to find the session in.
  * @sess_id: The session id of the session to check.

@@ -235,3 +235,16 @@ purple_media_backend_get_available_params(PurpleMediaBackend *self)
 	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND(self), NULL_ARRAY);
 	return PURPLE_MEDIA_BACKEND_GET_INTERFACE(self)->get_available_params();
 }
+
+gboolean
+purple_media_backend_set_send_rtcp_mux(PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant, gboolean send_rtcp_mux)
+{
+	PurpleMediaBackendIface *backend_iface;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND(self), FALSE);
+	backend_iface = PURPLE_MEDIA_BACKEND_GET_INTERFACE(self);
+	g_return_val_if_fail(backend_iface->set_send_rtcp_mux, FALSE);
+	return backend_iface->set_send_rtcp_mux(self,
+			sess_id, participant, send_rtcp_mux);
+}
