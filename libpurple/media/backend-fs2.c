@@ -107,6 +107,10 @@ static const gchar **purple_media_backend_fs2_get_available_params(void);
 static gboolean purple_media_backend_fs2_send_dtmf(
 		PurpleMediaBackend *self, const gchar *sess_id,
 		gchar dtmf, guint8 volume, guint16 duration);
+static gboolean purple_media_backend_fs2_set_send_rtcp_mux(
+		PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant,
+		gboolean send_rtcp_mux);
 
 static void free_stream(PurpleMediaBackendFs2Stream *stream);
 static void free_session(PurpleMediaBackendFs2Session *session);
@@ -563,6 +567,7 @@ purple_media_backend_iface_init(PurpleMediaBackendIface *iface)
 	iface->set_params = purple_media_backend_fs2_set_params;
 	iface->get_available_params = purple_media_backend_fs2_get_available_params;
 	iface->send_dtmf = purple_media_backend_fs2_send_dtmf;
+	iface->set_send_rtcp_mux = purple_media_backend_fs2_set_send_rtcp_mux;
 }
 
 static FsMediaType
@@ -2838,3 +2843,24 @@ purple_media_backend_fs2_set_output_volume(PurpleMediaBackendFs2 *self,
 #endif /* USE_VV */
 }
 #endif /* USE_GSTREAMER */
+
+static gboolean
+purple_media_backend_fs2_set_send_rtcp_mux(PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant,
+		gboolean send_rtcp_mux)
+{
+	PurpleMediaBackendFs2Stream *stream;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
+	stream = get_stream(PURPLE_MEDIA_BACKEND_FS2(self),
+			sess_id, participant);
+
+	if (stream != NULL &&
+		g_object_class_find_property (G_OBJECT_GET_CLASS (stream->stream),
+			"send-rtcp-mux") != NULL) {
+		g_object_set (stream->stream, "send-rtcp-mux", send_rtcp_mux, NULL);
+		return TRUE;
+	}
+
+	return FALSE;
+}
