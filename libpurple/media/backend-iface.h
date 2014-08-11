@@ -90,6 +90,9 @@ struct _PurpleMediaBackendIface
 	void (*set_params) (PurpleMediaBackend *self,
 		guint num_params, GParameter *params);
 	const gchar **(*get_available_params) (void);
+	gboolean (*set_send_rtcp_mux) (PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant, gboolean send_rtcp_mux);
+
 };
 
 /**
@@ -262,6 +265,21 @@ void purple_media_backend_set_params(PurpleMediaBackend *self,
  * Returns: NULL-terminated array of names of supported parameters.
  */
 const gchar **purple_media_backend_get_available_params(PurpleMediaBackend *self);
+
+/**
+ * purple_media_backend_set_send_rtcp_mux:
+ * @self: The media backend the session is in.
+ * @sess_id: The session id of the session to set the rtcp-mux option to
+ * @participant: The participant the stream is associated with.
+ * @send_rtcp_mux: Whether or not to enable rtcp-mux
+ *
+ * Controls whether or not the RTCP should be muxed with the RTP
+ *
+ * Returns: True if set successfully, otherwise False.
+ */
+gboolean purple_media_backend_set_send_rtcp_mux(PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant, gboolean send_rtcp_mux);
+
 
 G_END_DECLS
 
