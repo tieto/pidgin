@@ -324,10 +324,10 @@ GList *purple_media_get_active_remote_candidates(PurpleMedia *media,
  * purple_media_set_remote_codecs:
  * @media: The media object to find the session in.
  * @sess_id: The session id of the session find the stream in.
- * @participant: The name of the remote user to set the candidates from.
+ * @participant: The name of the remote user to set the codecs for.
  * @codecs: The list of remote codecs to set.
  *
- * Sets remote candidates from the stream.
+ * Sets remote codecs from the stream.
  *
  * Returns: %TRUE The codecs were set successfully, or %FALSE otherwise.
  */

@@ -359,6 +359,11 @@ void purple_media_manager_set_application_data_callbacks(
  * Sends a buffer of data to a #PURPLE_MEDIA_APPLICATION session.
  * If @blocking is set, unless an error occured, the function will not return
  * until the data has been flushed into the network.
+ * If the stream is not writable, the data will be queued. It is the
+ * responsability of the user to stop sending data when the stream isn't
+ * writable anymore. It is also the responsability of the user to only start
+ * sending data after the stream has been configured correctly (encryption
+ * parameters for example).
  *
  * Returns: Number of bytes sent or -1 in case of error.
  */
