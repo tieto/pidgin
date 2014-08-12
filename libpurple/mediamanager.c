@@ -313,7 +313,7 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 {
 #ifdef USE_VV
 	PurpleMedia *media;
-	gboolean signal_ret;
+	guint signal_id;
 
 	media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
 			     "manager", manager,
@@ -322,12 +322,17 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 			     "initiator", initiator,
 			     NULL));
 
-	g_signal_emit(manager, purple_media_manager_signals[INIT_MEDIA], 0,
-			media, account, remote_user, &signal_ret);
+	signal_id = purple_media_manager_signals[INIT_MEDIA];
 
-	if (signal_ret == FALSE) {
-		g_object_unref(media);
-		return NULL;
+	if (g_signal_has_handler_pending(manager, signal_id, 0, FALSE)) {
+		gboolean signal_ret;
+
+		g_signal_emit(manager, signal_id, 0, media, account, remote_user,
+				&signal_ret);
+		if (signal_ret == FALSE) {
+			g_object_unref(media);
+			return NULL;
+		}
 	}
 
 	manager->priv->medias = g_list_append(manager->priv->medias, media);
