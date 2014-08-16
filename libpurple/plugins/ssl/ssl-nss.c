@@ -133,6 +133,8 @@ static gchar *get_error_text(void)
 static void
 ssl_nss_init_nss(void)
 {
+	SSLVersionRange supported, enabled;
+
 	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
 	NSS_NoDB_Init(".");
 	NSS_SetDomesticPolicy();
@@ -149,6 +151,29 @@ ssl_nss_init_nss(void)
 	SSL_CipherPrefSetDefault(SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA, 1);
 	SSL_CipherPrefSetDefault(SSL_DHE_RSA_WITH_DES_CBC_SHA, 1);
 	SSL_CipherPrefSetDefault(SSL_DHE_DSS_WITH_DES_CBC_SHA, 1);
+
+	/* Get the ranges of supported and enabled SSL versions */
+	if ((SSL_VersionRangeGetSupported(ssl_variant_stream, &supported) == SECSuccess) &&
+			(SSL_VersionRangeGetDefault(ssl_variant_stream, &enabled) == SECSuccess)) {
+		purple_debug_info("nss", "TLS supported versions: "
+				"%d through %d\n", supported.min, supported.max);
+		purple_debug_info("nss", "TLS versions allowed by default: "
+				"%d through %d\n", enabled.min, enabled.max);
+
+		/* Make sure all versions of TLS supported by the local library are
+		   enabled. (For some reason NSS doesn't enable newer versions of TLS
+		   by default -- more context in ticket #15909.) */
+		if (supported.max > enabled.max) {
+			enabled.max = supported.max;
+			if (SSL_VersionRangeSetDefault(ssl_variant_stream, &enabled) == SECSuccess) {
+				purple_debug_info("nss", "Changed allowed TLS versions to "
+						"%d through %d\n", enabled.min, enabled.max);
+			} else {
+				purple_debug_error("nss", "Error setting allowed TLS versions to "
+						"%d through %d\n", enabled.min, enabled.max);
+			}
+		}
+	}
 
 	_identity = PR_GetUniqueIdentity("Purple");
 	_nss_methods = PR_GetDefaultIOMethods();
