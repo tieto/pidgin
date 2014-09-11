@@ -1,6 +1,16 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 3.0.0 (??/??/????):
+	General:
+	* Various core components of libpurple are now GObjects (Ankit Vani).
+	* Ciphers are now built from the libpurple directory.
+	* Doxygen has been replaced by gtk-doc for generating documentation (Ankit
+	  Vani).
+
+	libpurple:
+	* Specify a different set of encryption ciphers for TLS connections when
+	  using GnuTLS. (elrond, belmyst, and Mark Doliner) (#8061)
+
 	Pidgin:
 	* Support building with the GTK+ 3.x toolkit.  When configuring the
 	  build, use --with-gtk=<2|3> to determine which toolkit to use.  Using
@@ -62,11 +72,6 @@ version 3.0.0 (??/??/????):
 	Plugins:
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
-
-	General:
-	* Various core components of libpurple are now GObjects.
-	* Ciphers are now built from the libpurple directory.
-	* Doxygen has been replaced by gtk-doc for generating documentation.
 
 version 2.10.10 (?/?/?):
 	libpurple3 compatibility:
