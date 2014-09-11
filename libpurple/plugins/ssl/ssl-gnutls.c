@@ -63,6 +63,43 @@ ssl_gnutls_log(int level, const char *str)
 	purple_debug_misc("gnutls", "lvl %d: %s", level, str);
 }
 
+/**
+ * set_cipher_priorities:
+ * @priority_cache: A pointer to a gnutls_priority_t. This will be initialized
+ *                       using the given priorities.
+ * @priorities: A GnuTLS priority string.
+ *
+ * A simple convenience wrapper around gnutls_priority_init(). The wrapper
+ * does a few things:
+ * - Logs a helpful message if initialization fails.
+ * - Frees priority_cache if needed if initialization fails.
+ * - Set priority_cache to NULL if needed if initialization fails.
+ */
+static void
+set_cipher_priorities(gnutls_priority_t *priority_cache, const char *priorities)
+{
+	int ret;
+
+	ret = gnutls_priority_init(priority_cache, priorities, NULL);
+	if (ret != GNUTLS_E_SUCCESS) {
+		purple_debug_warning("gnutls", "Unable to set cipher priorities to %s. "
+				"Error code %d: %s\n", priorities, ret, gnutls_strerror(ret));
+
+		/* Versions of GnuTLS before 2.9.10 allocate but don't free priority_cache
+		   if there's an error. We free it here to avoid a mem leak. */
+		if (!gnutls_check_version("2.9.10")) {
+			gnutls_free(*priority_cache);
+		}
+
+		/* Versions of GnuTLS before 3.2.9 leave priority_cache pointing to
+		   freed memory if there's an error. We want our callers to be able to
+		   depend on this being NULL, so set it to NULL ourselves. */
+		if (!gnutls_check_version("3.2.9")) {
+			*priority_cache = NULL;
+		}
+	}
+}
+
 static void
 ssl_gnutls_init_gnutls(void)
 {
@@ -143,16 +180,9 @@ ssl_gnutls_init_gnutls(void)
 		}
 
 		if (default_priority_str) {
-			if (gnutls_priority_init(&default_priority, default_priority_str, NULL)) {
-				purple_debug_warning("gnutls", "Unable to set default priority to %s\n",
-				                     default_priority_str);
-				/* Versions of GnuTLS as of 2.8.6 (2010-03-31) don't free/NULL
-				 * this on error.
-				 */
-				gnutls_free(default_priority);
-				default_priority = NULL;
-			}
-
+			/* Note: If the string is invalid then this call will fail and
+			   we'll try again with our default priority string later. */
+			set_cipher_priorities(&default_priority, default_priority_str);
 			g_free(default_priority_str);
 		}
 
@@ -161,12 +191,12 @@ ssl_gnutls_init_gnutls(void)
 	}
 
 #ifdef HAVE_GNUTLS_PRIORITY_FUNCS
-	/* Make sure we set have a default priority! */
+	/* Set a default priority string if we didn't do it above */
 	if (!default_priority) {
-		if (gnutls_priority_init(&default_priority, "NORMAL:%SSL3_RECORD_VERSION", NULL)) {
-			/* See comment above about memory leak */
-			gnutls_free(default_priority);
-			gnutls_priority_init(&default_priority, "NORMAL", NULL);
+		set_cipher_priorities(&default_priority, "NORMAL:%SSL3_RECORD_VERSION");
+		if (!default_priority) {
+			/* Try again with an extremely simple priority string. */
+			set_cipher_priorities(&default_priority, "NORMAL");
 		}
 	}
 #endif /* HAVE_GNUTLS_PRIORITY_FUNCS */
