@@ -242,12 +242,12 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 	gnutls_data->handshake_handler = 0;
 
 	if(ret != 0) {
-		purple_debug_error("gnutls", "Handshake failed. Error %s\n",
-			gnutls_strerror(ret));
+		purple_debug_error("gnutls", "Handshake failed: %s\n",
+				gnutls_strerror(ret));
 
 		if(gsc->error_cb != NULL)
 			gsc->error_cb(gsc, PURPLE_SSL_HANDSHAKE_FAILED,
-				gsc->connect_cb_data);
+					gsc->connect_cb_data);
 
 		purple_ssl_close(gsc);
 	} else {
