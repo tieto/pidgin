@@ -50,6 +50,10 @@ static gnutls_certificate_client_credentials xcred = NULL;
  * is to disable weaker ciphers while remaining compatible with almost all
  * servers.
  *
+ * Ideally this is something we wouldn't do. Ideally the system-wide GnuTLS
+ * library would use good defaults. But for now I think we can safely be more
+ * restrictive than the GnuTLS defaults. --Mark Doliner
+ *
  * You can test the priority string using this command:
  * > gnutls-cli --priority "<SIGNATURE STRING>" <HOSTNAME>
  * Note that on Ubuntu 14.04 gnutls-cli is linked against the older GnuTLS
