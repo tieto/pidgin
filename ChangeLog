@@ -10,6 +10,8 @@ version 3.0.0 (??/??/????):
 	libpurple:
 	* Specify a different set of encryption ciphers for TLS connections when
 	  using GnuTLS. (elrond, belmyst, and Mark Doliner) (#8061)
+	* Don't allow SSL 3.0 (only TLS 1.0 and newer) for TLS connections when
+	  using either GnuTLS or NSS.
 
 	Pidgin:
 	* Support building with the GTK+ 3.x toolkit.  When configuring the

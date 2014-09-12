@@ -160,10 +160,12 @@ ssl_nss_init_nss(void)
 		purple_debug_info("nss", "TLS versions allowed by default: "
 				"0x%04hx through 0x%04hx\n", enabled.min, enabled.max);
 
-		/* Make sure all versions of TLS supported by the local library are
-		   enabled. (For some reason NSS doesn't enable newer versions of TLS
-		   by default -- more context in ticket #15909.) */
-		if (supported.max > enabled.max) {
+		/* Make sure SSL 3.0 is disabled (it's old and everyone should be
+		   using at least TLS 1.0 by now), and make sure all versions of TLS
+		   supported by the local library are enabled (for some reason NSS
+		   doesn't enable newer versions of TLS by default -- more context in
+		   ticket #15909). */
+		if (enabled.min != SSL_LIBRARY_VERSION_TLS_1_0 || supported.max > enabled.max) {
 			enabled.max = supported.max;
 			if (SSL_VersionRangeSetDefault(ssl_variant_stream, &enabled) == SECSuccess) {
 				purple_debug_info("nss", "Changed allowed TLS versions to "
