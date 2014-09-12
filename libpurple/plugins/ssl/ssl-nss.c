@@ -156,9 +156,9 @@ ssl_nss_init_nss(void)
 	if ((SSL_VersionRangeGetSupported(ssl_variant_stream, &supported) == SECSuccess) &&
 			(SSL_VersionRangeGetDefault(ssl_variant_stream, &enabled) == SECSuccess)) {
 		purple_debug_info("nss", "TLS supported versions: "
-				"%d through %d\n", supported.min, supported.max);
+				"0x%04hx through 0x%04hx\n", supported.min, supported.max);
 		purple_debug_info("nss", "TLS versions allowed by default: "
-				"%d through %d\n", enabled.min, enabled.max);
+				"0x%04hx through 0x%04hx\n", enabled.min, enabled.max);
 
 		/* Make sure all versions of TLS supported by the local library are
 		   enabled. (For some reason NSS doesn't enable newer versions of TLS
@@ -167,10 +167,10 @@ ssl_nss_init_nss(void)
 			enabled.max = supported.max;
 			if (SSL_VersionRangeSetDefault(ssl_variant_stream, &enabled) == SECSuccess) {
 				purple_debug_info("nss", "Changed allowed TLS versions to "
-						"%d through %d\n", enabled.min, enabled.max);
+						"0x%04hx through 0x%04hx\n", enabled.min, enabled.max);
 			} else {
 				purple_debug_error("nss", "Error setting allowed TLS versions to "
-						"%d through %d\n", enabled.min, enabled.max);
+						"0x%04hx through 0x%04hx\n", enabled.min, enabled.max);
 			}
 		}
 	}
