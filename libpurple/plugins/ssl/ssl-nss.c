@@ -32,6 +32,9 @@
 #ifdef _WIN32
 # ifndef HAVE_LONG_LONG
 #define HAVE_LONG_LONG
+/* WINDDK_BUILD is defined because the checks around usage of
+ * intrisic functions are wrong in nspr */
+#define WINDDK_BUILD
 # endif
 #else
 /* TODO: Why is this done?
