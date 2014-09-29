@@ -25,7 +25,7 @@ BONJOUR_TOP ?= $(WIN32_DEV_TOP)/bonjour-sdk
 JSON_GLIB_TOP ?= $(WIN32_DEV_TOP)/json-glib-0.14
 LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2-2.9
 MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0
-NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.14
+NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.17.1-nspr-4.10.7
 PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl-5.10
 SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1
 TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.5
@@ -75,7 +75,6 @@ GCCWARNINGS ?= -Waggregate-return -Wcast-align -Wdeclaration-after-statement -We
 CC_HARDENING_OPTIONS ?= -Wstack-protector -fwrapv -fno-strict-overflow -Wno-missing-field-initializers -Wformat-security -fstack-protector-all --param ssp-buffer-size=1
 LD_HARDENING_OPTIONS ?= -Wl,--dynamicbase -Wl,--nxcompat
 
-TAG := @$(PURPLE_TOP)/tag.sh
 
 # parse the version number from the configure.ac file if it is newer
 #m4_define([purple_major_version], [2])
@@ -117,45 +116,18 @@ DLL_LD_FLAGS += -Wl,--enable-auto-image-base -Wl,--enable-auto-import $(LD_HARDE
 ifeq "$(origin CC)" "default"
   CC := gcc.exe
 endif
-# comment out the next line to make output more verbose
-CC := $(TAG) "auto" $(CC)
-
-GMSGFMT ?= $(GETTEXT_TOP)/bin/msgfmt
+GMSGFMT ?= $(WIN32_DEV_TOP)/gettext-0.17/bin/msgfmt
 MAKENSIS ?= makensis.exe
 PERL ?= perl
 WINDRES ?= windres
 STRIP ?= strip
-INTLTOOL_MERGE ?= $(INTLTOOL_TOP)/bin/intltool-merge
+INTLTOOL_MERGE ?= $(WIN32_DEV_TOP)/intltool_0.40.4-1_win32/bin/intltool-merge
 MONO_SIGNCODE ?= signcode
 GPG_SIGN ?= gpg
-GLIB_GENMARSHAL ?= $(GTK_BIN)/glib-genmarshal
-GLIB_MKENUMS ?= $(GTK_BIN)/glib-mkenums
 
 PIDGIN_COMMON_RULES := $(PURPLE_TOP)/win32/rules.mak
 PIDGIN_COMMON_TARGETS := $(PURPLE_TOP)/win32/targets.mak
 MINGW_MAKEFILE := Makefile.mingw
-MAKE_at := @
-
-USE_VV ?= 1
-
-ifeq "$(USE_VV)" "1"
-VV_LIBS := \
-	-lgstreamer-0.10 \
-	-lgstvideo-0.10 \
-	-lgstinterfaces-0.10 \
-	-lfarstream-0.1
-VV_INCLUDE_PATHS := \
-	-I$(GSTREAMER_TOP)/include/gstreamer-0.10 \
-	-I$(GSTREAMER_TOP)/include/farstream-0.1 \
-	-I$(LIBXML2_TOP)/include/libxml2
-VV_LIB_PATHS := \
-	-L$(GSTREAMER_TOP)/lib
-DEFINES += -DUSE_GSTREAMER -DUSE_VV
-else
-VV_LIBS :=
-VV_INCLUDE_PATHS :=
-VV_LIB_PATHS :=
-endif
 
 INSTALL_PIXMAPS ?= 1
 INSTALL_SSL_CERTIFICATES ?= 1
