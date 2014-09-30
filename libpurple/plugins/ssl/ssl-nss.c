@@ -138,7 +138,6 @@ ssl_nss_init_nss(void)
 {
 #if NSS_VMAJOR > 3 || ( NSS_VMAJOR == 3 && NSS_VMINOR >= 14 )
 	SSLVersionRange supported, enabled;
-fprintf(stderr, "MARK got it\n");
 #endif /* NSS >= 3.14 */
 
 	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
