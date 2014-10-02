@@ -443,6 +443,16 @@ request_pad_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 
 	gst_iterator_free(iter);
 }
+
+static void
+nonunique_src_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
+{
+	GstElement *element = GST_ELEMENT_PARENT(pad);
+	gst_element_set_locked_state(element, TRUE);
+	gst_element_set_state(element, GST_STATE_NULL);
+	gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(element)), element);
+}
+
 #endif
 
 #ifdef USE_GSTREAMER
@@ -582,6 +592,10 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 		ret = purple_media_element_info_call_create(info,
 				media, session_id, participant);
 		if (element_type & PURPLE_MEDIA_ELEMENT_SRC) {
+			GstPad *pad = gst_element_get_static_pad(ret, "src");
+			g_signal_connect(pad, "unlinked",
+					G_CALLBACK(nonunique_src_unlinked_cb), NULL);
+			gst_object_unref(pad);
 			gst_object_ref(ret);
 			gst_bin_add(GST_BIN(purple_media_manager_get_pipeline(manager)),
 				ret);
