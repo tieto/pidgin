@@ -1,6 +1,22 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 3.0.0 (??/??/????):
+	General:
+	* Various core components of libpurple are now GObjects (Ankit Vani).
+	* Ciphers are now built from the libpurple directory.
+	* Doxygen has been replaced by gtk-doc for generating documentation (Ankit
+	  Vani).
+	* Added dependency GPlugin, which is now required to build libpurple with
+	  plugins support.
+	* Added dependency gobject-introspection, which is now required to enable
+	  non-native plugin support.
+
+	libpurple:
+	* Specify a different set of encryption ciphers for TLS connections when
+	  using GnuTLS. (elrond, belmyst, and Mark Doliner) (#8061)
+	* Don't allow SSL 3.0 (only TLS 1.0 and newer) for TLS connections when
+	  using either GnuTLS or NSS.
+
 	Pidgin:
 	* Support building with the GTK+ 3.x toolkit.  When configuring the
 	  build, use --with-gtk=<2|3> to determine which toolkit to use.  Using
@@ -76,23 +92,18 @@ version 3.0.0 (??/??/????):
 	* A single jabber plugin provides XMPP, GTalk and Facebook protocols.
 	* A single yahoo plugin provides both Yahoo and Yahoo JAPAN protocols.
 
-	General:
-	* Various core components of libpurple are now GObjects.
-	* Ciphers are now built from the libpurple directory.
-	* Added dependency GPlugin, which is now required to build libpurple with
-	  plugins support.
-	* Added dependency gobject-introspection, which is now required to enable
-	  non-native plugin support.
-	* Doxygen has been replaced by gtk-doc for generating documentation.
-
 version 2.10.10 (?/?/?):
+	General:
+	* Allow and prefer TLS 1.2 and 1.1 when using libnss. (Elrond and
+	  Ashish Gupta) (#15909)
+
 	libpurple3 compatibility:
 	* Encrypted account passwords are preserved until the new one is set.
 	* Fix loading Google Talk and Facebook XMPP accounts.
 
 	Windows-Specific Changes:
 	* Updates to dependencies:
-		* NSS 3.16 and NSPR 4.10.4
+		* NSS 3.17.1 and NSPR 4.10.7
 
 	Finch:
 	* Fix build against Python 3. (Ed Catmur) (#15969)
@@ -319,7 +330,7 @@ version 2.10.7 (02/13/2013):
 	  this issue and suggesting solutions. (#15277)
 	* Updates to a number of dependencies, some of which have security
 	  related fixes. Thanks again to Jacob Appelbaum and Jurre van Bergen
-	  for identifying the vulnerable libraries and to Dieter Verfaillie 
+	  for identifying the vulnerable libraries and to Dieter Verfaillie
 	  for helping getting the libraries updated. (#14571, #15285, #15286)
 		* ATK 1.32.0-2
 		* Cyrus SASL 2.1.25

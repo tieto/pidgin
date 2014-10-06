@@ -44,7 +44,69 @@ typedef struct
 static gnutls_certificate_client_credentials xcred = NULL;
 
 #ifdef HAVE_GNUTLS_PRIORITY_FUNCS
-/* Priority strings.  The default one is, well, the default (and is always
+
+/**
+ * This string tells GnuTLS the list of ciphers we're ok with using. The goal
+ * is to disable weaker ciphers while remaining compatible with almost all
+ * servers.
+ *
+ * Ideally this is something we wouldn't do. Ideally the system-wide GnuTLS
+ * library would use good defaults. But for now I think we can safely be more
+ * restrictive than the GnuTLS defaults. --Mark Doliner
+ *
+ * You can test the priority string using this command:
+ * > gnutls-cli --priority "<SIGNATURE STRING>" <HOSTNAME>
+ * Note that on Ubuntu 14.04 gnutls-cli is linked against the older GnuTLS
+ * 2.12.23, which might be different than what Pidgin is linked against.
+ *
+ * Rationale for this string:
+ * - Start with the SECURE192 keyword and add the SECURE128 keyword. This
+ *   includes both 128 and 192 bit ciphers, giving priority to the 192 bit
+ *   ciphers. We're not too picky about the order... people generally think
+ *   128 bit ciphers are sufficient for now and 192 bit ciphers are overkill
+ *   (and slower), but the speed impact shouldn't matter much for us and we
+ *   prefer to be resilient into the distant future.
+ *
+ * - Remove and re-add RSA ciphers. This gives them a lower priority. We do
+ *   this because they don't support perfect forward secrecy (PFS) and we want
+ *   ciphers that DO support PFS to have a higher priority. An alternate way
+ *   to do this is to add +PFS to the front of the string, but the PFS keyword
+ *   was only added in 3.2.4 and attempting to use it with older GnuTLS causes
+ *   the entire priority string to be discarded.
+ *
+ * - Add SIGN-RSA-SHA1. SHA-1 is a weaker hashing algorithm that's not
+ *   included in SECURE128. We'd prefer not to include it, but unfortunately
+ *   as of 2014-09-10 it is required by login.live.com (used by the MSN PRPL).
+ *
+ * - Remove DHE-DSS ciphers. This is kind of arbitrary. We think maybe nobody
+ *   uses these and all things being equal a shorter cipher list is preferred.
+ *
+ * - Disable SSL 3.0. Everyone should be using at least TLS 1.0 by now.
+ *
+ * We only use this string for GnuTLS 3.2.2 and newer. For older versions we
+ * use NORMAL. Over time the GnuTLS library has changed how it parses priority
+ * strings and there are some unfortunate quirks:
+ * - 128 bit ciphers stopped being included in the SECURE256 keyword in 3.0.9.
+ * - 256 bit ciphers started being included in the SECURE128 keyword in 3.0.12.
+ * - Support for combining priority string keywords wasn't added until 3.1.0.
+ * - Adding/removing items from the priority string using plus and minus is
+ *   buggy in GnuTLS 3.2.2 and older. See this commit for details:
+ *   https://gitorious.org/gnutls/gnutls/commit/913f03ccfafc37277f0a88287d02cdbb9bbfb652
+ *
+ * These quirks make it difficult to find a single priority string that works
+ * well for all versions of GnuTLS that enables 128 and 256 bit ciphers while
+ * disabling less secure ciphers. In fact it's difficult to come up with ANY
+ * string that accomplishes this for 3.0.9, 3.0.10, and 3.0.11. And the bug
+ * with adding/removing items from the priority string means we might get
+ * unexpected results when using a complicated string, and so we're better off
+ * just sticking with the default.
+ *
+ * For more discussion about this change see bug #8061.
+ */
+#define GNUTLS_DEFAULT_PRIORITY "SECURE192:+SECURE128:-RSA:+RSA:+SIGN-RSA-SHA1:-DHE-DSS:-VERS-SSL3.0"
+
+/*
+ * Priority strings.  The default one is, well, the default (and is always
  * set).  The hash table is of the form hostname => priority (both
  * char *).
  *
@@ -61,6 +123,43 @@ ssl_gnutls_log(int level, const char *str)
 {
 	/* GnuTLS log messages include the '\n' */
 	purple_debug_misc("gnutls", "lvl %d: %s", level, str);
+}
+
+/**
+ * set_cipher_priorities:
+ * @priority_cache: A pointer to a gnutls_priority_t. This will be initialized
+ *                       using the given priorities.
+ * @priorities: A GnuTLS priority string.
+ *
+ * A simple convenience wrapper around gnutls_priority_init(). The wrapper
+ * does a few things:
+ * - Logs a helpful message if initialization fails.
+ * - Frees priority_cache if needed if initialization fails.
+ * - Set priority_cache to NULL if needed if initialization fails.
+ */
+static void
+set_cipher_priorities(gnutls_priority_t *priority_cache, const char *priorities)
+{
+	int ret;
+
+	ret = gnutls_priority_init(priority_cache, priorities, NULL);
+	if (ret != GNUTLS_E_SUCCESS) {
+		purple_debug_warning("gnutls", "Unable to set cipher priorities to %s. "
+				"Error code %d: %s\n", priorities, ret, gnutls_strerror(ret));
+
+		/* Versions of GnuTLS before 2.9.10 allocate but don't free priority_cache
+		   if there's an error. We free it here to avoid a mem leak. */
+		if (!gnutls_check_version("2.9.10")) {
+			gnutls_free(*priority_cache);
+		}
+
+		/* Versions of GnuTLS before 3.2.9 leave priority_cache pointing to
+		   freed memory if there's an error. We want our callers to be able to
+		   depend on this being NULL, so set it to NULL ourselves. */
+		if (!gnutls_check_version("3.2.9")) {
+			*priority_cache = NULL;
+		}
+	}
 }
 
 static void
@@ -143,16 +242,9 @@ ssl_gnutls_init_gnutls(void)
 		}
 
 		if (default_priority_str) {
-			if (gnutls_priority_init(&default_priority, default_priority_str, NULL)) {
-				purple_debug_warning("gnutls", "Unable to set default priority to %s\n",
-				                     default_priority_str);
-				/* Versions of GnuTLS as of 2.8.6 (2010-03-31) don't free/NULL
-				 * this on error.
-				 */
-				gnutls_free(default_priority);
-				default_priority = NULL;
-			}
-
+			/* Note: If the string is invalid then this call will fail and
+			   we'll try again with our default priority string later. */
+			set_cipher_priorities(&default_priority, default_priority_str);
 			g_free(default_priority_str);
 		}
 
@@ -161,12 +253,14 @@ ssl_gnutls_init_gnutls(void)
 	}
 
 #ifdef HAVE_GNUTLS_PRIORITY_FUNCS
-	/* Make sure we set have a default priority! */
+	/* Set a default priority string if we didn't do it above */
 	if (!default_priority) {
-		if (gnutls_priority_init(&default_priority, "NORMAL:%SSL3_RECORD_VERSION", NULL)) {
-			/* See comment above about memory leak */
-			gnutls_free(default_priority);
-			gnutls_priority_init(&default_priority, "NORMAL", NULL);
+		if (gnutls_check_version("3.2.2")) {
+			set_cipher_priorities(&default_priority, GNUTLS_DEFAULT_PRIORITY);
+		}
+		if (!default_priority) {
+			/* Try again with an extremely simple priority string. */
+			set_cipher_priorities(&default_priority, "NORMAL");
 		}
 	}
 #endif /* HAVE_GNUTLS_PRIORITY_FUNCS */
@@ -242,12 +336,12 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 	gnutls_data->handshake_handler = 0;
 
 	if(ret != 0) {
-		purple_debug_error("gnutls", "Handshake failed. Error %s\n",
-			gnutls_strerror(ret));
+		purple_debug_error("gnutls", "Handshake failed: %s\n",
+				gnutls_strerror(ret));
 
 		if(gsc->error_cb != NULL)
 			gsc->error_cb(gsc, PURPLE_SSL_HANDSHAKE_FAILED,
-				gsc->connect_cb_data);
+					gsc->connect_cb_data);
 
 		purple_ssl_close(gsc);
 	} else {
