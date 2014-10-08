@@ -90,6 +90,7 @@ struct _PurpleMediaManagerPrivate
 #ifdef HAVE_MEDIA_APPLICATION
 typedef struct {
 	PurpleMedia *media;
+	GWeakRef media_ref;
 	gchar *session_id;
 	gchar *participant;
 	PurpleMediaAppDataCallbacks callbacks;
@@ -540,7 +541,6 @@ free_appdata_info_locked (PurpleMediaAppDataInfo *info)
 	/* Make sure no other thread is using the structure */
 	g_free (info->session_id);
 	g_free (info->participant);
-	g_object_unref (info->media);
 
 	if (info->readable_source) {
 		g_source_destroy (info->readable_source);
@@ -605,7 +605,8 @@ ensure_app_data_info_and_lock (PurpleMediaManager *manager, PurpleMedia *media,
 
 	if (info == NULL) {
 		info = g_slice_new0 (PurpleMediaAppDataInfo);
-		info->media = g_object_ref (media);
+		info->media = media;
+		g_weak_ref_init (&info->media_ref, media);
 		info->session_id = g_strdup (session_id);
 		info->participant = g_strdup (participant);
 		g_cond_init (&info->readable_cond);
@@ -729,7 +730,7 @@ appsrc_writable (gpointer user_data)
 		return FALSE;
 	}
 	writable_cb = info->callbacks.writable;
-	media = g_object_ref (info->media);
+	media = g_weak_ref_get (&info->media_ref);
 	session_id = g_strdup (info->session_id);
 	participant = g_strdup (info->participant);
 	writable = info->writable && info->connected;
@@ -741,7 +742,7 @@ appsrc_writable (gpointer user_data)
 	g_mutex_unlock (&manager->priv->appdata_mutex);
 
 
-	if (writable_cb)
+	if (writable_cb && media)
 		writable_cb (manager, media, session_id, participant, writable,
 			cb_data);
 
@@ -903,7 +904,7 @@ appsink_readable (gpointer user_data)
 	while (info->callbacks.readable &&
 		(info->num_samples > 0 || info->current_sample != NULL)) {
 		readable_cb = info->callbacks.readable;
-		media = g_object_ref (info->media);
+		media = g_weak_ref_get (&info->media_ref);
 		session_id = g_strdup (info->session_id);
 		participant = g_strdup (info->participant);
 		cb_data = info->user_data;
