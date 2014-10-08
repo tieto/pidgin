@@ -220,17 +220,6 @@ GList *purple_media_manager_get_private_media_by_account(
 		PurpleMediaManager *manager, PurpleAccount *account);
 
 /**
- * purple_media_manager_remove_private_media:
- * @manager: The media manager to remove the media session from.
- * @media: The media session to remove.
- *
- * Removes a private media session from the media manager.
- */
-void
-purple_media_manager_remove_private_media(PurpleMediaManager *manager,
-				  PurpleMedia *media);
-
-/**
  * purple_media_manager_create_output_window:
  * @manager: Manager the output windows are registered with.
  * @media: Media session the output windows are registered for.

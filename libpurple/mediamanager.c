@@ -446,9 +446,8 @@ get_media_by_account(PurpleMediaManager *manager,
 #endif
 }
 
-static void
-remove_media(PurpleMediaManager *manager,
-	PurpleMedia *media, gboolean private)
+void
+purple_media_manager_remove_media(PurpleMediaManager *manager, PurpleMedia *media)
 {
 #ifdef USE_VV
 	GList *list;
@@ -456,11 +455,12 @@ remove_media(PurpleMediaManager *manager,
 
 	g_return_if_fail(manager != NULL);
 
-	if (private)
-		medias = &manager->priv->private_medias;
-	else
+	if ((list = g_list_find(manager->priv->medias, media))) {
 		medias = &manager->priv->medias;
-	list = g_list_find(*medias, media);
+	} else if ((list = g_list_find(manager->priv->private_medias, media))) {
+		medias = &manager->priv->private_medias;
+	}
+
 	if (list) {
 		GList *i;
 		*medias = g_list_delete_link(*medias, list);
@@ -506,13 +506,6 @@ purple_media_manager_get_media_by_account(PurpleMediaManager *manager,
 	return get_media_by_account (manager, account, FALSE);
 }
 
-void
-purple_media_manager_remove_media(PurpleMediaManager *manager,
-				  PurpleMedia *media)
-{
-	remove_media (manager, media, FALSE);
-}
-
 PurpleMedia *
 purple_media_manager_create_private_media(PurpleMediaManager *manager,
 				  PurpleAccount *account,
@@ -535,13 +528,6 @@ purple_media_manager_get_private_media_by_account(PurpleMediaManager *manager,
 		PurpleAccount *account)
 {
 	return get_media_by_account (manager, account, TRUE);
-}
-
-void
-purple_media_manager_remove_private_media(PurpleMediaManager *manager,
-				  PurpleMedia *media)
-{
-	remove_media (manager, media, TRUE);
 }
 
 #ifdef HAVE_MEDIA_APPLICATION
