@@ -1420,3 +1420,46 @@ purple_media_get_tee(PurpleMedia *media,
 }
 #endif /* USE_GSTREAMER */
 
+gboolean
+purple_media_send_dtmf(PurpleMedia *media, const gchar *session_id,
+		gchar dtmf, guint8 volume, guint16 duration)
+{
+#ifdef USE_VV
+	PurpleAccount *account = NULL;
+	PurpleConnection *gc = NULL;
+	PurplePlugin *prpl = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleMediaBackendIface *backend_iface = NULL;
+
+	if (media)
+	{
+		account = purple_media_get_account(media);
+		backend_iface = PURPLE_MEDIA_BACKEND_GET_INTERFACE(media->priv->backend);
+	}
+	if (account)
+		gc = purple_account_get_connection(account);
+	if (gc)
+		prpl = purple_connection_get_prpl(gc);
+	if (prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (dtmf == 'a')
+		dtmf = 'A';
+	else if (dtmf == 'b')
+		dtmf = 'B';
+	else if (dtmf == 'c')
+		dtmf = 'C';
+	else if (dtmf == 'd')
+		dtmf = 'D';
+
+	g_return_val_if_fail(strchr("0123456789ABCD#*", dtmf), FALSE);
+
+	if (backend_iface && backend_iface->send_dtmf
+		&& backend_iface->send_dtmf(media->priv->backend,
+				session_id, dtmf, volume, duration))
+	{
+		return TRUE;
+	}
+#endif
+	return FALSE;
+}

@@ -31,6 +31,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+typedef struct _PurpleMedia PurpleMedia;
+
 #include "media/candidate.h"
 #include "media/codec.h"
 #include "media/enum-types.h"
@@ -41,8 +43,6 @@
 #define PURPLE_IS_MEDIA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MEDIA))
 #define PURPLE_IS_MEDIA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA))
 #define PURPLE_MEDIA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA, PurpleMediaClass))
-
-typedef struct _PurpleMedia PurpleMedia;
 
 #include "signals.h"
 #include "util.h"
@@ -440,6 +440,22 @@ gulong purple_media_set_output_window(PurpleMedia *media,
  * Removes all output windows from a given media session.
  */
 void purple_media_remove_output_windows(PurpleMedia *media);
+
+/**
+ * purple_media_send_dtmf:
+ * @media: The media instance to send a DTMF signal to.
+ * @sess_id: The session id of the session to send the DTMF signal on.
+ * @dtmf: The character representing the DTMF in the range [0-9#*A-D].
+ * @volume: The power level expressed in dBm0 after dropping the sign in the
+ *          range of 0 to 63.  A larger value represents a lower volume.
+ * @duration: The duration of the tone in milliseconds.
+ *
+ * Sends a DTMF signal out-of-band.
+ *
+ * Returns: %TRUE DTMF sent successfully, or %FALSE otherwise.
+ */
+gboolean purple_media_send_dtmf(PurpleMedia *media, const gchar *session_id,
+		gchar dtmf, guint8 volume, guint16 duration);
 
 G_END_DECLS
 

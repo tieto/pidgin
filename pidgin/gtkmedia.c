@@ -43,6 +43,7 @@
 #ifdef GDK_WINDOWING_QUARTZ
 #include <gdk/gdkquartz.h>
 #endif
+#include <gdk/gdkkeysyms.h>
 
 #include "gtk3compat.h"
 
@@ -744,6 +745,136 @@ pidgin_media_add_audio_widget(PidginMedia *gtkmedia,
 }
 
 static void
+phone_dtmf_pressed_cb(GtkButton *button, gpointer user_data)
+{
+	PidginMedia *gtkmedia = user_data;
+	gint num;
+	gchar *sid;
+
+	num = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(button), "dtmf-digit"));
+	sid = g_object_get_data(G_OBJECT(button), "session-id");
+
+	purple_media_send_dtmf(gtkmedia->priv->media, sid, num, 25, 50);
+}
+
+static inline GtkWidget *
+phone_create_button(const gchar *text_hi, const gchar *text_lo)
+{
+	GtkWidget *button;
+	GtkWidget *label_hi;
+	GtkWidget *label_lo;
+	GtkWidget *grid;
+	gchar *text_hi_local;
+
+	if (text_hi)
+		text_hi_local = _(text_hi);
+	else
+		text_hi_local = "";
+
+	grid = gtk_vbox_new(TRUE, 0);
+
+	button = gtk_button_new();
+	label_hi = gtk_label_new(text_hi_local);
+	gtk_misc_set_alignment(GTK_MISC(label_hi), 0.5, 0.5);
+	gtk_box_pack_end(GTK_BOX(grid), label_hi, FALSE, TRUE, 0);
+	label_lo = gtk_label_new(text_lo);
+	gtk_misc_set_alignment(GTK_MISC(label_lo), 0.5, 0.5);
+	gtk_label_set_use_markup(GTK_LABEL(label_lo), TRUE);
+	gtk_box_pack_end(GTK_BOX(grid), label_lo, FALSE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(button), grid);
+
+	return button;
+}
+
+static struct phone_label {
+	gchar *subtext;
+	gchar *text;
+	gchar chr;
+} phone_labels[] = {
+	{"<b>1</b>", NULL, '1'},
+	/* Translators note: These are the letters on the keys of a numeric
+	   keypad; translate according to §7.2.4 of
+	 http://www.etsi.org/deliver/etsi_es/202100_202199/202130/01.01.01_60/es_20213 */
+	 /* Letters on the '2' key of a numeric keypad */
+	{"<b>2</b>", N_("ABC"), '2'},
+	 /* Letters on the '3' key of a numeric keypad */
+	{"<b>3</b>", N_("DEF"), '3'},
+	 /* Letters on the '4' key of a numeric keypad */
+	{"<b>4</b>", N_("GHI"), '4'},
+	 /* Letters on the '5' key of a numeric keypad */
+	{"<b>5</b>", N_("JKL"), '5'},
+	 /* Letters on the '6' key of a numeric keypad */
+	{"<b>6</b>", N_("MNO"), '6'},
+	 /* Letters on the '7' key of a numeric keypad */
+	{"<b>7</b>", N_("PQRS"), '7'},
+	 /* Letters on the '8' key of a numeric keypad */
+	{"<b>8</b>", N_("TUV"), '8'},
+	 /* Letters on the '9' key of a numeric keypad */
+	{"<b>9</b>", N_("WXYZ"), '9'},
+	{"<b>*</b>", NULL, '*'},
+	{"<b>0</b>", NULL, '0'},
+	{"<b>#</b>", NULL, '#'},
+	{NULL, NULL, 0}
+};
+
+static gboolean
+pidgin_media_dtmf_key_press_event_cb(GtkWidget *widget,
+		GdkEvent *event, gpointer user_data)
+{
+	PidginMedia *gtkmedia = user_data;
+	GdkEventKey *key = (GdkEventKey *) event;
+
+	if (event->type != GDK_KEY_PRESS) {
+		return FALSE;
+	}
+
+	if ((key->keyval >= GDK_KEY_0 && key->keyval <= GDK_KEY_9) ||
+		key->keyval == GDK_KEY_asterisk ||
+		key->keyval == GDK_KEY_numbersign) {
+		gchar *sid = g_object_get_data(G_OBJECT(widget), "session-id");
+
+		purple_media_send_dtmf(gtkmedia->priv->media, sid, key->keyval, 25, 50);
+	}
+
+	return FALSE;
+}
+
+static GtkWidget *
+pidgin_media_add_dtmf_widget(PidginMedia *gtkmedia,
+		PurpleMediaSessionType type, const gchar *_sid)
+{
+	GtkWidget *grid = gtk_table_new(4, 3, TRUE);
+	GtkWidget *button;
+	gint index = 0;
+	GtkWindow *win = &gtkmedia->parent;
+
+	/* Add buttons */
+	for (index = 0; phone_labels[index].subtext != NULL; index++) {
+		button = phone_create_button(phone_labels[index].text,
+				phone_labels[index].subtext);
+		g_signal_connect(button, "pressed",
+				G_CALLBACK(phone_dtmf_pressed_cb), gtkmedia);
+		g_object_set_data(G_OBJECT(button), "dtmf-digit",
+				GINT_TO_POINTER(phone_labels[index].chr));
+		g_object_set_data_full(G_OBJECT(button), "session-id",
+				g_strdup(_sid), g_free);
+		gtk_table_attach(GTK_TABLE(grid), button, index % 3,
+				index % 3 + 1, index / 3, index / 3 + 1,
+				GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND,
+				2, 2);
+	}
+
+	g_signal_connect(G_OBJECT(win), "key-press-event",
+		G_CALLBACK(pidgin_media_dtmf_key_press_event_cb), gtkmedia);
+	g_object_set_data_full(G_OBJECT(win), "session-id",
+		g_strdup(_sid), g_free);
+
+	gtk_widget_show_all(grid);
+
+	return grid;
+}
+
+static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *sid)
 {
 	GtkWidget *send_widget = NULL, *recv_widget = NULL, *button_widget = NULL;
@@ -889,7 +1020,11 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 
 		gtk_box_pack_end(GTK_BOX(recv_widget),
 				pidgin_media_add_audio_widget(gtkmedia,
-				PURPLE_MEDIA_SEND_AUDIO, NULL), FALSE, FALSE, 0);
+				PURPLE_MEDIA_SEND_AUDIO, sid), FALSE, FALSE, 0);
+
+		gtk_box_pack_end(GTK_BOX(recv_widget),
+				pidgin_media_add_dtmf_widget(gtkmedia,
+				PURPLE_MEDIA_SEND_AUDIO, sid), FALSE, FALSE, 0);
 	}
 
 	if (type & PURPLE_MEDIA_AUDIO &&

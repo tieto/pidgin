@@ -91,6 +91,9 @@ static gboolean purple_media_backend_fs2_set_send_codec(
 static void purple_media_backend_fs2_set_params(PurpleMediaBackend *self,
 		guint num_params, GParameter *params);
 static const gchar **purple_media_backend_fs2_get_available_params(void);
+static gboolean purple_media_backend_fs2_send_dtmf(
+		PurpleMediaBackend *self, const gchar *sess_id,
+		gchar dtmf, guint8 volume, guint16 duration);
 
 static void free_stream(PurpleMediaBackendFs2Stream *stream);
 static void free_session(PurpleMediaBackendFs2Session *session);
@@ -531,6 +534,7 @@ purple_media_backend_iface_init(PurpleMediaBackendIface *iface)
 	iface->set_send_codec = purple_media_backend_fs2_set_send_codec;
 	iface->set_params = purple_media_backend_fs2_set_params;
 	iface->get_available_params = purple_media_backend_fs2_get_available_params;
+	iface->send_dtmf = purple_media_backend_fs2_send_dtmf;
 }
 
 static FsMediaType
@@ -2556,6 +2560,65 @@ purple_media_backend_fs2_set_params(PurpleMediaBackend *self,
 	g_object_set(G_OBJECT(priv->conference), "sdes", sdes, NULL);
 	gst_structure_free(sdes);
 #endif /* HAVE_FARSIGHT */
+}
+static gboolean
+send_dtmf_callback(gpointer userdata)
+{
+	FsSession *session = userdata;
+
+	fs_session_stop_telephony_event(session);
+
+	return FALSE;
+}
+static gboolean
+purple_media_backend_fs2_send_dtmf(PurpleMediaBackend *self,
+		const gchar *sess_id, gchar dtmf, guint8 volume,
+		guint16 duration)
+{
+	PurpleMediaBackendFs2Session *session;
+	FsDTMFEvent event;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
+
+	session = get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
+	if (session == NULL)
+		return FALSE;
+
+	/* Convert DTMF char into FsDTMFEvent enum */
+	switch(dtmf) {
+		case '0': event = FS_DTMF_EVENT_0; break;
+		case '1': event = FS_DTMF_EVENT_1; break;
+		case '2': event = FS_DTMF_EVENT_2; break;
+		case '3': event = FS_DTMF_EVENT_3; break;
+		case '4': event = FS_DTMF_EVENT_4; break;
+		case '5': event = FS_DTMF_EVENT_5; break;
+		case '6': event = FS_DTMF_EVENT_6; break;
+		case '7': event = FS_DTMF_EVENT_7; break;
+		case '8': event = FS_DTMF_EVENT_8; break;
+		case '9': event = FS_DTMF_EVENT_9; break;
+		case '*': event = FS_DTMF_EVENT_STAR; break;
+		case '#': event = FS_DTMF_EVENT_POUND; break;
+		case 'A': event = FS_DTMF_EVENT_A; break;
+		case 'B': event = FS_DTMF_EVENT_B; break;
+		case 'C': event = FS_DTMF_EVENT_C; break;
+		case 'D': event = FS_DTMF_EVENT_D; break;
+		default:
+			return FALSE;
+	}
+
+	if (!fs_session_start_telephony_event(session->session,
+			event, volume)) {
+		return FALSE;
+	}
+
+	if (duration <= 50) {
+		fs_session_stop_telephony_event(session->session);
+	} else {
+		purple_timeout_add(duration, send_dtmf_callback,
+				session->session);
+	}
+
+	return TRUE;
 }
 #else
 GType
