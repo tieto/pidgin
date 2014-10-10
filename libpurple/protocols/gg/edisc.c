@@ -482,11 +482,11 @@ static void ggp_edisc_xfer_send_init_ticket_created(PurpleHttpConnection *hc,
 			ggp_edisc_xfer_error(xfer,
 				_("Recipient not logged in"));
 		else if (error_id == 207) /* bad sender recipient relation */
-			ggp_edisc_xfer_error(xfer, _("Recipient didn't added "
-				"you to his buddy list"));
+			ggp_edisc_xfer_error(xfer, _("You aren't on the "
+                                "recipient's buddy list"));
 		else
 			ggp_edisc_xfer_error(xfer,
-				_("Cannot offer sending a file"));
+				_("Unable to send file"));
 		return;
 	}
 
