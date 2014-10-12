@@ -218,6 +218,8 @@ protobuf_c_buffer_simple_append (ProtobufCBuffer *buffer,
       while (new_alloced < new_len)
         new_alloced += new_alloced;
       DO_ALLOC (new_data, &protobuf_c_default_allocator, new_alloced, return);
+      if (!new_data)
+        return;
       memcpy (new_data, simp->data, simp->len);
       if (simp->must_free_data)
         FREE (&protobuf_c_default_allocator, simp->data);
@@ -2059,6 +2061,8 @@ parse_member (ScannedMember *scanned_member,
       ufield->wire_type = scanned_member->wire_type;
       ufield->len = scanned_member->len;
       DO_UNALIGNED_ALLOC (ufield->data, allocator, scanned_member->len, return 0);
+      if (ufield->data == NULL)
+        return 0;
       memcpy (ufield->data, scanned_member->data, ufield->len);
       return 1;
     }
