@@ -41,50 +41,6 @@ static GList *cert_verifiers = NULL;
 /** List of registered Pools */
 static GList *cert_pools = NULL;
 
-/*
- * TODO: Merge this with PurpleCertificateVerificationStatus for 3.0.0 */
-typedef enum {
-	PURPLE_CERTIFICATE_UNKNOWN_ERROR = -1,
-
-	/* Not an error */
-	PURPLE_CERTIFICATE_NO_PROBLEMS = 0,
-
-	/* Non-fatal */
-	PURPLE_CERTIFICATE_NON_FATALS_MASK = 0x0000FFFF,
-
-	/* The certificate is self-signed. */
-	PURPLE_CERTIFICATE_SELF_SIGNED = 0x01,
-
-	/* The CA is not in libpurple's pool of certificates. */
-	PURPLE_CERTIFICATE_CA_UNKNOWN = 0x02,
-
-	/* The current time is before the certificate's specified
-	 * activation time.
-	 */
-	PURPLE_CERTIFICATE_NOT_ACTIVATED = 0x04,
-
-	/* The current time is after the certificate's specified expiration time */
-	PURPLE_CERTIFICATE_EXPIRED = 0x08,
-
-	/* The certificate's subject name doesn't match the expected */
-	PURPLE_CERTIFICATE_NAME_MISMATCH = 0x10,
-
-	/* No CA pool was found. This shouldn't happen... */
-	PURPLE_CERTIFICATE_NO_CA_POOL = 0x20,
-
-	/* Fatal */
-	PURPLE_CERTIFICATE_FATALS_MASK = 0xFFFF0000,
-
-	/* The signature chain could not be validated. Due to limitations in the
-	 * the current API, this also indicates one of the CA certificates in the
-	 * chain is expired (or not yet activated). FIXME 3.0.0 */
-	PURPLE_CERTIFICATE_INVALID_CHAIN = 0x10000,
-
-	/* The signature has been revoked. */
-	PURPLE_CERTIFICATE_REVOKED = 0x20000,
-
-	PURPLE_CERTIFICATE_LAST = 0x40000,
-} PurpleCertificateInvalidityFlags;
 
 static const gchar *
 invalidity_reason_to_string(PurpleCertificateInvalidityFlags flag)
@@ -776,10 +732,11 @@ static GList *x509_ca_certs = NULL;
 /** Used for lazy initialization purposes. */
 static gboolean x509_ca_initialized = FALSE;
 
-/** Adds a certificate to the in-memory cache, doing nothing else */
+/** Adds a certificate to the in-memory cache, and mark it as trusted */
 static gboolean
 x509_ca_quiet_put_cert(PurpleCertificate *crt)
 {
+	gboolean ret;
 	x509_ca_element *el;
 
 	/* lazy_init calls this function, so calling lazy_init here is a
@@ -791,12 +748,20 @@ x509_ca_quiet_put_cert(PurpleCertificate *crt)
 	/* TODO: Perhaps just check crt->scheme->name instead? */
 	g_return_val_if_fail(crt->scheme == purple_certificate_find_scheme(x509_ca.scheme_name), FALSE);
 
-	el = g_new0(x509_ca_element, 1);
-	el->dn = purple_certificate_get_unique_id(crt);
-	el->crt = purple_certificate_copy(crt);
-	x509_ca_certs = g_list_prepend(x509_ca_certs, el);
+	ret = TRUE;
 
-	return TRUE;
+	if (crt->scheme->register_trusted_tls_cert) {
+		ret = (crt->scheme->register_trusted_tls_cert)(crt, TRUE);
+	}
+
+	if (ret) {
+		el = g_new0(x509_ca_element, 1);
+		el->dn = purple_certificate_get_unique_id(crt);
+		el->crt = purple_certificate_copy(crt);
+		x509_ca_certs = g_list_prepend(x509_ca_certs, el);
+	}
+
+	return ret;
 }
 
 /* Since the libpurple CertificatePools get registered before plugins are
@@ -927,6 +892,7 @@ x509_ca_uninit(void)
 	g_list_free(x509_ca_certs);
 	x509_ca_certs = NULL;
 	x509_ca_initialized = FALSE;
+	/** TODO: the cert store in the SSL implementation wouldn't be cleared by this */
 	g_list_foreach(x509_ca_paths, (GFunc)g_free, NULL);
 	g_list_free(x509_ca_paths);
 	x509_ca_paths = NULL;
@@ -1184,6 +1150,10 @@ x509_tls_peers_put_cert(const gchar *id, PurpleCertificate *crt)
 	/* Work out the filename and export */
 	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);
 	ret = purple_certificate_export(keypath, crt);
+
+	if (crt->scheme->register_trusted_tls_cert) {
+		ret = (crt->scheme->register_trusted_tls_cert)(crt, FALSE);
+	}
 
 	g_free(keypath);
 	return ret;
@@ -1605,6 +1575,14 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 	gchar *ca_id, *ca2_id;
 
 	peer_crt = (PurpleCertificate *) chain->data;
+
+	if (peer_crt->scheme->verify_cert) {
+		/** Make sure we've loaded the CA certs (which causes NSS to trust them) */
+		g_return_if_fail(x509_ca_lazy_init());
+		peer_crt->scheme->verify_cert(vrq, &flags);
+		x509_tls_cached_complete(vrq, flags);
+		return;
+	}
 
 	/* TODO: Figure out a way to check for a bad signature, as opposed to
 	   "not self-signed" */

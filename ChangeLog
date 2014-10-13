@@ -1,9 +1,17 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.10.10 (?/?/?):
+version 2.10.10 (10/22/14):
 	General:
-	* Allow and prefer TLS 1.2 and 1.1 when using libnss. (Elrond and
-	  Ashish Gupta) (#15909)
+	* Check the basic constraints extension when validating SSL/TLS
+	  certificates. This fixes a security hole that allowed a malicious
+	  man-in-the-middle to impersonate an IM server or any other https
+	  endpoint. This affected both the NSS and GnuTLS plugins. (Discovered
+	  by an anonymous person and Jacob Appelbaum of the Tor Project, with
+	  thanks to Moxie Marlinspike for first publishing about this type of
+	  vulnerability. Thanks to Kai Engert for guidance and for some of the
+	  NSS changes).
+	* Allow and prefer TLS 1.2 and 1.1 when using the NSS plugin for SSL.
+	  (Elrond and Ashish Gupta) (#15909)
 
 	libpurple3 compatibility:
 	* Encrypted account passwords are preserved until the new one is set.
