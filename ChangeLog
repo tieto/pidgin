@@ -45,6 +45,11 @@ version 2.10.10 (10/22/14):
 	  (CVE-2014-NNNN)
 
 	XMPP:
+	* Fix potential information leak where a malicious XMPP server and
+	  possibly even a malicious remote user could create a carefully crafted
+	  XMPP message that causes libpurple to send an XMPP message containing
+	  arbitrary memory. (Discovered and fixed by Thijs Alkemade and Paul
+	  Aurich) (CVE-2014-NNNN)
 	* Fix Facebook XMPP roster quirks. (#15041, #15957)
 
 	Yahoo:

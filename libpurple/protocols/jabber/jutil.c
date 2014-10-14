@@ -81,10 +81,10 @@ jabber_idn_validate(const char *str, const char *at, const char *slash,
 
 		if (slash) {
 			domain_len = slash - str;
-			resource = slash;
+			resource = slash + 1;
 			resource_len = null - (slash + 1);
 		} else {
-			domain_len = null - (str + 1);
+			domain_len = null - str;
 		}
 	}
 
@@ -126,6 +126,8 @@ jabber_idn_validate(const char *str, const char *at, const char *slash,
 			jid = NULL;
 			goto out;
 		}
+
+		jid->domain = g_strndup(domain, domain_len);
 	} else {
 		/* Apply nameprep */
 		if (stringprep_nameprep(idn_buffer, sizeof(idn_buffer)) != STRINGPREP_OK) {
