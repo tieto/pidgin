@@ -9,7 +9,7 @@ version 2.10.10 (10/22/14):
 	  by an anonymous person and Jacob Appelbaum of the Tor Project, with
 	  thanks to Moxie Marlinspike for first publishing about this type of
 	  vulnerability. Thanks to Kai Engert for guidance and for some of the
-	  NSS changes).
+	  NSS changes). (CVE-2014-NNNN)
 	* Allow and prefer TLS 1.2 and 1.1 when using the NSS plugin for SSL.
 	  (Elrond and Ashish Gupta) (#15909)
 
