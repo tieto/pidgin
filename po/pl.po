@@ -10,14 +10,15 @@
 # Copyright (C) Piotr Makowski <pmakowski@aviary.pl>, 2008
 # Copyright (C) Przemysław Sułek <pbs@linux.net.pl>, 2001
 # Copyright (C) Tomasz Sałaciński <tsalacinski@gmail.com>, 2007
-# Piotr Drąg <piotrdrag@gmail.com>, 2012-2014
+# Piotr Drąg <piotrdrag@gmail.com>, 2009,2012-2014
+# Tomek Wasilczyk <twasilczyk@pidgin.im>, 2013
 # tomkiewicz, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-02-02 15:39+0000\n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-06-27 14:11+0000\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/pidgin/language/"
 "pl/)\n"
@@ -1693,7 +1694,6 @@ msgstr "Ten protokół nie obsługuje pobierania publicznego pseudonimu."
 msgid "Unknown"
 msgstr "Nieznany"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Znajomi"
 
@@ -1807,10 +1807,19 @@ msgstr ""
 "Z danych certyfikatu wynika, że pochodzi on z \"%s\". Może to oznaczać, że "
 "użytkownik łączy się z usługą inną niż żądana."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Informacje o certyfikacie"
+
+msgid "Unable to find Issuer Certificate"
+msgstr "Nie można odnaleźć certyfikatu wydającego"
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1819,14 +1828,18 @@ msgid ""
 msgstr ""
 "Wspólna nazwa: %s\n"
 "\n"
+"Wydane przez: %s\n"
+"\n"
 "Odcisk (SHA1): %s\n"
 "\n"
 "Data aktywacji: %s\n"
 "Data wygaśnięcia: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Informacje o certyfikacie"
+msgid "(self-signed)"
+msgstr "(podpisane przez samego siebie)"
+
+msgid "View Issuer Certificate"
+msgstr "Wyświetl certyfikat wydającego"
 
 #. show error to user
 msgid "Registration Error"
@@ -3238,14 +3251,14 @@ msgstr "Dodaj do konferencji"
 msgid "Chat _name:"
 msgstr "Nazwa ko_nferencji:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Nie można uzyskać nazwy komputera \"%s\": %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Łączenie"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr "Nie można uzyskać nazwy komputera: %s"
 
 msgid "Chat error"
 msgstr "Błąd konferencji"
@@ -9980,6 +9993,9 @@ msgstr "Ustawienia obecności"
 msgid "Start Doodling"
 msgstr "Rozpocznij sesję Doodle"
 
+msgid "Activate which ID?"
+msgstr "Który identyfikator aktywować?"
+
 msgid "Select the ID you want to activate"
 msgstr "Wybierz identyfikator do aktywacji"
 
@@ -11778,6 +11794,9 @@ msgstr "bengalski"
 msgid "Bengali-India"
 msgstr "bengalski (Indie)"
 
+msgid "Bodo"
+msgstr "bodo"
+
 msgid "Bosnian"
 msgstr "bośniacki"
 
@@ -11816,6 +11835,9 @@ msgstr "esperanto"
 
 msgid "Spanish"
 msgstr "hiszpański"
+
+msgid "Argentine Spanish"
+msgstr "hiszpański (Argentyna)"
 
 msgid "Estonian"
 msgstr "estoński"
@@ -11856,9 +11878,6 @@ msgstr "chorwacki"
 msgid "Hungarian"
 msgstr "węgierski"
 
-msgid "Armenian"
-msgstr "armeński"
-
 msgid "Indonesian"
 msgstr "indonezyjski"
 
@@ -11874,6 +11893,9 @@ msgstr "gruziński"
 msgid "Ubuntu Georgian Translators"
 msgstr "Tłumacze Ubuntu na język gruziński"
 
+msgid "Kazakh"
+msgstr "kazachski"
+
 msgid "Khmer"
 msgstr "khmerski"
 
@@ -11886,14 +11908,17 @@ msgstr "Zespół tłumaczenia na język kannada"
 msgid "Korean"
 msgstr "koreański"
 
+msgid "Kashmiri"
+msgstr "kaszmirski"
+
 msgid "Kurdish"
 msgstr "kurdyjski"
 
-msgid "Lao"
-msgstr "laotański"
-
 msgid "Lithuanian"
 msgstr "litewski"
+
+msgid "Latvian"
+msgstr "łotewski"
 
 msgid "Maithili"
 msgstr "maithili"
@@ -11912,9 +11937,6 @@ msgstr "mongolski"
 
 msgid "Marathi"
 msgstr "marathi"
-
-msgid "Malay"
-msgstr "malajski"
 
 msgid "Burmese"
 msgstr "birmański"
@@ -11958,6 +11980,9 @@ msgstr "rumuński"
 msgid "Russian"
 msgstr "rosyjski"
 
+msgid "Sindhi"
+msgstr "sindhi"
+
 msgid "Slovak"
 msgstr "słowacki"
 
@@ -11991,11 +12016,17 @@ msgstr "telugu"
 msgid "Thai"
 msgstr "tajlandzki"
 
+msgid "Tatar"
+msgstr "tatarski"
+
 msgid "Ukranian"
 msgstr "ukraiński"
 
 msgid "Urdu"
 msgstr "urdu"
+
+msgid "Uzbek"
+msgstr "uzbecki"
 
 msgid "Vietnamese"
 msgstr "wietnamski"
@@ -12011,6 +12042,15 @@ msgstr "chiński tradycyjny"
 
 msgid "Amharic"
 msgstr "amharski"
+
+msgid "Armenian"
+msgstr "armeński"
+
+msgid "Lao"
+msgstr "laotański"
+
+msgid "Malay"
+msgstr "malajski"
 
 msgid "Turkish"
 msgstr "turecki"

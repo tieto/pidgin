@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-02-02 11:20+0000\n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-08-06 19:53+0000\n"
 "Last-Translator: Panos Bouklis <panos@echidna-band.com>\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/pidgin/language/"
 "el/)\n"
@@ -1698,7 +1698,6 @@ msgstr "Αυτό το πρωτόκολλο δεν υποστηρίζει τη λ
 msgid "Unknown"
 msgstr "Άγνωστο"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Φίλοι"
 
@@ -1812,26 +1811,31 @@ msgstr ""
 "Το πιστοποιητικό υποστηρίζει ότι είναι από \"%s\".  Αυτό μπορεί να σημαίνει "
 "ότι δεν είστε συνδεδεμένοι με την υπηρεσία που νομίζετε ότι είστε."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Πληροφορίες πιστοποιητικού"
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
-"Σύνηθες όνομα: %s\n"
-"\n"
-"Αποτύπωμα (SHA1): %s\n"
-"\n"
-"Ημερομηνία ενεργοποίησης: %s\n"
-"Ημερομηνία λήξης: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Πληροφορίες πιστοποιητικού"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
+msgstr ""
 
 #. show error to user
 msgid "Registration Error"
@@ -3267,14 +3271,14 @@ msgstr "Προσθήκη στη συζήτηση"
 msgid "Chat _name:"
 msgstr "Όνομα _συζήτησης:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Αδυναμία ανάλυσης ονόματος υπολογιστή '%s': %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Γίνεται σύνδεση"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr "Αδυναμία ανάλυσης ονόματος υπολογιστή: %s"
 
 msgid "Chat error"
 msgstr "Σφάλμα συζήτησης"
@@ -3485,7 +3489,7 @@ msgid "Nick"
 msgstr "Ψευδώνυμο"
 
 msgid "Login name"
-msgstr ""
+msgstr "Όνομα εισόδου"
 
 msgid "Host name"
 msgstr "Όνομα κεντρικού υπολογιστή"
@@ -10038,6 +10042,9 @@ msgstr "Ρυθμίσεις παρουσίας"
 msgid "Start Doodling"
 msgstr "Ξεκίνα το Doodling"
 
+msgid "Activate which ID?"
+msgstr "Ενεργοποίηση ποιανού ID;"
+
 msgid "Select the ID you want to activate"
 msgstr "Επιλέξτε το ID που θέλετε να ενεργοποιήσετε"
 
@@ -11843,6 +11850,9 @@ msgstr "Μπεγκάλι"
 msgid "Bengali-India"
 msgstr "Μπενγκάλι Ινδίας"
 
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "Βοσνιακά"
 
@@ -11881,6 +11891,9 @@ msgstr "Εσπεράντο"
 
 msgid "Spanish"
 msgstr "Ισπανικά"
+
+msgid "Argentine Spanish"
+msgstr "Ισπανικά Αργεντινής"
 
 msgid "Estonian"
 msgstr "Εσθονικά"
@@ -11921,9 +11934,6 @@ msgstr "Κροατικά"
 msgid "Hungarian"
 msgstr "Ουγγρικά"
 
-msgid "Armenian"
-msgstr "Αρμενικά"
-
 msgid "Indonesian"
 msgstr "Ινδονησιανά"
 
@@ -11939,6 +11949,9 @@ msgstr "Γεωργιανά"
 msgid "Ubuntu Georgian Translators"
 msgstr "Γεωργιανοί μεταφραστές Ubuntu"
 
+msgid "Kazakh"
+msgstr ""
+
 msgid "Khmer"
 msgstr "Κχμερ"
 
@@ -11951,14 +11964,17 @@ msgstr "Ομάδα μετάφρασης Κανάντα"
 msgid "Korean"
 msgstr "Κορεάτικα"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "Κουρδικά"
 
-msgid "Lao"
-msgstr "Λαοτινά"
-
 msgid "Lithuanian"
 msgstr "Λιθουανικά"
+
+msgid "Latvian"
+msgstr "Λετονικά"
 
 msgid "Maithili"
 msgstr "Μαϊθιλί"
@@ -11977,9 +11993,6 @@ msgstr "Μογγολικά"
 
 msgid "Marathi"
 msgstr "Μαράθι"
-
-msgid "Malay"
-msgstr "Μαλαισιακά"
 
 msgid "Burmese"
 msgstr "Βιρμανικά"
@@ -12023,6 +12036,9 @@ msgstr "Ρουμάνικα"
 msgid "Russian"
 msgstr "Ρώσικα"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "Σλοβακικά"
 
@@ -12056,11 +12072,17 @@ msgstr "Τελούγκου"
 msgid "Thai"
 msgstr "Ταϊλανδικά"
 
+msgid "Tatar"
+msgstr ""
+
 msgid "Ukranian"
 msgstr "Ουκρανικά"
 
 msgid "Urdu"
 msgstr "Ούρντου"
+
+msgid "Uzbek"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "Βιετναμέζικα"
@@ -12076,6 +12098,15 @@ msgstr "Παραδοσιακά Κινέζικα"
 
 msgid "Amharic"
 msgstr "Αμχαρικά"
+
+msgid "Armenian"
+msgstr "Αρμενικά"
+
+msgid "Lao"
+msgstr "Λαοτινά"
+
+msgid "Malay"
+msgstr "Μαλαισιακά"
 
 msgid "Turkish"
 msgstr "Τούρκικα"
