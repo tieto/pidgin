@@ -4,15 +4,16 @@
 #
 # Translators:
 # Jure Cuhalev <gandalf@owca.info>, 2003
-# Martin Srebotnjak <miles@filmsi.net>, 2006,2013
+# Jure Cuhalev <gandalf@owca.info>, 2003
+# Martin Srebotnjak <miles@filmsi.net>, 2006,2013-2014
 # Matjaž Horvat <matjaz@owca.info>, 2004
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-01-21 08:26+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-07-01 20:44+0000\n"
+"Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian (http://www.transifex.com/projects/p/pidgin/"
 "language/sl/)\n"
 "Language: sl\n"
@@ -1680,7 +1681,6 @@ msgstr "Ta protokol ne podpira pridobivanja javnega vzdevka."
 msgid "Unknown"
 msgstr "Neznan"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Prijatelji"
 
@@ -1794,26 +1794,31 @@ msgstr ""
 "Predstavljeno digitalno potrdilo priča, da dejansko pripada \"%s\".  To "
 "pomeni, da se ne povezujete s storitvijo, s katero mislite, da se."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Podatki o digitalnem potrdilu"
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
-"Splošno ime: %s\n"
-"\n"
-"Prstni odtis (SHA1): %s\n"
-"\n"
-"Datum aktivacije: %s\n"
-"Rok veljavnosti: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Podatki o digitalnem potrdilu"
+msgid "(self-signed)"
+msgstr "(samopodpisano)"
+
+msgid "View Issuer Certificate"
+msgstr "Pokaži potrdilo izdajatelja"
 
 #. show error to user
 msgid "Registration Error"
@@ -3214,14 +3219,14 @@ msgstr "Dodaj k pomenku"
 msgid "Chat _name:"
 msgstr "_Ime za klepet:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Imena strežnika '%s' ni mogoče razločiti: %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Povezovanje"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr "Imena gostitelja ni mogoče razločiti: %s"
 
 msgid "Chat error"
 msgstr "Napaka pri pomenku"
@@ -3377,7 +3382,7 @@ msgid "Auto-detect incoming UTF-8"
 msgstr "Samo-razpoznaj dohodni UTF-8"
 
 msgid "Ident name"
-msgstr ""
+msgstr "Ime identitete"
 
 msgid "Real name"
 msgstr "Resnično ime"
@@ -3429,11 +3434,9 @@ msgstr " <i>(identified)</i>"
 msgid "Nick"
 msgstr "Vzdevek"
 
-#, fuzzy
 msgid "Login name"
-msgstr "Brez imena"
+msgstr "Prijavno ime"
 
-#, fuzzy
 msgid "Host name"
 msgstr "Ime gostitelja"
 
@@ -9908,6 +9911,9 @@ msgstr "Nastavitve prisotnosti"
 msgid "Start Doodling"
 msgstr "Začni Doodlati"
 
+msgid "Activate which ID?"
+msgstr "Kateri ID želite aktivirati?"
+
 msgid "Select the ID you want to activate"
 msgstr "Izberite ID, ki ga želite aktivirati"
 
@@ -11703,7 +11709,7 @@ msgid "Assamese"
 msgstr "asamsko"
 
 msgid "Asturian"
-msgstr ""
+msgstr "asturijski"
 
 msgid "Belarusian Latin"
 msgstr "belorusko (latinica)"
@@ -11716,6 +11722,9 @@ msgstr "bengalsko"
 
 msgid "Bengali-India"
 msgstr "bengalsko (Indija)"
+
+msgid "Bodo"
+msgstr "bodojsko"
 
 msgid "Bosnian"
 msgstr "bosansko"
@@ -11756,6 +11765,9 @@ msgstr "esperanto"
 msgid "Spanish"
 msgstr "špansko"
 
+msgid "Argentine Spanish"
+msgstr "argentinsko špansko"
+
 msgid "Estonian"
 msgstr "estonsko"
 
@@ -11795,9 +11807,6 @@ msgstr "hrvaško"
 msgid "Hungarian"
 msgstr "madžarsko"
 
-msgid "Armenian"
-msgstr "armensko"
-
 msgid "Indonesian"
 msgstr "indonezijsko"
 
@@ -11813,6 +11822,9 @@ msgstr "gruzijsko"
 msgid "Ubuntu Georgian Translators"
 msgstr "gruzijski prevajalci za Ubuntu"
 
+msgid "Kazakh"
+msgstr "kazaški"
+
 msgid "Khmer"
 msgstr "kmersko"
 
@@ -11825,14 +11837,17 @@ msgstr "prevajalska skupina za Kannado"
 msgid "Korean"
 msgstr "korejsko"
 
+msgid "Kashmiri"
+msgstr "kašmirsko"
+
 msgid "Kurdish"
 msgstr "kurdsko"
 
-msgid "Lao"
-msgstr "laoško"
-
 msgid "Lithuanian"
 msgstr "litvansko"
+
+msgid "Latvian"
+msgstr "latvijski"
 
 msgid "Maithili"
 msgstr "maitilsko"
@@ -11851,9 +11866,6 @@ msgstr "mongolsko"
 
 msgid "Marathi"
 msgstr "maratsko"
-
-msgid "Malay"
-msgstr "malajsko"
 
 msgid "Burmese"
 msgstr "burmanski"
@@ -11897,6 +11909,9 @@ msgstr "romunsko"
 msgid "Russian"
 msgstr "rusko"
 
+msgid "Sindhi"
+msgstr "sindsko"
+
 msgid "Slovak"
 msgstr "slovaško"
 
@@ -11930,11 +11945,17 @@ msgstr "teluško"
 msgid "Thai"
 msgstr "tajsko"
 
+msgid "Tatar"
+msgstr "tatarski"
+
 msgid "Ukranian"
 msgstr "ukrajinsko"
 
 msgid "Urdu"
 msgstr "urdujsko"
+
+msgid "Uzbek"
+msgstr "uzbeško"
 
 msgid "Vietnamese"
 msgstr "vietnamsko"
@@ -11950,6 +11971,15 @@ msgstr "tradicionalno kitajsko"
 
 msgid "Amharic"
 msgstr "amharsko"
+
+msgid "Armenian"
+msgstr "armensko"
+
+msgid "Lao"
+msgstr "laoško"
+
+msgid "Malay"
+msgstr "malajsko"
 
 msgid "Turkish"
 msgstr "turško"
@@ -12696,7 +12726,7 @@ msgstr ""
 "poljuben brskalnik, a niste nastavili ukaza."
 
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
-msgstr ""
+msgstr "URL ni mogoče odpreti: ukaz brskalnika 'Ročno' se zdi neveljaven."
 
 msgid "No message"
 msgstr "Ni sporočil"
@@ -14672,34 +14702,33 @@ msgstr ""
 
 #. Alerts
 msgid "Chatroom alerts"
-msgstr ""
+msgstr "Opozorila sobe pomenkov"
 
 msgid "Chatroom message alerts _only where someone says your username"
-msgstr ""
+msgstr "Opozorila o sporočilih v sobi _le ko nekdo omeni moje uporabniško ime"
 
 #. Launcher integration
 msgid "Launcher Icon"
-msgstr ""
+msgstr "Ikona zaganjalnika"
 
 msgid "_Disable launcher integration"
-msgstr ""
+msgstr "_Onemogoči integracijo zaganjalnika"
 
 msgid "Show number of unread _messages on launcher icon"
-msgstr ""
+msgstr "Pokaži število neprebranih _sporočil na ikoni za zagon"
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "Število pomenkov v oknu"
+msgstr "Pokaži število neprebranih po_menkov na ikoni za zagon"
 
 #. Messaging menu integration
 msgid "Messaging Menu"
-msgstr ""
+msgstr "Meni sporočanja"
 
 msgid "Show number of _unread messages for conversations in messaging menu"
-msgstr ""
+msgstr "Pokaži število _neprebranih sporočil iz pogovorov v meniju sporočanja"
 
 msgid "Show _elapsed time for unread conversations in messaging menu"
-msgstr ""
+msgstr "Pokaži _pretečeni čas za neprebrana sporočila v meniju sporočanja"
 
 #. *< type
 #. *< ui_requirement
@@ -14708,17 +14737,17 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "Unity Integration"
-msgstr ""
+msgstr "Integracija z Unity"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Provides integration with Unity."
-msgstr ""
+msgstr "Omogoča integracijo z Unity."
 
 #. *  description
 msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr ""
+msgstr "Omogoča integracijo z menijem in zaganjalnikom v Unity."
 
 msgid "Audio"
 msgstr "Zvok"

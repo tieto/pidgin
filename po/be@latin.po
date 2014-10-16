@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
 "PO-Revision-Date: 2008-03-29 21:08+0200\n"
 "Last-Translator: YOUR NAME <E-MAIL@ADDRESS>\n"
 "Language-Team: Belarusian Latin <be-latin.open-tran.eu>\n"
@@ -1675,7 +1675,6 @@ msgstr "Hety pratakoł nie padtrymvaje pakojaŭ dla hutarki."
 msgid "Unknown"
 msgstr "Nieviadomy"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Siabry"
 
@@ -1790,10 +1789,20 @@ msgstr ""
 "Sertyfikat, jaki padaŭ \"%s\", nasamreč naležyć \"%s\". Heta moža značyć, "
 "što ty spałučajeśsia nia z toj słužbaju, ź jakoj dumaješ."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Źviestki ab sertyfikacie"
+
+#, fuzzy
+msgid "Unable to find Issuer Certificate"
+msgstr "Niemahčyma aŭtaryzavacca: %s"
+
 #. Make messages
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1807,9 +1816,12 @@ msgstr ""
 "Data aktyvizacyi: %s\n"
 "Data zakančeńnia terminu: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Źviestki ab sertyfikacie"
+msgid "(self-signed)"
+msgstr ""
+
+#, fuzzy
+msgid "View Issuer Certificate"
+msgstr "_Pakažy sertyfikat..."
 
 #. show error to user
 msgid "Registration Error"
@@ -3223,14 +3235,14 @@ msgstr "Dadaj da hutarki"
 msgid "Chat _name:"
 msgstr "Nazva _hutarki:"
 
-#, fuzzy, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Niemahčyma spałučycca z serveram."
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Spałučeńnie"
+
+#, fuzzy, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr "Niemahčyma spałučycca z serveram."
 
 msgid "Chat error"
 msgstr "Pamyłka hutarki"
@@ -10203,6 +10215,9 @@ msgstr "Nałady prysutnaści"
 msgid "Start Doodling"
 msgstr "Pačni durnotu"
 
+msgid "Activate which ID?"
+msgstr "Jaki ID aktyvizavać?"
+
 msgid "Select the ID you want to activate"
 msgstr ""
 
@@ -12061,6 +12076,9 @@ msgstr "Benhalskaja"
 msgid "Bengali-India"
 msgstr "Benhalskaja"
 
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "Baśnijskaja"
 
@@ -12099,6 +12117,9 @@ msgstr "Esperanta"
 
 msgid "Spanish"
 msgstr "Hišpanskaja"
+
+msgid "Argentine Spanish"
+msgstr ""
 
 msgid "Estonian"
 msgstr "Estonskaja"
@@ -12140,10 +12161,6 @@ msgstr ""
 msgid "Hungarian"
 msgstr "Vuhorskaja"
 
-#, fuzzy
-msgid "Armenian"
-msgstr "Rumynskaja"
-
 msgid "Indonesian"
 msgstr "Indanezijskaja"
 
@@ -12159,6 +12176,9 @@ msgstr "Hruzinskaja"
 msgid "Ubuntu Georgian Translators"
 msgstr "Hruzinskija pierakładčyki Ubuntu"
 
+msgid "Kazakh"
+msgstr ""
+
 #, fuzzy
 msgid "Khmer"
 msgstr "Inšaje"
@@ -12172,14 +12192,17 @@ msgstr "Kamanda pierakładčykaŭ na Kannada"
 msgid "Korean"
 msgstr "Karejskaja"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "Kurdzkaja"
 
-msgid "Lao"
-msgstr "Laoskaja"
-
 msgid "Lithuanian"
 msgstr "Litoŭskaja"
+
+msgid "Latvian"
+msgstr ""
 
 #, fuzzy
 msgid "Maithili"
@@ -12203,10 +12226,6 @@ msgstr "Makiedonskaja"
 #, fuzzy
 msgid "Marathi"
 msgstr "Gujarati"
-
-#, fuzzy
-msgid "Malay"
-msgstr "Mužčynski"
 
 msgid "Burmese"
 msgstr ""
@@ -12251,6 +12270,9 @@ msgstr "Rumynskaja"
 msgid "Russian"
 msgstr "Rasiejskaja"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "Słavackaja"
 
@@ -12285,12 +12307,18 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Tajskaja"
 
+msgid "Tatar"
+msgstr ""
+
 #, fuzzy
 msgid "Ukranian"
 msgstr "Rumynskaja"
 
 msgid "Urdu"
 msgstr "Urdu"
+
+msgid "Uzbek"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vijetnamskaja"
@@ -12306,6 +12334,17 @@ msgstr "Tradycyjnaja kitajskaja"
 
 msgid "Amharic"
 msgstr "Amharskaja"
+
+#, fuzzy
+msgid "Armenian"
+msgstr "Rumynskaja"
+
+msgid "Lao"
+msgstr "Laoskaja"
+
+#, fuzzy
+msgid "Malay"
+msgstr "Mužčynski"
 
 msgid "Turkish"
 msgstr "Tureckaja"
@@ -15531,6 +15570,10 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#, fuzzy
+#~ msgid "Unable to resolve hostname '%s': %s"
+#~ msgstr "Niemahčyma spałučycca z serveram."
+
 #~ msgid "Token Error"
 #~ msgstr "Pamyłka znaku"
 
@@ -16961,9 +17004,6 @@ msgstr ""
 
 #~ msgid "Conversation Window Hiding"
 #~ msgstr "Chavańnie vakna razmovy"
-
-#~ msgid "Activate which ID?"
-#~ msgstr "Jaki ID aktyvizavać?"
 
 #~ msgid "Cursor Color"
 #~ msgstr "Koler kursora"
