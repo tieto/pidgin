@@ -2,22 +2,23 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# Mișu Moldovan <dumol@gnome.org>, 2011.
+# Translators:
+# Mișu Moldovan <dumol@gnome.org>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2011-08-11 08:24+0000\n"
-"Last-Translator: dumol <dumol@gnome.org>\n"
-"Language-Team: Romanian (http://www.transifex.net/projects/p/pidgin/team/"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"Language-Team: Romanian (http://www.transifex.com/projects/p/pidgin/language/"
 "ro/)\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?"
-"2:1))\n"
+"2:1));\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -1681,7 +1682,6 @@ msgstr "Acest protocol nu suportă descărcarea unui alias public."
 msgid "Unknown"
 msgstr "Necunoscut"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Contacte"
 
@@ -1793,26 +1793,31 @@ msgstr ""
 "Certificatul pretinde însă că e de la „%s”. Asta ar putea însemna că nu vă "
 "conectați la serviciul la care credeți că vă conectați."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Detalii certificat"
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
-"Nume comun: %s\n"
-"\n"
-"Amprentă SHA1: %s\n"
-"\n"
-"Dată de activare: %s\n"
-"Dată de expirare: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Detalii certificat"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
+msgstr ""
 
 #. show error to user
 msgid "Registration Error"
@@ -2271,9 +2276,8 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "A intervenit o eroare Farsight2 peste care nu se poate trece."
 
-#, fuzzy
 msgid "A non-recoverable Farstream error has occurred."
-msgstr "A intervenit o eroare Farsight2 peste care nu se poate trece."
+msgstr ""
 
 msgid "Error with your microphone"
 msgstr "Probleme cu microfonul local"
@@ -3219,14 +3223,14 @@ msgstr "Adaugă în chat"
 msgid "Chat _name:"
 msgstr "_Nume de chat:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Nu se poate rezolva numele calculatorului '%s': %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Autentificare"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr ""
 
 msgid "Chat error"
 msgstr "Eroare de chat"
@@ -3381,9 +3385,8 @@ msgstr "Codări"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Detectare automată pentru mesajele UTF-8 primite"
 
-#, fuzzy
 msgid "Ident name"
-msgstr "Nume de familie"
+msgstr ""
 
 msgid "Real name"
 msgstr "Nume real"
@@ -3395,13 +3398,11 @@ msgstr "Nume real"
 msgid "Use SSL"
 msgstr "Utilizare SSL"
 
-#, fuzzy
 msgid "Authenticate with SASL"
-msgstr "Autentificare"
+msgstr ""
 
-#, fuzzy
 msgid "Allow plaintext SASL auth over unencrypted connection"
-msgstr "Permite autentificarea în clar prin conexiuni necriptate"
+msgstr ""
 
 msgid "Bad mode"
 msgstr "Mod greșit"
@@ -3437,13 +3438,11 @@ msgstr " <i>(identificat)</i>"
 msgid "Nick"
 msgstr "Pseudonim"
 
-#, fuzzy
 msgid "Login name"
-msgstr "Fără nume"
+msgstr ""
 
-#, fuzzy
 msgid "Host name"
-msgstr "Nume server"
+msgstr ""
 
 msgid "Currently on"
 msgstr "Prezent în"
@@ -3590,32 +3589,29 @@ msgstr "Pseudonimul sau canalul sunt temporar indisponibile."
 msgid "Wallops from %s"
 msgstr "Mesaje de sistem de la %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to initialize SASL authentication: %s"
-msgstr "Nu s-a putut inițializa conexiunea client SILC"
+msgstr ""
 
 msgid "SASL authentication failed: No worthy authentication mechanisms found."
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "SASL authentication failed: %s"
-msgstr "Autentificare SASL eșuată"
+msgstr ""
 
 msgid ""
 "SASL authentication failed: Server does not support SASL authentication."
 msgstr ""
 
-#, fuzzy
 msgid "SASL authentication failed: Initializing SASL failed."
-msgstr "Autentificare SASL eșuată"
+msgstr ""
 
-#, fuzzy
 msgid "Incorrect Password"
-msgstr "Parolă greșită"
+msgstr ""
 
-#, fuzzy
 msgid "SASL authentication failed: No worthy mechanisms found"
-msgstr "Autentificare SASL eșuată"
+msgstr ""
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;acțiune de efectuat&gt;:  Efectuați o acțiune."
@@ -4653,9 +4649,9 @@ msgstr "Nu se poate iniția media cu %s, JID nevalid"
 msgid "Unable to initiate media with %s: user is not online"
 msgstr "Nu se poate iniția media cu %s, contactul nu este online"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to initiate media with %s: resource is not online"
-msgstr "Nu se poate iniția media cu %s, contactul nu este online"
+msgstr ""
 
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
@@ -5860,29 +5856,23 @@ msgstr ""
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Mesajul nu a fost trimis pentru că apărut o eroare necunoscută."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. Converting the encoding from "
 "%s to UTF-8 failed.)"
 msgstr ""
-"(Eroare la conversia mesajului.\t Verificați opțiunea „Codare” în editorul "
-"de conturi)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was %s, but it "
 "was not valid UTF-8.)"
 msgstr ""
-"(A intervenit o eroare la primirea acestui mesaj. Codarea proprie nu se "
-"potrivește cu cea aleasă de %s sau %s utilizează un client problematic)."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was missing, but "
 "it was not valid UTF-8.)"
 msgstr ""
-"(Eroare la conversia mesajului.\t Verificați opțiunea „Codare” în editorul "
-"de conturi)"
 
 msgid "Writing error"
 msgstr "Eroare la scriere"
@@ -6036,9 +6026,8 @@ msgid "Where I Live"
 msgstr "Unde locuiesc"
 
 #. relationship status
-#, fuzzy
 msgid "Relationship Status"
-msgstr "Ștergere status"
+msgstr ""
 
 #. mobile number
 msgid "Mobile Number"
@@ -6137,14 +6126,12 @@ msgid "The file you are trying to send is too large!"
 msgstr "Fișierul pe care încercați să îl trimiteți este prea mare!"
 
 #. file read error
-#, fuzzy
 msgid "Unable to access the local file"
-msgstr "Acest modul nu a putut fi încărcat."
+msgstr ""
 
 #. file write error
-#, fuzzy
 msgid "Unable to save the file"
-msgstr "Nu se poate deschide fișierul."
+msgstr ""
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6294,20 +6281,17 @@ msgstr ""
 msgid "Engaged"
 msgstr ""
 
-#, fuzzy
 msgid "Married"
-msgstr "Îngrijorat"
+msgstr ""
 
-#, fuzzy
 msgid "It's complicated"
-msgstr "Intoxicat"
+msgstr ""
 
 msgid "Widowed"
 msgstr ""
 
-#, fuzzy
 msgid "Separated"
-msgstr "Departament"
+msgstr ""
 
 msgid "Divorced"
 msgstr ""
@@ -8399,9 +8383,8 @@ msgstr "Trimite un anunț TEST"
 msgid "Topic:"
 msgstr "Subiect:"
 
-#, fuzzy
 msgid "A server is required to connect this account"
-msgstr "Serverul a închis conexiunea."
+msgstr ""
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -9966,6 +9949,9 @@ msgstr "Opțiuni de prezență"
 
 msgid "Start Doodling"
 msgstr "Mâzgălituri"
+
+msgid "Activate which ID?"
+msgstr ""
 
 msgid "Select the ID you want to activate"
 msgstr "Alegeți ID-ul ce doriți să-l activați"
@@ -11602,13 +11588,10 @@ msgstr "Mesaje necitite"
 msgid "New Event"
 msgstr "Eveniment nou"
 
-#, fuzzy
 msgid ""
 "The account has disconnected and you are no longer in this chat. You will "
 "automatically rejoin the chat when the account reconnects."
 msgstr ""
-"Contul v-a fost deconectat și nu mai sunteți parte în acest chat. Veți intra "
-"din nou automat atunci când contul se va reconecta."
 
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Golește conținutul ferestrei de discuții."
@@ -11769,6 +11752,9 @@ msgstr "Bengali"
 msgid "Bengali-India"
 msgstr "Bengali-India"
 
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "Bosniacă"
 
@@ -11807,6 +11793,9 @@ msgstr "Esperanto"
 
 msgid "Spanish"
 msgstr "Spaniolă"
+
+msgid "Argentine Spanish"
+msgstr ""
 
 msgid "Estonian"
 msgstr "Estonă"
@@ -11847,9 +11836,6 @@ msgstr "Croată"
 msgid "Hungarian"
 msgstr "Maghiară"
 
-msgid "Armenian"
-msgstr "Armeană"
-
 msgid "Indonesian"
 msgstr "Indoneziană"
 
@@ -11865,6 +11851,9 @@ msgstr "Georgiană"
 msgid "Ubuntu Georgian Translators"
 msgstr "Traducătorii Ubuntu din Georgia"
 
+msgid "Kazakh"
+msgstr ""
+
 msgid "Khmer"
 msgstr "Khmeră"
 
@@ -11877,14 +11866,17 @@ msgstr "Echipa de localizare Kannada"
 msgid "Korean"
 msgstr "Coreeană"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "Kurdă"
 
-msgid "Lao"
-msgstr "Lao"
-
 msgid "Lithuanian"
 msgstr "Lituaniană"
+
+msgid "Latvian"
+msgstr ""
 
 msgid "Maithili"
 msgstr "Maithili"
@@ -11903,9 +11895,6 @@ msgstr "Mongoleză"
 
 msgid "Marathi"
 msgstr "Marathi"
-
-msgid "Malay"
-msgstr "Malay"
 
 msgid "Burmese"
 msgstr ""
@@ -11949,6 +11938,9 @@ msgstr "Română"
 msgid "Russian"
 msgstr "Rusă"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "Slovacă"
 
@@ -11961,9 +11953,8 @@ msgstr "Albaneză"
 msgid "Serbian"
 msgstr "Sârbă"
 
-#, fuzzy
 msgid "Serbian Latin"
-msgstr "Bielorusă (alfabet latin)"
+msgstr ""
 
 msgid "Sinhala"
 msgstr "Sinhala"
@@ -11983,11 +11974,17 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Thailandeză"
 
+msgid "Tatar"
+msgstr ""
+
 msgid "Ukranian"
 msgstr "Ucrainiană"
 
 msgid "Urdu"
 msgstr "Urdu"
+
+msgid "Uzbek"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vietnameză"
@@ -12003,6 +12000,15 @@ msgstr "Chineză tradițională"
 
 msgid "Amharic"
 msgstr "Amharic"
+
+msgid "Armenian"
+msgstr "Armeană"
+
+msgid "Lao"
+msgstr "Lao"
+
+msgid "Malay"
+msgstr "Malay"
 
 msgid "Turkish"
 msgstr "Turcă"
@@ -12750,9 +12756,8 @@ msgstr ""
 "Ați ales să precizați o comandă pentru deschiderea unui navigator, dar nu "
 "ați introdus-o în preferințe."
 
-#, fuzzy
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
-msgstr "Navigatorul „%s” este nevalid."
+msgstr ""
 
 msgid "No message"
 msgstr "Niciun mesaj"
@@ -14728,18 +14733,15 @@ msgstr ""
 "discuții și înregistrări."
 
 #. Alerts
-#, fuzzy
 msgid "Chatroom alerts"
-msgstr "Embleme ale canalelor de chat"
+msgstr ""
 
-#, fuzzy
 msgid "Chatroom message alerts _only where someone says your username"
-msgstr "\tD_oar când cineva vă spune numele de utilizator"
+msgstr ""
 
 #. Launcher integration
-#, fuzzy
 msgid "Launcher Icon"
-msgstr "Salvare avatar"
+msgstr ""
 
 msgid "_Disable launcher integration"
 msgstr ""
@@ -14747,14 +14749,12 @@ msgstr ""
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "Număr maxim de discuții într-o fereastră"
+msgstr ""
 
 #. Messaging menu integration
-#, fuzzy
 msgid "Messaging Menu"
-msgstr "Ați trimis un mesaj"
+msgstr ""
 
 msgid "Show number of _unread messages for conversations in messaging menu"
 msgstr ""
@@ -14768,21 +14768,18 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#, fuzzy
 msgid "Unity Integration"
-msgstr "Integrare cu Evolution"
+msgstr ""
 
 #. *< name
 #. *< version
 #. *  summary
-#, fuzzy
 msgid "Provides integration with Unity."
-msgstr "Oferă integrare cu aplicația Evolution."
+msgstr ""
 
 #. *  description
-#, fuzzy
 msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr "Oferă integrare cu aplicația Evolution."
+msgstr ""
 
 msgid "Audio"
 msgstr "Audio"
@@ -15106,116 +15103,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nu aveţi drepturile de acces necesare dezinstalării acestei aplicaţii."
-
-#~ msgid "Token Error"
-#~ msgstr "Eroare verificare"
-
-#~ msgid "Unable to fetch the token.\n"
-#~ msgstr "Nu se poate obține o verificare.\n"
-
-#~ msgid "You must fill in all registration fields"
-#~ msgstr "Trebuie să completați toate câmpurile de înregistrare."
-
-#~ msgid "Passwords do not match"
-#~ msgstr "Parolele nu se potrivesc."
-
-#~ msgid "Unable to register new account.  An unknown error occurred."
-#~ msgstr ""
-#~ "Noul cont nu poate fi înregistrat. A intervenit o eroare necunoscută."
-
-#~ msgid "New Gadu-Gadu Account Registered"
-#~ msgstr "Noul cont Gadu-Gadu a fost înregistrat"
-
-#~ msgid "Registration completed successfully!"
-#~ msgstr "Înregistrare terminată cu succes!"
-
-#~ msgid "Enter captcha text"
-#~ msgstr "Introduceți textul captcha"
-
-#~ msgid "Captcha"
-#~ msgstr "Imagine captcha"
-
-#~ msgid "Register New Gadu-Gadu Account"
-#~ msgstr "Înregistrare cont nou Gadu-Gadu"
-
-#~ msgid "Please, fill in the following fields"
-#~ msgstr "Completați următoarele câmpuri:"
-
-#~ msgid "Fill in the fields."
-#~ msgstr "Completați câmpurile."
-
-#~ msgid "Your current password is different from the one that you specified."
-#~ msgstr "Parola curentă este diferită de cea specificată."
-
-#~ msgid "Unable to change password. Error occurred.\n"
-#~ msgstr "Nu s-a putut schimba parola. A intervenit o eroare.\n"
-
-#~ msgid "Change password for the Gadu-Gadu account"
-#~ msgstr "Schimbare parolă cont Gadu-Gadu"
-
-#~ msgid "Password was changed successfully!"
-#~ msgstr "Parola a fost schimbată cu succes!"
-
-#~ msgid "Current password"
-#~ msgstr "Parolă curentă"
-
-#~ msgid "Password (retype)"
-#~ msgstr "Confirmare parolă"
-
-#~ msgid "Enter current token"
-#~ msgstr "Introduceți verificarea curentă"
-
-#~ msgid "Current token"
-#~ msgstr "Verificare curentă"
-
-#~ msgid "Please, enter your current password and your new password for UIN: "
-#~ msgstr "Introduceți parola curentă și pe cea nouă pentru UIN-ul: "
-
-#~ msgid "Change Gadu-Gadu Password"
-#~ msgstr "Schimbare parolă Gadu-Gadu"
-
-#~ msgid "Buddy list downloaded"
-#~ msgstr "Lista de contacte a fost descărcată"
-
-#~ msgid "Your buddy list was downloaded from the server."
-#~ msgstr "Lista de contacte a fost descărcată de pe server."
-
-#~ msgid "Buddy list uploaded"
-#~ msgstr "Listă de contacte stocată"
-
-#~ msgid "Your buddy list was stored on the server."
-#~ msgstr "Lista de contacte v-a fost stocată pe server."
-
-#~ msgid "Change password..."
-#~ msgstr "Schimbare parolă..."
-
-#~ msgid "Upload buddylist to Server"
-#~ msgstr "Stochează lista de contacte pe server"
-
-#~ msgid "Download buddylist from Server"
-#~ msgstr "Descarcă lista de contacte de pe server"
-
-#~ msgid "Delete buddylist from Server"
-#~ msgstr "Șterge lista de contacte de pe server"
-
-#~ msgid "Hidden Number"
-#~ msgstr "Număr ascuns"
-
-#~ msgid "No Sametime Community Server specified"
-#~ msgstr "Nu s-a specificat un server de comunitate Sametime"
-
-#~ msgid ""
-#~ "No host or IP address has been configured for the Meanwhile account %s. "
-#~ "Please enter one below to continue logging in."
-#~ msgstr ""
-#~ "Niciun nume de server sau adresă IP nu au fost configurate pentru contul "
-#~ "Meanwhile %s. Introduceți una mai jos pentru a continua autentificarea."
-
-#~ msgid "Meanwhile Connection Setup"
-#~ msgstr "Opțiuni conexiune Meanwhile"
-
-#~ msgid "No Sametime Community Server Specified"
-#~ msgstr "Nu s-a specificat un server de comunitate Sametime"
-
-#~ msgid "Connect"
-#~ msgstr "Conectare"

@@ -75,6 +75,7 @@ purple_cipher_digest_region(name, data_sv, in_len, digest)
 			XSRETURN_UNDEF;
 		}
 		SvCUR_set(digest, RETVAL);
+		/* coverity[extra_comma] */
 		SvPOK_only(digest);
 	OUTPUT:
 		RETVAL
@@ -188,6 +189,7 @@ purple_cipher_context_digest(context, in_len, digest)
 			XSRETURN_UNDEF;
 		}
 		SvCUR_set(digest, RETVAL);
+		/* coverity[extra_comma] */
 		SvPOK_only(digest);
 	OUTPUT:
 		RETVAL
@@ -210,6 +212,7 @@ purple_cipher_context_digest_to_str(context, in_len, digest_s)
 			XSRETURN_UNDEF;
 		}
 		SvCUR_set(digest_s, RETVAL);
+		/* coverity[extra_comma] */
 		SvPOK_only(digest_s);
 	OUTPUT:
 		RETVAL
@@ -230,6 +233,7 @@ purple_cipher_context_encrypt(context, data_sv, output, OUTLIST size_t outlen)
 		buff = (guchar *)SvGROW(output, datalen);
 		RETVAL = purple_cipher_context_encrypt(context, data, datalen, buff, &outlen);
 		if(outlen != 0) {
+			/* coverity[extra_comma] */
 			SvPOK_only(output);
 			SvCUR_set(output, outlen);
 		} else {
@@ -254,6 +258,7 @@ purple_cipher_context_decrypt(context, data_sv, output, OUTLIST size_t outlen)
 		buff = (guchar *)SvGROW(output, datalen);
 		RETVAL = purple_cipher_context_decrypt(context, data, datalen, buff, &outlen);
 		if(outlen != 0) {
+			/* coverity[extra_comma] */
 			SvPOK_only(output);
 			SvCUR_set(output, outlen);
 		} else {

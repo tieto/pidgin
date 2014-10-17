@@ -49,7 +49,6 @@ version-check:
 # Ensure ChangeLogs have the correct version
 	head ChangeLog     | grep "^version $(PACKAGE_VERSION) (.*):$$" >/dev/null
 	head ChangeLog.API | grep "^version $(PACKAGE_VERSION):$$" >/dev/null
-	head po/ChangeLog  | grep "^version $(PACKAGE_VERSION)$$" >/dev/null
 
 # Ensure we're working from a tag...
 	test x`hg log -r "tag($(PACKAGE_VERSION))" --template "{node}"` = x`hg id -i --debug`
@@ -85,23 +84,29 @@ if ENABLE_GNT
 GNT_DIR=finch
 endif
 
-# This is phony, so that we always try to rebuild it.  If it succeeds
-# in calculating changes, it produces its target; otherwise, its
-# target does not exist.
-.PHONY: package_revision_raw.txt
+# We always try to rebuild all objects that depends on this dummy target.
+.FORCE:
+
 # if both attempts fail, then we need to remove the empty file that >
 # creates, and also make sure that the shell command exits
 # successfully; the rm -f ensures both
-package_revision_raw.txt:
+package_revision_raw.txt: .FORCE
 	$(AM_V_GEN)REAL_BLDDIR=$$PWD/$(top_builddir); \
-	(hg --cwd $(srcdir) id -i --debug) 2>/dev/null >$@ \
-	|| rm -f $@
+	(hg --cwd $(srcdir) id -i --debug) 2>/dev/null >$@.new \
+	|| rm -f $@.new
+	$(AM_V_at)if test -f $@.new; then \
+		if ! diff $@ $@.new > /dev/null; then \
+			mv $@.new $@; \
+		else \
+			rm $@.new; \
+		fi \
+	fi
 package_revision.h: package_revision_raw.txt
 	$(AM_V_GEN)if test -f $<; then \
-	  echo "#define REVISION \"`cat $<`\"" > $@; \
+		echo "#define REVISION \"`cat $<`\"" > $@; \
 	fi
 	$(AM_V_at)if test ! -f $@ -a -f $(srcdir)/$@; then \
-	  cp $(srcdir)/$@ $@; \
+		cp $(srcdir)/$@ $@; \
 	fi
 	$(AM_V_at)test -f $@ || echo "#define REVISION \"unknown\"" > $@
 
@@ -139,9 +144,10 @@ endif
 
 # perl's MakeMaker uninstall foo doesn't work well with DESTDIR set, which
 # breaks "make distcheck" unless we ignore perl things
+# TODO drop it when we drop perl wrapper
 
 distuninstallcheck_listfiles = \
-	find . -type f -print | grep -v perl | grep -v Purple.3pm
+	find . -type f -print | grep -v perl | grep -v Purple.3pm | grep -v Pidgin.3pm
 
 DISTCLEANFILES= $(DESKTOP_FILE) libpurple/gconf/purple.schemas intltool-extract \
-			intltool-merge intltool-update
+			intltool-merge intltool-update package_revision_raw.txt

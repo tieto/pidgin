@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-01-21 08:25+0000\n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-06-27 08:27+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Panjabi (Punjabi) (http://www.transifex.com/projects/p/pidgin/"
 "language/pa/)\n"
@@ -1638,7 +1638,6 @@ msgstr "ਇਹ ਪ੍ਰੋਟੋਕਾਲ ਪਬਲਿਕ ਉਪ-ਨਾਂ ਲ�
 msgid "Unknown"
 msgstr "ਅਣਜਾਣ"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "ਬੱਡੀ"
 
@@ -1743,26 +1742,31 @@ msgstr ""
 "ਸਰਟੀਫਿਕੇਟ ਨੂੰ \"%s\" ਵਲੋਂ ਦੇ ਤੌਰ ਉੱਤੇ ਪੇਸ਼ ਕੀਤਾ ਗਿਆ ਹੈ। ਇਸ ਦਾ ਮਤਲਬ ਇਹ ਹੋ ਸਕਦਾ ਹੈ ਕਿ ਤੁਸੀਂ ਉਸ "
 "ਸਰਵਿਸ ਨਾਲ ਨਹੀਂ ਜੁੜ ਰਹੇ, ਜੋ ਕਿ ਤੁਸੀਂ ਸੋਚ ਰਹੇ ਹੋ।"
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "ਸਰਟੀਫਿਕੇਟ ਜਾਣਕਾਰੀ"
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
-"ਆਮ ਨਾਂ: %s\n"
-"\n"
-"ਫਿੰਗਰਪਰਿੰਟ (SHA1): %s\n"
-"\n"
-"ਐਕਟਿਵ ਮਿਤੀ: %s\n"
-"ਮਿਆਦ: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "ਸਰਟੀਫਿਕੇਟ ਜਾਣਕਾਰੀ"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
+msgstr ""
 
 #. show error to user
 msgid "Registration Error"
@@ -3119,14 +3123,14 @@ msgstr "ਗੱਲਾਂ 'ਚ ਸ਼ਾਮਿਲ"
 msgid "Chat _name:"
 msgstr "ਗੱਲ ਨਾਂ(_n):"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "ਹੋਸਟ ਨਾਂ '%s' ਹੱਲ ਕਰਨ ਲਈ ਅਸਮਰੱਥ: %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "ਕੁਨੈਕਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr ""
 
 msgid "Chat error"
 msgstr "ਗੱਲ ਗਲਤੀ"
@@ -3334,13 +3338,11 @@ msgstr " <i>(ਪਛਾਣਿਆ)</i>"
 msgid "Nick"
 msgstr "ਨਾਂ"
 
-#, fuzzy
 msgid "Login name"
-msgstr "ਕੋਈ ਨਾਂ ਨਹੀਂ"
+msgstr ""
 
-#, fuzzy
 msgid "Host name"
-msgstr "ਹੋਸਟ ਨਾਂ"
+msgstr ""
 
 msgid "Currently on"
 msgstr "ਇਸ ਸਮੇਂ"
@@ -9645,6 +9647,9 @@ msgstr "ਮੌਜੂਦਗੀ ਸੈਟਿੰਗ"
 msgid "Start Doodling"
 msgstr "ਘੁੱਗੂ ਘਾਂਘੜੇ ਸ਼ੁਰੂ"
 
+msgid "Activate which ID?"
+msgstr ""
+
 msgid "Select the ID you want to activate"
 msgstr "ID ਚੁਣੋ, ਜੋ ਤੁਸੀਂ ਸਰਗਰਮ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ"
 
@@ -11404,6 +11409,9 @@ msgstr "ਬੰਗਾਲੀ"
 msgid "Bengali-India"
 msgstr "ਬੰਗਾਲੀ-ਭਾਰਤੀ"
 
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "ਬੋਸਨੀਆਈ"
 
@@ -11442,6 +11450,9 @@ msgstr "ਇਸਪੀਰਨਟੋ"
 
 msgid "Spanish"
 msgstr "ਸਪੇਨੀ"
+
+msgid "Argentine Spanish"
+msgstr ""
 
 msgid "Estonian"
 msgstr "ਈਸਟੋਨੀਆਈ"
@@ -11482,9 +11493,6 @@ msgstr ""
 msgid "Hungarian"
 msgstr "ਹੰਗਰੀਆਈ"
 
-msgid "Armenian"
-msgstr "ਅਰਮੀਨੀਆਈ"
-
 msgid "Indonesian"
 msgstr "ਇੰਡੋਨੇਸ਼ੀਆਈ"
 
@@ -11500,6 +11508,9 @@ msgstr "ਜਾਰਜੀਆਈ"
 msgid "Ubuntu Georgian Translators"
 msgstr "ਉਬਤੂੰ ਜਾਰਜੀਆਈ ਅਨੁਵਾਦਕ"
 
+msgid "Kazakh"
+msgstr ""
+
 msgid "Khmer"
 msgstr "ਖਮੀਰ"
 
@@ -11512,14 +11523,17 @@ msgstr "ਕੰਨੜ ਅਨੁਵਾਦਕ ਟੀਮ"
 msgid "Korean"
 msgstr "ਕੋਰੀਆਈ"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "ਕੁਰਦ"
 
-msgid "Lao"
-msgstr "ਲਾਓ"
-
 msgid "Lithuanian"
 msgstr "ਲੀਥੂਵਨੀਆਈ"
+
+msgid "Latvian"
+msgstr ""
 
 msgid "Maithili"
 msgstr "ਮੈਥਲੀ"
@@ -11538,9 +11552,6 @@ msgstr "ਮੰਗੋਲੀਆਈ"
 
 msgid "Marathi"
 msgstr "ਮਰਾਠੀ"
-
-msgid "Malay"
-msgstr "ਮਲਾਏ"
 
 msgid "Burmese"
 msgstr ""
@@ -11584,6 +11595,9 @@ msgstr "ਰੋਮਾਨੀਆਈ"
 msgid "Russian"
 msgstr "ਰੂਸੀ"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "ਸਲੋਵਾਕ"
 
@@ -11617,11 +11631,17 @@ msgstr "ਤੇਲਗੂ"
 msgid "Thai"
 msgstr "ਥਾਈ"
 
+msgid "Tatar"
+msgstr ""
+
 msgid "Ukranian"
 msgstr "ਯੂਕਰੇਨੀ"
 
 msgid "Urdu"
 msgstr "ਉਰਦੂ"
+
+msgid "Uzbek"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "ਵੀਅਤਨਾਮੀ"
@@ -11637,6 +11657,15 @@ msgstr "ਮੂਲ ਚੀਨੀ"
 
 msgid "Amharic"
 msgstr "ਅਮਹਾਰਿਕ"
+
+msgid "Armenian"
+msgstr "ਅਰਮੀਨੀਆਈ"
+
+msgid "Lao"
+msgstr "ਲਾਓ"
+
+msgid "Malay"
+msgstr "ਮਲਾਏ"
 
 msgid "Turkish"
 msgstr "ਤੁਰਕ"
@@ -14307,9 +14336,8 @@ msgstr ""
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "ਪ੍ਰਤੀ ਵਿੰਡੋ ਵਿੱਚ ਗੱਲਬਾਤਾਂ ਦੀ ਗਿਣਤੀ"
+msgstr ""
 
 #. Messaging menu integration
 msgid "Messaging Menu"

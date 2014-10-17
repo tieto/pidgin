@@ -1676,7 +1676,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	time_t log_last_modified;
 	FILE *index;
 	FILE *file;
-	int index_fd;
+	int file_fd, index_fd;
 	char *index_tmp;
 	char buf[BUF_LONG];
 	struct tm tm;
@@ -1692,36 +1692,49 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 	g_free(logfile);
 
-	if (g_stat(purple_stringref_value(pathref), &st))
-	{
+	file_fd = g_open(purple_stringref_value(pathref), 0, O_RDONLY);
+	if (file_fd == -1 || (file = fdopen(file_fd, "rb")) == NULL) {
+		purple_debug_error("log",
+			"Failed to open log file \"%s\" for reading: %s\n",
+			purple_stringref_value(pathref), g_strerror(errno));
 		purple_stringref_unref(pathref);
 		g_free(pathstr);
 		return NULL;
 	}
-	else
+	if (fstat(file_fd, &st) == -1) {
+		purple_stringref_unref(pathref);
+		g_free(pathstr);
+		fclose(file);
+		return NULL;
+	} else
 		log_last_modified = st.st_mtime;
 
 	/* Change the .log extension to .idx */
 	strcpy(pathstr + strlen(pathstr) - 3, "idx");
 
-	if (g_stat(pathstr, &st) == 0)
-	{
+	index_fd = g_open(pathstr, 0, O_RDONLY);
+	if (index_fd != -1) {
+		if (fstat(index_fd, &st) != 0) {
+			close(index_fd);
+			index_fd = -1;
+		}
+	}
+
+	if (index_fd != -1) {
 		if (st.st_mtime < log_last_modified)
 		{
 			purple_debug_warning("log", "Index \"%s\" exists, but is older than the log.\n", pathstr);
+			close(index_fd);
 		}
 		else
 		{
 			/* The index file exists and is at least as new as the log, so open it. */
-			if (!(index = g_fopen(pathstr, "rb")))
-			{
+			if (!(index = fdopen(index_fd, "rb"))) {
 				purple_debug_error("log", "Failed to open index file \"%s\" for reading: %s\n",
 				                 pathstr, g_strerror(errno));
 
 				/* Fall through so that we'll parse the log file. */
-			}
-			else
-			{
+			} else {
 				purple_debug_info("log", "Using index: %s\n", pathstr);
 				g_free(pathstr);
 				while (fgets(buf, BUF_LONG, index))
@@ -1747,17 +1760,10 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 				fclose(index);
 				purple_stringref_unref(pathref);
 
+				fclose(file);
 				return list;
 			}
 		}
-	}
-
-	if (!(file = g_fopen(purple_stringref_value(pathref), "rb"))) {
-		purple_debug_error("log", "Failed to open log file \"%s\" for reading: %s\n",
-		                   purple_stringref_value(pathref), g_strerror(errno));
-		purple_stringref_unref(pathref);
-		g_free(pathstr);
-		return NULL;
 	}
 
 	index_tmp = g_strdup_printf("%s.XXXXXX", pathstr);
@@ -1837,8 +1843,12 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 			g_snprintf(convostart, length, "%s", temp);
 			memset(&tm, 0, sizeof(tm));
-			sscanf(convostart, "%*s %3s %d %d:%d:%d %d",
-			       month, &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &tm.tm_year);
+			if (sscanf(convostart, "%*s %3s %d %d:%d:%d %d", month,
+				&tm.tm_mday, &tm.tm_hour, &tm.tm_min,
+				&tm.tm_sec, &tm.tm_year) != 6)
+			{
+				purple_debug_warning("log", "invalid date format\n");
+			}
 			/* Ugly hack, in case current locale is not English */
 			if (purple_strequal(month, "Jan")) {
 				tm.tm_mon= 0;
@@ -1942,9 +1952,15 @@ static char * old_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	struct old_logger_data *data = log->logger_data;
 	const char *path = purple_stringref_value(data->pathref);
 	FILE *file = g_fopen(path, "rb");
-	char *read = g_malloc(data->length + 1);
-	fseek(file, data->offset, SEEK_SET);
-	result = fread(read, data->length, 1, file);
+	char *read;
+
+	g_return_val_if_fail(file, g_strdup(""));
+	read = g_malloc(data->length + 1);
+
+	if (fseek(file, data->offset, SEEK_SET) != 0)
+		result = 0;
+	else
+		result = fread(read, data->length, 1, file);
 	if (result != 1)
 		purple_debug_error("log", "Unable to read from log file: %s\n", path);
 	fclose(file);

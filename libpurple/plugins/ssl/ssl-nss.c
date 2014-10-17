@@ -32,6 +32,9 @@
 #ifdef _WIN32
 # ifndef HAVE_LONG_LONG
 #define HAVE_LONG_LONG
+/* WINDDK_BUILD is defined because the checks around usage of
+ * intrisic functions are wrong in nspr */
+#define WINDDK_BUILD
 # endif
 #else
 /* TODO: Why is this done?
@@ -42,6 +45,7 @@
 #include <nspr.h>
 #include <nss.h>
 #include <nssb64.h>
+#include <ocsp.h>
 #include <pk11func.h>
 #include <prio.h>
 #include <secerr.h>
@@ -49,6 +53,11 @@
 #include <ssl.h>
 #include <sslerr.h>
 #include <sslproto.h>
+
+/* There's a bug in some versions of this header that requires that some of
+   the headers above be included first. This is true for at least libnss
+   3.15.4. */
+#include <certdb.h>
 
 /* This is defined in NSPR's <private/pprio.h>, but to avoid including a
  * private header we duplicate the prototype here */
@@ -133,6 +142,10 @@ static gchar *get_error_text(void)
 static void
 ssl_nss_init_nss(void)
 {
+#if NSS_VMAJOR > 3 || ( NSS_VMAJOR == 3 && NSS_VMINOR >= 14 )
+	SSLVersionRange supported, enabled;
+#endif /* NSS >= 3.14 */
+
 	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
 	NSS_NoDB_Init(".");
 	NSS_SetDomesticPolicy();
@@ -149,6 +162,34 @@ ssl_nss_init_nss(void)
 	SSL_CipherPrefSetDefault(SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA, 1);
 	SSL_CipherPrefSetDefault(SSL_DHE_RSA_WITH_DES_CBC_SHA, 1);
 	SSL_CipherPrefSetDefault(SSL_DHE_DSS_WITH_DES_CBC_SHA, 1);
+
+#if NSS_VMAJOR > 3 || ( NSS_VMAJOR == 3 && NSS_VMINOR >= 14 )
+	/* Get the ranges of supported and enabled SSL versions */
+	if ((SSL_VersionRangeGetSupported(ssl_variant_stream, &supported) == SECSuccess) &&
+			(SSL_VersionRangeGetDefault(ssl_variant_stream, &enabled) == SECSuccess)) {
+		purple_debug_info("nss", "TLS supported versions: "
+				"0x%04hx through 0x%04hx\n", supported.min, supported.max);
+		purple_debug_info("nss", "TLS versions allowed by default: "
+				"0x%04hx through 0x%04hx\n", enabled.min, enabled.max);
+
+		/* Make sure all versions of TLS supported by the local library are
+		   enabled. (For some reason NSS doesn't enable newer versions of TLS
+		   by default -- more context in ticket #15909.) */
+		if (supported.max > enabled.max) {
+			enabled.max = supported.max;
+			if (SSL_VersionRangeSetDefault(ssl_variant_stream, &enabled) == SECSuccess) {
+				purple_debug_info("nss", "Changed allowed TLS versions to "
+						"0x%04hx through 0x%04hx\n", enabled.min, enabled.max);
+			} else {
+				purple_debug_error("nss", "Error setting allowed TLS versions to "
+						"0x%04hx through 0x%04hx\n", enabled.min, enabled.max);
+			}
+		}
+	}
+#endif /* NSS >= 3.14 */
+
+	/** Disable OCSP Checking until we can make that use our HTTP & Proxy stuff */
+	CERT_EnableOCSPChecking(PR_FALSE);
 
 	_identity = PR_GetUniqueIdentity("Purple");
 	_nss_methods = PR_GetDefaultIOMethods();
@@ -266,6 +307,46 @@ ssl_nss_get_peer_certificates(PRFileDesc *socket, PurpleSslConnection * gsc)
 	return peer_certs;
 }
 
+/*
+ * Ideally this information would be exposed to the UI somehow, but for now we
+ * just print it to the debug log
+ */
+static void
+print_security_info(PRFileDesc *fd)
+{
+	SECStatus result;
+	SSLChannelInfo channel;
+	SSLCipherSuiteInfo suite;
+
+	result = SSL_GetChannelInfo(fd, &channel, sizeof channel);
+	if (result == SECSuccess && channel.length == sizeof channel
+			&& channel.cipherSuite) {
+		result = SSL_GetCipherSuiteInfo(channel.cipherSuite,
+				&suite, sizeof suite);
+
+		if (result == SECSuccess) {
+			purple_debug_info("nss", "SSL version %d.%d using "
+					"%d-bit %s with %d-bit %s MAC\n"
+					"Server Auth: %d-bit %s, "
+					"Key Exchange: %d-bit %s, "
+					"Compression: %s\n"
+					"Cipher Suite Name: %s\n",
+					channel.protocolVersion >> 8,
+					channel.protocolVersion & 0xff,
+					suite.effectiveKeyBits,
+					suite.symCipherName,
+					suite.macBits,
+					suite.macAlgorithmName,
+					channel.authKeyBits,
+					suite.authAlgorithmName,
+					channel.keaKeyBits, suite.keaTypeName,
+					channel.compressionMethodName,
+					suite.cipherSuiteName);
+		}
+	}
+}
+
+
 static void
 ssl_nss_handshake_cb(gpointer data, int fd, PurpleInputCondition cond)
 {
@@ -292,6 +373,8 @@ ssl_nss_handshake_cb(gpointer data, int fd, PurpleInputCondition cond)
 
 		return;
 	}
+
+	print_security_info(nss_data->in);
 
 	purple_input_remove(nss_data->handshake_handler);
 	nss_data->handshake_handler = 0;
@@ -878,7 +961,7 @@ x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 		    Handling is different for signed vs unsigned 32-bit types.
 		 */
 		if (*activation != nss_activ) {
-		       	if (nss_activ < 0) {
+			if (nss_activ < 0) {
 				purple_debug_warning("nss",
 					"Setting Activation Date to epoch to handle pre-epoch value\n");
 				*activation = 0;
@@ -916,6 +999,108 @@ x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 	return TRUE;
 }
 
+static gboolean
+x509_register_trusted_tls_cert(PurpleCertificate *crt, gboolean ca)
+{
+	CERTCertDBHandle *certdb = CERT_GetDefaultCertDB();
+	CERTCertificate *crt_dat;
+	CERTCertTrust trust;
+
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_nss, FALSE);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, FALSE);
+
+	purple_debug_info("nss", "Trusting %s\n", crt_dat->subjectName);
+
+	if (ca && !CERT_IsCACert(crt_dat, NULL)) {
+		purple_debug_error("nss",
+			"Refusing to set non-CA cert as trusted CA\n");
+		return FALSE;
+	}
+
+	if (crt_dat->isperm) {
+		purple_debug_info("nss",
+			"Skipping setting trust for cert in permanent DB\n");
+		return TRUE;
+	}
+
+	if (ca) {
+		trust.sslFlags = CERTDB_TRUSTED_CA | CERTDB_TRUSTED_CLIENT_CA;
+	} else {
+		trust.sslFlags = CERTDB_TRUSTED;
+	}
+	trust.emailFlags = 0;
+	trust.objectSigningFlags = 0;
+
+	CERT_ChangeCertTrust(certdb, crt_dat, &trust);
+
+	return TRUE;
+}
+
+static void x509_verify_cert(PurpleCertificateVerificationRequest *vrq, PurpleCertificateInvalidityFlags *flags)
+{
+	CERTCertDBHandle *certdb = CERT_GetDefaultCertDB();
+	CERTCertificate *crt_dat;
+	PRTime now = PR_Now();
+	SECStatus          rv;
+	PurpleCertificate *first_cert = vrq->cert_chain->data;
+	CERTVerifyLog log;
+
+	crt_dat = X509_NSS_DATA(first_cert);
+
+	log.arena = PORT_NewArena(512);
+	log.head = log.tail = NULL;
+	log.count = 0;
+	rv = CERT_VerifyCert(certdb, crt_dat, PR_TRUE, certUsageSSLServer, now, NULL, &log);
+
+	if (rv != SECSuccess || log.count > 0) {
+		CERTVerifyLogNode *node   = NULL;
+		unsigned int depth = (unsigned int)-1;
+
+		for (node = log.head; node; node = node->next) {
+			if (depth != node->depth) {
+				depth = node->depth;
+				purple_debug_error("nss", "CERT %d. %s %s:\n", depth,
+					node->cert->subjectName,
+					depth ? "[Certificate Authority]": "");
+			}
+			purple_debug_error("nss", "  ERROR %ld: %s\n", node->error,
+				PR_ErrorToName(node->error));
+			switch (node->error) {
+				case SEC_ERROR_EXPIRED_CERTIFICATE:
+					*flags |= PURPLE_CERTIFICATE_EXPIRED;
+					break;
+				case SEC_ERROR_REVOKED_CERTIFICATE:
+					*flags |= PURPLE_CERTIFICATE_REVOKED;
+					break;
+				case SEC_ERROR_UNTRUSTED_ISSUER:
+					if (crt_dat->isRoot) {
+						*flags |= PURPLE_CERTIFICATE_SELF_SIGNED;
+					} else {
+						*flags |= PURPLE_CERTIFICATE_CA_UNKNOWN;
+					}
+					break;
+				case SEC_ERROR_CERT_SIGNATURE_ALGORITHM_DISABLED:
+				case SEC_ERROR_BAD_SIGNATURE:
+				default:
+					*flags |= PURPLE_CERTIFICATE_INVALID_CHAIN;
+			}
+			if (node->cert)
+				CERT_DestroyCertificate(node->cert);
+		}
+	} else {
+		rv = CERT_VerifyCertName(crt_dat, vrq->subject_name);
+		if (rv != SECSuccess) {
+			purple_debug_error("nss", "Cert chain valid, but name not verified\n");
+			*flags |= PURPLE_CERTIFICATE_NAME_MISMATCH;
+		}
+	}
+
+	PORT_FreeArena(log.arena, PR_FALSE);
+}
+
 static PurpleCertificateScheme x509_nss = {
 	"x509",                          /* Scheme name */
 	N_("X.509 Certificates"),        /* User-visible scheme name */
@@ -931,9 +1116,8 @@ static PurpleCertificateScheme x509_nss = {
 	x509_check_name,                 /* Check subject name */
 	x509_times,                      /* Activation/Expiration time */
 	x509_importcerts_from_file,      /* Multiple certificate import function */
-
-	NULL,
-	NULL,
+	x509_register_trusted_tls_cert,  /* Register a certificate as trusted for TLS */
+	x509_verify_cert,                /* Verify that the specified cert chain is trusted */
 	NULL
 };
 

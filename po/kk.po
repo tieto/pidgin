@@ -1,17 +1,18 @@
-# translation of am.po to Armenian
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# David Avsharyan <avsharyan@gmail.com>, 2009.
 #
+# Translators:
 msgid ""
 msgstr ""
-"Project-Id-Version: am\n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2009-05-20 17:37+0400\n"
-"Last-Translator: David Avsharyan <avsharyan@gmail.com>\n"
-"Language-Team: \n"
-"Language: \n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"Language-Team: Kazakh (http://www.transifex.com/projects/p/pidgin/language/"
+"kk/)\n"
+"Language: kk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,11 +21,11 @@ msgstr ""
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
 msgid "Finch"
-msgstr "Սերինոս"
+msgstr "Finch"
 
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "%s. Ավելի շատ ինֆորմացիայի համար հավագեք `%s -h'.\n"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -37,15 +38,6 @@ msgid ""
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s\n"
-"Կիրառում: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    օգտագործել DIR կոնֆիգուրացիոն ֆայլերի համար\n"
-"  -d, --debug         կարգաբերվող հաղորդագրությունները տպել դեպի ստանդարտ "
-"սխալների հոսք\n"
-"  -h, --help          ցույց տալ այս օգնությունը և դուրս գալ\n"
-"  -n, --nologin       ոչ ինքնաբերաբար մուտք\n"
-"  -v, --version       ցույց տալ ընթացիկ տարբերակը և դուրս գալ\n"
 
 #, c-format
 msgid ""
@@ -55,9 +47,8 @@ msgid ""
 msgstr ""
 
 #. the user did not fill in the captcha
-#, fuzzy
 msgid "Error"
-msgstr "Սխալներզ"
+msgstr "Қате"
 
 msgid "Account was not modified"
 msgstr ""
@@ -66,7 +57,7 @@ msgid "Account was not added"
 msgstr ""
 
 msgid "Username of an account must be non-empty."
-msgstr "Օգտագործողի անունը  ..."
+msgstr ""
 
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
@@ -77,73 +68,73 @@ msgid ""
 msgstr ""
 
 msgid "New mail notifications"
-msgstr "Նոր նամակի ծանուցումներ"
+msgstr ""
 
 msgid "Remember password"
-msgstr "Հիշել գաղտնաբառը"
+msgstr "Парольді сақтау"
 
 msgid "There are no protocol plugins installed."
-msgstr "Այնտեղ տեղադրված չէ պրոտոկոլի ավելացումներ․"
+msgstr ""
 
 msgid "(You probably forgot to 'make install'.)"
-msgstr "(Հավանաբար դուք  մոռացել եք անեք 'make install'.)"
+msgstr ""
 
 msgid "Modify Account"
-msgstr "Ձևափոխել Հաշիվը"
+msgstr "Тіркелгіні түзету"
 
 msgid "New Account"
-msgstr "Նոր Հաշիվ"
+msgstr "Жаңа тіркелгі"
 
 msgid "Protocol:"
-msgstr "Արձանագրություն։"
+msgstr "Хаттама:"
 
 msgid "Username:"
-msgstr "Օգտագործողի անունը։"
+msgstr "Пайдаланушы аты:"
 
 msgid "Password:"
-msgstr "Գաղտնաբառ։"
+msgstr "Пароль:"
 
 msgid "Alias:"
-msgstr "Փոխանուն։"
+msgstr "Алиас:"
 
 #. Register checkbox
 msgid "Create this account on the server"
-msgstr "Ստեղծել այս հաշիվը սերվերի վրա"
+msgstr "Бұл тіркелгіні серверде жасау"
 
 #. Cancel button
 #. Cancel
 msgid "Cancel"
-msgstr "Չեղյալ համարել"
+msgstr "Бас тарту"
 
 #. Save button
 #. Save
 msgid "Save"
-msgstr "Պահպանել"
+msgstr "Сақтау"
 
 #, c-format
 msgid "Are you sure you want to delete %s?"
-msgstr "Դուք համոզված եք, որ ցանկանում եք ջնջել %s?"
+msgstr "%s өшіруді шынымен қалайсыз ба?"
 
 msgid "Delete Account"
-msgstr "Ջնջել Հաշիվը"
+msgstr "Тіркелгіні өшіру"
 
 #. Delete button
 msgid "Delete"
-msgstr "Ջնջել"
+msgstr "Өшіру"
 
 msgid "Accounts"
-msgstr "Հաշիվներ"
+msgstr "Тіркелгілер"
 
 msgid "You can enable/disable accounts from the following list."
-msgstr "Դուք կարող եք միացնել/անջատել հաշիվները հետևյալ ցանկից․"
+msgstr ""
 
 #. Add button
 msgid "Add"
-msgstr "Ավելացնել"
+msgstr "Қосу"
 
 #. Modify button
 msgid "Modify"
-msgstr "Փոփոխել"
+msgstr "Өзгерту"
 
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
@@ -160,33 +151,29 @@ msgid "Authorize buddy?"
 msgstr ""
 
 msgid "Authorize"
-msgstr "Լիազորում"
+msgstr ""
 
 msgid "Deny"
-msgstr "Մերժել"
+msgstr "Тыйым салу"
 
 #, c-format
 msgid ""
 "Online: %d\n"
 "Total: %d"
 msgstr ""
-"Կապի մեջ: %d\n"
-"Ընդհանուր: %d"
 
 #, c-format
 msgid "Account: %s (%s)"
-msgstr "Հաշիվ: %s (%s"
+msgstr "Тіркелгі: %s (%s)"
 
 #, c-format
 msgid ""
 "\n"
 "Last Seen: %s ago"
 msgstr ""
-"\n"
-"Last Seen: %s ago"
 
 msgid "Default"
-msgstr ""
+msgstr "Бастапқы"
 
 msgid "You must provide a username for the buddy."
 msgstr ""
@@ -204,7 +191,7 @@ msgid "Error adding buddy"
 msgstr ""
 
 msgid "Username"
-msgstr ""
+msgstr "Пайдаланушы аты"
 
 msgid "Alias (optional)"
 msgstr ""
@@ -216,7 +203,7 @@ msgid "Add in group"
 msgstr ""
 
 msgid "Account"
-msgstr ""
+msgstr "Тіркелгі"
 
 msgid "Add Buddy"
 msgstr ""
@@ -229,13 +216,13 @@ msgstr ""
 
 #. Extract their Name and put it in
 msgid "Name"
-msgstr ""
+msgstr "Аты"
 
 msgid "Alias"
 msgstr ""
 
 msgid "Group"
-msgstr ""
+msgstr "Топ"
 
 msgid "Auto-join"
 msgstr ""
@@ -265,13 +252,13 @@ msgid "Please Update the necessary fields."
 msgstr ""
 
 msgid "Edit"
-msgstr ""
+msgstr "Түзету"
 
 msgid "Edit Settings"
 msgstr ""
 
 msgid "Information"
-msgstr ""
+msgstr "Ақпарат"
 
 msgid "Retrieving..."
 msgstr ""
@@ -286,7 +273,7 @@ msgid "Send File"
 msgstr ""
 
 msgid "Blocked"
-msgstr ""
+msgstr "Блокталған"
 
 msgid "Show when offline"
 msgstr ""
@@ -296,7 +283,7 @@ msgid "Please enter the new name for %s"
 msgstr ""
 
 msgid "Rename"
-msgstr ""
+msgstr "Атын ауыстыру"
 
 msgid "Set Alias"
 msgstr ""
@@ -319,7 +306,7 @@ msgid "Confirm Remove"
 msgstr ""
 
 msgid "Remove"
-msgstr ""
+msgstr "Өшіру"
 
 #. Buddy List
 msgid "Buddy List"
@@ -336,30 +323,30 @@ msgstr ""
 
 #. General
 msgid "Nickname"
-msgstr ""
+msgstr "Ник аты"
 
 #. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
-msgstr ""
+msgstr "Іссіз"
 
 msgid "On Mobile"
 msgstr ""
 
 msgid "New..."
-msgstr ""
+msgstr "Жаңа..."
 
 msgid "Saved..."
 msgstr ""
 
 msgid "Plugins"
-msgstr ""
+msgstr "Плагиндер"
 
 msgid "Block/Unblock"
 msgstr ""
 
 msgid "Block"
-msgstr ""
+msgstr "Блоктау"
 
 msgid "Unblock"
 msgstr ""
@@ -373,7 +360,7 @@ msgstr ""
 #. Not masked?
 #. No hints?
 msgid "OK"
-msgstr "OK"
+msgstr "ОК"
 
 msgid "New Instant Message"
 msgstr ""
@@ -382,16 +369,16 @@ msgid "Please enter the username or alias of the person you would like to IM."
 msgstr ""
 
 msgid "Channel"
-msgstr "Ալիք"
+msgstr ""
 
 msgid "Join a Chat"
-msgstr "Միանալ զրույցին"
+msgstr ""
 
 msgid "Please enter the name of the chat you want to join."
 msgstr ""
 
 msgid "Join"
-msgstr "Միանալ"
+msgstr ""
 
 msgid ""
 "Please enter the username or alias of the person whose log you would like to "
@@ -400,37 +387,37 @@ msgstr ""
 
 #. Create the "Options" frame.
 msgid "Options"
-msgstr ""
+msgstr "Опциялар"
 
 msgid "Send IM..."
 msgstr ""
 
 msgid "Block/Unblock..."
-msgstr "Փակել/Բացել"
+msgstr ""
 
 msgid "Join Chat..."
-msgstr "Միանալ զրույցին ... "
+msgstr ""
 
 msgid "View Log..."
-msgstr "Նայել գրառումները․․․"
+msgstr ""
 
 msgid "View All Logs"
-msgstr "Նայել մատյանի բոլոր գրառումները"
+msgstr ""
 
 msgid "Show"
-msgstr "Ցույց տալ"
+msgstr "Көрсету"
 
 msgid "Empty groups"
-msgstr "Դատարկ խմբեր"
+msgstr ""
 
 msgid "Offline buddies"
 msgstr ""
 
 msgid "Sort"
-msgstr "Դասակարգել"
+msgstr "Сұрыптау"
 
 msgid "By Status"
-msgstr "Ըստ "
+msgstr ""
 
 msgid "Alphabetically"
 msgstr ""
@@ -442,7 +429,7 @@ msgid "Buddy"
 msgstr ""
 
 msgid "Chat"
-msgstr "Զրույց"
+msgstr "Чат"
 
 msgid "Grouping"
 msgstr ""
@@ -509,17 +496,17 @@ msgid "Confirm certificate delete"
 msgstr ""
 
 msgid "Certificate Manager"
-msgstr ""
+msgstr "Сертификаттар менеджері"
 
 msgid "Hostname"
-msgstr ""
+msgstr "Компьютер аты"
 
 msgid "Info"
-msgstr ""
+msgstr "Ақпарат"
 
 #. Close button
 msgid "Close"
-msgstr ""
+msgstr "Жабу"
 
 #, c-format
 msgid "%s (%s)"
@@ -591,7 +578,7 @@ msgid ""
 msgstr ""
 
 msgid "Send To"
-msgstr ""
+msgstr "Қайда жіберу"
 
 msgid "Conversation"
 msgstr ""
@@ -624,7 +611,6 @@ msgstr ""
 msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Supported debug options are: plugins version"
 msgstr ""
@@ -706,43 +692,42 @@ msgstr ""
 #. * it doesn't make sense. The bug is likely in the packing in gntbox.c.
 #.
 msgid "Clear"
-msgstr ""
+msgstr "Тазарту"
 
 msgid "Filter:"
-msgstr ""
+msgstr "Сүзгі:"
 
 msgid "Pause"
-msgstr ""
+msgstr "Аялдату"
 
 #, c-format
 msgid "File Transfers - %d%% of %d file"
 msgid_plural "File Transfers - %d%% of %d files"
 msgstr[0] ""
-msgstr[1] ""
 
 #. Create the window.
 msgid "File Transfers"
 msgstr ""
 
 msgid "Progress"
-msgstr ""
+msgstr "Барысы"
 
 msgid "Filename"
-msgstr ""
+msgstr "Файл аты"
 
 msgid "Size"
-msgstr ""
+msgstr "Өлшемі"
 
 msgid "Speed"
-msgstr ""
+msgstr "Жылдамдық"
 
 msgid "Remaining"
-msgstr ""
+msgstr "Қалған"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
 #. presence
 msgid "Status"
-msgstr ""
+msgstr "Күйі"
 
 msgid "Close this window when all transfers finish"
 msgstr ""
@@ -751,7 +736,7 @@ msgid "Clear finished transfers"
 msgstr ""
 
 msgid "Stop"
-msgstr ""
+msgstr "Тоқтату"
 
 msgid "Waiting for transfer to begin"
 msgstr ""
@@ -760,7 +745,7 @@ msgid "Cancelled"
 msgstr ""
 
 msgid "Failed"
-msgstr ""
+msgstr "Сәтсіз"
 
 #, c-format
 msgid "%.2f KiB/s"
@@ -773,17 +758,17 @@ msgid "Received"
 msgstr ""
 
 msgid "Finished"
-msgstr ""
+msgstr "Аяқталған"
 
 #, c-format
 msgid "The file was saved as %s."
 msgstr ""
 
 msgid "Sending"
-msgstr ""
+msgstr "Жіберуде"
 
 msgid "Receiving"
-msgstr ""
+msgstr "Алуда"
 
 #, c-format
 msgid "Conversation in %s on %s"
@@ -842,10 +827,10 @@ msgstr ""
 
 #. Number of actions
 msgid "Accept"
-msgstr ""
+msgstr "Қабылдау"
 
 msgid "Reject"
-msgstr ""
+msgstr "Болдырмау"
 
 msgid "Call in progress."
 msgstr ""
@@ -874,16 +859,15 @@ msgid "You have mail!"
 msgstr ""
 
 msgid "Sender"
-msgstr ""
+msgstr "Жiберушi"
 
 msgid "Subject"
-msgstr ""
+msgstr "Тақырыбы"
 
 #, c-format
 msgid "%s (%s) has %d new message."
 msgid_plural "%s (%s) has %d new messages."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "New Mail"
 msgstr ""
@@ -896,7 +880,7 @@ msgid "Buddy Information"
 msgstr ""
 
 msgid "Continue"
-msgstr ""
+msgstr "Жалғастыру"
 
 msgid "IM"
 msgstr ""
@@ -905,16 +889,16 @@ msgid "Invite"
 msgstr ""
 
 msgid "(none)"
-msgstr ""
+msgstr "(ешнәрсе)"
 
 #. XXX: The following expects that finch_notify_message gets called. This
 #. * may not always happen, e.g. when another plugin sets its own
 #. * notify_message. So tread carefully.
 msgid "URI"
-msgstr ""
+msgstr "URI"
 
 msgid "ERROR"
-msgstr ""
+msgstr "ҚАТЕ"
 
 msgid "loading plugin failed"
 msgstr ""
@@ -966,7 +950,7 @@ msgstr ""
 #. Back to instant-apply! I win!  BU-HAHAHA!
 #. Create the window
 msgid "Preferences"
-msgstr ""
+msgstr "Баптаулар"
 
 msgid "Please enter a buddy to pounce."
 msgstr ""
@@ -982,7 +966,7 @@ msgstr ""
 
 #. Account:
 msgid "Account:"
-msgstr ""
+msgstr "Тіркелгі:"
 
 msgid "Buddy name:"
 msgstr ""
@@ -1023,7 +1007,7 @@ msgstr ""
 
 #. Create the "Action" frame.
 msgid "Action"
-msgstr ""
+msgstr "Әрекет"
 
 msgid "Open an IM window"
 msgstr ""
@@ -1112,7 +1096,7 @@ msgid "From last sent message"
 msgstr ""
 
 msgid "Never"
-msgstr ""
+msgstr "Ешқашан"
 
 msgid "Show Idle Time"
 msgstr ""
@@ -1151,7 +1135,7 @@ msgid "Conversations"
 msgstr ""
 
 msgid "Logging"
-msgstr ""
+msgstr "Журналдау"
 
 msgid "You must fill all the required fields."
 msgstr ""
@@ -1163,10 +1147,10 @@ msgid "Not implemented yet."
 msgstr ""
 
 msgid "Save File..."
-msgstr ""
+msgstr "Файлды сақтау..."
 
 msgid "Open File..."
-msgstr ""
+msgstr "Файлды ашу..."
 
 msgid "Choose Location..."
 msgstr ""
@@ -1194,7 +1178,7 @@ msgid "Message received begins conversation"
 msgstr ""
 
 msgid "Message sent"
-msgstr ""
+msgstr "Хабарлама жіберілді"
 
 msgid "Person enters chat"
 msgstr ""
@@ -1221,19 +1205,19 @@ msgid "GStreamer failed to initialize."
 msgstr ""
 
 msgid "(default)"
-msgstr ""
+msgstr "(бастапқы)"
 
 msgid "Select Sound File ..."
 msgstr ""
 
 msgid "Sound Preferences"
-msgstr ""
+msgstr "Дыбыс баптаулары"
 
 msgid "Profiles"
 msgstr ""
 
 msgid "Automatic"
-msgstr ""
+msgstr "Автоматты түрде"
 
 msgid "Console Beep"
 msgstr ""
@@ -1248,7 +1232,7 @@ msgid "Sound Method"
 msgstr ""
 
 msgid "Method: "
-msgstr ""
+msgstr "Тәсіл:"
 
 #, c-format
 msgid ""
@@ -1264,7 +1248,7 @@ msgid "Sounds when conversation has focus"
 msgstr ""
 
 msgid "Always"
-msgstr ""
+msgstr "Әрқашан"
 
 msgid "Only when available"
 msgstr ""
@@ -1280,16 +1264,16 @@ msgid "Sound Events"
 msgstr ""
 
 msgid "Event"
-msgstr ""
+msgstr "Оқиға"
 
 msgid "File"
-msgstr ""
+msgstr "Файл"
 
 msgid "Test"
-msgstr ""
+msgstr "Сынау"
 
 msgid "Reset"
-msgstr ""
+msgstr "Тастау"
 
 msgid "Choose..."
 msgstr ""
@@ -1306,10 +1290,10 @@ msgstr ""
 
 #. title
 msgid "Title"
-msgstr ""
+msgstr "Атауы"
 
 msgid "Type"
-msgstr ""
+msgstr "Түрі"
 
 #. Statuses are almost all the same. Define a macro to reduce code repetition.
 #. PurpleStatusPrimitive
@@ -1320,11 +1304,11 @@ msgstr ""
 #. not independent
 #. Attributes - each status can have a message.
 msgid "Message"
-msgstr ""
+msgstr "Хабарлама"
 
 #. Use
 msgid "Use"
-msgstr ""
+msgstr "Қолдану"
 
 msgid "Invalid title"
 msgstr ""
@@ -1342,10 +1326,10 @@ msgid "Substatus"
 msgstr ""
 
 msgid "Status:"
-msgstr ""
+msgstr "Күйі:"
 
 msgid "Message:"
-msgstr ""
+msgstr "Хабарлама:"
 
 msgid "Edit Status"
 msgstr ""
@@ -1358,7 +1342,7 @@ msgid "Save & Use"
 msgstr ""
 
 msgid "Certificates"
-msgstr ""
+msgstr "Сертификаттар"
 
 msgid "Sounds"
 msgstr ""
@@ -1494,7 +1478,7 @@ msgstr ""
 
 #. primitive,						no,							id,			name
 msgid "Offline"
-msgstr ""
+msgstr "Желіде емес"
 
 msgid "Online Buddies"
 msgstr ""
@@ -1541,13 +1525,13 @@ msgstr ""
 
 #, c-format
 msgid "Enter password for %s (%s)"
-msgstr ""
+msgstr "%s (%s) үшін парольді енгізіңіз"
 
 msgid "Enter Password"
-msgstr ""
+msgstr "Парольді енгізіңіз"
 
 msgid "Save password"
-msgstr ""
+msgstr "Парольді сақтау"
 
 #, c-format
 msgid "Missing protocol plugin for %s"
@@ -1566,10 +1550,10 @@ msgid "Original password"
 msgstr ""
 
 msgid "New password"
-msgstr ""
+msgstr "Жаңа пароль"
 
 msgid "New password (again)"
-msgstr ""
+msgstr "Жаңа пароль (қайтадан)"
 
 #, c-format
 msgid "Change password for %s"
@@ -1592,14 +1576,13 @@ msgid "This protocol does not support fetching the public alias."
 msgstr ""
 
 msgid "Unknown"
-msgstr ""
+msgstr "Белгісіз"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
-msgstr ""
+msgstr "Таныстар"
 
 msgid "buddy list"
-msgstr ""
+msgstr "таныстар тізімі"
 
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr ""
@@ -1694,10 +1677,19 @@ msgid ""
 "are not connecting to the service you believe you are."
 msgstr ""
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr ""
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1705,8 +1697,10 @@ msgid ""
 "Expiration date: %s\n"
 msgstr ""
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
 msgstr ""
 
 #. show error to user
@@ -2959,7 +2953,7 @@ msgstr ""
 #. 0
 #. Global
 msgid "Available"
-msgstr ""
+msgstr "Қолжетерлік"
 
 #. 2
 msgid "Chatty"
@@ -3020,13 +3014,13 @@ msgstr ""
 msgid "Chat _name:"
 msgstr ""
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr ""
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
+msgstr ""
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
 msgstr ""
 
 msgid "Chat error"
@@ -3035,9 +3029,8 @@ msgstr ""
 msgid "This chat name is already in use"
 msgstr ""
 
-#, fuzzy
 msgid "Not connected to the server"
-msgstr "Ստեղծել այս հաշիվը սերվերի վրա"
+msgstr ""
 
 msgid "Find buddies..."
 msgstr ""
@@ -4468,7 +4461,7 @@ msgstr ""
 
 #. Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im
 msgid "Domain"
-msgstr ""
+msgstr "Домен"
 
 msgid "Use old-style SSL"
 msgstr ""
@@ -4625,13 +4618,11 @@ msgstr ""
 msgid "Bored"
 msgstr ""
 
-#, fuzzy
 msgid "Brave"
-msgstr "Պահպանել"
+msgstr ""
 
-#, fuzzy
 msgid "Calm"
-msgstr "Չեղյալ համարել"
+msgstr ""
 
 msgid "Cautious"
 msgstr ""
@@ -4663,13 +4654,11 @@ msgstr ""
 msgid "Curious"
 msgstr ""
 
-#, fuzzy
 msgid "Dejected"
-msgstr "Ջնջել"
+msgstr ""
 
-#, fuzzy
 msgid "Depressed"
-msgstr "Ջնջել"
+msgstr ""
 
 msgid "Disappointed"
 msgstr ""
@@ -4767,9 +4756,8 @@ msgstr ""
 msgid "Mean"
 msgstr ""
 
-#, fuzzy
 msgid "Moody"
-msgstr "Փոփոխել"
+msgstr ""
 
 msgid "Nervous"
 msgstr ""
@@ -4792,9 +4780,8 @@ msgstr ""
 msgid "Relaxed"
 msgstr ""
 
-#, fuzzy
 msgid "Relieved"
-msgstr "Ջնջել"
+msgstr ""
 
 msgid "Remorseful"
 msgstr ""
@@ -5244,9 +5231,8 @@ msgstr ""
 msgid "Set Friendly Name..."
 msgstr ""
 
-#, fuzzy
 msgid "View Locations..."
-msgstr "Նայել գրառումները․․․"
+msgstr ""
 
 msgid "Set Home Phone Number..."
 msgstr ""
@@ -5513,7 +5499,6 @@ msgid_plural ""
 "After the maintenance has been completed, you will be able to successfully "
 "sign in."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid ""
 "Message was not sent because the system is unavailable. This normally "
@@ -5678,9 +5663,8 @@ msgid "Display Name"
 msgstr ""
 
 #. about me
-#, fuzzy
 msgid "About Me"
-msgstr "Հաշիվներ"
+msgstr ""
 
 #. where I live
 msgid "Where I Live"
@@ -5743,9 +5727,8 @@ msgstr ""
 msgid "There is no splash-screen currently available"
 msgstr ""
 
-#, fuzzy
 msgid "About"
-msgstr "Հաշիվներ"
+msgstr ""
 
 msgid "Search for user"
 msgstr ""
@@ -5753,9 +5736,8 @@ msgstr ""
 msgid "Search for a MXit contact"
 msgstr ""
 
-#, fuzzy
 msgid "Type search information"
-msgstr "%s. Ավելի շատ ինֆորմացիայի համար հավագեք `%s -h'.\n"
+msgstr ""
 
 msgid "_Search"
 msgstr ""
@@ -5777,9 +5759,8 @@ msgid "Search for contacts..."
 msgstr ""
 
 #. display splash-screen
-#, fuzzy
 msgid "View Splash..."
-msgstr "Նայել գրառումները․․․"
+msgstr ""
 
 #. display plugin version
 msgid "About..."
@@ -5822,9 +5803,8 @@ msgid "MXit ID"
 msgstr ""
 
 #. show the form to the user to complete
-#, fuzzy
 msgid "Register New MXit Account"
-msgstr "Նոր Հաշիվ"
+msgstr ""
 
 msgid "Please fill in the following fields:"
 msgstr ""
@@ -5963,7 +5943,7 @@ msgid "Invite Message"
 msgstr ""
 
 msgid "No results"
-msgstr ""
+msgstr "Нәтижелер жоқ"
 
 msgid "No contacts found."
 msgstr ""
@@ -6037,9 +6017,8 @@ msgstr ""
 msgid "Status Error"
 msgstr ""
 
-#, fuzzy
 msgid "Mood Error"
-msgstr "Սխալներզ"
+msgstr ""
 
 msgid "Invitation Error"
 msgstr ""
@@ -6096,7 +6075,7 @@ msgid "In Love"
 msgstr ""
 
 msgid "Pending"
-msgstr ""
+msgstr "Кезекте"
 
 msgid "Invited"
 msgstr ""
@@ -6104,15 +6083,14 @@ msgstr ""
 msgid "Rejected"
 msgstr ""
 
-#, fuzzy
 msgid "Deleted"
-msgstr "Ջնջել"
+msgstr ""
 
 msgid "MXit Advertising"
 msgstr ""
 
 msgid "More Information"
-msgstr ""
+msgstr "Көбірек ақпарат"
 
 #, c-format
 msgid "No such user: %s"
@@ -6161,7 +6139,7 @@ msgid "New picture comments"
 msgstr ""
 
 msgid "MySpace"
-msgstr ""
+msgstr "MySpace"
 
 msgid "IM Friends"
 msgstr ""
@@ -6174,7 +6152,6 @@ msgid_plural ""
 "%d buddies were added or updated from the server (including buddies already "
 "on the server-side list)"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Add contacts from server"
 msgstr ""
@@ -6628,7 +6605,7 @@ msgstr ""
 #. }
 #.
 msgid "Full name"
-msgstr ""
+msgstr "Толық аты"
 
 #, c-format
 msgid "GroupWise Conference %d"
@@ -6702,7 +6679,7 @@ msgstr ""
 #. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
 #.
 msgid "_OK"
-msgstr ""
+msgstr "_ОК"
 
 #, c-format
 msgid "Received unexpected response from %s: %s"
@@ -6831,7 +6808,7 @@ msgid "Watching a movie"
 msgstr ""
 
 msgid "Typing"
-msgstr ""
+msgstr "Теріп жатыр"
 
 msgid "At the office"
 msgstr ""
@@ -6862,7 +6839,7 @@ msgstr ""
 
 #. "I am mobile." / "John is mobile."
 msgid "Mobile"
-msgstr ""
+msgstr "Мобильді"
 
 msgid "Searching the web"
 msgstr ""
@@ -6932,7 +6909,7 @@ msgid "ICQ Protocol Plugin"
 msgstr ""
 
 msgid "Encoding"
-msgstr ""
+msgstr "Кодталуы"
 
 msgid "The remote user has closed the connection."
 msgstr ""
@@ -6967,7 +6944,7 @@ msgid "Free For Chat"
 msgstr ""
 
 msgid "Not Available"
-msgstr ""
+msgstr "Қолжетерсіз"
 
 msgid "Occupied"
 msgstr ""
@@ -6984,9 +6961,8 @@ msgstr ""
 msgid "Depression"
 msgstr ""
 
-#, fuzzy
 msgid "At home"
-msgstr "Լիազորում"
+msgstr ""
 
 msgid "At work"
 msgstr ""
@@ -7131,22 +7107,20 @@ msgid "Do you want to add this buddy to your buddy list?"
 msgstr ""
 
 msgid "_Add"
-msgstr ""
+msgstr "Қ_осу"
 
 msgid "_Decline"
-msgstr ""
+msgstr "Тай_дыру"
 
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid ""
@@ -7154,7 +7128,6 @@ msgid ""
 msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid ""
@@ -7162,20 +7135,17 @@ msgid ""
 msgid_plural ""
 "You missed %hu messages from %s because his/her warning level is too high."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "You missed %hu message from %s because your warning level is too high."
 msgid_plural ""
 "You missed %hu messages from %s because your warning level is too high."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Your AIM connection may be lost."
 msgstr ""
@@ -7197,7 +7167,6 @@ msgstr ""
 msgid "The following username is associated with %s"
 msgid_plural "The following usernames are associated with %s"
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "No results found for email address %s"
@@ -7279,7 +7248,6 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Profile too long."
 msgstr ""
@@ -7292,7 +7260,6 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Away message too long."
 msgstr ""
@@ -7322,7 +7289,7 @@ msgid ""
 msgstr ""
 
 msgid "(no name)"
-msgstr ""
+msgstr "(аты жоқ)"
 
 #, c-format
 msgid "Unable to add the buddy %s for an unknown reason."
@@ -7365,9 +7332,8 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr ""
 
-#, fuzzy
 msgid "Lunch"
-msgstr "Սերինոս"
+msgstr ""
 
 #, c-format
 msgid "Buddy Comment for %s"
@@ -7386,7 +7352,7 @@ msgid ""
 msgstr ""
 
 msgid "C_onnect"
-msgstr ""
+msgstr "Ба_йланысты орнату"
 
 msgid "You closed the connection."
 msgstr ""
@@ -7576,13 +7542,13 @@ msgid "Live Video"
 msgstr ""
 
 msgid "Camera"
-msgstr ""
+msgstr "Камера"
 
 msgid "Screen Sharing"
-msgstr ""
+msgstr "Экранмен бөлісу"
 
 msgid "IP Address"
-msgstr ""
+msgstr "IP адресі"
 
 msgid "Warning Level"
 msgstr ""
@@ -7595,7 +7561,7 @@ msgid "User information not available: %s"
 msgstr ""
 
 msgid "Mobile Phone"
-msgstr ""
+msgstr "Мобильді телефон"
 
 msgid "Personal Web Page"
 msgstr ""
@@ -7618,7 +7584,7 @@ msgid "Position"
 msgstr ""
 
 msgid "Web Page"
-msgstr ""
+msgstr "Веб парағы"
 
 msgid "Online Since"
 msgstr ""
@@ -7815,7 +7781,7 @@ msgid "Place Closed"
 msgstr ""
 
 msgid "Microphone"
-msgstr ""
+msgstr "Микрофон"
 
 msgid "Speakers"
 msgstr ""
@@ -7824,7 +7790,7 @@ msgid "Video Camera"
 msgstr ""
 
 msgid "File Transfer"
-msgstr ""
+msgstr "Файлдармен алмасу"
 
 msgid "Supports"
 msgstr ""
@@ -7845,7 +7811,7 @@ msgid "New Conference"
 msgstr ""
 
 msgid "Create"
-msgstr ""
+msgstr "Жасау"
 
 msgid "Available Conferences"
 msgstr ""
@@ -7886,7 +7852,7 @@ msgid "Last Known Client"
 msgstr ""
 
 msgid "User Name"
-msgstr ""
+msgstr "Пайдаланушы аты"
 
 msgid "Sametime ID"
 msgstr ""
@@ -7999,17 +7965,17 @@ msgid ""
 msgstr ""
 
 msgid "Search Results"
-msgstr ""
+msgstr "Іздеу нәтижелері"
 
 msgid "No matches"
-msgstr ""
+msgstr "Сәйкестіктер жоқ"
 
 #, c-format
 msgid "The identifier '%s' did not match any users in your Sametime community."
 msgstr ""
 
 msgid "No Matches"
-msgstr ""
+msgstr "Сәйкестіктер жоқ"
 
 msgid "Search for a user"
 msgstr ""
@@ -8046,7 +8012,7 @@ msgid "User %s is not present in the network"
 msgstr ""
 
 msgid "Key Agreement"
-msgstr ""
+msgstr "Кілт туралы келісім"
 
 msgid "Cannot perform the key agreement"
 msgstr ""
@@ -8126,7 +8092,7 @@ msgstr ""
 
 #. Open file selector to select the public key.
 msgid "Open..."
-msgstr ""
+msgstr "Ашу..."
 
 #, c-format
 msgid "The %s buddy is not present in the network"
@@ -8138,7 +8104,7 @@ msgid ""
 msgstr ""
 
 msgid "_Import..."
-msgstr ""
+msgstr "И_мпорттау..."
 
 msgid "Select correct user"
 msgstr ""
@@ -8178,7 +8144,7 @@ msgid "Preferred Language"
 msgstr ""
 
 msgid "Device"
-msgstr ""
+msgstr "Құрылғы"
 
 msgid "Timezone"
 msgstr ""
@@ -9224,7 +9190,7 @@ msgid "Ignore buddy?"
 msgstr ""
 
 msgid "Invalid username or password"
-msgstr ""
+msgstr "Пайдаланушы аты не паролі қате"
 
 msgid ""
 "Your account has been locked due to too many failed login attempts.  Please "
@@ -9312,6 +9278,9 @@ msgstr ""
 msgid "Start Doodling"
 msgstr ""
 
+msgid "Activate which ID?"
+msgstr ""
+
 msgid "Select the ID you want to activate"
 msgstr ""
 
@@ -9381,7 +9350,7 @@ msgid "Latest News"
 msgstr ""
 
 msgid "Home Page"
-msgstr ""
+msgstr "Үй парағы"
 
 msgid "Cool Link 1"
 msgstr ""
@@ -9430,7 +9399,7 @@ msgstr ""
 
 #. -35
 msgid "Not available"
-msgstr ""
+msgstr "Қол жетерлік емес"
 
 msgid ""
 "Unknown error. You may need to logout and wait five minutes before being "
@@ -9494,7 +9463,7 @@ msgid "_Instance:"
 msgstr ""
 
 msgid "_Recipient:"
-msgstr ""
+msgstr "А_лушы:"
 
 #, c-format
 msgid "Attempt to subscribe to %s,%s,%s failed"
@@ -9615,10 +9584,10 @@ msgstr ""
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
 #.
 msgid "_Yes"
-msgstr ""
+msgstr "_Иә"
 
 msgid "_No"
-msgstr ""
+msgstr "Ж_оқ"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
@@ -9628,7 +9597,7 @@ msgstr ""
 #. * buttons.
 #.
 msgid "_Accept"
-msgstr ""
+msgstr "Қ_абылдау"
 
 #. *
 #. * The default message to use when the user becomes auto-away.
@@ -9641,7 +9610,7 @@ msgstr ""
 
 #, c-format
 msgid "%s is now known as %s.\n"
-msgstr ""
+msgstr "%s енді %s ретінде белгілі.\n"
 
 #, c-format
 msgid ""
@@ -9736,43 +9705,37 @@ msgid "Calculating..."
 msgstr ""
 
 msgid "Unknown."
-msgstr ""
+msgstr "Белгісіз."
 
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d күн"
 
 #, c-format
 msgid "%s, %d hour"
 msgid_plural "%s, %d hours"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%s, %d сағат"
 
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d сағат"
 
 #, c-format
 msgid "%s, %d minute"
 msgid_plural "%s, %d minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%s, %d минут"
 
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d минут"
 
 #, c-format
 msgid "Could not open %s: Redirected too many times"
@@ -9822,11 +9785,11 @@ msgstr ""
 
 #. 10060
 msgid "Connection timed out."
-msgstr ""
+msgstr "Байланыс уақыты біткен."
 
 #. 10061
 msgid "Connection refused."
-msgstr ""
+msgstr "Байланыс үзілді."
 
 #. 10048
 msgid "Address already in use."
@@ -9860,7 +9823,7 @@ msgid "Pro_tocol:"
 msgstr ""
 
 msgid "_Username:"
-msgstr ""
+msgstr "Па_йдаланушы аты:"
 
 msgid "Remember pass_word"
 msgstr ""
@@ -9922,10 +9885,10 @@ msgid "Proxy _type:"
 msgstr ""
 
 msgid "_Host:"
-msgstr ""
+msgstr "_Хост:"
 
 msgid "_Port:"
-msgstr ""
+msgstr "_Порт:"
 
 msgid "Pa_ssword:"
 msgstr ""
@@ -9943,10 +9906,10 @@ msgid "An account already exists with the specified criteria."
 msgstr ""
 
 msgid "Add Account"
-msgstr ""
+msgstr "Тіркелгіні қосу"
 
 msgid "_Basic"
-msgstr ""
+msgstr "Қ_арапайым"
 
 msgid "Create _this new account on the server"
 msgstr ""
@@ -9955,7 +9918,7 @@ msgid "P_roxy"
 msgstr ""
 
 msgid "Enabled"
-msgstr ""
+msgstr "Іске қосулы"
 
 msgid "Protocol"
 msgstr ""
@@ -9988,7 +9951,7 @@ msgstr ""
 
 #. Buddy List
 msgid "Background Color"
-msgstr ""
+msgstr "Фон түсі"
 
 msgid "The background color for the buddy list"
 msgstr ""
@@ -10107,7 +10070,6 @@ msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
 "You currently have %d contacts named %s. Would you like to merge them?"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid ""
 "Merging these contacts will cause them to share a single entry on the buddy "
@@ -10130,13 +10092,13 @@ msgid "Room _List"
 msgstr ""
 
 msgid "_Block"
-msgstr ""
+msgstr "_Блоктау"
 
 msgid "Un_block"
 msgstr ""
 
 msgid "Move to"
-msgstr ""
+msgstr "Қайда жылжыту"
 
 msgid "Get _Info"
 msgstr ""
@@ -10172,7 +10134,7 @@ msgid "_Alias..."
 msgstr ""
 
 msgid "_Remove"
-msgstr ""
+msgstr "Ө_шіру"
 
 msgid "Set Custom Icon"
 msgstr ""
@@ -10190,7 +10152,7 @@ msgid "_Delete Group"
 msgstr ""
 
 msgid "_Rename"
-msgstr ""
+msgstr "Атын ауысты_ру"
 
 #. join button
 msgid "_Join"
@@ -10206,10 +10168,10 @@ msgid "_Edit Settings..."
 msgstr ""
 
 msgid "_Collapse"
-msgstr ""
+msgstr "Бү_ктеу"
 
 msgid "_Expand"
-msgstr ""
+msgstr "Жа_зық қылу"
 
 msgid "/Tools/Mute Sounds"
 msgstr ""
@@ -10355,7 +10317,7 @@ msgstr ""
 
 #, c-format
 msgid "<b>Account:</b> %s"
-msgstr ""
+msgstr "<b>Тіркелгі:</b> %s"
 
 #, c-format
 msgid ""
@@ -10433,7 +10395,6 @@ msgstr ""
 msgid "%d unread message from %s\n"
 msgid_plural "%d unread messages from %s\n"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Manually"
 msgstr ""
@@ -10462,14 +10423,13 @@ msgid "SSL FAQs"
 msgstr ""
 
 msgid "Welcome back!"
-msgstr ""
+msgstr "Қайта келуіңізбен!"
 
 #, c-format
 msgid "%d account was disabled because you signed on from another location:"
 msgid_plural ""
 "%d accounts were disabled because you signed on from another location:"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "<b>Username:</b>"
 msgstr ""
@@ -10839,15 +10799,13 @@ msgstr ""
 msgid "Close Find bar"
 msgstr ""
 
-#, fuzzy
 msgid "Find:"
-msgstr "Սերինոս"
+msgstr ""
 
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Stopped Typing"
 msgstr ""
@@ -10915,7 +10873,7 @@ msgid "Save Debug Log"
 msgstr ""
 
 msgid "Invert"
-msgstr ""
+msgstr "Терістеу"
 
 msgid "Highlight matches"
 msgstr ""
@@ -10930,7 +10888,7 @@ msgid "_Both Icon & Text"
 msgstr ""
 
 msgid "Filter"
-msgstr ""
+msgstr "Сүзгі"
 
 msgid "Right click for more options."
 msgstr ""
@@ -10942,16 +10900,16 @@ msgid "Select the debug filter level."
 msgstr ""
 
 msgid "All"
-msgstr ""
+msgstr "Барлығы"
 
 msgid "Misc"
 msgstr ""
 
 msgid "Warning"
-msgstr ""
+msgstr "Ескерту"
 
 msgid "Error "
-msgstr ""
+msgstr "Қате"
 
 msgid "Fatal Error"
 msgstr ""
@@ -11002,144 +10960,153 @@ msgid "Senior Contributor/QA"
 msgstr ""
 
 msgid "Afrikaans"
-msgstr ""
+msgstr "Африкаанс"
 
 msgid "Arabic"
-msgstr ""
+msgstr "Арабша"
 
 msgid "Assamese"
-msgstr ""
+msgstr "Ассам"
 
 msgid "Asturian"
-msgstr ""
+msgstr "Астурия"
 
 msgid "Belarusian Latin"
 msgstr ""
 
 msgid "Bulgarian"
-msgstr ""
+msgstr "Болгария"
 
 msgid "Bengali"
-msgstr ""
+msgstr "Бенгалдық"
 
 msgid "Bengali-India"
 msgstr ""
 
-msgid "Bosnian"
+msgid "Bodo"
 msgstr ""
 
+msgid "Bosnian"
+msgstr "Босния"
+
 msgid "Catalan"
-msgstr ""
+msgstr "Канада"
 
 msgid "Valencian-Catalan"
 msgstr ""
 
 msgid "Czech"
-msgstr ""
+msgstr "Чех"
 
 msgid "Danish"
-msgstr ""
+msgstr "Дания"
 
 msgid "German"
-msgstr ""
+msgstr "Неміс"
 
 msgid "Dzongkha"
-msgstr ""
+msgstr "Дзонг-кэ"
 
 msgid "Greek"
-msgstr ""
+msgstr "Грек"
 
 msgid "Australian English"
 msgstr ""
 
 msgid "British English"
-msgstr ""
+msgstr "Ұлыбританиялық ағылшын"
 
 msgid "Canadian English"
 msgstr ""
 
 msgid "Esperanto"
-msgstr ""
+msgstr "Эсперанто"
 
 msgid "Spanish"
+msgstr "Испан"
+
+msgid "Argentine Spanish"
 msgstr ""
 
 msgid "Estonian"
-msgstr ""
+msgstr "Эстон"
 
 msgid "Basque"
 msgstr ""
 
 msgid "Persian"
-msgstr ""
+msgstr "Парсы"
 
 msgid "Finnish"
-msgstr ""
+msgstr "Финн"
 
 msgid "French"
-msgstr ""
+msgstr "Француз"
 
 msgid "Irish"
-msgstr ""
+msgstr "Ирланд"
 
 msgid "Galician"
-msgstr ""
+msgstr "Галиция"
 
 msgid "Gujarati"
-msgstr ""
+msgstr "Гуджарати"
 
 msgid "Gujarati Language Team"
 msgstr ""
 
 msgid "Hebrew"
-msgstr ""
+msgstr "Иврит"
 
 msgid "Hindi"
-msgstr ""
+msgstr "Хинди"
 
 msgid "Croatian"
-msgstr ""
+msgstr "Хорват"
 
 msgid "Hungarian"
-msgstr ""
-
-msgid "Armenian"
-msgstr ""
+msgstr "Венгр"
 
 msgid "Indonesian"
-msgstr ""
+msgstr "Индонезия"
 
 msgid "Italian"
-msgstr ""
+msgstr "Италия"
 
 msgid "Japanese"
-msgstr ""
+msgstr "Жапон"
 
 msgid "Georgian"
-msgstr ""
+msgstr "Грузин"
 
 msgid "Ubuntu Georgian Translators"
 msgstr ""
 
+msgid "Kazakh"
+msgstr "Қазақ"
+
 msgid "Khmer"
-msgstr ""
+msgstr "Кхмер"
 
 msgid "Kannada"
-msgstr ""
+msgstr "Каннада"
 
 msgid "Kannada Translation team"
 msgstr ""
 
 msgid "Korean"
+msgstr "Корея"
+
+msgid "Kashmiri"
 msgstr ""
 
 msgid "Kurdish"
-msgstr ""
-
-msgid "Lao"
-msgstr ""
+msgstr "Курд"
 
 msgid "Lithuanian"
+msgstr "Литва"
+
+msgid "Latvian"
 msgstr ""
 
 msgid "Maithili"
@@ -11149,118 +11116,133 @@ msgid "Meadow Mari"
 msgstr ""
 
 msgid "Macedonian"
-msgstr ""
+msgstr "Македония"
 
 msgid "Malayalam"
-msgstr ""
+msgstr "Малайялам"
 
 msgid "Mongolian"
-msgstr ""
+msgstr "Моңғол"
 
 msgid "Marathi"
-msgstr ""
-
-msgid "Malay"
-msgstr ""
+msgstr "Маратхи"
 
 msgid "Burmese"
-msgstr ""
+msgstr "Бирма"
 
 msgid "Bokmål Norwegian"
-msgstr ""
+msgstr "Норвегиялық Букмол"
 
 msgid "Nepali"
-msgstr ""
+msgstr "Непал"
 
 msgid "Dutch, Flemish"
 msgstr ""
 
 msgid "Norwegian Nynorsk"
-msgstr ""
+msgstr "Норвегиялық Нюнорск"
 
 msgid "Occitan"
-msgstr ""
+msgstr "Окситан"
 
 msgid "Oriya"
-msgstr ""
+msgstr "Ория"
 
 msgid "Punjabi"
-msgstr ""
+msgstr "Панджаби"
 
 msgid "Polish"
-msgstr ""
+msgstr "Польша"
 
 msgid "Portuguese"
-msgstr ""
+msgstr "Португал"
 
 msgid "Portuguese-Brazil"
 msgstr ""
 
 msgid "Pashto"
-msgstr ""
+msgstr "Пушту"
 
 msgid "Romanian"
-msgstr ""
+msgstr "Румын"
 
 msgid "Russian"
+msgstr "Орыс"
+
+msgid "Sindhi"
 msgstr ""
 
 msgid "Slovak"
-msgstr ""
+msgstr "Словак"
 
 msgid "Slovenian"
-msgstr ""
+msgstr "Словен"
 
 msgid "Albanian"
-msgstr ""
+msgstr "Албан"
 
 msgid "Serbian"
-msgstr ""
+msgstr "Суринам"
 
 msgid "Serbian Latin"
 msgstr ""
 
 msgid "Sinhala"
-msgstr ""
+msgstr "Сингальдық"
 
 msgid "Swedish"
-msgstr ""
+msgstr "Сальвадор"
 
 msgid "Swahili"
-msgstr ""
+msgstr "Суахили"
 
 msgid "Tamil"
-msgstr ""
+msgstr "Тамильдік"
 
 msgid "Telugu"
-msgstr ""
+msgstr "Телугу"
 
 msgid "Thai"
+msgstr "Тай"
+
+msgid "Tatar"
 msgstr ""
 
 msgid "Ukranian"
 msgstr ""
 
 msgid "Urdu"
+msgstr "Урду"
+
+msgid "Uzbek"
 msgstr ""
 
 msgid "Vietnamese"
-msgstr ""
+msgstr "Вьетнам"
 
 msgid "Simplified Chinese"
-msgstr ""
+msgstr "Қытай оңайлатылған"
 
 msgid "Hong Kong Chinese"
 msgstr ""
 
 msgid "Traditional Chinese"
-msgstr ""
+msgstr "Қытай әдеттегі"
 
 msgid "Amharic"
-msgstr ""
+msgstr "Амхар"
+
+msgid "Armenian"
+msgstr "Армян"
+
+msgid "Lao"
+msgstr "Лао"
+
+msgid "Malay"
+msgstr "Малай"
 
 msgid "Turkish"
-msgstr ""
+msgstr "Түрік"
 
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr ""
@@ -11295,7 +11277,7 @@ msgstr ""
 
 #, c-format
 msgid "About %s"
-msgstr ""
+msgstr "%s туралы"
 
 msgid "Build Information"
 msgstr ""
@@ -11327,20 +11309,19 @@ msgstr ""
 msgid "Past Translators"
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Translator Information"
-msgstr "%s. Ավելի շատ ինֆորմացիայի համար հավագեք `%s -h'.\n"
+msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Plugin Information"
-msgstr "%s. Ավելի շատ ինֆորմացիայի համար հավագեք `%s -h'.\n"
+msgstr ""
 
-#, fuzzy
 msgid "Plugin Information"
-msgstr "%s. Ավելի շատ ինֆորմացիայի համար հավագեք `%s -h'.\n"
+msgstr ""
 
 msgid "_Name"
-msgstr ""
+msgstr "_Аты"
 
 msgid "_Account"
 msgstr ""
@@ -11383,7 +11364,6 @@ msgid_plural ""
 "You are about to remove the contact containing %s and %d other buddies from "
 "your buddy list.  Do you want to continue?"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Remove Contact"
 msgstr ""
@@ -11454,7 +11434,7 @@ msgid "New _Message..."
 msgstr ""
 
 msgid "_Accounts"
-msgstr ""
+msgstr "Тір_келгілер"
 
 msgid "Plu_gins"
 msgstr ""
@@ -11469,10 +11449,10 @@ msgid "_Blink on New Message"
 msgstr ""
 
 msgid "_Quit"
-msgstr ""
+msgstr "_Шығу"
 
 msgid "Not started"
-msgstr ""
+msgstr "Басталмаған"
 
 msgid "<b>Receiving As:</b>"
 msgstr ""
@@ -11505,13 +11485,13 @@ msgid "Process returned error code %d"
 msgstr ""
 
 msgid "Filename:"
-msgstr ""
+msgstr "Файл аты:"
 
 msgid "Local File:"
 msgstr ""
 
 msgid "Speed:"
-msgstr ""
+msgstr "Жылдамдық:"
 
 msgid "Time Elapsed:"
 msgstr ""
@@ -11630,7 +11610,7 @@ msgid "_Add Custom Smiley..."
 msgstr ""
 
 msgid "Select Font"
-msgstr ""
+msgstr "Қаріпті таңдау"
 
 msgid "Select Text Color"
 msgstr ""
@@ -11653,17 +11633,17 @@ msgid "Please enter the URL of the link that you want to insert."
 msgstr ""
 
 msgid "Insert Link"
-msgstr ""
+msgstr "Сiлтеменi кiрiстiру"
 
 msgid "_Insert"
-msgstr ""
+msgstr "_Кірістіру"
 
 #, c-format
 msgid "Failed to store image: %s\n"
 msgstr ""
 
 msgid "Insert Image"
-msgstr ""
+msgstr "Суретті кірістіру"
 
 #, c-format
 msgid ""
@@ -11681,7 +11661,7 @@ msgid "This theme has no available smileys."
 msgstr ""
 
 msgid "_Font"
-msgstr ""
+msgstr "Қа_ріп"
 
 msgid "Group Items"
 msgstr ""
@@ -11690,16 +11670,16 @@ msgid "Ungroup Items"
 msgstr ""
 
 msgid "Bold"
-msgstr ""
+msgstr "Жуан"
 
 msgid "Italic"
-msgstr ""
+msgstr "Көлбеу"
 
 msgid "Underline"
-msgstr ""
+msgstr "Асты сызылған"
 
 msgid "Strikethrough"
-msgstr ""
+msgstr "Сызып тасталған"
 
 msgid "Increase Font Size"
 msgstr ""
@@ -11726,13 +11706,13 @@ msgid "Send Attention"
 msgstr ""
 
 msgid "<b>_Bold</b>"
-msgstr ""
+msgstr "<b>_Жуан</b>"
 
 msgid "<i>_Italic</i>"
-msgstr ""
+msgstr "<i>Кө_лбеу</i>"
 
 msgid "<u>_Underline</u>"
-msgstr ""
+msgstr "<u>Асты сы_зылған</u>"
 
 msgid "<span strikethrough='true'>Strikethrough</span>"
 msgstr ""
@@ -11759,10 +11739,10 @@ msgid "Bac_kground color"
 msgstr ""
 
 msgid "_Image"
-msgstr ""
+msgstr "_Сурет"
 
 msgid "_Link"
-msgstr ""
+msgstr "Сі_лтеме"
 
 msgid "_Horizontal rule"
 msgstr ""
@@ -11911,13 +11891,11 @@ msgstr ""
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "<b>%d new email.</b>"
 msgid_plural "<b>%d new emails.</b>"
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "The browser command \"%s\" is invalid."
@@ -12317,21 +12295,17 @@ msgstr ""
 msgid "_TURN server:"
 msgstr ""
 
-#, fuzzy
 msgid "_UDP Port:"
-msgstr "Դասակարգել"
+msgstr ""
 
-#, fuzzy
 msgid "T_CP Port:"
-msgstr "Դասակարգել"
+msgstr ""
 
-#, fuzzy
 msgid "Use_rname:"
-msgstr "Օգտագործողի անունը։"
+msgstr ""
 
-#, fuzzy
 msgid "Pass_word:"
-msgstr "Գաղտնաբառ։"
+msgstr ""
 
 msgid "Seamonkey"
 msgstr ""
@@ -12438,13 +12412,11 @@ msgstr ""
 msgid "No proxy"
 msgstr ""
 
-#, fuzzy
 msgid "P_ort:"
-msgstr "Դասակարգել"
+msgstr ""
 
-#, fuzzy
 msgid "User_name:"
-msgstr "Օգտագործողի անունը։"
+msgstr ""
 
 msgid "Log _format:"
 msgstr ""
@@ -12847,12 +12819,11 @@ msgstr ""
 msgid "_Save File"
 msgstr ""
 
-#, fuzzy
 msgid "Do you really want to clear?"
-msgstr "Դուք համոզված եք, որ ցանկանում եք ջնջել %s?"
+msgstr ""
 
 msgid "Select color"
-msgstr ""
+msgstr "Түсті тандаңыз"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -12863,7 +12834,7 @@ msgid "_Alias"
 msgstr ""
 
 msgid "Close _tabs"
-msgstr ""
+msgstr "Бе_ттерді жабу"
 
 msgid "_Get Info"
 msgstr ""
@@ -12872,7 +12843,7 @@ msgid "_Invite"
 msgstr ""
 
 msgid "_Modify..."
-msgstr ""
+msgstr "Ө_згерту..."
 
 msgid "_Add..."
 msgstr ""
@@ -13677,9 +13648,8 @@ msgid ""
 "Icon for Unknown person"
 msgstr ""
 
-#, fuzzy
 msgid "Icon for Chat"
-msgstr "Միանալ զրույցին"
+msgstr ""
 
 msgid "Ignored"
 msgstr ""
@@ -14094,9 +14064,8 @@ msgid "GTK+ Runtime (required if not present)"
 msgstr ""
 
 #. Installer Subsection Text
-#, fuzzy
 msgid "Shortcuts"
-msgstr "Դասակարգել"
+msgstr "Жарлықтар"
 
 #. Installer Subsection Text
 msgid "Desktop"

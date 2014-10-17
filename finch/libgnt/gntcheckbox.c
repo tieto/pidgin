@@ -52,7 +52,7 @@ gnt_check_box_draw(GntWidget *widget)
 
 	wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_NORMAL));
 	mvwaddstr(widget->window, 0, 4, C_(GNT_BUTTON(cb)->priv->text));
-	wmove(widget->window, 0, 1);
+	(void)wmove(widget->window, 0, 1);
 
 	GNTDEBUG;
 }

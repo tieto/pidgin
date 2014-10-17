@@ -26,6 +26,9 @@
 /* always defined to indicate that i18n is enabled */
 #undef ENABLE_NLS
 
+/* use the given file as GnuTLS default trust store */
+#undef GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE
+
 /* Define if gst_registry_fork_set_enabled exists */
 #undef GST_CAN_DISABLE_FORKING
 
@@ -109,6 +112,12 @@
 /* Define if you have GnuTLS */
 #undef HAVE_GNUTLS
 
+/* Defined if GnuTLS >= 2.10.0 is available. */
+#undef HAVE_GNUTLS_2_10
+
+/* gnutls contains the gnutls_certificate_set_x509_system_trust function */
+#undef HAVE_GNUTLS_CERTIFICATE_SET_X509_SYSTEM_TRUST
+
 /* Define if your gnutls has the GNUTLS_CERT_INSECURE_ALGORITHM flag */
 #undef HAVE_GNUTLS_CERT_INSECURE_ALGORITHM
 
@@ -148,26 +157,17 @@
 /* Define if your <locale.h> file defines LC_MESSAGES. */
 #undef HAVE_LC_MESSAGES
 
-/* Define to 1 if you have the `db' library (-ldb). */
-#undef HAVE_LIBDB
-
-/* Define to 1 if you have libgadu. */
+/* Linked with external libgadu */
 #undef HAVE_LIBGADU
 
 /* Define to 1 if you have the `nsl' library (-lnsl). */
 #undef HAVE_LIBNSL
-
-/* Define to 1 if you have the `pthread' library (-lpthread). */
-#undef HAVE_LIBPTHREAD
 
 /* Define to 1 if you have the `resolv' library (-lresolv). */
 #undef HAVE_LIBRESOLV
 
 /* Define to 1 if you have the `socket' library (-lsocket). */
 #undef HAVE_LIBSOCKET
-
-/* Define to 1 if you have the `util' library (-lutil). */
-#undef HAVE_LIBUTIL
 
 /* Define to 1 if you have the <locale.h> header file. */
 #undef HAVE_LOCALE_H
@@ -390,9 +390,6 @@
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #undef LT_OBJDIR
-
-/* Define to 1 if your C compiler doesn't accept -c and -o together. */
-#undef NO_MINUS_C_MINUS_O
 
 /* Define to 1 if you don't have wide-character support. */
 #undef NO_WIDECHAR

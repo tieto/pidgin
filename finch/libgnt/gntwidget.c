@@ -326,6 +326,8 @@ gnt_widget_destroy(GntWidget *obj)
 void
 gnt_widget_show(GntWidget *widget)
 {
+	g_return_if_fail(widget != NULL);
+
 	gnt_widget_draw(widget);
 	gnt_screen_occupy(widget);
 }

@@ -83,7 +83,8 @@ purple_perl_bless_object(void *object, const char *stash_name)
 	stash = gv_stashpv(stash_name, 1);
 
 	hv = newHV();
-	hv_store(hv, "_purple", 7, create_sv_ptr(object), 0);
+	if (hv_store(hv, "_purple", 7, create_sv_ptr(object), 0) == NULL)
+		purple_debug_error("perl", "hv_store failed\n");
 
 	return sv_bless(newRV_noinc((SV *)hv), stash);
 }
@@ -191,7 +192,8 @@ execute_perl(const char *function, int argc, char **args)
 		if (args[i]) {
 			sv_args[i] = sv_2mortal(newSVpv(args[i], 0));
 			XPUSHs(sv_args[i]);
-		}
+		} else
+			sv_args[i] = NULL;
 	}
 
 	PUTBACK;

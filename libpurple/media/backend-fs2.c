@@ -179,6 +179,66 @@ static void
 purple_media_backend_fs2_init(PurpleMediaBackendFs2 *self)
 {}
 
+static FsCandidateType
+purple_media_candidate_type_to_fs(PurpleMediaCandidateType type)
+{
+	switch (type) {
+		case PURPLE_MEDIA_CANDIDATE_TYPE_HOST:
+			return FS_CANDIDATE_TYPE_HOST;
+		case PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX:
+			return FS_CANDIDATE_TYPE_SRFLX;
+		case PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX:
+			return FS_CANDIDATE_TYPE_PRFLX;
+		case PURPLE_MEDIA_CANDIDATE_TYPE_RELAY:
+			return FS_CANDIDATE_TYPE_RELAY;
+		case PURPLE_MEDIA_CANDIDATE_TYPE_MULTICAST:
+			return FS_CANDIDATE_TYPE_MULTICAST;
+	}
+	g_return_val_if_reached(FS_CANDIDATE_TYPE_HOST);
+}
+
+static PurpleMediaCandidateType
+purple_media_candidate_type_from_fs(FsCandidateType type)
+{
+	switch (type) {
+		case FS_CANDIDATE_TYPE_HOST:
+			return PURPLE_MEDIA_CANDIDATE_TYPE_HOST;
+		case FS_CANDIDATE_TYPE_SRFLX:
+			return PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX;
+		case FS_CANDIDATE_TYPE_PRFLX:
+			return PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX;
+		case FS_CANDIDATE_TYPE_RELAY:
+			return PURPLE_MEDIA_CANDIDATE_TYPE_RELAY;
+		case FS_CANDIDATE_TYPE_MULTICAST:
+			return PURPLE_MEDIA_CANDIDATE_TYPE_MULTICAST;
+	}
+	g_return_val_if_reached(PURPLE_MEDIA_CANDIDATE_TYPE_HOST);
+}
+
+static FsNetworkProtocol
+purple_media_network_protocol_to_fs(PurpleMediaNetworkProtocol protocol)
+{
+	switch (protocol) {
+		case PURPLE_MEDIA_NETWORK_PROTOCOL_UDP:
+			return FS_NETWORK_PROTOCOL_UDP;
+		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP:
+			return FS_NETWORK_PROTOCOL_TCP;
+	}
+	g_return_val_if_reached(FS_NETWORK_PROTOCOL_TCP);
+}
+
+static PurpleMediaNetworkProtocol
+purple_media_network_protocol_from_fs(FsNetworkProtocol protocol)
+{
+	switch (protocol) {
+		case FS_NETWORK_PROTOCOL_UDP:
+			return PURPLE_MEDIA_NETWORK_PROTOCOL_UDP;
+		case FS_NETWORK_PROTOCOL_TCP:
+			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP;
+	}
+	g_return_val_if_reached(PURPLE_MEDIA_NETWORK_PROTOCOL_TCP);
+}
+
 static gboolean
 event_probe_cb(GstPad *srcpad, GstEvent *event, gboolean release_pad)
 {
@@ -522,8 +582,8 @@ candidate_to_fs(PurpleMediaCandidate *candidate)
 			NULL);
 
 	fscandidate = fs_candidate_new(foundation,
-			component_id, type,
-			proto, ip, port);
+			component_id, purple_media_candidate_type_to_fs(type),
+			purple_media_network_protocol_to_fs(proto), ip, port);
 
 	fscandidate->base_ip = base_ip;
 	fscandidate->base_port = base_port;
@@ -560,8 +620,10 @@ candidate_from_fs(FsCandidate *fscandidate)
 		return NULL;
 
 	candidate = purple_media_candidate_new(fscandidate->foundation,
-		fscandidate->component_id, fscandidate->type,
-		fscandidate->proto, fscandidate->ip, fscandidate->port);
+		fscandidate->component_id,
+		purple_media_candidate_type_from_fs(fscandidate->type),
+		purple_media_network_protocol_from_fs(fscandidate->proto),
+		fscandidate->ip, fscandidate->port);
 	g_object_set(candidate,
 			"base-ip", fscandidate->base_ip,
 			"base-port", fscandidate->base_port,
@@ -1855,7 +1917,9 @@ append_relay_info(GValueArray *relay_info, const gchar *ip, gint port,
 		memset(&value, 0, sizeof(GValue));
 		g_value_init(&value, GST_TYPE_STRUCTURE);
 		gst_value_set_structure(&value, turn_setup);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		relay_info = g_value_array_append(relay_info, &value);
+G_GNUC_END_IGNORE_DEPRECATIONS
 		gst_structure_free(turn_setup);
 	}
 
@@ -1950,7 +2014,9 @@ create_stream(PurpleMediaBackendFs2 *self,
 	}
 
 	if (turn_ip && !strcmp("nice", transmitter) && !got_turn_from_prpl) {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		GValueArray *relay_info = g_value_array_new(0);
+G_GNUC_END_IGNORE_DEPRECATIONS
 		gint port;
 		const gchar *username =	purple_prefs_get_string(
 				"/purple/network/turn_username");
@@ -1977,11 +2043,11 @@ create_stream(PurpleMediaBackendFs2 *self,
 		purple_debug_info("backend-fs2",
 			"Setting relay-info on new stream\n");
 		_params[_num_params].name = "relay-info";
-		g_value_init(&_params[_num_params].value,
-			G_TYPE_VALUE_ARRAY);
-		g_value_set_boxed(&_params[_num_params].value,
-			relay_info);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+		g_value_init(&_params[_num_params].value, G_TYPE_VALUE_ARRAY);
+		g_value_set_boxed(&_params[_num_params].value, relay_info);
 		g_value_array_free(relay_info);
+G_GNUC_END_IGNORE_DEPRECATIONS
 		_num_params++;
 	}
 

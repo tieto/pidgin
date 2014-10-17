@@ -526,6 +526,19 @@ strbreakup (const char *string,
 	return str_array;
 }
 
+static GtkTextSearchFlags
+_source_flags_to_text_flags(GtkSourceSearchFlags flags)
+{
+	GtkTextSearchFlags text_flags = 0;
+
+	if (flags & GTK_SOURCE_SEARCH_VISIBLE_ONLY)
+		text_flags |= GTK_TEXT_SEARCH_VISIBLE_ONLY;
+	if (flags & GTK_SOURCE_SEARCH_TEXT_ONLY)
+		text_flags |= GTK_TEXT_SEARCH_TEXT_ONLY;
+
+	return text_flags;
+}
+
 /**
  * gtk_source_iter_forward_search:
  * @iter: start of search.
@@ -576,7 +589,7 @@ gtk_source_iter_forward_search (const GtkTextIter   *iter,
 	g_return_val_if_fail (str != NULL, FALSE);
 
 	if ((flags & GTK_SOURCE_SEARCH_CASE_INSENSITIVE) == 0)
-		return gtk_text_iter_forward_search (iter, str, flags,
+		return gtk_text_iter_forward_search (iter, str, _source_flags_to_text_flags(flags),
 						     match_start, match_end,
 						     limit);
 
@@ -679,7 +692,7 @@ gtk_source_iter_backward_search (const GtkTextIter   *iter,
 	g_return_val_if_fail (str != NULL, FALSE);
 
 	if ((flags & GTK_SOURCE_SEARCH_CASE_INSENSITIVE) == 0)
-		return gtk_text_iter_backward_search (iter, str, flags,
+		return gtk_text_iter_backward_search (iter, str, _source_flags_to_text_flags(flags),
 						      match_start, match_end,
 						      limit);
 

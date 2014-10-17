@@ -27,6 +27,7 @@
 
 #include "buddy.h"
 #include "chat.h"
+#include "facebook_roster.h"
 #include "google/google.h"
 #include "google/google_roster.h"
 #include "presence.h"
@@ -114,7 +115,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 
 	if(!groups) {
 		if(!buddies)
-			groups = g_slist_append(groups, g_strdup(_("Buddies")));
+			groups = g_slist_append(groups, g_strdup(JABBER_ROSTER_DEFAULT_GROUP));
 		else {
 			/* TODO: What should we do here? Removing the local buddies
 			 * is wrong, but so is letting the group state get out of sync with
@@ -137,7 +138,15 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		 * to the server, the buddy will be dropped from one of the groups.
 		 * Not optimal, but better than the alternative, I think.
 		 */
-		if((l = g_slist_find_custom(groups, purple_group_get_name(g), (GCompareFunc)purple_utf8_strcasecmp))) {
+		l = g_slist_find_custom(groups, purple_group_get_name(g),
+			(GCompareFunc)purple_utf8_strcasecmp);
+		if (!l && g_strcmp0(purple_group_get_name(g), _("Buddies")) == 0) {
+			l = g_slist_find_custom(groups, JABBER_ROSTER_DEFAULT_GROUP,
+				(GCompareFunc)purple_utf8_strcasecmp);
+		}
+		/* XXX: in 3.0.0 we have localized default name here too */
+
+		if (l) {
 			/* The buddy is already on the local list. Update info. */
 			const char *servernick, *balias;
 
@@ -156,7 +165,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 			purple_debug_info("jabber", "jabber_roster_parse(): Removing %s "
 			                  "from group '%s' on the local list\n",
 			                  purple_buddy_get_name(b),
-			                  purple_group_get_name(g));
+			                  jabber_roster_group_get_global_name(g));
 			purple_blist_remove_buddy(b);
 		}
 	}
@@ -203,10 +212,17 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 
 	js->currently_parsing_roster_push = TRUE;
 
+	if (js->server_caps & JABBER_CAP_FACEBOOK)
+		jabber_facebook_roster_cleanup(js, query);
+
 	for(item = xmlnode_get_child(query, "item"); item; item = xmlnode_get_next_twin(item))
 	{
 		const char *jid, *name, *subscription, *ask;
 		JabberBuddy *jb;
+
+		if (js->server_caps & JABBER_CAP_FACEBOOK)
+			if (!jabber_facebook_roster_incoming(js, item))
+				continue;
 
 		subscription = xmlnode_get_attrib(item, "subscription");
 		jid = xmlnode_get_attrib(item, "jid");
@@ -251,9 +267,12 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 			for(group = xmlnode_get_child(item, "group"); group; group = xmlnode_get_next_twin(group)) {
 				char *group_name = xmlnode_get_data(group);
 
-				if (group_name == NULL || *group_name == '\0')
+				if (group_name == NULL || *group_name == '\0' ||
+					g_strcmp0(group_name, _("Buddies")) == 0)
+				{
 					/* Changing this string?  Look in add_purple_buddy_to_groups */
-					group_name = g_strdup(_("Buddies"));
+					group_name = g_strdup(JABBER_ROSTER_DEFAULT_GROUP);
+				}
 
 				/*
 				 * See the note in add_purple_buddy_to_groups; the core handles
@@ -322,7 +341,8 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 		while(buddies) {
 			b = buddies->data;
 			g = purple_buddy_get_group(b);
-			groups = g_slist_append(groups, (char *)purple_group_get_name(g));
+			groups = g_slist_append(groups,
+				(char *)jabber_roster_group_get_global_name(g));
 			buddies = g_slist_remove(buddies, b);
 		}
 
@@ -440,8 +460,6 @@ void jabber_roster_group_change(PurpleConnection *gc, const char *name,
 {
 	GSList *buddies, *groups = NULL;
 	PurpleBuddy *b;
-	PurpleGroup *g;
-	const char *gname;
 
 	if(!old_group || !new_group || !strcmp(old_group, new_group))
 		return;
@@ -449,12 +467,7 @@ void jabber_roster_group_change(PurpleConnection *gc, const char *name,
 	buddies = purple_find_buddies(gc->account, name);
 	while(buddies) {
 		b = buddies->data;
-		g = purple_buddy_get_group(b);
-		gname = purple_group_get_name(g);
-		if(!strcmp(gname, old_group))
-			groups = g_slist_append(groups, (char*)new_group); /* ick */
-		else
-			groups = g_slist_append(groups, (char*)gname);
+		groups = g_slist_append(groups, (char*)new_group);
 		buddies = g_slist_remove(buddies, b);
 	}
 
@@ -468,7 +481,7 @@ void jabber_roster_group_rename(PurpleConnection *gc, const char *old_name,
 		PurpleGroup *group, GList *moved_buddies)
 {
 	GList *l;
-	const char *gname = purple_group_get_name(group);
+	const char *gname = jabber_roster_group_get_global_name(group);
 	for(l = moved_buddies; l; l = l->next) {
 		PurpleBuddy *buddy = l->data;
 		jabber_roster_group_change(gc, purple_buddy_get_name(buddy), old_name, gname);
@@ -489,12 +502,14 @@ void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		while(buddies) {
 			tmpbuddy = buddies->data;
 			tmpgroup = purple_buddy_get_group(tmpbuddy);
-			groups = g_slist_append(groups, (char *)purple_group_get_name(tmpgroup));
+			groups = g_slist_append(groups,
+				(char *)jabber_roster_group_get_global_name(tmpgroup));
 			buddies = g_slist_remove(buddies, tmpbuddy);
 		}
 
-		purple_debug_info("jabber", "jabber_roster_remove_buddy(): Removing %s from %s\n",
-		                  purple_buddy_get_name(buddy), purple_group_get_name(group));
+		purple_debug_info("jabber", "jabber_roster_remove_buddy(): "
+			"Removing %s from %s\n", purple_buddy_get_name(buddy),
+			jabber_roster_group_get_global_name(group));
 
 		jabber_roster_update(gc->proto_data, name, groups);
 	} else {
@@ -511,4 +526,21 @@ void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 
 		jabber_iq_send(iq);
 	}
+}
+
+const gchar *
+jabber_roster_group_get_global_name(PurpleGroup *group)
+{
+	const gchar *name = NULL;
+
+	if (group)
+		name = purple_group_get_name(group);
+
+	if (name == NULL)
+		name = JABBER_ROSTER_DEFAULT_GROUP;
+	else if (g_strcmp0(name, _("Buddies")) == 0)
+		name = JABBER_ROSTER_DEFAULT_GROUP;
+	/* XXX: in 3.0.0 we have localized default name here too */
+
+	return name;
 }

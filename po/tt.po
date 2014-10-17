@@ -1,31 +1,32 @@
-# translation of pidgin.po to Malay
-# Copyright (C) 2011
-# This file is distributed under the same license as the pidgin package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 #
-# Muhammad Najmi bin Ahmad Zabidi <najmi.zabidi@gmail.com>, 2011.
+# Translators:
+# v_ildar <v_ildar@bk.ru>, 2014
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2011-05-25 18:42+0800\n"
-"Last-Translator: Muhammad Najmi bin Ahmad Zabidi <najmi.zabidi@gmail.com>\n"
-"Language-Team: Malay <kedidiemas@yahoogroups.com>\n"
-"Language: ms\n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"Language-Team: Tatar (http://www.transifex.com/projects/p/pidgin/language/"
+"tt/)\n"
+"Language: tt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 1.2\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
 msgid "Finch"
-msgstr "Finch"
+msgstr ""
 
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "%s. Cuba `%s -h' untuk maklumat lanjut.\n"
+msgstr ""
 
 #, c-format
 msgid ""
@@ -48,16 +49,16 @@ msgstr ""
 
 #. the user did not fill in the captcha
 msgid "Error"
-msgstr "Ralat"
+msgstr "Хата"
 
 msgid "Account was not modified"
-msgstr "Akaun tidak diubah"
+msgstr ""
 
 msgid "Account was not added"
-msgstr "Akaun tidak ditambah"
+msgstr ""
 
 msgid "Username of an account must be non-empty."
-msgstr "Nama pengguna akaun tidak boleh dibiarkan kosong."
+msgstr ""
 
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
@@ -68,48 +69,48 @@ msgid ""
 msgstr ""
 
 msgid "New mail notifications"
-msgstr "Pemberitahuan emel baru"
+msgstr ""
 
 msgid "Remember password"
-msgstr "Ingat kata-laluan"
+msgstr ""
 
 msgid "There are no protocol plugins installed."
-msgstr "Tiada plugin protokol dipasang."
+msgstr ""
 
 msgid "(You probably forgot to 'make install'.)"
-msgstr "(Anda mungkin lupa untuk 'make install'.)"
+msgstr ""
 
 msgid "Modify Account"
-msgstr "Ubah Akaun"
+msgstr ""
 
 msgid "New Account"
-msgstr "Akaun Baru"
+msgstr ""
 
 msgid "Protocol:"
-msgstr "Protokol:"
+msgstr "Протокол:"
 
 msgid "Username:"
-msgstr "Nama pengguna:"
+msgstr ""
 
 msgid "Password:"
-msgstr "Kata laluan:"
+msgstr ""
 
 msgid "Alias:"
-msgstr "Alias:"
+msgstr ""
 
 #. Register checkbox
 msgid "Create this account on the server"
-msgstr "Cipta akaun ini pada pelayan"
+msgstr ""
 
 #. Cancel button
 #. Cancel
 msgid "Cancel"
-msgstr "Batal"
+msgstr ""
 
 #. Save button
 #. Save
 msgid "Save"
-msgstr ""
+msgstr "Саклау"
 
 #, c-format
 msgid "Are you sure you want to delete %s?"
@@ -120,7 +121,7 @@ msgstr ""
 
 #. Delete button
 msgid "Delete"
-msgstr ""
+msgstr "Бетерү"
 
 msgid "Accounts"
 msgstr ""
@@ -130,7 +131,7 @@ msgstr ""
 
 #. Add button
 msgid "Add"
-msgstr ""
+msgstr "Өстәү"
 
 #. Modify button
 msgid "Modify"
@@ -212,23 +213,23 @@ msgid "Please enter buddy information."
 msgstr ""
 
 msgid "Chats"
-msgstr ""
+msgstr "Чатлар"
 
 #. Extract their Name and put it in
 msgid "Name"
-msgstr ""
+msgstr "Исем"
 
 msgid "Alias"
 msgstr ""
 
 msgid "Group"
-msgstr ""
+msgstr "Группа"
 
 msgid "Auto-join"
 msgstr ""
 
 msgid "Add Chat"
-msgstr ""
+msgstr "Чат өстәү"
 
 msgid "You can edit more information from the context menu later."
 msgstr ""
@@ -240,7 +241,7 @@ msgid "You must give a name for the group to add."
 msgstr ""
 
 msgid "Add Group"
-msgstr ""
+msgstr "Группа өстәү"
 
 msgid "Enter the name of the group"
 msgstr ""
@@ -334,10 +335,10 @@ msgid "On Mobile"
 msgstr ""
 
 msgid "New..."
-msgstr ""
+msgstr "Яңа..."
 
 msgid "Saved..."
-msgstr ""
+msgstr "Сакланган..."
 
 msgid "Plugins"
 msgstr ""
@@ -611,7 +612,6 @@ msgstr ""
 msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Supported debug options are: plugins version"
 msgstr ""
@@ -705,7 +705,6 @@ msgstr ""
 msgid "File Transfers - %d%% of %d file"
 msgid_plural "File Transfers - %d%% of %d files"
 msgstr[0] ""
-msgstr[1] ""
 
 #. Create the window.
 msgid "File Transfers"
@@ -715,13 +714,13 @@ msgid "Progress"
 msgstr ""
 
 msgid "Filename"
-msgstr ""
+msgstr "Файл исеме"
 
 msgid "Size"
-msgstr ""
+msgstr "Зурлык"
 
 msgid "Speed"
-msgstr ""
+msgstr "Тизлек"
 
 msgid "Remaining"
 msgstr ""
@@ -754,7 +753,7 @@ msgid "%.2f KiB/s"
 msgstr ""
 
 msgid "Sent"
-msgstr ""
+msgstr "Җибәрелгән"
 
 msgid "Received"
 msgstr ""
@@ -767,7 +766,7 @@ msgid "The file was saved as %s."
 msgstr ""
 
 msgid "Sending"
-msgstr ""
+msgstr "Җибәрелә"
 
 msgid "Receiving"
 msgstr ""
@@ -870,7 +869,6 @@ msgstr ""
 msgid "%s (%s) has %d new message."
 msgid_plural "%s (%s) has %d new messages."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "New Mail"
 msgstr ""
@@ -883,7 +881,7 @@ msgid "Buddy Information"
 msgstr ""
 
 msgid "Continue"
-msgstr ""
+msgstr "Дәвам итү"
 
 msgid "IM"
 msgstr ""
@@ -892,7 +890,7 @@ msgid "Invite"
 msgstr ""
 
 msgid "(none)"
-msgstr ""
+msgstr "(һичбер)"
 
 #. XXX: The following expects that finch_notify_message gets called. This
 #. * may not always happen, e.g. when another plugin sets its own
@@ -901,7 +899,7 @@ msgid "URI"
 msgstr ""
 
 msgid "ERROR"
-msgstr ""
+msgstr "ХАТА"
 
 msgid "loading plugin failed"
 msgstr ""
@@ -1150,10 +1148,10 @@ msgid "Not implemented yet."
 msgstr ""
 
 msgid "Save File..."
-msgstr ""
+msgstr "Файл сайлау..."
 
 msgid "Open File..."
-msgstr ""
+msgstr "Файл ачу..."
 
 msgid "Choose Location..."
 msgstr ""
@@ -1220,7 +1218,7 @@ msgid "Profiles"
 msgstr ""
 
 msgid "Automatic"
-msgstr ""
+msgstr "Автоматик"
 
 msgid "Console Beep"
 msgstr ""
@@ -1235,7 +1233,7 @@ msgid "Sound Method"
 msgstr ""
 
 msgid "Method: "
-msgstr ""
+msgstr "Метод"
 
 #, c-format
 msgid ""
@@ -1581,7 +1579,6 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr ""
 
@@ -1681,10 +1678,19 @@ msgid ""
 "are not connecting to the service you believe you are."
 msgstr ""
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr ""
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1692,8 +1698,10 @@ msgid ""
 "Expiration date: %s\n"
 msgstr ""
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
 msgstr ""
 
 #. show error to user
@@ -3007,13 +3015,13 @@ msgstr ""
 msgid "Chat _name:"
 msgstr ""
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr ""
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
+msgstr ""
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
 msgstr ""
 
 msgid "Chat error"
@@ -3769,7 +3777,7 @@ msgid "Middle Name"
 msgstr ""
 
 msgid "Address"
-msgstr ""
+msgstr "Адрес"
 
 msgid "P.O. Box"
 msgstr ""
@@ -5370,7 +5378,7 @@ msgid "Work Phone 2"
 msgstr ""
 
 msgid "Work Address"
-msgstr ""
+msgstr "Эш адресы"
 
 msgid "Work Mobile"
 msgstr ""
@@ -5492,7 +5500,6 @@ msgid_plural ""
 "After the maintenance has been completed, you will be able to successfully "
 "sign in."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid ""
 "Message was not sent because the system is unavailable. This normally "
@@ -5953,13 +5960,11 @@ msgstr ""
 msgid "You have %i suggested friend."
 msgid_plural "You have %i suggested friends."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "We found %i contact that matches your search."
 msgid_plural "We found %i contacts that match your search."
 msgstr[0] ""
-msgstr[1] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6148,7 +6153,6 @@ msgid_plural ""
 "%d buddies were added or updated from the server (including buddies already "
 "on the server-side list)"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Add contacts from server"
 msgstr ""
@@ -7113,13 +7117,11 @@ msgstr ""
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid ""
@@ -7127,7 +7129,6 @@ msgid ""
 msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid ""
@@ -7135,20 +7136,17 @@ msgid ""
 msgid_plural ""
 "You missed %hu messages from %s because his/her warning level is too high."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "You missed %hu message from %s because your warning level is too high."
 msgid_plural ""
 "You missed %hu messages from %s because your warning level is too high."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Your AIM connection may be lost."
 msgstr ""
@@ -7170,7 +7168,6 @@ msgstr ""
 msgid "The following username is associated with %s"
 msgid_plural "The following usernames are associated with %s"
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "No results found for email address %s"
@@ -7252,7 +7249,6 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Profile too long."
 msgstr ""
@@ -7265,7 +7261,6 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Away message too long."
 msgstr ""
@@ -7554,7 +7549,7 @@ msgid "Screen Sharing"
 msgstr ""
 
 msgid "IP Address"
-msgstr ""
+msgstr "IP адрес"
 
 msgid "Warning Level"
 msgstr ""
@@ -9284,6 +9279,9 @@ msgstr ""
 msgid "Start Doodling"
 msgstr ""
 
+msgid "Activate which ID?"
+msgstr ""
+
 msgid "Select the ID you want to activate"
 msgstr ""
 
@@ -9714,37 +9712,31 @@ msgstr ""
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "%s, %d hour"
 msgid_plural "%s, %d hours"
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "%s, %d minute"
 msgid_plural "%s, %d minutes"
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "Could not open %s: Redirected too many times"
@@ -10079,7 +10071,6 @@ msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
 "You currently have %d contacts named %s. Would you like to merge them?"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid ""
 "Merging these contacts will cause them to share a single entry on the buddy "
@@ -10405,7 +10396,6 @@ msgstr ""
 msgid "%d unread message from %s\n"
 msgid_plural "%d unread messages from %s\n"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Manually"
 msgstr ""
@@ -10441,7 +10431,6 @@ msgid "%d account was disabled because you signed on from another location:"
 msgid_plural ""
 "%d accounts were disabled because you signed on from another location:"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "<b>Username:</b>"
 msgstr ""
@@ -10818,7 +10807,6 @@ msgstr ""
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Stopped Typing"
 msgstr ""
@@ -10996,6 +10984,9 @@ msgstr ""
 msgid "Bengali-India"
 msgstr ""
 
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr ""
 
@@ -11033,6 +11024,9 @@ msgid "Esperanto"
 msgstr ""
 
 msgid "Spanish"
+msgstr ""
+
+msgid "Argentine Spanish"
 msgstr ""
 
 msgid "Estonian"
@@ -11074,9 +11068,6 @@ msgstr ""
 msgid "Hungarian"
 msgstr ""
 
-msgid "Armenian"
-msgstr ""
-
 msgid "Indonesian"
 msgstr ""
 
@@ -11092,6 +11083,9 @@ msgstr ""
 msgid "Ubuntu Georgian Translators"
 msgstr ""
 
+msgid "Kazakh"
+msgstr "Казах"
+
 msgid "Khmer"
 msgstr ""
 
@@ -11104,14 +11098,17 @@ msgstr ""
 msgid "Korean"
 msgstr ""
 
-msgid "Kurdish"
+msgid "Kashmiri"
 msgstr ""
 
-msgid "Lao"
+msgid "Kurdish"
 msgstr ""
 
 msgid "Lithuanian"
 msgstr ""
+
+msgid "Latvian"
+msgstr "Латвия"
 
 msgid "Maithili"
 msgstr ""
@@ -11129,9 +11126,6 @@ msgid "Mongolian"
 msgstr ""
 
 msgid "Marathi"
-msgstr ""
-
-msgid "Malay"
 msgstr ""
 
 msgid "Burmese"
@@ -11176,6 +11170,9 @@ msgstr ""
 msgid "Russian"
 msgstr ""
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr ""
 
@@ -11209,10 +11206,16 @@ msgstr ""
 msgid "Thai"
 msgstr ""
 
+msgid "Tatar"
+msgstr "Татар"
+
 msgid "Ukranian"
 msgstr ""
 
 msgid "Urdu"
+msgstr ""
+
+msgid "Uzbek"
 msgstr ""
 
 msgid "Vietnamese"
@@ -11228,6 +11231,15 @@ msgid "Traditional Chinese"
 msgstr ""
 
 msgid "Amharic"
+msgstr ""
+
+msgid "Armenian"
+msgstr ""
+
+msgid "Lao"
+msgstr ""
+
+msgid "Malay"
 msgstr ""
 
 msgid "Turkish"
@@ -11353,7 +11365,6 @@ msgid_plural ""
 "You are about to remove the contact containing %s and %d other buddies from "
 "your buddy list.  Do you want to continue?"
 msgstr[0] ""
-msgstr[1] ""
 
 msgid "Remove Contact"
 msgstr ""
@@ -11881,13 +11892,11 @@ msgstr ""
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "<b>%d new email.</b>"
 msgid_plural "<b>%d new emails.</b>"
 msgstr[0] ""
-msgstr[1] ""
 
 #, c-format
 msgid "The browser command \"%s\" is invalid."
@@ -12803,7 +12812,7 @@ msgid "Open _Containing Directory"
 msgstr ""
 
 msgid "Save File"
-msgstr ""
+msgstr "Файлны саклау"
 
 msgid "_Play Sound"
 msgstr ""
@@ -12815,7 +12824,7 @@ msgid "Do you really want to clear?"
 msgstr ""
 
 msgid "Select color"
-msgstr ""
+msgstr "Төсне сайлау"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -13489,10 +13498,10 @@ msgid "GTK+ Theme Control Settings"
 msgstr ""
 
 msgid "Colors"
-msgstr ""
+msgstr "Төсләр"
 
 msgid "Fonts"
-msgstr ""
+msgstr "Шрафтлар"
 
 msgid "Miscellaneous"
 msgstr ""
@@ -13858,10 +13867,10 @@ msgid "Provides integration with Unity's messaging menu and launcher."
 msgstr ""
 
 msgid "Audio"
-msgstr ""
+msgstr "Аудио"
 
 msgid "Video"
-msgstr ""
+msgstr "Видео"
 
 msgid "Output"
 msgstr ""
@@ -13918,7 +13927,7 @@ msgid "Configure microphone and webcam settings for voice/video calls."
 msgstr ""
 
 msgid "Opacity:"
-msgstr ""
+msgstr "Үтә күренмә:"
 
 #. IM Convo trans options
 msgid "IM Conversation Windows"

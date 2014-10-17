@@ -1011,4 +1011,9 @@ PurplePlugin *purple_find_prpl(const char *id);
 }
 #endif
 
+#ifdef __COVERITY__
+#undef PURPLE_PROTOCOL_PLUGIN_HAS_FUNC
+#define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) (prpl->member != NULL)
+#endif
+
 #endif /* _PRPL_H_ */
