@@ -96,7 +96,7 @@ gnt_combo_box_draw(GntWidget *widget)
 	whline(widget->window, ' ' | gnt_color_pair(type), widget->priv.width - 4 - len);
 	mvwaddch(widget->window, 1, widget->priv.width - 3, ACS_VLINE | gnt_color_pair(GNT_COLOR_NORMAL));
 	mvwaddch(widget->window, 1, widget->priv.width - 2, ACS_DARROW | gnt_color_pair(GNT_COLOR_NORMAL));
-	wmove(widget->window, 1, 1);
+	(void)wmove(widget->window, 1, 1);
 
 	g_free(text);
 	GNTDEBUG;

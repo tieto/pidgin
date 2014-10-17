@@ -132,6 +132,7 @@ static Code_t Z_RetSubs(notice, nsubs, auth_routine)
 
 		__subscriptions_num = __subscriptions_num / 3;
 
+		free(__subscriptions_list);
 		__subscriptions_list = (ZSubscription_t *)
 			malloc((unsigned)(__subscriptions_num*
 					  sizeof(ZSubscription_t)));

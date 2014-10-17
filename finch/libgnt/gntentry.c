@@ -299,7 +299,7 @@ gnt_entry_draw(GntWidget *widget)
 	curpos = gnt_util_onscreen_width(entry->scroll, entry->cursor);
 	if (focus)
 		mvwchgat(widget->window, 0, curpos, 1, A_REVERSE, GNT_COLOR_TEXT_NORMAL, NULL);
-	wmove(widget->window, 0, curpos);
+	(void)wmove(widget->window, 0, curpos);
 
 	GNTDEBUG;
 }

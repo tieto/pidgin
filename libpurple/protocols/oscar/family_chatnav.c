@@ -224,11 +224,8 @@ parseinfo_perms(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFram
 		 * 2  Exchange creation allowed
 		 *
 		 */
-		if (aim_tlv_gettlv(innerlist, 0x00d5, 1)) {
-			guint8 createperms;
-
-			createperms = aim_tlv_get8(innerlist, 0x00d5, 1);
-		}
+		if (aim_tlv_gettlv(innerlist, 0x00d5, 1))
+			aim_tlv_get8(innerlist, 0x00d5, 1); /* createperms */
 
 		/*
 		 * Type 0x00d6: Character Set (First Time)

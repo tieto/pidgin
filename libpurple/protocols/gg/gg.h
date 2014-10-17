@@ -26,6 +26,7 @@
 
 #include <libgadu.h>
 #include "internal.h"
+#include "dnsquery.h"
 #include "search.h"
 #include "connection.h"
 
@@ -65,6 +66,7 @@ typedef struct {
 	GList *pending_richtext_messages;
 	GHashTable *pending_images;
 	gboolean status_broadcasting; //When TRUE status is visible to all, when FALSE status is visible only to friends.
+	PurpleDnsQueryData *dns_query;
 } GGPInfo;
 
 #endif /* _PURPLE_GG_H */

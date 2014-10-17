@@ -6,7 +6,8 @@ static void
 chat_components_foreach(gpointer key, gpointer value, gpointer user_data)
 {
 	HV *hv = user_data;
-	hv_store(hv, key, strlen(key), newSVpv(value, 0), 0);
+	if (hv_store(hv, key, strlen(key), newSVpv(value, 0), 0) == NULL)
+		purple_debug_error("perl", "hv_store failed\n");
 }
 
 MODULE = Purple::BuddyList  PACKAGE = Purple  PREFIX = purple_

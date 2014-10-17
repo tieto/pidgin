@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [10])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [10])
-m4_define([purple_micro_version], [9])
+m4_define([purple_micro_version], [10])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -304,7 +304,7 @@ if test x$enable_i18n = xyes; then
 	GETTEXT_PACKAGE=pidgin
 	AC_SUBST(GETTEXT_PACKAGE)
 
-	ALL_LINGUAS="af am ar ast az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hr hu hy id it ja ka km kn ko ku lo lt mai mhr mk mn mr ms_MY my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
+	ALL_LINGUAS="af am ar ast az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hr hu id it ja ka kk km kn ko ku lt lv mai mhr mk mn mr my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr tt uk ur vi xh zh_CN zh_HK zh_TW"
 	AM_GLIB_GNU_GETTEXT
 
 	dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -569,7 +569,7 @@ Use --disable-gtkspell if you do not need it.
 	dnl # Check for stuff needed by the Evolution integration plugin.
 	dnl #######################################################################
 	if test "x$enable_gevolution" = "xyes"; then
-		evo_deps="libebook-1.2 libedata-book-1.2"
+		evo_deps="libebook-1.2 libedata-book-1.2 evolution-data-server-1.2 < 3.6"
 		PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, , [
 			enable_gevolution="no"
 		])
@@ -577,6 +577,8 @@ Use --disable-gtkspell if you do not need it.
 			evo_deps="libebook-1.0 libedata-book-1.0"
 			PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, [
 				enable_gevolution="yes"
+			], [
+				enable_gevolution="no"
 			])
 		fi
 		if test "x$enable_gevolution" = "xyes"; then
@@ -586,7 +588,7 @@ Use --disable-gtkspell if you do not need it.
 		else
 			if test "x$force_deps" = "xyes" ; then
 				AC_MSG_ERROR([
-Evolution development headers not found.
+Evolution development headers not found (libebook, libedata-book, evolution-data-server < 3.6).
 Use --disable-gevolution if you do not need it.
 ])
 			fi
@@ -1021,98 +1023,64 @@ elif test "x$silc10client" = "xyes"; then
 fi
 
 dnl #######################################################################
-dnl # Check for Gadu-Gadu client includes and libraries
+dnl # Check for Gadu-Gadu protocol library (libgadu)
 dnl #######################################################################
-AC_ARG_WITH(gadu-includes, [AC_HELP_STRING([--with-gadu-includes=DIR], [compile the Gadu-Gadu plugin against includes in DIR])], [ac_gadu_includes="$withval"], [ac_gadu_includes="no"])
-AC_ARG_WITH(gadu-libs, [AC_HELP_STRING([--with-gadu-libs=DIR], [compile the Gadu-Gadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
-GADU_CFLAGS=""
-GADU_LIBS=""
-if test -n "$with_gadu_includes" || test -n "$with_gadu_libs"; then
-	gadu_manual_check="yes"
-else
-	gadu_manual_check="no"
-fi
-if test "x$gadu_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(GADU, [libgadu >= 1.11.0], [
-		gadu_includes="yes"
-		gadu_libs="yes"
-	], [
-		gadu_includes="no"
-	])
-else
-	if test "$ac_gadu_includes" != "no"; then
-		GADU_CFLAGS="-I$ac_gadu_includes"
-	fi
-	CPPFLAGS_save="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $GADU_CFLAGS"
-	AC_CHECK_HEADER(libgadu.h, [gadu_includes=yes])
-	CPPFLAGS="$CPPFLAGS_save"
 
-	if test "$ac_gadu_libs" != "no"; then
-		GADU_LIBS="-L$ac_gadu_libs"
-	fi
-	GADU_LIBS="$GADU_LIBS -lgadu"
-	AC_CHECK_LIB(gadu, gg_libgadu_version, [gadu_libs=yes], , $GADU_LIBS)
-fi
-GADU_CFLAGS=`echo $GADU_CFLAGS |$sedpath 's/-Wall//'`
+PKG_CHECK_MODULES(LIBGADU, [libgadu >= 1.12.0], [have_libgadu=yes], [have_libgadu=no])
 
-if test "x$gadu_libs" = "xyes"; then
-	AC_MSG_CHECKING(for libgadu GPL compatibility)
-	CPPFLAGS_save="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $GADU_CFLAGS"
-	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
-#if defined(__GG_LIBGADU_HAVE_OPENSSL) || defined(GG_CONFIG_HAVE_OPENSSL)
-#error "libgadu is not compatible with the GPL when compiled with OpenSSL support."
-#endif
-	]])], [
-		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <libgadu.h>]], [[
-#if GG_DEFAULT_PROTOCOL_VERSION < 0x2e
-#error "Your libgadu version is too old. libpurple requires 1.11.0 or higher."
-#endif
-		]])], [
-			AC_MSG_RESULT(yes)
-			AC_DEFINE([HAVE_LIBGADU], [1],
-				[Define to 1 if you have libgadu.])
-		], [
-			AC_MSG_RESULT(no)
-			echo
-			echo
-			echo "Your supplied copy of libgadu is too old."
-			echo "Install version 1.11.0 or newer."
-			echo "Then rerun this ./configure"
-			echo
-			echo "Falling back to using our own copy of libgadu"
-			echo
-			GADU_LIBS=""
-			GADU_CFLAGS=""
-			gadu_libs=no
+if test "x$have_libgadu" = "xyes"; then
+	AC_CHECK_LIB(gadu, gg_is_gpl_compliant, , [
+		LIBGADU_LIBS=""
+		LIBGADU_CFLAGS=""
+		have_libgadu=no
+		AC_MSG_WARN([
+libgadu is not compatible with the GPL when compiled with OpenSSL support.
+
+To compile against system libgadu, please recompile libgadu using:
+./configure --with-openssl=no
+Then rerun this ./configure
+
+Falling back to using our own copy of libgadu.
 		])
-	], [
-		AC_MSG_RESULT(no)
-		echo
-		echo
-		echo "libgadu is not compatible with the GPL when compiled with OpenSSL support."
-		echo "To compile against system libgadu, please recompile libgadu using:"
-		echo "./autogen.sh --disable-libgadu-openssl --disable-static --enable-shared"
-		echo "Then rerun this ./configure"
-		echo
-		echo "Falling back to using our own copy of libgadu"
-		echo
-		GADU_LIBS=""
-		GADU_CFLAGS=""
-		gadu_libs=no
 	])
-	CPPFLAGS="$CPPFLAGS_save"
 fi
 
-AM_CONDITIONAL(USE_INTERNAL_LIBGADU, test "x$gadu_libs" != "xyes")
+AM_CONDITIONAL(HAVE_LIBGADU, test "x$have_libgadu" = "xyes")
+if test "x$have_libgadu" = "xyes"; then
+	AC_DEFINE(HAVE_LIBGADU, 1, [Linked with external libgadu])
+else
+	AC_CHECK_LIB(gnutls, gnutls_certificate_set_x509_system_trust, [gg_have_gnutls_csxst=yes], [gg_have_gnutls_csxst=no])
 
-if test "x$gadu_libs" = "x"; then
-	gadu_libs=no
+	gg_gnutls_sts=""
+	if test "x$gg_have_gnutls_csxst" = "xno"; then
+		for i in /etc/ssl/ca-bundle.pem \
+			/etc/ssl/certs/ca-certificates.crt \
+			/etc/pki/tls/cert.pem \
+			/usr/local/share/certs/ca-root-nss.crt \
+			/etc/ssl/cert.pem
+		do
+			if test -e $i; then
+				gg_gnutls_sts="$i"
+				break
+			fi
+		done
+	fi
+
+	if test "x$gg_have_gnutls_csxst" = "xyes"; then
+		AC_DEFINE(HAVE_GNUTLS_CERTIFICATE_SET_X509_SYSTEM_TRUST, 1, [gnutls contains the gnutls_certificate_set_x509_system_trust function])
+	fi
+	if test "x$gg_gnutls_sts" != "x"; then
+		AC_DEFINE_UNQUOTED(GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE, ["$gg_gnutls_sts"], [use the given file as GnuTLS default trust store])
+	fi
+
+	PKG_CHECK_MODULES([GNUTLS_2_10], [gnutls >= 2.10.0], [
+		AC_DEFINE([HAVE_GNUTLS_2_10], [], [Defined if GnuTLS >= 2.10.0 is available.])
+	],:)
 fi
 
-AC_SUBST(GADU_LIBS)
-AC_SUBST(GADU_CFLAGS)
+AC_SUBST(LIBGADU_LIBS)
+AC_SUBST(LIBGADU_CFLAGS)
+
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
@@ -1299,9 +1267,7 @@ if test "x$GCC" = "xyes"; then
 		orig_CFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS $newflag"
 		AC_MSG_CHECKING(for $newflag option to gcc)
-		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
-			int main() {return 0;}
-		]])], [
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])], [
 			AC_MSG_RESULT(yes)
 			CFLAGS="$orig_CFLAGS"
 			DEBUG_CFLAGS="$DEBUG_CFLAGS $newflag"
@@ -1314,7 +1280,6 @@ if test "x$GCC" = "xyes"; then
 	if test "x$enable_fortify" = "xyes"; then
 		AC_MSG_CHECKING(for FORTIFY_SOURCE support)
 		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <features.h>]], [[
-			int main() {
 			#if !(__GNUC_PREREQ (4, 1) \
 				|| (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (4, 0)) \
 				|| (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (3, 4) \
@@ -1324,7 +1289,6 @@ if test "x$GCC" = "xyes"; then
 			#error No FORTIFY_SOURCE support
 			#endif
 				return 0;
-			}
 		]])], [
 			AC_MSG_RESULT(yes)
 			DEBUG_CFLAGS="$DEBUG_CFLAGS -Wp,-D_FORTIFY_SOURCE=2"
@@ -1343,6 +1307,17 @@ fi
 AC_SUBST(CFLAGS)
 
 AC_PATH_PROG(pidginpath, pidgin)
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [
+	#if !defined(__clang__)
+	#error
+	#endif
+])], have_clang=yes, have_clang=no)
+
+if test "x$have_clang" = "xyes"; then
+	dnl we don't care about it for 2.x.y
+	DEBUG_CFLAGS=`echo $DEBUG_CFLAGS |$sedpath 's/-Wcast-align//'`
+fi
 
 dnl #######################################################################
 dnl # Check for D-Bus libraries
@@ -1513,27 +1488,15 @@ dnl Check for Python headers (currently useful only for libgnt)
 dnl (Thanks to XChat)
 if test "x$enable_consoleui" = "xyes" -a ! -z "$PYTHON" -a x"$PYTHON" != x"no" ; then
 	AC_MSG_CHECKING(for Python compile flags)
-	PY_PREFIX=`$PYTHON -c 'import sys ; sys.stdout.write(sys.prefix)'`
-	PY_EXEC_PREFIX=`$PYTHON -c 'import sys ; sys.stdout.write(sys.exec_prefix)'`
-	changequote(<<, >>)dnl
-	PY_VERSION=`$PYTHON -c 'import sys ; sys.stdout.write(sys.version[0:3])'`
-	PY_MAJOR=`$PYTHON -c 'import sys ; sys.stdout.write(sys.version[0:2])'`
-	changequote([, ])dnl
-	if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h; then
-		AC_MSG_RESULT()
-		AC_CHECK_LIB(pthread, pthread_create, )
-		AC_CHECK_LIB(util, openpty, )
-		AC_CHECK_LIB(db, dbopen, )
-		PY_LIBS="-L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config -lpython$PY_VERSION"
-		PY_CFLAGS="-I$PY_PREFIX/include/python$PY_VERSION"
+	if test -f ${PYTHON}-config; then
+		PY_CFLAGS=`${PYTHON}-config --includes`
+		PY_LIBS=`${PYTHON}-config --libs`
 		AC_DEFINE(USE_PYTHON, [1], [Define if python headers are available.])
-		dnl Because the above AC_CHECK_LIB get in the way...
-		AC_MSG_CHECKING(for Python compile flags)
 		AC_MSG_RESULT(ok)
 	else
-		AC_MSG_RESULT([Can't find Python.h])
-		PY_LIBS=""
+		AC_MSG_RESULT([Cannot find ${PYTHON}-config])
 		PY_CFLAGS=""
+		PY_LIBS=""
 	fi
 fi
 AC_SUBST(PY_CFLAGS)
@@ -2656,7 +2619,7 @@ fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
-echo Use external libgadu.......... : $gadu_libs
+echo Use external libgadu.......... : $have_libgadu
 echo Install pixmaps............... : $enable_pixmaps
 echo Old tray icon compatibility... : $enable_traycompat
 echo Install translations.......... : $enable_i18n

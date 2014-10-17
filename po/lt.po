@@ -3,16 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Algimantas Margevičius <gymka@archlinux.lt>, 2012-2013
+# Algimantas Margevičius <gymka@archlinux.lt>, 2012-2014
 # Algimantas Margevičius <margevicius.algimantas@gmail.com>, 2012
 # Richard Laager <rlaager@wiktel.com>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-01-21 08:26+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-07-10 06:30+0000\n"
+"Last-Translator: Algimantas Margevičius <gymka@archlinux.lt>\n"
 "Language-Team: Lithuanian (http://www.transifex.com/projects/p/pidgin/"
 "language/lt/)\n"
 "Language: lt\n"
@@ -1682,7 +1682,6 @@ msgstr "Šis protokolas nepalaiko viešos tapatybės gavimo."
 msgid "Unknown"
 msgstr "Nežinoma"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Bičiuliai"
 
@@ -1796,10 +1795,19 @@ msgstr ""
 "Liudijimas iš tikrųjų priklauso „%s“.  Galbūt jūs jungiatės ne prie tos "
 "paslaugos, prie kurios manote, kad jungiatės."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Liudijimo informacija"
+
+msgid "Unable to find Issuer Certificate"
+msgstr "Nepavyko rasti sertifikato išdavėjo"
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1808,14 +1816,18 @@ msgid ""
 msgstr ""
 "Įprastas vardas: %s\n"
 "\n"
-"SHA1 kontrolinis kodas: %s\n"
+"Išdavė: %s\n"
 "\n"
-"Galiojimo pradžia: %s\n"
+"Kontrolinis kodas (SHA1): %s\n"
+"\n"
+"Aktyvuota: %s\n"
 "Galiojimo pabaiga: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Liudijimo informacija"
+msgid "(self-signed)"
+msgstr "(paties pasirašytas)"
+
+msgid "View Issuer Certificate"
+msgstr "Rodyti išdavėjo sertifikatą"
 
 #. show error to user
 msgid "Registration Error"
@@ -3213,14 +3225,14 @@ msgstr "Įtraukti į pokalbių kambarį"
 msgid "Chat _name:"
 msgstr "Ka_nalo pavadinimas:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Nepavyko nustatyti IP adreso pagal vardą „%s“: %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Jungiamasi"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr "Nepavyko nustatyti adreso: %s"
 
 msgid "Chat error"
 msgstr "Pokalbių kambario klaida"
@@ -3376,7 +3388,7 @@ msgid "Auto-detect incoming UTF-8"
 msgstr "Automatiškai nustatyti gaunamą UTF-8"
 
 msgid "Ident name"
-msgstr ""
+msgstr "Tapatybės vardas"
 
 msgid "Real name"
 msgstr "Tikras vardas"
@@ -3429,13 +3441,11 @@ msgstr "<i>(identifikavęsis)</i>"
 msgid "Nick"
 msgstr "Vardas"
 
-#, fuzzy
 msgid "Login name"
-msgstr "Be vardo"
+msgstr "Prisijungimo vardas"
 
-#, fuzzy
 msgid "Host name"
-msgstr "Mazgo vardas"
+msgstr "Kompiuterio vardas"
 
 msgid "Currently on"
 msgstr "Kanaluose"
@@ -9924,6 +9934,9 @@ msgstr "Būsenos nuostatos"
 msgid "Start Doodling"
 msgstr "Pradėti paišinėjimą"
 
+msgid "Activate which ID?"
+msgstr "Kurį ID aktyvuoti?"
+
 msgid "Select the ID you want to activate"
 msgstr "Pasirinkite ID, kurį norite aktyvuoti"
 
@@ -11704,7 +11717,7 @@ msgid "Assamese"
 msgstr "Asamesų"
 
 msgid "Asturian"
-msgstr ""
+msgstr "Asturų"
 
 msgid "Belarusian Latin"
 msgstr "Baltarusų kalba lotynu abėcėle"
@@ -11717,6 +11730,9 @@ msgstr "Bengalų kalba"
 
 msgid "Bengali-India"
 msgstr "Bengalų (Indija)"
+
+msgid "Bodo"
+msgstr "Bodo"
 
 msgid "Bosnian"
 msgstr "Bosnių kalba"
@@ -11757,6 +11773,9 @@ msgstr "Esperanto"
 msgid "Spanish"
 msgstr "Ispanų kalba"
 
+msgid "Argentine Spanish"
+msgstr "Argentinos ispanų"
+
 msgid "Estonian"
 msgstr "Estų kalba"
 
@@ -11796,9 +11815,6 @@ msgstr "Kroatų"
 msgid "Hungarian"
 msgstr "Vengrų kalba"
 
-msgid "Armenian"
-msgstr "Armėnų kalba"
-
 msgid "Indonesian"
 msgstr "Indoneziečių kalba"
 
@@ -11814,6 +11830,9 @@ msgstr "Gruzinų kalba"
 msgid "Ubuntu Georgian Translators"
 msgstr "Ubuntu vertėjai į gruzinų kalbą"
 
+msgid "Kazakh"
+msgstr "Kazachų"
+
 msgid "Khmer"
 msgstr "Khmerų kalba"
 
@@ -11826,14 +11845,17 @@ msgstr "Kanadų kalbos vertimo komanda"
 msgid "Korean"
 msgstr "Korėjiečių kalba"
 
+msgid "Kashmiri"
+msgstr "Kašmyro"
+
 msgid "Kurdish"
 msgstr "Kurdų kalba"
 
-msgid "Lao"
-msgstr "Laosiečių kalba"
-
 msgid "Lithuanian"
 msgstr "Lietuvių kalba"
+
+msgid "Latvian"
+msgstr "Latvių"
 
 msgid "Maithili"
 msgstr "Maitilių"
@@ -11852,9 +11874,6 @@ msgstr "Mongolų kalba"
 
 msgid "Marathi"
 msgstr "Maratų"
-
-msgid "Malay"
-msgstr "Malajiečių"
 
 msgid "Burmese"
 msgstr "Birmiečių"
@@ -11898,6 +11917,9 @@ msgstr "Rumunų kalba"
 msgid "Russian"
 msgstr "Rusų kalba"
 
+msgid "Sindhi"
+msgstr "Sindų"
+
 msgid "Slovak"
 msgstr "Slovakų kalba"
 
@@ -11931,11 +11953,17 @@ msgstr "Telugu kalba"
 msgid "Thai"
 msgstr "Tajų kalba"
 
+msgid "Tatar"
+msgstr "Totorių"
+
 msgid "Ukranian"
 msgstr "Ukrainiečių"
 
 msgid "Urdu"
 msgstr "Urdu kalba"
+
+msgid "Uzbek"
+msgstr "Uzbekų"
 
 msgid "Vietnamese"
 msgstr "Vietnamiečių kalba"
@@ -11951,6 +11979,15 @@ msgstr "Tradicinė kinų kalba"
 
 msgid "Amharic"
 msgstr "Amharų kalba"
+
+msgid "Armenian"
+msgstr "Armėnų kalba"
+
+msgid "Lao"
+msgstr "Laosiečių kalba"
+
+msgid "Malay"
+msgstr "Malajiečių"
 
 msgid "Turkish"
 msgstr "Turkų kalba"
@@ -12690,7 +12727,7 @@ msgid ""
 msgstr "Pasirinkta 'Rankinė' naršyklės komanda, tačiau komanda nenustatyta."
 
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
-msgstr ""
+msgstr "Nepavyko atverti URL: „Manual“ naršyklės komanda netinkama"
 
 msgid "No message"
 msgstr "Žinutės nėra"
@@ -14672,34 +14709,33 @@ msgstr ""
 
 #. Alerts
 msgid "Chatroom alerts"
-msgstr ""
+msgstr "Pokalbių kambarių įspėjimai"
 
 msgid "Chatroom message alerts _only where someone says your username"
-msgstr ""
+msgstr "Pokalbių kambarių įspėjimai, _tik tada kai minimas jūsų vardas"
 
 #. Launcher integration
 msgid "Launcher Icon"
-msgstr ""
+msgstr "Leistuko piktograma"
 
 msgid "_Disable launcher integration"
-msgstr ""
+msgstr "_Išjungti leistuko integravimą"
 
 msgid "Show number of unread _messages on launcher icon"
-msgstr ""
+msgstr "Leistuko piktogramoje rodyti neskaitytų _pranešimų skaičių"
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "Pokalbių skaičius langui"
+msgstr "Leistuko _piktogramoje rodyti neskaitytų pranešimų skaičių"
 
 #. Messaging menu integration
 msgid "Messaging Menu"
-msgstr ""
+msgstr "Pranešimų meniu"
 
 msgid "Show number of _unread messages for conversations in messaging menu"
-msgstr ""
+msgstr "Pranešimų meniu rodyti _neskaitytų pranešimų skaičių"
 
 msgid "Show _elapsed time for unread conversations in messaging menu"
-msgstr ""
+msgstr "Pranešimų meniu rodyti kiek _laiko jau yra neskaitytų pranešimų"
 
 #. *< type
 #. *< ui_requirement
@@ -14708,17 +14744,17 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "Unity Integration"
-msgstr ""
+msgstr "Unity integravimas"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Provides integration with Unity."
-msgstr ""
+msgstr "Suteikia Unity integravimą."
 
 #. *  description
 msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr ""
+msgstr "Suteikia integravimą į Unity pranešimų meniu ir leistuką."
 
 msgid "Audio"
 msgstr "Garsas"

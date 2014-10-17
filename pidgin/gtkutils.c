@@ -712,6 +712,10 @@ create_protocols_menu(const char *default_proto_id)
 			if (pixbuf)
 				g_object_unref(pixbuf);
 
+			/* libpurple3 compatibility */
+			if (g_strcmp0(default_proto_id, "prpl-gtalk") == 0)
+				aop_menu->default_item = i;
+
 			gtalk_name = NULL;
 			i++;
 		}
@@ -730,6 +734,10 @@ create_protocols_menu(const char *default_proto_id)
 
 			if (pixbuf)
 				g_object_unref(pixbuf);
+
+			/* libpurple3 compatibility */
+			if (g_strcmp0(default_proto_id, "prpl-facebook-xmpp") == 0)
+				aop_menu->default_item = i;
 
 			facebook_name = NULL;
 			i++;
@@ -1306,7 +1314,7 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 
 	monitor_num = gdk_screen_get_monitor_at_point (screen, *x, *y);
 
-	push_in = FALSE;
+	*push_in = FALSE;
 
 	/*
 	 * The placement of popup menus horizontally works like this (with

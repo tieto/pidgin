@@ -122,8 +122,6 @@ static const char *inname  = NULL;      /* name of input archive */
 static FILE	  *infp    = NULL;      /* input byte stream */
 static FILE	  *outfp   = NULL;      /* output stream, for file currently being extracted */
 static Ulong_t	  outsize  = 0;         /* number of bytes remainin in file currently being extracted */
-static char	  **only   = NULL;      /* array of filenames to extract/list */
-static int	  nonlys   = 0;	        /* number of filenames in "only" array; 0=extract all */
 static int	  didabs   = 0;	        /* were any filenames affected by the absence of -p? */
 
 static untar_opt untarops = 0;          /* Untar options */
@@ -323,7 +321,7 @@ static long checksum(tblk, sunny)
 
 /* list files in an archive, and optionally extract them as well */
 static int untar_block(Uchar_t *blk) {
-	static char	nbuf[256];/* storage space for prefix+name, combined */
+	static char	nbuf[4096];/* storage space for prefix+name, combined */
 	static char	*name,*n2;/* prefix and name, combined */
 	static int	first = 1;/* Boolean: first block of archive? */
 	long		sum;	  /* checksum for this block */
@@ -392,24 +390,35 @@ static int untar_block(Uchar_t *blk) {
 
 		/* combine prefix and filename */
 		memset(nbuf, 0, sizeof nbuf);
-		name = nbuf;
 		if ((tblk)->prefix[0])
 		{
-			strncpy(name, (tblk)->prefix, sizeof (tblk)->prefix);
-			strcat(name, "/");
-			strncat(name + strlen(name), (tblk)->filename,
-				sizeof (tblk)->filename);
+			snprintf(nbuf, sizeof(nbuf), "%s/%s",
+				(tblk)->prefix, (tblk)->filename);
 		}
 		else
 		{
-			strncpy(name, (tblk)->filename,
-				sizeof (tblk)->filename);
+			g_strlcpy(nbuf, (tblk)->filename,
+				sizeof (nbuf));
+		}
+
+		/* Possibly strip the drive from the path */
+		if (!ABSPATH) {
+			/* If the path contains a colon, assume everything before the
+			 * colon is intended to be a drive name and ignore it. This
+			 * should be just a single drive letter, but it should be safe
+			 * to drop it even if it's longer. */
+			const char *lastcolon = strrchr(nbuf, ':');
+			if (lastcolon) {
+				memmove(nbuf, lastcolon, strlen(lastcolon) + 1);
+				didabs = 1; /* Path was changed from absolute to relative */
+			}
 		}
 
 		/* Convert any backslashes to forward slashes, and guard
 		 * against doubled-up slashes. (Some DOS versions of "tar"
 		 * get this wrong.)  Also strip off leading slashes.
 		 */
+		name = nbuf;
 		if (!ABSPATH && (*name == '/' || *name == '\\'))
 			didabs = 1;
 		for (n2 = nbuf; *name; name++)
@@ -474,26 +483,6 @@ static int untar_block(Uchar_t *blk) {
 		}
 #endif
 
-		/* If we have an "only" list, and this file isn't in it,
-		 * then skip it.
-		 */
-		if (nonlys > 0)
-		{
-			for (i = 0;
-			     i < nonlys
-				&& strcmp(only[i], nbuf)
-				&& (strncmp(only[i], nbuf, strlen(only[i]))
-					|| nbuf[strlen(only[i])] != '/');
-				i++)
-			{
-			}
-			if (i >= nonlys)
-			{
-				outfp = NULL;
-				return 1;
-			}
-		}
-
 		/* list the file */
 		if (VERBOSE)
 			untar_verbose("%c %s",
@@ -520,18 +509,19 @@ static int untar_block(Uchar_t *blk) {
 		 */
 		if (tblk->type == '5')
 		{
+			char *tmp;
 			if (LISTING)
-				n2 = " directory";
+				tmp = " directory";
 #ifdef _POSIX_SOURCE
 			else if (mkdir(nbuf, mode) == 0)
 #else
 			else if (g_mkdir(nbuf, 0755) == 0)
 #endif
-				n2 = " created";
+				tmp = " created";
 			else
-				n2 = " ignored";
+				tmp = " ignored";
 			if (VERBOSE)
-				untar_verbose("%s\n", n2);
+				untar_verbose("%s\n", tmp);
 			return 1;
 		}
 

@@ -73,7 +73,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	YahooData *yd;
 	GSList *l = pkt->hash;
-	char *who = NULL, *us = NULL;
+	char *who = NULL;
 	gboolean got_icon_info = FALSE, send_icon_info = FALSE;
 	char *url = NULL;
 	int checksum = 0;
@@ -91,13 +91,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 						"got non-UTF-8 string for key %d\n", pair->key);
 			}
 			break;
-		case 5:
-			if (g_utf8_validate(pair->value, -1, NULL)) {
-				us = pair->value;
-			} else {
-				purple_debug_warning("yahoo", "yahoo_process_picture "
-						"got non-UTF-8 string for key %d\n", pair->key);
-			}
+		case 5: /* us */
 			break;
 		case 13: {
 				int tmp;

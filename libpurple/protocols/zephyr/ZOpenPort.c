@@ -9,6 +9,7 @@
  */
 
 #include "internal.h"
+#include "debug.h"
 #ifdef WIN32
 #include <winsock2.h>
 #else
@@ -22,6 +23,7 @@ Code_t ZOpenPort(port)
     socklen_t len;
 
     (void) ZClosePort();
+    memset(&bindin, 0, sizeof(bindin));
 
     if ((__Zephyr_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 	__Zephyr_fd = -1;
@@ -29,12 +31,15 @@ Code_t ZOpenPort(port)
     }
 
 #ifdef SO_BSDCOMPAT
-    {
-      int on = 1;
+	{
+		int on = 1;
 
-      setsockopt(__Zephyr_fd, SOL_SOCKET, SO_BSDCOMPAT, (char *)&on,
-		 sizeof(on));
-    }
+		if (setsockopt(__Zephyr_fd, SOL_SOCKET, SO_BSDCOMPAT,
+			(char *)&on, sizeof(on)) != 0)
+		{
+			purple_debug_warning("zephyr", "couldn't setsockopt\n");
+		}
+	}
 #endif
 
     bindin.sin_family = AF_INET;

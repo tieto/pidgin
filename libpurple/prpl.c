@@ -626,6 +626,17 @@ purple_find_prpl(const char *id)
 
 	g_return_val_if_fail(id != NULL, NULL);
 
+	/* libpurple3 compatibility.
+	 * prpl-xmpp isn't used yet (it's prpl-jabber),
+	 * but may be used in the future.
+	 */
+	if (g_strcmp0(id, "prpl-xmpp") == 0 ||
+		g_strcmp0(id, "prpl-gtalk") == 0 ||
+		g_strcmp0(id, "prpl-facebook-xmpp") == 0)
+	{
+		id = "prpl-jabber";
+	}
+
 	for (l = purple_plugins_get_protocols(); l != NULL; l = l->next) {
 		plugin = (PurplePlugin *)l->data;
 

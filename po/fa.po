@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# elnaaz <elnaz.s@gmail.com>, 2013
+# Elnaz Sarbar <elnaz.s@gmail.com>, 2013
+# Elnaz Sarbar <elnaz.s@gmail.com>, 2013
 # Richard Laager <rlaager@wiktel.com>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-01-21 08:25+0000\n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-06-27 08:27+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Persian (http://www.transifex.com/projects/p/pidgin/language/"
 "fa/)\n"
@@ -1645,7 +1646,6 @@ msgstr ""
 msgid "Unknown"
 msgstr "نامعلوم"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "رفقا"
 
@@ -1745,10 +1745,19 @@ msgid ""
 "are not connecting to the service you believe you are."
 msgstr ""
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr ""
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1756,8 +1765,10 @@ msgid ""
 "Expiration date: %s\n"
 msgstr ""
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
 msgstr ""
 
 #. show error to user
@@ -3112,14 +3123,14 @@ msgstr "اضافه کردن به گپ"
 msgid "Chat _name:"
 msgstr "_نام گپ:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr ""
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "در حال اتصال"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr ""
 
 msgid "Chat error"
 msgstr "خطای گپ"
@@ -3327,13 +3338,11 @@ msgstr "<i>(شناسایی شده)</i>"
 msgid "Nick"
 msgstr "لقب"
 
-#, fuzzy
 msgid "Login name"
-msgstr "بدون نام"
+msgstr ""
 
-#, fuzzy
 msgid "Host name"
-msgstr "نام میزبان"
+msgstr ""
 
 msgid "Currently on"
 msgstr "در حال حاضر روی"
@@ -9586,6 +9595,9 @@ msgstr "تنظیمات حضور"
 msgid "Start Doodling"
 msgstr ""
 
+msgid "Activate which ID?"
+msgstr ""
+
 msgid "Select the ID you want to activate"
 msgstr ""
 
@@ -11311,6 +11323,9 @@ msgstr "بنگالی"
 msgid "Bengali-India"
 msgstr ""
 
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "بوسنیایی"
 
@@ -11349,6 +11364,9 @@ msgstr ""
 
 msgid "Spanish"
 msgstr "اسپانیایی"
+
+msgid "Argentine Spanish"
+msgstr ""
 
 msgid "Estonian"
 msgstr "استونیایی"
@@ -11389,9 +11407,6 @@ msgstr ""
 msgid "Hungarian"
 msgstr "مجاری"
 
-msgid "Armenian"
-msgstr ""
-
 msgid "Indonesian"
 msgstr "اندونزیایی"
 
@@ -11407,6 +11422,9 @@ msgstr "گرجی"
 msgid "Ubuntu Georgian Translators"
 msgstr ""
 
+msgid "Kazakh"
+msgstr ""
+
 msgid "Khmer"
 msgstr ""
 
@@ -11419,14 +11437,17 @@ msgstr ""
 msgid "Korean"
 msgstr "کره‌ای"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "کردی"
 
-msgid "Lao"
-msgstr ""
-
 msgid "Lithuanian"
 msgstr "لیتوانیایی"
+
+msgid "Latvian"
+msgstr ""
 
 msgid "Maithili"
 msgstr ""
@@ -11444,9 +11465,6 @@ msgid "Mongolian"
 msgstr ""
 
 msgid "Marathi"
-msgstr ""
-
-msgid "Malay"
 msgstr ""
 
 msgid "Burmese"
@@ -11491,6 +11509,9 @@ msgstr "رومانیایی"
 msgid "Russian"
 msgstr "روسی"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "اسلوواکی"
 
@@ -11524,10 +11545,16 @@ msgstr "تلوگویی"
 msgid "Thai"
 msgstr "تایلندی"
 
+msgid "Tatar"
+msgstr ""
+
 msgid "Ukranian"
 msgstr ""
 
 msgid "Urdu"
+msgstr ""
+
+msgid "Uzbek"
 msgstr ""
 
 msgid "Vietnamese"
@@ -11544,6 +11571,15 @@ msgstr "چینی سنتی"
 
 msgid "Amharic"
 msgstr "امهری"
+
+msgid "Armenian"
+msgstr ""
+
+msgid "Lao"
+msgstr ""
+
+msgid "Malay"
+msgstr ""
 
 msgid "Turkish"
 msgstr "ترکی"
@@ -14204,9 +14240,8 @@ msgstr ""
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "تعداد گفتگوها در هر پنجره"
+msgstr ""
 
 #. Messaging menu integration
 msgid "Messaging Menu"

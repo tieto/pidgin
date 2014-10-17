@@ -25,14 +25,15 @@
  * testowa konwersja, żeby poznać długość tekstu wynikowego.
  */
 
+#include "network.h"
+#include "strman.h"
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 #include "libgadu.h"
-#include "libgadu-config.h"
-#include "libgadu-internal.h"
+#include "internal.h"
 #include "encoding.h"
 
 /**
@@ -95,7 +96,7 @@ static int gg_pubdir50_add_n(gg_pubdir50_t req, int num, const char *field, cons
 
 		return 0;
 	}
-		
+
 	if (!(dupfield = strdup(field))) {
 		gg_debug(GG_DEBUG_MISC, "// gg_pubdir50_add_n() out of memory\n");
 		free(dupvalue);
@@ -150,7 +151,7 @@ int gg_pubdir50_add(gg_pubdir50_t req, const char *field, const char *value)
 int gg_pubdir50_seq_set(gg_pubdir50_t req, uint32_t seq)
 {
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_pubdir50_seq_set(%p, %d);\n", req, seq);
-	
+
 	if (!req) {
 		gg_debug(GG_DEBUG_MISC, "// gg_pubdir50_seq_set() invalid arguments\n");
 		errno = EFAULT;
@@ -175,7 +176,7 @@ void gg_pubdir50_free(gg_pubdir50_t s)
 
 	if (!s)
 		return;
-	
+
 	for (i = 0; i < s->entries_count; i++) {
 		free(s->entries[i].field);
 		free(s->entries[i].value);
@@ -203,7 +204,7 @@ uint32_t gg_pubdir50(struct gg_session *sess, gg_pubdir50_t req)
 	struct gg_pubdir50_request *r;
 
 	gg_debug_session(sess, GG_DEBUG_FUNCTION, "** gg_pubdir50(%p, %p);\n", sess, req);
-	
+
 	if (!sess || !req) {
 		gg_debug_session(sess, GG_DEBUG_MISC, "// gg_pubdir50() invalid arguments\n");
 		errno = EFAULT;
@@ -220,14 +221,14 @@ uint32_t gg_pubdir50(struct gg_session *sess, gg_pubdir50_t req)
 		/* wyszukiwanie bierze tylko pierwszy wpis */
 		if (req->entries[i].num)
 			continue;
-		
+
 		if (sess->encoding == GG_ENCODING_CP1250) {
 			size += strlen(req->entries[i].field) + 1;
 			size += strlen(req->entries[i].value) + 1;
 		} else {
 			char *tmp;
 
-			// XXX \todo zoptymalizować
+			/* XXX \todo zoptymalizować */
 			tmp = gg_encoding_convert(req->entries[i].field, sess->encoding, GG_ENCODING_CP1250, -1, -1);
 
 			if (tmp == NULL)
@@ -237,7 +238,7 @@ uint32_t gg_pubdir50(struct gg_session *sess, gg_pubdir50_t req)
 
 			free(tmp);
 
-			// XXX \todo zoptymalizować
+			/* XXX \todo zoptymalizować */
 			tmp = gg_encoding_convert(req->entries[i].value, sess->encoding, GG_ENCODING_CP1250, -1, -1);
 
 			if (tmp == NULL)
@@ -276,7 +277,7 @@ uint32_t gg_pubdir50(struct gg_session *sess, gg_pubdir50_t req)
 		} else {
 			char *tmp;
 
-			// XXX \todo zoptymalizować
+			/* XXX \todo zoptymalizować */
 			tmp = gg_encoding_convert(req->entries[i].field, sess->encoding, GG_ENCODING_CP1250, -1, -1);
 
 			if (tmp == NULL) {
@@ -288,7 +289,7 @@ uint32_t gg_pubdir50(struct gg_session *sess, gg_pubdir50_t req)
 			p += strlen(tmp) + 1;
 			free(tmp);
 
-			// XXX \todo zoptymalizować
+			/* XXX \todo zoptymalizować */
 			tmp = gg_encoding_convert(req->entries[i].value, sess->encoding, GG_ENCODING_CP1250, -1, -1);
 
 
@@ -325,10 +326,10 @@ uint32_t gg_pubdir50(struct gg_session *sess, gg_pubdir50_t req)
 int gg_pubdir50_handle_reply_sess(struct gg_session *sess, struct gg_event *e, const char *packet, int length)
 {
 	const char *end = packet + length, *p;
-	struct gg_pubdir50_reply *r = (struct gg_pubdir50_reply*) packet;
+	const struct gg_pubdir50_reply *r = (const struct gg_pubdir50_reply*) packet;
 	gg_pubdir50_t res;
 	int num = 0;
-	
+
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_pubdir50_handle_reply_sess(%p, %p, %p, %d);\n", sess, e, packet, length);
 
 	if (!sess || !e || !packet) {
@@ -385,7 +386,7 @@ int gg_pubdir50_handle_reply_sess(struct gg_session *sess, struct gg_event *e, c
 		}
 
 		value = NULL;
-		
+
 		for (p = field; p < end; p++) {
 			/* jeśli mamy koniec tekstu... */
 			if (!*p) {
@@ -400,7 +401,7 @@ int gg_pubdir50_handle_reply_sess(struct gg_session *sess, struct gg_event *e, c
 					break;
 			}
 		}
-		
+
 		/* sprawdźmy, czy pole nie wychodzi poza pakiet, żeby nie
 		 * mieć segfaultów, jeśli serwer przestanie zakańczać pakietów
 		 * przez \0 */
@@ -437,10 +438,10 @@ int gg_pubdir50_handle_reply_sess(struct gg_session *sess, struct gg_event *e, c
 				free(tmp);
 			}
 		}
-	}	
+	}
 
 	res->count = num + 1;
-	
+
 	return 0;
 
 failure:

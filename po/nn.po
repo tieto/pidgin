@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Yngve Spjeld Landro <l10n@landro.net>, 2011-2012
+# Richard Laager <rlaager@wiktel.com>, 2014
+# Yngve Spjeld Landro <l10n@landro.net>, 2011-2013
 # Yngve Spjeld Landro <l10n@landro.net>, 2012-2013
 # Yngve Spjeld Landro <l10n@landro.net>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-01-21 08:25+0000\n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-06-27 08:27+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Norwegian Nynorsk (http://www.transifex.com/projects/p/pidgin/"
 "language/nn/)\n"
@@ -1668,7 +1669,6 @@ msgstr "Protokollen kan ikkje nytta offentlege aliasar."
 msgid "Unknown"
 msgstr "Ukjend"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Venner"
 
@@ -1780,26 +1780,31 @@ msgstr ""
 "Sertifikatet seier at det er frå \"%s\" i staden for. Dette kan bety at du "
 "ikkje koplar deg til den tenesta du trur du gjer."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Sertifikatopplysningar"
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
-"Namn: %s\n"
-"\n"
-"Fingeravtrykk (SHA1): %s\n"
-"\n"
-"Teke i bruk: %s\n"
-"Utgår: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Sertifikatopplysningar"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
+msgstr ""
 
 #. show error to user
 msgid "Registration Error"
@@ -3193,14 +3198,14 @@ msgstr "Legg til praterom"
 msgid "Chat _name:"
 msgstr "Prate_namn:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Klarer ikkje å finna tenarnamnet '%s': %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Koplar til"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr "Klarer ikkje å slå opp tenarnamnet: %s"
 
 msgid "Chat error"
 msgstr "Prateromsfeil"
@@ -3356,7 +3361,7 @@ msgid "Auto-detect incoming UTF-8"
 msgstr "Automatisk oppdaging av innkomande UTF-8"
 
 msgid "Ident name"
-msgstr ""
+msgstr "Ident-namn"
 
 msgid "Real name"
 msgstr "Eigentleg namn"
@@ -3408,11 +3413,9 @@ msgstr " <i>(identifisert)</i>"
 msgid "Nick"
 msgstr "Kallenamn"
 
-#, fuzzy
 msgid "Login name"
-msgstr "Ikkje noko namn"
+msgstr "Påloggingsnamn"
 
-#, fuzzy
 msgid "Host name"
 msgstr "Vertsnamn"
 
@@ -9837,6 +9840,9 @@ msgstr "Nærværsinnstillingar"
 msgid "Start Doodling"
 msgstr "Laga krusedullar"
 
+msgid "Activate which ID?"
+msgstr "Vel ID"
+
 msgid "Select the ID you want to activate"
 msgstr "Vel ID-en du vil ta i bruk"
 
@@ -11602,7 +11608,7 @@ msgid "Assamese"
 msgstr "Assamesisk"
 
 msgid "Asturian"
-msgstr ""
+msgstr "Asturiansk"
 
 msgid "Belarusian Latin"
 msgstr "Kviterussisk latinsk"
@@ -11615,6 +11621,9 @@ msgstr "Bengali"
 
 msgid "Bengali-India"
 msgstr "Bengali (India)"
+
+msgid "Bodo"
+msgstr ""
 
 msgid "Bosnian"
 msgstr "Bosnisk"
@@ -11655,6 +11664,9 @@ msgstr "Esperanto"
 msgid "Spanish"
 msgstr "Spansk"
 
+msgid "Argentine Spanish"
+msgstr ""
+
 msgid "Estonian"
 msgstr "Estisk"
 
@@ -11694,9 +11706,6 @@ msgstr "Kroatisk"
 msgid "Hungarian"
 msgstr "Ungarsk"
 
-msgid "Armenian"
-msgstr "Armensk"
-
 msgid "Indonesian"
 msgstr "Indonesisk"
 
@@ -11712,6 +11721,9 @@ msgstr "Georgisk"
 msgid "Ubuntu Georgian Translators"
 msgstr "Ubuntu georgisk-omsetjarar"
 
+msgid "Kazakh"
+msgstr "Kasakhisk"
+
 msgid "Khmer"
 msgstr "Khmer"
 
@@ -11724,14 +11736,17 @@ msgstr "Kannada-omsetjingsgruppa"
 msgid "Korean"
 msgstr "Koreansk"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "Kurdisk"
 
-msgid "Lao"
-msgstr "Lao"
-
 msgid "Lithuanian"
 msgstr "Litauisk"
+
+msgid "Latvian"
+msgstr "Latvisk"
 
 msgid "Maithili"
 msgstr "Maithili"
@@ -11750,9 +11765,6 @@ msgstr "Mongolsk"
 
 msgid "Marathi"
 msgstr "Marathi"
-
-msgid "Malay"
-msgstr "Malayisk"
 
 msgid "Burmese"
 msgstr "Burmesisk"
@@ -11796,6 +11808,9 @@ msgstr "Rumensk"
 msgid "Russian"
 msgstr "Russisk"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "Slovakisk"
 
@@ -11809,7 +11824,7 @@ msgid "Serbian"
 msgstr "Serbisk"
 
 msgid "Serbian Latin"
-msgstr ""
+msgstr "Serbisk (latinsk alfabet)"
 
 msgid "Sinhala"
 msgstr "Singalesisk"
@@ -11829,11 +11844,17 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Thai"
 
+msgid "Tatar"
+msgstr "Tatarisk"
+
 msgid "Ukranian"
 msgstr "Ukrainsk"
 
 msgid "Urdu"
 msgstr "Urdu"
+
+msgid "Uzbek"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vietnamesisk"
@@ -11849,6 +11870,15 @@ msgstr "Tradisjonell kinesisk"
 
 msgid "Amharic"
 msgstr "Amharisk"
+
+msgid "Armenian"
+msgstr "Armensk"
+
+msgid "Lao"
+msgstr "Lao"
+
+msgid "Malay"
+msgstr "Malayisk"
 
 msgid "Turkish"
 msgstr "Tyrkisk"
@@ -12588,6 +12618,8 @@ msgstr "'Manuell' nettlesarkommando er vald, men ingen kommando er brukt."
 
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
 msgstr ""
+"Klarte ikkje å opna adressa: nettlesarkommandoen 'Manual' verkar vera "
+"ugyldig."
 
 msgid "No message"
 msgstr "Inga melding"
@@ -14558,34 +14590,33 @@ msgstr ""
 
 #. Alerts
 msgid "Chatroom alerts"
-msgstr ""
+msgstr "Prateromvarsel"
 
 msgid "Chatroom message alerts _only where someone says your username"
-msgstr ""
+msgstr "Varsel om prateromsmeldingar _berre om nokon nemner brukarnamnet ditt"
 
 #. Launcher integration
 msgid "Launcher Icon"
-msgstr ""
+msgstr "Oppstartsikon"
 
 msgid "_Disable launcher integration"
-msgstr ""
+msgstr "Slå _av samordninga med oppstartaren"
 
 msgid "Show number of unread _messages on launcher icon"
-msgstr ""
+msgstr "Syn talet på ulesne _meldingar på oppstartsikonet "
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "Tal på samtalar per vindauge"
+msgstr "Syn talet på ulesne _samtalar på oppstartsikonet "
 
 #. Messaging menu integration
 msgid "Messaging Menu"
-msgstr ""
+msgstr "Meldingstenestemeny"
 
 msgid "Show number of _unread messages for conversations in messaging menu"
-msgstr ""
+msgstr "Syn talet på _ulesne meldingar for samtalar i meldingstenestemenyen"
 
 msgid "Show _elapsed time for unread conversations in messaging menu"
-msgstr ""
+msgstr "Syn talet på _brukt tid for ulesne samtalar i meldingstenestemenyen"
 
 #. *< type
 #. *< ui_requirement
@@ -14594,17 +14625,17 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "Unity Integration"
-msgstr ""
+msgstr "Unity-samordning"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Provides integration with Unity."
-msgstr ""
+msgstr "Gjev samordning med Unity."
 
 #. *  description
 msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr ""
+msgstr "Gjev samordning med Unity sin meldingstenestemeny og oppstartar."
 
 msgid "Audio"
 msgstr "Lyd"

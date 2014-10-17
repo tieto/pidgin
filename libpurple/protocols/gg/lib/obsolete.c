@@ -1,4 +1,4 @@
-/* $Id: obsolete.c 1082 2011-04-08 17:50:14Z wojtekka $ */
+/* $Id$ */
 
 /*
  *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -32,9 +32,10 @@
 /** \cond obsolete */
 
 #include <errno.h>
+#include <string.h>
 
 #include "libgadu.h"
-#include "libgadu-internal.h"
+#include "internal.h"
 
 struct gg_http *gg_userlist_get(uin_t uin, const char *passwd, int async)
 {
@@ -108,7 +109,9 @@ void gg_search_free(struct gg_http *h)
 
 }
 
-const struct gg_search_request *gg_search_request_mode_0(char *nickname, char *first_name, char *last_name, char *city, int gender, int min_birth, int max_birth, int active, int start)
+const struct gg_search_request *gg_search_request_mode_0(char *nickname,
+	char *first_name, char *last_name, char *city, int gender,
+	int min_birth, int max_birth, int active, int start)
 {
 	return NULL;
 }
@@ -169,7 +172,9 @@ struct gg_http *gg_change_passwd(uin_t uin, const char *passwd, const char *newp
 	return NULL;
 }
 
-struct gg_http *gg_change_passwd2(uin_t uin, const char *passwd, const char *newpasswd, const char *email, const char *newemail, int async)
+struct gg_http *gg_change_passwd2(uin_t uin, const char *passwd,
+	const char *newpasswd, const char *email, const char *newemail,
+	int async)
 {
 	gg_debug(GG_DEBUG_MISC, "// gg_change_passwd2() is obsolete. use gg_change_passwd4() instead!\n");
 	errno = EINVAL;
@@ -204,7 +209,9 @@ struct gg_http *gg_change_info(uin_t uin, const char *passwd, const struct gg_ch
 	return NULL;
 }
 
-struct gg_change_info_request *gg_change_info_request_new(const char *first_name, const char *last_name, const char *nickname, const char *email, int born, int gender, const char *city)
+struct gg_change_info_request *gg_change_info_request_new(
+	const char *first_name, const char *last_name, const char *nickname,
+	const char *email, int born, int gender, const char *city)
 {
 	return NULL;
 }
@@ -232,6 +239,12 @@ int gg_resolve_pthread(int *fd, void **resolver, const char *hostname)
 int gg_pubdir50_handle_reply(struct gg_event *e, const char *packet, int length)
 {
 	return -1;
+}
+
+void gg_login_hash_sha1(const char *password, uint32_t seed, uint8_t *result)
+{
+	if (gg_login_hash_sha1_2(password, seed, result) != 0)
+		memset(result, 0, 20);
 }
 
 /** \endcond */

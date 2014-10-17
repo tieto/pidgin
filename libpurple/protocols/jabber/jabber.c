@@ -471,8 +471,10 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	gc = js->gc;
 	account = purple_connection_get_account(gc);
 
+	g_return_if_fail(data != NULL);
+
 	/* because printing a tab to debug every minute gets old */
-	if(strcmp(data, "\t")) {
+	if (data && strcmp(data, "\t") != 0) {
 		const char *username;
 		char *text = NULL, *last_part = NULL, *tag_start = NULL;
 
@@ -931,6 +933,12 @@ jabber_stream_new(PurpleAccount *account)
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
 	js->fd = -1;
+
+	if (g_strcmp0("prpl-facebook-xmpp",
+		purple_account_get_protocol_id(account)) == 0)
+	{
+		js->server_caps |= JABBER_CAP_FACEBOOK;
+	}
 
 	user = g_strdup(purple_account_get_username(account));
 	/* jabber_id_new doesn't accept "user@domain/" as valid */

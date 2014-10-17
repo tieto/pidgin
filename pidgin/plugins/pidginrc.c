@@ -511,8 +511,8 @@ purplerc_make_misc_vbox(void)
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-	check = pidgin_prefs_checkbox(_("Disable Typing Notification Text"),
-			"/plugins/gtk/purplerc/set/disable-typing-notification", hbox);
+	pidgin_prefs_checkbox(_("Disable Typing Notification Text"),
+		"/plugins/gtk/purplerc/set/disable-typing-notification", hbox);
 
 	/* Widget boolean stuff */
 	/*

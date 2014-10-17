@@ -1,32 +1,23 @@
-# Pidgin Occitan translation
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 #
-# Copyright (C) 2008, Yannig Marchegay <yannig@marchegay.org>
-#
-# This file is distributed under the same license as the Pidgin package.
-#
-# Avant de soumettre des changements ou des conseils de traduction,
-# consultez lo document des règles de traduction en français de Mozilla.
-# Ces règles servent de base pour ce fichièr.
-# http://frenchmozilla.sourceforge.net/pages/regles.html
-#
-# D'autres documents utiles peuvent être consultés sur lo projet de
-# traduction de GNOME.
-# http://wiki.traduc.org/gnomefr/
-# Éric Boumaour <zongo_fr@users.sourceforge.net>, 2011.
-#
+# Translators:
+# Éric Boumaour <zongo_fr@users.sourceforge.net>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2011-01-09 00:11+0100\n"
-"Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
-"Language-Team: fr <fr@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"Language-Team: Occitan (post 1500) (http://www.transifex.com/projects/p/"
+"pidgin/language/oc/)\n"
+"Language: oc\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n>1;\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -206,9 +197,8 @@ msgstr "Nom d'utilizaire"
 msgid "Alias (optional)"
 msgstr ""
 
-#, fuzzy
 msgid "Invite message (optional)"
-msgstr "Messatges enviats"
+msgstr ""
 
 msgid "Add in group"
 msgstr "Apondre al grop"
@@ -1594,7 +1584,6 @@ msgstr ""
 msgid "Unknown"
 msgstr "Desconegut"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Contactes"
 
@@ -1694,10 +1683,19 @@ msgid ""
 "are not connecting to the service you believe you are."
 msgstr ""
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr ""
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1705,8 +1703,10 @@ msgid ""
 "Expiration date: %s\n"
 msgstr ""
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
 msgstr ""
 
 #. show error to user
@@ -2934,16 +2934,14 @@ msgstr ""
 msgid "Please, enter your search criteria below"
 msgstr ""
 
-#, fuzzy
 msgid "Show status to:"
-msgstr "Estat :"
+msgstr ""
 
 msgid "All people"
 msgstr ""
 
-#, fuzzy
 msgid "Only buddies"
-msgstr "Los contactes desconnectats"
+msgstr ""
 
 msgid "Change status broadcasting"
 msgstr ""
@@ -2963,7 +2961,6 @@ msgstr ""
 msgid "Available"
 msgstr "Disponible"
 
-# Repris du fr.po de gabber
 #. 2
 msgid "Chatty"
 msgstr ""
@@ -3023,14 +3020,14 @@ msgstr ""
 msgid "Chat _name:"
 msgstr ""
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr ""
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Connexion"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr ""
 
 msgid "Chat error"
 msgstr ""
@@ -3185,9 +3182,8 @@ msgstr ""
 msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
-#, fuzzy
 msgid "Ident name"
-msgstr "(pas de nom)"
+msgstr ""
 
 msgid "Real name"
 msgstr ""
@@ -3199,9 +3195,8 @@ msgstr ""
 msgid "Use SSL"
 msgstr ""
 
-#, fuzzy
 msgid "Authenticate with SASL"
-msgstr "L'autentificacion a abocat"
+msgstr ""
 
 msgid "Allow plaintext SASL auth over unencrypted connection"
 msgstr ""
@@ -3240,13 +3235,11 @@ msgstr " <i>(identificat)</i>"
 msgid "Nick"
 msgstr "Escais"
 
-#, fuzzy
 msgid "Login name"
-msgstr "Pas de nom"
+msgstr ""
 
-#, fuzzy
 msgid "Host name"
-msgstr "Nom d'òste"
+msgstr ""
 
 msgid "Currently on"
 msgstr ""
@@ -3396,9 +3389,9 @@ msgstr ""
 msgid "SASL authentication failed: No worthy authentication mechanisms found."
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "SASL authentication failed: %s"
-msgstr "L'autentificacion a abocat"
+msgstr ""
 
 msgid ""
 "SASL authentication failed: Server does not support SASL authentication."
@@ -3407,9 +3400,8 @@ msgstr ""
 msgid "SASL authentication failed: Initializing SASL failed."
 msgstr ""
 
-#, fuzzy
 msgid "Incorrect Password"
-msgstr "Picatz lo mot de pas"
+msgstr ""
 
 msgid "SASL authentication failed: No worthy mechanisms found"
 msgstr ""
@@ -5678,9 +5670,8 @@ msgid "Display Name"
 msgstr ""
 
 #. about me
-#, fuzzy
 msgid "About Me"
-msgstr "A prepaus de ieu"
+msgstr ""
 
 #. where I live
 msgid "Where I Live"
@@ -5731,9 +5722,8 @@ msgid "Verify PIN"
 msgstr ""
 
 #. (reference: "libpurple/request.h")
-#, fuzzy
 msgid "Change PIN"
-msgstr "Modificar lo mot de pas"
+msgstr ""
 
 msgid "Change MXit PIN"
 msgstr ""
@@ -5747,16 +5737,14 @@ msgstr ""
 msgid "About"
 msgstr "A prepaus"
 
-#, fuzzy
 msgid "Search for user"
-msgstr "_Recercar :"
+msgstr ""
 
 msgid "Search for a MXit contact"
 msgstr ""
 
-#, fuzzy
 msgid "Type search information"
-msgstr "Entresenhas sus l'utilizaire"
+msgstr ""
 
 msgid "_Search"
 msgstr "_Recercar"
@@ -5766,9 +5754,8 @@ msgid "Change Profile..."
 msgstr ""
 
 #. change PIN
-#, fuzzy
 msgid "Change PIN..."
-msgstr "Modificar lo mot de pas"
+msgstr ""
 
 #. suggested friends
 msgid "Suggested friends..."
@@ -5791,14 +5778,12 @@ msgid "The file you are trying to send is too large!"
 msgstr ""
 
 #. file read error
-#, fuzzy
 msgid "Unable to access the local file"
-msgstr "Impossible de dobrir le fichièr '%s' : %s"
+msgstr ""
 
 #. file write error
-#, fuzzy
 msgid "Unable to save the file"
-msgstr "Impossible de dobrir le fichièr '%s' : %s"
+msgstr ""
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -5907,9 +5892,8 @@ msgstr ""
 msgid "Rejection Message"
 msgstr ""
 
-#, fuzzy
 msgid "No profile available"
-msgstr "Pas disponible"
+msgstr ""
 
 msgid "This contact does not have a profile."
 msgstr ""
@@ -5918,9 +5902,8 @@ msgid "Your MXit ID..."
 msgstr ""
 
 #. contact is in Deleted, Rejected or None state
-#, fuzzy
 msgid "Re-Invite"
-msgstr "Convidar"
+msgstr ""
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -5954,9 +5937,8 @@ msgstr ""
 msgid "Widowed"
 msgstr ""
 
-#, fuzzy
 msgid "Separated"
-msgstr "Departament"
+msgstr ""
 
 msgid "Divorced"
 msgstr ""
@@ -5964,21 +5946,18 @@ msgstr ""
 msgid "Last Online"
 msgstr ""
 
-#, fuzzy
 msgid "Invite Message"
-msgstr "Messatges enviats"
+msgstr ""
 
-#, fuzzy
 msgid "No results"
-msgstr "Resultas de la recèrca"
+msgstr ""
 
 msgid "No contacts found."
 msgstr ""
 
 #. define columns
-#, fuzzy
 msgid "UserId"
-msgstr "Utilizaire"
+msgstr ""
 
 msgid "Where I live"
 msgstr ""
@@ -8405,7 +8384,6 @@ msgstr ""
 msgid "Error occurred"
 msgstr ""
 
-# c-format
 #, c-format
 msgid "%s has changed the topic of <I>%s</I> to: %s"
 msgstr ""
@@ -9319,6 +9297,9 @@ msgstr ""
 msgid "Start Doodling"
 msgstr ""
 
+msgid "Activate which ID?"
+msgstr ""
+
 msgid "Select the ID you want to activate"
 msgstr ""
 
@@ -9990,9 +9971,8 @@ msgstr ""
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr ""
 
-#, fuzzy
 msgid "Send Instant Message"
-msgstr "Mandar un messatge"
+msgstr ""
 
 #. Buddy List
 msgid "Background Color"
@@ -10352,9 +10332,8 @@ msgstr ""
 msgid "/Help/De_veloper Information"
 msgstr ""
 
-#, fuzzy
 msgid "/Help/_Plugin Information"
-msgstr "Entresenhas sul compte"
+msgstr ""
 
 msgid "/Help/_Translator Information"
 msgstr ""
@@ -10529,9 +10508,8 @@ msgstr ""
 msgid "(Optional) A_lias:"
 msgstr ""
 
-#, fuzzy
 msgid "(Optional) _Invite message:"
-msgstr "Messatges enviats"
+msgstr ""
 
 msgid "Add buddy to _group:"
 msgstr ""
@@ -11034,6 +11012,9 @@ msgstr "Bengalí"
 msgid "Bengali-India"
 msgstr "Bengalí indian"
 
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "Bosniac"
 
@@ -11072,6 +11053,9 @@ msgstr "Esperanto"
 
 msgid "Spanish"
 msgstr "Castelhan"
+
+msgid "Argentine Spanish"
+msgstr ""
 
 msgid "Estonian"
 msgstr "Estonian"
@@ -11112,9 +11096,6 @@ msgstr ""
 msgid "Hungarian"
 msgstr "Ongrés"
 
-msgid "Armenian"
-msgstr ""
-
 msgid "Indonesian"
 msgstr "Indonesian"
 
@@ -11130,6 +11111,9 @@ msgstr "Georgian"
 msgid "Ubuntu Georgian Translators"
 msgstr ""
 
+msgid "Kazakh"
+msgstr ""
+
 msgid "Khmer"
 msgstr ""
 
@@ -11142,14 +11126,17 @@ msgstr ""
 msgid "Korean"
 msgstr "Corean"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "Curd"
 
-msgid "Lao"
-msgstr "Laossian"
-
 msgid "Lithuanian"
 msgstr "Lituanian"
+
+msgid "Latvian"
+msgstr ""
 
 msgid "Maithili"
 msgstr ""
@@ -11167,9 +11154,6 @@ msgid "Mongolian"
 msgstr ""
 
 msgid "Marathi"
-msgstr ""
-
-msgid "Malay"
 msgstr ""
 
 msgid "Burmese"
@@ -11214,6 +11198,9 @@ msgstr "Romanian"
 msgid "Russian"
 msgstr "Rus"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "Eslovac"
 
@@ -11226,9 +11213,8 @@ msgstr "Albanés"
 msgid "Serbian"
 msgstr "Serbian"
 
-#, fuzzy
 msgid "Serbian Latin"
-msgstr "Bielorus latin"
+msgstr ""
 
 msgid "Sinhala"
 msgstr ""
@@ -11248,11 +11234,17 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Tailandés"
 
+msgid "Tatar"
+msgstr ""
+
 msgid "Ukranian"
 msgstr "Ukrainien"
 
 msgid "Urdu"
 msgstr "Ordo"
+
+msgid "Uzbek"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vietnamés"
@@ -11268,6 +11260,15 @@ msgstr "Chinés tradicional"
 
 msgid "Amharic"
 msgstr "Amaric"
+
+msgid "Armenian"
+msgstr ""
+
+msgid "Lao"
+msgstr "Laossian"
+
+msgid "Malay"
+msgstr ""
 
 msgid "Turkish"
 msgstr "Turc"
@@ -11341,13 +11342,12 @@ msgstr ""
 msgid "%s Translator Information"
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "%s Plugin Information"
-msgstr "Entresenhas sus l'utilizaire"
+msgstr ""
 
-#, fuzzy
 msgid "Plugin Information"
-msgstr "Entresenhas"
+msgstr ""
 
 msgid "_Name"
 msgstr "_Nom"
@@ -12330,9 +12330,8 @@ msgstr "Servidor _TURN :"
 msgid "_UDP Port:"
 msgstr "Pòrt _UDP :"
 
-#, fuzzy
 msgid "T_CP Port:"
-msgstr "Pòrt _UDP :"
+msgstr ""
 
 msgid "Use_rname:"
 msgstr "Nom d'utilizai_re :"
@@ -13872,9 +13871,8 @@ msgid "Show number of unread co_nversations on launcher icon"
 msgstr ""
 
 #. Messaging menu integration
-#, fuzzy
 msgid "Messaging Menu"
-msgstr "Messatge"
+msgstr ""
 
 msgid "Show number of _unread messages for conversations in messaging menu"
 msgstr ""
@@ -13888,9 +13886,8 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#, fuzzy
 msgid "Unity Integration"
-msgstr "Entresenhas sus l'utilizaire"
+msgstr ""
 
 #. *< name
 #. *< version
@@ -13929,9 +13926,8 @@ msgstr "P_eriferic"
 msgid "DROP"
 msgstr ""
 
-#, fuzzy
 msgid "Volume:"
-msgstr "V_olum :"
+msgstr ""
 
 msgid "Silence threshold:"
 msgstr ""
@@ -14197,281 +14193,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
-
-#~ msgid "Passwords do not match"
-#~ msgstr "Los mots de pas son pas los meteisses"
-
-#~ msgid "Captcha"
-#~ msgstr "Captcha"
-
-#~ msgid "Connect"
-#~ msgstr "Se connectar"
-
-#~ msgid "Dragon"
-#~ msgstr "Dragon"
-
-#~ msgid "Goat"
-#~ msgstr "Cabra"
-
-#~ msgid "Monkey"
-#~ msgstr "Monin"
-
-#~ msgid "Dog"
-#~ msgstr "Can"
-
-#~ msgid "Pig"
-#~ msgstr "Tesson"
-
-#~ msgid "Visible"
-#~ msgstr "Visible"
-
-#~ msgid "Private"
-#~ msgstr "Privat"
-
-#~ msgid "QQ Number"
-#~ msgstr "Numèro QQ"
-
-#~ msgid "City/Area"
-#~ msgstr "Ciutat"
-
-#~ msgid "Zodiac"
-#~ msgstr "Signe del zodiac"
-
-#~ msgid "True"
-#~ msgstr "Verai"
-
-#~ msgid "False"
-#~ msgstr "Fals"
-
-#~ msgid "Modify Address"
-#~ msgstr "Modificar l'adreça"
-
-#~ msgid "_Modify"
-#~ msgstr "_Modificar"
-
-#~ msgid "Send"
-#~ msgstr "Mandar"
-
-#~ msgid "Add buddy"
-#~ msgstr "Apondre un contacte"
-
-#~ msgid "Message: %s"
-#~ msgstr "Messatge : %s"
-
-#~ msgid "QQ Qun"
-#~ msgstr "QQ Qun"
-
-#~ msgid "Creator"
-#~ msgstr "Creator"
-
-#~ msgid "Category"
-#~ msgstr "Categoria"
-
-#~ msgid "Setup"
-#~ msgstr "Configuracion"
-
-#~ msgid "Level"
-#~ msgstr "Nivèl"
-
-#~ msgid " VIP"
-#~ msgstr " VIP"
-
-#~ msgid " Video"
-#~ msgstr " Vidèo"
-
-#~ msgid " Zone"
-#~ msgstr "Pas cap"
-
-#~ msgid "<b>IP</b>: %s<br>\n"
-#~ msgstr "<b>IP</b> : %s<br>\n"
-
-#~ msgid "About OpenQ %s"
-#~ msgstr "A prepaus d'OpenQ %s"
-
-#~ msgid "About OpenQ"
-#~ msgstr "A prepaus d'OpenQ"
-
-#~ msgid "Auto"
-#~ msgstr "Auto"
-
-#~ msgid "QQ2008"
-#~ msgstr "QQ2008"
-
-#~ msgid "QQ2007"
-#~ msgstr "QQ2007"
-
-#~ msgid "QQ2005"
-#~ msgstr "QQ2005"
-
-#~ msgid "Activation required"
-#~ msgstr "L'activacion a abocat"
-
-#~ msgid "Connecting to server"
-#~ msgstr "Connexion al servidor"
-
-#~ msgid "QQ Error"
-#~ msgstr "Error QQ"
-
-#~ msgid "%s:%s"
-#~ msgstr "%s:%s"
-
-#~ msgid "From %s:"
-#~ msgstr "De %s :"
-
-#, fuzzy
-#~ msgid "Nick Name"
-#~ msgstr "Escais"
-
-#~ msgid "Artist"
-#~ msgstr "Artista"
-
-#~ msgid "Album"
-#~ msgstr "Albom"
-
-#, fuzzy
-#~ msgid "New Mood"
-#~ msgstr "Mot de pas novèl"
-
-#, fuzzy
-#~ msgid "Change your Mood"
-#~ msgstr "Modificar lo mot de pas"
-
-#~ msgid "Orientation"
-#~ msgstr "Orientacion"
-
-#~ msgid "The orientation of the tray."
-#~ msgstr "L'orientacion de la zòna de notificacion."
-
-#~ msgid "Unknown error."
-#~ msgstr "Error desconeguda."
-
-#, fuzzy
-#~ msgid "(Default)"
-#~ msgstr "Defaut"
-
-#~ msgid "Icon"
-#~ msgstr "Icòna"
-
-#~ msgid "Failed to open file '%s': %s"
-#~ msgstr "Impossible de dobrir le fichièr '%s' : %s"
-
-#~ msgid ""
-#~ "Failed to load image '%s': reason not known, probably a corrupt image file"
-#~ msgstr ""
-#~ "Impossible de cargar l'imatge '%s' : rason desconeguda, probable que siá "
-#~ "corromput"
-
-#~ msgid "_User:"
-#~ msgstr "_Utilizaire :"
-
-#, fuzzy
-#~ msgid "Calling ... "
-#~ msgstr "A calcular..."
-
-#, fuzzy
-#~ msgid "_Proxy"
-#~ msgstr "Proxy"
-
-#~ msgid "_Resume"
-#~ msgstr "_Contunhar"
-
-#~ msgid "XHTML-IM"
-#~ msgstr "XHTML-IM"
-
-#, fuzzy
-#~ msgid "Add buddy Q&A"
-#~ msgstr "Apondre lo contacte"
-
-#~ msgid "Save As..."
-#~ msgstr "Enregistrar coma..."
-
-#, fuzzy
-#~ msgid "QQ Budy"
-#~ msgstr "Apondre lo contacte"
-
-#, fuzzy
-#~ msgid "Would you add?"
-#~ msgstr "Voulez-vous l'ajouter ?"
-
-#~ msgid "Artists"
-#~ msgstr "Artistas"
-
-#~ msgid "Reason: %s"
-#~ msgstr "Rason : %s"
-
-#~ msgid "Display Statistics"
-#~ msgstr "Afficher los statistiques"
-
-#~ msgid "_Merge"
-#~ msgstr "_Fusionner"
-
-#~ msgid ""
-#~ "Please enter the screen name of the person you would like to add to your "
-#~ "buddy list. You may optionally enter an alias, or nickname,  for the "
-#~ "buddy. The alias will be displayed in place of the screen name whenever "
-#~ "possible.\n"
-#~ msgstr ""
-#~ "Saisissez lo nom d'utilisateur de la personne que vous voulez ajouter à "
-#~ "votre liste de contacts. Vous pouvez choisir un alias ou surnom pour lo "
-#~ "contact. L'alias sera affiché à la place du nom d'utilisateur chaque fois "
-#~ "que cela est possible.\n"
-
-#~ msgid "Pounce only when my status is not available"
-#~ msgstr "Alerter uniquement quand mon état est non disponible"
-
-#~ msgid "Use recent buddies group"
-#~ msgstr "Utiliser lo groupe de contacts récents"
-
-#~ msgid "Show how long you have been idle"
-#~ msgstr "Afficher temps d'inactivité"
-
-#~ msgid "%s is now %s"
-#~ msgstr "%s est désormais %s."
-
-#~ msgid "%s is no longer %s"
-#~ msgstr "%s n'est plus %s."
-
-#~ msgid "User has typed something and stopped"
-#~ msgstr "L'utilisateur a écrit quelque chose et s'est arrêté"
-
-#~ msgid "nudged"
-#~ msgstr "nudgé"
-
-#~ msgid "You have just sent a Nudge!"
-#~ msgstr "Vous venez d'envoyer un « Nudge. »"
-
-#~ msgid "%s just sent you a Buzz!"
-#~ msgstr "%s vient de vous envoyer un « Buzz ! »"
-
-#~ msgid "You have just sent a Buzz!"
-#~ msgstr "Vous venez d'envoyer un « Buzz ! »"
-
-#~ msgid "buzzed"
-#~ msgstr "buzzé"
-
-#~ msgid "Norwegian"
-#~ msgstr "Norvégien"
-
-#~ msgid "Unavailable"
-#~ msgstr "Non disponible"
-
-#~ msgid "Alias..."
-#~ msgstr "Alias..."
-
-#~ msgid "Tools"
-#~ msgstr "Outils"
-
-#~ msgid "Timestamps"
-#~ msgstr "Horodatage"
-
-#~ msgid "Slovack"
-#~ msgstr "Slovaque"
-
-#~ msgid "Azerbaijani"
-#~ msgstr "Azéri"
-
-#~ msgid "Xhosa"
-#~ msgstr "Xhosa"
-
-#~ msgid "Chinese"
-#~ msgstr "Chinois"

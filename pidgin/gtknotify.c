@@ -1706,8 +1706,8 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 			G_CALLBACK(pounce_response_open_ims), NULL);
 	}
 
-	button = gtk_dialog_add_button(GTK_DIALOG(dialog),
-	                               GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
+	gtk_dialog_add_button(GTK_DIALOG(dialog),
+		GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
