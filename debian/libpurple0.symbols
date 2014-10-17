@@ -915,6 +915,7 @@ libpurple.so.0 libpurple0 #MINVER#
  _purple_connection_destroy@Base 2.6.0
  _purple_connection_new@Base 2.6.0
  _purple_connection_new_unregister@Base 2.6.0
+ _purple_network_set_common_socket_flags@Base 2.10.10
  _purple_oscar_convert@Base 2.6.0
  dbus_signals@Base 2.6.0
  empty_to_null@Base 2.6.0

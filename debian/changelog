@@ -1,3 +1,13 @@
+pidgin (2.10.10-1) unstable; urgency=high
+
+  * Imported Upstream version 2.10.10
+    * Fixes security issues: CVE-2014-3694, CVE-2014-3695, CVE-2014-3696,
+      CVE-2014-3697, CVE-2014-3698
+  * Update debian/watch to check upstream signature (Closes: #764768)
+  * Build with system libgadu
+
+ -- Ari Pollak <ari@debian.org>  Thu, 16 Oct 2014 21:01:32 -0400
+
 pidgin (2.10.9-1) unstable; urgency=medium
 
   * Imported Upstream version 2.10.9
