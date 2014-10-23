@@ -1318,7 +1318,7 @@ purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size)
 			purple_xfer_cancel_local(xfer);
 			return -1;
 		}
-		got_len = fread(buffer, size, 1, priv->dest_fp);
+		got_len = fread(buffer, 1, size, priv->dest_fp);
 		if ((got_len < 0 || (gsize)got_len != size) &&
 			ferror(priv->dest_fp))
 		{
