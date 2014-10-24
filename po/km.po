@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-02-02 12:44-0800\n"
+"PO-Revision-Date: 2014-02-02 09:03+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Khmer (http://www.transifex.com/projects/p/pidgin/language/"
 "km/)\n"
@@ -1636,6 +1636,7 @@ msgstr ""
 msgid "Unknown"
 msgstr "មិន​ស្គាល់"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "មិត្តភក្ដិ"
 
@@ -1744,31 +1745,26 @@ msgstr ""
 "វិញ្ញាបនបត្រ​បានអះអាង​ថា​បានមក​ពី​ \"%s\" ជំនួស​វិញ ។ វា​អាច​មានន័យ​ថា អ្នក​មិនបាន​តភ្ជាប់​ទៅ​កាន់សេវា​"
 "ដែល​អ្នក​ជឿជាក់​នោះ​ទេ ។"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "ព័ត៌មាន​វិញ្ញាបនបត្រ"
-
-msgid "Unable to find Issuer Certificate"
-msgstr ""
-
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
-"\n"
-"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
+"ឈ្មោះ​​ធម្មតា ៖ %s\n"
+"\n"
+"ស្នាមម្រាមដៃ (SHA1) ៖ %s\n"
+"\n"
+"កាលបរិច្ឆេទ​ធ្វើ​ឲ្យ​សកម្ម ៖ %s\n"
+"កាលបរិច្ឆេទ​ផុត​កំណត់ ៖ %s\n"
 
-msgid "(self-signed)"
-msgstr ""
-
-msgid "View Issuer Certificate"
-msgstr ""
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "ព័ត៌មាន​វិញ្ញាបនបត្រ"
 
 #. show error to user
 msgid "Registration Error"
@@ -3129,14 +3125,14 @@ msgstr "បន្ថែម​ទៅ​កាន់​ការ​ជជែក"
 msgid "Chat _name:"
 msgstr "ឈ្មោះការ​ជជែក ៖"
 
+#, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr "មិន​អាច​ដោះស្រាយ​ឈ្មោះ​ម៉ាស៊ីន '%s': %s បាន​ទេ"
+
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "តភ្ជាប់"
-
-#, c-format
-msgid "Unable to resolve hostname: %s"
-msgstr ""
 
 msgid "Chat error"
 msgstr "កំហុស​ក្នុងកា​រជជែក"
@@ -9619,9 +9615,6 @@ msgstr "ការ​កំណត់​វត្តមាន"
 msgid "Start Doodling"
 msgstr "ចាប់ផ្ដើម Doodling"
 
-msgid "Activate which ID?"
-msgstr ""
-
 msgid "Select the ID you want to activate"
 msgstr "ជ្រើស​លេខ​សម្គាល់​ដែល​អ្នក​ចង់​ធ្វើ​ឲ្យ​សកម្ម"
 
@@ -11365,9 +11358,6 @@ msgstr "បេន្កាលី"
 msgid "Bengali-India"
 msgstr ""
 
-msgid "Bodo"
-msgstr ""
-
 msgid "Bosnian"
 msgstr "បូស្នី"
 
@@ -11406,9 +11396,6 @@ msgstr "អេស្ពេរ៉ាន់តូ\t"
 
 msgid "Spanish"
 msgstr "​អេស៉្បាញ"
-
-msgid "Argentine Spanish"
-msgstr ""
 
 msgid "Estonian"
 msgstr "អេស្តូនី"
@@ -11449,6 +11436,9 @@ msgstr ""
 msgid "Hungarian"
 msgstr "ហុងគ្រី"
 
+msgid "Armenian"
+msgstr "អាម៉ីនៀន"
+
 msgid "Indonesian"
 msgstr "ឥណ្ឌូនេស៊ី"
 
@@ -11464,9 +11454,6 @@ msgstr "ហ្សកហ្ស៊ី"
 msgid "Ubuntu Georgian Translators"
 msgstr "អ្នកប្រើ​ប្រែ​​ហ្សកហ្ស៊ី​របស់​អូប៊ុនទូ"
 
-msgid "Kazakh"
-msgstr ""
-
 msgid "Khmer"
 msgstr "ខ្មែរ"
 
@@ -11479,17 +11466,14 @@ msgstr "ក្រុម​អ្នកបកប្រែ​ភាសា​កិ
 msgid "Korean"
 msgstr "កូរ៉េ"
 
-msgid "Kashmiri"
-msgstr ""
-
 msgid "Kurdish"
 msgstr "ឃឺដ"
 
+msgid "Lao"
+msgstr "ឡាវ"
+
 msgid "Lithuanian"
 msgstr "លីទុយអានី"
-
-msgid "Latvian"
-msgstr ""
 
 msgid "Maithili"
 msgstr ""
@@ -11508,6 +11492,9 @@ msgstr "ម៉ុងហ្គោលី"
 
 msgid "Marathi"
 msgstr "ម៉ារ៉ា​ធី"
+
+msgid "Malay"
+msgstr "ម៉ាឡេស៊ី"
 
 msgid "Burmese"
 msgstr ""
@@ -11551,9 +11538,6 @@ msgstr "រូម៉ានី"
 msgid "Russian"
 msgstr "រុស្ស៊ី"
 
-msgid "Sindhi"
-msgstr ""
-
 msgid "Slovak"
 msgstr "ស្លូវ៉ាគី"
 
@@ -11587,17 +11571,11 @@ msgstr "តេលូហ្គូ"
 msgid "Thai"
 msgstr "ថៃ"
 
-msgid "Tatar"
-msgstr ""
-
 msgid "Ukranian"
 msgstr "អ៊ុយ​ក្រែន"
 
 msgid "Urdu"
 msgstr "​អ៊ូរ្ឌូ"
-
-msgid "Uzbek"
-msgstr ""
 
 msgid "Vietnamese"
 msgstr "វៀតណាម"
@@ -11613,15 +11591,6 @@ msgstr "ចិនបុរាណ"
 
 msgid "Amharic"
 msgstr "អាមហារីច"
-
-msgid "Armenian"
-msgstr "អាម៉ីនៀន"
-
-msgid "Lao"
-msgstr "ឡាវ"
-
-msgid "Malay"
-msgstr "ម៉ាឡេស៊ី"
 
 msgid "Turkish"
 msgstr "ទួរគី"

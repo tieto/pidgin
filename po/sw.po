@@ -1,32 +1,30 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-#
-# Translators:
-# , 2009
+# Copyright (C) 2009
+# This file is distributed under the same license as the Pidgin package.
+# , 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin\n"
+"Project-Id-Version: pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Swahili (http://www.transifex.com/projects/p/pidgin/language/"
-"sw/)\n"
-"Language: sw\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"PO-Revision-Date: 2009-04-16 22:24+0300\n"
+"Last-Translator: \n"
+"Language-Team: American English <kde-i18n-doc@lists.kde.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 0.2\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
+#, fuzzy
 msgid "Finch"
-msgstr ""
+msgstr "Maliza"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr ""
+msgstr "\n"
 
 #, c-format
 msgid ""
@@ -68,11 +66,13 @@ msgid ""
 "The account's username cannot be changed while it is connected to the server."
 msgstr ""
 
+#, fuzzy
 msgid "New mail notifications"
-msgstr ""
+msgstr "Arifisho la Jumla"
 
+#, fuzzy
 msgid "Remember password"
-msgstr ""
+msgstr "Ingiza tena nywila:"
 
 msgid "There are no protocol plugins installed."
 msgstr ""
@@ -86,11 +86,13 @@ msgstr ""
 msgid "New Account"
 msgstr ""
 
+#, fuzzy
 msgid "Protocol:"
-msgstr ""
+msgstr "Itifaki"
 
+#, fuzzy
 msgid "Username:"
-msgstr ""
+msgstr "Jina la mtumiaji"
 
 msgid "Password:"
 msgstr "Nywila:"
@@ -112,16 +114,18 @@ msgstr "Ghairi"
 msgid "Save"
 msgstr "Hifadhi"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Are you sure you want to delete %s?"
-msgstr ""
+msgstr "Una uhakika unataka kufuta ithibati yako?"
 
+#, fuzzy
 msgid "Delete Account"
-msgstr ""
+msgstr "Futa mwenyeji"
 
 #. Delete button
+#, fuzzy
 msgid "Delete"
-msgstr ""
+msgstr "&Futa"
 
 msgid "Accounts"
 msgstr ""
@@ -134,8 +138,9 @@ msgid "Add"
 msgstr "Ongeza"
 
 #. Modify button
+#, fuzzy
 msgid "Modify"
-msgstr ""
+msgstr "R&ekebisha"
 
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
@@ -151,8 +156,9 @@ msgstr ""
 msgid "Authorize buddy?"
 msgstr ""
 
+#, fuzzy
 msgid "Authorize"
-msgstr ""
+msgstr "Mamlaka"
 
 msgid "Deny"
 msgstr "Kataa"
@@ -173,8 +179,9 @@ msgid ""
 "Last Seen: %s ago"
 msgstr ""
 
+#, fuzzy
 msgid "Default"
-msgstr ""
+msgstr "chaguo-msingi"
 
 msgid "You must provide a username for the buddy."
 msgstr ""
@@ -194,11 +201,13 @@ msgstr ""
 msgid "Username"
 msgstr "Jina la mtumiaji"
 
+#, fuzzy
 msgid "Alias (optional)"
-msgstr ""
+msgstr "&Barua pepe (Uchaguzi):"
 
+#, fuzzy
 msgid "Invite message (optional)"
-msgstr ""
+msgstr "&Barua pepe (Uchaguzi):"
 
 msgid "Add in group"
 msgstr ""
@@ -212,8 +221,9 @@ msgstr ""
 msgid "Please enter buddy information."
 msgstr ""
 
+#, fuzzy
 msgid "Chats"
-msgstr ""
+msgstr "Chad"
 
 #. Extract their Name and put it in
 msgid "Name"
@@ -234,8 +244,9 @@ msgstr ""
 msgid "You can edit more information from the context menu later."
 msgstr ""
 
+#, fuzzy
 msgid "Error adding group"
-msgstr ""
+msgstr "Hitilafu katika Kutuma Taarifa"
 
 msgid "You must give a name for the group to add."
 msgstr ""
@@ -252,14 +263,17 @@ msgstr ""
 msgid "Please Update the necessary fields."
 msgstr ""
 
+#, fuzzy
 msgid "Edit"
-msgstr ""
+msgstr "&Hariri"
 
+#, fuzzy
 msgid "Edit Settings"
-msgstr ""
+msgstr "Vipimo"
 
+#, fuzzy
 msgid "Information"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
 msgid "Retrieving..."
 msgstr ""
@@ -270,8 +284,9 @@ msgstr ""
 msgid "Add Buddy Pounce"
 msgstr ""
 
+#, fuzzy
 msgid "Send File"
-msgstr ""
+msgstr "Tuma Kwa:"
 
 msgid "Blocked"
 msgstr "Imezuiliwa"
@@ -283,8 +298,9 @@ msgstr ""
 msgid "Please enter the new name for %s"
 msgstr ""
 
+#, fuzzy
 msgid "Rename"
-msgstr ""
+msgstr "&Badili jina"
 
 msgid "Set Alias"
 msgstr ""
@@ -298,13 +314,14 @@ msgstr ""
 msgid "Removing this group will also remove all the buddies in the group"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Are you sure you want to remove %s?"
-msgstr ""
+msgstr "Una uhakika unataka kuondoa nywila zote?"
 
 #. XXX: anything to do with the returned ui-handle?
+#, fuzzy
 msgid "Confirm Remove"
-msgstr ""
+msgstr "Thibitisha kufunga"
 
 msgid "Remove"
 msgstr "Ondoa"
@@ -369,8 +386,9 @@ msgstr ""
 msgid "Please enter the username or alias of the person you would like to IM."
 msgstr ""
 
+#, fuzzy
 msgid "Channel"
-msgstr ""
+msgstr "Ghairi"
 
 msgid "Join a Chat"
 msgstr ""
@@ -405,20 +423,24 @@ msgstr ""
 msgid "View All Logs"
 msgstr ""
 
+#, fuzzy
 msgid "Show"
-msgstr ""
+msgstr "Onyesha:"
 
 msgid "Empty groups"
 msgstr ""
 
+#, fuzzy
 msgid "Offline buddies"
-msgstr ""
+msgstr "Namna ya Nje ya mkondo"
 
+#, fuzzy
 msgid "Sort"
-msgstr ""
+msgstr "&Panga"
 
+#, fuzzy
 msgid "By Status"
-msgstr ""
+msgstr "Hali"
 
 msgid "Alphabetically"
 msgstr ""
@@ -429,14 +451,17 @@ msgstr ""
 msgid "Buddy"
 msgstr ""
 
+#, fuzzy
 msgid "Chat"
-msgstr ""
+msgstr "Chad"
 
+#, fuzzy
 msgid "Grouping"
-msgstr ""
+msgstr "Hakuna Mpangilio"
 
+#, fuzzy
 msgid "Certificate Import"
-msgstr ""
+msgstr "Hati ina"
 
 msgid "Specify a hostname"
 msgstr ""
@@ -456,8 +481,9 @@ msgstr ""
 msgid "X.509 certificate import failed"
 msgstr ""
 
+#, fuzzy
 msgid "Select a PEM certificate"
-msgstr ""
+msgstr "Teua Ithibati"
 
 #, c-format
 msgid ""
@@ -465,18 +491,20 @@ msgid ""
 "Check that you have write permission to the target path\n"
 msgstr ""
 
+#, fuzzy
 msgid "Certificate Export Error"
-msgstr ""
+msgstr "Ithibati Ipo"
 
 msgid "X.509 certificate export failed"
 msgstr ""
 
+#, fuzzy
 msgid "PEM X.509 Certificate Export"
-msgstr ""
+msgstr "X.509 Ithibati (PEM)"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Certificate for %s"
-msgstr ""
+msgstr "Hati ina"
 
 #, c-format
 msgid ""
@@ -486,8 +514,9 @@ msgid ""
 "%s"
 msgstr ""
 
+#, fuzzy
 msgid "SSL Host Certificate"
-msgstr ""
+msgstr "Ithibati SSL ya Mteja"
 
 #, c-format
 msgid "Really delete certificate for %s?"
@@ -502,16 +531,17 @@ msgstr "Meneja Ithibati"
 msgid "Hostname"
 msgstr ""
 
+#, fuzzy
 msgid "Info"
-msgstr ""
+msgstr "Taarifa:"
 
 #. Close button
 msgid "Close"
 msgstr "Funga"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s (%s)"
-msgstr ""
+msgstr "%S (%S)"
 
 #, c-format
 msgid "%s disconnected."
@@ -578,17 +608,20 @@ msgid ""
 "Logging stopped. Future messages in this conversation will not be logged."
 msgstr ""
 
+#, fuzzy
 msgid "Send To"
-msgstr ""
+msgstr "Tuma kwa:"
 
+#, fuzzy
 msgid "Conversation"
-msgstr ""
+msgstr "Unganisho"
 
 msgid "Clear Scrollback"
 msgstr ""
 
+#, fuzzy
 msgid "Show Timestamps"
-msgstr ""
+msgstr "Onyesha Ufafanuzi"
 
 msgid "Add Buddy Pounce..."
 msgstr ""
@@ -602,8 +635,9 @@ msgstr ""
 msgid "Enable Sounds"
 msgstr ""
 
+#, fuzzy
 msgid "You are not connected."
-msgstr ""
+msgstr "\"Haikuweza kupakia: \""
 
 msgid "<AUTO-REPLY> "
 msgstr ""
@@ -683,21 +717,25 @@ msgid ""
 "cyan, default<br><br>EXAMPLE:<br>    msgcolor send cyan default"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to open file."
-msgstr ""
+msgstr "Nimeshindwa Kusasisha"
 
+#, fuzzy
 msgid "Debug Window"
-msgstr ""
+msgstr "Dirisha Jipya"
 
 #. XXX: Setting the GROW_Y for the following widgets don't make sense. But right now
 #. * it's necessary to make the width of the debug window resizable ... like I said,
 #. * it doesn't make sense. The bug is likely in the packing in gntbox.c.
 #.
+#, fuzzy
 msgid "Clear"
-msgstr ""
+msgstr "&Safisha"
 
+#, fuzzy
 msgid "Filter:"
-msgstr ""
+msgstr "Ch&uja:"
 
 msgid "Pause"
 msgstr "Simamisha"
@@ -712,20 +750,24 @@ msgstr[1] ""
 msgid "File Transfers"
 msgstr ""
 
+#, fuzzy
 msgid "Progress"
-msgstr ""
+msgstr "Hatua:"
 
+#, fuzzy
 msgid "Filename"
-msgstr ""
+msgstr "Jina la faili:"
 
 msgid "Size"
 msgstr "Saizi"
 
+#, fuzzy
 msgid "Speed"
-msgstr ""
+msgstr "Kilishi mkono"
 
+#, fuzzy
 msgid "Remaining"
-msgstr ""
+msgstr "#1 imebakia"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
 #. presence
@@ -738,8 +780,9 @@ msgstr ""
 msgid "Clear finished transfers"
 msgstr ""
 
+#, fuzzy
 msgid "Stop"
-msgstr ""
+msgstr "&Simama"
 
 msgid "Waiting for transfer to begin"
 msgstr ""
@@ -767,11 +810,13 @@ msgstr "Imemaliza"
 msgid "The file was saved as %s."
 msgstr ""
 
+#, fuzzy
 msgid "Sending"
-msgstr ""
+msgstr "kuumbia"
 
+#, fuzzy
 msgid "Receiving"
-msgstr ""
+msgstr "teremua"
 
 #, c-format
 msgid "Conversation in %s on %s"
@@ -781,8 +826,9 @@ msgstr ""
 msgid "Conversation with %s on %s"
 msgstr ""
 
+#, fuzzy
 msgid "%B %Y"
-msgstr ""
+msgstr "%S %S"
 
 msgid ""
 "System events will only be logged if the \"Log all status changes to system "
@@ -798,8 +844,9 @@ msgid ""
 "Chats will only be logged if the \"Log all chats\" preference is enabled."
 msgstr ""
 
+#, fuzzy
 msgid "No logs were found"
-msgstr ""
+msgstr "Hakuna masasisho yaliyopatikana."
 
 msgid "Total log size:"
 msgstr ""
@@ -832,8 +879,9 @@ msgstr ""
 msgid "Accept"
 msgstr ""
 
+#, fuzzy
 msgid "Reject"
-msgstr ""
+msgstr "Seti upya"
 
 msgid "Call in progress."
 msgstr ""
@@ -855,14 +903,16 @@ msgstr ""
 msgid "call: Make an audio call."
 msgstr ""
 
+#, fuzzy
 msgid "Emails"
-msgstr ""
+msgstr "Barua pepe"
 
 msgid "You have mail!"
 msgstr ""
 
+#, fuzzy
 msgid "Sender"
-msgstr ""
+msgstr "Seva"
 
 msgid "Subject"
 msgstr "Mhusika"
@@ -873,15 +923,17 @@ msgid_plural "%s (%s) has %d new messages."
 msgstr[0] ""
 msgstr[1] ""
 
+#, fuzzy
 msgid "New Mail"
-msgstr ""
+msgstr "Tabo mpya"
 
 #, c-format
 msgid "Info for %s"
 msgstr ""
 
+#, fuzzy
 msgid "Buddy Information"
-msgstr ""
+msgstr "Fic&ha Taarifa"
 
 msgid "Continue"
 msgstr "Endelea"
@@ -936,14 +988,16 @@ msgid ""
 "Please open the debug window and try again to see the exact error message."
 msgstr ""
 
+#, fuzzy
 msgid "Select plugin to install"
-msgstr ""
+msgstr "Chagua mandhari kusakinisha"
 
 msgid "You can (un)load plugins from the following list."
 msgstr ""
 
+#, fuzzy
 msgid "Install Plugin..."
-msgstr ""
+msgstr "Usakinishaji Programu-jalizi"
 
 msgid "Configure Plugin"
 msgstr ""
@@ -1010,11 +1064,13 @@ msgid "Sends a message"
 msgstr ""
 
 #. Create the "Action" frame.
+#, fuzzy
 msgid "Action"
-msgstr ""
+msgstr "&Tendo"
 
+#, fuzzy
 msgid "Open an IM window"
-msgstr ""
+msgstr "Fungua dirisha jipya"
 
 msgid "Pop up a notification"
 msgstr ""
@@ -1043,9 +1099,9 @@ msgstr ""
 msgid "You must create an account first before you can create a pounce."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Are you sure you want to delete the pounce on %s for %s?"
-msgstr ""
+msgstr "Je una uhakika uantaka kufuta ithibati hizi?"
 
 msgid "Buddy Pounces"
 msgstr ""
@@ -1099,8 +1155,9 @@ msgstr ""
 msgid "From last sent message"
 msgstr ""
 
+#, fuzzy
 msgid "Never"
-msgstr ""
+msgstr "Seva"
 
 msgid "Show Idle Time"
 msgstr ""
@@ -1114,8 +1171,9 @@ msgstr ""
 msgid "Log format"
 msgstr ""
 
+#, fuzzy
 msgid "Log IMs"
-msgstr ""
+msgstr "I&ngia"
 
 msgid "Log chats"
 msgstr ""
@@ -1126,20 +1184,24 @@ msgstr ""
 msgid "Report Idle time"
 msgstr ""
 
+#, fuzzy
 msgid "Change status when idle"
-msgstr ""
+msgstr "&Badili matini ya ufito hali"
 
 msgid "Minutes before changing status"
 msgstr ""
 
+#, fuzzy
 msgid "Change status to"
-msgstr ""
+msgstr "&Badili matini ya ufito hali"
 
+#, fuzzy
 msgid "Conversations"
-msgstr ""
+msgstr "Unganisho"
 
+#, fuzzy
 msgid "Logging"
-msgstr ""
+msgstr "Inapakia"
 
 msgid "You must fill all the required fields."
 msgstr ""
@@ -1150,11 +1212,13 @@ msgstr ""
 msgid "Not implemented yet."
 msgstr ""
 
+#, fuzzy
 msgid "Save File..."
-msgstr ""
+msgstr "&Hifadhi faili"
 
+#, fuzzy
 msgid "Open File..."
-msgstr ""
+msgstr "Fungua Faili"
 
 msgid "Choose Location..."
 msgstr ""
@@ -1181,8 +1245,9 @@ msgstr ""
 msgid "Message received begins conversation"
 msgstr ""
 
+#, fuzzy
 msgid "Message sent"
-msgstr ""
+msgstr "Ujumbe haujaenda."
 
 msgid "Person enters chat"
 msgstr ""
@@ -1199,8 +1264,9 @@ msgstr ""
 msgid "Someone says your username in chat"
 msgstr ""
 
+#, fuzzy
 msgid "Attention received"
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
 msgid "GStreamer Failure"
 msgstr ""
@@ -1208,17 +1274,20 @@ msgstr ""
 msgid "GStreamer failed to initialize."
 msgstr ""
 
+#, fuzzy
 msgid "(default)"
-msgstr ""
+msgstr "chaguo-msingi"
 
 msgid "Select Sound File ..."
 msgstr ""
 
+#, fuzzy
 msgid "Sound Preferences"
-msgstr ""
+msgstr "&Mapendekezo ya Tovuti"
 
+#, fuzzy
 msgid "Profiles"
-msgstr ""
+msgstr "Mafaili_%S"
 
 msgid "Automatic"
 msgstr ""
@@ -1251,8 +1320,9 @@ msgstr ""
 msgid "Sounds when conversation has focus"
 msgstr ""
 
+#, fuzzy
 msgid "Always"
-msgstr ""
+msgstr "Uliza daima"
 
 msgid "Only when available"
 msgstr ""
@@ -1270,24 +1340,28 @@ msgstr ""
 msgid "Event"
 msgstr ""
 
+#, fuzzy
 msgid "File"
-msgstr ""
+msgstr "Faili:"
 
+#, fuzzy
 msgid "Test"
-msgstr ""
+msgstr "Matini"
 
 msgid "Reset"
 msgstr "Seti upya"
 
+#, fuzzy
 msgid "Choose..."
-msgstr ""
+msgstr "Chagua…"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Are you sure you want to delete \"%s\""
-msgstr ""
+msgstr "Una uhakika unataka kufuta ithibati yako?"
 
+#, fuzzy
 msgid "Delete Status"
-msgstr ""
+msgstr "Futa mwenyeji"
 
 msgid "Saved Statuses"
 msgstr ""
@@ -1314,36 +1388,42 @@ msgstr "Ujumbe"
 msgid "Use"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid title"
-msgstr ""
+msgstr "Kizuizi batili"
 
 msgid "Please enter a non-empty title for the status."
 msgstr ""
 
+#, fuzzy
 msgid "Duplicate title"
-msgstr ""
+msgstr "sifa rudufu"
 
 msgid "Please enter a different title for the status."
 msgstr ""
 
+#, fuzzy
 msgid "Substatus"
-msgstr ""
+msgstr "Hali"
 
 msgid "Status:"
 msgstr "Hali:"
 
+#, fuzzy
 msgid "Message:"
-msgstr ""
+msgstr "Ujumbe"
 
+#, fuzzy
 msgid "Edit Status"
-msgstr ""
+msgstr "Marekani"
 
 msgid "Use different status for following accounts"
 msgstr ""
 
 #. Save & Use
+#, fuzzy
 msgid "Save & Use"
-msgstr ""
+msgstr "Hifadhi Kama"
 
 msgid "Certificates"
 msgstr "Hati"
@@ -1351,8 +1431,9 @@ msgstr "Hati"
 msgid "Sounds"
 msgstr ""
 
+#, fuzzy
 msgid "Statuses"
-msgstr ""
+msgstr "Hali"
 
 msgid "Error loading the plugin."
 msgstr ""
@@ -1438,8 +1519,9 @@ msgid ""
 "the same conversation type(s)."
 msgstr ""
 
+#, fuzzy
 msgid "GntHistory"
-msgstr ""
+msgstr "Historia"
 
 msgid "Shows recently logged conversations in new conversations."
 msgstr ""
@@ -1477,8 +1559,9 @@ msgstr ""
 msgid "When receiving a message with URL(s), use TinyURL for easier copying"
 msgstr ""
 
+#, fuzzy
 msgid "Online"
-msgstr ""
+msgstr "Nenda mkondoni"
 
 #. primitive,						no,							id,			name
 msgid "Offline"
@@ -1487,8 +1570,9 @@ msgstr ""
 msgid "Online Buddies"
 msgstr ""
 
+#, fuzzy
 msgid "Offline Buddies"
-msgstr ""
+msgstr "Namna ya Nje ya mkondo"
 
 msgid "Online/Offline"
 msgstr ""
@@ -1527,22 +1611,25 @@ msgstr ""
 msgid "Password is required to sign on."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Enter password for %s (%s)"
-msgstr ""
+msgstr "Ingiza nywila kwa ajili ya %1$S kwenye %2$S"
 
+#, fuzzy
 msgid "Enter Password"
-msgstr ""
+msgstr "Ingiza nywila mpya:"
 
+#, fuzzy
 msgid "Save password"
-msgstr ""
+msgstr "Nywila Zilizohifadhiwa"
 
 #, c-format
 msgid "Missing protocol plugin for %s"
 msgstr ""
 
+#, fuzzy
 msgid "Connection Error"
-msgstr ""
+msgstr "Hitilafu ya Sanidi"
 
 msgid "New passwords do not match."
 msgstr ""
@@ -1553,11 +1640,13 @@ msgstr ""
 msgid "Original password"
 msgstr ""
 
+#, fuzzy
 msgid "New password"
-msgstr ""
+msgstr "Nyilwa mpya:"
 
+#, fuzzy
 msgid "New password (again)"
-msgstr ""
+msgstr "Nywila mpya (tena):"
 
 #, c-format
 msgid "Change password for %s"
@@ -1582,6 +1671,7 @@ msgstr ""
 msgid "Unknown"
 msgstr "Isiyojulikana"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr ""
 
@@ -1615,8 +1705,9 @@ msgid ""
 "validated."
 msgstr ""
 
+#, fuzzy
 msgid "The certificate chain presented is invalid."
-msgstr ""
+msgstr "Nambari mstari iliyoingizwa ni batili."
 
 msgid "The certificate has been revoked."
 msgstr ""
@@ -1644,8 +1735,9 @@ msgstr ""
 
 #. Scheme name
 #. Pool name
+#, fuzzy
 msgid "Certificate Authorities"
-msgstr ""
+msgstr "Hatifisha Sera"
 
 #. Scheme name
 #. Pool name
@@ -1653,27 +1745,31 @@ msgid "SSL Peers Cache"
 msgstr ""
 
 #. Make messages
-#, c-format
+#, fuzzy, c-format
 msgid "Accept certificate for %s?"
-msgstr ""
+msgstr "Rekebisha cheli au ithibati ya uaminifu"
 
 #. TODO: Find what the handle ought to be
+#, fuzzy
 msgid "SSL Certificate Verification"
-msgstr ""
+msgstr "Kagua Uhalisia wa Hati"
 
+#, fuzzy
 msgid "_View Certificate..."
-msgstr ""
+msgstr "Angalia Hati"
 
 #, c-format
 msgid "The certificate for %s could not be validated."
 msgstr ""
 
 #. TODO: Probably wrong.
+#, fuzzy
 msgid "SSL Certificate Error"
-msgstr ""
+msgstr "Mamlaka ya Ithibati SSL"
 
+#, fuzzy
 msgid "Unable to validate certificate"
-msgstr ""
+msgstr "Hati Thibati"
 
 #, c-format
 msgid ""
@@ -1681,19 +1777,10 @@ msgid ""
 "are not connecting to the service you believe you are."
 msgstr ""
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr ""
-
-msgid "Unable to find Issuer Certificate"
-msgstr ""
-
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
-"\n"
-"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1701,18 +1788,19 @@ msgid ""
 "Expiration date: %s\n"
 msgstr ""
 
-msgid "(self-signed)"
-msgstr ""
-
-msgid "View Issuer Certificate"
-msgstr ""
+#. TODO: Find what the handle ought to be
+#, fuzzy
+msgid "Certificate Information"
+msgstr "Kagua Uhalisia wa Hati"
 
 #. show error to user
+#, fuzzy
 msgid "Registration Error"
-msgstr ""
+msgstr "Hitilafu ya Sanidi"
 
+#, fuzzy
 msgid "Unregistration Error"
-msgstr ""
+msgstr "Hitilafu ya Sanidi"
 
 #, c-format
 msgid "+++ %s signed on"
@@ -1737,8 +1825,9 @@ msgstr ""
 msgid "The message is too large."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to send message."
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
 msgid "Send Message"
 msgstr ""
@@ -1794,8 +1883,9 @@ msgstr ""
 msgid "Purple's D-BUS server is not running for the reason listed below"
 msgstr ""
 
+#, fuzzy
 msgid "No name"
-msgstr ""
+msgstr "Jina la DNS"
 
 msgid "Unable to create new resolver process\n"
 msgstr ""
@@ -1823,16 +1913,17 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error converting %s to punycode: %d"
-msgstr ""
+msgstr "Hitilafu kwenye utengenezaji wa saraka:"
 
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr ""
 
+#, fuzzy
 msgid "Unknown reason"
-msgstr ""
+msgstr "Hitilafu isiyojulikana"
 
 msgid "Aborting DNS lookup in Tor Proxy mode."
 msgstr ""
@@ -1849,14 +1940,15 @@ msgid ""
 "%s.\n"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Error accessing %s: \n"
 "%s.\n"
-msgstr ""
+msgstr "Hitilafu katika kufikia %S"
 
+#, fuzzy
 msgid "Directory is not writable."
-msgstr ""
+msgstr "Faili %S haliandikiki."
 
 msgid "Cannot send a file of 0 bytes."
 msgstr ""
@@ -1868,8 +1960,9 @@ msgstr ""
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr ""
 
+#, fuzzy
 msgid "File is not readable."
-msgstr ""
+msgstr "Faili %S haliandikiki."
 
 #, c-format
 msgid "%s wants to send you %s (%s)"
@@ -2113,8 +2206,9 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr ""
 
+#, fuzzy
 msgid "A non-recoverable Farstream error has occurred."
-msgstr ""
+msgstr "Hitilafu ya ndani ya seva (500)"
 
 msgid "Error with your microphone"
 msgstr ""
@@ -2122,12 +2216,13 @@ msgstr ""
 msgid "Error with your webcam"
 msgstr ""
 
+#, fuzzy
 msgid "Conference error"
-msgstr ""
+msgstr "Hitilafu ya Sanidi"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error creating session: %s"
-msgstr ""
+msgstr "Hitilafu kwenye utengenezaji wa saraka:"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -2188,11 +2283,13 @@ msgstr ""
 msgid "Set Autoaccept Setting"
 msgstr ""
 
+#, fuzzy
 msgid "_Save"
-msgstr ""
+msgstr "Hifadhi"
 
+#, fuzzy
 msgid "_Cancel"
-msgstr ""
+msgstr "Ghairi"
 
 msgid "Ask"
 msgstr ""
@@ -2200,8 +2297,9 @@ msgstr ""
 msgid "Auto Accept"
 msgstr ""
 
+#, fuzzy
 msgid "Auto Reject"
-msgstr ""
+msgstr "Gungu&a Kiotomati"
 
 msgid "Autoaccept File Transfers..."
 msgstr ""
@@ -2228,8 +2326,9 @@ msgstr ""
 msgid "Escape the filenames"
 msgstr ""
 
+#, fuzzy
 msgid "Notes"
-msgstr ""
+msgstr "Hakuna vitu"
 
 msgid "Enter your notes below..."
 msgstr ""
@@ -2295,8 +2394,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "File Control"
-msgstr ""
+msgstr "Fi&cha Visisimamizi"
 
 #. *< name
 #. *< version
@@ -2442,8 +2542,9 @@ msgstr ""
 msgid "Message could not be sent because the maximum length was exceeded."
 msgstr ""
 
+#, fuzzy
 msgid "Message could not be sent."
-msgstr ""
+msgstr "Ujumbe haujaenda."
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
@@ -2454,8 +2555,9 @@ msgstr ""
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
 #. choose to leave them alone.  Choose what's best for your language.
+#, fuzzy
 msgid "Fire"
-msgstr ""
+msgstr "Faili:"
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
@@ -2478,8 +2580,9 @@ msgstr ""
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
 #. choose to leave them alone.  Choose what's best for your language.
+#, fuzzy
 msgid "Trillian"
-msgstr ""
+msgstr "Kifriul"
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
@@ -2507,8 +2610,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "Log Reader"
-msgstr ""
+msgstr "Kichwa cha kushoto"
 
 #. *< name
 #. *< version
@@ -2546,8 +2650,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "New Line"
-msgstr ""
+msgstr "Dirisha jipya"
 
 #. *< name
 #. *< version
@@ -2577,8 +2682,9 @@ msgid ""
 "a pounce and automatically send them when \"%s\" logs back in?"
 msgstr ""
 
+#, fuzzy
 msgid "Offline Message"
-msgstr ""
+msgstr "Hifadhi ya nje ya Mkondo"
 
 msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
 msgstr ""
@@ -2595,8 +2701,9 @@ msgstr ""
 msgid "Do not ask. Always save in pounce."
 msgstr ""
 
+#, fuzzy
 msgid "One Time Password"
-msgstr ""
+msgstr "Ingiza Nywila Kuu"
 
 #. *< type
 #. *< ui_requirement
@@ -2694,8 +2801,9 @@ msgid "Tests to see that most things are working."
 msgstr ""
 
 #. Scheme name
+#, fuzzy
 msgid "X.509 Certificates"
-msgstr ""
+msgstr "X.509 Ithibati (PEM)"
 
 #. *< type
 #. *< ui_requirement
@@ -2719,8 +2827,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "NSS"
-msgstr ""
+msgstr "RSS"
 
 #. *< name
 #. *< version
@@ -2811,18 +2920,21 @@ msgid ""
 "im/BonjourWindows for more information."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to listen for incoming IM connections"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
 msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
 msgstr ""
 
+#, fuzzy
 msgid "First name"
-msgstr ""
+msgstr "Ukurasa wa kwanza"
 
+#, fuzzy
 msgid "Last name"
-msgstr ""
+msgstr "Ukurasa wa mwisho"
 
 #. email
 msgid "Email"
@@ -2857,9 +2969,9 @@ msgstr ""
 msgid "Bonjour"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has closed the conversation."
-msgstr ""
+msgstr "Mwenzi SSL imefunga uunganisho huu"
 
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr ""
@@ -2910,39 +3022,46 @@ msgid "Year of birth"
 msgstr ""
 
 #. gender
+#, fuzzy
 msgid "Gender"
-msgstr ""
+msgstr "Katikati"
 
 msgid "Male or female"
 msgstr ""
 
 #. 0
+#, fuzzy
 msgid "Male"
-msgstr ""
+msgstr "Mali"
 
 msgid "Female"
 msgstr ""
 
+#, fuzzy
 msgid "Only online"
-msgstr ""
+msgstr "Baki Mkondoni"
 
+#, fuzzy
 msgid "Find buddies"
-msgstr ""
+msgstr "Ta&futa Masasisho"
 
 msgid "Please, enter your search criteria below"
 msgstr ""
 
+#, fuzzy
 msgid "Show status to:"
-msgstr ""
+msgstr "&Badili matini ya ufito hali"
 
 msgid "All people"
 msgstr ""
 
+#, fuzzy
 msgid "Only buddies"
-msgstr ""
+msgstr "Ta&futa Masasisho"
 
+#, fuzzy
 msgid "Change status broadcasting"
-msgstr ""
+msgstr "&Badili matini ya ufito hali"
 
 msgid "Please, select who can see your status"
 msgstr ""
@@ -2956,8 +3075,9 @@ msgstr ""
 
 #. 0
 #. Global
+#, fuzzy
 msgid "Available"
-msgstr ""
+msgstr "Haipatikani"
 
 #. 2
 msgid "Chatty"
@@ -2974,13 +3094,15 @@ msgstr ""
 msgid "Away"
 msgstr ""
 
+#, fuzzy
 msgid "UIN"
-msgstr ""
+msgstr "UID"
 
 #. first name
 #. optional information
+#, fuzzy
 msgid "First Name"
-msgstr ""
+msgstr "Ukurasa wa kwanza"
 
 msgid "Birth Year"
 msgstr ""
@@ -2994,8 +3116,9 @@ msgstr ""
 msgid "Search results"
 msgstr "Tafuta matokeo"
 
+#, fuzzy
 msgid "No matching users found"
-msgstr ""
+msgstr "Hamna uwiyano sawa na CRL uliopatikana."
 
 msgid "There are no users matching your search criteria."
 msgstr ""
@@ -3006,11 +3129,13 @@ msgstr ""
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
+#, fuzzy
 msgid "Connected"
-msgstr ""
+msgstr "Unganisho"
 
+#, fuzzy
 msgid "Connection failed"
-msgstr ""
+msgstr "Unganisho Limeshindikana"
 
 msgid "Add to chat"
 msgstr ""
@@ -3018,23 +3143,26 @@ msgstr ""
 msgid "Chat _name:"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr "Imeshindwa kuipata seva wakala"
+
 #. 1. connect to server
 #. connect to the server
+#, fuzzy
 msgid "Connecting"
-msgstr ""
+msgstr "Inaunganisha…"
 
-#, c-format
-msgid "Unable to resolve hostname: %s"
-msgstr ""
-
+#, fuzzy
 msgid "Chat error"
-msgstr ""
+msgstr "Kichamorro"
 
 msgid "This chat name is already in use"
 msgstr ""
 
+#, fuzzy
 msgid "Not connected to the server"
-msgstr ""
+msgstr "Imeshindwa kuipata seva wakala"
 
 msgid "Find buddies..."
 msgstr ""
@@ -3063,21 +3191,24 @@ msgstr ""
 msgid "Gadu-Gadu User"
 msgstr ""
 
+#, fuzzy
 msgid "GG server"
-msgstr ""
+msgstr "Anza"
 
 msgid "Don't use encryption"
 msgstr ""
 
+#, fuzzy
 msgid "Use encryption if available"
-msgstr ""
+msgstr "Haipatikani"
 
 #. TODO
 msgid "Require encryption"
 msgstr ""
 
+#, fuzzy
 msgid "Connection security"
-msgstr ""
+msgstr "Muunganisho ulikataliwa"
 
 #, c-format
 msgid "Unknown command: %s"
@@ -3087,20 +3218,23 @@ msgstr ""
 msgid "current topic is: %s"
 msgstr ""
 
+#, fuzzy
 msgid "No topic is set"
-msgstr ""
+msgstr "Hakuna sifa zilizowekwa."
 
 msgid "File Transfer Failed"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to open a listening port."
-msgstr ""
+msgstr "Nimeshindwa Kusasisha"
 
 msgid "Error displaying MOTD"
 msgstr ""
 
+#, fuzzy
 msgid "No MOTD available"
-msgstr ""
+msgstr "Haipatikani"
 
 msgid "There is no MOTD associated with this connection."
 msgstr ""
@@ -3115,9 +3249,9 @@ msgstr ""
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
 #. TODO: do we really want to disconnect on a failure to write?
-#, c-format
+#, fuzzy, c-format
 msgid "Lost connection with server: %s"
-msgstr ""
+msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
 
 msgid "View MOTD"
 msgstr ""
@@ -3125,8 +3259,9 @@ msgstr ""
 msgid "_Channel:"
 msgstr ""
 
+#, fuzzy
 msgid "_Password:"
-msgstr ""
+msgstr "Nywila:"
 
 msgid "IRC nick and server may not contain whitespace"
 msgstr ""
@@ -3138,12 +3273,13 @@ msgid "Unable to connect"
 msgstr "Haikuweza kuunganishwa"
 
 #. this is a regular connect, error out
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to connect: %s"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
+#, fuzzy
 msgid "Server closed the connection"
-msgstr ""
+msgstr "Mwenzi SSL imefunga uunganisho huu"
 
 msgid "Users"
 msgstr ""
@@ -3171,30 +3307,36 @@ msgid "Server"
 msgstr "Seva"
 
 #. port to connect to
+#, fuzzy
 msgid "Port"
-msgstr ""
+msgstr "Lango:"
 
+#, fuzzy
 msgid "Encodings"
-msgstr ""
+msgstr "Kisimba:"
 
 msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
+#, fuzzy
 msgid "Ident name"
-msgstr ""
+msgstr "Njia batili"
 
+#, fuzzy
 msgid "Real name"
-msgstr ""
+msgstr "class name"
 
 #.
 #. option = purple_account_option_string_new(_("Quit message"), "quitmsg", IRC_DEFAULT_QUIT);
 #. prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #.
+#, fuzzy
 msgid "Use SSL"
-msgstr ""
+msgstr "Tumia %S"
 
+#, fuzzy
 msgid "Authenticate with SASL"
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
 msgid "Allow plaintext SASL auth over unencrypted connection"
 msgstr ""
@@ -3230,14 +3372,17 @@ msgstr ""
 msgid " <i>(identified)</i>"
 msgstr ""
 
+#, fuzzy
 msgid "Nick"
-msgstr ""
+msgstr "Bofya"
 
+#, fuzzy
 msgid "Login name"
-msgstr ""
+msgstr "Jina la DNS"
 
+#, fuzzy
 msgid "Host name"
-msgstr ""
+msgstr "Ukurasa wa mwisho"
 
 msgid "Currently on"
 msgstr ""
@@ -3274,8 +3419,9 @@ msgstr ""
 msgid "Unknown message '%s'"
 msgstr ""
 
+#, fuzzy
 msgid "Unknown message"
-msgstr ""
+msgstr "Ukubwa usiojulikana"
 
 msgid "The IRC server received a message it did not understand."
 msgstr ""
@@ -3303,8 +3449,9 @@ msgstr ""
 msgid "No such nick or channel"
 msgstr ""
 
+#, fuzzy
 msgid "Could not send"
-msgstr ""
+msgstr "\"Haikuweza kupakia: \""
 
 #, c-format
 msgid "Joining %s requires an invitation."
@@ -3326,8 +3473,9 @@ msgstr ""
 msgid "mode (%s %s) by %s"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid nickname"
-msgstr ""
+msgstr "Jina la profaili ni batili"
 
 msgid ""
 "Your selected nickname was rejected by the server.  It probably contains "
@@ -3380,29 +3528,32 @@ msgstr ""
 msgid "Wallops from %s"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Failed to initialize SASL authentication: %s"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
 msgid "SASL authentication failed: No worthy authentication mechanisms found."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "SASL authentication failed: %s"
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
 msgid ""
 "SASL authentication failed: Server does not support SASL authentication."
 msgstr ""
 
+#, fuzzy
 msgid "SASL authentication failed: Initializing SASL failed."
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
+#, fuzzy
 msgid "Incorrect Password"
-msgstr ""
+msgstr "Nywila ya sasa hivi:"
 
+#, fuzzy
 msgid "SASL authentication failed: No worthy mechanisms found"
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr ""
@@ -3581,8 +3732,9 @@ msgstr ""
 #. * in the "additional data with success" case.
 #. * Seen with Wildfire 3.0.1.
 #.
+#, fuzzy
 msgid "Invalid response from server"
-msgstr ""
+msgstr "Mwitiko wa bila kutegemea kutoka kwa seva"
 
 msgid "Server does not use any supported authentication method"
 msgstr ""
@@ -3593,8 +3745,9 @@ msgid ""
 "this and continue authentication?"
 msgstr ""
 
+#, fuzzy
 msgid "Plaintext Authentication"
-msgstr ""
+msgstr "Ishara ya Uthibitisho Inayoulindwa"
 
 msgid "You require encryption, but it is not available on this server."
 msgstr ""
@@ -3614,18 +3767,21 @@ msgid ""
 "Allow this and continue authentication?"
 msgstr ""
 
+#, fuzzy
 msgid "SASL authentication failed"
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
-#, c-format
+#, fuzzy, c-format
 msgid "SASL error: %s"
-msgstr ""
+msgstr "SSL Seva"
 
+#, fuzzy
 msgid "Invalid Encoding"
-msgstr ""
+msgstr "Jina la profaili ni batili"
 
+#, fuzzy
 msgid "Unsupported Extension"
-msgstr ""
+msgstr "Kivunge kisichokubaliwa"
 
 msgid ""
 "Unexpected response from the server.  This may indicate a possible MITM "
@@ -3637,32 +3793,40 @@ msgid ""
 "it.  This indicates a likely MITM attack"
 msgstr ""
 
+#, fuzzy
 msgid "Server does not support channel binding"
-msgstr ""
+msgstr "Faili %S halipo"
 
+#, fuzzy
 msgid "Unsupported channel binding method"
-msgstr ""
+msgstr "Kivunge kisichokubaliwa"
 
+#, fuzzy
 msgid "User not found"
-msgstr ""
+msgstr "Seva haipatikani"
 
+#, fuzzy
 msgid "Invalid Username Encoding"
-msgstr ""
+msgstr "Jina batili la moduli."
 
 msgid "Resource Constraint"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to canonicalize username"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
+#, fuzzy
 msgid "Unable to canonicalize password"
-msgstr ""
+msgstr "Nimeshindwa Kusasisha"
 
+#, fuzzy
 msgid "Malicious challenge from server"
-msgstr ""
+msgstr "Mwitiko wa bila kutegemea kutoka kwa seva"
 
+#, fuzzy
 msgid "Unexpected response from server"
-msgstr ""
+msgstr "Mwitiko wa bila kutegemea kutoka kwa seva"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr ""
@@ -3670,21 +3834,25 @@ msgstr ""
 msgid "No session ID given"
 msgstr ""
 
+#, fuzzy
 msgid "Unsupported version of BOSH protocol"
-msgstr ""
+msgstr "Kivunge kisichokubaliwa"
 
+#, fuzzy
 msgid "Unable to establish a connection with the server"
-msgstr ""
+msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to establish a connection with the server: %s"
-msgstr ""
+msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
 
+#, fuzzy
 msgid "Unable to establish SSL connection"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
+#, fuzzy
 msgid "Full Name"
-msgstr ""
+msgstr "Jina la faili:"
 
 msgid "Family Name"
 msgstr ""
@@ -3706,31 +3874,37 @@ msgstr ""
 msgid "Extended Address"
 msgstr ""
 
+#, fuzzy
 msgid "Locality"
-msgstr ""
+msgstr "Mahali"
 
+#, fuzzy
 msgid "Region"
-msgstr ""
+msgstr "Reunion"
 
 msgid "Postal Code"
 msgstr ""
 
+#, fuzzy
 msgid "Country"
-msgstr ""
+msgstr "Hesabu"
 
 #. lots of clients (including purple) do this, but it's
 #. * out of spec
 msgid "Telephone"
 msgstr ""
 
+#, fuzzy
 msgid "Organization Name"
-msgstr ""
+msgstr "Jumuiya(J)"
 
+#, fuzzy
 msgid "Organization Unit"
-msgstr ""
+msgstr "Jumuiya(J)"
 
+#, fuzzy
 msgid "Job Title"
-msgstr ""
+msgstr "Cheo cha &kazi:"
 
 msgid "Role"
 msgstr ""
@@ -3757,27 +3931,32 @@ msgstr "Mteja"
 msgid "Operating System"
 msgstr ""
 
+#, fuzzy
 msgid "Local Time"
-msgstr ""
+msgstr "faili la kikweti"
 
 msgid "Priority"
 msgstr ""
 
+#, fuzzy
 msgid "Resource"
-msgstr ""
+msgstr "#1 rasilimali"
 
+#, fuzzy
 msgid "Uptime"
-msgstr ""
+msgstr "Sasisha"
 
+#, fuzzy
 msgid "Logged Off"
-msgstr ""
+msgstr "Ingia"
 
 #, c-format
 msgid "%s ago"
 msgstr ""
 
+#, fuzzy
 msgid "Middle Name"
-msgstr ""
+msgstr "Jina la Moduli:"
 
 msgid "Address"
 msgstr "Anuani"
@@ -3788,14 +3967,15 @@ msgstr ""
 msgid "Photo"
 msgstr ""
 
+#, fuzzy
 msgid "Logo"
-msgstr ""
+msgstr "Togo"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s will no longer be able to see your status updates.  Do you want to "
 "continue?"
-msgstr ""
+msgstr "Unakaribia kufunga tabo ya %S. Unauhakika unataka kuendelea?"
 
 msgid "Cancel Presence Notification"
 msgstr ""
@@ -3811,27 +3991,33 @@ msgstr ""
 
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
+#, fuzzy
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Jiunge"
 
 msgid "Initiate _Chat"
 msgstr ""
 
+#, fuzzy
 msgid "Log In"
-msgstr ""
+msgstr "I&ngia"
 
+#, fuzzy
 msgid "Log Out"
-msgstr ""
+msgstr "O&ndoka"
 
+#, fuzzy
 msgid "JID"
-msgstr ""
+msgstr "UID"
 
 #. last name
+#, fuzzy
 msgid "Last Name"
-msgstr ""
+msgstr "Ukurasa wa mwisho"
 
+#, fuzzy
 msgid "The following are the results of your search"
-msgstr ""
+msgstr "Kuki zifuatazo zinalingana na unazotafuta:"
 
 #. current comment from Jabber User Directory users.jabber.org
 msgid ""
@@ -3873,14 +4059,16 @@ msgstr ""
 msgid "Select a user directory to search"
 msgstr ""
 
+#, fuzzy
 msgid "Search Directory"
-msgstr ""
+msgstr "Tafuta historia"
 
 msgid "_Room:"
 msgstr ""
 
+#, fuzzy
 msgid "_Server:"
-msgstr ""
+msgstr "Seva"
 
 msgid "_Handle:"
 msgstr ""
@@ -3889,15 +4077,17 @@ msgstr ""
 msgid "%s is not a valid room name"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid Room Name"
-msgstr ""
+msgstr "Jina batili la moduli."
 
 #, c-format
 msgid "%s is not a valid server name"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid Server Name"
-msgstr ""
+msgstr "Jina batili la moduli."
 
 #, c-format
 msgid "%s is not a valid room handle"
@@ -3906,20 +4096,24 @@ msgstr ""
 msgid "Invalid Room Handle"
 msgstr ""
 
+#, fuzzy
 msgid "Configuration error"
-msgstr ""
+msgstr "Hitilafu ya Sanidi"
 
+#, fuzzy
 msgid "Unable to configure"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
+#, fuzzy
 msgid "Room Configuration Error"
-msgstr ""
+msgstr "Hitilafu ya Sanidi"
 
 msgid "This room is not capable of being configured"
 msgstr ""
 
+#, fuzzy
 msgid "Registration error"
-msgstr ""
+msgstr "Hitilafu ya Sanidi"
 
 msgid "Nick changing not supported in non-MUC chatrooms"
 msgstr ""
@@ -3927,8 +4121,9 @@ msgstr ""
 msgid "Error retrieving room list"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid Server"
-msgstr ""
+msgstr "Anuani batili"
 
 msgid "Enter a Conference Server"
 msgstr ""
@@ -3939,11 +4134,13 @@ msgstr ""
 msgid "Find Rooms"
 msgstr ""
 
+#, fuzzy
 msgid "Affiliations:"
-msgstr ""
+msgstr "Machaguo"
 
+#, fuzzy
 msgid "No users found"
-msgstr ""
+msgstr "Hamna uwiyano sawa na CRL uliopatikana."
 
 msgid "Roles:"
 msgstr ""
@@ -3954,11 +4151,13 @@ msgstr ""
 msgid "You require encryption, but no TLS/SSL support was found."
 msgstr ""
 
+#, fuzzy
 msgid "Ping timed out"
-msgstr ""
+msgstr "Muunganiko umepita muda"
 
+#, fuzzy
 msgid "Invalid XMPP ID"
-msgstr ""
+msgstr "Kizuizi batili"
 
 msgid "Invalid XMPP ID. Username portion must be set."
 msgstr ""
@@ -3980,8 +4179,9 @@ msgstr ""
 msgid "Registration Successful"
 msgstr ""
 
+#, fuzzy
 msgid "Registration Failed"
-msgstr ""
+msgstr "Usajili wa Chrome Umeshindikana"
 
 #, c-format
 msgid "Registration from %s successfully removed"
@@ -3990,8 +4190,9 @@ msgstr ""
 msgid "Unregistration Successful"
 msgstr ""
 
+#, fuzzy
 msgid "Unregistration Failed"
-msgstr ""
+msgstr "Usajili wa Chrome Umeshindikana"
 
 msgid "State"
 msgstr "Hali"
@@ -3999,14 +4200,17 @@ msgstr "Hali"
 msgid "Postal code"
 msgstr ""
 
+#, fuzzy
 msgid "Phone"
-msgstr ""
+msgstr "Bila"
 
+#, fuzzy
 msgid "Date"
-msgstr ""
+msgstr "Tarehe:"
 
+#, fuzzy
 msgid "Already Registered"
-msgstr ""
+msgstr "Ipo"
 
 msgid "Password"
 msgstr "Nywila"
@@ -4024,8 +4228,9 @@ msgstr ""
 msgid "Register New XMPP Account"
 msgstr ""
 
+#, fuzzy
 msgid "Register"
-msgstr ""
+msgstr "Mwandishi wa habari"
 
 #, c-format
 msgid "Change Account Registration at %s"
@@ -4035,11 +4240,13 @@ msgstr ""
 msgid "Register New Account at %s"
 msgstr ""
 
+#, fuzzy
 msgid "Change Registration"
-msgstr ""
+msgstr "Usajili wa Chrome Umeshindikana"
 
+#, fuzzy
 msgid "Error unregistering account"
-msgstr ""
+msgstr "Hitilafu katika kusajili DLL"
 
 msgid "Account successfully unregistered"
 msgstr ""
@@ -4074,11 +4281,13 @@ msgstr ""
 msgid "From (To pending)"
 msgstr ""
 
+#, fuzzy
 msgid "From"
-msgstr ""
+msgstr "kutoka"
 
+#, fuzzy
 msgid "To"
-msgstr ""
+msgstr "Kwa:"
 
 msgid "None (To pending)"
 msgstr ""
@@ -4087,8 +4296,9 @@ msgid "None"
 msgstr "Bila"
 
 #. subscription type
+#, fuzzy
 msgid "Subscription"
-msgstr ""
+msgstr "Maelezo"
 
 msgid "Mood Text"
 msgstr ""
@@ -4096,8 +4306,9 @@ msgstr ""
 msgid "Allow Buzz"
 msgstr ""
 
+#, fuzzy
 msgid "Mood Name"
-msgstr ""
+msgstr "Jina la Moduli:"
 
 msgid "Mood Comment"
 msgstr ""
@@ -4111,8 +4322,9 @@ msgstr ""
 msgid "Tune Artist"
 msgstr ""
 
+#, fuzzy
 msgid "Tune Title"
-msgstr ""
+msgstr "Mada Fupi"
 
 msgid "Tune Album"
 msgstr ""
@@ -4135,20 +4347,24 @@ msgstr ""
 msgid "Tune URL"
 msgstr ""
 
+#, fuzzy
 msgid "Password Changed"
-msgstr ""
+msgstr "Badilisho la Nywila limeshindikana"
 
+#, fuzzy
 msgid "Your password has been changed."
-msgstr ""
+msgstr "Nywila yako imesetiwa upya."
 
 msgid "Error changing password"
 msgstr ""
 
+#, fuzzy
 msgid "Password (again)"
-msgstr ""
+msgstr "Nywila mpya (tena):"
 
+#, fuzzy
 msgid "Change XMPP Password"
-msgstr ""
+msgstr "Badil &Nywila"
 
 msgid "Please enter your new password"
 msgstr ""
@@ -4157,8 +4373,9 @@ msgid "Set User Info..."
 msgstr ""
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
+#, fuzzy
 msgid "Change Password..."
-msgstr ""
+msgstr "Badil &Nywila"
 
 #. }
 msgid "Search for Users..."
@@ -4167,8 +4384,9 @@ msgstr ""
 msgid "Bad Request"
 msgstr ""
 
+#, fuzzy
 msgid "Conflict"
-msgstr ""
+msgstr "Thibitisha"
 
 msgid "Feature Not Implemented"
 msgstr ""
@@ -4176,35 +4394,42 @@ msgstr ""
 msgid "Forbidden"
 msgstr ""
 
+#, fuzzy
 msgid "Gone"
-msgstr ""
+msgstr "Bila"
 
+#, fuzzy
 msgid "Internal Server Error"
-msgstr ""
+msgstr "Hitilafu ya ndani ya seva (500)"
 
+#, fuzzy
 msgid "Item Not Found"
-msgstr ""
+msgstr "Faili halipatikani"
 
 msgid "Malformed XMPP ID"
 msgstr ""
 
+#, fuzzy
 msgid "Not Acceptable"
-msgstr ""
+msgstr "Haipatikani"
 
 msgid "Not Allowed"
 msgstr ""
 
+#, fuzzy
 msgid "Payment Required"
-msgstr ""
+msgstr "Nywila inatakiwa"
 
 msgid "Recipient Unavailable"
 msgstr ""
 
+#, fuzzy
 msgid "Registration Required"
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
+#, fuzzy
 msgid "Remote Server Not Found"
-msgstr ""
+msgstr "Wakala kompyuta tumishi hapatikani"
 
 msgid "Remote Server Timeout"
 msgstr ""
@@ -4215,20 +4440,23 @@ msgstr ""
 msgid "Service Unavailable"
 msgstr ""
 
+#, fuzzy
 msgid "Subscription Required"
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
 msgid "Unexpected Request"
 msgstr ""
 
+#, fuzzy
 msgid "Authorization Aborted"
-msgstr ""
+msgstr "Sainisho limetibuliwa"
 
 msgid "Incorrect encoding in authorization"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid authzid"
-msgstr ""
+msgstr "Njia batili"
 
 msgid "Invalid Authorization Mechanism"
 msgstr ""
@@ -4239,11 +4467,13 @@ msgstr ""
 msgid "Temporary Authentication Failure"
 msgstr ""
 
+#, fuzzy
 msgid "Authentication Failure"
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
+#, fuzzy
 msgid "Bad Format"
-msgstr ""
+msgstr "Fomati"
 
 msgid "Bad Namespace Prefix"
 msgstr ""
@@ -4251,8 +4481,9 @@ msgstr ""
 msgid "Resource Conflict"
 msgstr ""
 
+#, fuzzy
 msgid "Connection Timeout"
-msgstr ""
+msgstr "Muunganiko umepita muda"
 
 msgid "Host Gone"
 msgstr ""
@@ -4263,14 +4494,16 @@ msgstr ""
 msgid "Improper Addressing"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid ID"
-msgstr ""
+msgstr "Kizuizi batili"
 
 msgid "Invalid Namespace"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid XML"
-msgstr ""
+msgstr "Kizuizi batili"
 
 msgid "Non-matching Hosts"
 msgstr ""
@@ -4278,8 +4511,9 @@ msgstr ""
 msgid "Policy Violation"
 msgstr ""
 
+#, fuzzy
 msgid "Remote Connection Failed"
-msgstr ""
+msgstr "Muunganiko salama umeshindikana"
 
 msgid "Restricted XML"
 msgstr ""
@@ -4290,17 +4524,21 @@ msgstr ""
 msgid "System Shutdown"
 msgstr ""
 
+#, fuzzy
 msgid "Undefined Condition"
-msgstr ""
+msgstr "kitu ambacho hakijafafanuliwa"
 
+#, fuzzy
 msgid "Unsupported Encoding"
-msgstr ""
+msgstr "Kivunge kisichokubaliwa"
 
+#, fuzzy
 msgid "Unsupported Stanza Type"
-msgstr ""
+msgstr "Kivunge kisichokubaliwa"
 
+#, fuzzy
 msgid "Unsupported Version"
-msgstr ""
+msgstr "Kivunge kisichokubaliwa"
 
 msgid "XML Not Well Formed"
 msgstr ""
@@ -4464,8 +4702,9 @@ msgid "XMPP Protocol Plugin"
 msgstr ""
 
 #. Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im
+#, fuzzy
 msgid "Domain"
-msgstr ""
+msgstr "Kikoa:"
 
 msgid "Use old-style SSL"
 msgstr ""
@@ -4473,8 +4712,9 @@ msgstr ""
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr ""
 
+#, fuzzy
 msgid "Connect port"
-msgstr ""
+msgstr "Unganisho"
 
 #. TODO: default to automatically try different ports. Make the user be
 #. * able to set the first port to try (like LastConnectedPort in Windows client).
@@ -4554,19 +4794,21 @@ msgstr ""
 msgid "_Configure Room"
 msgstr ""
 
+#, fuzzy
 msgid "_Accept Defaults"
-msgstr ""
+msgstr "Misingi ya mfumo"
 
+#, fuzzy
 msgid "No reason"
-msgstr ""
+msgstr "Hitilafu isiyojulikana"
 
 #, c-format
 msgid "You have been kicked: (%s)"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Kicked (%s)"
-msgstr ""
+msgstr "(%S)"
 
 msgid "Unknown Error in presence"
 msgstr ""
@@ -4595,11 +4837,13 @@ msgstr ""
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr ""
 
+#, fuzzy
 msgid "Afraid"
-msgstr ""
+msgstr "Kiarabu"
 
+#, fuzzy
 msgid "Amazed"
-msgstr ""
+msgstr "Kiassame"
 
 msgid "Amorous"
 msgstr ""
@@ -4616,35 +4860,44 @@ msgstr ""
 msgid "Aroused"
 msgstr ""
 
+#, fuzzy
 msgid "Ashamed"
-msgstr ""
+msgstr "Kiassame"
 
 msgid "Bored"
 msgstr ""
 
+#, fuzzy
 msgid "Brave"
-msgstr ""
+msgstr "Hifadhi"
 
+#, fuzzy
 msgid "Calm"
-msgstr ""
+msgstr "Tayari"
 
+#, fuzzy
 msgid "Cautious"
-msgstr ""
+msgstr "Chad"
 
+#, fuzzy
 msgid "Cold"
-msgstr ""
+msgstr "Funga"
 
+#, fuzzy
 msgid "Confident"
-msgstr ""
+msgstr "Thibitisha"
 
+#, fuzzy
 msgid "Confused"
-msgstr ""
+msgstr "Endelea"
 
+#, fuzzy
 msgid "Contemplative"
-msgstr ""
+msgstr "Yaliyomo"
 
+#, fuzzy
 msgid "Contented"
-msgstr ""
+msgstr "Unganisho"
 
 msgid "Cranky"
 msgstr ""
@@ -4652,29 +4905,36 @@ msgstr ""
 msgid "Crazy"
 msgstr ""
 
+#, fuzzy
 msgid "Creative"
-msgstr ""
+msgstr "Kicree"
 
+#, fuzzy
 msgid "Curious"
-msgstr ""
+msgstr "Kinauru"
 
+#, fuzzy
 msgid "Dejected"
-msgstr ""
+msgstr "Seti upya"
 
+#, fuzzy
 msgid "Depressed"
-msgstr ""
+msgstr "&Futa"
 
+#, fuzzy
 msgid "Disappointed"
-msgstr ""
+msgstr "Lemaza"
 
 msgid "Disgusted"
 msgstr ""
 
+#, fuzzy
 msgid "Dismayed"
-msgstr ""
+msgstr "Lemaza"
 
+#, fuzzy
 msgid "Distracted"
-msgstr ""
+msgstr "Haijakechiwa"
 
 msgid "Embarrassed"
 msgstr ""
@@ -4688,17 +4948,20 @@ msgstr ""
 msgid "Flirtatious"
 msgstr ""
 
+#, fuzzy
 msgid "Frustrated"
-msgstr ""
+msgstr "Ukurasa wa kwanza"
 
 msgid "Grateful"
 msgstr ""
 
+#, fuzzy
 msgid "Grieving"
-msgstr ""
+msgstr "Hakuna Mpangilio"
 
+#, fuzzy
 msgid "Grumpy"
-msgstr ""
+msgstr "Kusanya kwa:"
 
 msgid "Guilty"
 msgstr ""
@@ -4709,8 +4972,9 @@ msgstr ""
 msgid "Hopeful"
 msgstr ""
 
+#, fuzzy
 msgid "Hot"
-msgstr ""
+msgstr "Mwenyeji:"
 
 msgid "Humbled"
 msgstr ""
@@ -4718,8 +4982,9 @@ msgstr ""
 msgid "Humiliated"
 msgstr ""
 
+#, fuzzy
 msgid "Hungry"
-msgstr ""
+msgstr "Ago"
 
 msgid "Hurt"
 msgstr ""
@@ -4733,14 +4998,16 @@ msgstr ""
 msgid "In love"
 msgstr ""
 
+#, fuzzy
 msgid "Indignant"
-msgstr ""
+msgstr "Kindonesia"
 
 msgid "Interested"
 msgstr ""
 
+#, fuzzy
 msgid "Intoxicated"
-msgstr ""
+msgstr "Kizuizi batili"
 
 msgid "Invincible"
 msgstr ""
@@ -4748,26 +5015,31 @@ msgstr ""
 msgid "Jealous"
 msgstr ""
 
+#, fuzzy
 msgid "Lonely"
-msgstr ""
+msgstr "Jumatatu"
 
+#, fuzzy
 msgid "Lost"
-msgstr ""
+msgstr "Mwenyeji:"
 
 msgid "Lucky"
 msgstr ""
 
+#, fuzzy
 msgid "Mean"
-msgstr ""
+msgstr "Kijerumani"
 
+#, fuzzy
 msgid "Moody"
-msgstr ""
+msgstr "R&ekebisha"
 
 msgid "Nervous"
 msgstr ""
 
+#, fuzzy
 msgid "Neutral"
-msgstr ""
+msgstr "Ufafanuzi"
 
 msgid "Offended"
 msgstr ""
@@ -4775,26 +5047,33 @@ msgstr ""
 msgid "Outraged"
 msgstr ""
 
+#, fuzzy
 msgid "Playful"
-msgstr ""
+msgstr "Che&za"
 
+#, fuzzy
 msgid "Proud"
-msgstr ""
+msgstr "&Pakia upya"
 
+#, fuzzy
 msgid "Relaxed"
-msgstr ""
+msgstr "class name"
 
+#, fuzzy
 msgid "Relieved"
-msgstr ""
+msgstr "&Futa"
 
+#, fuzzy
 msgid "Remorseful"
-msgstr ""
+msgstr "Ondoa"
 
+#, fuzzy
 msgid "Restless"
-msgstr ""
+msgstr "Mwandishi wa habari"
 
+#, fuzzy
 msgid "Sad"
-msgstr ""
+msgstr "Jm"
 
 msgid "Sarcastic"
 msgstr ""
@@ -4805,14 +5084,16 @@ msgstr ""
 msgid "Serious"
 msgstr ""
 
+#, fuzzy
 msgid "Shocked"
-msgstr ""
+msgstr "Imezuiliwa"
 
 msgid "Shy"
 msgstr ""
 
+#, fuzzy
 msgid "Sick"
-msgstr ""
+msgstr "Bofya"
 
 #. Sleepy / Tired
 msgid "Sleepy"
@@ -4821,11 +5102,13 @@ msgstr ""
 msgid "Spontaneous"
 msgstr ""
 
+#, fuzzy
 msgid "Stressed"
-msgstr ""
+msgstr "Kilishi mkono"
 
+#, fuzzy
 msgid "Strong"
-msgstr ""
+msgstr "Kitonga"
 
 msgid "Surprised"
 msgstr ""
@@ -4836,14 +5119,17 @@ msgstr ""
 msgid "Thirsty"
 msgstr ""
 
+#, fuzzy
 msgid "Tired"
-msgstr ""
+msgstr "Faili:"
 
+#, fuzzy
 msgid "Undefined"
-msgstr ""
+msgstr "Interlingue"
 
+#, fuzzy
 msgid "Weak"
-msgstr ""
+msgstr "Nyuma"
 
 msgid "Worried"
 msgstr ""
@@ -4859,14 +5145,16 @@ msgid ""
 "something appropriate."
 msgstr ""
 
+#, fuzzy
 msgid "Set"
-msgstr ""
+msgstr "Sep"
 
 msgid "Set Nickname..."
 msgstr ""
 
+#, fuzzy
 msgid "Actions"
-msgstr ""
+msgstr "Machaguo"
 
 msgid "Select an action"
 msgstr ""
@@ -4874,9 +5162,9 @@ msgstr ""
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
 #. * won't cause too many problems if we just ignore it
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to add \"%s\"."
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
 msgid "Buddy Add error"
 msgstr ""
@@ -4884,17 +5172,20 @@ msgstr ""
 msgid "The username specified does not exist."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to parse message"
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
 msgid "Syntax Error (probably a client bug)"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid email address"
-msgstr ""
+msgstr "Anuani batili"
 
+#, fuzzy
 msgid "User does not exist"
-msgstr ""
+msgstr "Faili %S halipo"
 
 msgid "Fully qualified domain name missing"
 msgstr ""
@@ -4902,11 +5193,13 @@ msgstr ""
 msgid "Already logged in"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid username"
-msgstr ""
+msgstr "Jina batili la moduli."
 
+#, fuzzy
 msgid "Invalid friendly name"
-msgstr ""
+msgstr "Jina la profaili ni batili"
 
 msgid "List full"
 msgstr ""
@@ -4917,8 +5210,9 @@ msgstr ""
 msgid "Not on list"
 msgstr ""
 
+#, fuzzy
 msgid "User is offline"
-msgstr ""
+msgstr "Fanya &kazi nje ya mkondo"
 
 msgid "Already in the mode"
 msgstr ""
@@ -4929,8 +5223,9 @@ msgstr ""
 msgid "Too many groups"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid group"
-msgstr ""
+msgstr "Ingizo batili"
 
 msgid "User not in group"
 msgstr ""
@@ -4956,8 +5251,9 @@ msgstr ""
 msgid "Too many hits to a FND"
 msgstr ""
 
+#, fuzzy
 msgid "Not logged in"
-msgstr ""
+msgstr "Hajaingia"
 
 msgid "Service temporarily unavailable"
 msgstr ""
@@ -4977,8 +5273,9 @@ msgstr ""
 msgid "Wrong CHL value sent to server"
 msgstr ""
 
+#, fuzzy
 msgid "Server busy"
-msgstr ""
+msgstr "Seva"
 
 msgid "Server unavailable"
 msgstr ""
@@ -4992,14 +5289,16 @@ msgstr ""
 msgid "Server is going down (abandon ship)"
 msgstr ""
 
+#, fuzzy
 msgid "Error creating connection"
-msgstr ""
+msgstr "Hitilafu kwenye utengenezaji wa saraka:"
 
 msgid "CVR parameters are either unknown or not allowed"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to write"
-msgstr ""
+msgstr "Nimeshindwa Kusasisha"
 
 msgid "Session overload"
 msgstr ""
@@ -5010,23 +5309,27 @@ msgstr ""
 msgid "Too many sessions"
 msgstr ""
 
+#, fuzzy
 msgid "Passport not verified"
-msgstr ""
+msgstr "(Mwandishi hajathibitishwa)"
 
 msgid "Bad friend file"
 msgstr ""
 
+#, fuzzy
 msgid "Not expected"
-msgstr ""
+msgstr "Hakuna iliyochaguliwa"
 
 msgid "Friendly name is changing too rapidly"
 msgstr ""
 
+#, fuzzy
 msgid "Server too busy"
-msgstr ""
+msgstr "Seva haipatikani"
 
+#, fuzzy
 msgid "Authentication failed"
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
 msgid "Not allowed when offline"
 msgstr ""
@@ -5046,9 +5349,9 @@ msgstr ""
 msgid "Bad ticket"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unknown Error Code %d"
-msgstr ""
+msgstr "Hitilafu isiyojulikana"
 
 #, c-format
 msgid "MSN Error: %s\n"
@@ -5070,8 +5373,9 @@ msgid ""
 "to be added?"
 msgstr ""
 
+#, fuzzy
 msgid "Other Contacts"
-msgstr ""
+msgstr "Lugha nyinginezo"
 
 msgid "Non-IM Contacts"
 msgstr ""
@@ -5107,30 +5411,34 @@ msgstr ""
 msgid "Nudging %s..."
 msgstr ""
 
+#, fuzzy
 msgid "Email Address..."
-msgstr ""
+msgstr "Anwani ya Barua pepe"
 
 msgid "Your new MSN friendly name is too long."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Set friendly name for %s."
-msgstr ""
+msgstr "Jina la profaili ni batili"
 
+#, fuzzy
 msgid "Set Friendly Name"
-msgstr ""
+msgstr "Jina la profaili ni batili"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr ""
 
+#, fuzzy
 msgid "This Location"
-msgstr ""
+msgstr "Mapali pa &Tawanyiko:"
 
 msgid "This is the name that identifies this location"
 msgstr ""
 
+#, fuzzy
 msgid "Other Locations"
-msgstr ""
+msgstr "Mapali pa &Tawanyiko:"
 
 msgid "You can sign out from other locations here"
 msgstr ""
@@ -5155,8 +5463,9 @@ msgstr ""
 msgid "Allow"
 msgstr "Ruhusu"
 
+#, fuzzy
 msgid "Disallow"
-msgstr ""
+msgstr "Lemaza"
 
 msgid "Set your home phone number."
 msgstr ""
@@ -5193,14 +5502,16 @@ msgstr ""
 msgid "Send a mobile message."
 msgstr ""
 
+#, fuzzy
 msgid "Page"
-msgstr ""
+msgstr "Ukurasa wa #"
 
 msgid "Playing a game"
 msgstr ""
 
+#, fuzzy
 msgid "Working"
-msgstr ""
+msgstr "Tahadhari:"
 
 msgid "Has you"
 msgstr ""
@@ -5226,8 +5537,9 @@ msgstr ""
 msgid "Out to Lunch"
 msgstr ""
 
+#, fuzzy
 msgid "Game Title"
-msgstr ""
+msgstr "Mada Fupi"
 
 msgid "Office Title"
 msgstr ""
@@ -5235,8 +5547,9 @@ msgstr ""
 msgid "Set Friendly Name..."
 msgstr ""
 
+#, fuzzy
 msgid "View Locations..."
-msgstr ""
+msgstr "Mapali pa &Tawanyiko:"
 
 msgid "Set Home Phone Number..."
 msgstr ""
@@ -5274,8 +5587,9 @@ msgid ""
 "be valid email addresses."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to Add"
-msgstr ""
+msgstr "Nimeshindwa Kusasisha"
 
 msgid "Error retrieving profile"
 msgstr ""
@@ -5286,8 +5600,9 @@ msgstr "Ujumla"
 msgid "Age"
 msgstr ""
 
+#, fuzzy
 msgid "Occupation"
-msgstr ""
+msgstr "Mahali"
 
 msgid "Location"
 msgstr "Mahali"
@@ -5307,8 +5622,9 @@ msgstr ""
 msgid "Interests"
 msgstr ""
 
+#, fuzzy
 msgid "Pets"
-msgstr ""
+msgstr "Bonyeza"
 
 msgid "Hometown"
 msgstr ""
@@ -5331,8 +5647,9 @@ msgstr ""
 msgid "Contact Info"
 msgstr ""
 
+#, fuzzy
 msgid "Personal"
-msgstr ""
+msgstr "Kipersia"
 
 msgid "Significant Other"
 msgstr ""
@@ -5343,8 +5660,9 @@ msgstr ""
 msgid "Home Phone 2"
 msgstr ""
 
+#, fuzzy
 msgid "Home Address"
-msgstr ""
+msgstr "Anwani-IP"
 
 msgid "Personal Mobile"
 msgstr ""
@@ -5358,8 +5676,9 @@ msgstr ""
 msgid "Personal IM"
 msgstr ""
 
+#, fuzzy
 msgid "Anniversary"
-msgstr ""
+msgstr "Universal"
 
 #. Business
 msgid "Work"
@@ -5380,8 +5699,9 @@ msgstr ""
 msgid "Work Phone 2"
 msgstr ""
 
+#, fuzzy
 msgid "Work Address"
-msgstr ""
+msgstr "Anwani-IP"
 
 msgid "Work Mobile"
 msgstr ""
@@ -5398,17 +5718,21 @@ msgstr ""
 msgid "Work IM"
 msgstr ""
 
+#, fuzzy
 msgid "Start Date"
-msgstr ""
+msgstr "Anzisha Upya Baadae"
 
+#, fuzzy
 msgid "Favorite Things"
-msgstr ""
+msgstr "Vibwedo"
 
+#, fuzzy
 msgid "Last Updated"
-msgstr ""
+msgstr "Sasisho la mara ya mwisho"
 
+#, fuzzy
 msgid "Homepage"
-msgstr ""
+msgstr "Ukurasa wa &Nyumbani:"
 
 msgid "The user has not created a public profile."
 msgstr ""
@@ -5448,8 +5772,9 @@ msgstr ""
 msgid "Show custom smileys"
 msgstr ""
 
+#, fuzzy
 msgid "Allow direct connections"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
 msgid "Allow connecting from multiple locations"
 msgstr ""
@@ -5466,20 +5791,22 @@ msgstr ""
 msgid "The following users are missing from your addressbook"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unknown error (%d): %s"
-msgstr ""
+msgstr "Hitilafu isiyojulikana"
 
+#, fuzzy
 msgid "Unable to add user"
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
 #. Unknown error!
-#, c-format
+#, fuzzy, c-format
 msgid "Unknown error (%d)"
-msgstr ""
+msgstr "Hitilafu isiyojulikana"
 
+#, fuzzy
 msgid "Unable to remove user"
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr ""
@@ -5552,8 +5879,9 @@ msgstr ""
 msgid "Our protocol is not supported by the server"
 msgstr ""
 
+#, fuzzy
 msgid "Error parsing HTTP"
-msgstr ""
+msgstr "Hitilafu katika kuhifadhi %S"
 
 msgid "You have signed on from another location"
 msgstr ""
@@ -5581,11 +5909,13 @@ msgstr ""
 msgid "Starting authentication"
 msgstr ""
 
+#, fuzzy
 msgid "Getting cookie"
-msgstr ""
+msgstr "Anza"
 
+#, fuzzy
 msgid "Sending cookie"
-msgstr ""
+msgstr "Tuma Habari…"
 
 msgid "Retrieving buddy list"
 msgstr ""
@@ -5640,19 +5970,22 @@ msgstr ""
 msgid "Do you want to delete this buddy from your address book as well?"
 msgstr ""
 
+#, fuzzy
 msgid "The username specified is invalid."
-msgstr ""
+msgstr "Nambari mstari iliyoingizwa ni batili."
 
+#, fuzzy
 msgid "The Display Name you entered is invalid."
-msgstr ""
+msgstr "Nambari mstari iliyoingizwa ni batili."
 
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
 msgstr ""
 
 #. show error to user
+#, fuzzy
 msgid "Profile Update Error"
-msgstr ""
+msgstr "Hitilafu ya Printa"
 
 #. no profile information yet, so we cannot update
 #. (reference: "libpurple/request.h")
@@ -5664,24 +5997,28 @@ msgstr ""
 
 #. display name
 #. nick name (required)
+#, fuzzy
 msgid "Display Name"
-msgstr ""
+msgstr "Ukurasa wa kwanza"
 
 #. about me
+#, fuzzy
 msgid "About Me"
-msgstr ""
+msgstr "Kuhusu %S"
 
 #. where I live
 msgid "Where I Live"
 msgstr ""
 
 #. relationship status
+#, fuzzy
 msgid "Relationship Status"
-msgstr ""
+msgstr "Futa mwenyeji"
 
 #. mobile number
+#, fuzzy
 msgid "Mobile Number"
-msgstr ""
+msgstr "Jina la Moduli:"
 
 #. is searchable
 msgid "Can be searched"
@@ -5691,37 +6028,44 @@ msgstr ""
 msgid "Can be suggested"
 msgstr ""
 
+#, fuzzy
 msgid "Update your MXit Profile"
-msgstr ""
+msgstr "Notisi za Mtumiaji"
 
+#, fuzzy
 msgid "The PIN you entered is invalid."
-msgstr ""
+msgstr "Nambari mstari iliyoingizwa ni batili."
 
+#, fuzzy
 msgid "The PIN you entered has an invalid length [4-10]."
-msgstr ""
+msgstr "Nambari mstari iliyoingizwa ni batili."
 
 msgid "The PIN is invalid. It should only consist of digits [0-9]."
 msgstr ""
 
+#, fuzzy
 msgid "The two PINs you entered do not match."
-msgstr ""
+msgstr "Nywila"
 
 #. show error to user
+#, fuzzy
 msgid "PIN Update Error"
-msgstr ""
+msgstr "Hitilafu ya Printa"
 
 #. pin
 #. pin (required)
+#, fuzzy
 msgid "PIN"
-msgstr ""
+msgstr "UID"
 
 #. verify pin
 msgid "Verify PIN"
 msgstr ""
 
 #. (reference: "libpurple/request.h")
+#, fuzzy
 msgid "Change PIN"
-msgstr ""
+msgstr "Badil &Nywila"
 
 msgid "Change MXit PIN"
 msgstr ""
@@ -5732,28 +6076,34 @@ msgstr ""
 msgid "There is no splash-screen currently available"
 msgstr ""
 
+#, fuzzy
 msgid "About"
-msgstr ""
+msgstr "Kuhusu %S"
 
+#, fuzzy
 msgid "Search for user"
-msgstr ""
+msgstr "Tafuta matokeo"
 
 msgid "Search for a MXit contact"
 msgstr ""
 
+#, fuzzy
 msgid "Type search information"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
+#, fuzzy
 msgid "_Search"
-msgstr ""
+msgstr "Tafuta"
 
 #. display / change profile
+#, fuzzy
 msgid "Change Profile..."
-msgstr ""
+msgstr "Badil &Nywila"
 
 #. change PIN
+#, fuzzy
 msgid "Change PIN..."
-msgstr ""
+msgstr "Badil &Nywila"
 
 #. suggested friends
 msgid "Suggested friends..."
@@ -5768,40 +6118,48 @@ msgid "View Splash..."
 msgstr ""
 
 #. display plugin version
+#, fuzzy
 msgid "About..."
-msgstr ""
+msgstr "Kuhusu %S"
 
 #. the file is too big
 msgid "The file you are trying to send is too large!"
 msgstr ""
 
 #. file read error
+#, fuzzy
 msgid "Unable to access the local file"
-msgstr ""
+msgstr "Nimeshindwa Kusasisha"
 
 #. file write error
+#, fuzzy
 msgid "Unable to save the file"
-msgstr ""
+msgstr "Nimeshindwa Kusasisha"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
 msgstr ""
 
+#, fuzzy
 msgid "Logging In..."
-msgstr ""
+msgstr "Ingia"
 
+#, fuzzy
 msgid ""
 "Unable to connect to the MXit server. Please check your server settings."
-msgstr ""
+msgstr "Imeshindwa kuipata seva wakala"
 
+#, fuzzy
 msgid "Connecting..."
-msgstr ""
+msgstr "Inaunganisha…"
 
+#, fuzzy
 msgid "The Display Name you entered is too short."
-msgstr ""
+msgstr "Nambari mstari iliyoingizwa ni batili."
 
+#, fuzzy
 msgid "The PIN you entered has an invalid length [7-10]."
-msgstr ""
+msgstr "Nambari mstari iliyoingizwa ni batili."
 
 #. mxit login name
 msgid "MXit ID"
@@ -5845,28 +6203,32 @@ msgstr ""
 msgid "You did not enter the security code"
 msgstr ""
 
+#, fuzzy
 msgid "Security Code"
-msgstr ""
+msgstr "Levo ya Usalama"
 
 #. ask for input (required)
 msgid "Enter Security Code"
 msgstr ""
 
+#, fuzzy
 msgid "Your Country"
-msgstr ""
+msgstr "Hesabu"
 
 msgid "Your Language"
 msgstr ""
 
 #. display the form to the user and wait for his/her input
+#, fuzzy
 msgid "MXit Authorization"
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
 msgid "MXit account validation"
 msgstr ""
 
+#, fuzzy
 msgid "Retrieving User Information..."
-msgstr ""
+msgstr "Taarifa Zaidi"
 
 msgid "was kicked"
 msgstr ""
@@ -5874,24 +6236,29 @@ msgstr ""
 msgid "You have been kicked from this MultiMX."
 msgstr ""
 
+#, fuzzy
 msgid "_Room Name:"
-msgstr ""
+msgstr "Jina la Moduli:"
 
 #. Display system message in chat window
 msgid "You have invited"
 msgstr ""
 
+#, fuzzy
 msgid "Loading menu..."
-msgstr ""
+msgstr "Ingia"
 
+#, fuzzy
 msgid "Status Message"
-msgstr ""
+msgstr "Jumbe za tahadhari"
 
+#, fuzzy
 msgid "Rejection Message"
-msgstr ""
+msgstr "Jumbe za tahadhari"
 
+#, fuzzy
 msgid "No profile available"
-msgstr ""
+msgstr "Haipatikani"
 
 msgid "This contact does not have a profile."
 msgstr ""
@@ -5900,16 +6267,19 @@ msgid "Your MXit ID..."
 msgstr ""
 
 #. contact is in Deleted, Rejected or None state
+#, fuzzy
 msgid "Re-Invite"
-msgstr ""
+msgstr "Kizuizi batili"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
 msgid "WAP Server"
-msgstr ""
+msgstr "Seva"
 
+#, fuzzy
 msgid "Connect via HTTP"
-msgstr ""
+msgstr "Inaunganisha…"
 
 msgid "Enable splash-screen popup"
 msgstr ""
@@ -5929,8 +6299,9 @@ msgstr ""
 msgid "Married"
 msgstr ""
 
+#, fuzzy
 msgid "It's complicated"
-msgstr ""
+msgstr "Kizuizi batili"
 
 msgid "Widowed"
 msgstr ""
@@ -5941,21 +6312,26 @@ msgstr ""
 msgid "Divorced"
 msgstr ""
 
+#, fuzzy
 msgid "Last Online"
-msgstr ""
+msgstr "Nenda mkondoni"
 
+#, fuzzy
 msgid "Invite Message"
-msgstr ""
+msgstr "Jumbe za tahadhari"
 
+#, fuzzy
 msgid "No results"
-msgstr ""
+msgstr "Tafuta matokeo"
 
+#, fuzzy
 msgid "No contacts found."
-msgstr ""
+msgstr "Hamna uwiyano sawa na CRL uliopatikana."
 
 #. define columns
+#, fuzzy
 msgid "UserId"
-msgstr ""
+msgstr "Jina la Mtumiaji:"
 
 msgid "Where I live"
 msgstr ""
@@ -5977,25 +6353,29 @@ msgid "We have lost the connection to MXit. Please reconnect."
 msgstr ""
 
 #. packet could not be queued for transmission
+#, fuzzy
 msgid "Message Send Error"
-msgstr ""
+msgstr "Ujumbe haujaenda."
 
+#, fuzzy
 msgid "Unable to process your request at this time"
-msgstr ""
+msgstr "Imeshindwa kuipata seva wakala"
 
 msgid "Timeout while waiting for a response from the MXit server."
 msgstr ""
 
+#, fuzzy
 msgid "Successfully Logged In..."
-msgstr ""
+msgstr "Imesakinishwa kimafanikio %S."
 
 #, c-format
 msgid ""
 "%s sent you an encrypted message, but it is not supported on this client."
 msgstr ""
 
+#, fuzzy
 msgid "Message Error"
-msgstr ""
+msgstr "Ujumbe"
 
 #. could not be decrypted
 msgid "An encrypted message was received which could not be decrypted."
@@ -6004,40 +6384,49 @@ msgstr ""
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
 
+#, fuzzy
 msgid "An internal MXit server error occurred."
-msgstr ""
+msgstr "Hitilafu ya ndani ya seva (500)"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Login error: %s (%i)"
-msgstr ""
+msgstr "SSL Seva"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Logout error: %s (%i)"
-msgstr ""
+msgstr "SSL Seva"
 
+#, fuzzy
 msgid "Contact Error"
-msgstr ""
+msgstr "Hitilafu ya Sanidi"
 
+#, fuzzy
 msgid "Message Sending Error"
-msgstr ""
+msgstr "Ujumbe haujaenda."
 
+#, fuzzy
 msgid "Status Error"
-msgstr ""
+msgstr "Hitilafu katika kusakinisha"
 
+#, fuzzy
 msgid "Mood Error"
-msgstr ""
+msgstr "Hitilafu isiyojulikana"
 
+#, fuzzy
 msgid "Invitation Error"
-msgstr ""
+msgstr "Hitilafu ya Sanidi"
 
+#, fuzzy
 msgid "Contact Removal Error"
-msgstr ""
+msgstr "Hitilafu ya Sanidi"
 
+#, fuzzy
 msgid "Subscription Error"
-msgstr ""
+msgstr "Maelezo"
 
+#, fuzzy
 msgid "Contact Update Error"
-msgstr ""
+msgstr "Hitilafu ya Sanidi"
 
 msgid "File Transfer Error"
 msgstr ""
@@ -6045,11 +6434,13 @@ msgstr ""
 msgid "Cannot create MultiMx room"
 msgstr ""
 
+#, fuzzy
 msgid "MultiMx Invitation Error"
-msgstr ""
+msgstr "Hitilafu ya Sanidi"
 
+#, fuzzy
 msgid "Profile Error"
-msgstr ""
+msgstr "Hitilafu ya Printa"
 
 #. bad packet
 msgid "Invalid packet received from MXit."
@@ -6081,23 +6472,28 @@ msgstr ""
 msgid "In Love"
 msgstr ""
 
+#, fuzzy
 msgid "Pending"
-msgstr ""
+msgstr "kuumbia"
 
+#, fuzzy
 msgid "Invited"
-msgstr ""
+msgstr "Kizuizi batili"
 
+#, fuzzy
 msgid "Rejected"
-msgstr ""
+msgstr "Seti upya"
 
+#, fuzzy
 msgid "Deleted"
-msgstr ""
+msgstr "&Futa"
 
 msgid "MXit Advertising"
 msgstr ""
 
+#, fuzzy
 msgid "More Information"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
 #, c-format
 msgid "No such user: %s"
@@ -6109,11 +6505,13 @@ msgstr ""
 msgid "Reading challenge"
 msgstr ""
 
+#, fuzzy
 msgid "Unexpected challenge length from server"
-msgstr ""
+msgstr "Mwitiko wa bila kutegemea kutoka kwa seva"
 
+#, fuzzy
 msgid "Logging in"
-msgstr ""
+msgstr "Ingia"
 
 msgid "MySpaceIM - No Username Set"
 msgstr ""
@@ -6145,8 +6543,9 @@ msgstr ""
 msgid "New picture comments"
 msgstr ""
 
+#, fuzzy
 msgid "MySpace"
-msgstr ""
+msgstr "Nafasi"
 
 msgid "IM Friends"
 msgstr ""
@@ -6202,8 +6601,9 @@ msgstr ""
 msgid "blocklist command failed"
 msgstr ""
 
+#, fuzzy
 msgid "Missing Cipher"
-msgstr ""
+msgstr "Faili linalokosekana"
 
 msgid "The RC4 cipher could not be found"
 msgstr ""
@@ -6256,14 +6656,16 @@ msgstr ""
 msgid "Headline"
 msgstr ""
 
+#, fuzzy
 msgid "Song"
-msgstr ""
+msgstr "Kitonga"
 
 msgid "Total Friends"
 msgstr ""
 
+#, fuzzy
 msgid "Client Version"
-msgstr ""
+msgstr "Toleo Jipya"
 
 msgid ""
 "An error occurred while trying to set the username.  Please try again, or "
@@ -6314,8 +6716,9 @@ msgid "Zapping %s..."
 msgstr ""
 
 #. Whack means "to hit or strike someone with a sharp blow"
+#, fuzzy
 msgid "Whack"
-msgstr ""
+msgstr "Nyuma"
 
 #, c-format
 msgid "%s has whacked you!"
@@ -6328,8 +6731,9 @@ msgstr ""
 #. Torch means "to set on fire."  Don't worry, this doesn't
 #. * make a whole lot of sense in English, either.  Feel free
 #. * to translate it literally.
+#, fuzzy
 msgid "Torch"
-msgstr ""
+msgstr "Machi"
 
 #, c-format
 msgid "%s has torched you!"
@@ -6352,8 +6756,9 @@ msgid "Smooching %s..."
 msgstr ""
 
 #. A hug is a display of affection; wrapping your arms around someone
+#, fuzzy
 msgid "Hug"
-msgstr ""
+msgstr "Ago"
 
 #, c-format
 msgid "%s has hugged you!"
@@ -6376,8 +6781,9 @@ msgid "Slapping %s..."
 msgstr ""
 
 #. Goose means "to pinch someone on their butt"
+#, fuzzy
 msgid "Goose"
-msgstr ""
+msgstr "Google"
 
 #, c-format
 msgid "%s has goosed you!"
@@ -6445,23 +6851,29 @@ msgstr ""
 msgid "Error communicating with server"
 msgstr ""
 
+#, fuzzy
 msgid "Conference not found"
-msgstr ""
+msgstr "Mstari haujapatikana"
 
+#, fuzzy
 msgid "Conference does not exist"
-msgstr ""
+msgstr "Faili lililohitajiwa halipo"
 
+#, fuzzy
 msgid "A folder with that name already exists"
-msgstr ""
+msgstr "Ufunguo wenye lakabu kama hii tayari upo."
 
+#, fuzzy
 msgid "Not supported"
-msgstr ""
+msgstr "Haujaanza"
 
+#, fuzzy
 msgid "Password has expired"
-msgstr ""
+msgstr "Nywila inatakiwa"
 
+#, fuzzy
 msgid "Incorrect password"
-msgstr ""
+msgstr "Nywila ya sasa hivi:"
 
 msgid "Account has been disabled"
 msgstr ""
@@ -6518,13 +6930,13 @@ msgstr ""
 msgid "The user is either offline or you are blocked"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unknown error: 0x%X"
-msgstr ""
+msgstr "Hitilafu isiyojulikana"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to login: %s"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6612,8 +7024,9 @@ msgstr ""
 #. purple_notify_user_info_add_pair(user_info, tag, value);
 #. }
 #.
+#, fuzzy
 msgid "Full name"
-msgstr ""
+msgstr "Jina la faili:"
 
 #, c-format
 msgid "GroupWise Conference %d"
@@ -6639,8 +7052,9 @@ msgid ""
 "Sent: %s"
 msgstr ""
 
+#, fuzzy
 msgid "Would you like to join the conversation?"
-msgstr ""
+msgstr "Ungependa kuhifadhi faili hili?"
 
 #, c-format
 msgid ""
@@ -6686,16 +7100,17 @@ msgstr ""
 #. *
 #. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
 #.
+#, fuzzy
 msgid "_OK"
-msgstr ""
+msgstr "Sawa"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Received unexpected response from %s: %s"
-msgstr ""
+msgstr "Mwitiko wa bila kutegemea kutoka kwa seva"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Received unexpected response from %s"
-msgstr ""
+msgstr "Mwitiko wa bila kutegemea kutoka kwa seva"
 
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
@@ -6709,12 +7124,13 @@ msgstr ""
 
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
-#, c-format
+#, fuzzy, c-format
 msgid "Error requesting %s: %s"
-msgstr ""
+msgstr "Hitilafu katika kuhifadhi %S"
 
+#, fuzzy
 msgid "The server returned an empty response"
-msgstr ""
+msgstr "Imeshindwa kuipata seva wakala"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6743,8 +7159,9 @@ msgstr ""
 msgid "Invalid chat room name"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid error"
-msgstr ""
+msgstr "Kizuizi batili"
 
 msgid "Cannot receive IM due to parental controls"
 msgstr ""
@@ -6752,8 +7169,9 @@ msgstr ""
 msgid "Cannot send SMS without accepting terms"
 msgstr ""
 
+#, fuzzy
 msgid "Cannot send SMS"
-msgstr ""
+msgstr "\"Haikuweza kupakia: \""
 
 #. SMS_WITHOUT_DISCLAIMER is weird
 msgid "Cannot send SMS to this country"
@@ -6778,39 +7196,44 @@ msgstr ""
 msgid "Bot account reached monthly IM limit"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to receive offline messages"
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
+#, fuzzy
 msgid "Offline message store full"
-msgstr ""
+msgstr "Hifadhi ya nje ya Mkondo"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send message: %s (%s)"
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
 #, c-format
 msgid "Unable to send message: %s"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send message to %s: %s (%s)"
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send message to %s: %s"
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
 msgid "Thinking"
 msgstr ""
 
+#, fuzzy
 msgid "Shopping"
-msgstr ""
+msgstr "Kitonga"
 
+#, fuzzy
 msgid "Questioning"
-msgstr ""
+msgstr "Kiestonia"
 
+#, fuzzy
 msgid "Eating"
-msgstr ""
+msgstr "Inahifadhi"
 
 msgid "Watching a movie"
 msgstr ""
@@ -6830,14 +7253,16 @@ msgstr ""
 msgid "Having fun"
 msgstr ""
 
+#, fuzzy
 msgid "Sleeping"
-msgstr ""
+msgstr "kuumbia"
 
 msgid "Using a PDA"
 msgstr ""
 
+#, fuzzy
 msgid "Meeting friends"
-msgstr ""
+msgstr "Imeshindwa kunakili"
 
 msgid "On the phone"
 msgstr ""
@@ -6846,8 +7271,9 @@ msgid "Surfing"
 msgstr ""
 
 #. "I am mobile." / "John is mobile."
+#, fuzzy
 msgid "Mobile"
-msgstr ""
+msgstr "Moduli"
 
 msgid "Searching the web"
 msgstr ""
@@ -6859,33 +7285,39 @@ msgid "Having Coffee"
 msgstr ""
 
 #. Playing video games
+#, fuzzy
 msgid "Gaming"
-msgstr ""
+msgstr "Jina la Mtumiaji:"
 
 msgid "Browsing the web"
 msgstr ""
 
+#, fuzzy
 msgid "Smoking"
-msgstr ""
+msgstr "Kitonga"
 
+#, fuzzy
 msgid "Writing"
-msgstr ""
+msgstr "Tahadhari:"
 
 #. Drinking [Alcohol]
+#, fuzzy
 msgid "Drinking"
-msgstr ""
+msgstr "Tahadhari:"
 
 msgid "Listening to music"
 msgstr ""
 
+#, fuzzy
 msgid "Studying"
-msgstr ""
+msgstr "kuumbia"
 
 msgid "In the restroom"
 msgstr ""
 
+#, fuzzy
 msgid "Received invalid data on connection with server"
-msgstr ""
+msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
 
 #. *< type
 #. *< ui_requirement
@@ -6916,11 +7348,13 @@ msgstr ""
 msgid "ICQ Protocol Plugin"
 msgstr ""
 
+#, fuzzy
 msgid "Encoding"
-msgstr ""
+msgstr "Kisimba:"
 
+#, fuzzy
 msgid "The remote user has closed the connection."
-msgstr ""
+msgstr "Mwenzi SSL imefunga uunganisho huu"
 
 msgid "The remote user has declined your request."
 msgstr ""
@@ -6932,8 +7366,9 @@ msgstr ""
 msgid "Received invalid data on connection with remote user."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to establish a connection with the remote user."
-msgstr ""
+msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
 
 msgid "Direct IM established"
 msgstr ""
@@ -6963,31 +7398,35 @@ msgstr ""
 msgid "Invisible"
 msgstr ""
 
+#, fuzzy
 msgid "Evil"
-msgstr ""
+msgstr "Barua pepe"
 
 msgid "Depression"
 msgstr ""
 
+#, fuzzy
 msgid "At home"
-msgstr ""
+msgstr "Kuhusu %S"
 
+#, fuzzy
 msgid "At work"
-msgstr ""
+msgstr "Mtandao"
 
 msgid "At lunch"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
-msgstr ""
+msgstr "Imeshindwa kuipata seva wakala"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to connect to BOS server: %s"
-msgstr ""
+msgstr "Imeshindwa kuipata seva wakala"
 
+#, fuzzy
 msgid "Username sent"
-msgstr ""
+msgstr "Jina la mtumiaji"
 
 msgid "Connection established, cookie sent"
 msgstr ""
@@ -7023,8 +7462,9 @@ msgstr ""
 
 #. Unregistered username
 #. the username does not exist
+#, fuzzy
 msgid "Username does not exist"
-msgstr ""
+msgstr "Faili %S halipo"
 
 #. Suspended account
 msgid "Your account is currently suspended"
@@ -7053,8 +7493,9 @@ msgid ""
 "longer."
 msgstr ""
 
+#, fuzzy
 msgid "The SecurID key entered is invalid"
-msgstr ""
+msgstr "Nambari mstari iliyoingizwa ni batili."
 
 msgid "Enter SecurID"
 msgstr ""
@@ -7062,8 +7503,9 @@ msgstr ""
 msgid "Enter the 6 digit number from the digital display."
 msgstr ""
 
+#, fuzzy
 msgid "Password sent"
-msgstr ""
+msgstr "Nywila"
 
 msgid "Unable to initialize connection"
 msgstr ""
@@ -7114,8 +7556,9 @@ msgstr ""
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr ""
 
+#, fuzzy
 msgid "_Add"
-msgstr ""
+msgstr "Ongeza"
 
 msgid "_Decline"
 msgstr ""
@@ -7305,8 +7748,9 @@ msgid ""
 "list.  Please remove one and try again."
 msgstr ""
 
+#, fuzzy
 msgid "(no name)"
-msgstr ""
+msgstr "(hakuna lakabu)"
 
 #, c-format
 msgid "Unable to add the buddy %s for an unknown reason."
@@ -7337,8 +7781,9 @@ msgid ""
 "%s"
 msgstr ""
 
+#, fuzzy
 msgid "Authorization Denied"
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
 msgid "_Exchange:"
 msgstr ""
@@ -7349,8 +7794,9 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr ""
 
+#, fuzzy
 msgid "Lunch"
-msgstr ""
+msgstr "Maliza"
 
 #, c-format
 msgid "Buddy Comment for %s"
@@ -7368,11 +7814,13 @@ msgid ""
 "Do you wish to continue?"
 msgstr ""
 
+#, fuzzy
 msgid "C_onnect"
-msgstr ""
+msgstr "Yaliyomo"
 
+#, fuzzy
 msgid "You closed the connection."
-msgstr ""
+msgstr "Mwenzi SSL imefunga uunganisho huu"
 
 msgid "Get AIM Info"
 msgstr ""
@@ -7381,14 +7829,17 @@ msgstr ""
 msgid "Edit Buddy Comment"
 msgstr ""
 
+#, fuzzy
 msgid "Get X-Status Msg"
-msgstr ""
+msgstr "Jumbe za tahadhari"
 
+#, fuzzy
 msgid "End Direct IM Session"
-msgstr ""
+msgstr "Mwelekeo"
 
+#, fuzzy
 msgid "Direct IM"
-msgstr ""
+msgstr "Mwelekeo"
 
 msgid "Re-request Authorization"
 msgstr ""
@@ -7429,8 +7880,9 @@ msgid "Set User Info (web)..."
 msgstr ""
 
 #. This only happens when connecting with the old-style BUCP login
+#, fuzzy
 msgid "Change Password (web)"
-msgstr ""
+msgstr "Badil &Nywila"
 
 msgid "Configure IM Forwarding (web)"
 msgstr ""
@@ -7446,8 +7898,9 @@ msgid "Show Invisible List"
 msgstr ""
 
 #. AIM actions
+#, fuzzy
 msgid "Confirm Account"
-msgstr ""
+msgstr "Thibitisha kufunga"
 
 msgid "Display Currently Registered Email Address"
 msgstr ""
@@ -7504,17 +7957,20 @@ msgstr ""
 msgid "AIM Direct IM"
 msgstr ""
 
+#, fuzzy
 msgid "Get File"
-msgstr ""
+msgstr "Mafaili ya Matini"
 
+#, fuzzy
 msgid "Games"
-msgstr ""
+msgstr "Jina"
 
 msgid "ICQ Xtraz"
 msgstr ""
 
+#, fuzzy
 msgid "Add-Ins"
-msgstr ""
+msgstr "Nyongeza"
 
 msgid "Send Buddy List"
 msgstr ""
@@ -7546,20 +8002,24 @@ msgstr ""
 msgid "Hiptop"
 msgstr ""
 
+#, fuzzy
 msgid "Security Enabled"
-msgstr ""
+msgstr "Levo ya Usalama"
 
+#, fuzzy
 msgid "Video Chat"
-msgstr ""
+msgstr "Podikasti Video"
 
 msgid "iChat AV"
 msgstr ""
 
+#, fuzzy
 msgid "Live Video"
-msgstr ""
+msgstr "Hifadhi video"
 
+#, fuzzy
 msgid "Camera"
-msgstr ""
+msgstr "Cameroon"
 
 msgid "Screen Sharing"
 msgstr ""
@@ -7567,8 +8027,9 @@ msgstr ""
 msgid "IP Address"
 msgstr "Anwani-IP"
 
+#, fuzzy
 msgid "Warning Level"
-msgstr ""
+msgstr "Jumbe za tahadhari"
 
 msgid "Buddy Comment"
 msgstr ""
@@ -7585,20 +8046,23 @@ msgstr ""
 
 #. aim_userinfo_t
 #. use_html_status
+#, fuzzy
 msgid "Additional Information"
-msgstr ""
+msgstr "Inachunguza taarifa"
 
 msgid "Zip Code"
 msgstr ""
 
+#, fuzzy
 msgid "Work Information"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
 msgid "Division"
 msgstr ""
 
+#, fuzzy
 msgid "Position"
-msgstr ""
+msgstr "Nafasi:"
 
 msgid "Web Page"
 msgstr ""
@@ -7612,8 +8076,9 @@ msgstr ""
 msgid "Capabilities"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid SNAC"
-msgstr ""
+msgstr "Kizuizi batili"
 
 msgid "Server rate limit exceeded"
 msgstr ""
@@ -7645,8 +8110,9 @@ msgstr ""
 msgid "Responses lost"
 msgstr ""
 
+#, fuzzy
 msgid "Request denied"
-msgstr ""
+msgstr "Ufikio umekataliwa"
 
 msgid "Busted SNAC payload"
 msgstr ""
@@ -7666,8 +8132,9 @@ msgstr ""
 msgid "User temporarily unavailable"
 msgstr ""
 
+#, fuzzy
 msgid "No match"
-msgstr ""
+msgstr "%S oanisho"
 
 msgid "List overflow"
 msgstr ""
@@ -7684,14 +8151,16 @@ msgstr ""
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
+#, fuzzy
 msgid "Appear Online"
-msgstr ""
+msgstr "Baki Mkondoni"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear offline to the chosen user when your status is set to
 #. Invisible (this is the default).
+#, fuzzy
 msgid "Don't Appear Online"
-msgstr ""
+msgstr "Baki Mkondoni"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to always appear offline to the chosen user (even when your status
@@ -7703,8 +8172,9 @@ msgstr ""
 #. you to appear offline to the chosen user if you are invisible, and
 #. appear online to the chosen user if you are not invisible (this is the
 #. default).
+#, fuzzy
 msgid "Don't Appear Offline"
-msgstr ""
+msgstr "Baki Mkondoni"
 
 msgid "you have no buddies on this list"
 msgstr ""
@@ -7715,8 +8185,9 @@ msgid ""
 "\""
 msgstr ""
 
+#, fuzzy
 msgid "Visible List"
-msgstr ""
+msgstr "Lemaza"
 
 msgid "These buddies will see your status when you switch to \"Invisible\""
 msgstr ""
@@ -7800,11 +8271,13 @@ msgstr ""
 msgid "Microphone"
 msgstr ""
 
+#, fuzzy
 msgid "Speakers"
-msgstr ""
+msgstr "Seva"
 
+#, fuzzy
 msgid "Video Camera"
-msgstr ""
+msgstr "Kicheza Video"
 
 msgid "File Transfer"
 msgstr ""
@@ -7827,11 +8300,13 @@ msgstr ""
 msgid "New Conference"
 msgstr ""
 
+#, fuzzy
 msgid "Create"
-msgstr ""
+msgstr "Kicree"
 
+#, fuzzy
 msgid "Available Conferences"
-msgstr ""
+msgstr "Profaili Zipatikanazo"
 
 msgid "Create New Conference..."
 msgstr ""
@@ -7858,8 +8333,9 @@ msgstr ""
 msgid "Topic:"
 msgstr ""
 
+#, fuzzy
 msgid "A server is required to connect this account"
-msgstr ""
+msgstr "Mwenzi SSL imefunga uunganisho huu"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -7868,8 +8344,9 @@ msgstr ""
 msgid "Last Known Client"
 msgstr ""
 
+#, fuzzy
 msgid "User Name"
-msgstr ""
+msgstr "Jina la Mtumiaji:"
 
 msgid "Sametime ID"
 msgstr ""
@@ -7883,8 +8360,9 @@ msgid ""
 "select the correct user from the list below to add them to your buddy list."
 msgstr ""
 
+#, fuzzy
 msgid "Select User"
-msgstr ""
+msgstr "Chagua &Yote"
 
 msgid "Unable to add user: user not found"
 msgstr ""
@@ -7934,8 +8412,9 @@ msgstr ""
 msgid "A group named '%s' already exists in your buddy list."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to add group"
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
 msgid "Possible Matches"
 msgstr ""
@@ -7970,9 +8449,9 @@ msgid ""
 "group and its members to your buddy list."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Search results for '%s'"
-msgstr ""
+msgstr "Majibu ya kutafutwa kwa"
 
 #, c-format
 msgid ""
@@ -7981,18 +8460,21 @@ msgid ""
 "buttons below."
 msgstr ""
 
+#, fuzzy
 msgid "Search Results"
-msgstr ""
+msgstr "Tafuta matokeo"
 
+#, fuzzy
 msgid "No matches"
-msgstr ""
+msgstr "%S maoanisho"
 
 #, c-format
 msgid "The identifier '%s' did not match any users in your Sametime community."
 msgstr ""
 
+#, fuzzy
 msgid "No Matches"
-msgstr ""
+msgstr "%S maoanisho"
 
 msgid "Search for a user"
 msgstr ""
@@ -8002,8 +8484,9 @@ msgid ""
 "in your Sametime community."
 msgstr ""
 
+#, fuzzy
 msgid "User Search"
-msgstr ""
+msgstr "Tafuti Mpya"
 
 msgid "Import Sametime List..."
 msgstr ""
@@ -8037,8 +8520,9 @@ msgstr ""
 msgid "Error occurred during key agreement"
 msgstr ""
 
+#, fuzzy
 msgid "Key Agreement failed"
-msgstr ""
+msgstr "Makubaliano Muhimu"
 
 msgid "Timeout during key agreement"
 msgstr ""
@@ -8068,8 +8552,9 @@ msgid ""
 "Remote port: %d"
 msgstr ""
 
+#, fuzzy
 msgid "Key Agreement Request"
-msgstr ""
+msgstr "Makubaliano Muhimu"
 
 msgid "IM With Password"
 msgstr ""
@@ -8077,23 +8562,27 @@ msgstr ""
 msgid "Cannot set IM key"
 msgstr ""
 
+#, fuzzy
 msgid "Set IM Password"
-msgstr ""
+msgstr "Onyesha Nywila"
 
+#, fuzzy
 msgid "Get Public Key"
-msgstr ""
+msgstr "Ufunguo Huria wa Muhusika"
 
 msgid "Cannot fetch the public key"
 msgstr ""
 
+#, fuzzy
 msgid "Show Public Key"
-msgstr ""
+msgstr "Ufunguo Huria wa Muhusika"
 
 msgid "Could not load public key"
 msgstr ""
 
+#, fuzzy
 msgid "User Information"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
 msgid "Cannot get user information"
 msgstr ""
@@ -8120,8 +8609,9 @@ msgid ""
 "a public key."
 msgstr ""
 
+#, fuzzy
 msgid "_Import..."
-msgstr ""
+msgstr "&Leta…"
 
 msgid "Select correct user"
 msgstr ""
@@ -8136,8 +8626,9 @@ msgid ""
 "from the list to add to the buddy list."
 msgstr ""
 
+#, fuzzy
 msgid "Detached"
-msgstr ""
+msgstr "Haijakechiwa"
 
 msgid "Indisposed"
 msgstr ""
@@ -8151,8 +8642,9 @@ msgstr ""
 msgid "Robot"
 msgstr ""
 
+#, fuzzy
 msgid "User Modes"
-msgstr ""
+msgstr "Jina la Mtumiaji:"
 
 msgid "Preferred Contact"
 msgstr ""
@@ -8160,14 +8652,16 @@ msgstr ""
 msgid "Preferred Language"
 msgstr ""
 
+#, fuzzy
 msgid "Device"
-msgstr ""
+msgstr "Huduma"
 
 msgid "Timezone"
 msgstr ""
 
+#, fuzzy
 msgid "Geolocation"
-msgstr ""
+msgstr "Mahali"
 
 msgid "Reset IM Key"
 msgstr ""
@@ -8194,8 +8688,9 @@ msgstr ""
 msgid "Channel %s does not exist in the network"
 msgstr ""
 
+#, fuzzy
 msgid "Channel Information"
-msgstr ""
+msgstr "Inachunguza taarifa"
 
 msgid "Cannot get channel information"
 msgstr ""
@@ -8265,11 +8760,13 @@ msgstr ""
 msgid "Add / Remove"
 msgstr ""
 
+#, fuzzy
 msgid "Group Name"
-msgstr ""
+msgstr "Kusanya kwa:"
 
+#, fuzzy
 msgid "Passphrase"
-msgstr ""
+msgstr "Nywila"
 
 #, c-format
 msgid "Please enter the %s channel private group name and passphrase."
@@ -8278,8 +8775,9 @@ msgstr ""
 msgid "Add Channel Private Group"
 msgstr ""
 
+#, fuzzy
 msgid "User Limit"
-msgstr ""
+msgstr "Jina la Mtumiaji:"
 
 msgid "Set user limit on channel. Set to zero to reset user limit."
 msgstr ""
@@ -8293,11 +8791,13 @@ msgstr ""
 msgid "Add Private Group"
 msgstr ""
 
+#, fuzzy
 msgid "Reset Permanent"
-msgstr ""
+msgstr "Kudumu"
 
+#, fuzzy
 msgid "Set Permanent"
-msgstr ""
+msgstr "Kudumu"
 
 msgid "Set User Limit"
 msgstr ""
@@ -8352,14 +8852,16 @@ msgstr ""
 msgid "Permission denied"
 msgstr ""
 
+#, fuzzy
 msgid "Key agreement failed"
-msgstr ""
+msgstr "Makubaliano Muhimu"
 
 msgid "Connection timed out"
 msgstr "Muunganiko umepita muda"
 
+#, fuzzy
 msgid "Creating connection failed"
-msgstr ""
+msgstr "Muunganiko salama umeshindikana"
 
 msgid "File transfer session does not exist"
 msgstr ""
@@ -8417,8 +8919,9 @@ msgstr ""
 msgid "Server signoff"
 msgstr ""
 
+#, fuzzy
 msgid "Personal Information"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
 msgid "Birth Day"
 msgstr ""
@@ -8426,14 +8929,17 @@ msgstr ""
 msgid "Job Role"
 msgstr ""
 
+#, fuzzy
 msgid "Organization"
-msgstr ""
+msgstr "Shirika:"
 
+#, fuzzy
 msgid "Unit"
-msgstr ""
+msgstr "Kizio:"
 
+#, fuzzy
 msgid "Note"
-msgstr ""
+msgstr "Bila"
 
 msgid "Join Chat"
 msgstr ""
@@ -8449,8 +8955,9 @@ msgstr ""
 msgid "Real Name"
 msgstr ""
 
+#, fuzzy
 msgid "Status Text"
-msgstr ""
+msgstr "M&wambaa Hali"
 
 msgid "Public Key Fingerprint"
 msgstr ""
@@ -8479,14 +8986,16 @@ msgstr ""
 msgid "Cannot get room list"
 msgstr ""
 
+#, fuzzy
 msgid "Network is empty"
-msgstr ""
+msgstr "Muda wa mtandao umeisha"
 
 msgid "No public key was received"
 msgstr ""
 
+#, fuzzy
 msgid "Server Information"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
 msgid "Cannot get server information"
 msgstr ""
@@ -8519,11 +9028,13 @@ msgstr ""
 msgid "Network Statistics"
 msgstr ""
 
+#, fuzzy
 msgid "Ping"
-msgstr ""
+msgstr "Chapisha"
 
+#, fuzzy
 msgid "Ping failed"
-msgstr ""
+msgstr "Imeshindwa kunakili"
 
 msgid "Ping reply received from server"
 msgstr ""
@@ -8537,8 +9048,9 @@ msgstr ""
 msgid "Cannot watch user"
 msgstr ""
 
+#, fuzzy
 msgid "Resuming session"
-msgstr ""
+msgstr "Rejesha Awamu"
 
 msgid "Authenticating connection"
 msgstr ""
@@ -8546,8 +9058,9 @@ msgstr ""
 msgid "Verifying server public key"
 msgstr ""
 
+#, fuzzy
 msgid "Passphrase required"
-msgstr ""
+msgstr "Nywila inatakiwa"
 
 #, c-format
 msgid ""
@@ -8567,20 +9080,23 @@ msgid ""
 "%s\n"
 msgstr ""
 
+#, fuzzy
 msgid "Verify Public Key"
-msgstr ""
+msgstr "Ufunguo Huria wa Muhusika"
 
 msgid "_View..."
 msgstr ""
 
+#, fuzzy
 msgid "Unsupported public key type"
-msgstr ""
+msgstr "Aina ya faili isiyo stahimiliwa."
 
 msgid "Disconnected by server"
 msgstr ""
 
+#, fuzzy
 msgid "Error connecting to SILC Server"
-msgstr ""
+msgstr "Inaunganisha kwenye seva ya sasisho…"
 
 msgid "Key Exchange failed"
 msgstr ""
@@ -8592,32 +9108,35 @@ msgstr ""
 msgid "Performing key exchange"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to load SILC key pair"
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
 #. Progress
+#, fuzzy
 msgid "Connecting to SILC Server"
-msgstr ""
+msgstr "Inaunganisha kwenye seva ya sasisho…"
 
 msgid "Out of memory"
 msgstr "Nje ya kumbukumbu"
 
+#, fuzzy
 msgid "Unable to initialize SILC protocol"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
 msgid "Error loading SILC key pair"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Download %s: %s"
-msgstr ""
+msgstr "Inapakua: %S"
 
 msgid "Your Current Mood"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Normal"
-msgstr ""
+msgstr "&Kawaida"
 
 msgid ""
 "\n"
@@ -8636,8 +9155,9 @@ msgstr ""
 msgid "Your Current Status"
 msgstr ""
 
+#, fuzzy
 msgid "Online Services"
-msgstr ""
+msgstr "Huduma za tovuti"
 
 msgid "Let others see what services you are using"
 msgstr ""
@@ -8693,8 +9213,9 @@ msgstr ""
 msgid "Generate Key Pair"
 msgstr ""
 
+#, fuzzy
 msgid "Online Status"
-msgstr ""
+msgstr "Marekani"
 
 msgid "View Message of the Day"
 msgstr ""
@@ -8712,9 +9233,9 @@ msgstr ""
 msgid "You must specify a nick"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "channel %s not found"
-msgstr ""
+msgstr "Mstari haujapatikana"
 
 #, c-format
 msgid "channel modes for %s: %s"
@@ -8858,8 +9379,9 @@ msgstr ""
 msgid "Use Perfect Forward Secrecy"
 msgstr ""
 
+#, fuzzy
 msgid "Public key authentication"
-msgstr ""
+msgstr "Ishara ya Uthibitisho Inayoulindwa"
 
 msgid "Block IMs without Key Exchange"
 msgstr ""
@@ -8876,8 +9398,9 @@ msgstr ""
 msgid "Creating SILC key pair..."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to create SILC key pair"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
 #. Hint for translators: Please check the tabulator width here and in
 #. the next strings (short strings: 2 tabs, longer strings 1 tab,
@@ -8886,9 +9409,9 @@ msgstr ""
 msgid "Real Name: \t%s\n"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "User Name: \t%s\n"
-msgstr ""
+msgstr "Jina la Mtumiaji:"
 
 #, c-format
 msgid "Email: \t\t%s\n"
@@ -8898,9 +9421,9 @@ msgstr ""
 msgid "Host Name: \t%s\n"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Organization: \t%s\n"
-msgstr ""
+msgstr "Jumuiya: \"%S\""
 
 #, c-format
 msgid "Country: \t%s\n"
@@ -8914,9 +9437,9 @@ msgstr ""
 msgid "Key Length: \t%d bits\n"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Version: \t%s\n"
-msgstr ""
+msgstr "Toleo la 1"
 
 #, c-format
 msgid ""
@@ -8931,17 +9454,20 @@ msgid ""
 "%s"
 msgstr ""
 
+#, fuzzy
 msgid "Public Key Information"
-msgstr ""
+msgstr "Fic&ha Taarifa"
 
+#, fuzzy
 msgid "Paging"
-msgstr ""
+msgstr "Inahifadhi"
 
 msgid "Video Conferencing"
 msgstr ""
 
+#, fuzzy
 msgid "Computer"
-msgstr ""
+msgstr "Imemaliza"
 
 msgid "PDA"
 msgstr ""
@@ -9008,27 +9534,32 @@ msgstr ""
 msgid "Failure: Authentication failed"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to initialize SILC Client connection"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
 msgid "John Noname"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to load SILC key pair: %s"
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
+#, fuzzy
 msgid "Unable to create connection"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
+#, fuzzy
 msgid "Unknown server response"
-msgstr ""
+msgstr "Hitilafu isiyojulikana"
 
+#, fuzzy
 msgid "Unable to create listen socket"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
+#, fuzzy
 msgid "Unable to resolve hostname"
-msgstr ""
+msgstr "Imeshindwa kuipata seva wakala"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr ""
@@ -9091,11 +9622,13 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
+#, fuzzy
 msgid "Yahoo! Protocol Plugin"
-msgstr ""
+msgstr "Yahoo! Barua"
 
+#, fuzzy
 msgid "Pager port"
-msgstr ""
+msgstr "Page Down"
 
 msgid "File transfer server"
 msgstr ""
@@ -9115,8 +9648,9 @@ msgstr ""
 msgid "Chat room list URL"
 msgstr ""
 
+#, fuzzy
 msgid "Yahoo JAPAN ID..."
-msgstr ""
+msgstr "Yahoo! Barua"
 
 #. *< type
 #. *< ui_requirement
@@ -9206,8 +9740,9 @@ msgstr ""
 msgid "Ignore buddy?"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid username or password"
-msgstr ""
+msgstr "Jina batili la moduli."
 
 msgid ""
 "Your account has been locked due to too many failed login attempts.  Please "
@@ -9230,26 +9765,29 @@ msgstr ""
 msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to add buddy to server list"
-msgstr ""
+msgstr "Haiwezi kuongeza moduli"
 
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
 msgstr ""
 
+#, fuzzy
 msgid "Received unexpected HTTP response from server"
-msgstr ""
+msgstr "Mwitiko wa bila kutegemea kutoka kwa seva"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Lost connection with %s: %s"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to establish a connection with %s: %s"
-msgstr ""
+msgstr "Firefox haiwezi kuzindua unganisho katika seva ya %S."
 
+#, fuzzy
 msgid "Unable to connect: The server returned an empty response."
-msgstr ""
+msgstr "Imeshindwa kuipata seva wakala"
 
 msgid ""
 "Unable to connect: The server's response did not contain the necessary "
@@ -9265,8 +9803,9 @@ msgstr ""
 msgid "Not in Office"
 msgstr ""
 
+#, fuzzy
 msgid "On Vacation"
-msgstr ""
+msgstr "Fungua &Mahali…"
 
 msgid "Stepped Out"
 msgstr ""
@@ -9277,8 +9816,9 @@ msgstr ""
 msgid "Appear Permanently Offline"
 msgstr ""
 
+#, fuzzy
 msgid "Presence"
-msgstr ""
+msgstr "Mapendekezo"
 
 msgid "Don't Appear Permanently Offline"
 msgstr ""
@@ -9295,9 +9835,6 @@ msgstr ""
 msgid "Start Doodling"
 msgstr ""
 
-msgid "Activate which ID?"
-msgstr ""
-
 msgid "Select the ID you want to activate"
 msgstr ""
 
@@ -9310,8 +9847,9 @@ msgstr ""
 msgid "Join User in Chat..."
 msgstr ""
 
+#, fuzzy
 msgid "Open Inbox"
-msgstr ""
+msgstr "Fungua katika:"
 
 msgid "Can't send SMS. Unable to obtain mobile carrier."
 msgstr ""
@@ -9328,8 +9866,9 @@ msgstr ""
 msgid "Sent Doodle request."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to connect."
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
 msgid "Unable to establish file descriptor."
 msgstr ""
@@ -9338,14 +9877,16 @@ msgstr ""
 msgid "%s is trying to send you a group of %d files.\n"
 msgstr ""
 
+#, fuzzy
 msgid "Write Error"
-msgstr ""
+msgstr "Hitilafu ya Printa"
 
 msgid "Yahoo! Japan Profile"
 msgstr ""
 
+#, fuzzy
 msgid "Yahoo! Profile"
-msgstr ""
+msgstr "Yahoo! Barua"
 
 msgid ""
 "Sorry, profiles marked as containing adult content are not supported at this "
@@ -9357,8 +9898,9 @@ msgid ""
 "web browser:"
 msgstr ""
 
+#, fuzzy
 msgid "Yahoo! ID"
-msgstr ""
+msgstr "Yahoo! Barua"
 
 msgid "Hobbies"
 msgstr ""
@@ -9366,8 +9908,9 @@ msgstr ""
 msgid "Latest News"
 msgstr ""
 
+#, fuzzy
 msgid "Home Page"
-msgstr ""
+msgstr "Ukurasa wa &Nyumbani:"
 
 msgid "Cool Link 1"
 msgstr ""
@@ -9399,16 +9942,18 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has declined to join."
-msgstr ""
+msgstr "Mwenzi SSL imefunga uunganisho huu"
 
+#, fuzzy
 msgid "Failed to join chat"
-msgstr ""
+msgstr "Imeshindwa kuunganisha"
 
 #. -6
+#, fuzzy
 msgid "Unknown room"
-msgstr ""
+msgstr "Hitilafu isiyojulikana"
 
 #. -15
 msgid "Maybe the room is full"
@@ -9442,8 +9987,9 @@ msgstr ""
 msgid "Webcams"
 msgstr ""
 
+#, fuzzy
 msgid "Connection problem"
-msgstr ""
+msgstr "Unganisho Limeshindikana"
 
 msgid "Unable to fetch room list."
 msgstr ""
@@ -9451,8 +9997,9 @@ msgstr ""
 msgid "User Rooms"
 msgstr ""
 
+#, fuzzy
 msgid "Connection problem with the YCHT server"
-msgstr ""
+msgstr "Unganisho Limeshindikana"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
@@ -9476,8 +10023,9 @@ msgstr ""
 msgid "_Class:"
 msgstr ""
 
+#, fuzzy
 msgid "_Instance:"
-msgstr ""
+msgstr "Imesakinishwa"
 
 msgid "_Recipient:"
 msgstr ""
@@ -9526,8 +10074,9 @@ msgstr ""
 msgid "zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"
 msgstr ""
 
+#, fuzzy
 msgid "Resubscribe"
-msgstr ""
+msgstr "Jiunge"
 
 msgid "Retrieve subscriptions from server"
 msgstr ""
@@ -9563,15 +10112,16 @@ msgstr ""
 msgid "Import from .zephyr.subs"
 msgstr ""
 
+#, fuzzy
 msgid "Realm"
-msgstr ""
+msgstr "Tayari"
 
 msgid "Exposure"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to create socket: %s"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
 #, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
@@ -9585,9 +10135,9 @@ msgstr ""
 msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error resolving %s"
-msgstr ""
+msgstr "Hitilafu katika kuhifadhi %S"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -9600,11 +10150,13 @@ msgstr ""
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
 #.
+#, fuzzy
 msgid "_Yes"
-msgstr ""
+msgstr "Ndiyo"
 
+#, fuzzy
 msgid "_No"
-msgstr ""
+msgstr "Hapana"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
@@ -9650,14 +10202,16 @@ msgid "The text-shortcut for the smiley"
 msgstr ""
 
 #. Stored Image
+#, fuzzy
 msgid "Stored Image"
-msgstr ""
+msgstr "Hifadhi Taswira"
 
 msgid "Stored Image. (that'll have to do for now)"
 msgstr ""
 
+#, fuzzy
 msgid "SSL Connection Failed"
-msgstr ""
+msgstr "Unganisho Limeshindikana"
 
 msgid "SSL Handshake Failed"
 msgstr ""
@@ -9665,11 +10219,13 @@ msgstr ""
 msgid "SSL peer presented an invalid certificate"
 msgstr ""
 
+#, fuzzy
 msgid "Unknown SSL error"
-msgstr ""
+msgstr "Hitilafu isiyojulikana"
 
+#, fuzzy
 msgid "Unset"
-msgstr ""
+msgstr "Haitumiki"
 
 msgid "Do not disturb"
 msgstr ""
@@ -9677,8 +10233,9 @@ msgstr ""
 msgid "Extended away"
 msgstr ""
 
+#, fuzzy
 msgid "Feeling"
-msgstr ""
+msgstr "teremua"
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -9714,15 +10271,16 @@ msgstr ""
 #. * change this to "%X %x" if they want the time to be shown first,
 #. * followed by the date.
 #.
-#, c-format
+#, fuzzy, c-format
 msgid "%x %X"
-msgstr ""
+msgstr "%S %S"
 
 msgid "Calculating..."
 msgstr ""
 
+#, fuzzy
 msgid "Unknown."
-msgstr ""
+msgstr "Isiyojulikana"
 
 #, c-format
 msgid "%d second"
@@ -9764,9 +10322,9 @@ msgstr[1] ""
 msgid "Could not open %s: Redirected too many times"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to connect to %s"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
 #, c-format
 msgid "Error reading from %s: response too long (%d bytes limit)"
@@ -9786,41 +10344,44 @@ msgstr ""
 msgid "Error writing to %s: %s"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to connect to %s: %s"
-msgstr ""
+msgstr "Haikuweza kuunganishwa"
 
 #, c-format
 msgid " - %s"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid " (%s)"
-msgstr ""
+msgstr "(%S)"
 
 #. 10053
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 
 #. 10054
+#, fuzzy
 msgid "Remote host closed connection."
-msgstr ""
+msgstr "Mwenzi SSL imefunga uunganisho huu"
 
 #. 10060
+#, fuzzy
 msgid "Connection timed out."
-msgstr ""
+msgstr "Muunganiko umepita muda"
 
 #. 10061
+#, fuzzy
 msgid "Connection refused."
-msgstr ""
+msgstr "Muunganisho ulikataliwa"
 
 #. 10048
 msgid "Address already in use."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error Reading %s"
-msgstr ""
+msgstr "Hitilafu wakati natengeneza %S"
 
 #, c-format
 msgid ""
@@ -9831,8 +10392,9 @@ msgstr ""
 msgid "Pidgin Internet Messenger"
 msgstr ""
 
+#, fuzzy
 msgid "Internet Messenger"
-msgstr ""
+msgstr "Internet Explorer"
 
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
@@ -9842,46 +10404,57 @@ msgstr ""
 msgid "Login Options"
 msgstr ""
 
+#, fuzzy
 msgid "Pro_tocol:"
-msgstr ""
+msgstr "Itifaki"
 
+#, fuzzy
 msgid "_Username:"
-msgstr ""
+msgstr "Jina la mtumiaji"
 
+#, fuzzy
 msgid "Remember pass_word"
-msgstr ""
+msgstr "Ingiza tena nywila:"
 
 #. Build the user options frame.
+#, fuzzy
 msgid "User Options"
-msgstr ""
+msgstr "Machaguo ya Mtandao"
 
 msgid "_Local alias:"
 msgstr ""
 
+#, fuzzy
 msgid "New _mail notifications"
-msgstr ""
+msgstr "Arifisho la Jumla"
 
 #. Buddy icon
 msgid "Use this buddy _icon for this account:"
 msgstr ""
 
+#, fuzzy
 msgid "Ad_vanced"
-msgstr ""
+msgstr "Pevu"
 
+#, fuzzy
 msgid "Use GNOME Proxy Settings"
-msgstr ""
+msgstr "&Tumia vipimo vya wakala vya mfumo"
 
+#, fuzzy
 msgid "Use Global Proxy Settings"
-msgstr ""
+msgstr "&Tumia vipimo vya wakala vya mfumo"
 
+#, fuzzy
 msgid "No Proxy"
-msgstr ""
+msgstr "Hakuna waka&la"
 
+#, fuzzy
 msgid "SOCKS 4"
-msgstr ""
+msgstr "SOC&KS v4"
 
+#, fuzzy
 msgid "SOCKS 5"
-msgstr ""
+msgstr "SOCKS &v5"
 
 msgid "Tor/Privacy (SOCKS5)"
 msgstr ""
@@ -9907,20 +10480,25 @@ msgstr ""
 msgid "Proxy _type:"
 msgstr ""
 
+#, fuzzy
 msgid "_Host:"
-msgstr ""
+msgstr "Mwenyeji:"
 
+#, fuzzy
 msgid "_Port:"
-msgstr ""
+msgstr "Lango:"
 
+#, fuzzy
 msgid "Pa_ssword:"
-msgstr ""
+msgstr "Nywila:"
 
+#, fuzzy
 msgid "Use _silence suppression"
-msgstr ""
+msgstr "Rejesha Awamu"
 
+#, fuzzy
 msgid "_Voice and Video"
-msgstr ""
+msgstr "Vipimo"
 
 msgid "Unable to save new account"
 msgstr ""
@@ -9937,14 +10515,16 @@ msgstr ""
 msgid "Create _this new account on the server"
 msgstr ""
 
+#, fuzzy
 msgid "P_roxy"
-msgstr ""
+msgstr "Hakuna waka&la"
 
 msgid "Enabled"
 msgstr "Imeamshwa"
 
+#, fuzzy
 msgid "Protocol"
-msgstr ""
+msgstr "Itifaki"
 
 #, c-format
 msgid ""
@@ -9969,18 +10549,21 @@ msgstr ""
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr ""
 
+#, fuzzy
 msgid "Send Instant Message"
-msgstr ""
+msgstr "Jumbe za tahadhari"
 
 #. Buddy List
+#, fuzzy
 msgid "Background Color"
-msgstr ""
+msgstr "Chapisha rangi za usuli"
 
 msgid "The background color for the buddy list"
 msgstr ""
 
+#, fuzzy
 msgid "Layout"
-msgstr ""
+msgstr "Lao"
 
 msgid "The layout of icons, name, and status of the buddy list"
 msgstr ""
@@ -9988,32 +10571,36 @@ msgstr ""
 #. Group
 #. Note to translators: These two strings refer to the background color
 #. of a buddy list group when in its expanded state
+#, fuzzy
 msgid "Expanded Background Color"
-msgstr ""
+msgstr "Chapisha rangi za usuli"
 
 msgid "The background color of an expanded group"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list group when in its expanded state
+#, fuzzy
 msgid "Expanded Text"
-msgstr ""
+msgstr "Tanua"
 
 msgid "The text information for when a group is expanded"
 msgstr ""
 
 #. Note to translators: These two strings refer to the background color
 #. of a buddy list group when in its collapsed state
+#, fuzzy
 msgid "Collapsed Background Color"
-msgstr ""
+msgstr "Chapisha rangi za usuli"
 
 msgid "The background color of a collapsed group"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list group when in its collapsed state
+#, fuzzy
 msgid "Collapsed Text"
-msgstr ""
+msgstr "Kunja"
 
 msgid "The text information for when a group is collapsed"
 msgstr ""
@@ -10021,40 +10608,45 @@ msgstr ""
 #. Buddy
 #. Note to translators: These two strings refer to the background color
 #. of a buddy list contact or chat room
+#, fuzzy
 msgid "Contact/Chat Background Color"
-msgstr ""
+msgstr "Chapisha rangi za usuli"
 
 msgid "The background color of a contact or chat"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list contact when in its expanded state
+#, fuzzy
 msgid "Contact Text"
-msgstr ""
+msgstr "M&wambaa Hali"
 
 msgid "The text information for when a contact is expanded"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is online
+#, fuzzy
 msgid "Online Text"
-msgstr ""
+msgstr "Nenda mkondoni"
 
 msgid "The text information for when a buddy is online"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is away
+#, fuzzy
 msgid "Away Text"
-msgstr ""
+msgstr "M&wambaa Hali"
 
 msgid "The text information for when a buddy is away"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is offline
+#, fuzzy
 msgid "Offline Text"
-msgstr ""
+msgstr "Namna ya Nje ya mkondo"
 
 msgid "The text information for when a buddy is offline"
 msgstr ""
@@ -10069,8 +10661,9 @@ msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when they have sent you a new message
+#, fuzzy
 msgid "Message Text"
-msgstr ""
+msgstr "Ujumbe haujaenda."
 
 msgid "The text information for when a buddy has an unread message"
 msgstr ""
@@ -10104,8 +10697,9 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr ""
 
+#, fuzzy
 msgid "A_ccount"
-msgstr ""
+msgstr "hesabu ya matembeleo"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
@@ -10115,14 +10709,16 @@ msgstr ""
 msgid "Room _List"
 msgstr ""
 
+#, fuzzy
 msgid "_Block"
-msgstr ""
+msgstr "Zuia"
 
 msgid "Un_block"
 msgstr ""
 
+#, fuzzy
 msgid "Move to"
-msgstr ""
+msgstr "Sogeza kwenda:"
 
 msgid "Get _Info"
 msgstr ""
@@ -10157,8 +10753,9 @@ msgstr ""
 msgid "_Alias..."
 msgstr ""
 
+#, fuzzy
 msgid "_Remove"
-msgstr ""
+msgstr "Ondoa"
 
 msgid "Set Custom Icon"
 msgstr ""
@@ -10172,11 +10769,13 @@ msgstr ""
 msgid "Add C_hat..."
 msgstr ""
 
+#, fuzzy
 msgid "_Delete Group"
-msgstr ""
+msgstr "Futa mwenyeji"
 
+#, fuzzy
 msgid "_Rename"
-msgstr ""
+msgstr "&Badili jina"
 
 #. join button
 msgid "_Join"
@@ -10185,17 +10784,20 @@ msgstr ""
 msgid "Auto-Join"
 msgstr ""
 
+#, fuzzy
 msgid "Persistent"
-msgstr ""
+msgstr "Kipersia"
 
 msgid "_Edit Settings..."
 msgstr ""
 
+#, fuzzy
 msgid "_Collapse"
-msgstr ""
+msgstr "Kunja"
 
+#, fuzzy
 msgid "_Expand"
-msgstr ""
+msgstr "Tanua"
 
 msgid "/Tools/Mute Sounds"
 msgstr ""
@@ -10207,14 +10809,16 @@ msgstr ""
 #. I don't believe this can happen currently, I think
 #. * everything that calls this function checks for one of the
 #. * above node types first.
+#, fuzzy
 msgid "Unknown node type"
-msgstr ""
+msgstr "Utambulisho usiojulikana"
 
 msgid "Please select your mood from the list"
 msgstr ""
 
+#, fuzzy
 msgid "Message (optional)"
-msgstr ""
+msgstr "&Barua pepe (Uchaguzi):"
 
 msgid "Edit User Mood"
 msgstr ""
@@ -10278,14 +10882,16 @@ msgid "/Accounts/Manage Accounts"
 msgstr ""
 
 #. Tools
+#, fuzzy
 msgid "/_Tools"
-msgstr ""
+msgstr "&Zana"
 
 msgid "/Tools/Buddy _Pounces"
 msgstr ""
 
+#, fuzzy
 msgid "/Tools/_Certificates"
-msgstr ""
+msgstr "Ithibati Zako"
 
 msgid "/Tools/Custom Smile_ys"
 msgstr ""
@@ -10315,26 +10921,31 @@ msgid "/Tools/Mute _Sounds"
 msgstr ""
 
 #. Help
+#, fuzzy
 msgid "/_Help"
-msgstr ""
+msgstr "Msaada"
 
 msgid "/Help/Online _Help"
 msgstr ""
 
+#, fuzzy
 msgid "/Help/_Build Information"
-msgstr ""
+msgstr "Fic&ha Taarifa"
 
 msgid "/Help/_Debug Window"
 msgstr ""
 
+#, fuzzy
 msgid "/Help/De_veloper Information"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
+#, fuzzy
 msgid "/Help/_Plugin Information"
-msgstr ""
+msgstr "Fic&ha Taarifa"
 
+#, fuzzy
 msgid "/Help/_Translator Information"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
 msgid "/Help/_About"
 msgstr ""
@@ -10355,8 +10966,9 @@ msgid ""
 "<b>Topic:</b> %s"
 msgstr ""
 
+#, fuzzy
 msgid "(no topic set)"
-msgstr ""
+msgstr "(haijawekwa)"
 
 msgid "Buddy Alias"
 msgstr ""
@@ -10421,8 +11033,9 @@ msgid_plural "%d unread messages from %s\n"
 msgstr[0] ""
 msgstr[1] ""
 
+#, fuzzy
 msgid "Manually"
-msgstr ""
+msgstr "Januari"
 
 msgid "By status"
 msgstr ""
@@ -10434,9 +11047,9 @@ msgstr ""
 msgid "%s disconnected"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s disabled"
-msgstr ""
+msgstr "Imelemazwa"
 
 msgid "Reconnect"
 msgstr ""
@@ -10444,11 +11057,13 @@ msgstr ""
 msgid "Re-enable"
 msgstr ""
 
+#, fuzzy
 msgid "SSL FAQs"
-msgstr ""
+msgstr "SSL CA"
 
+#, fuzzy
 msgid "Welcome back!"
-msgstr ""
+msgstr "Karibu Wanadamu!"
 
 #, c-format
 msgid "%d account was disabled because you signed on from another location:"
@@ -10549,20 +11164,25 @@ msgstr ""
 msgid "<PurpleMain>/Accounts/"
 msgstr ""
 
+#, fuzzy
 msgid "_Edit Account"
-msgstr ""
+msgstr "hesabu ya matembeleo"
 
+#, fuzzy
 msgid "Set _Mood..."
-msgstr ""
+msgstr "Badil &Nywila"
 
+#, fuzzy
 msgid "No actions available"
-msgstr ""
+msgstr "Haipatikani"
 
+#, fuzzy
 msgid "_Disable"
-msgstr ""
+msgstr "Lemaza"
 
+#, fuzzy
 msgid "/Tools"
-msgstr ""
+msgstr "&Zana"
 
 msgid "/Buddies/Sort Buddies"
 msgstr ""
@@ -10571,8 +11191,9 @@ msgid "Type the host name for this certificate."
 msgstr ""
 
 #. Widget creation function
+#, fuzzy
 msgid "SSL Servers"
-msgstr ""
+msgstr "SSL Seva"
 
 msgid "Unknown command."
 msgstr ""
@@ -10590,8 +11211,9 @@ msgstr ""
 msgid "_Buddy:"
 msgstr ""
 
+#, fuzzy
 msgid "_Message:"
-msgstr ""
+msgstr "Ujumbe"
 
 #, c-format
 msgid "<h1>Conversation with %s</h1>\n"
@@ -10609,17 +11231,20 @@ msgstr ""
 msgid "Get Away Message"
 msgstr ""
 
+#, fuzzy
 msgid "Last Said"
-msgstr ""
+msgstr "Ukurasa wa mwisho"
 
 msgid "Unable to save icon file to disk."
 msgstr ""
 
+#, fuzzy
 msgid "Save Icon"
-msgstr ""
+msgstr "Hifadhi Taswira"
 
+#, fuzzy
 msgid "Animate"
-msgstr ""
+msgstr "Fanya hai"
 
 msgid "Hide Icon"
 msgstr ""
@@ -10643,8 +11268,9 @@ msgstr ""
 msgid "/Conversation/New Instant _Message..."
 msgstr ""
 
+#, fuzzy
 msgid "/Conversation/Join a _Chat..."
-msgstr ""
+msgstr "Unganisho"
 
 msgid "/Conversation/_Find..."
 msgstr ""
@@ -10673,8 +11299,9 @@ msgstr ""
 msgid "/Conversation/Se_nd File..."
 msgstr ""
 
+#, fuzzy
 msgid "/Conversation/Get _Attention"
-msgstr ""
+msgstr "Unganisho"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr ""
@@ -10713,8 +11340,9 @@ msgid "/Conversation/_Close"
 msgstr ""
 
 #. Options
+#, fuzzy
 msgid "/_Options"
-msgstr ""
+msgstr "Machaguo"
 
 msgid "/Options/Enable _Logging"
 msgstr ""
@@ -10731,16 +11359,18 @@ msgstr ""
 msgid "/Conversation/More"
 msgstr ""
 
+#, fuzzy
 msgid "/Options"
-msgstr ""
+msgstr "Machaguo"
 
 #. The menubar has been deactivated. Make sure the 'More' submenu is regenerated next time
 #. * the 'Conversation' menu pops up.
 #. Make sure the 'Conversation -> More' menuitems are regenerated whenever
 #. * the 'Conversation' menu pops up because the entries can change after the
 #. * conversation is created.
+#, fuzzy
 msgid "/Conversation"
-msgstr ""
+msgstr "Unganisho"
 
 msgid "/Conversation/View Log"
 msgstr ""
@@ -10757,8 +11387,9 @@ msgstr ""
 msgid "/Conversation/Send File..."
 msgstr ""
 
+#, fuzzy
 msgid "/Conversation/Get Attention"
-msgstr ""
+msgstr "Unganisho"
 
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr ""
@@ -10812,8 +11443,9 @@ msgid ""
 msgstr ""
 
 #. Build the Send To menu
+#, fuzzy
 msgid "S_end To"
-msgstr ""
+msgstr "Tuma kwa:"
 
 msgid "_Send"
 msgstr ""
@@ -10822,11 +11454,13 @@ msgstr ""
 msgid "0 people in room"
 msgstr ""
 
+#, fuzzy
 msgid "Close Find bar"
-msgstr ""
+msgstr "Funga ujumbe huu"
 
+#, fuzzy
 msgid "Find:"
-msgstr ""
+msgstr "Tafuta"
 
 #, c-format
 msgid "%d person in room"
@@ -10840,8 +11474,9 @@ msgstr ""
 msgid "Nick Said"
 msgstr ""
 
+#, fuzzy
 msgid "Unread Messages"
-msgstr ""
+msgstr "Jumbe za tahadhari"
 
 msgid "New Event"
 msgstr ""
@@ -10860,17 +11495,20 @@ msgstr "Thibitisha kufunga"
 msgid "You have unread messages. Are you sure you want to close the window?"
 msgstr ""
 
+#, fuzzy
 msgid "Close other tabs"
-msgstr ""
+msgstr "Funga Tab&o Nyingine"
 
+#, fuzzy
 msgid "Close all tabs"
-msgstr ""
+msgstr "Funga tabo"
 
 msgid "Detach this tab"
 msgstr ""
 
+#, fuzzy
 msgid "Close this tab"
-msgstr ""
+msgstr "Funga ujumbe huu"
 
 msgid "Close conversation"
 msgstr ""
@@ -10902,20 +11540,23 @@ msgstr ""
 msgid "Invert"
 msgstr ""
 
+#, fuzzy
 msgid "Highlight matches"
-msgstr ""
+msgstr "&Angaza yote"
 
 msgid "_Icon Only"
 msgstr ""
 
+#, fuzzy
 msgid "_Text Only"
-msgstr ""
+msgstr "Kuza Saizi ya Maandishi &Tu"
 
 msgid "_Both Icon & Text"
 msgstr ""
 
+#, fuzzy
 msgid "Filter"
-msgstr ""
+msgstr "Ch&uja:"
 
 msgid "Right click for more options."
 msgstr ""
@@ -10926,20 +11567,24 @@ msgstr ""
 msgid "Select the debug filter level."
 msgstr ""
 
+#, fuzzy
 msgid "All"
-msgstr ""
+msgstr "&Yote"
 
 msgid "Misc"
 msgstr ""
 
+#, fuzzy
 msgid "Warning"
-msgstr ""
+msgstr "Tahadhari:"
 
+#, fuzzy
 msgid "Error "
-msgstr ""
+msgstr "Hitikafu "
 
+#, fuzzy
 msgid "Fatal Error"
-msgstr ""
+msgstr "Hitilafu katika kusakinisha"
 
 msgid "artist"
 msgstr ""
@@ -10992,14 +11637,16 @@ msgstr "Kiafriakansi"
 msgid "Arabic"
 msgstr "Kiarabu"
 
+#, fuzzy
 msgid "Assamese"
-msgstr ""
+msgstr "Kiassame"
 
 msgid "Asturian"
 msgstr ""
 
+#, fuzzy
 msgid "Belarusian Latin"
-msgstr ""
+msgstr "Kibelarusi"
 
 msgid "Bulgarian"
 msgstr "Kibulgaria"
@@ -11007,11 +11654,9 @@ msgstr "Kibulgaria"
 msgid "Bengali"
 msgstr "Kibengalia"
 
+#, fuzzy
 msgid "Bengali-India"
-msgstr ""
-
-msgid "Bodo"
-msgstr ""
+msgstr "Kibengalia"
 
 msgid "Bosnian"
 msgstr "Kibosnia"
@@ -11052,9 +11697,6 @@ msgstr "Kiesperanto"
 msgid "Spanish"
 msgstr "Kihispania"
 
-msgid "Argentine Spanish"
-msgstr ""
-
 msgid "Estonian"
 msgstr "Kiestonia"
 
@@ -11094,6 +11736,10 @@ msgstr ""
 msgid "Hungarian"
 msgstr "Kihungaria"
 
+#, fuzzy
+msgid "Armenian"
+msgstr "Kiromania"
+
 msgid "Indonesian"
 msgstr "Kindonesia"
 
@@ -11109,9 +11755,6 @@ msgstr "Kigeorgia"
 msgid "Ubuntu Georgian Translators"
 msgstr ""
 
-msgid "Kazakh"
-msgstr ""
-
 msgid "Khmer"
 msgstr "Kihemeri"
 
@@ -11124,35 +11767,39 @@ msgstr ""
 msgid "Korean"
 msgstr "Kikorea"
 
-msgid "Kashmiri"
-msgstr ""
-
 msgid "Kurdish"
 msgstr "Kikurdi"
+
+msgid "Lao"
+msgstr "Lao"
 
 msgid "Lithuanian"
 msgstr "Kilithuania"
 
-msgid "Latvian"
-msgstr ""
-
 msgid "Maithili"
 msgstr ""
 
+#, fuzzy
 msgid "Meadow Mari"
-msgstr ""
+msgstr "Tabo mpya"
 
 msgid "Macedonian"
 msgstr "Kimacedonia"
 
+#, fuzzy
 msgid "Malayalam"
-msgstr ""
+msgstr "Mali"
 
 msgid "Mongolian"
 msgstr "Kimongolia"
 
+#, fuzzy
 msgid "Marathi"
-msgstr ""
+msgstr "Kigujarati"
+
+#, fuzzy
+msgid "Malay"
+msgstr "Mali"
 
 msgid "Burmese"
 msgstr ""
@@ -11172,8 +11819,9 @@ msgstr "Kinynorsk cha Norway"
 msgid "Occitan"
 msgstr "Kioccita"
 
+#, fuzzy
 msgid "Oriya"
-msgstr ""
+msgstr "Opera"
 
 msgid "Punjabi"
 msgstr "Kipunjabi"
@@ -11196,9 +11844,6 @@ msgstr "Kiromania"
 msgid "Russian"
 msgstr "Kirusi"
 
-msgid "Sindhi"
-msgstr ""
-
 msgid "Slovak"
 msgstr "Kislovaki"
 
@@ -11211,8 +11856,9 @@ msgstr "Kialbania"
 msgid "Serbian"
 msgstr "Kiserbia"
 
+#, fuzzy
 msgid "Serbian Latin"
-msgstr ""
+msgstr "Kibelarusi"
 
 msgid "Sinhala"
 msgstr "Kisinihala"
@@ -11232,17 +11878,12 @@ msgstr "Kitelugu"
 msgid "Thai"
 msgstr "Kitai"
 
-msgid "Tatar"
-msgstr ""
-
+#, fuzzy
 msgid "Ukranian"
-msgstr ""
+msgstr "Kiromania"
 
 msgid "Urdu"
 msgstr "Kiurdu"
-
-msgid "Uzbek"
-msgstr ""
 
 msgid "Vietnamese"
 msgstr "Kivietnamu"
@@ -11258,15 +11899,6 @@ msgstr "Kichina Asili"
 
 msgid "Amharic"
 msgstr "Kiamharic"
-
-msgid "Armenian"
-msgstr ""
-
-msgid "Lao"
-msgstr "Lao"
-
-msgid "Malay"
-msgstr ""
 
 msgid "Turkish"
 msgstr "Kituruki"
@@ -11302,17 +11934,18 @@ msgid ""
 "<br/>"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "About %s"
-msgstr ""
+msgstr "Kuhusu %S"
 
+#, fuzzy
 msgid "Build Information"
-msgstr ""
+msgstr "Fic&ha Taarifa"
 
 #. End of not to be translated section
-#, c-format
+#, fuzzy, c-format
 msgid "%s Build Information"
-msgstr ""
+msgstr "Fic&ha Taarifa"
 
 msgid "Current Developers"
 msgstr ""
@@ -11326,29 +11959,32 @@ msgstr ""
 msgid "Retired Crazy Patch Writers"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s Developer Information"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
 msgid "Current Translators"
 msgstr ""
 
+#, fuzzy
 msgid "Past Translators"
-msgstr ""
+msgstr "Watafsiri:"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s Translator Information"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s Plugin Information"
-msgstr ""
+msgstr "Fic&ha Taarifa"
 
+#, fuzzy
 msgid "Plugin Information"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
+#, fuzzy
 msgid "_Name"
-msgstr ""
+msgstr "Jina"
 
 msgid "_Account"
 msgstr ""
@@ -11393,11 +12029,13 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
+#, fuzzy
 msgid "Remove Contact"
-msgstr ""
+msgstr "Ondoa Kuki"
 
+#, fuzzy
 msgid "_Remove Contact"
-msgstr ""
+msgstr "Ondoa Kuki"
 
 #, c-format
 msgid ""
@@ -11417,16 +12055,17 @@ msgid ""
 "list.  Do you want to continue?"
 msgstr ""
 
+#, fuzzy
 msgid "Remove Group"
-msgstr ""
+msgstr "Ondoa Kuki"
 
 msgid "_Remove Group"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
-msgstr ""
+msgstr "Unakaribia kufunga tabo ya %S. Unauhakika unataka kuendelea?"
 
 msgid "Remove Buddy"
 msgstr ""
@@ -11434,14 +12073,15 @@ msgstr ""
 msgid "_Remove Buddy"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
-msgstr ""
+msgstr "Unakaribia kufunga tabo ya %S. Unauhakika unataka kuendelea?"
 
+#, fuzzy
 msgid "Remove Chat"
-msgstr ""
+msgstr "Ondoa &All"
 
 msgid "_Remove Chat"
 msgstr ""
@@ -11464,11 +12104,13 @@ msgstr ""
 msgid "_Accounts"
 msgstr ""
 
+#, fuzzy
 msgid "Plu_gins"
-msgstr ""
+msgstr "Programu tumizi"
 
+#, fuzzy
 msgid "Pr_eferences"
-msgstr ""
+msgstr "Mapendekezo"
 
 msgid "Mute _Sounds"
 msgstr ""
@@ -11476,11 +12118,13 @@ msgstr ""
 msgid "_Blink on New Message"
 msgstr ""
 
+#, fuzzy
 msgid "_Quit"
-msgstr ""
+msgstr "&Funga"
 
+#, fuzzy
 msgid "Not started"
-msgstr ""
+msgstr "Haujaanza"
 
 msgid "<b>Receiving As:</b>"
 msgstr ""
@@ -11504,19 +12148,21 @@ msgstr ""
 msgid "Error launching %s: %s"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error running %s"
-msgstr ""
+msgstr "Hitilafu katika kufungua %S"
 
 #, c-format
 msgid "Process returned error code %d"
 msgstr ""
 
+#, fuzzy
 msgid "Filename:"
-msgstr ""
+msgstr "Jina la faili:"
 
+#, fuzzy
 msgid "Local File:"
-msgstr ""
+msgstr "faili la kikweti"
 
 msgid "Speed:"
 msgstr ""
@@ -11524,8 +12170,9 @@ msgstr ""
 msgid "Time Elapsed:"
 msgstr "Muda Uliotumika:"
 
+#, fuzzy
 msgid "Time Remaining:"
-msgstr ""
+msgstr "#1 imebakia"
 
 msgid "Close this window when all transfers _finish"
 msgstr ""
@@ -11631,26 +12278,31 @@ msgstr ""
 msgid "Save Image"
 msgstr "Hifadhi Taswira"
 
+#, fuzzy
 msgid "_Save Image..."
-msgstr ""
+msgstr "Hifadhi Taswira"
 
 msgid "_Add Custom Smiley..."
 msgstr ""
 
+#, fuzzy
 msgid "Select Font"
-msgstr ""
+msgstr "&Uchanguzi"
 
 msgid "Select Text Color"
 msgstr ""
 
+#, fuzzy
 msgid "Select Background Color"
-msgstr ""
+msgstr "Chapisha rangi za usuli"
 
+#, fuzzy
 msgid "_URL"
-msgstr ""
+msgstr "URL"
 
+#, fuzzy
 msgid "_Description"
-msgstr ""
+msgstr "Maelezo"
 
 msgid ""
 "Please enter the URL and description of the link that you want to insert. "
@@ -11688,8 +12340,9 @@ msgstr ""
 msgid "This theme has no available smileys."
 msgstr ""
 
+#, fuzzy
 msgid "_Font"
-msgstr ""
+msgstr "Fonti"
 
 msgid "Group Items"
 msgstr ""
@@ -11700,11 +12353,13 @@ msgstr ""
 msgid "Bold"
 msgstr ""
 
+#, fuzzy
 msgid "Italic"
-msgstr ""
+msgstr "Kiitalia"
 
+#, fuzzy
 msgid "Underline"
-msgstr ""
+msgstr "Interlingue"
 
 msgid "Strikethrough"
 msgstr ""
@@ -11730,8 +12385,9 @@ msgstr ""
 msgid "Insert Smiley"
 msgstr ""
 
+#, fuzzy
 msgid "Send Attention"
-msgstr ""
+msgstr "Tuma kwa:"
 
 msgid "<b>_Bold</b>"
 msgstr ""
@@ -11748,8 +12404,9 @@ msgstr ""
 msgid "<span size='larger'>_Larger</span>"
 msgstr ""
 
+#, fuzzy
 msgid "_Normal"
-msgstr ""
+msgstr "&Kawaida"
 
 msgid "<span size='smaller'>_Smaller</span>"
 msgstr ""
@@ -11766,8 +12423,9 @@ msgstr ""
 msgid "Bac_kground color"
 msgstr ""
 
+#, fuzzy
 msgid "_Image"
-msgstr ""
+msgstr "Taswira"
 
 msgid "_Link"
 msgstr ""
@@ -11781,8 +12439,9 @@ msgstr ""
 msgid "_Attention!"
 msgstr ""
 
+#, fuzzy
 msgid "Log Deletion Failed"
-msgstr ""
+msgstr "Unganisho Limeshindikana"
 
 msgid "Check permissions and try again."
 msgstr ""
@@ -11805,11 +12464,13 @@ msgid ""
 "%s?"
 msgstr ""
 
+#, fuzzy
 msgid "Delete Log?"
-msgstr ""
+msgstr "Futa mwenyeji"
 
+#, fuzzy
 msgid "Delete Log..."
-msgstr ""
+msgstr "Futa mwenyeji"
 
 #, c-format
 msgid "<span size='larger' weight='bold'>Conversation in %s on %s</span>"
@@ -11823,9 +12484,9 @@ msgstr ""
 msgid "_Browse logs folder"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
-msgstr ""
+msgstr "\n"
 
 #, c-format
 msgid ""
@@ -11889,8 +12550,9 @@ msgstr ""
 msgid "Exiting because another libpurple client is already running.\n"
 msgstr ""
 
+#, fuzzy
 msgid "_Media"
-msgstr ""
+msgstr "Media"
 
 msgid "_Hangup"
 msgstr ""
@@ -11909,8 +12571,9 @@ msgstr ""
 msgid "_Hold"
 msgstr ""
 
+#, fuzzy
 msgid "_Pause"
-msgstr ""
+msgstr "Simamisha"
 
 msgid "_Mute"
 msgstr ""
@@ -11931,8 +12594,9 @@ msgstr[1] ""
 msgid "The browser command \"%s\" is invalid."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to open URL"
-msgstr ""
+msgstr "Nimeshindwa Kusasisha"
 
 #, c-format
 msgid "Error launching \"%s\": %s"
@@ -11945,11 +12609,13 @@ msgstr ""
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
 msgstr ""
 
+#, fuzzy
 msgid "No message"
-msgstr ""
+msgstr "Ujumbe"
 
+#, fuzzy
 msgid "Open All Messages"
-msgstr ""
+msgstr "Fungua kwenye Tabo zote"
 
 msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
 msgstr ""
@@ -11970,14 +12636,16 @@ msgstr ""
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
 msgstr ""
 
+#, fuzzy
 msgid "The following plugins will be unloaded."
-msgstr ""
+msgstr "Programu-jalizi zifuatazo zinapatikana:"
 
 msgid "Multiple plugins will be unloaded."
 msgstr ""
 
+#, fuzzy
 msgid "Unload Plugins"
-msgstr ""
+msgstr "Kuhusu Program-jalizi"
 
 msgid "Could not unload plugin"
 msgstr ""
@@ -12011,8 +12679,9 @@ msgstr ""
 msgid "<b>Plugin Details</b>"
 msgstr ""
 
+#, fuzzy
 msgid "Select a file"
-msgstr ""
+msgstr "Chagua Profaili"
 
 msgid "Modify Buddy Pounce"
 msgstr ""
@@ -12057,8 +12726,9 @@ msgstr ""
 msgid "Sends a _message"
 msgstr ""
 
+#, fuzzy
 msgid "Ope_n an IM window"
-msgstr ""
+msgstr "Fungua dirisha jipya"
 
 msgid "_Pop up a notification"
 msgstr ""
@@ -12072,14 +12742,17 @@ msgstr ""
 msgid "P_lay a sound"
 msgstr ""
 
+#, fuzzy
 msgid "Brows_e..."
-msgstr ""
+msgstr "Vinjari…"
 
+#, fuzzy
 msgid "Br_owse..."
-msgstr ""
+msgstr "Vinjari…"
 
+#, fuzzy
 msgid "Pre_view"
-msgstr ""
+msgstr "Hakiki"
 
 msgid "P_ounce only when my status is not Available"
 msgstr ""
@@ -12117,8 +12790,9 @@ msgstr ""
 msgid "Went away"
 msgstr ""
 
+#, fuzzy
 msgid "Sent a message"
-msgstr ""
+msgstr "Weka Ukurasa Nyumbani"
 
 msgid "Unknown.... Please report this!"
 msgstr ""
@@ -12141,14 +12815,16 @@ msgstr ""
 msgid "Theme failed to unpack."
 msgstr ""
 
+#, fuzzy
 msgid "Theme failed to load."
-msgstr ""
+msgstr "Imeshindwa Kuingia"
 
 msgid "Theme failed to copy."
 msgstr ""
 
+#, fuzzy
 msgid "Theme Selections"
-msgstr ""
+msgstr "&Uchanguzi"
 
 #. Instructions
 msgid ""
@@ -12160,17 +12836,20 @@ msgstr ""
 msgid "Buddy List Theme:"
 msgstr ""
 
+#, fuzzy
 msgid "Status Icon Theme:"
-msgstr ""
+msgstr "Hali"
 
 msgid "Sound Theme:"
 msgstr ""
 
+#, fuzzy
 msgid "Smiley Theme:"
-msgstr ""
+msgstr "Pata Mandhari"
 
+#, fuzzy
 msgid "Keyboard Shortcuts"
-msgstr ""
+msgstr "Uwekaji wa Mikato"
 
 msgid "Cl_ose conversations with the Escape key"
 msgstr ""
@@ -12185,8 +12864,9 @@ msgstr ""
 msgid "On unread messages"
 msgstr ""
 
+#, fuzzy
 msgid "Conversation Window"
-msgstr ""
+msgstr "Unganisho"
 
 msgid "_Hide new IM conversations:"
 msgstr ""
@@ -12210,11 +12890,13 @@ msgstr ""
 msgid "_Placement:"
 msgstr ""
 
+#, fuzzy
 msgid "Top"
-msgstr ""
+msgstr "Kwa:"
 
+#, fuzzy
 msgid "Bottom"
-msgstr ""
+msgstr "&Chini:"
 
 msgid "Left"
 msgstr "Kushoto"
@@ -12249,8 +12931,9 @@ msgstr ""
 msgid "Highlight _misspelled words"
 msgstr ""
 
+#, fuzzy
 msgid "Use smooth-scrolling"
-msgstr ""
+msgstr "Tu&mia ubiringizaji taratibu"
 
 msgid "F_lash window when IMs are received"
 msgstr ""
@@ -12258,14 +12941,16 @@ msgstr ""
 msgid "Resize incoming custom smileys"
 msgstr ""
 
+#, fuzzy
 msgid "Maximum size:"
-msgstr ""
+msgstr "Upe&ochini wa fonti size:"
 
 msgid "Minimum input area height in lines:"
 msgstr ""
 
+#, fuzzy
 msgid "Font"
-msgstr ""
+msgstr "Fonti"
 
 msgid "Use font from _theme"
 msgstr ""
@@ -12287,15 +12972,17 @@ msgstr ""
 msgid "Cannot start browser configuration program."
 msgstr ""
 
+#, fuzzy
 msgid "Disabled"
-msgstr ""
+msgstr "Lemaza"
 
 #, c-format
 msgid "Use _automatically detected IP address: %s"
 msgstr ""
 
+#, fuzzy
 msgid "ST_UN server:"
-msgstr ""
+msgstr "Seva"
 
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr ""
@@ -12303,8 +12990,9 @@ msgstr ""
 msgid "Public _IP:"
 msgstr ""
 
+#, fuzzy
 msgid "Ports"
-msgstr ""
+msgstr "Lango:"
 
 msgid "_Enable automatic router port forwarding"
 msgstr ""
@@ -12312,30 +13000,37 @@ msgstr ""
 msgid "_Manually specify range of ports to listen on:"
 msgstr ""
 
+#, fuzzy
 msgid "_Start:"
-msgstr ""
+msgstr "Hali:"
 
+#, fuzzy
 msgid "_End:"
-msgstr ""
+msgstr "Tanua"
 
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr ""
 
+#, fuzzy
 msgid "_TURN server:"
-msgstr ""
+msgstr "Seva"
 
+#, fuzzy
 msgid "_UDP Port:"
-msgstr ""
+msgstr "Lango:"
 
+#, fuzzy
 msgid "T_CP Port:"
-msgstr ""
+msgstr "Lango:"
 
+#, fuzzy
 msgid "Use_rname:"
-msgstr ""
+msgstr "Jina la mtumiaji"
 
+#, fuzzy
 msgid "Pass_word:"
-msgstr ""
+msgstr "Nywila:"
 
 msgid "Seamonkey"
 msgstr ""
@@ -12343,8 +13038,9 @@ msgstr ""
 msgid "Opera"
 msgstr "Opera"
 
+#, fuzzy
 msgid "Netscape"
-msgstr ""
+msgstr "Netscape 4"
 
 msgid "Mozilla"
 msgstr "Mozilla"
@@ -12357,11 +13053,13 @@ msgstr ""
 
 #. Do not move the line below.  Code below expects gnome-open to be in
 #. * this list immediately after xdg-open!
+#, fuzzy
 msgid "Desktop Default"
-msgstr ""
+msgstr "Rejesha Misingi"
 
+#, fuzzy
 msgid "GNOME Default"
-msgstr ""
+msgstr "WPS Msingi"
 
 msgid "Galeon"
 msgstr "Galeon"
@@ -12398,14 +13096,16 @@ msgstr ""
 msgid "Configure _Browser"
 msgstr ""
 
+#, fuzzy
 msgid "_Browser:"
-msgstr ""
+msgstr "Vinjari…"
 
 msgid "_Open link in:"
 msgstr ""
 
+#, fuzzy
 msgid "Browser default"
-msgstr ""
+msgstr "Tumia Msingi"
 
 msgid "Existing window"
 msgstr ""
@@ -12436,17 +13136,21 @@ msgstr ""
 msgid "Use remote _DNS with SOCKS4 proxies"
 msgstr ""
 
+#, fuzzy
 msgid "Proxy t_ype:"
-msgstr ""
+msgstr "Aina ya uunganishi"
 
+#, fuzzy
 msgid "No proxy"
-msgstr ""
+msgstr "Hakuna waka&la"
 
+#, fuzzy
 msgid "P_ort:"
-msgstr ""
+msgstr "Lango:"
 
+#, fuzzy
 msgid "User_name:"
-msgstr ""
+msgstr "Jina la mtumiaji"
 
 msgid "Log _format:"
 msgstr ""
@@ -12460,8 +13164,9 @@ msgstr ""
 msgid "Log all _status changes to system log"
 msgstr ""
 
+#, fuzzy
 msgid "Sound Selection"
-msgstr ""
+msgstr "&Uchanguzi"
 
 #, c-format
 msgid "Quietest"
@@ -12471,17 +13176,17 @@ msgstr ""
 msgid "Quieter"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Quiet"
-msgstr ""
+msgstr "&Funga"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Loud"
-msgstr ""
+msgstr "&Pakia upya"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Louder"
-msgstr ""
+msgstr "folda"
 
 #, c-format
 msgid "Loudest"
@@ -12511,17 +13216,21 @@ msgstr ""
 msgid "_Enable sounds:"
 msgstr ""
 
+#, fuzzy
 msgid "V_olume:"
-msgstr ""
+msgstr "Safu-wima:"
 
+#, fuzzy
 msgid "Play"
-msgstr ""
+msgstr "Che&za"
 
+#, fuzzy
 msgid "_Browse..."
-msgstr ""
+msgstr "Vinjari…"
 
+#, fuzzy
 msgid "_Reset"
-msgstr ""
+msgstr "Seti upya"
 
 msgid "_Report idle time:"
 msgstr ""
@@ -12532,8 +13241,9 @@ msgstr ""
 msgid "_Minutes before becoming idle:"
 msgstr ""
 
+#, fuzzy
 msgid "Change to this status when _idle:"
-msgstr ""
+msgstr "&Badili matini ya ufito hali"
 
 msgid "_Auto-reply:"
 msgstr ""
@@ -12554,14 +13264,16 @@ msgstr ""
 msgid "Interface"
 msgstr ""
 
+#, fuzzy
 msgid "Browser"
-msgstr ""
+msgstr "Vinjari…"
 
 msgid "Status / Idle"
 msgstr ""
 
+#, fuzzy
 msgid "Themes"
-msgstr ""
+msgstr "Pata Mandhari"
 
 msgid "Allow all users to contact me"
 msgstr ""
@@ -12588,8 +13300,9 @@ msgid "Set privacy for:"
 msgstr ""
 
 #. Remove All button
+#, fuzzy
 msgid "Remove Al_l"
-msgstr ""
+msgstr "Ondoa &All"
 
 msgid "Permit User"
 msgstr ""
@@ -12607,12 +13320,13 @@ msgstr ""
 msgid "Allow %s to contact you?"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Are you sure you wish to allow %s to contact you?"
-msgstr ""
+msgstr "Una uhakika unataka kuOnyesha nywila zako?"
 
+#, fuzzy
 msgid "Block User"
-msgstr ""
+msgstr "Imezuiliwa"
 
 msgid "Type a user to block."
 msgstr ""
@@ -12631,20 +13345,24 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
+#, fuzzy
 msgid "That file already exists"
-msgstr ""
+msgstr "Ithibati tayari ipo."
 
+#, fuzzy
 msgid "Would you like to overwrite it?"
-msgstr ""
+msgstr "Ungependa kuhifadhi faili hili?"
 
 msgid "Overwrite"
 msgstr ""
 
+#, fuzzy
 msgid "Choose New Name"
-msgstr ""
+msgstr "Jina la Kuki"
 
+#, fuzzy
 msgid "Select Folder..."
-msgstr ""
+msgstr "Fold&a Lililochaguliwa"
 
 #. list button
 msgid "_Get List"
@@ -12654,8 +13372,9 @@ msgstr ""
 msgid "_Add Chat"
 msgstr ""
 
+#, fuzzy
 msgid "Are you sure you want to delete the selected saved statuses?"
-msgstr ""
+msgstr "Je una uhakika uantaka kufuta ithibati hizi?"
 
 #. Use button
 msgid "_Use"
@@ -12667,11 +13386,13 @@ msgstr ""
 msgid "Different"
 msgstr ""
 
+#, fuzzy
 msgid "_Title:"
-msgstr ""
+msgstr "Jina:"
 
+#, fuzzy
 msgid "_Status:"
-msgstr ""
+msgstr "Hali:"
 
 #. Different status message expander
 msgid "Use a _different status for some accounts"
@@ -12690,11 +13411,13 @@ msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr ""
 
+#, fuzzy
 msgid "Custom Smiley"
-msgstr ""
+msgstr "Kipimo cha kaida..."
 
+#, fuzzy
 msgid "Duplicate Shortcut"
-msgstr ""
+msgstr "sifa rudufu"
 
 msgid "Edit Smiley"
 msgstr ""
@@ -12702,8 +13425,9 @@ msgstr ""
 msgid "Add Smiley"
 msgstr ""
 
+#, fuzzy
 msgid "_Image:"
-msgstr ""
+msgstr "Taswira"
 
 #. Shortcut text
 msgid "S_hortcut text:"
@@ -12718,8 +13442,9 @@ msgstr ""
 msgid "Custom Smiley Manager"
 msgstr ""
 
+#, fuzzy
 msgid "Select Buddy Icon"
-msgstr ""
+msgstr "&Uchanguzi"
 
 msgid "Click to change your buddyicon for this account."
 msgstr ""
@@ -12749,8 +13474,9 @@ msgstr ""
 msgid "The following error has occurred loading %s: %s"
 msgstr ""
 
+#, fuzzy
 msgid "Failed to load image"
-msgstr ""
+msgstr "Imeshindwa Kuingia"
 
 #, c-format
 msgid "Cannot send folder %s."
@@ -12776,8 +13502,9 @@ msgstr ""
 msgid "Send image file"
 msgstr ""
 
+#, fuzzy
 msgid "Insert in message"
-msgstr ""
+msgstr "Funga ujumbe huu"
 
 msgid "Would you like to set it as the buddy icon for this user?"
 msgstr ""
@@ -12819,52 +13546,63 @@ msgstr ""
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
 msgstr ""
 
+#, fuzzy
 msgid "Icon Error"
-msgstr ""
+msgstr "Hitilafu isiyojulikana"
 
 msgid "Could not set icon"
 msgstr ""
 
+#, fuzzy
 msgid "_Open Link"
-msgstr ""
+msgstr "Fungua katika:"
 
+#, fuzzy
 msgid "_Copy Link Location"
-msgstr ""
+msgstr "&Nakili Mahali pa Kiungo"
 
+#, fuzzy
 msgid "_Copy Email Address"
-msgstr ""
+msgstr "Nakili Anwani ya Barua-p&epe"
 
+#, fuzzy
 msgid "_Open File"
-msgstr ""
+msgstr "Fungua Faili"
 
 msgid "Open _Containing Directory"
 msgstr ""
 
+#, fuzzy
 msgid "Save File"
-msgstr ""
+msgstr "&Hifadhi faili"
 
 msgid "_Play Sound"
 msgstr ""
 
+#, fuzzy
 msgid "_Save File"
-msgstr ""
+msgstr "&Hifadhi faili"
 
+#, fuzzy
 msgid "Do you really want to clear?"
-msgstr ""
+msgstr "Una uhakika unataka kufuta ithibati yako?"
 
+#, fuzzy
 msgid "Select color"
-msgstr ""
+msgstr "Chagua &Yote"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
+#, fuzzy
 msgid "Pidgin"
-msgstr ""
+msgstr "Programu-unganishi"
 
 msgid "_Alias"
 msgstr ""
 
+#, fuzzy
 msgid "Close _tabs"
-msgstr ""
+msgstr "Funga tabo"
 
 msgid "_Get Info"
 msgstr ""
@@ -12872,17 +13610,20 @@ msgstr ""
 msgid "_Invite"
 msgstr ""
 
+#, fuzzy
 msgid "_Modify..."
-msgstr ""
+msgstr "R&ekebisha"
 
 msgid "_Add..."
 msgstr ""
 
+#, fuzzy
 msgid "_Open Mail"
-msgstr ""
+msgstr "Fungua tabo"
 
+#, fuzzy
 msgid "_Edit"
-msgstr ""
+msgstr "&Hariri"
 
 msgid "Pidgin Tooltip"
 msgstr ""
@@ -12890,14 +13631,16 @@ msgstr ""
 msgid "Pidgin smileys"
 msgstr ""
 
+#, fuzzy
 msgid "none"
-msgstr ""
+msgstr "Bila"
 
 msgid "Selecting this disables graphical emoticons."
 msgstr ""
 
+#, fuzzy
 msgid "Small"
-msgstr ""
+msgstr "Kisomali"
 
 msgid "Smaller versions of the default smileys"
 msgstr ""
@@ -12999,17 +13742,20 @@ msgstr ""
 msgid "Customize colors in the conversation window"
 msgstr ""
 
+#, fuzzy
 msgid "Error Messages"
-msgstr ""
+msgstr "Ufafanuzi wa Hitilafu"
 
 msgid "Highlighted Messages"
 msgstr ""
 
+#, fuzzy
 msgid "System Messages"
-msgstr ""
+msgstr "Misingi ya mfumo"
 
+#, fuzzy
 msgid "Sent Messages"
-msgstr ""
+msgstr "Jumbe za tahadhari"
 
 msgid "Received Messages"
 msgstr ""
@@ -13029,17 +13775,20 @@ msgstr ""
 
 #. Note to translators: The string "Enter an XMPP Server" is asking the
 #. user to type the name of an XMPP server which will then be queried
+#, fuzzy
 msgid "Server name request"
-msgstr ""
+msgstr "Seva"
 
+#, fuzzy
 msgid "Enter an XMPP Server"
-msgstr ""
+msgstr "Ingiza neno tafuti:"
 
 msgid "Select an XMPP server to query"
 msgstr ""
 
+#, fuzzy
 msgid "Find Services"
-msgstr ""
+msgstr "Huduma za tovuti"
 
 msgid "Add to Buddy List"
 msgstr ""
@@ -13047,32 +13796,39 @@ msgstr ""
 msgid "Gateway"
 msgstr ""
 
+#, fuzzy
 msgid "Directory"
-msgstr ""
+msgstr "Tafuta historia"
 
+#, fuzzy
 msgid "PubSub Collection"
-msgstr ""
+msgstr "&Uchanguzi"
 
 msgid "PubSub Leaf"
 msgstr ""
 
+#, fuzzy
 msgid "Other"
-msgstr ""
+msgstr "Wengine"
 
+#, fuzzy
 msgid ""
 "\n"
 "<b>Description:</b> "
-msgstr ""
+msgstr "Maelezo"
 
 #. Create the window.
+#, fuzzy
 msgid "Service Discovery"
-msgstr ""
+msgstr "Tafuta historia"
 
+#, fuzzy
 msgid "_Browse"
-msgstr ""
+msgstr "Vinjari…"
 
+#, fuzzy
 msgid "Server does not exist"
-msgstr ""
+msgstr "Faili %S halipo"
 
 msgid "Server does not support service discovery"
 msgstr ""
@@ -13172,12 +13928,14 @@ msgstr ""
 msgid "Select a person from your address book below, or add a new person."
 msgstr ""
 
+#, fuzzy
 msgid "Group:"
-msgstr ""
+msgstr "Kusanya kwa:"
 
 #. "New Person" button
+#, fuzzy
 msgid "New Person"
-msgstr ""
+msgstr "Toleo Jipya"
 
 #. "Select Buddy" button
 msgid "Select Buddy"
@@ -13190,15 +13948,17 @@ msgid ""
 msgstr ""
 
 #. Add the expander
+#, fuzzy
 msgid "User _details"
-msgstr ""
+msgstr "Onyesha &ufafanuzi"
 
 #. "Associate Buddy" button
 msgid "_Associate Buddy"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to send email"
-msgstr ""
+msgstr "Haiwezi kufuta moduli"
 
 msgid "The evolution executable was not found in the PATH."
 msgstr ""
@@ -13246,17 +14006,21 @@ msgid "Account type:"
 msgstr ""
 
 #. Optional Information section
+#, fuzzy
 msgid "Optional information:"
-msgstr ""
+msgstr "Taarifa zaidi"
 
+#, fuzzy
 msgid "First name:"
-msgstr ""
+msgstr "Ukurasa wa kwanza"
 
+#, fuzzy
 msgid "Last name:"
-msgstr ""
+msgstr "Ukurasa wa mwisho"
 
+#, fuzzy
 msgid "Email:"
-msgstr ""
+msgstr "Barua pepe"
 
 #. *< type
 #. *< ui_requirement
@@ -13320,8 +14084,9 @@ msgstr ""
 msgid "Draw Markerline in "
 msgstr ""
 
+#, fuzzy
 msgid "_IM windows"
-msgstr ""
+msgstr "Dirisha jipya"
 
 msgid "C_hat windows"
 msgstr ""
@@ -13340,8 +14105,9 @@ msgstr ""
 msgid "There was a conflict in running the command:"
 msgstr ""
 
+#, fuzzy
 msgid "Error Running Editor"
-msgstr ""
+msgstr "Hitilafu katika Kutuma Taarifa"
 
 msgid "The following error has occurred:"
 msgstr ""
@@ -13402,8 +14168,9 @@ msgstr ""
 msgid "Set window manager \"_URGENT\" hint"
 msgstr ""
 
+#, fuzzy
 msgid "_Flash window"
-msgstr ""
+msgstr "Dirisha sawa"
 
 #. Raise window method button
 msgid "R_aise conversation window"
@@ -13443,8 +14210,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "Message Notification"
-msgstr ""
+msgstr "Arifisho la Jumla"
 
 #. *< name
 #. *< version
@@ -13485,8 +14253,9 @@ msgstr ""
 msgid "Highlighted Message Name Color"
 msgstr ""
 
+#, fuzzy
 msgid "Typing Notification Color"
-msgstr ""
+msgstr "Arifisho la Jumla"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr ""
@@ -13494,8 +14263,9 @@ msgstr ""
 msgid "Conversation Entry"
 msgstr ""
 
+#, fuzzy
 msgid "Conversation History"
-msgstr ""
+msgstr "Unganisho"
 
 msgid "Request Dialog"
 msgstr ""
@@ -13503,8 +14273,9 @@ msgstr ""
 msgid "Notify Dialog"
 msgstr ""
 
+#, fuzzy
 msgid "Select Color"
-msgstr ""
+msgstr "Chagua &Yote"
 
 #, c-format
 msgid "Select Interface Font"
@@ -13520,14 +14291,16 @@ msgstr ""
 msgid "GTK+ Text Shortcut Theme"
 msgstr ""
 
+#, fuzzy
 msgid "Disable Typing Notification Text"
-msgstr ""
+msgstr "Arifisho la Jumla"
 
 msgid "GTK+ Theme Control Settings"
 msgstr ""
 
+#, fuzzy
 msgid "Colors"
-msgstr ""
+msgstr "Funga"
 
 msgid "Fonts"
 msgstr "Fonti"
@@ -13572,8 +14345,9 @@ msgstr "Toleo Jipya Linapatikana"
 msgid "Later"
 msgstr "Baadae"
 
+#, fuzzy
 msgid "Download Now"
-msgstr ""
+msgstr "Hitilafu ya upakuzi"
 
 #. *< type
 #. *< ui_requirement
@@ -13581,8 +14355,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "Release Notification"
-msgstr ""
+msgstr "Arifisho la Jumla"
 
 #. *< name
 #. *< version
@@ -13604,8 +14379,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "Send Button"
-msgstr ""
+msgstr "Tuma kwa:"
 
 #. *< name
 #. *< version
@@ -13627,8 +14403,9 @@ msgstr ""
 msgid "Text Replacements"
 msgstr ""
 
+#, fuzzy
 msgid "You type"
-msgstr ""
+msgstr "Aina ya uunganishi"
 
 msgid "You send"
 msgstr ""
@@ -13636,8 +14413,9 @@ msgstr ""
 msgid "Whole words only"
 msgstr ""
 
+#, fuzzy
 msgid "Case sensitive"
-msgstr ""
+msgstr "(Nyepesi huhisi herufi kubwa au ndogo)"
 
 msgid "Add a new text replacement"
 msgstr ""
@@ -13667,43 +14445,51 @@ msgstr ""
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr ""
 
+#, fuzzy
 msgid "Just logged in"
-msgstr ""
+msgstr "Hajaingia"
 
+#, fuzzy
 msgid "Just logged out"
-msgstr ""
+msgstr "Hajaingia"
 
 msgid ""
 "Icon for Contact/\n"
 "Icon for Unknown person"
 msgstr ""
 
+#, fuzzy
 msgid "Icon for Chat"
-msgstr ""
+msgstr "Hitilafu isiyojulikana"
 
 msgid "Ignored"
 msgstr ""
 
+#, fuzzy
 msgid "Founder"
-msgstr ""
+msgstr "folda"
 
 #. A user in a chat room who has special privileges.
+#, fuzzy
 msgid "Operator"
-msgstr ""
+msgstr "Opera"
 
 #. A half operator is someone who has a subset of the privileges
 #. that an operator has.
 msgid "Half Operator"
 msgstr ""
 
+#, fuzzy
 msgid "Authorization dialog"
-msgstr ""
+msgstr "Uthibitisho unatakiwa"
 
+#, fuzzy
 msgid "Error dialog"
-msgstr ""
+msgstr "Hitikafu "
 
+#, fuzzy
 msgid "Information dialog"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
 msgid "Mail dialog"
 msgstr ""
@@ -13711,14 +14497,16 @@ msgstr ""
 msgid "Question dialog"
 msgstr ""
 
+#, fuzzy
 msgid "Warning dialog"
-msgstr ""
+msgstr "Jumbe za tahadhari"
 
 msgid "What kind of dialog is this?"
 msgstr ""
 
+#, fuzzy
 msgid "Status Icons"
-msgstr ""
+msgstr "Hali"
 
 msgid "Chatroom Emblems"
 msgstr ""
@@ -13729,8 +14517,9 @@ msgstr ""
 msgid "Pidgin Icon Theme Editor"
 msgstr ""
 
+#, fuzzy
 msgid "Contact"
-msgstr ""
+msgstr "Yaliyomo"
 
 msgid "Pidgin Buddylist Theme Editor"
 msgstr ""
@@ -13782,8 +14571,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "Timestamp"
-msgstr ""
+msgstr "Uchapaji wa Muda"
 
 #. *< name
 #. *< version
@@ -13801,8 +14591,9 @@ msgstr ""
 msgid "_Force timestamp format:"
 msgstr ""
 
+#, fuzzy
 msgid "Use system default"
-msgstr ""
+msgstr "Rejesha Misingi"
 
 msgid "12 hour time format"
 msgstr ""
@@ -13854,8 +14645,9 @@ msgid "Chatroom message alerts _only where someone says your username"
 msgstr ""
 
 #. Launcher integration
+#, fuzzy
 msgid "Launcher Icon"
-msgstr ""
+msgstr "Hifadhi Taswira"
 
 msgid "_Disable launcher integration"
 msgstr ""
@@ -13867,8 +14659,9 @@ msgid "Show number of unread co_nversations on launcher icon"
 msgstr ""
 
 #. Messaging menu integration
+#, fuzzy
 msgid "Messaging Menu"
-msgstr ""
+msgstr "Ujumbe haujaenda."
 
 msgid "Show number of _unread messages for conversations in messaging menu"
 msgstr ""
@@ -13882,8 +14675,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "Unity Integration"
-msgstr ""
+msgstr "Taarifa Zaidi"
 
 #. *< name
 #. *< version
@@ -13898,32 +14692,38 @@ msgstr ""
 msgid "Audio"
 msgstr ""
 
+#, fuzzy
 msgid "Video"
-msgstr ""
+msgstr "Hifadhi video"
 
 msgid "Output"
 msgstr ""
 
+#, fuzzy
 msgid "_Plugin"
-msgstr ""
+msgstr "Programu tumizi"
 
+#, fuzzy
 msgid "_Device"
-msgstr ""
+msgstr "Huduma"
 
 msgid "Input"
 msgstr ""
 
+#, fuzzy
 msgid "P_lugin"
-msgstr ""
+msgstr "Programu tumizi"
 
+#, fuzzy
 msgid "D_evice"
-msgstr ""
+msgstr "Huduma"
 
 msgid "DROP"
 msgstr ""
 
+#, fuzzy
 msgid "Volume:"
-msgstr ""
+msgstr "Safu-wima:"
 
 msgid "Silence threshold:"
 msgstr ""
@@ -13943,8 +14743,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "Voice/Video Settings"
-msgstr ""
+msgstr "Vipimo"
 
 #. *< name
 #. *< version
@@ -13971,8 +14772,9 @@ msgstr ""
 msgid "Remove IM window transparency on focus"
 msgstr ""
 
+#, fuzzy
 msgid "Always on top"
-msgstr ""
+msgstr "&Juu Daima"
 
 #. Buddy List trans options
 msgid "Buddy List Window"
@@ -14048,8 +14850,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "XMPP Console"
-msgstr ""
+msgstr "Kiweko cha Hitilafu"
 
 msgid "Account: "
 msgstr ""
@@ -14094,20 +14897,24 @@ msgid "GTK+ Runtime (required if not present)"
 msgstr ""
 
 #. Installer Subsection Text
+#, fuzzy
 msgid "Shortcuts"
-msgstr ""
+msgstr "Uwekaji wa Mikato"
 
 #. Installer Subsection Text
+#, fuzzy
 msgid "Desktop"
-msgstr ""
+msgstr "Rejesha Misingi"
 
 #. Installer Subsection Text
+#, fuzzy
 msgid "Start Menu"
-msgstr ""
+msgstr "Kila unapoanzisha"
 
 #. Installer Subsection Text
+#, fuzzy
 msgid "Localizations"
-msgstr ""
+msgstr "Mahali"
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
@@ -14189,3 +14996,400 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Token Error"
+#~ msgstr "Hitilafu ya Faili"
+
+#, fuzzy
+#~ msgid "Passwords do not match"
+#~ msgstr "Nywila"
+
+#, fuzzy
+#~ msgid "Registration completed successfully!"
+#~ msgstr "Sakinisho limemaliza kikamilifu"
+
+#, fuzzy
+#~ msgid "Captcha"
+#~ msgstr "Naki&li Picha"
+
+#, fuzzy
+#~ msgid "Current password"
+#~ msgstr "Nywila ya sasa hivi:"
+
+#, fuzzy
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "Badilisha Nywila Kuu"
+
+#, fuzzy
+#~ msgid "Change password..."
+#~ msgstr "Badil &Nywila"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "Jina la Moduli:"
+
+#, fuzzy
+#~ msgid "Connect"
+#~ msgstr "Yaliyomo"
+
+#, fuzzy
+#~ msgid "Taurus"
+#~ msgstr "Kinauru"
+
+#, fuzzy
+#~ msgid "Cancer"
+#~ msgstr "Ghairi"
+
+#, fuzzy
+#~ msgid "Leo"
+#~ msgstr "Lao"
+
+#, fuzzy
+#~ msgid "Libra"
+#~ msgstr "Libya"
+
+#, fuzzy
+#~ msgid "Rat"
+#~ msgstr "Jmosi"
+
+#, fuzzy
+#~ msgid "Tiger"
+#~ msgstr "Niger"
+
+#, fuzzy
+#~ msgid "Rabbit"
+#~ msgstr "Mibbit"
+
+#, fuzzy
+#~ msgid "Snake"
+#~ msgstr "Hifadhi"
+
+#, fuzzy
+#~ msgid "Horse"
+#~ msgstr "Nyumbani"
+
+#, fuzzy
+#~ msgid "Monkey"
+#~ msgstr "Jumatatu"
+
+#, fuzzy
+#~ msgid "Rooster"
+#~ msgstr "Mwandishi wa habari"
+
+#, fuzzy
+#~ msgid "Visible"
+#~ msgstr "Lemaza"
+
+#, fuzzy
+#~ msgid "Private"
+#~ msgstr "Faragha"
+
+#, fuzzy
+#~ msgid "Zipcode"
+#~ msgstr "Folda la Zipu"
+
+#, fuzzy
+#~ msgid "College"
+#~ msgstr "Kunja"
+
+#, fuzzy
+#~ msgid "Blood"
+#~ msgstr "Zuia"
+
+#, fuzzy
+#~ msgid "True"
+#~ msgstr "Jnne"
+
+#, fuzzy
+#~ msgid "False"
+#~ msgstr "si kweli"
+
+#, fuzzy
+#~ msgid "Modify Address"
+#~ msgstr "Anwani ya Barua pepe"
+
+#~ msgid "Update"
+#~ msgstr "Sasisha"
+
+#, fuzzy
+#~ msgid "_Modify"
+#~ msgstr "R&ekebisha"
+
+#, fuzzy
+#~ msgid "Enter answer here"
+#~ msgstr "Ingiza neno tafuti:"
+
+#, fuzzy
+#~ msgid "Send"
+#~ msgstr "Kivenda"
+
+#, fuzzy
+#~ msgid "Invalid answer."
+#~ msgstr "Agumenti batili"
+
+#, fuzzy
+#~ msgid "Would you like to add him?"
+#~ msgstr "Ungependa kuhifadhi faili hili?"
+
+#, fuzzy
+#~ msgid "Message: %s"
+#~ msgstr "Ujumbe"
+
+#, fuzzy
+#~ msgid "Group ID"
+#~ msgstr "Kusanya kwa:"
+
+#, fuzzy
+#~ msgid "Not member"
+#~ msgstr "Novemba"
+
+#, fuzzy
+#~ msgid "Member"
+#~ msgstr "Novemba"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "Cheo cha &kazi:"
+
+#, fuzzy
+#~ msgid "Detail"
+#~ msgstr "Ufafanuzi"
+
+#, fuzzy
+#~ msgid "Successfully joined Qun"
+#~ msgstr "Imesakinishwa kimafanikio %S."
+
+#, fuzzy
+#~ msgid "Failed:"
+#~ msgstr "Imeshindwa"
+
+#, fuzzy
+#~ msgid "Quit Qun"
+#~ msgstr "Funga %s"
+
+#, fuzzy
+#~ msgid "Setup"
+#~ msgstr "Sep"
+
+#, fuzzy
+#~ msgid "Unknown-%d"
+#~ msgstr "Isiyojulikana: %S"
+
+#, fuzzy
+#~ msgid "Level"
+#~ msgstr "Lebo"
+
+#, fuzzy
+#~ msgid " Video"
+#~ msgstr "Hifadhi video"
+
+#, fuzzy
+#~ msgid " Zone"
+#~ msgstr "Bila"
+
+#, fuzzy
+#~ msgid "Flag"
+#~ msgstr "Kifulah"
+
+#, fuzzy
+#~ msgid "Account Information"
+#~ msgstr "Inachunguza taarifa"
+
+#, fuzzy
+#~ msgid "Select Server"
+#~ msgstr "SSL Seva"
+
+#, fuzzy
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "Imeshindwa kuipata seva wakala"
+
+#, fuzzy
+#~ msgid "Activation required"
+#~ msgstr "Uthibitisho unatakiwa"
+
+#, fuzzy
+#~ msgid "Captcha Image"
+#~ msgstr "Naki&li Picha"
+
+#, fuzzy
+#~ msgid "Socket error"
+#~ msgstr "Hitilafu ya hati"
+
+#, fuzzy
+#~ msgid "Getting server"
+#~ msgstr "Anza"
+
+#, fuzzy
+#~ msgid "Connecting to server"
+#~ msgstr "Naunganisha na %1$S…"
+
+#, fuzzy
+#~ msgid "QQ Error"
+#~ msgstr "Hitikafu "
+
+#, fuzzy
+#~ msgid "From %s:"
+#~ msgstr "Kutoka %S"
+
+#, fuzzy
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "Haiwezi kufuta moduli"
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr "Hitilafu katika kuhifadhi %S"
+
+#, fuzzy
+#~ msgid "The name you entered is invalid."
+#~ msgstr "Nambari mstari iliyoingizwa ni batili."
+
+#, fuzzy
+#~ msgid "The certificate is not valid yet."
+#~ msgstr "Nambari mstari iliyoingizwa ni batili."
+
+#, fuzzy
+#~ msgid "The nick name you entered is invalid."
+#~ msgstr "Nambari mstari iliyoingizwa ni batili."
+
+#, fuzzy
+#~ msgid "Nick Name"
+#~ msgstr "Jina la mtumiaji"
+
+#, fuzzy
+#~ msgid "Unknown reason."
+#~ msgstr "Hitilafu isiyojulikana"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "Nywila ya sasa hivi:"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "Tabo mpya"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "Badil &Nywila"
+
+#, fuzzy
+#~ msgid "Orientation"
+#~ msgstr "Mkao:"
+
+#, fuzzy
+#~ msgid "Error creating conference."
+#~ msgstr "Hitilafu kwenye utengenezaji wa saraka:"
+
+#, fuzzy
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "Haikuweza kuunganishwa"
+
+#, fuzzy
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr "Haikuweza kuunganishwa"
+
+#, fuzzy
+#~ msgid "Profile URL"
+#~ msgstr "Profile Linatumika"
+
+#, fuzzy
+#~ msgid "Unknown error."
+#~ msgstr "Hitilafu isiyojulikana"
+
+#, fuzzy
+#~ msgid "Unable to rename group"
+#~ msgstr "Haiwezi kufuta moduli"
+
+#, fuzzy
+#~ msgid "Unable to delete group"
+#~ msgstr "Haiwezi kufuta moduli"
+
+#, fuzzy
+#~ msgid "Debugging Information"
+#~ msgstr "Inachunguza taarifa"
+
+#, fuzzy
+#~ msgid ""
+#~ "Error saving image\n"
+#~ "\n"
+#~ "%s"
+#~ msgstr "Hitilafu katika kuhifadhi %S"
+
+#, fuzzy
+#~ msgid "(Default)"
+#~ msgstr "chaguo-msingi"
+
+#, fuzzy
+#~ msgid "Install Theme"
+#~ msgstr "Sakinisha Mandhari"
+
+#~ msgid "Icon"
+#~ msgstr "Ikoni"
+
+#, fuzzy
+#~ msgid "_End port:"
+#~ msgstr "Tuma Kwa:"
+
+#, fuzzy
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr "Haiwezi kufuta moduli"
+
+#, fuzzy
+#~ msgid "_Resume"
+#~ msgstr "Endelea"
+
+#, fuzzy
+#~ msgid "Cannot open socket"
+#~ msgstr "Haiwezi kufungua %S"
+
+#, fuzzy
+#~ msgid "Unable to read socket"
+#~ msgstr "Haiwezi kuongeza moduli"
+
+#, fuzzy
+#~ msgid "Connection failed."
+#~ msgstr "Unganisho Limeshindikana"
+
+#, fuzzy
+#~ msgid "Write error"
+#~ msgstr "Hitilafu ya Printa"
+
+#, fuzzy
+#~ msgid "User Tune"
+#~ msgstr "Jina la Mtumiaji:"
+
+#, fuzzy
+#~ msgid "User Browsing"
+#~ msgstr "Kuvinjari kwa kareti"
+
+#, fuzzy
+#~ msgid "Hop Check"
+#~ msgstr "Usikague"
+
+#, fuzzy
+#~ msgid "Read Error"
+#~ msgstr "Hitilafu ya Faili"
+
+#, fuzzy
+#~ msgid "Incorrect password."
+#~ msgstr "Nywila ya sasa hivi:"
+
+#, fuzzy
+#~ msgid "Could Not Connect"
+#~ msgstr "Imeshindwa kuunganisha"
+
+#, fuzzy
+#~ msgid "Invalid username."
+#~ msgstr "Jina batili la moduli."
+
+#, fuzzy
+#~ msgid "Connection lost"
+#~ msgstr "Unganisho"
+
+#, fuzzy
+#~ msgid "Error reading from socket: %s"
+#~ msgstr "Hitilafu ya upakiaji lahamtindo: %S"
+
+#, fuzzy
+#~ msgid "Unable to connect to host"
+#~ msgstr "Haikuweza kuunganishwa"

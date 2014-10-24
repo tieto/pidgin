@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"PO-Revision-Date: 2014-01-21 08:25+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Irish (http://www.transifex.com/projects/p/pidgin/language/"
 "ga/)\n"
@@ -1681,6 +1681,7 @@ msgstr "Ní féidir an leasainm poiblí a fháil leis an bprótacal seo."
 msgid "Unknown"
 msgstr "Anaithnid"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Cairde"
 
@@ -1794,31 +1795,26 @@ msgstr ""
 "Deir an teastas gur tháinig sé ó \"%s\". Seans nach bhfuil tú ag ceangal "
 "leis an tseirbhís a cheap tú."
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Eolas faoin Teastas"
-
-msgid "Unable to find Issuer Certificate"
-msgstr ""
-
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
-"\n"
-"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
+"Gnáthainm: %s\n"
+"\n"
+"Méarlorg (SHA1): %s\n"
+"\n"
+"Dáta tosaithe: %s\n"
+"Dáta éaga: %s\n"
 
-msgid "(self-signed)"
-msgstr ""
-
-msgid "View Issuer Certificate"
-msgstr ""
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Eolas faoin Teastas"
 
 #. show error to user
 msgid "Registration Error"
@@ -3233,14 +3229,14 @@ msgstr "Cuir le comhrá"
 msgid "Chat _name:"
 msgstr "Ai_nm an chomhrá:"
 
+#, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr "Ní féidir óstainm '%s' a réiteach: %s"
+
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Ceangal"
-
-#, c-format
-msgid "Unable to resolve hostname: %s"
-msgstr ""
 
 msgid "Chat error"
 msgstr "Earráid i gcomhrá"
@@ -3449,11 +3445,13 @@ msgstr " <i>(aitheanta)</i>"
 msgid "Nick"
 msgstr "Leasainm"
 
+#, fuzzy
 msgid "Login name"
-msgstr ""
+msgstr "Gan ainm"
 
+#, fuzzy
 msgid "Host name"
-msgstr ""
+msgstr "Óstainm"
 
 msgid "Currently on"
 msgstr "Anseo faoi láthair"
@@ -8755,9 +8753,9 @@ msgid ""
 "You cannot receive buddy notifications until you import his/her public key.  "
 "You can use the Get Public Key command to get the public key."
 msgstr ""
-"Ní féidir leat fógraí carad a fháil go dtí go n-iompórtálfaidh tú a "
-"(h)eochair phoiblí. Is féidir an t-ordú 'Faigh Eochair Phoiblí' a úsáid chun "
-"an eochair a fháil."
+"Ní féidir leat fógraí carad a fháil go dtí go n-iompórtálfaidh tú a (h)"
+"eochair phoiblí. Is féidir an t-ordú 'Faigh Eochair Phoiblí' a úsáid chun an "
+"eochair a fháil."
 
 #. Open file selector to select the public key.
 msgid "Open..."
@@ -10052,9 +10050,6 @@ msgstr "Socruithe Láithreachta"
 
 msgid "Start Doodling"
 msgstr "Tosaigh Scriobláil"
-
-msgid "Activate which ID?"
-msgstr ""
 
 msgid "Select the ID you want to activate"
 msgstr "Roghnaigh an t-aitheantas ba mhaith leat cur i bhfeidhm"
@@ -11874,9 +11869,6 @@ msgstr "Beangáilis"
 msgid "Bengali-India"
 msgstr "Beangáilis-An India"
 
-msgid "Bodo"
-msgstr ""
-
 msgid "Bosnian"
 msgstr "Boisnis"
 
@@ -11915,9 +11907,6 @@ msgstr "Esperanto"
 
 msgid "Spanish"
 msgstr "Spáinnis"
-
-msgid "Argentine Spanish"
-msgstr ""
 
 msgid "Estonian"
 msgstr "Eastóinis"
@@ -11958,6 +11947,9 @@ msgstr "Cróitis"
 msgid "Hungarian"
 msgstr "Ungáiris"
 
+msgid "Armenian"
+msgstr "Airméinis"
+
 msgid "Indonesian"
 msgstr "Indinéisis"
 
@@ -11973,9 +11965,6 @@ msgstr "Seoirsis"
 msgid "Ubuntu Georgian Translators"
 msgstr "Aistritheoirí Seoirsise Ubuntu"
 
-msgid "Kazakh"
-msgstr ""
-
 msgid "Khmer"
 msgstr "Ciméiris"
 
@@ -11988,17 +11977,14 @@ msgstr "Foireann Aistriúcháin Cannadaise"
 msgid "Korean"
 msgstr "Cóiréis"
 
-msgid "Kashmiri"
-msgstr ""
-
 msgid "Kurdish"
 msgstr "Coirdis"
 
+msgid "Lao"
+msgstr "Láóis"
+
 msgid "Lithuanian"
 msgstr "Liotuáinis"
-
-msgid "Latvian"
-msgstr ""
 
 msgid "Maithili"
 msgstr "Maitilis"
@@ -12017,6 +12003,9 @@ msgstr "Mongóilis"
 
 msgid "Marathi"
 msgstr "Maraitis"
+
+msgid "Malay"
+msgstr "Malaeis"
 
 msgid "Burmese"
 msgstr "Burmais"
@@ -12060,9 +12049,6 @@ msgstr "Rómáinis"
 msgid "Russian"
 msgstr "Rúisis"
 
-msgid "Sindhi"
-msgstr ""
-
 msgid "Slovak"
 msgstr "Slóvaicis"
 
@@ -12096,17 +12082,11 @@ msgstr "Teileagúis"
 msgid "Thai"
 msgstr "Téalainnis"
 
-msgid "Tatar"
-msgstr ""
-
 msgid "Ukranian"
 msgstr "Úcráinis"
 
 msgid "Urdu"
 msgstr "Urdais"
-
-msgid "Uzbek"
-msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vítneaimis"
@@ -12122,15 +12102,6 @@ msgstr "Sínis Traidisiúnta"
 
 msgid "Amharic"
 msgstr "Amáiris"
-
-msgid "Armenian"
-msgstr "Airméinis"
-
-msgid "Lao"
-msgstr "Láóis"
-
-msgid "Malay"
-msgstr "Malaeis"
 
 msgid "Turkish"
 msgstr "Tuircis"
@@ -14902,8 +14873,9 @@ msgstr ""
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
 
+#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr ""
+msgstr "Líon na gcomhráite san fhuinneog"
 
 #. Messaging menu integration
 msgid "Messaging Menu"

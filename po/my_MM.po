@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"PO-Revision-Date: 2014-01-21 08:25+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Burmese (Myanmar) (http://www.transifex.com/projects/p/pidgin/"
 "language/my_MM/)\n"
@@ -1644,6 +1644,7 @@ msgstr "ဤပရိုတိုကောတွင် အများဆို�
 msgid "Unknown"
 msgstr "အမည်မသိ"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "မိတ်ဆွေများ"
 
@@ -1749,31 +1750,26 @@ msgstr ""
 "ဤအသိအမှတ်ပြုလွှာသည် \"%s\" ထံမှ ဖြစ်ကြောင်း ဆိုထားသည်။ ဆိုလိုသည်မှာ သင်သည် သင်ဆက်သွယ်လိုသည့် ၀န်ဆောင်မှုနှင့် "
 "အဆက်အသွယ် လုပ်မထားပါ။"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "အသိအမှတ်ပြုလွှာ အကြောင်းအရာ"
-
-msgid "Unable to find Issuer Certificate"
-msgstr ""
-
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
-"\n"
-"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
+"အများသိအမည် - %s\n"
+"\n"
+"လက်ဗွေရာ(SHA1): %s\n"
+"\n"
+"အသက်သွင်းသော နေ့စွဲ - %s\n"
+"သက်တမ်းကုန်မည့် နေ့စွဲ - %s\n"
 
-msgid "(self-signed)"
-msgstr ""
-
-msgid "View Issuer Certificate"
-msgstr ""
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "အသိအမှတ်ပြုလွှာ အကြောင်းအရာ"
 
 #. show error to user
 msgid "Registration Error"
@@ -3145,14 +3141,14 @@ msgstr "စကားပြောခန်းထဲ ထည့်သွင်း�
 msgid "Chat _name:"
 msgstr "_N စကားပြောသူ အမည် -"
 
+#, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr "Hostname '%s': %s ကို မဖြေရှင်းနိုင်ပါ"
+
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "ဆက်သွယ်နေသည်"
-
-#, c-format
-msgid "Unable to resolve hostname: %s"
-msgstr ""
 
 msgid "Chat error"
 msgstr "စကားပြောဆိုမှု ချို့ယွင်းချက်"
@@ -3360,11 +3356,13 @@ msgstr " <i>(identified)</i>"
 msgid "Nick"
 msgstr "နာမည်ပြောင်"
 
+#, fuzzy
 msgid "Login name"
-msgstr ""
+msgstr "အမည် မရှိပါ"
 
+#, fuzzy
 msgid "Host name"
-msgstr ""
+msgstr "စက်အမည်"
 
 msgid "Currently on"
 msgstr "လက်ရှိနေရာ "
@@ -9160,8 +9158,8 @@ msgid ""
 "names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt;:  List "
 "specific users in channel(s)"
 msgstr ""
-"names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt; -  "
-"ချာနယ်(များ)ထဲရှိ သီးခြား သုံးစွဲသူများကို စာရင်းပြုစုရန်"
+"names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt; -  ချာနယ်"
+"(များ)ထဲရှိ သီးခြား သုံးစွဲသူများကို စာရင်းပြုစုရန်"
 
 #. *< type
 #. *< ui_requirement
@@ -9654,9 +9652,6 @@ msgstr "လက်ရှိ ချိန်ညှိချက်များ"
 
 msgid "Start Doodling"
 msgstr "Doodle ပြုလုပ်မှု စတင်ရန်"
-
-msgid "Activate which ID?"
-msgstr ""
 
 msgid "Select the ID you want to activate"
 msgstr "သင် အသက်သွင်းလိုသော ID ကို ရွေးရန်"
@@ -11410,9 +11405,6 @@ msgstr "ဘင်္ဂါလီ"
 msgid "Bengali-India"
 msgstr "ဘင်္ဂါလီ-အိန္ဒိယ"
 
-msgid "Bodo"
-msgstr ""
-
 msgid "Bosnian"
 msgstr "ဘော့စနီးယန်း"
 
@@ -11451,9 +11443,6 @@ msgstr "အက်စ်ပါရန်တို"
 
 msgid "Spanish"
 msgstr "စပဲနစ်ရှ်"
-
-msgid "Argentine Spanish"
-msgstr ""
 
 msgid "Estonian"
 msgstr "အက်စ်တိုနီယန်"
@@ -11494,6 +11483,9 @@ msgstr "ခရိုအေးရှား"
 msgid "Hungarian"
 msgstr "ဟန်​ဂေရီဟန်"
 
+msgid "Armenian"
+msgstr "အာမေးနီးယန်း"
+
 msgid "Indonesian"
 msgstr "အင်ဒိုနီးရှန်း"
 
@@ -11509,9 +11501,6 @@ msgstr "​ဂျော်ဂျီယန်"
 msgid "Ubuntu Georgian Translators"
 msgstr "ဦးဘွန်သူး ဂျော်ဂျီဟန် ဘာသာပြန်သူများ"
 
-msgid "Kazakh"
-msgstr ""
-
 msgid "Khmer"
 msgstr "ခမာ"
 
@@ -11524,17 +11513,14 @@ msgstr "ကန်နာဒါ ဘာသာပြန်အသင်း"
 msgid "Korean"
 msgstr "ကိုရီးယန်း"
 
-msgid "Kashmiri"
-msgstr ""
-
 msgid "Kurdish"
 msgstr "ကူဒစ်ရှ်"
 
+msgid "Lao"
+msgstr "လော"
+
 msgid "Lithuanian"
 msgstr "လစ်သူယန်းနီယန်း"
-
-msgid "Latvian"
-msgstr ""
 
 msgid "Maithili"
 msgstr "မယ်သီလီ"
@@ -11553,6 +11539,9 @@ msgstr "မွန်ဂိုလီယန်"
 
 msgid "Marathi"
 msgstr "မာရသီ"
+
+msgid "Malay"
+msgstr "မလေး"
 
 msgid "Burmese"
 msgstr ""
@@ -11596,9 +11585,6 @@ msgstr "ရိုမေးနီးယန်း"
 msgid "Russian"
 msgstr "ရှရှား"
 
-msgid "Sindhi"
-msgstr ""
-
 msgid "Slovak"
 msgstr "ဆလိုဗက်"
 
@@ -11632,17 +11618,11 @@ msgstr "တေလူဂူ"
 msgid "Thai"
 msgstr "ထိုင်း"
 
-msgid "Tatar"
-msgstr ""
-
 msgid "Ukranian"
 msgstr "ယူကရေးနီးယန်း"
 
 msgid "Urdu"
 msgstr "အူရ်ဒူ"
-
-msgid "Uzbek"
-msgstr ""
 
 msgid "Vietnamese"
 msgstr "ဗီယက်နမ်"
@@ -11658,15 +11638,6 @@ msgstr "ရိုးရာ တရုတ်စာ"
 
 msgid "Amharic"
 msgstr "အမ်ဟာရစ်"
-
-msgid "Armenian"
-msgstr "အာမေးနီးယန်း"
-
-msgid "Lao"
-msgstr "လော"
-
-msgid "Malay"
-msgstr "မလေး"
 
 msgid "Turkish"
 msgstr "တားရ်ကစ်ရှ်"
@@ -14342,8 +14313,9 @@ msgstr ""
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
 
+#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr ""
+msgstr "ဝင်းဒိုး အလိုက် စကားပြောဆိုမှု အရေအတွက်"
 
 #. Messaging menu integration
 msgid "Messaging Menu"

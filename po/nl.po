@@ -5,14 +5,14 @@
 # Translators:
 # Daniël Heres <danielheres@gmail.com>, 2008
 # Gideon van Melle <translations@gvmelle.com>, 2011-2014
-# Vincent van Adrighem <adrighem@gnome.org>, 2004-2006
+# Vincent van Adrighem <adrighem@gnome.org>, 2004, 2005, 2006
 # Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2004
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-08-25 15:04+0000\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"PO-Revision-Date: 2014-01-29 09:24+0000\n"
 "Last-Translator: Gideon van Melle <translations@gvmelle.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/pidgin/language/"
 "nl/)\n"
@@ -1675,6 +1675,7 @@ msgstr "Dit protocol ondersteunt het ophalen van een publieke alias niet."
 msgid "Unknown"
 msgstr "Onbekend"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Vrienden"
 
@@ -1789,19 +1790,10 @@ msgstr ""
 "betekenen dat u niet verbonden bent met de dienst waarmee u denkt verbonden "
 "te zijn."
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Certificaatinformatie"
-
-msgid "Unable to find Issuer Certificate"
-msgstr "Kan de uitgeven van het certificaat niet vinden"
-
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
-"\n"
-"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1810,18 +1802,14 @@ msgid ""
 msgstr ""
 "Algemene naam: %s\n"
 "\n"
-"uitgegeven door: %s\n"
-"\n"
-"Vingerafdruk (SHA1): %s\n"
+"Algoritme van vingerafdruk (SHA1): %s\n"
 "\n"
 "Geldig van: %s\n"
 "Geldig tot: %s\n"
 
-msgid "(self-signed)"
-msgstr "(zelf ondertekend)"
-
-msgid "View Issuer Certificate"
-msgstr "Bekijk uitgever van certificaat"
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Certificaatinformatie"
 
 #. show error to user
 msgid "Registration Error"
@@ -3231,14 +3219,14 @@ msgstr "Toevoegen aan chat"
 msgid "Chat _name:"
 msgstr "_Naam chat:"
 
+#, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr "Kan computernaam '%s': %s  niet ontbinden"
+
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Verbinding wordt gemaakt"
-
-#, c-format
-msgid "Unable to resolve hostname: %s"
-msgstr "Kan hostnaam niet ontcijferen: %s"
 
 msgid "Chat error"
 msgstr "Chatfout"
@@ -3448,11 +3436,13 @@ msgstr " <i>(geïdentificeerd)</i>"
 msgid "Nick"
 msgstr "Nick"
 
+#, fuzzy
 msgid "Login name"
-msgstr "Log-in naam"
+msgstr "Geen naam"
 
+#, fuzzy
 msgid "Host name"
-msgstr "Host naam"
+msgstr "Computernaam"
 
 msgid "Currently on"
 msgstr "Nu aanwezig"
@@ -9946,9 +9936,6 @@ msgstr "Aanwezigheidsinstellingen"
 msgid "Start Doodling"
 msgstr "Begin met Schetsen"
 
-msgid "Activate which ID?"
-msgstr "Welke ID activeren?"
-
 msgid "Select the ID you want to activate"
 msgstr "Selecteer de ID die u wilt activeren"
 
@@ -11726,7 +11713,7 @@ msgid "Assamese"
 msgstr "Assamese"
 
 msgid "Asturian"
-msgstr "Asturisch"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Witrussisch Latijn"
@@ -11739,9 +11726,6 @@ msgstr "Bengaals"
 
 msgid "Bengali-India"
 msgstr "Bengaals-Indiaas"
-
-msgid "Bodo"
-msgstr "Bodo"
 
 msgid "Bosnian"
 msgstr "Bosnisch"
@@ -11782,9 +11766,6 @@ msgstr "Esperanto"
 msgid "Spanish"
 msgstr "Spaans"
 
-msgid "Argentine Spanish"
-msgstr "Argentijns spaans"
-
 msgid "Estonian"
 msgstr "Estlands"
 
@@ -11824,6 +11805,9 @@ msgstr "Kroatisch"
 msgid "Hungarian"
 msgstr "Hongaars"
 
+msgid "Armenian"
+msgstr "Armeens"
+
 msgid "Indonesian"
 msgstr "Indonesisch"
 
@@ -11839,9 +11823,6 @@ msgstr "Georgisch"
 msgid "Ubuntu Georgian Translators"
 msgstr "Georgische vertalers van Ubuntu"
 
-msgid "Kazakh"
-msgstr "Kazachs"
-
 msgid "Khmer"
 msgstr "Cambodjaans"
 
@@ -11854,17 +11835,14 @@ msgstr "Kannada vertaalteam"
 msgid "Korean"
 msgstr "Koreaans"
 
-msgid "Kashmiri"
-msgstr "Kashmirs"
-
 msgid "Kurdish"
 msgstr "Koerdisch"
 
+msgid "Lao"
+msgstr "Laotiaans"
+
 msgid "Lithuanian"
 msgstr "Litouws"
-
-msgid "Latvian"
-msgstr "Lets"
 
 msgid "Maithili"
 msgstr "Maithili"
@@ -11883,6 +11861,9 @@ msgstr "Mongools"
 
 msgid "Marathi"
 msgstr "Marathi"
+
+msgid "Malay"
+msgstr "Maleis"
 
 msgid "Burmese"
 msgstr "Burmees"
@@ -11926,9 +11907,6 @@ msgstr "Roemeens"
 msgid "Russian"
 msgstr "Russisch"
 
-msgid "Sindhi"
-msgstr "Sindhi"
-
 msgid "Slovak"
 msgstr "Slowaaks"
 
@@ -11962,17 +11940,11 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Thais"
 
-msgid "Tatar"
-msgstr "Tartaars"
-
 msgid "Ukranian"
 msgstr "Ukranian"
 
 msgid "Urdu"
 msgstr "Urdu"
-
-msgid "Uzbek"
-msgstr "Oezbeeks"
 
 msgid "Vietnamese"
 msgstr "Vietnamees"
@@ -11988,15 +11960,6 @@ msgstr "Traditioneel Chinees"
 
 msgid "Amharic"
 msgstr "Amharic"
-
-msgid "Armenian"
-msgstr "Armeens"
-
-msgid "Lao"
-msgstr "Laotiaans"
-
-msgid "Malay"
-msgstr "Maleis"
 
 msgid "Turkish"
 msgstr "Turks"
@@ -14741,6 +14704,7 @@ msgstr "_Uitschakelen launcher integratie"
 msgid "Show number of unread _messages on launcher icon"
 msgstr "Toon aantal ongelezen _berichten op launcher pictogram"
 
+#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
 msgstr "Toon aantal ongelezen _conversaties op launcher pictogram"
 

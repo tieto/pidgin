@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"PO-Revision-Date: 2014-01-21 08:25+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Hebrew (http://www.transifex.com/projects/p/pidgin/language/"
 "he/)\n"
@@ -1639,6 +1639,7 @@ msgstr "פרוטוקול זה אינו תומך בשליפת שמות נוספי
 msgid "Unknown"
 msgstr "לא ידוע"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "אנשי קשר"
 
@@ -1744,31 +1745,26 @@ msgstr ""
 "התעודה טוענת שהיא באה בעצם מאת \"%s\". ייתכן וזה אומר שהשירות אליו התחברת "
 "אינו השירות שחשבת שהוא."
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "פרטי התעודה"
-
-msgid "Unable to find Issuer Certificate"
-msgstr ""
-
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
-"\n"
-"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
+"שם משותף: %s\n"
+"\n"
+"טביעת-אצבע (SHA1): %s\n"
+"\n"
+"תאריך הפעלה: %s\n"
+"תאריך תפוגה: %s\n"
 
-msgid "(self-signed)"
-msgstr ""
-
-msgid "View Issuer Certificate"
-msgstr ""
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "פרטי התעודה"
 
 #. show error to user
 msgid "Registration Error"
@@ -3131,14 +3127,14 @@ msgstr "הוסף לשיחה"
 msgid "Chat _name:"
 msgstr "שם _צ'אט:"
 
+#, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr "לא ניתן לתרגם לכתובת את שם השרת '%s': %s"
+
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "מתחבר"
-
-#, c-format
-msgid "Unable to resolve hostname: %s"
-msgstr ""
 
 msgid "Chat error"
 msgstr "שגיאה בצ'אט"
@@ -3346,11 +3342,13 @@ msgstr " <i>(מזוהה)</i>"
 msgid "Nick"
 msgstr "כינוי"
 
+#, fuzzy
 msgid "Login name"
-msgstr ""
+msgstr "ללא שם"
 
+#, fuzzy
 msgid "Host name"
-msgstr ""
+msgstr "שם שרת"
 
 msgid "Currently on"
 msgstr "כרגע ב-"
@@ -9638,9 +9636,6 @@ msgstr "אפשרויות נוכחות"
 msgid "Start Doodling"
 msgstr "התחל לקשקש"
 
-msgid "Activate which ID?"
-msgstr ""
-
 msgid "Select the ID you want to activate"
 msgstr "יש לבחור את המזהה ברצונך להפעיל"
 
@@ -11399,9 +11394,6 @@ msgstr "בנגאלית"
 msgid "Bengali-India"
 msgstr "בנגאלית-הודו"
 
-msgid "Bodo"
-msgstr ""
-
 msgid "Bosnian"
 msgstr "בוסנית"
 
@@ -11440,9 +11432,6 @@ msgstr "אספרנט"
 
 msgid "Spanish"
 msgstr "ספרדית"
-
-msgid "Argentine Spanish"
-msgstr ""
 
 msgid "Estonian"
 msgstr "אסטונית"
@@ -11483,6 +11472,9 @@ msgstr "קרואטית"
 msgid "Hungarian"
 msgstr "הונגרית"
 
+msgid "Armenian"
+msgstr "ארמנית"
+
 msgid "Indonesian"
 msgstr "אינדונזית"
 
@@ -11498,9 +11490,6 @@ msgstr "גאורגנית (גרוזינית)"
 msgid "Ubuntu Georgian Translators"
 msgstr "מתרגמי הגרוזינית של אובונטו"
 
-msgid "Kazakh"
-msgstr ""
-
 msgid "Khmer"
 msgstr "קמבודית"
 
@@ -11513,17 +11502,14 @@ msgstr "קבוצת התרגום לקאנאדית"
 msgid "Korean"
 msgstr "קוריאנית"
 
-msgid "Kashmiri"
-msgstr ""
-
 msgid "Kurdish"
 msgstr "כורדית"
 
+msgid "Lao"
+msgstr "לאית"
+
 msgid "Lithuanian"
 msgstr "ליטואנית"
-
-msgid "Latvian"
-msgstr ""
 
 msgid "Maithili"
 msgstr "מאת'ילי"
@@ -11542,6 +11528,9 @@ msgstr "מונגולית"
 
 msgid "Marathi"
 msgstr "מרטהי"
+
+msgid "Malay"
+msgstr "מאלאית"
 
 msgid "Burmese"
 msgstr "בורמית"
@@ -11585,9 +11574,6 @@ msgstr "רומנית"
 msgid "Russian"
 msgstr "רוסית"
 
-msgid "Sindhi"
-msgstr ""
-
 msgid "Slovak"
 msgstr "סלובקית"
 
@@ -11621,17 +11607,11 @@ msgstr "טלוגו"
 msgid "Thai"
 msgstr "תאלנדית"
 
-msgid "Tatar"
-msgstr ""
-
 msgid "Ukranian"
 msgstr "אוקראינית"
 
 msgid "Urdu"
 msgstr "אורדו"
-
-msgid "Uzbek"
-msgstr ""
 
 msgid "Vietnamese"
 msgstr "ויאטנמית"
@@ -11647,15 +11627,6 @@ msgstr "סינית מסורתית"
 
 msgid "Amharic"
 msgstr "אמהרית"
-
-msgid "Armenian"
-msgstr "ארמנית"
-
-msgid "Lao"
-msgstr "לאית"
-
-msgid "Malay"
-msgstr "מאלאית"
 
 msgid "Turkish"
 msgstr "תורכית"
@@ -14339,8 +14310,9 @@ msgstr ""
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
 
+#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr ""
+msgstr "מספר שיחות בכל חלון"
 
 #. Messaging menu integration
 msgid "Messaging Menu"

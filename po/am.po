@@ -1,27 +1,26 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Pidgin Amharic translation
+# Copyright (C) 2003, Daniel Yacob, Ge'ez Frontier Foundation <locales@geez.org>
 #
-# Translators:
+# This file is distributed under the same license as the Pidgin package.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin\n"
+"Project-Id-Version: Pidgin 0.60 \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Amharic (http://www.transifex.com/projects/p/pidgin/language/"
-"am/)\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"PO-Revision-Date: 2003-04-08 09:23:11+EDT\n"
+"Last-Translator: Ge'ez Frontier Foundation <locales@geez.org>\n"
+"Language-Team: Amharic <locales@geez.org>\n"
 "Language: am\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
+#, fuzzy
 msgid "Finch"
-msgstr ""
+msgstr "መስኮት"
 
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
@@ -47,8 +46,9 @@ msgid ""
 msgstr ""
 
 #. the user did not fill in the captcha
+#, fuzzy
 msgid "Error"
-msgstr ""
+msgstr "የIRC ስህተት"
 
 msgid "Account was not modified"
 msgstr ""
@@ -70,8 +70,9 @@ msgstr ""
 msgid "New mail notifications"
 msgstr ""
 
+#, fuzzy
 msgid "Remember password"
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን አስታውስ"
 
 msgid "There are no protocol plugins installed."
 msgstr ""
@@ -82,14 +83,18 @@ msgstr ""
 msgid "Modify Account"
 msgstr ""
 
+#, fuzzy
 msgid "New Account"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 msgid "Protocol:"
 msgstr ""
 
+#, fuzzy
 msgid "Username:"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
 msgid "Password:"
 msgstr "ሚስጢራዊ ቃል፦"
@@ -98,8 +103,9 @@ msgid "Alias:"
 msgstr ""
 
 #. Register checkbox
+#, fuzzy
 msgid "Create this account on the server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. Cancel button
 #. Cancel
@@ -115,8 +121,11 @@ msgstr "አስቀምጥ"
 msgid "Are you sure you want to delete %s?"
 msgstr ""
 
+#, fuzzy
 msgid "Delete Account"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 #. Delete button
 msgid "Delete"
@@ -133,8 +142,9 @@ msgid "Add"
 msgstr "ጨምር"
 
 #. Modify button
+#, fuzzy
 msgid "Modify"
-msgstr ""
+msgstr "ለውጡ (_M)"
 
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
@@ -147,8 +157,9 @@ msgstr ""
 msgid "%s%s%s%s wants to add %s to his or her buddy list%s%s"
 msgstr ""
 
+#, fuzzy
 msgid "Authorize buddy?"
-msgstr ""
+msgstr "ተዉት"
 
 msgid "Authorize"
 msgstr ""
@@ -162,18 +173,21 @@ msgid ""
 "Total: %d"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Account: %s (%s)"
 msgstr ""
+"%s\n"
+"%s፦ %s"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Last Seen: %s ago"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
+#, fuzzy
 msgid "Default"
-msgstr ""
+msgstr "አጥፉ"
 
 msgid "You must provide a username for the buddy."
 msgstr ""
@@ -187,29 +201,38 @@ msgstr ""
 msgid "The selected account is not online."
 msgstr ""
 
+#, fuzzy
 msgid "Error adding buddy"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
+#, fuzzy
 msgid "Username"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
+#, fuzzy
 msgid "Alias (optional)"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Invite message (optional)"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Add in group"
-msgstr ""
+msgstr "መድረክ ጨምር"
 
+#, fuzzy
 msgid "Account"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 msgid "Add Buddy"
 msgstr ""
 
+#, fuzzy
 msgid "Please enter buddy information."
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Chats"
 msgstr ""
@@ -218,23 +241,27 @@ msgstr ""
 msgid "Name"
 msgstr "ስም"
 
+#, fuzzy
 msgid "Alias"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Group"
-msgstr ""
+msgstr "መድረክ፦ (_G)"
 
 msgid "Auto-join"
 msgstr ""
 
+#, fuzzy
 msgid "Add Chat"
-msgstr ""
+msgstr "ውሪ"
 
 msgid "You can edit more information from the context menu later."
 msgstr ""
 
+#, fuzzy
 msgid "Error adding group"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 msgid "You must give a name for the group to add."
 msgstr ""
@@ -242,23 +269,27 @@ msgstr ""
 msgid "Add Group"
 msgstr "መድረክ ጨምር"
 
+#, fuzzy
 msgid "Enter the name of the group"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Edit Chat"
-msgstr ""
+msgstr "ውሪ"
 
 msgid "Please Update the necessary fields."
 msgstr ""
 
+#, fuzzy
 msgid "Edit"
-msgstr ""
+msgstr "አስተካክል (_E)"
 
 msgid "Edit Settings"
 msgstr ""
 
+#, fuzzy
 msgid "Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Retrieving..."
 msgstr ""
@@ -272,21 +303,25 @@ msgstr ""
 msgid "Send File"
 msgstr "ፋይልን ላክ"
 
+#, fuzzy
 msgid "Blocked"
-msgstr ""
+msgstr "ደማቅ"
 
+#, fuzzy
 msgid "Show when offline"
-msgstr ""
+msgstr "ኦንላይን"
 
 #, c-format
 msgid "Please enter the new name for %s"
 msgstr ""
 
+#, fuzzy
 msgid "Rename"
-msgstr ""
+msgstr "እንደገና ሰይም (_R)"
 
+#, fuzzy
 msgid "Set Alias"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Enter empty string to reset the name."
 msgstr ""
@@ -302,8 +337,9 @@ msgid "Are you sure you want to remove %s?"
 msgstr ""
 
 #. XXX: anything to do with the returned ui-handle?
+#, fuzzy
 msgid "Confirm Remove"
-msgstr ""
+msgstr "አስወግድ"
 
 msgid "Remove"
 msgstr "አስወግድ"
@@ -318,8 +354,9 @@ msgstr ""
 msgid "Toggle Tag"
 msgstr ""
 
+#, fuzzy
 msgid "View Log"
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
 #. General
 msgid "Nickname"
@@ -330,14 +367,16 @@ msgstr "ቅጽል ስም"
 msgid "Idle"
 msgstr ""
 
+#, fuzzy
 msgid "On Mobile"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
 msgid "New..."
 msgstr "አዲስ.."
 
+#, fuzzy
 msgid "Saved..."
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "Plugins"
 msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
@@ -362,23 +401,27 @@ msgstr ""
 msgid "OK"
 msgstr "እሺ"
 
+#, fuzzy
 msgid "New Instant Message"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
 msgid "Please enter the username or alias of the person you would like to IM."
 msgstr ""
 
+#, fuzzy
 msgid "Channel"
-msgstr ""
+msgstr "ጣቢያ፦"
 
+#, fuzzy
 msgid "Join a Chat"
-msgstr ""
+msgstr "ውሪን አገጣጥም"
 
 msgid "Please enter the name of the chat you want to join."
 msgstr ""
 
+#, fuzzy
 msgid "Join"
-msgstr ""
+msgstr "ዝምብለህ ይግባ (_L)"
 
 msgid ""
 "Please enter the username or alias of the person whose log you would like to "
@@ -386,38 +429,48 @@ msgid ""
 msgstr ""
 
 #. Create the "Options" frame.
+#, fuzzy
 msgid "Options"
-msgstr ""
+msgstr "/ምርጫዎች (_O)"
 
+#, fuzzy
 msgid "Send IM..."
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
+#, fuzzy
 msgid "Block/Unblock..."
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "Join Chat..."
-msgstr ""
+msgstr "ውሪ አገጣጥም..."
 
+#, fuzzy
 msgid "View Log..."
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
+#, fuzzy
 msgid "View All Logs"
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
 msgid "Show"
 msgstr ""
 
+#, fuzzy
 msgid "Empty groups"
-msgstr ""
+msgstr "በመድረክ"
 
+#, fuzzy
 msgid "Offline buddies"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "Sort"
-msgstr ""
+msgstr "ፖርት"
 
+#, fuzzy
 msgid "By Status"
-msgstr ""
+msgstr "ሁኔታ፦"
 
 msgid "Alphabetically"
 msgstr ""
@@ -425,17 +478,20 @@ msgstr ""
 msgid "By Log Size"
 msgstr ""
 
+#, fuzzy
 msgid "Buddy"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Chat"
 msgstr "ውሪ"
 
+#, fuzzy
 msgid "Grouping"
-msgstr ""
+msgstr "መድረክ፦ (_G)"
 
+#, fuzzy
 msgid "Certificate Import"
-msgstr ""
+msgstr "አገናኝ"
 
 msgid "Specify a hostname"
 msgstr ""
@@ -498,8 +554,9 @@ msgstr ""
 msgid "Certificate Manager"
 msgstr ""
 
+#, fuzzy
 msgid "Hostname"
-msgstr ""
+msgstr "የአባት ስም፦"
 
 msgid "Info"
 msgstr "መረጃ"
@@ -508,13 +565,15 @@ msgstr "መረጃ"
 msgid "Close"
 msgstr "ዝጋ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s (%s)"
 msgstr ""
+"%s\n"
+"%s፦ %s"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s disconnected."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid ""
@@ -548,9 +607,11 @@ msgstr ""
 msgid "Message was not sent, because you are not signed on."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s (%s -- %s)"
 msgstr ""
+"%s\n"
+"%s፦ %s"
 
 #, c-format
 msgid "%s [%s]"
@@ -577,11 +638,13 @@ msgid ""
 "Logging stopped. Future messages in this conversation will not be logged."
 msgstr ""
 
+#, fuzzy
 msgid "Send To"
-msgstr ""
+msgstr "ላክ"
 
+#, fuzzy
 msgid "Conversation"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Clear Scrollback"
 msgstr ""
@@ -592,17 +655,20 @@ msgstr ""
 msgid "Add Buddy Pounce..."
 msgstr ""
 
+#, fuzzy
 msgid "Invite..."
-msgstr ""
+msgstr "አስገባ"
 
 msgid "Enable Logging"
 msgstr ""
 
+#, fuzzy
 msgid "Enable Sounds"
-msgstr ""
+msgstr "ሴት"
 
+#, fuzzy
 msgid "You are not connected."
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "<AUTO-REPLY> "
 msgstr ""
@@ -695,17 +761,19 @@ msgstr ""
 msgid "Clear"
 msgstr "ሰርዝ"
 
+#, fuzzy
 msgid "Filter:"
-msgstr ""
+msgstr "ሴት"
 
+#, fuzzy
 msgid "Pause"
-msgstr ""
+msgstr "ለአጭር ጊዜ አሳርፍ (_P)"
 
-#, c-format
+#, fuzzy, c-format
 msgid "File Transfers - %d%% of %d file"
 msgid_plural "File Transfers - %d%% of %d files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ፋይልን ላክ"
+msgstr[1] "ፋይልን ላክ"
 
 #. Create the window.
 msgid "File Transfers"
@@ -720,16 +788,18 @@ msgstr "የፋይል ስም"
 msgid "Size"
 msgstr "መጠን"
 
+#, fuzzy
 msgid "Speed"
-msgstr ""
+msgstr "ፍጥነት፦"
 
 msgid "Remaining"
 msgstr ""
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
 #. presence
+#, fuzzy
 msgid "Status"
-msgstr ""
+msgstr "ሁኔታ፦"
 
 msgid "Close this window when all transfers finish"
 msgstr ""
@@ -737,27 +807,32 @@ msgstr ""
 msgid "Clear finished transfers"
 msgstr ""
 
+#, fuzzy
 msgid "Stop"
-msgstr ""
+msgstr "ታሪክ"
 
 msgid "Waiting for transfer to begin"
 msgstr ""
 
+#, fuzzy
 msgid "Cancelled"
-msgstr ""
+msgstr "ተወው"
 
+#, fuzzy
 msgid "Failed"
-msgstr ""
+msgstr "ሴት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%.2f KiB/s"
-msgstr ""
+msgstr "%.2f KB/s"
 
+#, fuzzy
 msgid "Sent"
-msgstr ""
+msgstr "አድርግ"
 
+#, fuzzy
 msgid "Received"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
 msgid "Finished"
 msgstr ""
@@ -766,19 +841,20 @@ msgstr ""
 msgid "The file was saved as %s."
 msgstr ""
 
+#, fuzzy
 msgid "Sending"
-msgstr ""
+msgstr "ላክ"
 
 msgid "Receiving"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Conversation in %s on %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Conversation with %s on %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "%B %Y"
 msgstr ""
@@ -807,16 +883,17 @@ msgstr ""
 msgid "Scroll/Search: "
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Conversations in %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Conversations with %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "All Conversations"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "System Log"
 msgstr ""
@@ -831,8 +908,9 @@ msgstr ""
 msgid "Accept"
 msgstr ""
 
+#, fuzzy
 msgid "Reject"
-msgstr ""
+msgstr "እንደነበረ አድረግ"
 
 msgid "Call in progress."
 msgstr ""
@@ -854,17 +932,20 @@ msgstr ""
 msgid "call: Make an audio call."
 msgstr ""
 
+#, fuzzy
 msgid "Emails"
-msgstr ""
+msgstr "ኢሜይል"
 
 msgid "You have mail!"
 msgstr ""
 
+#, fuzzy
 msgid "Sender"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
+#, fuzzy
 msgid "Subject"
-msgstr ""
+msgstr "ጉዳዩ የለም"
 
 #, c-format
 msgid "%s (%s) has %d new message."
@@ -872,33 +953,39 @@ msgid_plural "%s (%s) has %d new messages."
 msgstr[0] ""
 msgstr[1] ""
 
+#, fuzzy
 msgid "New Mail"
-msgstr ""
+msgstr "ኢሜይል"
 
 #, c-format
 msgid "Info for %s"
 msgstr ""
 
+#, fuzzy
 msgid "Buddy Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Continue"
-msgstr ""
+msgstr "አገናኝ"
 
 msgid "IM"
 msgstr ""
 
+#, fuzzy
 msgid "Invite"
-msgstr ""
+msgstr "አስገባ"
 
+#, fuzzy
 msgid "(none)"
-msgstr ""
+msgstr "(ስም የለም)"
 
 #. XXX: The following expects that finch_notify_message gets called. This
 #. * may not always happen, e.g. when another plugin sets its own
 #. * notify_message. So tread carefully.
+#, fuzzy
 msgid "URI"
-msgstr ""
+msgstr "UIN"
 
 msgid "ERROR"
 msgstr ""
@@ -925,8 +1012,9 @@ msgstr ""
 msgid "No configuration options for this plugin."
 msgstr ""
 
+#, fuzzy
 msgid "Error loading plugin"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 msgid "The selected file is not a valid plugin."
 msgstr ""
@@ -935,8 +1023,9 @@ msgid ""
 "Please open the debug window and try again to see the exact error message."
 msgstr ""
 
+#, fuzzy
 msgid "Select plugin to install"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 msgid "You can (un)load plugins from the following list."
 msgstr ""
@@ -971,18 +1060,21 @@ msgstr ""
 msgid "Account:"
 msgstr ""
 
+#, fuzzy
 msgid "Buddy name:"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 #. Create the "Pounce When Buddy..." frame.
 msgid "Pounce When Buddy..."
 msgstr ""
 
+#, fuzzy
 msgid "Signs on"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
+#, fuzzy
 msgid "Signs off"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 msgid "Goes away"
 msgstr ""
@@ -1005,21 +1097,25 @@ msgstr ""
 msgid "Stops typing"
 msgstr ""
 
+#, fuzzy
 msgid "Sends a message"
-msgstr ""
+msgstr "[መልዕክት የለም]"
 
 #. Create the "Action" frame.
+#, fuzzy
 msgid "Action"
-msgstr ""
+msgstr "አካባቢ"
 
 msgid "Open an IM window"
 msgstr ""
 
+#, fuzzy
 msgid "Pop up a notification"
-msgstr ""
+msgstr "አያያዝ ቦታ ቅጂ"
 
+#, fuzzy
 msgid "Send a message"
-msgstr ""
+msgstr "[መልዕክት የለም]"
 
 msgid "Execute a command"
 msgstr ""
@@ -1046,8 +1142,9 @@ msgstr ""
 msgid "Are you sure you want to delete the pounce on %s for %s?"
 msgstr ""
 
+#, fuzzy
 msgid "Buddy Pounces"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 #, c-format
 msgid "%s has started typing to you (%s)"
@@ -1057,9 +1154,9 @@ msgstr ""
 msgid "%s has paused while typing to you (%s)"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has signed on (%s)"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 #, c-format
 msgid "%s has returned from being idle (%s)"
@@ -1073,9 +1170,9 @@ msgstr ""
 msgid "%s has stopped typing to you (%s)"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has signed off (%s)"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 #, c-format
 msgid "%s has become idle (%s)"
@@ -1085,9 +1182,9 @@ msgstr ""
 msgid "%s has gone away. (%s)"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has sent you a message. (%s)"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 msgid "Unknown pounce event. Please report this!"
 msgstr ""
@@ -1095,11 +1192,13 @@ msgstr ""
 msgid "Based on keyboard use"
 msgstr ""
 
+#, fuzzy
 msgid "From last sent message"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
+#, fuzzy
 msgid "Never"
-msgstr ""
+msgstr "ሰርቨር፦"
 
 msgid "Show Idle Time"
 msgstr ""
@@ -1110,14 +1209,17 @@ msgstr ""
 msgid "Notify buddies when you are typing"
 msgstr ""
 
+#, fuzzy
 msgid "Log format"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Log IMs"
-msgstr ""
+msgstr "ዝምብለህ ይግባ"
 
+#, fuzzy
 msgid "Log chats"
-msgstr ""
+msgstr "ውሪ"
 
 msgid "Log status change events"
 msgstr ""
@@ -1125,14 +1227,16 @@ msgstr ""
 msgid "Report Idle time"
 msgstr ""
 
+#, fuzzy
 msgid "Change status when idle"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 msgid "Minutes before changing status"
 msgstr ""
 
+#, fuzzy
 msgid "Change status to"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 msgid "Conversations"
 msgstr ""
@@ -1149,20 +1253,24 @@ msgstr ""
 msgid "Not implemented yet."
 msgstr ""
 
+#, fuzzy
 msgid "Save File..."
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
+#, fuzzy
 msgid "Open File..."
-msgstr ""
+msgstr "ጌም - ክፈት..."
 
+#, fuzzy
 msgid "Choose Location..."
-msgstr ""
+msgstr "አካባቢ"
 
 msgid "Hit 'Enter' to find more rooms of this category."
 msgstr ""
 
+#, fuzzy
 msgid "Get"
-msgstr ""
+msgstr "አድርግ"
 
 #. Create the window.
 msgid "Room List"
@@ -1207,17 +1315,21 @@ msgstr ""
 msgid "GStreamer failed to initialize."
 msgstr ""
 
+#, fuzzy
 msgid "(default)"
-msgstr ""
+msgstr "አጥፉ"
 
+#, fuzzy
 msgid "Select Sound File ..."
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
+#, fuzzy
 msgid "Sound Preferences"
-msgstr ""
+msgstr "ምርጫዎች"
 
+#, fuzzy
 msgid "Profiles"
-msgstr ""
+msgstr "የJabber ስህተት %s"
 
 msgid "Automatic"
 msgstr "አውቶማቲክ"
@@ -1228,8 +1340,9 @@ msgstr ""
 msgid "Command"
 msgstr "ትእዛዝ"
 
+#, fuzzy
 msgid "No Sound"
-msgstr ""
+msgstr "ድምፆች"
 
 msgid "Sound Method"
 msgstr ""
@@ -1250,8 +1363,9 @@ msgstr "የድምፅ ምርጫዎች"
 msgid "Sounds when conversation has focus"
 msgstr ""
 
+#, fuzzy
 msgid "Always"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Only when available"
 msgstr ""
@@ -1269,8 +1383,9 @@ msgstr ""
 msgid "Event"
 msgstr "ኩነት"
 
+#, fuzzy
 msgid "File"
-msgstr ""
+msgstr "ሴት"
 
 msgid "Test"
 msgstr "ፈተና"
@@ -1285,11 +1400,13 @@ msgstr "ምረጡ..."
 msgid "Are you sure you want to delete \"%s\""
 msgstr ""
 
+#, fuzzy
 msgid "Delete Status"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "Saved Statuses"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 #. title
 msgid "Title"
@@ -1306,43 +1423,51 @@ msgstr ""
 #. user_settable
 #. not independent
 #. Attributes - each status can have a message.
+#, fuzzy
 msgid "Message"
-msgstr ""
+msgstr "መልእክት፦ (_M)"
 
 #. Use
+#, fuzzy
 msgid "Use"
-msgstr ""
+msgstr "ተጠቀም"
 
+#, fuzzy
 msgid "Invalid title"
-msgstr ""
+msgstr "ሰርቨር፦"
 
 msgid "Please enter a non-empty title for the status."
 msgstr ""
 
+#, fuzzy
 msgid "Duplicate title"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Please enter a different title for the status."
 msgstr ""
 
+#, fuzzy
 msgid "Substatus"
-msgstr ""
+msgstr "ሁኔታ፦"
 
 msgid "Status:"
 msgstr "ሁኔታ፦"
 
+#, fuzzy
 msgid "Message:"
-msgstr ""
+msgstr "መልእክት፦ (_M)"
 
+#, fuzzy
 msgid "Edit Status"
-msgstr ""
+msgstr "ሁኔታ፦"
 
 msgid "Use different status for following accounts"
 msgstr ""
 
 #. Save & Use
+#, fuzzy
 msgid "Save & Use"
-msgstr ""
+msgstr "አስቀምጥ እና ተጠቀም"
 
 msgid "Certificates"
 msgstr ""
@@ -1350,17 +1475,20 @@ msgstr ""
 msgid "Sounds"
 msgstr "ድምፆች"
 
+#, fuzzy
 msgid "Statuses"
-msgstr ""
+msgstr "ሁኔታ፦"
 
 msgid "Error loading the plugin."
 msgstr ""
 
+#, fuzzy
 msgid "Couldn't find X display"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "Couldn't find window"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "This plugin cannot be loaded because it was not built with X11 support."
 msgstr ""
@@ -1376,28 +1504,29 @@ msgid ""
 "X, if possible."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s just signed on"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s just signed off"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s sent you a message"
-msgstr ""
+msgstr "[መልዕክት የለም]"
 
 #, c-format
 msgid "%s said your nick in %s"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s sent a message in %s"
-msgstr ""
+msgstr "[መልዕክት የለም]"
 
+#, fuzzy
 msgid "Buddy signs on/off"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "You receive an IM"
 msgstr ""
@@ -1423,9 +1552,9 @@ msgstr ""
 msgid "Toaster plugin"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "<b>Conversation with %s on %s:</b><br>"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "History Plugin Requires Logging"
 msgstr ""
@@ -1437,8 +1566,9 @@ msgid ""
 "the same conversation type(s)."
 msgstr ""
 
+#, fuzzy
 msgid "GntHistory"
-msgstr ""
+msgstr "ታሪክ"
 
 msgid "Shows recently logged conversations in new conversations."
 msgstr ""
@@ -1467,8 +1597,9 @@ msgstr ""
 msgid "TinyURL (or other) address prefix"
 msgstr ""
 
+#, fuzzy
 msgid "TinyURL"
-msgstr ""
+msgstr "URL"
 
 msgid "TinyURL plugin"
 msgstr ""
@@ -1480,23 +1611,28 @@ msgid "Online"
 msgstr "ኦንላይን"
 
 #. primitive,						no,							id,			name
+#, fuzzy
 msgid "Offline"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "Online Buddies"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "Offline Buddies"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "Online/Offline"
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "Meebo"
 msgstr ""
 
+#, fuzzy
 msgid "No Grouping"
-msgstr ""
+msgstr "ድምፆች"
 
 msgid "Nested Subgroup"
 msgstr ""
@@ -1507,8 +1643,9 @@ msgstr ""
 msgid "Provides alternate buddylist grouping options."
 msgstr ""
 
+#, fuzzy
 msgid "Lastlog"
-msgstr ""
+msgstr "ዝምብለህ ይግባ"
 
 #. Translator Note: The "backlog" is the conversation buffer/history.
 msgid "lastlog: Searches for a substring in the backlog."
@@ -1520,28 +1657,35 @@ msgstr ""
 msgid "Lastlog plugin."
 msgstr ""
 
+#, fuzzy
 msgid "accounts"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
+#, fuzzy
 msgid "Password is required to sign on."
-msgstr ""
+msgstr "ሚስጢራዊ ቃል፦"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Enter password for %s (%s)"
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
+#, fuzzy
 msgid "Enter Password"
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
+#, fuzzy
 msgid "Save password"
-msgstr ""
+msgstr "አዲስ ሚስጢራዊ ቃል"
 
 #, c-format
 msgid "Missing protocol plugin for %s"
 msgstr ""
 
+#, fuzzy
 msgid "Connection Error"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "New passwords do not match."
 msgstr ""
@@ -1549,18 +1693,21 @@ msgstr ""
 msgid "Fill out all fields completely."
 msgstr ""
 
+#, fuzzy
 msgid "Original password"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
+#, fuzzy
 msgid "New password"
-msgstr ""
+msgstr "አዲስ ሚስጢራዊ ቃል"
 
+#, fuzzy
 msgid "New password (again)"
-msgstr ""
+msgstr "አዲስ ሚስጢራዊ ቃል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Change password for %s"
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
 msgid "Please enter your current password and your new password."
 msgstr ""
@@ -1581,6 +1728,7 @@ msgstr ""
 msgid "Unknown"
 msgstr "ያልታወቀ"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr ""
 
@@ -1671,8 +1819,9 @@ msgstr ""
 msgid "SSL Certificate Error"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to validate certificate"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid ""
@@ -1680,19 +1829,10 @@ msgid ""
 "are not connecting to the service you believe you are."
 msgstr ""
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr ""
-
-msgid "Unable to find Issuer Certificate"
-msgstr ""
-
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
-"\n"
-"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1700,38 +1840,39 @@ msgid ""
 "Expiration date: %s\n"
 msgstr ""
 
-msgid "(self-signed)"
-msgstr ""
-
-msgid "View Issuer Certificate"
-msgstr ""
+#. TODO: Find what the handle ought to be
+#, fuzzy
+msgid "Certificate Information"
+msgstr "የቢሮ መረጃ፦"
 
 #. show error to user
 msgid "Registration Error"
 msgstr ""
 
+#, fuzzy
 msgid "Unregistration Error"
-msgstr ""
+msgstr "የIRC ስህተት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "+++ %s signed on"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "+++ %s signed off"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 #. Undocumented
 #. Unknown error
 msgid "Unknown error"
 msgstr "ያልታወቀ ስህተት"
 
+#, fuzzy
 msgid "Unable to send message: The message is too large."
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send message to %s."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "The message is too large."
 msgstr ""
@@ -1739,11 +1880,13 @@ msgstr ""
 msgid "Unable to send message."
 msgstr ""
 
+#, fuzzy
 msgid "Send Message"
-msgstr ""
+msgstr "[መልዕክት የለም]"
 
+#, fuzzy
 msgid "_Send Message"
-msgstr ""
+msgstr "[መልዕክት የለም]"
 
 #, c-format
 msgid "%s entered the room."
@@ -1769,8 +1912,9 @@ msgstr ""
 msgid "%s left the room (%s)."
 msgstr ""
 
+#, fuzzy
 msgid "Invite to chat"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 #. Put our happy label in it.
 msgid ""
@@ -1778,39 +1922,42 @@ msgid ""
 "invite message."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Failed to get connection: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Failed to get name: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Failed to get serv name: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Purple's D-BUS server is not running for the reason listed below"
 msgstr ""
 
+#, fuzzy
 msgid "No name"
-msgstr ""
+msgstr "የአባት ስም፦"
 
+#, fuzzy
 msgid "Unable to create new resolver process\n"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Unable to send request to resolver process\n"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Error resolving %s:\n"
 "%s"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error resolving %s: %d"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 #, c-format
 msgid ""
@@ -1822,16 +1969,17 @@ msgstr ""
 msgid "Resolver process exited without answering our request"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error converting %s to punycode: %d"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 #, c-format
 msgid "Thread creation failure: %s"
 msgstr ""
 
+#, fuzzy
 msgid "Unknown reason"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
 msgid "Aborting DNS lookup in Tor Proxy mode."
 msgstr ""
@@ -1889,17 +2037,17 @@ msgid ""
 "Remote port: %d"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s is offering to send file %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "%s is not a valid filename.\n"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Offering to send %s to %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "Starting transfer of %s from %s"
@@ -1927,9 +2075,9 @@ msgstr ""
 msgid "%s cancelled the transfer of %s"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s cancelled the file transfer"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "File transfer to %s failed."
@@ -2112,8 +2260,9 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr ""
 
+#, fuzzy
 msgid "A non-recoverable Farstream error has occurred."
-msgstr ""
+msgstr "የውስጥ ብልሽት"
 
 msgid "Error with your microphone"
 msgstr ""
@@ -2121,12 +2270,13 @@ msgstr ""
 msgid "Error with your webcam"
 msgstr ""
 
+#, fuzzy
 msgid "Conference error"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error creating session: %s"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 #, c-format
 msgid "You are using %s, but this plugin requires %s."
@@ -2153,22 +2303,25 @@ msgid ""
 "again."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to load the plugin"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "The required plugin %s was unable to load."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to load your plugin."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "%s requires %s, but it failed to unload."
 msgstr ""
 
+#, fuzzy
 msgid "Autoaccept"
-msgstr ""
+msgstr "አውቶማቲክ"
 
 msgid "Auto-accept file transfer requests from selected users."
 msgstr ""
@@ -2190,8 +2343,9 @@ msgstr ""
 msgid "_Save"
 msgstr "አስቀምጥ (_S)"
 
+#, fuzzy
 msgid "_Cancel"
-msgstr ""
+msgstr "ተወው"
 
 msgid "Ask"
 msgstr ""
@@ -2202,8 +2356,9 @@ msgstr ""
 msgid "Auto Reject"
 msgstr ""
 
+#, fuzzy
 msgid "Autoaccept File Transfers..."
-msgstr ""
+msgstr "ምርጫዎች"
 
 #. XXX: Is there a better way than this? There really should be.
 msgid ""
@@ -2221,14 +2376,17 @@ msgid ""
 "(only when there's no conversation with the sender)"
 msgstr ""
 
+#, fuzzy
 msgid "Create a new directory for each user"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
+#, fuzzy
 msgid "Escape the filenames"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Notes"
-msgstr ""
+msgstr "ምንም"
 
 msgid "Enter your notes below..."
 msgstr ""
@@ -2244,8 +2402,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "Buddy Notes"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 #. *< name
 #. *< version
@@ -2294,8 +2453,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "File Control"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 #. *< name
 #. *< version
@@ -2304,8 +2464,9 @@ msgstr ""
 msgid "Allows control by entering commands in a file."
 msgstr ""
 
+#, fuzzy
 msgid "Minutes"
-msgstr ""
+msgstr "ደቂቃዎች።"
 
 #. This is a cultural reference.  Dy'er Mak'er is a song by Led Zeppelin.
 #. If that doesn't translate well into your language, drop the 's before translating.
@@ -2324,8 +2485,9 @@ msgstr ""
 msgid "Unset Account Idle Time"
 msgstr ""
 
+#, fuzzy
 msgid "_Unset"
-msgstr ""
+msgstr "ተጠቀም"
 
 msgid "Set Idle Time for All Accounts"
 msgstr ""
@@ -2363,8 +2525,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "IPC Test Server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. *< name
 #. *< version
@@ -2417,15 +2580,16 @@ msgstr ""
 msgid "(UTC)"
 msgstr ""
 
+#, fuzzy
 msgid "User is offline."
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "Auto-response sent:"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has signed off."
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 msgid "One or more messages may have been undeliverable."
 msgstr ""
@@ -2453,8 +2617,9 @@ msgstr ""
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
 #. choose to leave them alone.  Choose what's best for your language.
+#, fuzzy
 msgid "Fire"
-msgstr ""
+msgstr "ሴት"
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
@@ -2471,8 +2636,9 @@ msgstr ""
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
 #. choose to leave them alone.  Choose what's best for your language.
+#, fuzzy
 msgid "MSN Messenger"
-msgstr ""
+msgstr "መልእክት፦ (_M)"
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
@@ -2497,8 +2663,9 @@ msgid "Use name heuristics"
 msgstr ""
 
 #. Add Log Directory preferences.
+#, fuzzy
 msgid "Log Directory"
-msgstr ""
+msgstr "ሰርቨር፦"
 
 #. *< type
 #. *< ui_requirement
@@ -2506,8 +2673,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "Log Reader"
-msgstr ""
+msgstr "ሰርቨርን የለም"
 
 #. *< name
 #. *< version
@@ -2533,8 +2701,9 @@ msgstr ""
 msgid "Add new line in IMs"
 msgstr ""
 
+#, fuzzy
 msgid "Add new line in Chats"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 #. *< magic
 #. *< major version
@@ -2545,8 +2714,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "New Line"
-msgstr ""
+msgstr "አዲስ መስኮት"
 
 #. *< name
 #. *< version
@@ -2576,8 +2746,9 @@ msgid ""
 "a pounce and automatically send them when \"%s\" logs back in?"
 msgstr ""
 
+#, fuzzy
 msgid "Offline Message"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
 msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
 msgstr ""
@@ -2594,8 +2765,9 @@ msgstr ""
 msgid "Do not ask. Always save in pounce."
 msgstr ""
 
+#, fuzzy
 msgid "One Time Password"
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
 #. *< type
 #. *< ui_requirement
@@ -2657,8 +2829,9 @@ msgstr ""
 msgid "Display notification message in conversations"
 msgstr ""
 
+#, fuzzy
 msgid "Raise psychic conversations"
-msgstr ""
+msgstr "<አዲስ ተጠቃሚ>"
 
 #. *< type
 #. *< ui_requirement
@@ -2760,9 +2933,9 @@ msgstr ""
 msgid "%s is no longer idle."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has signed on."
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 msgid "Notify When"
 msgstr ""
@@ -2810,28 +2983,38 @@ msgid ""
 "im/BonjourWindows for more information."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to listen for incoming IM connections"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
 msgstr ""
 
+#, fuzzy
 msgid "First name"
-msgstr ""
+msgstr "ስም"
 
+#, fuzzy
 msgid "Last name"
-msgstr ""
+msgstr "የአባት ስም፦"
 
 #. email
+#, fuzzy
 msgid "Email"
-msgstr ""
+msgstr "ኢሜይል"
 
+#, fuzzy
 msgid "AIM Account"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
+#, fuzzy
 msgid "XMPP Account"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 #. *< type
 #. *< ui_requirement
@@ -2846,12 +3029,14 @@ msgstr ""
 msgid "Bonjour Protocol Plugin"
 msgstr ""
 
+#, fuzzy
 msgid "Purple Person"
-msgstr ""
+msgstr "<አዲስ ተጠቃሚ>"
 
 #. Creating the options for the protocol
+#, fuzzy
 msgid "Local Port"
-msgstr ""
+msgstr "አካባቢ"
 
 msgid "Bonjour"
 msgstr ""
@@ -2860,8 +3045,9 @@ msgstr ""
 msgid "%s has closed the conversation."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to send the message, the conversation couldn't be started."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Error communicating with local mDNSResponder."
 msgstr ""
@@ -2874,8 +3060,9 @@ msgid ""
 "invalid."
 msgstr ""
 
+#, fuzzy
 msgid "Save Buddylist..."
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "Your buddylist is empty, nothing was written to the file."
 msgstr ""
@@ -2896,11 +3083,13 @@ msgstr ""
 msgid "Buddylist loaded successfully!"
 msgstr ""
 
+#, fuzzy
 msgid "Save buddylist..."
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
+#, fuzzy
 msgid "Load buddylist from file..."
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "City"
 msgstr "ከተማ"
@@ -2922,8 +3111,9 @@ msgstr "ወንድ"
 msgid "Female"
 msgstr "ሴት"
 
+#, fuzzy
 msgid "Only online"
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "Find buddies"
 msgstr ""
@@ -2931,17 +3121,20 @@ msgstr ""
 msgid "Please, enter your search criteria below"
 msgstr ""
 
+#, fuzzy
 msgid "Show status to:"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 msgid "All people"
 msgstr ""
 
+#, fuzzy
 msgid "Only buddies"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "Change status broadcasting"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 msgid "Please, select who can see your status"
 msgstr ""
@@ -2950,8 +3143,9 @@ msgstr ""
 msgid "Select a chat for buddy: %s"
 msgstr ""
 
+#, fuzzy
 msgid "Add to chat..."
-msgstr ""
+msgstr "ውሪ"
 
 #. 0
 #. Global
@@ -2981,11 +3175,13 @@ msgstr "UIN"
 msgid "First Name"
 msgstr "ስም፦"
 
+#, fuzzy
 msgid "Birth Year"
-msgstr ""
+msgstr "የልደት በዓል"
 
+#, fuzzy
 msgid "Unable to display the search results."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Gadu-Gadu Public Directory"
 msgstr ""
@@ -2999,47 +3195,56 @@ msgstr ""
 msgid "There are no users matching your search criteria."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to read from socket"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
+#, fuzzy
 msgid "Connected"
-msgstr ""
+msgstr "አገናኝ"
 
+#, fuzzy
 msgid "Connection failed"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "Add to chat"
-msgstr ""
+msgstr "ውሪ"
 
+#, fuzzy
 msgid "Chat _name:"
-msgstr ""
+msgstr "የአባት ስም፦"
+
+#, fuzzy, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr "ተገናኝቷል"
 
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr ""
 
-#, c-format
-msgid "Unable to resolve hostname: %s"
-msgstr ""
-
+#, fuzzy
 msgid "Chat error"
-msgstr ""
+msgstr "የIRC ስህተት"
 
 msgid "This chat name is already in use"
 msgstr ""
 
+#, fuzzy
 msgid "Not connected to the server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Find buddies..."
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
+#, fuzzy
 msgid "Save buddylist to file..."
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 #. magic
 #. major_version
@@ -3059,24 +3264,28 @@ msgstr ""
 msgid "Polish popular IM"
 msgstr ""
 
+#, fuzzy
 msgid "Gadu-Gadu User"
-msgstr ""
+msgstr "የጌም ተጠቃሚ"
 
+#, fuzzy
 msgid "GG server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Don't use encryption"
 msgstr ""
 
+#, fuzzy
 msgid "Use encryption if available"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 #. TODO
 msgid "Require encryption"
 msgstr ""
 
+#, fuzzy
 msgid "Connection security"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "Unknown command: %s"
@@ -3089,11 +3298,13 @@ msgstr ""
 msgid "No topic is set"
 msgstr ""
 
+#, fuzzy
 msgid "File Transfer Failed"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
+#, fuzzy
 msgid "Unable to open a listening port."
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "Error displaying MOTD"
 msgstr ""
@@ -3114,18 +3325,20 @@ msgstr ""
 #. * PurpleHTTPConnection reports it is fully sent.
 #.
 #. TODO: do we really want to disconnect on a failure to write?
-#, c-format
+#, fuzzy, c-format
 msgid "Lost connection with server: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "View MOTD"
 msgstr ""
 
+#, fuzzy
 msgid "_Channel:"
-msgstr ""
+msgstr "ጣቢያ፦"
 
+#, fuzzy
 msgid "_Password:"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል (_P)"
 
 msgid "IRC nick and server may not contain whitespace"
 msgstr ""
@@ -3137,18 +3350,21 @@ msgid "Unable to connect"
 msgstr ""
 
 #. this is a regular connect, error out
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to connect: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Server closed the connection"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Users"
-msgstr ""
+msgstr "ተጠቃሚ (_U)"
 
+#, fuzzy
 msgid "Topic"
-msgstr ""
+msgstr "ጉዳዩ፦"
 
 #. *< type
 #. *< ui_requirement
@@ -3166,24 +3382,28 @@ msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr ""
 
 #. set up account ID as user:server
+#, fuzzy
 msgid "Server"
-msgstr ""
+msgstr "ሰርቨር፦"
 
 #. port to connect to
 msgid "Port"
 msgstr "ፖርት"
 
+#, fuzzy
 msgid "Encodings"
-msgstr ""
+msgstr "የሆሄያት ኮድ፦"
 
 msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
+#, fuzzy
 msgid "Ident name"
-msgstr ""
+msgstr "እስክሪን ስም፦ (_S)"
 
+#, fuzzy
 msgid "Real name"
-msgstr ""
+msgstr "እንደገና ሰይም (_R)"
 
 #.
 #. option = purple_account_option_string_new(_("Quit message"), "quitmsg", IRC_DEFAULT_QUIT);
@@ -3205,9 +3425,9 @@ msgstr ""
 msgid "Ban on %s by %s, set %s ago"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Ban on %s"
-msgstr ""
+msgstr "ሁኔታ፦ %s"
 
 msgid "End of ban list"
 msgstr ""
@@ -3232,11 +3452,13 @@ msgstr ""
 msgid "Nick"
 msgstr "ቅጽል"
 
+#, fuzzy
 msgid "Login name"
-msgstr ""
+msgstr "የአባት ስም፦"
 
+#, fuzzy
 msgid "Host name"
-msgstr ""
+msgstr "የአባት ስም፦"
 
 msgid "Currently on"
 msgstr ""
@@ -3244,11 +3466,13 @@ msgstr ""
 msgid "Idle for"
 msgstr ""
 
+#, fuzzy
 msgid "Online since"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "<b>Defining adjective:</b>"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
 msgid "Glorious"
 msgstr ""
@@ -3273,8 +3497,9 @@ msgstr ""
 msgid "Unknown message '%s'"
 msgstr ""
 
+#, fuzzy
 msgid "Unknown message"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
 msgid "The IRC server received a message it did not understand."
 msgstr ""
@@ -3283,8 +3508,9 @@ msgstr ""
 msgid "Users on %s: %s"
 msgstr ""
 
+#, fuzzy
 msgid "Time Response"
-msgstr ""
+msgstr "አርእስት"
 
 msgid "The IRC server's local time is:"
 msgstr ""
@@ -3325,8 +3551,9 @@ msgstr ""
 msgid "mode (%s %s) by %s"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid nickname"
-msgstr ""
+msgstr "እስክሪን ስም"
 
 msgid ""
 "Your selected nickname was rejected by the server.  It probably contains "
@@ -3345,8 +3572,9 @@ msgstr ""
 msgid "The nickname \"%s\" is already being used."
 msgstr ""
 
+#, fuzzy
 msgid "Nickname in use"
-msgstr ""
+msgstr "ቅጽል ስም"
 
 msgid "Cannot change nick"
 msgstr ""
@@ -3379,29 +3607,32 @@ msgstr ""
 msgid "Wallops from %s"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Failed to initialize SASL authentication: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "SASL authentication failed: No worthy authentication mechanisms found."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "SASL authentication failed: %s"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid ""
 "SASL authentication failed: Server does not support SASL authentication."
 msgstr ""
 
+#, fuzzy
 msgid "SASL authentication failed: Initializing SASL failed."
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "Incorrect Password"
-msgstr ""
+msgstr "አዲስ ሚስጢራዊ ቃል"
 
+#, fuzzy
 msgid "SASL authentication failed: No worthy mechanisms found"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr ""
@@ -3564,14 +3795,17 @@ msgstr ""
 msgid "Disconnected."
 msgstr ""
 
+#, fuzzy
 msgid "Unknown Error"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
+#, fuzzy
 msgid "Ad-Hoc Command Failed"
-msgstr ""
+msgstr "ትእዛዝ"
 
+#, fuzzy
 msgid "execute"
-msgstr ""
+msgstr "አጥፉ"
 
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
@@ -3580,8 +3814,9 @@ msgstr ""
 #. * in the "additional data with success" case.
 #. * Seen with Wildfire 3.0.1.
 #.
+#, fuzzy
 msgid "Invalid response from server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Server does not use any supported authentication method"
 msgstr ""
@@ -3613,15 +3848,17 @@ msgid ""
 "Allow this and continue authentication?"
 msgstr ""
 
+#, fuzzy
 msgid "SASL authentication failed"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "SASL error: %s"
-msgstr ""
+msgstr "የIRC ስህተት"
 
+#, fuzzy
 msgid "Invalid Encoding"
-msgstr ""
+msgstr "ሰርቨር፦"
 
 msgid "Unsupported Extension"
 msgstr ""
@@ -3636,32 +3873,40 @@ msgid ""
 "it.  This indicates a likely MITM attack"
 msgstr ""
 
+#, fuzzy
 msgid "Server does not support channel binding"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 msgid "Unsupported channel binding method"
 msgstr ""
 
+#, fuzzy
 msgid "User not found"
-msgstr ""
+msgstr "ተጠቃሚ መርጫዎች"
 
+#, fuzzy
 msgid "Invalid Username Encoding"
-msgstr ""
+msgstr "እስክሪን ስም"
 
+#, fuzzy
 msgid "Resource Constraint"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "Unable to canonicalize username"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Unable to canonicalize password"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "Malicious challenge from server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Unexpected response from server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr ""
@@ -3672,15 +3917,17 @@ msgstr ""
 msgid "Unsupported version of BOSH protocol"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to establish a connection with the server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to establish a connection with the server: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Unable to establish SSL connection"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Full Name"
 msgstr "ሙሉ ስም"
@@ -3728,8 +3975,9 @@ msgstr ""
 msgid "Organization Unit"
 msgstr ""
 
+#, fuzzy
 msgid "Job Title"
-msgstr ""
+msgstr "አርእስት"
 
 msgid "Role"
 msgstr ""
@@ -3750,26 +3998,34 @@ msgid ""
 "comfortable."
 msgstr ""
 
+#, fuzzy
 msgid "Client"
-msgstr ""
+msgstr "ከተማ"
 
 msgid "Operating System"
 msgstr ""
 
+#, fuzzy
 msgid "Local Time"
-msgstr ""
+msgstr "አካባቢ"
 
+#, fuzzy
 msgid "Priority"
-msgstr ""
+msgstr "ፖርት"
 
+#, fuzzy
 msgid "Resource"
-msgstr ""
+msgstr "ቀጥል (_R)"
 
+#, fuzzy
 msgid "Uptime"
-msgstr ""
+msgstr "የአባት ስም"
 
+#, fuzzy
 msgid "Logged Off"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 #, c-format
 msgid "%s ago"
@@ -3778,17 +4034,20 @@ msgstr ""
 msgid "Middle Name"
 msgstr ""
 
+#, fuzzy
 msgid "Address"
-msgstr ""
+msgstr "አድራሻ፦"
 
 msgid "P.O. Box"
 msgstr ""
 
+#, fuzzy
 msgid "Photo"
-msgstr ""
+msgstr "ፖርት"
 
+#, fuzzy
 msgid "Logo"
-msgstr ""
+msgstr "ዝምብለህ ይግባ"
 
 #, c-format
 msgid ""
@@ -3813,14 +4072,17 @@ msgstr ""
 msgid "Unsubscribe"
 msgstr ""
 
+#, fuzzy
 msgid "Initiate _Chat"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Log In"
-msgstr ""
+msgstr "ዝምብለህ ይግባ"
 
+#, fuzzy
 msgid "Log Out"
-msgstr ""
+msgstr "የዝምብለህ ይግባ መርጫዎች"
 
 msgid "JID"
 msgstr ""
@@ -3838,48 +4100,55 @@ msgid ""
 "Each field supports wild card searches (%)"
 msgstr ""
 
+#, fuzzy
 msgid "Directory Query Failed"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "Could not query the directory server."
 msgstr ""
 
 #. Try to translate the message (see static message
 #. list in jabber_user_dir_comments[])
-#, c-format
+#, fuzzy, c-format
 msgid "Server Instructions: %s"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 
+#, fuzzy
 msgid "Email Address"
-msgstr ""
+msgstr "ኢሜያል አድራሻ"
 
+#, fuzzy
 msgid "Search for XMPP users"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 #. "Search"
 msgid "Search"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid Directory"
-msgstr ""
+msgstr "ሰርቨር፦"
 
 msgid "Enter a User Directory"
 msgstr ""
 
+#, fuzzy
 msgid "Select a user directory to search"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 msgid "Search Directory"
 msgstr ""
 
+#, fuzzy
 msgid "_Room:"
-msgstr ""
+msgstr "ቤት፦"
 
+#, fuzzy
 msgid "_Server:"
-msgstr ""
+msgstr "ሰርቨር፦"
 
 msgid "_Handle:"
 msgstr ""
@@ -3895,8 +4164,9 @@ msgstr ""
 msgid "%s is not a valid server name"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid Server Name"
-msgstr ""
+msgstr "የውስጥ ብልሽት"
 
 #, c-format
 msgid "%s is not a valid room handle"
@@ -3905,20 +4175,23 @@ msgstr ""
 msgid "Invalid Room Handle"
 msgstr ""
 
+#, fuzzy
 msgid "Configuration error"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Unable to configure"
 msgstr ""
 
+#, fuzzy
 msgid "Room Configuration Error"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "This room is not capable of being configured"
 msgstr ""
 
+#, fuzzy
 msgid "Registration error"
-msgstr ""
+msgstr "የIRC ስህተት"
 
 msgid "Nick changing not supported in non-MUC chatrooms"
 msgstr ""
@@ -3926,23 +4199,28 @@ msgstr ""
 msgid "Error retrieving room list"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid Server"
-msgstr ""
+msgstr "ሰርቨር፦"
 
+#, fuzzy
 msgid "Enter a Conference Server"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Select a conference server to query"
 msgstr ""
 
+#, fuzzy
 msgid "Find Rooms"
-msgstr ""
+msgstr "የውሪ ቤቶች"
 
+#, fuzzy
 msgid "Affiliations:"
-msgstr ""
+msgstr "አካባቢ"
 
+#, fuzzy
 msgid "No users found"
-msgstr ""
+msgstr "ድምፆች"
 
 msgid "Roles:"
 msgstr ""
@@ -3953,8 +4231,9 @@ msgstr ""
 msgid "You require encryption, but no TLS/SSL support was found."
 msgstr ""
 
+#, fuzzy
 msgid "Ping timed out"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "Invalid XMPP ID"
 msgstr ""
@@ -3965,8 +4244,9 @@ msgstr ""
 msgid "Invalid XMPP ID. Domain must be set."
 msgstr ""
 
+#, fuzzy
 msgid "Malformed BOSH URL"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -3986,11 +4266,13 @@ msgstr ""
 msgid "Registration from %s successfully removed"
 msgstr ""
 
+#, fuzzy
 msgid "Unregistration Successful"
-msgstr ""
+msgstr "የIRC ስህተት"
 
+#, fuzzy
 msgid "Unregistration Failed"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "State"
 msgstr "ሁኔታ"
@@ -3998,8 +4280,9 @@ msgstr "ሁኔታ"
 msgid "Postal code"
 msgstr ""
 
+#, fuzzy
 msgid "Phone"
-msgstr ""
+msgstr "ምንም"
 
 msgid "Date"
 msgstr "ቀን"
@@ -4007,8 +4290,9 @@ msgstr "ቀን"
 msgid "Already Registered"
 msgstr ""
 
+#, fuzzy
 msgid "Password"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል፦"
 
 msgid "Unregister"
 msgstr ""
@@ -4034,8 +4318,9 @@ msgstr ""
 msgid "Register New Account at %s"
 msgstr ""
 
+#, fuzzy
 msgid "Change Registration"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 msgid "Error unregistering account"
 msgstr ""
@@ -4067,8 +4352,9 @@ msgstr ""
 msgid "Now Listening"
 msgstr ""
 
+#, fuzzy
 msgid "Both"
-msgstr ""
+msgstr "ወደ ታች"
 
 msgid "From (To pending)"
 msgstr ""
@@ -4076,8 +4362,9 @@ msgstr ""
 msgid "From"
 msgstr ""
 
+#, fuzzy
 msgid "To"
-msgstr ""
+msgstr "ወደ ላይ"
 
 msgid "None (To pending)"
 msgstr ""
@@ -4086,20 +4373,24 @@ msgid "None"
 msgstr "ምንም"
 
 #. subscription type
+#, fuzzy
 msgid "Subscription"
-msgstr ""
+msgstr "መግለጫ"
 
+#, fuzzy
 msgid "Mood Text"
-msgstr ""
+msgstr "ጽሑፍ"
 
 msgid "Allow Buzz"
 msgstr ""
 
+#, fuzzy
 msgid "Mood Name"
-msgstr ""
+msgstr "ጽሑፍ"
 
+#, fuzzy
 msgid "Mood Comment"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 #. primitive
 #. ID
@@ -4110,8 +4401,9 @@ msgstr ""
 msgid "Tune Artist"
 msgstr ""
 
+#, fuzzy
 msgid "Tune Title"
-msgstr ""
+msgstr "አርእስት"
 
 msgid "Tune Album"
 msgstr ""
@@ -4119,14 +4411,16 @@ msgstr ""
 msgid "Tune Genre"
 msgstr ""
 
+#, fuzzy
 msgid "Tune Comment"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Tune Track"
 msgstr ""
 
+#, fuzzy
 msgid "Tune Time"
-msgstr ""
+msgstr "አርእስት"
 
 msgid "Tune Year"
 msgstr ""
@@ -4134,20 +4428,24 @@ msgstr ""
 msgid "Tune URL"
 msgstr ""
 
+#, fuzzy
 msgid "Password Changed"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል፦"
 
 msgid "Your password has been changed."
 msgstr ""
 
+#, fuzzy
 msgid "Error changing password"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
+#, fuzzy
 msgid "Password (again)"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል፦"
 
+#, fuzzy
 msgid "Change XMPP Password"
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
 msgid "Please enter your new password"
 msgstr ""
@@ -4156,30 +4454,36 @@ msgid "Set User Info..."
 msgstr ""
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
+#, fuzzy
 msgid "Change Password..."
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
 #. }
+#, fuzzy
 msgid "Search for Users..."
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 msgid "Bad Request"
 msgstr ""
 
+#, fuzzy
 msgid "Conflict"
-msgstr ""
+msgstr "አገናኝ"
 
 msgid "Feature Not Implemented"
 msgstr ""
 
+#, fuzzy
 msgid "Forbidden"
-msgstr ""
+msgstr "የተደበቀ"
 
+#, fuzzy
 msgid "Gone"
-msgstr ""
+msgstr "ምንም"
 
+#, fuzzy
 msgid "Internal Server Error"
-msgstr ""
+msgstr "የውስጥ ብልሽት"
 
 msgid "Item Not Found"
 msgstr ""
@@ -4247,8 +4551,9 @@ msgstr ""
 msgid "Bad Namespace Prefix"
 msgstr ""
 
+#, fuzzy
 msgid "Resource Conflict"
-msgstr ""
+msgstr "ቀጥል (_R)"
 
 msgid "Connection Timeout"
 msgstr ""
@@ -4256,11 +4561,13 @@ msgstr ""
 msgid "Host Gone"
 msgstr ""
 
+#, fuzzy
 msgid "Host Unknown"
-msgstr ""
+msgstr "ያልታወቀ"
 
+#, fuzzy
 msgid "Improper Addressing"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 msgid "Invalid ID"
 msgstr ""
@@ -4277,8 +4584,9 @@ msgstr ""
 msgid "Policy Violation"
 msgstr ""
 
+#, fuzzy
 msgid "Remote Connection Failed"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "Restricted XML"
 msgstr ""
@@ -4304,36 +4612,37 @@ msgstr ""
 msgid "XML Not Well Formed"
 msgstr ""
 
+#, fuzzy
 msgid "Stream Error"
-msgstr ""
+msgstr "የውስጥ ብልሽት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to ban user %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "Unknown affiliation: \"%s\""
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to affiliate user %s as \"%s\""
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unknown role: \"%s\""
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to set role \"%s\" for user: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to kick user %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to ping user %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "Unable to buzz, because there is nothing known about %s."
@@ -4362,24 +4671,25 @@ msgstr ""
 msgid "Buzzing %s..."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to initiate media with %s: invalid JID"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to initiate media with %s: user is not online"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to initiate media with %s: resource is not online"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
 msgstr ""
 
+#, fuzzy
 msgid "Media Initiation Failed"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 #, c-format
 msgid ""
@@ -4387,20 +4697,24 @@ msgid ""
 "session."
 msgstr ""
 
+#, fuzzy
 msgid "Select a Resource"
-msgstr ""
+msgstr "ቀጥል (_R)"
 
+#, fuzzy
 msgid "Initiate Media"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Account does not support PEP, can't set mood"
 msgstr ""
 
+#, fuzzy
 msgid "config:  Configure a chat room."
-msgstr ""
+msgstr "የውሪ ቤትን አገጣጥም"
 
+#, fuzzy
 msgid "configure:  Configure a chat room."
-msgstr ""
+msgstr "የውሪ ቤትን አገጣጥም"
 
 msgid "part [message]:  Leave the room."
 msgstr ""
@@ -4443,8 +4757,9 @@ msgstr ""
 msgid "buzz: Buzz a user to get their attention"
 msgstr ""
 
+#, fuzzy
 msgid "mood: Set current user mood"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 msgid "Extended Away"
 msgstr ""
@@ -4463,8 +4778,9 @@ msgid "XMPP Protocol Plugin"
 msgstr ""
 
 #. Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im
+#, fuzzy
 msgid "Domain"
-msgstr ""
+msgstr "ትእዛዝ"
 
 msgid "Use old-style SSL"
 msgstr ""
@@ -4472,17 +4788,20 @@ msgstr ""
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr ""
 
+#, fuzzy
 msgid "Connect port"
-msgstr ""
+msgstr "አገናኝ"
 
 #. TODO: default to automatically try different ports. Make the user be
 #. * able to set the first port to try (like LastConnectedPort in Windows client).
 #. Account options
+#, fuzzy
 msgid "Connect server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "File transfer proxies"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
 msgid "BOSH URL"
 msgstr ""
@@ -4512,15 +4831,17 @@ msgstr ""
 msgid "Message delivery to %s failed: %s"
 msgstr ""
 
+#, fuzzy
 msgid "XMPP Message Error"
-msgstr ""
+msgstr "የJabber ስህተት %s"
 
 #, c-format
 msgid "(Code %s)"
 msgstr ""
 
+#, fuzzy
 msgid "A custom smiley in the message is too large to send."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "XMPP stream header missing"
 msgstr ""
@@ -4542,8 +4863,9 @@ msgstr ""
 msgid "Error in chat %s"
 msgstr ""
 
+#, fuzzy
 msgid "Create New Room"
-msgstr ""
+msgstr "የውሪ ቤቶች"
 
 msgid ""
 "You are creating a new room.  Would you like to configure it, or accept the "
@@ -4553,19 +4875,23 @@ msgstr ""
 msgid "_Configure Room"
 msgstr ""
 
+#, fuzzy
 msgid "_Accept Defaults"
-msgstr ""
+msgstr "አጥፉ"
 
+#, fuzzy
 msgid "No reason"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
 #, c-format
 msgid "You have been kicked: (%s)"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Kicked (%s)"
 msgstr ""
+"%s\n"
+"%s፦ %s"
 
 msgid "Unknown Error in presence"
 msgstr ""
@@ -4575,16 +4901,17 @@ msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
 
 #. not success
+#, fuzzy
 msgid "File Send Failed"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send file to %s, invalid JID"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send file to %s, user is not online"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "Unable to send file to %s, not subscribed to user presence"
@@ -4594,8 +4921,9 @@ msgstr ""
 msgid "Please select the resource of %s to which you would like to send a file"
 msgstr ""
 
+#, fuzzy
 msgid "Afraid"
-msgstr ""
+msgstr "አውቶማቲክ"
 
 msgid "Amazed"
 msgstr ""
@@ -4618,62 +4946,78 @@ msgstr ""
 msgid "Ashamed"
 msgstr ""
 
+#, fuzzy
 msgid "Bored"
-msgstr ""
+msgstr "ደማቅ"
 
+#, fuzzy
 msgid "Brave"
-msgstr ""
+msgstr "አስቀምጥ"
 
+#, fuzzy
 msgid "Calm"
-msgstr ""
+msgstr "እንደገና ሰይም (_R)"
 
 msgid "Cautious"
 msgstr ""
 
+#, fuzzy
 msgid "Cold"
-msgstr ""
+msgstr "ደማቅ"
 
+#, fuzzy
 msgid "Confident"
-msgstr ""
+msgstr "አገናኝ"
 
+#, fuzzy
 msgid "Confused"
-msgstr ""
+msgstr "አገናኝ"
 
+#, fuzzy
 msgid "Contemplative"
-msgstr ""
+msgstr "መረጃ አግኝ"
 
+#, fuzzy
 msgid "Contented"
-msgstr ""
+msgstr "አገናኝ"
 
+#, fuzzy
 msgid "Cranky"
-msgstr ""
+msgstr "ትእዛዝ"
 
 msgid "Crazy"
 msgstr ""
 
+#, fuzzy
 msgid "Creative"
-msgstr ""
+msgstr "ቀን"
 
+#, fuzzy
 msgid "Curious"
-msgstr ""
+msgstr "መክፈቻዎች"
 
+#, fuzzy
 msgid "Dejected"
-msgstr ""
+msgstr "እንደነበረ አድረግ"
 
+#, fuzzy
 msgid "Depressed"
-msgstr ""
+msgstr "አጥፉ"
 
+#, fuzzy
 msgid "Disappointed"
-msgstr ""
+msgstr "ትእዛዝ"
 
 msgid "Disgusted"
 msgstr ""
 
+#, fuzzy
 msgid "Dismayed"
-msgstr ""
+msgstr "ትእዛዝ"
 
+#, fuzzy
 msgid "Distracted"
-msgstr ""
+msgstr "ትእዛዝ"
 
 msgid "Embarrassed"
 msgstr ""
@@ -4681,35 +5025,42 @@ msgstr ""
 msgid "Envious"
 msgstr ""
 
+#, fuzzy
 msgid "Excited"
-msgstr ""
+msgstr "ውጣ"
 
 msgid "Flirtatious"
 msgstr ""
 
+#, fuzzy
 msgid "Frustrated"
-msgstr ""
+msgstr "ስም"
 
 msgid "Grateful"
 msgstr ""
 
+#, fuzzy
 msgid "Grieving"
-msgstr ""
+msgstr "መድረክ፦ (_G)"
 
+#, fuzzy
 msgid "Grumpy"
-msgstr ""
+msgstr "መድረክ፦ (_G)"
 
+#, fuzzy
 msgid "Guilty"
-msgstr ""
+msgstr "ከተማ"
 
+#, fuzzy
 msgid "Happy"
-msgstr ""
+msgstr "ተጠቀም (_Y)"
 
 msgid "Hopeful"
 msgstr ""
 
+#, fuzzy
 msgid "Hot"
-msgstr ""
+msgstr "እንግዳ ተቀባይ (_H)"
 
 msgid "Humbled"
 msgstr ""
@@ -4717,8 +5068,9 @@ msgstr ""
 msgid "Humiliated"
 msgstr ""
 
+#, fuzzy
 msgid "Hungry"
-msgstr ""
+msgstr "አገር"
 
 msgid "Hurt"
 msgstr ""
@@ -4726,20 +5078,24 @@ msgstr ""
 msgid "Impressed"
 msgstr ""
 
+#, fuzzy
 msgid "In awe"
-msgstr ""
+msgstr "ተዉት"
 
+#, fuzzy
 msgid "In love"
-msgstr ""
+msgstr "ተዉት"
 
 msgid "Indignant"
 msgstr ""
 
+#, fuzzy
 msgid "Interested"
-msgstr ""
+msgstr "አስገባ"
 
+#, fuzzy
 msgid "Intoxicated"
-msgstr ""
+msgstr "አስገባ"
 
 msgid "Invincible"
 msgstr ""
@@ -4747,11 +5103,13 @@ msgstr ""
 msgid "Jealous"
 msgstr ""
 
+#, fuzzy
 msgid "Lonely"
-msgstr ""
+msgstr "ምንም"
 
+#, fuzzy
 msgid "Lost"
-msgstr ""
+msgstr "ድምፆች"
 
 msgid "Lucky"
 msgstr ""
@@ -4759,38 +5117,47 @@ msgstr ""
 msgid "Mean"
 msgstr ""
 
+#, fuzzy
 msgid "Moody"
-msgstr ""
+msgstr "ለውጡ (_M)"
 
 msgid "Nervous"
 msgstr ""
 
+#, fuzzy
 msgid "Neutral"
-msgstr ""
+msgstr "ዝርዝሮች"
 
+#, fuzzy
 msgid "Offended"
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "Outraged"
 msgstr ""
 
+#, fuzzy
 msgid "Playful"
-msgstr ""
+msgstr "አጫውት"
 
+#, fuzzy
 msgid "Proud"
-msgstr ""
+msgstr "ጫን"
 
+#, fuzzy
 msgid "Relaxed"
-msgstr ""
+msgstr "እንደገና ሰይም (_R)"
 
+#, fuzzy
 msgid "Relieved"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
+#, fuzzy
 msgid "Remorseful"
-msgstr ""
+msgstr "አስወግድ"
 
+#, fuzzy
 msgid "Restless"
-msgstr ""
+msgstr "እንደነበረ አድረግ"
 
 msgid "Sad"
 msgstr ""
@@ -4801,17 +5168,20 @@ msgstr ""
 msgid "Satisfied"
 msgstr ""
 
+#, fuzzy
 msgid "Serious"
-msgstr ""
+msgstr "ድምፆች"
 
+#, fuzzy
 msgid "Shocked"
-msgstr ""
+msgstr "ደማቅ"
 
 msgid "Shy"
 msgstr ""
 
+#, fuzzy
 msgid "Sick"
-msgstr ""
+msgstr "ቅጽል"
 
 #. Sleepy / Tired
 msgid "Sleepy"
@@ -4820,11 +5190,13 @@ msgstr ""
 msgid "Spontaneous"
 msgstr ""
 
+#, fuzzy
 msgid "Stressed"
-msgstr ""
+msgstr "ፍጥነት፦"
 
+#, fuzzy
 msgid "Strong"
-msgstr ""
+msgstr "ፖርት፦"
 
 msgid "Surprised"
 msgstr ""
@@ -4835,20 +5207,25 @@ msgstr ""
 msgid "Thirsty"
 msgstr ""
 
+#, fuzzy
 msgid "Tired"
-msgstr ""
+msgstr "ሴት"
 
+#, fuzzy
 msgid "Undefined"
-msgstr ""
+msgstr "የስር መስመር"
 
+#, fuzzy
 msgid "Weak"
-msgstr ""
+msgstr "ወደኋላ"
 
+#, fuzzy
 msgid "Worried"
-msgstr ""
+msgstr "ደማቅ"
 
+#, fuzzy
 msgid "Set User Nickname"
-msgstr ""
+msgstr "ቅጽል ስም"
 
 msgid "Please specify a new nickname for you."
 msgstr ""
@@ -4861,21 +5238,24 @@ msgstr ""
 msgid "Set"
 msgstr "አድርግ"
 
+#, fuzzy
 msgid "Set Nickname..."
-msgstr ""
+msgstr "ቅጽል ስም"
 
+#, fuzzy
 msgid "Actions"
-msgstr ""
+msgstr "አካባቢ"
 
+#, fuzzy
 msgid "Select an action"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 #. only notify the user about problems adding to the friends list
 #. * maybe we should do something else for other lists, but it probably
 #. * won't cause too many problems if we just ignore it
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to add \"%s\"."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Buddy Add error"
 msgstr ""
@@ -4889,8 +5269,9 @@ msgstr ""
 msgid "Syntax Error (probably a client bug)"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid email address"
-msgstr ""
+msgstr "ኢሜያል አድራሻ"
 
 msgid "User does not exist"
 msgstr ""
@@ -4901,11 +5282,13 @@ msgstr ""
 msgid "Already logged in"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid username"
-msgstr ""
+msgstr "እስክሪን ስም"
 
+#, fuzzy
 msgid "Invalid friendly name"
-msgstr ""
+msgstr "የውስጥ ብልሽት"
 
 msgid "List full"
 msgstr ""
@@ -4925,8 +5308,9 @@ msgstr ""
 msgid "Already in opposite list"
 msgstr ""
 
+#, fuzzy
 msgid "Too many groups"
-msgstr ""
+msgstr "በመድረክ"
 
 msgid "Invalid group"
 msgstr ""
@@ -4946,8 +5330,9 @@ msgstr ""
 msgid "Switchboard failed"
 msgstr ""
 
+#, fuzzy
 msgid "Notify transfer failed"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
 msgid "Required fields missing"
 msgstr ""
@@ -4964,8 +5349,9 @@ msgstr ""
 msgid "Database server error"
 msgstr ""
 
+#, fuzzy
 msgid "Command disabled"
-msgstr ""
+msgstr "ትእዛዝ"
 
 msgid "File operation error"
 msgstr ""
@@ -5045,13 +5431,13 @@ msgstr ""
 msgid "Bad ticket"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unknown Error Code %d"
-msgstr ""
+msgstr "ያልታወቀ የስህተት ኮድ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "MSN Error: %s\n"
-msgstr ""
+msgstr "ስህተት %s፦ %s"
 
 #, c-format
 msgid "Buddy list synchronization issue in %s (%s)"
@@ -5069,11 +5455,13 @@ msgid ""
 "to be added?"
 msgstr ""
 
+#, fuzzy
 msgid "Other Contacts"
-msgstr ""
+msgstr "አስወግድ"
 
+#, fuzzy
 msgid "Non-IM Contacts"
-msgstr ""
+msgstr "አስወግድ"
 
 #, c-format
 msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
@@ -5098,38 +5486,42 @@ msgstr ""
 msgid "Nudge"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has nudged you!"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 #, c-format
 msgid "Nudging %s..."
 msgstr ""
 
+#, fuzzy
 msgid "Email Address..."
-msgstr ""
+msgstr "ኢሜያል አድራሻ"
 
 msgid "Your new MSN friendly name is too long."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Set friendly name for %s."
-msgstr ""
+msgstr "እስክሪን ስም"
 
+#, fuzzy
 msgid "Set Friendly Name"
-msgstr ""
+msgstr "እስክሪን ስም"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr ""
 
+#, fuzzy
 msgid "This Location"
-msgstr ""
+msgstr "አካባቢ"
 
 msgid "This is the name that identifies this location"
 msgstr ""
 
+#, fuzzy
 msgid "Other Locations"
-msgstr ""
+msgstr "አካባቢ"
 
 msgid "You can sign out from other locations here"
 msgstr ""
@@ -5174,9 +5566,9 @@ msgid ""
 "Mobile pages to your cell phone or other mobile device?"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Blocked Text for %s"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "No text is blocked for this account."
 msgstr ""
@@ -5192,26 +5584,31 @@ msgstr ""
 msgid "Send a mobile message."
 msgstr ""
 
+#, fuzzy
 msgid "Page"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
 msgid "Playing a game"
 msgstr ""
 
+#, fuzzy
 msgid "Working"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
 msgid "Has you"
 msgstr ""
 
+#, fuzzy
 msgid "Home Phone Number"
-msgstr ""
+msgstr "የሞቢል ስልክ፦"
 
+#, fuzzy
 msgid "Work Phone Number"
-msgstr ""
+msgstr "የሞቢል ስልክ፦"
 
+#, fuzzy
 msgid "Mobile Phone Number"
-msgstr ""
+msgstr "የሞቢል ስልክ፦"
 
 msgid "Be Right Back"
 msgstr ""
@@ -5225,26 +5622,33 @@ msgstr ""
 msgid "Out to Lunch"
 msgstr ""
 
+#, fuzzy
 msgid "Game Title"
-msgstr ""
+msgstr "አርእስት"
 
+#, fuzzy
 msgid "Office Title"
-msgstr ""
+msgstr "አርእስት"
 
+#, fuzzy
 msgid "Set Friendly Name..."
-msgstr ""
+msgstr "እስክሪን ስም"
 
+#, fuzzy
 msgid "View Locations..."
-msgstr ""
+msgstr "አካባቢ"
 
+#, fuzzy
 msgid "Set Home Phone Number..."
-msgstr ""
+msgstr "የሞቢል ስልክ፦"
 
+#, fuzzy
 msgid "Set Work Phone Number..."
-msgstr ""
+msgstr "የሞቢል ስልክ፦"
 
+#, fuzzy
 msgid "Set Mobile Phone Number..."
-msgstr ""
+msgstr "የሞቢል ስልክ፦"
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr ""
@@ -5261,8 +5665,9 @@ msgstr ""
 msgid "Open Hotmail Inbox"
 msgstr ""
 
+#, fuzzy
 msgid "Send to Mobile"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
@@ -5273,8 +5678,9 @@ msgid ""
 "be valid email addresses."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to Add"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Error retrieving profile"
 msgstr ""
@@ -5282,14 +5688,17 @@ msgstr ""
 msgid "General"
 msgstr ""
 
+#, fuzzy
 msgid "Age"
-msgstr ""
+msgstr "ዕድሜ፦"
 
+#, fuzzy
 msgid "Occupation"
-msgstr ""
+msgstr "/ምርጫዎች (_O)"
 
+#, fuzzy
 msgid "Location"
-msgstr ""
+msgstr "አካባቢ"
 
 msgid "Hobbies and Interests"
 msgstr ""
@@ -5303,14 +5712,17 @@ msgstr ""
 msgid "Marital Status"
 msgstr ""
 
+#, fuzzy
 msgid "Interests"
-msgstr ""
+msgstr "አስገባ"
 
+#, fuzzy
 msgid "Pets"
-msgstr ""
+msgstr "ፖርት"
 
+#, fuzzy
 msgid "Hometown"
-msgstr ""
+msgstr "ያልታወቀ"
 
 msgid "Places Lived"
 msgstr ""
@@ -5327,35 +5739,44 @@ msgstr ""
 msgid "Favorite Quote"
 msgstr ""
 
+#, fuzzy
 msgid "Contact Info"
-msgstr ""
+msgstr "መረጃ አግኝ"
 
+#, fuzzy
 msgid "Personal"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
 msgid "Significant Other"
 msgstr ""
 
+#, fuzzy
 msgid "Home Phone"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
+#, fuzzy
 msgid "Home Phone 2"
-msgstr ""
+msgstr "የሞቢል ስልክ፦"
 
+#, fuzzy
 msgid "Home Address"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
+#, fuzzy
 msgid "Personal Mobile"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
+#, fuzzy
 msgid "Home Fax"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
+#, fuzzy
 msgid "Personal Email"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
+#, fuzzy
 msgid "Personal IM"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
 msgid "Anniversary"
 msgstr ""
@@ -5364,47 +5785,56 @@ msgstr ""
 msgid "Work"
 msgstr ""
 
+#, fuzzy
 msgid "Company"
-msgstr ""
+msgstr "ትእዛዝ"
 
 msgid "Department"
 msgstr ""
 
+#, fuzzy
 msgid "Profession"
-msgstr ""
+msgstr "ይሻሻል"
 
+#, fuzzy
 msgid "Work Phone"
-msgstr ""
+msgstr "ምንም"
 
 msgid "Work Phone 2"
 msgstr ""
 
+#, fuzzy
 msgid "Work Address"
-msgstr ""
+msgstr "የቢሮ አድራሻ፦"
 
+#, fuzzy
 msgid "Work Mobile"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
+#, fuzzy
 msgid "Work Pager"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
 msgid "Work Fax"
 msgstr ""
 
+#, fuzzy
 msgid "Work Email"
-msgstr ""
+msgstr "ኢሜይል"
 
 msgid "Work IM"
 msgstr ""
 
+#, fuzzy
 msgid "Start Date"
-msgstr ""
+msgstr "ሁኔታ"
 
 msgid "Favorite Things"
 msgstr ""
 
+#, fuzzy
 msgid "Last Updated"
-msgstr ""
+msgstr "የአባት ስም"
 
 msgid "Homepage"
 msgstr ""
@@ -5423,8 +5853,9 @@ msgid ""
 "does not exist."
 msgstr ""
 
+#, fuzzy
 msgid "View web profile"
-msgstr ""
+msgstr "ኦንላይን"
 
 #. *< type
 #. *< ui_requirement
@@ -5441,14 +5872,16 @@ msgstr ""
 msgid "Use HTTP Method"
 msgstr ""
 
+#, fuzzy
 msgid "HTTP Method Server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Show custom smileys"
 msgstr ""
 
+#, fuzzy
 msgid "Allow direct connections"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Allow connecting from multiple locations"
 msgstr ""
@@ -5456,29 +5889,33 @@ msgstr ""
 msgid "nudge: nudge a user to get their attention"
 msgstr ""
 
+#, fuzzy
 msgid "Windows Live ID authentication:Unable to connect"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "Windows Live ID authentication:Invalid response"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "The following users are missing from your addressbook"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unknown error (%d): %s"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
+#, fuzzy
 msgid "Unable to add user"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. Unknown error!
-#, c-format
+#, fuzzy, c-format
 msgid "Unknown error (%d)"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
+#, fuzzy
 msgid "Unable to remove user"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr ""
@@ -5536,23 +5973,26 @@ msgid ""
 "it was not valid UTF-8.)"
 msgstr ""
 
+#, fuzzy
 msgid "Writing error"
-msgstr ""
+msgstr "የIRC ስህተት"
 
+#, fuzzy
 msgid "Reading error"
-msgstr ""
+msgstr "የIRC ስህተት"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Connection error from %s server:\n"
 "%s"
-msgstr ""
+msgstr "ያልታወቀ የስህተት ኮድ"
 
 msgid "Our protocol is not supported by the server"
 msgstr ""
 
+#, fuzzy
 msgid "Error parsing HTTP"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 msgid "You have signed on from another location"
 msgstr ""
@@ -5563,9 +6003,9 @@ msgstr ""
 msgid "The MSN servers are going down temporarily"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to authenticate: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
@@ -5577,14 +6017,16 @@ msgstr ""
 msgid "Transferring"
 msgstr ""
 
+#, fuzzy
 msgid "Starting authentication"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "Getting cookie"
 msgstr ""
 
+#, fuzzy
 msgid "Sending cookie"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
 msgid "Retrieving buddy list"
 msgstr ""
@@ -5650,37 +6092,45 @@ msgid ""
 msgstr ""
 
 #. show error to user
+#, fuzzy
 msgid "Profile Update Error"
-msgstr ""
+msgstr "የIRC ስህተት"
 
 #. no profile information yet, so we cannot update
 #. (reference: "libpurple/request.h")
+#, fuzzy
 msgid "Profile"
-msgstr ""
+msgstr "የJabber ስህተት %s"
 
 msgid "Your profile information is not yet retrieved. Please try again later."
 msgstr ""
 
 #. display name
 #. nick name (required)
+#, fuzzy
 msgid "Display Name"
-msgstr ""
+msgstr "አሳይ"
 
 #. about me
+#, fuzzy
 msgid "About Me"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 #. where I live
 msgid "Where I Live"
 msgstr ""
 
 #. relationship status
+#, fuzzy
 msgid "Relationship Status"
-msgstr ""
+msgstr "ኦንላይን"
 
 #. mobile number
+#, fuzzy
 msgid "Mobile Number"
-msgstr ""
+msgstr "የሞቢል ስልክ፦"
 
 #. is searchable
 msgid "Can be searched"
@@ -5690,8 +6140,9 @@ msgstr ""
 msgid "Can be suggested"
 msgstr ""
 
+#, fuzzy
 msgid "Update your MXit Profile"
-msgstr ""
+msgstr "የJabber ስህተት %s"
 
 msgid "The PIN you entered is invalid."
 msgstr ""
@@ -5706,24 +6157,28 @@ msgid "The two PINs you entered do not match."
 msgstr ""
 
 #. show error to user
+#, fuzzy
 msgid "PIN Update Error"
-msgstr ""
+msgstr "የIRC ስህተት"
 
 #. pin
 #. pin (required)
+#, fuzzy
 msgid "PIN"
-msgstr ""
+msgstr "UIN"
 
 #. verify pin
 msgid "Verify PIN"
 msgstr ""
 
 #. (reference: "libpurple/request.h")
+#, fuzzy
 msgid "Change PIN"
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
+#, fuzzy
 msgid "Change MXit PIN"
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "View Splash"
 msgstr ""
@@ -5731,40 +6186,51 @@ msgstr ""
 msgid "There is no splash-screen currently available"
 msgstr ""
 
+#, fuzzy
 msgid "About"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
+#, fuzzy
 msgid "Search for user"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
+#, fuzzy
 msgid "Search for a MXit contact"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
+#, fuzzy
 msgid "Type search information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "_Search"
 msgstr ""
 
 #. display / change profile
+#, fuzzy
 msgid "Change Profile..."
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
 #. change PIN
+#, fuzzy
 msgid "Change PIN..."
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
 #. suggested friends
+#, fuzzy
 msgid "Suggested friends..."
-msgstr ""
+msgstr "እስክሪን ስም"
 
 #. search for contacts
+#, fuzzy
 msgid "Search for contacts..."
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 #. display splash-screen
+#, fuzzy
 msgid "View Splash..."
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
 #. display plugin version
 msgid "About..."
@@ -5775,26 +6241,31 @@ msgid "The file you are trying to send is too large!"
 msgstr ""
 
 #. file read error
+#, fuzzy
 msgid "Unable to access the local file"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. file write error
+#, fuzzy
 msgid "Unable to save the file"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
 msgstr ""
 
+#, fuzzy
 msgid "Logging In..."
-msgstr ""
+msgstr "የዝምብለህ ይግባ መርጫዎች"
 
+#, fuzzy
 msgid ""
 "Unable to connect to the MXit server. Please check your server settings."
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Connecting..."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "The Display Name you entered is too short."
 msgstr ""
@@ -5807,8 +6278,11 @@ msgid "MXit ID"
 msgstr ""
 
 #. show the form to the user to complete
+#, fuzzy
 msgid "Register New MXit Account"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 msgid "Please fill in the following fields:"
 msgstr ""
@@ -5848,24 +6322,29 @@ msgid "Security Code"
 msgstr ""
 
 #. ask for input (required)
+#, fuzzy
 msgid "Enter Security Code"
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
+#, fuzzy
 msgid "Your Country"
-msgstr ""
+msgstr "አገር"
 
+#, fuzzy
 msgid "Your Language"
-msgstr ""
+msgstr "ምርጫዎች"
 
 #. display the form to the user and wait for his/her input
+#, fuzzy
 msgid "MXit Authorization"
-msgstr ""
+msgstr "ተዉት"
 
 msgid "MXit account validation"
 msgstr ""
 
+#, fuzzy
 msgid "Retrieving User Information..."
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "was kicked"
 msgstr ""
@@ -5873,42 +6352,51 @@ msgstr ""
 msgid "You have been kicked from this MultiMX."
 msgstr ""
 
+#, fuzzy
 msgid "_Room Name:"
-msgstr ""
+msgstr "ቤት፦"
 
 #. Display system message in chat window
 msgid "You have invited"
 msgstr ""
 
+#, fuzzy
 msgid "Loading menu..."
-msgstr ""
+msgstr "የዝምብለህ ይግባ መርጫዎች"
 
+#, fuzzy
 msgid "Status Message"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
+#, fuzzy
 msgid "Rejection Message"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
+#, fuzzy
 msgid "No profile available"
-msgstr ""
+msgstr "ሰርቨርን የለም"
 
 msgid "This contact does not have a profile."
 msgstr ""
 
+#, fuzzy
 msgid "Your MXit ID..."
-msgstr ""
+msgstr "ምረጡ..."
 
 #. contact is in Deleted, Rejected or None state
+#, fuzzy
 msgid "Re-Invite"
-msgstr ""
+msgstr "አስገባ"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
+#, fuzzy
 msgid "WAP Server"
-msgstr ""
+msgstr "ሰርቨር፦"
 
+#, fuzzy
 msgid "Connect via HTTP"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Enable splash-screen popup"
 msgstr ""
@@ -5925,11 +6413,13 @@ msgstr ""
 msgid "Engaged"
 msgstr ""
 
+#, fuzzy
 msgid "Married"
-msgstr ""
+msgstr "ደማቅ"
 
+#, fuzzy
 msgid "It's complicated"
-msgstr ""
+msgstr "አስገባ"
 
 msgid "Widowed"
 msgstr ""
@@ -5940,21 +6430,26 @@ msgstr ""
 msgid "Divorced"
 msgstr ""
 
+#, fuzzy
 msgid "Last Online"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "Invite Message"
-msgstr ""
+msgstr "(1 መልዕክት)"
 
+#, fuzzy
 msgid "No results"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
+#, fuzzy
 msgid "No contacts found."
-msgstr ""
+msgstr "ድምፆች"
 
 #. define columns
+#, fuzzy
 msgid "UserId"
-msgstr ""
+msgstr "ተጠቃሚ (_U)"
 
 msgid "Where I live"
 msgstr ""
@@ -5976,25 +6471,29 @@ msgid "We have lost the connection to MXit. Please reconnect."
 msgstr ""
 
 #. packet could not be queued for transmission
+#, fuzzy
 msgid "Message Send Error"
-msgstr ""
+msgstr "የJabber ስህተት %s"
 
+#, fuzzy
 msgid "Unable to process your request at this time"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Timeout while waiting for a response from the MXit server."
 msgstr ""
 
+#, fuzzy
 msgid "Successfully Logged In..."
-msgstr ""
+msgstr "ስልክ"
 
 #, c-format
 msgid ""
 "%s sent you an encrypted message, but it is not supported on this client."
 msgstr ""
 
+#, fuzzy
 msgid "Message Error"
-msgstr ""
+msgstr "የJabber ስህተት %s"
 
 #. could not be decrypted
 msgid "An encrypted message was received which could not be decrypted."
@@ -6003,52 +6502,64 @@ msgstr ""
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
 
+#, fuzzy
 msgid "An internal MXit server error occurred."
-msgstr ""
+msgstr "የውስጥ ብልሽት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Login error: %s (%i)"
-msgstr ""
+msgstr "የIRC ስህተት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Logout error: %s (%i)"
-msgstr ""
+msgstr "የIRC ስህተት"
 
+#, fuzzy
 msgid "Contact Error"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Message Sending Error"
-msgstr ""
+msgstr "የJabber ስህተት %s"
 
+#, fuzzy
 msgid "Status Error"
-msgstr ""
+msgstr "የውስጥ ብልሽት"
 
+#, fuzzy
 msgid "Mood Error"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
+#, fuzzy
 msgid "Invitation Error"
-msgstr ""
+msgstr "የIRC ስህተት"
 
+#, fuzzy
 msgid "Contact Removal Error"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Subscription Error"
-msgstr ""
+msgstr "መግለጫ"
 
+#, fuzzy
 msgid "Contact Update Error"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "File Transfer Error"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
 msgid "Cannot create MultiMx room"
 msgstr ""
 
+#, fuzzy
 msgid "MultiMx Invitation Error"
-msgstr ""
+msgstr "የIRC ስህተት"
 
+#, fuzzy
 msgid "Profile Error"
-msgstr ""
+msgstr "የIRC ስህተት"
 
 #. bad packet
 msgid "Invalid packet received from MXit."
@@ -6077,45 +6588,55 @@ msgstr ""
 msgid "A connection error occurred to MXit. (read stage 0x06)"
 msgstr ""
 
+#, fuzzy
 msgid "In Love"
-msgstr ""
+msgstr "ተዉት"
 
+#, fuzzy
 msgid "Pending"
-msgstr ""
+msgstr "ላክ"
 
+#, fuzzy
 msgid "Invited"
-msgstr ""
+msgstr "አስገባ"
 
+#, fuzzy
 msgid "Rejected"
-msgstr ""
+msgstr "እንደነበረ አድረግ"
 
+#, fuzzy
 msgid "Deleted"
-msgstr ""
+msgstr "አጥፉ"
 
 msgid "MXit Advertising"
 msgstr ""
 
+#, fuzzy
 msgid "More Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 #, c-format
 msgid "No such user: %s"
 msgstr ""
 
+#, fuzzy
 msgid "User lookup"
-msgstr ""
+msgstr "ተጠቃሚ መርጫዎች"
 
+#, fuzzy
 msgid "Reading challenge"
-msgstr ""
+msgstr "የIRC ስህተት"
 
 msgid "Unexpected challenge length from server"
 msgstr ""
 
+#, fuzzy
 msgid "Logging in"
-msgstr ""
+msgstr "የዝምብለህ ይግባ መርጫዎች"
 
+#, fuzzy
 msgid "MySpaceIM - No Username Set"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
 msgid "You appear to have no MySpace username."
 msgstr ""
@@ -6123,14 +6644,16 @@ msgstr ""
 msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
 msgstr ""
 
+#, fuzzy
 msgid "Lost connection with server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. Can't write _()'d strings in array initializers. Workaround.
 #. khc: then use N_() in the array initializer and use _() when they are
 #. used
+#, fuzzy
 msgid "New mail messages"
-msgstr ""
+msgstr "[መልዕክት የለም]"
 
 msgid "New blog comments"
 msgstr ""
@@ -6160,8 +6683,9 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
+#, fuzzy
 msgid "Add contacts from server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "Protocol error, code %d: %s"
@@ -6174,14 +6698,16 @@ msgid ""
 "cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
 
+#, fuzzy
 msgid "Incorrect username or password"
-msgstr ""
+msgstr "አዲስ ሚስጢራዊ ቃል"
 
 msgid "MySpaceIM Error"
 msgstr ""
 
+#, fuzzy
 msgid "Invalid input condition"
-msgstr ""
+msgstr "ሰርቨር፦"
 
 msgid "Failed to add buddy"
 msgstr ""
@@ -6222,8 +6748,9 @@ msgstr ""
 msgid "Find people..."
 msgstr ""
 
+#, fuzzy
 msgid "Change IM name..."
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
 msgid "myim URL handler"
 msgstr ""
@@ -6240,8 +6767,9 @@ msgstr ""
 msgid "Show headline in status text"
 msgstr ""
 
+#, fuzzy
 msgid "Send emoticons"
-msgstr ""
+msgstr "የድምፅ ምርጫዎች"
 
 msgid "Screen resolution (dots per inch)"
 msgstr ""
@@ -6249,20 +6777,24 @@ msgstr ""
 msgid "Base font size (points)"
 msgstr ""
 
+#, fuzzy
 msgid "User"
-msgstr ""
+msgstr "ተጠቃሚ (_U)"
 
+#, fuzzy
 msgid "Headline"
-msgstr ""
+msgstr "እንደገና ሰይም (_R)"
 
+#, fuzzy
 msgid "Song"
-msgstr ""
+msgstr "ፖርት፦"
 
 msgid "Total Friends"
 msgstr ""
 
+#, fuzzy
 msgid "Client Version"
-msgstr ""
+msgstr "የCTCP ዝርያ"
 
 msgid ""
 "An error occurred while trying to set the username.  Please try again, or "
@@ -6282,15 +6814,17 @@ msgstr ""
 msgid "MySpaceIM - Please Set a Username"
 msgstr ""
 
+#, fuzzy
 msgid "This username is unavailable."
-msgstr ""
+msgstr "ሰርቨርን የለም"
 
 msgid "Please try another username:"
 msgstr ""
 
 #. Protocol won't log in now without a username set.. Disconnect
+#, fuzzy
 msgid "No username set"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
 msgid "Please enter a username to check its availability:"
 msgstr ""
@@ -6313,8 +6847,9 @@ msgid "Zapping %s..."
 msgstr ""
 
 #. Whack means "to hit or strike someone with a sharp blow"
+#, fuzzy
 msgid "Whack"
-msgstr ""
+msgstr "ወደኋላ"
 
 #, c-format
 msgid "%s has whacked you!"
@@ -6327,8 +6862,9 @@ msgstr ""
 #. Torch means "to set on fire."  Don't worry, this doesn't
 #. * make a whole lot of sense in English, either.  Feel free
 #. * to translate it literally.
+#, fuzzy
 msgid "Torch"
-msgstr ""
+msgstr "ጉዳዩ፦"
 
 #, c-format
 msgid "%s has torched you!"
@@ -6354,9 +6890,9 @@ msgstr ""
 msgid "Hug"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has hugged you!"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 #, c-format
 msgid "Hugging %s..."
@@ -6366,21 +6902,22 @@ msgstr ""
 msgid "Slap"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has slapped you!"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 #, c-format
 msgid "Slapping %s..."
 msgstr ""
 
 #. Goose means "to pinch someone on their butt"
+#, fuzzy
 msgid "Goose"
-msgstr ""
+msgstr "ምንም"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has goosed you!"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 #, c-format
 msgid "Goosing %s..."
@@ -6392,9 +6929,9 @@ msgstr ""
 msgid "High-five"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has high-fived you!"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 #, c-format
 msgid "High-fiving %s..."
@@ -6435,8 +6972,9 @@ msgstr ""
 msgid "Required parameters not passed in"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to write to network"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Unable to read from network"
 msgstr ""
@@ -6456,11 +6994,13 @@ msgstr ""
 msgid "Not supported"
 msgstr ""
 
+#, fuzzy
 msgid "Password has expired"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል፦"
 
+#, fuzzy
 msgid "Incorrect password"
-msgstr ""
+msgstr "አዲስ ሚስጢራዊ ቃል"
 
 msgid "Account has been disabled"
 msgstr ""
@@ -6517,13 +7057,13 @@ msgstr ""
 msgid "The user is either offline or you are blocked"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unknown error: 0x%X"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to login: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
@@ -6586,24 +7126,28 @@ msgstr ""
 msgid "Unable to change server side privacy settings (%s)."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to create conference (%s)."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Error communicating with server. Closing connection."
 msgstr ""
 
+#, fuzzy
 msgid "Telephone Number"
-msgstr ""
+msgstr "ስልክ"
 
+#, fuzzy
 msgid "Personal Title"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
+#, fuzzy
 msgid "Mailstop"
-msgstr ""
+msgstr "ኢሜይል"
 
+#, fuzzy
 msgid "User ID"
-msgstr ""
+msgstr "ተጠቃሚ (_U)"
 
 #. tag = _("DN");
 #. value = nm_user_record_get_dn(user_record);
@@ -6611,12 +7155,13 @@ msgstr ""
 #. purple_notify_user_info_add_pair(user_info, tag, value);
 #. }
 #.
+#, fuzzy
 msgid "Full name"
-msgstr ""
+msgstr "ሙሉ ስም"
 
-#, c-format
+#, fuzzy, c-format
 msgid "GroupWise Conference %d"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Authenticating..."
 msgstr ""
@@ -6667,11 +7212,13 @@ msgstr ""
 msgid "Novell GroupWise Messenger Protocol Plugin"
 msgstr ""
 
+#, fuzzy
 msgid "Server address"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
+#, fuzzy
 msgid "Server port"
-msgstr ""
+msgstr "ሰርቨር፦"
 
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr ""
@@ -6685,8 +7232,9 @@ msgstr ""
 #. *
 #. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
 #.
+#, fuzzy
 msgid "_OK"
-msgstr ""
+msgstr "እሺ"
 
 #, c-format
 msgid "Received unexpected response from %s: %s"
@@ -6708,12 +7256,13 @@ msgstr ""
 
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
-#, c-format
+#, fuzzy, c-format
 msgid "Error requesting %s: %s"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
+#, fuzzy
 msgid "The server returned an empty response"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -6736,11 +7285,13 @@ msgid ""
 "different encodings selected, or %s has a buggy client.)"
 msgstr ""
 
+#, fuzzy
 msgid "Could not join chat room"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "Invalid chat room name"
-msgstr ""
+msgstr "የውስጥ ብልሽት"
 
 msgid "Invalid error"
 msgstr ""
@@ -6777,39 +7328,43 @@ msgstr ""
 msgid "Bot account reached monthly IM limit"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to receive offline messages"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Offline message store full"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send message: %s (%s)"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send message: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send message to %s: %s (%s)"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send message to %s: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Thinking"
 msgstr ""
 
+#, fuzzy
 msgid "Shopping"
-msgstr ""
+msgstr "ፖርት፦"
 
 msgid "Questioning"
 msgstr ""
 
+#, fuzzy
 msgid "Eating"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
 msgid "Watching a movie"
 msgstr ""
@@ -6817,8 +7372,9 @@ msgstr ""
 msgid "Typing"
 msgstr ""
 
+#, fuzzy
 msgid "At the office"
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "Taking a bath"
 msgstr ""
@@ -6829,8 +7385,9 @@ msgstr ""
 msgid "Having fun"
 msgstr ""
 
+#, fuzzy
 msgid "Sleeping"
-msgstr ""
+msgstr "ላክ"
 
 msgid "Using a PDA"
 msgstr ""
@@ -6845,8 +7402,9 @@ msgid "Surfing"
 msgstr ""
 
 #. "I am mobile." / "John is mobile."
+#, fuzzy
 msgid "Mobile"
-msgstr ""
+msgstr "የሞቢል ስልክ፦"
 
 msgid "Searching the web"
 msgstr ""
@@ -6858,33 +7416,40 @@ msgid "Having Coffee"
 msgstr ""
 
 #. Playing video games
+#, fuzzy
 msgid "Gaming"
-msgstr ""
+msgstr "ተጠቃሚ (_U)"
 
 msgid "Browsing the web"
 msgstr ""
 
+#, fuzzy
 msgid "Smoking"
-msgstr ""
+msgstr "ፖርት፦"
 
+#, fuzzy
 msgid "Writing"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
 #. Drinking [Alcohol]
+#, fuzzy
 msgid "Drinking"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
 msgid "Listening to music"
 msgstr ""
 
+#, fuzzy
 msgid "Studying"
-msgstr ""
+msgstr "ላክ"
 
+#, fuzzy
 msgid "In the restroom"
-msgstr ""
+msgstr "አስገባ"
 
+#, fuzzy
 msgid "Received invalid data on connection with server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. *< type
 #. *< ui_requirement
@@ -6899,8 +7464,9 @@ msgstr ""
 msgid "AIM Protocol Plugin"
 msgstr ""
 
+#, fuzzy
 msgid "ICQ UIN..."
-msgstr ""
+msgstr "ICQ UTF8"
 
 #. *< type
 #. *< ui_requirement
@@ -6915,8 +7481,9 @@ msgstr ""
 msgid "ICQ Protocol Plugin"
 msgstr ""
 
+#, fuzzy
 msgid "Encoding"
-msgstr ""
+msgstr "የሆሄያት ኮድ፦"
 
 msgid "The remote user has closed the connection."
 msgstr ""
@@ -6931,11 +7498,13 @@ msgstr ""
 msgid "Received invalid data on connection with remote user."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to establish a connection with the remote user."
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Direct IM established"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 #, c-format
 msgid ""
@@ -6962,31 +7531,35 @@ msgstr ""
 msgid "Invisible"
 msgstr ""
 
+#, fuzzy
 msgid "Evil"
-msgstr ""
+msgstr "ኢሜይል"
 
+#, fuzzy
 msgid "Depression"
-msgstr ""
+msgstr "ይሻሻል"
 
 msgid "At home"
 msgstr ""
 
+#, fuzzy
 msgid "At work"
-msgstr ""
+msgstr "አዲስ"
 
 msgid "At lunch"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to connect to authentication server: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to connect to BOS server: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Username sent"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
 msgid "Connection established, cookie sent"
 msgstr ""
@@ -7022,8 +7595,9 @@ msgstr ""
 
 #. Unregistered username
 #. the username does not exist
+#, fuzzy
 msgid "Username does not exist"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
 #. Suspended account
 msgid "Your account is currently suspended"
@@ -7064,8 +7638,9 @@ msgstr ""
 msgid "Password sent"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to initialize connection"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid ""
@@ -7113,11 +7688,13 @@ msgstr ""
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr ""
 
+#, fuzzy
 msgid "_Add"
-msgstr ""
+msgstr "ጨምር"
 
+#, fuzzy
 msgid "_Decline"
-msgstr ""
+msgstr "የስር መስመር (_U)"
 
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
@@ -7173,8 +7750,9 @@ msgstr ""
 msgid "Username formatting can change only capitalization and whitespace."
 msgstr ""
 
+#, fuzzy
 msgid "Pop-Up Message"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
 #, c-format
 msgid "The following username is associated with %s"
@@ -7287,8 +7865,9 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to Retrieve Buddy List"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
@@ -7307,9 +7886,9 @@ msgstr ""
 msgid "(no name)"
 msgstr "(ስም የለም)"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to add the buddy %s for an unknown reason."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid ""
@@ -7339,8 +7918,9 @@ msgstr ""
 msgid "Authorization Denied"
 msgstr ""
 
+#, fuzzy
 msgid "_Exchange:"
-msgstr ""
+msgstr "ለውጥ"
 
 msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
 msgstr ""
@@ -7348,12 +7928,13 @@ msgstr ""
 msgid "iTunes Music Store Link"
 msgstr ""
 
+#, fuzzy
 msgid "Lunch"
-msgstr ""
+msgstr "መስኮት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Buddy Comment for %s"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Buddy Comment:"
 msgstr ""
@@ -7367,24 +7948,29 @@ msgid ""
 "Do you wish to continue?"
 msgstr ""
 
+#, fuzzy
 msgid "C_onnect"
-msgstr ""
+msgstr "አገናኝ"
 
+#, fuzzy
 msgid "You closed the connection."
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Get AIM Info"
-msgstr ""
+msgstr "መረጃ አግኝ"
 
 #. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
 msgstr ""
 
+#, fuzzy
 msgid "Get X-Status Msg"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
+#, fuzzy
 msgid "End Direct IM Session"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "Direct IM"
 msgstr ""
@@ -7398,11 +7984,13 @@ msgstr ""
 msgid "Web aware (enabling this will cause you to receive SPAM!)"
 msgstr ""
 
+#, fuzzy
 msgid "ICQ Privacy Options"
-msgstr ""
+msgstr "የመክፈቻዎች ምርጫዎች"
 
+#, fuzzy
 msgid "Change Address To:"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 msgid "you are not waiting for authorization"
 msgstr ""
@@ -7424,22 +8012,26 @@ msgstr ""
 msgid "Type the email address of the buddy you are searching for."
 msgstr ""
 
+#, fuzzy
 msgid "Set User Info (web)..."
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
 #. This only happens when connecting with the old-style BUCP login
+#, fuzzy
 msgid "Change Password (web)"
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
 msgid "Configure IM Forwarding (web)"
 msgstr ""
 
 #. ICQ actions
+#, fuzzy
 msgid "Set Privacy Options..."
-msgstr ""
+msgstr "ተጨማሪ ምርጫዎች አሳይ"
 
+#, fuzzy
 msgid "Show Visible List"
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "Show Invisible List"
 msgstr ""
@@ -7457,8 +8049,9 @@ msgstr ""
 msgid "Show Buddies Awaiting Authorization"
 msgstr ""
 
+#, fuzzy
 msgid "Search for Buddy by Email Address..."
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Use clientLogin"
 msgstr ""
@@ -7476,12 +8069,13 @@ msgstr ""
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Attempting to connect to %s:%hu."
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Attempting to connect via proxy server."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "%s has just asked to directly connect to %s"
@@ -7533,8 +8127,9 @@ msgstr "Nihilist"
 msgid "ICQ Server Relay"
 msgstr ""
 
+#, fuzzy
 msgid "Old ICQ UTF8"
-msgstr ""
+msgstr "ICQ UTF8"
 
 msgid "Trillian Encryption"
 msgstr ""
@@ -7542,74 +8137,91 @@ msgstr ""
 msgid "ICQ UTF8"
 msgstr "ICQ UTF8"
 
+#, fuzzy
 msgid "Hiptop"
-msgstr ""
+msgstr "ታሪክ"
 
 msgid "Security Enabled"
 msgstr ""
 
+#, fuzzy
 msgid "Video Chat"
-msgstr ""
+msgstr "ውሪ"
 
+#, fuzzy
 msgid "iChat AV"
-msgstr ""
+msgstr "ውሪ"
 
 msgid "Live Video"
 msgstr ""
 
+#, fuzzy
 msgid "Camera"
-msgstr ""
+msgstr "ስም"
 
+#, fuzzy
 msgid "Screen Sharing"
-msgstr ""
+msgstr "እስክሪን ስም"
 
+#, fuzzy
 msgid "IP Address"
-msgstr ""
+msgstr "አድራሻ፦"
 
 msgid "Warning Level"
 msgstr ""
 
+#, fuzzy
 msgid "Buddy Comment"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
-#, c-format
+#, fuzzy, c-format
 msgid "User information not available: %s"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Mobile Phone"
-msgstr ""
+msgstr "የሞቢል ስልክ፦"
 
+#, fuzzy
 msgid "Personal Web Page"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
 #. aim_userinfo_t
 #. use_html_status
+#, fuzzy
 msgid "Additional Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Zip Code"
 msgstr ""
 
+#, fuzzy
 msgid "Work Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Division"
 msgstr ""
 
+#, fuzzy
 msgid "Position"
-msgstr ""
+msgstr "ቦታ፦"
 
+#, fuzzy
 msgid "Web Page"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
+#, fuzzy
 msgid "Online Since"
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "Member Since"
 msgstr ""
 
+#, fuzzy
 msgid "Capabilities"
 msgstr ""
+"\n"
+"<b>ሁኔታ፦</b>"
 
 msgid "Invalid SNAC"
 msgstr ""
@@ -7683,27 +8295,31 @@ msgstr ""
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
+#, fuzzy
 msgid "Appear Online"
-msgstr ""
+msgstr "ኦንላይን"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear offline to the chosen user when your status is set to
 #. Invisible (this is the default).
+#, fuzzy
 msgid "Don't Appear Online"
-msgstr ""
+msgstr "ኦንላይን"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to always appear offline to the chosen user (even when your status
 #. isn't Invisible).
+#, fuzzy
 msgid "Appear Offline"
-msgstr ""
+msgstr "ኦንላይን"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear offline to the chosen user if you are invisible, and
 #. appear online to the chosen user if you are not invisible (this is the
 #. default).
+#, fuzzy
 msgid "Don't Appear Offline"
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "you have no buddies on this list"
 msgstr ""
@@ -7726,29 +8342,32 @@ msgstr ""
 msgid "These buddies will always see you as offline"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "<b>Group Title:</b> %s<br>"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
-#, c-format
+#, fuzzy, c-format
 msgid "<b>Notes Group ID:</b> %s<br>"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
 #, c-format
 msgid "Info for Group %s"
 msgstr ""
 
+#, fuzzy
 msgid "Notes Address Book Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Invite Group to Conference..."
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Get Notes Address Book Info"
 msgstr ""
 
+#, fuzzy
 msgid "Sending Handshake"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
 msgid "Waiting for Handshake Acknowledgement"
 msgstr ""
@@ -7759,17 +8378,20 @@ msgstr ""
 msgid "Waiting for Login Acknowledgement"
 msgstr ""
 
+#, fuzzy
 msgid "Login Redirected"
-msgstr ""
+msgstr "ሰርቨርን የለም"
 
+#, fuzzy
 msgid "Forcing Login"
-msgstr ""
+msgstr "የዝምብለህ ይግባ መርጫዎች"
 
 msgid "Login Acknowledged"
 msgstr ""
 
+#, fuzzy
 msgid "Starting Services"
-msgstr ""
+msgstr "ኦንላይን"
 
 #, c-format
 msgid ""
@@ -7783,18 +8405,21 @@ msgstr ""
 msgid "Announcement from %s"
 msgstr ""
 
+#, fuzzy
 msgid "Conference Closed"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Unable to send message: "
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send message to %s:"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Place Closed"
-msgstr ""
+msgstr "ተወው"
 
 msgid "Microphone"
 msgstr ""
@@ -7802,20 +8427,24 @@ msgstr ""
 msgid "Speakers"
 msgstr ""
 
+#, fuzzy
 msgid "Video Camera"
-msgstr ""
+msgstr "ውሪ"
 
+#, fuzzy
 msgid "File Transfer"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
+#, fuzzy
 msgid "Supports"
-msgstr ""
+msgstr "ፖርት"
 
 msgid "External User"
 msgstr ""
 
+#, fuzzy
 msgid "Create conference with user"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 #, c-format
 msgid ""
@@ -7823,20 +8452,25 @@ msgid ""
 "sent to %s"
 msgstr ""
 
+#, fuzzy
 msgid "New Conference"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Create"
-msgstr ""
+msgstr "ቀን"
 
+#, fuzzy
 msgid "Available Conferences"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Create New Conference..."
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Invite user to a conference"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 #, c-format
 msgid ""
@@ -7845,11 +8479,13 @@ msgid ""
 "this user to."
 msgstr ""
 
+#, fuzzy
 msgid "Invite to Conference"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Invite to Conference..."
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Send TEST Announcement"
 msgstr ""
@@ -7857,8 +8493,9 @@ msgstr ""
 msgid "Topic:"
 msgstr "ጉዳዩ፦"
 
+#, fuzzy
 msgid "A server is required to connect this account"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -7867,8 +8504,9 @@ msgstr ""
 msgid "Last Known Client"
 msgstr ""
 
+#, fuzzy
 msgid "User Name"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
 msgid "Sametime ID"
 msgstr ""
@@ -7882,11 +8520,13 @@ msgid ""
 "select the correct user from the list below to add them to your buddy list."
 msgstr ""
 
+#, fuzzy
 msgid "Select User"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
+#, fuzzy
 msgid "Unable to add user: user not found"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid ""
@@ -7894,11 +8534,11 @@ msgid ""
 "entry has been removed from your buddy list."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Error reading file %s: \n"
 "%s\n"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 msgid "Remotely Stored Buddy List"
 msgstr ""
@@ -7926,15 +8566,17 @@ msgstr ""
 msgid "Export Sametime List for Account %s"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to add group: group exists"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "A group named '%s' already exists in your buddy list."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to add group"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Possible Matches"
 msgstr ""
@@ -7969,9 +8611,9 @@ msgid ""
 "group and its members to your buddy list."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Search results for '%s'"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 #, c-format
 msgid ""
@@ -7993,8 +8635,9 @@ msgstr ""
 msgid "No Matches"
 msgstr ""
 
+#, fuzzy
 msgid "Search for a user"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 msgid ""
 "Enter a name or partial ID in the field below to search for matching users "
@@ -8010,8 +8653,9 @@ msgstr ""
 msgid "Export Sametime List..."
 msgstr ""
 
+#, fuzzy
 msgid "Add Notes Address Book Group..."
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
 msgid "User Search..."
 msgstr ""
@@ -8070,14 +8714,16 @@ msgstr ""
 msgid "Key Agreement Request"
 msgstr ""
 
+#, fuzzy
 msgid "IM With Password"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል፦"
 
 msgid "Cannot set IM key"
 msgstr ""
 
+#, fuzzy
 msgid "Set IM Password"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል፦"
 
 msgid "Get Public Key"
 msgstr ""
@@ -8091,11 +8737,13 @@ msgstr ""
 msgid "Could not load public key"
 msgstr ""
 
+#, fuzzy
 msgid "User Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Cannot get user information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 #, c-format
 msgid "The %s buddy is not trusted"
@@ -8107,8 +8755,9 @@ msgid ""
 msgstr ""
 
 #. Open file selector to select the public key.
+#, fuzzy
 msgid "Open..."
-msgstr ""
+msgstr "ጌም - ክፈት..."
 
 #, c-format
 msgid "The %s buddy is not present in the network"
@@ -8122,8 +8771,9 @@ msgstr ""
 msgid "_Import..."
 msgstr ""
 
+#, fuzzy
 msgid "Select correct user"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 msgid ""
 "More than one user was found with the same public key. Select the correct "
@@ -8150,23 +8800,28 @@ msgstr ""
 msgid "Robot"
 msgstr ""
 
+#, fuzzy
 msgid "User Modes"
-msgstr ""
+msgstr "ተጠቃሚ መርጫዎች"
 
+#, fuzzy
 msgid "Preferred Contact"
-msgstr ""
+msgstr "አስወግድ"
 
+#, fuzzy
 msgid "Preferred Language"
-msgstr ""
+msgstr "ምርጫዎች"
 
 msgid "Device"
 msgstr ""
 
+#, fuzzy
 msgid "Timezone"
-msgstr ""
+msgstr "አርእስት"
 
+#, fuzzy
 msgid "Geolocation"
-msgstr ""
+msgstr "አካባቢ"
 
 msgid "Reset IM Key"
 msgstr ""
@@ -8174,38 +8829,42 @@ msgstr ""
 msgid "IM with Key Exchange"
 msgstr ""
 
+#, fuzzy
 msgid "IM with Password"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል፦"
 
 msgid "Get Public Key..."
 msgstr ""
 
+#, fuzzy
 msgid "Kill User"
-msgstr ""
+msgstr "የጌም ተጠቃሚ"
 
 msgid "Draw On Whiteboard"
 msgstr ""
 
+#, fuzzy
 msgid "_Passphrase:"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል (_P)"
 
 #, c-format
 msgid "Channel %s does not exist in the network"
 msgstr ""
 
+#, fuzzy
 msgid "Channel Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Cannot get channel information"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "<b>Channel Name:</b> %s"
-msgstr ""
+msgstr "እስክሪን ስም፦"
 
-#, c-format
+#, fuzzy, c-format
 msgid "<br><b>User Count:</b> %d"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
 #, c-format
 msgid "<br><b>Channel Founder:</b> %s"
@@ -8220,9 +8879,9 @@ msgstr ""
 msgid "<br><b>Channel HMAC:</b> %s"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "<br><b>Channel Topic:</b><br>%s"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
 #, c-format
 msgid "<br><b>Channel Modes:</b> "
@@ -8243,8 +8902,9 @@ msgstr ""
 msgid "Open Public Key..."
 msgstr ""
 
+#, fuzzy
 msgid "Channel Passphrase"
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
 msgid "Channel Public Keys List"
 msgstr ""
@@ -8261,11 +8921,13 @@ msgstr ""
 msgid "Channel Authentication"
 msgstr ""
 
+#, fuzzy
 msgid "Add / Remove"
-msgstr ""
+msgstr "አስወግድ"
 
+#, fuzzy
 msgid "Group Name"
-msgstr ""
+msgstr "መድረክ"
 
 msgid "Passphrase"
 msgstr ""
@@ -8274,11 +8936,13 @@ msgstr ""
 msgid "Please enter the %s channel private group name and passphrase."
 msgstr ""
 
+#, fuzzy
 msgid "Add Channel Private Group"
-msgstr ""
+msgstr "መድረክ ጨምር"
 
+#, fuzzy
 msgid "User Limit"
-msgstr ""
+msgstr "ተጠቃሚ (_U)"
 
 msgid "Set user limit on channel. Set to zero to reset user limit."
 msgstr ""
@@ -8289,8 +8953,9 @@ msgstr ""
 msgid "Ban List"
 msgstr ""
 
+#, fuzzy
 msgid "Add Private Group"
-msgstr ""
+msgstr "መድረክ ጨምር"
 
 msgid "Reset Permanent"
 msgstr ""
@@ -8324,29 +8989,34 @@ msgid ""
 "You have to join the %s channel before you are able to join the private group"
 msgstr ""
 
+#, fuzzy
 msgid "Join Private Group"
-msgstr ""
+msgstr "መድረክን እንደገና ሰይም"
 
 msgid "Cannot join private group"
 msgstr ""
 
+#, fuzzy
 msgid "Call Command"
-msgstr ""
+msgstr "ትእዛዝ"
 
 msgid "Cannot call command"
 msgstr ""
 
+#, fuzzy
 msgid "Unknown command"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
+#, fuzzy
 msgid "Secure File Transfer"
-msgstr ""
+msgstr "ምርጫዎች"
 
 msgid "Error during file transfer"
 msgstr ""
 
+#, fuzzy
 msgid "Remote disconnected"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Permission denied"
 msgstr ""
@@ -8354,11 +9024,13 @@ msgstr ""
 msgid "Key agreement failed"
 msgstr ""
 
+#, fuzzy
 msgid "Connection timed out"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "Creating connection failed"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "File transfer session does not exist"
 msgstr ""
@@ -8413,14 +9085,17 @@ msgstr ""
 msgid "Killed by %s (%s)"
 msgstr ""
 
+#, fuzzy
 msgid "Server signoff"
-msgstr ""
+msgstr "ሰርቨር፦"
 
+#, fuzzy
 msgid "Personal Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Birth Day"
-msgstr ""
+msgstr "የልደት በዓል"
 
 msgid "Job Role"
 msgstr ""
@@ -8431,11 +9106,13 @@ msgstr ""
 msgid "Unit"
 msgstr ""
 
+#, fuzzy
 msgid "Note"
-msgstr ""
+msgstr "ምንም"
 
+#, fuzzy
 msgid "Join Chat"
-msgstr ""
+msgstr "ውሪን አገጣጥም"
 
 #, c-format
 msgid "You are channel founder on <I>%s</I>"
@@ -8445,11 +9122,13 @@ msgstr ""
 msgid "Channel founder on <I>%s</I> is <I>%s</I>"
 msgstr ""
 
+#, fuzzy
 msgid "Real Name"
-msgstr ""
+msgstr "እንደገና ሰይም (_R)"
 
+#, fuzzy
 msgid "Status Text"
-msgstr ""
+msgstr "ሁኔታ፦"
 
 msgid "Public Key Fingerprint"
 msgstr ""
@@ -8457,8 +9136,9 @@ msgstr ""
 msgid "Public Key Babbleprint"
 msgstr ""
 
+#, fuzzy
 msgid "_More..."
-msgstr ""
+msgstr "ምረጡ..."
 
 msgid "Detach From Server"
 msgstr ""
@@ -8472,29 +9152,34 @@ msgstr ""
 msgid "Failed to change nickname"
 msgstr ""
 
+#, fuzzy
 msgid "Roomlist"
-msgstr ""
+msgstr "የIRC ስህተት"
 
 msgid "Cannot get room list"
 msgstr ""
 
+#, fuzzy
 msgid "Network is empty"
-msgstr ""
+msgstr "አዲስ"
 
 msgid "No public key was received"
 msgstr ""
 
+#, fuzzy
 msgid "Server Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Cannot get server information"
 msgstr ""
 
+#, fuzzy
 msgid "Server Statistics"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
+#, fuzzy
 msgid "Cannot get server statistics"
-msgstr ""
+msgstr "ሰርቨርን የለም"
 
 #, c-format
 msgid ""
@@ -8569,17 +9254,20 @@ msgstr ""
 msgid "Verify Public Key"
 msgstr ""
 
+#, fuzzy
 msgid "_View..."
-msgstr ""
+msgstr "አዲስ.."
 
 msgid "Unsupported public key type"
 msgstr ""
 
+#, fuzzy
 msgid "Disconnected by server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Error connecting to SILC Server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Key Exchange failed"
 msgstr ""
@@ -8591,18 +9279,21 @@ msgstr ""
 msgid "Performing key exchange"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to load SILC key pair"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. Progress
+#, fuzzy
 msgid "Connecting to SILC Server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Out of memory"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to initialize SILC protocol"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Error loading SILC key pair"
 msgstr ""
@@ -8629,14 +9320,16 @@ msgstr ""
 msgid "MMS"
 msgstr ""
 
+#, fuzzy
 msgid "Video conferencing"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Your Current Status"
 msgstr ""
 
+#, fuzzy
 msgid "Online Services"
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "Let others see what services you are using"
 msgstr ""
@@ -8647,8 +9340,9 @@ msgstr ""
 msgid "Your VCard File"
 msgstr ""
 
+#, fuzzy
 msgid "Timezone (UTC)"
-msgstr ""
+msgstr "አርእስት"
 
 msgid "User Online Status Attributes"
 msgstr ""
@@ -8674,26 +9368,31 @@ msgstr ""
 msgid "Passphrases do not match"
 msgstr ""
 
+#, fuzzy
 msgid "Key Pair Generation failed"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "Key length"
 msgstr ""
 
+#, fuzzy
 msgid "Public key file"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Private key file"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Passphrase (retype)"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል፦"
 
 msgid "Generate Key Pair"
 msgstr ""
 
+#, fuzzy
 msgid "Online Status"
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "View Message of the Day"
 msgstr ""
@@ -8715,9 +9414,9 @@ msgstr ""
 msgid "channel %s not found"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "channel modes for %s: %s"
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን ለውጥ"
 
 #, c-format
 msgid "no channel modes are set on %s"
@@ -8839,11 +9538,13 @@ msgstr ""
 msgid "Secure Internet Live Conferencing (SILC) Protocol"
 msgstr ""
 
+#, fuzzy
 msgid "Network"
-msgstr ""
+msgstr "አዲስ"
 
+#, fuzzy
 msgid "Public Key file"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Private Key file"
 msgstr ""
@@ -8875,35 +9576,36 @@ msgstr ""
 msgid "Creating SILC key pair..."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to create SILC key pair"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. Hint for translators: Please check the tabulator width here and in
 #. the next strings (short strings: 2 tabs, longer strings 1 tab,
 #. sum: 3 tabs or 24 characters)
-#, c-format
+#, fuzzy, c-format
 msgid "Real Name: \t%s\n"
-msgstr ""
+msgstr "እንደገና ሰይም (_R)"
 
-#, c-format
+#, fuzzy, c-format
 msgid "User Name: \t%s\n"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Email: \t\t%s\n"
-msgstr ""
+msgstr "ኢሜይል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Host Name: \t%s\n"
-msgstr ""
+msgstr "ስም፦"
 
 #, c-format
 msgid "Organization: \t%s\n"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Country: \t%s\n"
-msgstr ""
+msgstr "አገር"
 
 #, c-format
 msgid "Algorithm: \t%s\n"
@@ -8913,9 +9615,9 @@ msgstr ""
 msgid "Key Length: \t%d bits\n"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Version: \t%s\n"
-msgstr ""
+msgstr "አገር"
 
 #, c-format
 msgid ""
@@ -8930,17 +9632,21 @@ msgid ""
 "%s"
 msgstr ""
 
+#, fuzzy
 msgid "Public Key Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Paging"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
+#, fuzzy
 msgid "Video Conferencing"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Computer"
-msgstr ""
+msgstr "አገር"
 
 msgid "PDA"
 msgstr ""
@@ -8961,8 +9667,9 @@ msgstr ""
 msgid "Whiteboard"
 msgstr ""
 
+#, fuzzy
 msgid "No server statistics available"
-msgstr ""
+msgstr "ሰርቨርን የለም"
 
 msgid "Error during connecting to SILC Server"
 msgstr ""
@@ -9007,33 +9714,40 @@ msgstr ""
 msgid "Failure: Authentication failed"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to initialize SILC Client connection"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "John Noname"
-msgstr ""
+msgstr "የአባት ስም፦"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to load SILC key pair: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Unable to create connection"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Unknown server response"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
+#, fuzzy
 msgid "Unable to create listen socket"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Unable to resolve hostname"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr ""
 
+#, fuzzy
 msgid "SIP connect server not specified"
-msgstr ""
+msgstr "ሰርቨር፦"
 
 #. *< type
 #. *< ui_requirement
@@ -9053,20 +9767,23 @@ msgstr ""
 msgid "Publish status (note: everyone may watch you)"
 msgstr ""
 
+#, fuzzy
 msgid "Use UDP"
-msgstr ""
+msgstr "ተጠቃሚ (_U)"
 
 msgid "Use proxy"
 msgstr ""
 
+#, fuzzy
 msgid "Proxy"
-msgstr ""
+msgstr "ፖርት"
 
 msgid "Auth User"
 msgstr ""
 
+#, fuzzy
 msgid "Auth Domain"
-msgstr ""
+msgstr "አውቶማቲክ"
 
 msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
 msgstr ""
@@ -9077,8 +9794,9 @@ msgstr ""
 msgid "doodle: Request user to start a Doodle session"
 msgstr ""
 
+#, fuzzy
 msgid "Yahoo ID..."
-msgstr ""
+msgstr "ምረጡ..."
 
 #. *< type
 #. *< ui_requirement
@@ -9090,20 +9808,23 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
+#, fuzzy
 msgid "Yahoo! Protocol Plugin"
-msgstr ""
+msgstr "የJabber ስህተት %s"
 
 msgid "Pager port"
 msgstr ""
 
+#, fuzzy
 msgid "File transfer server"
-msgstr ""
+msgstr "ፋይልን ላክ"
 
 msgid "File transfer port"
 msgstr ""
 
+#, fuzzy
 msgid "Chat room locale"
-msgstr ""
+msgstr "የውሪ ቤቶች"
 
 msgid "Ignore conference and chatroom invitations"
 msgstr ""
@@ -9111,11 +9832,13 @@ msgstr ""
 msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr ""
 
+#, fuzzy
 msgid "Chat room list URL"
-msgstr ""
+msgstr "የውሪ ቤቶች"
 
+#, fuzzy
 msgid "Yahoo JAPAN ID..."
-msgstr ""
+msgstr "ምረጡ..."
 
 #. *< type
 #. *< ui_requirement
@@ -9161,8 +9884,9 @@ msgid "Add buddy rejected"
 msgstr ""
 
 #. Some error in the received stream
+#, fuzzy
 msgid "Received invalid data"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. security lock from too many failed login attempts
 msgid ""
@@ -9183,8 +9907,9 @@ msgid ""
 msgstr ""
 
 #. username or password missing
+#, fuzzy
 msgid "Username or password missing"
-msgstr ""
+msgstr "አዲስ ሚስጢራዊ ቃል"
 
 #, c-format
 msgid ""
@@ -9202,11 +9927,13 @@ msgid ""
 "\"Yes\" will remove and ignore the buddy."
 msgstr ""
 
+#, fuzzy
 msgid "Ignore buddy?"
-msgstr ""
+msgstr "ተዉት"
 
+#, fuzzy
 msgid "Invalid username or password"
-msgstr ""
+msgstr "አዲስ ሚስጢራዊ ቃል"
 
 msgid ""
 "Your account has been locked due to too many failed login attempts.  Please "
@@ -9229,8 +9956,9 @@ msgstr ""
 msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr ""
 
+#, fuzzy
 msgid "Unable to add buddy to server list"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
@@ -9239,24 +9967,26 @@ msgstr ""
 msgid "Received unexpected HTTP response from server"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Lost connection with %s: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to establish a connection with %s: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Unable to connect: The server returned an empty response."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid ""
 "Unable to connect: The server's response did not contain the necessary "
 "information"
 msgstr ""
 
+#, fuzzy
 msgid "Not at Home"
-msgstr ""
+msgstr "የአባት ስም፦"
 
 msgid "Not at Desk"
 msgstr ""
@@ -9270,23 +10000,29 @@ msgstr ""
 msgid "Stepped Out"
 msgstr ""
 
+#, fuzzy
 msgid "Not on server list"
-msgstr ""
+msgstr "ሰርቨርን የለም"
 
+#, fuzzy
 msgid "Appear Permanently Offline"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "Presence"
-msgstr ""
+msgstr "ምርጫዎች"
 
+#, fuzzy
 msgid "Don't Appear Permanently Offline"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "Join in Chat"
-msgstr ""
+msgstr "ውሪን አገጣጥም"
 
+#, fuzzy
 msgid "Initiate Conference"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Presence Settings"
 msgstr ""
@@ -9294,20 +10030,19 @@ msgstr ""
 msgid "Start Doodling"
 msgstr ""
 
-msgid "Activate which ID?"
-msgstr ""
-
 msgid "Select the ID you want to activate"
 msgstr ""
 
+#, fuzzy
 msgid "Join whom in chat?"
-msgstr ""
+msgstr "ውሪን አገጣጥም"
 
 msgid "Activate ID..."
 msgstr ""
 
+#, fuzzy
 msgid "Join User in Chat..."
-msgstr ""
+msgstr "ውሪ አገጣጥም..."
 
 msgid "Open Inbox"
 msgstr ""
@@ -9333,18 +10068,20 @@ msgstr ""
 msgid "Unable to establish file descriptor."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s is trying to send you a group of %d files.\n"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Write Error"
-msgstr ""
+msgstr "የIRC ስህተት"
 
 msgid "Yahoo! Japan Profile"
 msgstr ""
 
+#, fuzzy
 msgid "Yahoo! Profile"
-msgstr ""
+msgstr "የJabber ስህተት %s"
 
 msgid ""
 "Sorry, profiles marked as containing adult content are not supported at this "
@@ -9362,11 +10099,13 @@ msgstr ""
 msgid "Hobbies"
 msgstr ""
 
+#, fuzzy
 msgid "Latest News"
-msgstr ""
+msgstr "የአባት ስም"
 
+#, fuzzy
 msgid "Home Page"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
 msgid "Cool Link 1"
 msgstr ""
@@ -9377,8 +10116,9 @@ msgstr ""
 msgid "Cool Link 3"
 msgstr ""
 
+#, fuzzy
 msgid "Last Update"
-msgstr ""
+msgstr "የአባት ስም"
 
 msgid ""
 "This profile is in a language or format that is not supported at this time."
@@ -9398,24 +10138,26 @@ msgstr ""
 msgid "The user's profile is empty."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s has declined to join."
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 msgid "Failed to join chat"
 msgstr ""
 
 #. -6
+#, fuzzy
 msgid "Unknown room"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
 #. -15
 msgid "Maybe the room is full"
 msgstr ""
 
 #. -35
+#, fuzzy
 msgid "Not available"
-msgstr ""
+msgstr "ሰርቨርን የለም"
 
 msgid ""
 "Unknown error. You may need to logout and wait five minutes before being "
@@ -9441,26 +10183,29 @@ msgstr ""
 msgid "Webcams"
 msgstr ""
 
+#, fuzzy
 msgid "Connection problem"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Unable to fetch room list."
 msgstr ""
 
+#, fuzzy
 msgid "User Rooms"
-msgstr ""
+msgstr "ተጠቃሚ መርጫዎች"
 
+#, fuzzy
 msgid "Connection problem with the YCHT server"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to send to chat %s,%s,%s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Hidden or not logged-in"
 msgstr ""
@@ -9525,8 +10270,9 @@ msgstr ""
 msgid "zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"
 msgstr ""
 
+#, fuzzy
 msgid "Resubscribe"
-msgstr ""
+msgstr "ቀጥል (_R)"
 
 msgid "Retrieve subscriptions from server"
 msgstr ""
@@ -9544,11 +10290,13 @@ msgstr ""
 msgid "Zephyr Protocol Plugin"
 msgstr ""
 
+#, fuzzy
 msgid "Use tzc"
-msgstr ""
+msgstr "አስገባ"
 
+#, fuzzy
 msgid "tzc command"
-msgstr ""
+msgstr "ትእዛዝ"
 
 msgid "Export to .anyone"
 msgstr ""
@@ -9562,31 +10310,32 @@ msgstr ""
 msgid "Import from .zephyr.subs"
 msgstr ""
 
+#, fuzzy
 msgid "Realm"
-msgstr ""
+msgstr "እንደገና ሰይም (_R)"
 
 msgid "Exposure"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to create socket: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "HTTP proxy connection error %d"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid "Access denied: HTTP proxy server forbids port %d tunneling"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error resolving %s"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -9599,11 +10348,13 @@ msgstr ""
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
 #.
+#, fuzzy
 msgid "_Yes"
-msgstr ""
+msgstr "አዎ"
 
+#, fuzzy
 msgid "_No"
-msgstr ""
+msgstr "አይ"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
@@ -9621,8 +10372,9 @@ msgstr ""
 msgid "I'm not here right now"
 msgstr ""
 
+#, fuzzy
 msgid "saved statuses"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 #, c-format
 msgid "%s is now known as %s.\n"
@@ -9642,21 +10394,24 @@ msgid "Accept chat invitation?"
 msgstr ""
 
 #. Shortcut
+#, fuzzy
 msgid "Shortcut"
-msgstr ""
+msgstr "አቋራጮች"
 
 msgid "The text-shortcut for the smiley"
 msgstr ""
 
 #. Stored Image
+#, fuzzy
 msgid "Stored Image"
-msgstr ""
+msgstr "ምስሉን አስቀምጥ... (_S)"
 
 msgid "Stored Image. (that'll have to do for now)"
 msgstr ""
 
+#, fuzzy
 msgid "SSL Connection Failed"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "SSL Handshake Failed"
 msgstr ""
@@ -9664,11 +10419,13 @@ msgstr ""
 msgid "SSL peer presented an invalid certificate"
 msgstr ""
 
+#, fuzzy
 msgid "Unknown SSL error"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
+#, fuzzy
 msgid "Unset"
-msgstr ""
+msgstr "አስገባ"
 
 msgid "Do not disturb"
 msgstr ""
@@ -9679,17 +10436,17 @@ msgstr ""
 msgid "Feeling"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s (%s) changed status from %s to %s"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s (%s) is now %s"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s (%s) is no longer %s"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 #, c-format
 msgid "%s became idle"
@@ -9723,17 +10480,17 @@ msgstr ""
 msgid "Unknown."
 msgstr "ያልታወቀ።"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ምልክት"
+msgstr[1] "ምልክት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%d day"
 msgid_plural "%d days"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ቀን"
+msgstr[1] "ቀን"
 
 #, c-format
 msgid "%s, %d hour"
@@ -9741,35 +10498,35 @@ msgid_plural "%s, %d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ሰዓት"
+msgstr[1] "ሰዓት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s, %d minute"
 msgid_plural "%s, %d minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ደቂቃ"
+msgstr[1] "ደቂቃ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ደቂቃ"
+msgstr[1] "ደቂቃ"
 
 #, c-format
 msgid "Could not open %s: Redirected too many times"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to connect to %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error reading from %s: response too long (%d bytes limit)"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 #, c-format
 msgid ""
@@ -9777,49 +10534,54 @@ msgid ""
 "server may be trying something malicious."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error reading from %s: %s"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error writing to %s: %s"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to connect to %s: %s"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #, c-format
 msgid " - %s"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid " (%s)"
 msgstr ""
+"%s\n"
+"%s፦ %s"
 
 #. 10053
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 
 #. 10054
+#, fuzzy
 msgid "Remote host closed connection."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. 10060
+#, fuzzy
 msgid "Connection timed out."
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 #. 10061
+#, fuzzy
 msgid "Connection refused."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. 10048
 msgid "Address already in use."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error Reading %s"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 #, c-format
 msgid ""
@@ -9830,8 +10592,9 @@ msgstr ""
 msgid "Pidgin Internet Messenger"
 msgstr ""
 
+#, fuzzy
 msgid "Internet Messenger"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
@@ -9844,28 +10607,33 @@ msgstr "የዝምብለህ ይግባ መርጫዎች"
 msgid "Pro_tocol:"
 msgstr ""
 
+#, fuzzy
 msgid "_Username:"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
+#, fuzzy
 msgid "Remember pass_word"
-msgstr ""
+msgstr "ሚስጢራዊ ቃልን አስታውስ"
 
 #. Build the user options frame.
 msgid "User Options"
 msgstr "ተጠቃሚ መርጫዎች"
 
+#, fuzzy
 msgid "_Local alias:"
-msgstr ""
+msgstr "አካባቢ"
 
+#, fuzzy
 msgid "New _mail notifications"
-msgstr ""
+msgstr "አያያዝ ቦታ ቅጂ"
 
 #. Buddy icon
 msgid "Use this buddy _icon for this account:"
 msgstr ""
 
+#, fuzzy
 msgid "Ad_vanced"
-msgstr ""
+msgstr "ተወው"
 
 msgid "Use GNOME Proxy Settings"
 msgstr ""
@@ -9909,8 +10677,9 @@ msgstr ""
 msgid "_Host:"
 msgstr "እንግዳ ተቀባይ፦ (_H)"
 
+#, fuzzy
 msgid "_Port:"
-msgstr ""
+msgstr "ፖርት፦"
 
 msgid "Pa_ssword:"
 msgstr "ሚስጢራዊ ቃል፦ (_S)"
@@ -9921,8 +10690,9 @@ msgstr ""
 msgid "_Voice and Video"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to save new account"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "An account already exists with the specified criteria."
 msgstr ""
@@ -9930,17 +10700,20 @@ msgstr ""
 msgid "Add Account"
 msgstr ""
 
+#, fuzzy
 msgid "_Basic"
-msgstr ""
+msgstr "አይታሊክ ማድረጊያ (_I)"
 
 msgid "Create _this new account on the server"
 msgstr ""
 
+#, fuzzy
 msgid "P_roxy"
-msgstr ""
+msgstr "ፖርት"
 
+#, fuzzy
 msgid "Enabled"
-msgstr ""
+msgstr "ሴት"
 
 msgid "Protocol"
 msgstr ""
@@ -9968,18 +10741,21 @@ msgstr ""
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr ""
 
+#, fuzzy
 msgid "Send Instant Message"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
 #. Buddy List
+#, fuzzy
 msgid "Background Color"
-msgstr ""
+msgstr "የመደቡ ቀለም"
 
 msgid "The background color for the buddy list"
 msgstr ""
 
+#, fuzzy
 msgid "Layout"
-msgstr ""
+msgstr "ዝምብለህ ይግባ"
 
 msgid "The layout of icons, name, and status of the buddy list"
 msgstr ""
@@ -9987,8 +10763,9 @@ msgstr ""
 #. Group
 #. Note to translators: These two strings refer to the background color
 #. of a buddy list group when in its expanded state
+#, fuzzy
 msgid "Expanded Background Color"
-msgstr ""
+msgstr "የመደቡ ቀለም"
 
 msgid "The background color of an expanded group"
 msgstr ""
@@ -10003,16 +10780,18 @@ msgstr ""
 
 #. Note to translators: These two strings refer to the background color
 #. of a buddy list group when in its collapsed state
+#, fuzzy
 msgid "Collapsed Background Color"
-msgstr ""
+msgstr "የመደቡ ቀለም"
 
 msgid "The background color of a collapsed group"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list group when in its collapsed state
+#, fuzzy
 msgid "Collapsed Text"
-msgstr ""
+msgstr "ጽሑፍ"
 
 msgid "The text information for when a group is collapsed"
 msgstr ""
@@ -10020,56 +10799,63 @@ msgstr ""
 #. Buddy
 #. Note to translators: These two strings refer to the background color
 #. of a buddy list contact or chat room
+#, fuzzy
 msgid "Contact/Chat Background Color"
-msgstr ""
+msgstr "የመደቡ ቀለም"
 
 msgid "The background color of a contact or chat"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list contact when in its expanded state
+#, fuzzy
 msgid "Contact Text"
-msgstr ""
+msgstr "አቋራጮች"
 
 msgid "The text information for when a contact is expanded"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is online
+#, fuzzy
 msgid "Online Text"
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "The text information for when a buddy is online"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is away
+#, fuzzy
 msgid "Away Text"
-msgstr ""
+msgstr "ሁኔታ፦"
 
 msgid "The text information for when a buddy is away"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is offline
+#, fuzzy
 msgid "Offline Text"
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "The text information for when a buddy is offline"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is idle
+#, fuzzy
 msgid "Idle Text"
-msgstr ""
+msgstr "ጽሑፍ"
 
 msgid "The text information for when a buddy is idle"
 msgstr ""
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when they have sent you a new message
+#, fuzzy
 msgid "Message Text"
-msgstr ""
+msgstr "መልእክት፦ (_M)"
 
 msgid "The text information for when a buddy has an unread message"
 msgstr ""
@@ -10103,55 +10889,68 @@ msgstr ""
 msgid "Please update the necessary fields."
 msgstr ""
 
+#, fuzzy
 msgid "A_ccount"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 msgstr ""
 
+#, fuzzy
 msgid "Room _List"
-msgstr ""
+msgstr "የIRC ስህተት"
 
+#, fuzzy
 msgid "_Block"
-msgstr ""
+msgstr "ደማቅ"
 
 msgid "Un_block"
 msgstr ""
 
+#, fuzzy
 msgid "Move to"
-msgstr ""
+msgstr "ተጨማሪ ማብራሪያ"
 
+#, fuzzy
 msgid "Get _Info"
-msgstr ""
+msgstr "መረጃ አግኝ"
 
 msgid "I_M"
 msgstr ""
 
+#, fuzzy
 msgid "_Audio Call"
-msgstr ""
+msgstr "ውሪ"
 
 msgid "Audio/_Video Call"
 msgstr ""
 
+#, fuzzy
 msgid "_Video Call"
-msgstr ""
+msgstr "ውሪ"
 
+#, fuzzy
 msgid "_Send File..."
-msgstr ""
+msgstr "ፋይልን ላክ"
 
+#, fuzzy
 msgid "Add Buddy _Pounce..."
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "View _Log"
 msgstr ""
 
+#, fuzzy
 msgid "Hide When Offline"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "Show When Offline"
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "_Alias..."
 msgstr ""
@@ -10159,17 +10958,21 @@ msgstr ""
 msgid "_Remove"
 msgstr "አስወግድ (_R)"
 
+#, fuzzy
 msgid "Set Custom Icon"
-msgstr ""
+msgstr "የተለየ"
 
+#, fuzzy
 msgid "Remove Custom Icon"
-msgstr ""
+msgstr "አስወግድ"
 
+#, fuzzy
 msgid "Add _Buddy..."
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
+#, fuzzy
 msgid "Add C_hat..."
-msgstr ""
+msgstr "ውሪ"
 
 msgid "_Delete Group"
 msgstr "መድረክ አጥፉ (_D)"
@@ -10178,17 +10981,20 @@ msgid "_Rename"
 msgstr "እንደገና ሰይም (_R)"
 
 #. join button
+#, fuzzy
 msgid "_Join"
-msgstr ""
+msgstr "ዝምብለህ ይግባ (_L)"
 
 msgid "Auto-Join"
 msgstr ""
 
+#, fuzzy
 msgid "Persistent"
-msgstr ""
+msgstr "ዝምብለህ ይግባ"
 
+#, fuzzy
 msgid "_Edit Settings..."
-msgstr ""
+msgstr "ሁኔታ፦"
 
 msgid "_Collapse"
 msgstr ""
@@ -10206,17 +11012,20 @@ msgstr ""
 #. I don't believe this can happen currently, I think
 #. * everything that calls this function checks for one of the
 #. * above node types first.
+#, fuzzy
 msgid "Unknown node type"
-msgstr ""
+msgstr "ያልታወቀ የስህተት ኮድ"
 
 msgid "Please select your mood from the list"
 msgstr ""
 
+#, fuzzy
 msgid "Message (optional)"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Edit User Mood"
-msgstr ""
+msgstr "ተጠቃሚ መርጫዎች"
 
 #. NOTE: Do not set any accelerator to Control+O. It is mapped by
 #. gtk_blist_key_press_cb to "Get User Info" on the selected buddy.
@@ -10224,8 +11033,9 @@ msgstr ""
 msgid "/_Buddies"
 msgstr ""
 
+#, fuzzy
 msgid "/Buddies/New Instant _Message..."
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
 msgid "/Buddies/Join a _Chat..."
 msgstr ""
@@ -10233,29 +11043,36 @@ msgstr ""
 msgid "/Buddies/Get User _Info..."
 msgstr ""
 
+#, fuzzy
 msgid "/Buddies/View User _Log..."
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
+#, fuzzy
 msgid "/Buddies/Sh_ow"
-msgstr ""
+msgstr "ተጨማሪ ምርጫዎች አሳይ"
 
+#, fuzzy
 msgid "/Buddies/Show/_Offline Buddies"
-msgstr ""
+msgstr "ተጨማሪ ምርጫዎች አሳይ"
 
+#, fuzzy
 msgid "/Buddies/Show/_Empty Groups"
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
+#, fuzzy
 msgid "/Buddies/Show/Buddy _Details"
-msgstr ""
+msgstr "ተጨማሪ ምርጫዎች አሳይ"
 
+#, fuzzy
 msgid "/Buddies/Show/Idle _Times"
-msgstr ""
+msgstr "ተጨማሪ ምርጫዎች አሳይ"
 
 msgid "/Buddies/Show/_Protocol Icons"
 msgstr ""
 
+#, fuzzy
 msgid "/Buddies/_Sort Buddies"
-msgstr ""
+msgstr "ተጨማሪ ምርጫዎች አሳይ"
 
 msgid "/Buddies/_Add Buddy..."
 msgstr ""
@@ -10270,30 +11087,41 @@ msgid "/Buddies/_Quit"
 msgstr ""
 
 #. Accounts menu
+#, fuzzy
 msgid "/_Accounts"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
+#, fuzzy
 msgid "/Accounts/Manage Accounts"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 #. Tools
 msgid "/_Tools"
 msgstr "/መሣሪያዎች (_T)"
 
+#, fuzzy
 msgid "/Tools/Buddy _Pounces"
-msgstr ""
+msgstr "ምርጫዎች"
 
+#, fuzzy
 msgid "/Tools/_Certificates"
-msgstr ""
+msgstr "ምርጫዎች"
 
+#, fuzzy
 msgid "/Tools/Custom Smile_ys"
-msgstr ""
+msgstr "ምርጫዎች"
 
+#, fuzzy
 msgid "/Tools/Plu_gins"
-msgstr ""
+msgstr "ምርጫዎች"
 
+#, fuzzy
 msgid "/Tools/Pr_eferences"
-msgstr ""
+msgstr "ምርጫዎች"
 
 msgid "/Tools/Pr_ivacy"
 msgstr ""
@@ -10301,8 +11129,9 @@ msgstr ""
 msgid "/Tools/Set _Mood"
 msgstr ""
 
+#, fuzzy
 msgid "/Tools/_File Transfers"
-msgstr ""
+msgstr "ምርጫዎች"
 
 msgid "/Tools/R_oom List"
 msgstr ""
@@ -10320,51 +11149,61 @@ msgstr "/መረጃ (_H)"
 msgid "/Help/Online _Help"
 msgstr ""
 
+#, fuzzy
 msgid "/Help/_Build Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "/Help/_Debug Window"
 msgstr ""
 
+#, fuzzy
 msgid "/Help/De_veloper Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "/Help/_Plugin Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "/Help/_Translator Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "/Help/_About"
-msgstr ""
+msgstr "/መረጃ/ስለ... (_A)"
 
-#, c-format
+#, fuzzy, c-format
 msgid "<b>Account:</b> %s"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "<b>Occupants:</b> %d"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "<b>Topic:</b> %s"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
 msgid "(no topic set)"
 msgstr ""
 
+#, fuzzy
 msgid "Buddy Alias"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Logged In"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
+#, fuzzy
 msgid "Last Seen"
-msgstr ""
+msgstr "የአባት ስም፦"
 
 msgid "Spooky"
 msgstr ""
@@ -10378,38 +11217,44 @@ msgstr ""
 msgid "Total Buddies"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Idle %dd %dh %02dm"
-msgstr ""
+msgstr "%dh%02dm"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Idle %dh %02dm"
-msgstr ""
+msgstr "%dh%02dm"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Idle %dm"
-msgstr ""
+msgstr "%dh%02dm"
 
+#, fuzzy
 msgid "/Buddies/New Instant Message..."
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
+#, fuzzy
 msgid "/Buddies/Join a Chat..."
-msgstr ""
+msgstr "ውሪ አገጣጥም..."
 
+#, fuzzy
 msgid "/Buddies/Get User Info..."
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
 msgid "/Buddies/Add Buddy..."
 msgstr ""
 
+#, fuzzy
 msgid "/Buddies/Add Chat..."
-msgstr ""
+msgstr "ውሪ አገጣጥም..."
 
+#, fuzzy
 msgid "/Buddies/Add Group..."
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
+#, fuzzy
 msgid "/Tools/Privacy"
-msgstr ""
+msgstr "ምርጫዎች"
 
 msgid "/Tools/Room List"
 msgstr ""
@@ -10423,25 +11268,28 @@ msgstr[1] ""
 msgid "Manually"
 msgstr ""
 
+#, fuzzy
 msgid "By status"
-msgstr ""
+msgstr "ሁኔታ፦"
 
 msgid "By recent log activity"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s disconnected"
-msgstr ""
+msgstr "ተገናኝቷል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s disabled"
-msgstr ""
+msgstr "ትእዛዝ"
 
+#, fuzzy
 msgid "Reconnect"
-msgstr ""
+msgstr "አገናኝ"
 
+#, fuzzy
 msgid "Re-enable"
-msgstr ""
+msgstr "እንደገና ሰይም (_R)"
 
 msgid "SSL FAQs"
 msgstr ""
@@ -10456,17 +11304,23 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
+#, fuzzy
 msgid "<b>Username:</b>"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
+#, fuzzy
 msgid "<b>Password:</b>"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል፦"
 
+#, fuzzy
 msgid "_Login"
-msgstr ""
+msgstr "ዝምብለህ ይግባ"
 
+#, fuzzy
 msgid "/Accounts"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 #. Translators: Please maintain the use of -> and <- to refer to menu heirarchy
 #, c-format
@@ -10481,35 +11335,44 @@ msgstr ""
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
+#, fuzzy
 msgid "/Buddies/Show/Offline Buddies"
-msgstr ""
+msgstr "ተጨማሪ ምርጫዎች አሳይ"
 
+#, fuzzy
 msgid "/Buddies/Show/Empty Groups"
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
+#, fuzzy
 msgid "/Buddies/Show/Buddy Details"
-msgstr ""
+msgstr "ተጨማሪ ምርጫዎች አሳይ"
 
+#, fuzzy
 msgid "/Buddies/Show/Idle Times"
-msgstr ""
+msgstr "ተጨማሪ ምርጫዎች አሳይ"
 
 msgid "/Buddies/Show/Protocol Icons"
 msgstr ""
 
+#, fuzzy
 msgid "Add a buddy.\n"
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
+#, fuzzy
 msgid "Buddy's _username:"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "(Optional) A_lias:"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "(Optional) _Invite message:"
-msgstr ""
+msgstr "(1 መልዕክት)"
 
+#, fuzzy
 msgid "Add buddy to _group:"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "This protocol does not support chat rooms."
 msgstr ""
@@ -10524,8 +11387,9 @@ msgid ""
 "would like to add to your buddy list.\n"
 msgstr ""
 
+#, fuzzy
 msgid "A_lias:"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "_Group:"
 msgstr "መድረክ፦ (_G)"
@@ -10539,8 +11403,11 @@ msgstr ""
 msgid "Please enter the name of the group to be added."
 msgstr ""
 
+#, fuzzy
 msgid "Enable Account"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 msgid "<PurpleMain>/Accounts/Enable Account"
 msgstr ""
@@ -10548,11 +11415,15 @@ msgstr ""
 msgid "<PurpleMain>/Accounts/"
 msgstr ""
 
+#, fuzzy
 msgid "_Edit Account"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
+#, fuzzy
 msgid "Set _Mood..."
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "No actions available"
 msgstr ""
@@ -10560,8 +11431,9 @@ msgstr ""
 msgid "_Disable"
 msgstr ""
 
+#, fuzzy
 msgid "/Tools"
-msgstr ""
+msgstr "/መሣሪያዎች (_T)"
 
 msgid "/Buddies/Sort Buddies"
 msgstr ""
@@ -10570,11 +11442,13 @@ msgid "Type the host name for this certificate."
 msgstr ""
 
 #. Widget creation function
+#, fuzzy
 msgid "SSL Servers"
-msgstr ""
+msgstr "ሰርቨር፦"
 
+#, fuzzy
 msgid "Unknown command."
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
 msgid "That buddy is not on the same protocol as this chat."
 msgstr ""
@@ -10605,17 +11479,21 @@ msgstr ""
 msgid "Ignore"
 msgstr "ተዉት"
 
+#, fuzzy
 msgid "Get Away Message"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
+#, fuzzy
 msgid "Last Said"
-msgstr ""
+msgstr "የአባት ስም፦"
 
+#, fuzzy
 msgid "Unable to save icon file to disk."
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Save Icon"
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "Animate"
 msgstr ""
@@ -10626,11 +11504,13 @@ msgstr "ምልክትን ደብቅ"
 msgid "Save Icon As..."
 msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
+#, fuzzy
 msgid "Set Custom Icon..."
-msgstr ""
+msgstr "የተለየ"
 
+#, fuzzy
 msgid "Change Size"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 msgid "Show All"
 msgstr ""
@@ -10642,8 +11522,9 @@ msgstr ""
 msgid "/Conversation/New Instant _Message..."
 msgstr ""
 
+#, fuzzy
 msgid "/Conversation/Join a _Chat..."
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "/Conversation/_Find..."
 msgstr ""
@@ -10654,26 +11535,32 @@ msgstr ""
 msgid "/Conversation/_Save As..."
 msgstr ""
 
+#, fuzzy
 msgid "/Conversation/Clea_r Scrollback"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "/Conversation/M_edia"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "/Conversation/Media/_Audio Call"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "/Conversation/Media/_Video Call"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "/Conversation/Media/Audio\\/Video _Call"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "/Conversation/Se_nd File..."
 msgstr ""
 
+#, fuzzy
 msgid "/Conversation/Get _Attention"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr ""
@@ -10684,17 +11571,20 @@ msgstr ""
 msgid "/Conversation/In_vite..."
 msgstr ""
 
+#, fuzzy
 msgid "/Conversation/M_ore"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "/Conversation/Al_ias..."
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "/Conversation/_Block..."
 msgstr ""
 
+#, fuzzy
 msgid "/Conversation/_Unblock..."
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "/Conversation/_Add..."
 msgstr ""
@@ -10727,37 +11617,45 @@ msgstr ""
 msgid "/Options/Show Ti_mestamps"
 msgstr ""
 
+#, fuzzy
 msgid "/Conversation/More"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "/Options"
-msgstr ""
+msgstr "/ምርጫዎች (_O)"
 
 #. The menubar has been deactivated. Make sure the 'More' submenu is regenerated next time
 #. * the 'Conversation' menu pops up.
 #. Make sure the 'Conversation -> More' menuitems are regenerated whenever
 #. * the 'Conversation' menu pops up because the entries can change after the
 #. * conversation is created.
+#, fuzzy
 msgid "/Conversation"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "/Conversation/View Log"
 msgstr ""
 
+#, fuzzy
 msgid "/Conversation/Media/Audio Call"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "/Conversation/Media/Video Call"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "/Conversation/Media/Audio\\/Video Call"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "/Conversation/Send File..."
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "/Conversation/Get Attention"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr ""
@@ -10774,8 +11672,9 @@ msgstr ""
 msgid "/Conversation/Block..."
 msgstr ""
 
+#, fuzzy
 msgid "/Conversation/Unblock..."
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "/Conversation/Add..."
 msgstr ""
@@ -10804,18 +11703,20 @@ msgstr ""
 msgid "User is typing..."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "%s has stopped typing"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 #. Build the Send To menu
+#, fuzzy
 msgid "S_end To"
-msgstr ""
+msgstr "ላክ"
 
+#, fuzzy
 msgid "_Send"
-msgstr ""
+msgstr "ላክ"
 
 #. Setup the label telling how many people are in the room.
 msgid "0 people in room"
@@ -10824,8 +11725,9 @@ msgstr ""
 msgid "Close Find bar"
 msgstr ""
 
+#, fuzzy
 msgid "Find:"
-msgstr ""
+msgstr "መስኮት"
 
 #, c-format
 msgid "%d person in room"
@@ -10836,14 +11738,17 @@ msgstr[1] ""
 msgid "Stopped Typing"
 msgstr ""
 
+#, fuzzy
 msgid "Nick Said"
-msgstr ""
+msgstr "ቅጽል"
 
+#, fuzzy
 msgid "Unread Messages"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
+#, fuzzy
 msgid "New Event"
-msgstr ""
+msgstr "ኩነት"
 
 msgid ""
 "The account has disconnected and you are no longer in this chat. You will "
@@ -10889,8 +11794,9 @@ msgstr "በመድረክ"
 msgid "By account"
 msgstr ""
 
+#, fuzzy
 msgid "Find"
-msgstr ""
+msgstr "መስኮት"
 
 msgid "_Search for:"
 msgstr ""
@@ -10898,8 +11804,9 @@ msgstr ""
 msgid "Save Debug Log"
 msgstr ""
 
+#, fuzzy
 msgid "Invert"
-msgstr ""
+msgstr "አስገባ"
 
 msgid "Highlight matches"
 msgstr ""
@@ -10907,17 +11814,20 @@ msgstr ""
 msgid "_Icon Only"
 msgstr ""
 
+#, fuzzy
 msgid "_Text Only"
-msgstr ""
+msgstr "የጽሑፍ ቀለም (_T)"
 
 msgid "_Both Icon & Text"
 msgstr ""
 
+#, fuzzy
 msgid "Filter"
-msgstr ""
+msgstr "ሴት"
 
+#, fuzzy
 msgid "Right click for more options."
-msgstr ""
+msgstr "ተጨማሪ ምርጫዎች አሳይ"
 
 msgid "Level "
 msgstr ""
@@ -10931,17 +11841,21 @@ msgstr ""
 msgid "Misc"
 msgstr ""
 
+#, fuzzy
 msgid "Warning"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
+#, fuzzy
 msgid "Error "
-msgstr ""
+msgstr "የIRC ስህተት"
 
+#, fuzzy
 msgid "Fatal Error"
-msgstr ""
+msgstr "የውስጥ ብልሽት"
 
+#, fuzzy
 msgid "artist"
-msgstr ""
+msgstr "አድራሻ፦"
 
 msgid "voice and video"
 msgstr ""
@@ -10960,11 +11874,13 @@ msgstr ""
 msgid "Ka-Hing Cheung"
 msgstr ""
 
+#, fuzzy
 msgid "maintainer"
-msgstr ""
+msgstr "ደቂቃ"
 
+#, fuzzy
 msgid "libfaim maintainer"
-msgstr ""
+msgstr "ደቂቃ"
 
 #. If "lazy bum" translates literally into a serious insult, use something else or omit it.
 msgid "hacker and designated driver [lazy bum]"
@@ -10976,8 +11892,9 @@ msgstr ""
 msgid "XMPP"
 msgstr ""
 
+#, fuzzy
 msgid "original author"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 msgid "lead developer"
 msgstr ""
@@ -10988,11 +11905,13 @@ msgstr ""
 msgid "Afrikaans"
 msgstr ""
 
+#, fuzzy
 msgid "Arabic"
-msgstr ""
+msgstr "አውቶማቲክ"
 
+#, fuzzy
 msgid "Assamese"
-msgstr ""
+msgstr "ጨዋታዎች"
 
 msgid "Asturian"
 msgstr ""
@@ -11009,9 +11928,6 @@ msgstr ""
 msgid "Bengali-India"
 msgstr ""
 
-msgid "Bodo"
-msgstr ""
-
 msgid "Bosnian"
 msgstr ""
 
@@ -11024,8 +11940,9 @@ msgstr ""
 msgid "Czech"
 msgstr ""
 
+#, fuzzy
 msgid "Danish"
-msgstr ""
+msgstr "ዝርዝሮች"
 
 msgid "German"
 msgstr ""
@@ -11051,29 +11968,30 @@ msgstr ""
 msgid "Spanish"
 msgstr ""
 
-msgid "Argentine Spanish"
-msgstr ""
-
 msgid "Estonian"
 msgstr ""
 
 msgid "Basque"
 msgstr ""
 
+#, fuzzy
 msgid "Persian"
-msgstr ""
+msgstr "ዝምብለህ ይግባ"
 
+#, fuzzy
 msgid "Finnish"
-msgstr ""
+msgstr "ዝርዝሮች"
 
 msgid "French"
 msgstr ""
 
+#, fuzzy
 msgid "Irish"
-msgstr ""
+msgstr "አድራሻ፦"
 
+#, fuzzy
 msgid "Galician"
-msgstr ""
+msgstr "አይታሊክ ማድረጊያ"
 
 msgid "Gujarati"
 msgstr ""
@@ -11093,26 +12011,30 @@ msgstr ""
 msgid "Hungarian"
 msgstr ""
 
+#, fuzzy
+msgid "Armenian"
+msgstr "የጌም ማውሪያ"
+
 msgid "Indonesian"
 msgstr ""
 
+#, fuzzy
 msgid "Italian"
-msgstr ""
+msgstr "አይታሊክ ማድረጊያ"
 
 msgid "Japanese"
 msgstr ""
 
+#, fuzzy
 msgid "Georgian"
-msgstr ""
+msgstr "ዝምብለህ ይግባ"
 
 msgid "Ubuntu Georgian Translators"
 msgstr ""
 
-msgid "Kazakh"
-msgstr ""
-
+#, fuzzy
 msgid "Khmer"
-msgstr ""
+msgstr "ኦፔራ"
 
 msgid "Kannada"
 msgstr ""
@@ -11123,35 +12045,41 @@ msgstr ""
 msgid "Korean"
 msgstr ""
 
-msgid "Kashmiri"
-msgstr ""
-
 msgid "Kurdish"
 msgstr ""
+
+#, fuzzy
+msgid "Lao"
+msgstr "ዝምብለህ ይግባ"
 
 msgid "Lithuanian"
 msgstr ""
 
-msgid "Latvian"
-msgstr ""
-
+#, fuzzy
 msgid "Maithili"
-msgstr ""
+msgstr "Nihilist"
 
+#, fuzzy
 msgid "Meadow Mari"
-msgstr ""
+msgstr "ኢሜይል"
 
 msgid "Macedonian"
 msgstr ""
 
+#, fuzzy
 msgid "Malayalam"
-msgstr ""
+msgstr "ወንድ"
 
 msgid "Mongolian"
 msgstr ""
 
+#, fuzzy
 msgid "Marathi"
-msgstr ""
+msgstr "አድራሻ፦"
+
+#, fuzzy
+msgid "Malay"
+msgstr "ወንድ"
 
 msgid "Burmese"
 msgstr ""
@@ -11171,14 +12099,16 @@ msgstr ""
 msgid "Occitan"
 msgstr ""
 
+#, fuzzy
 msgid "Oriya"
-msgstr ""
+msgstr "ኦፔራ"
 
 msgid "Punjabi"
 msgstr ""
 
+#, fuzzy
 msgid "Polish"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
 msgid "Portuguese"
 msgstr ""
@@ -11186,16 +12116,14 @@ msgstr ""
 msgid "Portuguese-Brazil"
 msgstr ""
 
+#, fuzzy
 msgid "Pashto"
-msgstr ""
+msgstr "ፖርት"
 
 msgid "Romanian"
 msgstr ""
 
 msgid "Russian"
-msgstr ""
-
-msgid "Sindhi"
 msgstr ""
 
 msgid "Slovak"
@@ -11204,8 +12132,9 @@ msgstr ""
 msgid "Slovenian"
 msgstr ""
 
+#, fuzzy
 msgid "Albanian"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Serbian"
 msgstr ""
@@ -11222,8 +12151,9 @@ msgstr ""
 msgid "Swahili"
 msgstr ""
 
+#, fuzzy
 msgid "Tamil"
-msgstr ""
+msgstr "አርእስት"
 
 msgid "Telugu"
 msgstr ""
@@ -11231,20 +12161,17 @@ msgstr ""
 msgid "Thai"
 msgstr ""
 
-msgid "Tatar"
-msgstr ""
-
+#, fuzzy
 msgid "Ukranian"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Urdu"
-msgstr ""
+msgstr "ተጠቃሚ (_U)"
 
-msgid "Uzbek"
-msgstr ""
-
+#, fuzzy
 msgid "Vietnamese"
-msgstr ""
+msgstr "የፋይል ስም"
 
 msgid "Simplified Chinese"
 msgstr ""
@@ -11255,17 +12182,9 @@ msgstr ""
 msgid "Traditional Chinese"
 msgstr ""
 
+#, fuzzy
 msgid "Amharic"
-msgstr ""
-
-msgid "Armenian"
-msgstr ""
-
-msgid "Lao"
-msgstr ""
-
-msgid "Malay"
-msgstr ""
+msgstr "አውቶማቲክ"
 
 msgid "Turkish"
 msgstr ""
@@ -11305,13 +12224,14 @@ msgstr ""
 msgid "About %s"
 msgstr ""
 
+#, fuzzy
 msgid "Build Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 #. End of not to be translated section
-#, c-format
+#, fuzzy, c-format
 msgid "%s Build Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Current Developers"
 msgstr ""
@@ -11325,9 +12245,9 @@ msgstr ""
 msgid "Retired Crazy Patch Writers"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s Developer Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Current Translators"
 msgstr ""
@@ -11335,19 +12255,21 @@ msgstr ""
 msgid "Past Translators"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s Translator Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s Plugin Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Plugin Information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "_Name"
-msgstr ""
+msgstr "ስም"
 
 msgid "_Account"
 msgstr ""
@@ -11360,11 +12282,13 @@ msgid ""
 "to view."
 msgstr ""
 
+#, fuzzy
 msgid "View User Log"
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
+#, fuzzy
 msgid "Alias Contact"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Enter an alias for this contact."
 msgstr ""
@@ -11376,8 +12300,9 @@ msgstr ""
 msgid "Alias Buddy"
 msgstr ""
 
+#, fuzzy
 msgid "Alias Chat"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Enter an alias for this chat."
 msgstr ""
@@ -11392,11 +12317,13 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
+#, fuzzy
 msgid "Remove Contact"
-msgstr ""
+msgstr "አስወግድ"
 
+#, fuzzy
 msgid "_Remove Contact"
-msgstr ""
+msgstr "አስወግድ"
 
 #, c-format
 msgid ""
@@ -11404,11 +12331,13 @@ msgid ""
 "want to continue?"
 msgstr ""
 
+#, fuzzy
 msgid "Merge Groups"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "_Merge Groups"
-msgstr ""
+msgstr "መድረክ አጥፉ (_D)"
 
 #, c-format
 msgid ""
@@ -11419,8 +12348,9 @@ msgstr ""
 msgid "Remove Group"
 msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "_Remove Group"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 #, c-format
 msgid ""
@@ -11430,8 +12360,9 @@ msgstr ""
 msgid "Remove Buddy"
 msgstr ""
 
+#, fuzzy
 msgid "_Remove Buddy"
-msgstr ""
+msgstr "አስወግድ (_R)"
 
 #, c-format
 msgid ""
@@ -11439,44 +12370,59 @@ msgid ""
 "continue?"
 msgstr ""
 
+#, fuzzy
 msgid "Remove Chat"
-msgstr ""
+msgstr "አስወግድ"
 
+#, fuzzy
 msgid "_Remove Chat"
-msgstr ""
+msgstr "አስወግድ"
 
+#, fuzzy
 msgid "Right-click for more unread messages...\n"
-msgstr ""
+msgstr "ተጨማሪ ምርጫዎች አሳይ"
 
+#, fuzzy
 msgid "_Change Status"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
+#, fuzzy
 msgid "Show Buddy _List"
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
+#, fuzzy
 msgid "_Unread Messages"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
+#, fuzzy
 msgid "New _Message..."
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
+#, fuzzy
 msgid "_Accounts"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
+#, fuzzy
 msgid "Plu_gins"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
+#, fuzzy
 msgid "Pr_eferences"
-msgstr ""
+msgstr "ምርጫዎች"
 
+#, fuzzy
 msgid "Mute _Sounds"
-msgstr ""
+msgstr "ድምፆች"
 
+#, fuzzy
 msgid "_Blink on New Message"
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
+#, fuzzy
 msgid "_Quit"
-msgstr ""
+msgstr "ውጣ"
 
 msgid "Not started"
 msgstr ""
@@ -11490,8 +12436,9 @@ msgstr ""
 msgid "<b>Sending To:</b>"
 msgstr ""
 
+#, fuzzy
 msgid "<b>Sending As:</b>"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
 msgid "There is no application configured to open this type of file."
 msgstr ""
@@ -11499,13 +12446,13 @@ msgstr ""
 msgid "An error occurred while opening the file."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error launching %s: %s"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error running %s"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 #, c-format
 msgid "Process returned error code %d"
@@ -11514,8 +12461,9 @@ msgstr ""
 msgid "Filename:"
 msgstr "የፋይል ስም፦"
 
+#, fuzzy
 msgid "Local File:"
-msgstr ""
+msgstr "አካባቢ"
 
 msgid "Speed:"
 msgstr "ፍጥነት፦"
@@ -11539,8 +12487,9 @@ msgstr ""
 msgid "Paste as Plain _Text"
 msgstr ""
 
+#, fuzzy
 msgid "_Reset formatting"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Disable _smileys in selected text"
 msgstr ""
@@ -11563,14 +12512,16 @@ msgstr ""
 msgid "Color to draw hyperlinks when mouse is over them."
 msgstr ""
 
+#, fuzzy
 msgid "Sent Message Name Color"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
 msgid "Color to draw the name of a message you sent."
 msgstr ""
 
+#, fuzzy
 msgid "Received Message Name Color"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
 msgid "Color to draw the name of a message you received."
 msgstr ""
@@ -11599,20 +12550,24 @@ msgstr ""
 msgid "Color to draw the name of a whispered message."
 msgstr ""
 
+#, fuzzy
 msgid "Typing notification color"
-msgstr ""
+msgstr "አያያዝ ቦታ ቅጂ"
 
+#, fuzzy
 msgid "The color to use for the typing notification"
-msgstr ""
+msgstr "አያያዝ ቦታ ቅጂ"
 
+#, fuzzy
 msgid "Typing notification font"
-msgstr ""
+msgstr "አያያዝ ቦታ ቅጂ"
 
 msgid "The font to use for the typing notification"
 msgstr ""
 
+#, fuzzy
 msgid "Enable typing notification"
-msgstr ""
+msgstr "አያያዝ ቦታ ቅጂ"
 
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
@@ -11627,8 +12582,9 @@ msgid ""
 "%s"
 msgstr ""
 
+#, fuzzy
 msgid "Save Image"
-msgstr ""
+msgstr "ምስሉን አስቀምጥ... (_S)"
 
 msgid "_Save Image..."
 msgstr "ምስሉን አስቀምጥ... (_S)"
@@ -11645,11 +12601,13 @@ msgstr ""
 msgid "Select Background Color"
 msgstr ""
 
+#, fuzzy
 msgid "_URL"
-msgstr ""
+msgstr "URL"
 
+#, fuzzy
 msgid "_Description"
-msgstr ""
+msgstr "መግለጫ"
 
 msgid ""
 "Please enter the URL and description of the link that you want to insert. "
@@ -11662,15 +12620,17 @@ msgstr ""
 msgid "Insert Link"
 msgstr "አያያዝ አስገባ"
 
+#, fuzzy
 msgid "_Insert"
-msgstr ""
+msgstr "አስገባ"
 
 #, c-format
 msgid "Failed to store image: %s\n"
 msgstr ""
 
+#, fuzzy
 msgid "Insert Image"
-msgstr ""
+msgstr "ምስል አስገባ"
 
 #, c-format
 msgid ""
@@ -11687,11 +12647,13 @@ msgstr ""
 msgid "This theme has no available smileys."
 msgstr ""
 
+#, fuzzy
 msgid "_Font"
-msgstr ""
+msgstr "የፊደል ቅርጾች"
 
+#, fuzzy
 msgid "Group Items"
-msgstr ""
+msgstr "መድረክ"
 
 msgid "Ungroup Items"
 msgstr ""
@@ -11705,8 +12667,9 @@ msgstr "አይታሊክ ማድረጊያ"
 msgid "Underline"
 msgstr "የስር መስመር"
 
+#, fuzzy
 msgid "Strikethrough"
-msgstr ""
+msgstr "ስርዝ (_S)"
 
 msgid "Increase Font Size"
 msgstr ""
@@ -11717,29 +12680,37 @@ msgstr ""
 msgid "Font Face"
 msgstr "የፊደል ቅርጽ ዘይቤ"
 
+#, fuzzy
 msgid "Foreground Color"
-msgstr ""
+msgstr "የመደቡ ቀለም"
 
+#, fuzzy
 msgid "Reset Formatting"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Insert IM Image"
-msgstr ""
+msgstr "ምስል አስገባ"
 
+#, fuzzy
 msgid "Insert Smiley"
-msgstr ""
+msgstr "ምስል አስገባ"
 
+#, fuzzy
 msgid "Send Attention"
-msgstr ""
+msgstr "ላክ"
 
+#, fuzzy
 msgid "<b>_Bold</b>"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል፦"
 
+#, fuzzy
 msgid "<i>_Italic</i>"
-msgstr ""
+msgstr "አይታሊክ ማድረጊያ (_I)"
 
+#, fuzzy
 msgid "<u>_Underline</u>"
-msgstr ""
+msgstr "የስር መስመር (_U)"
 
 msgid "<span strikethrough='true'>Strikethrough</span>"
 msgstr ""
@@ -11756,32 +12727,38 @@ msgstr ""
 #. If we want to show the formatting for the following items, we would
 #. * need to update them when formatting changes. The above items don't need
 #. * no updating nor nothin'
+#, fuzzy
 msgid "_Font face"
-msgstr ""
+msgstr "የፊደል ቅርጽ ዘይቤ"
 
+#, fuzzy
 msgid "Foreground _color"
-msgstr ""
+msgstr "የመደቡ ቀለም"
 
 msgid "Bac_kground color"
 msgstr "የመደቡ ቀለም (_K)"
 
+#, fuzzy
 msgid "_Image"
-msgstr ""
+msgstr "ምስሉን አስቀምጥ... (_S)"
 
+#, fuzzy
 msgid "_Link"
-msgstr ""
+msgstr "ዝምብለህ ይግባ (_L)"
 
 msgid "_Horizontal rule"
 msgstr ""
 
+#, fuzzy
 msgid "_Smile!"
-msgstr ""
+msgstr "ምስል አስገባ"
 
 msgid "_Attention!"
 msgstr ""
 
+#, fuzzy
 msgid "Log Deletion Failed"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid "Check permissions and try again."
 msgstr ""
@@ -11804,11 +12781,13 @@ msgid ""
 "%s?"
 msgstr ""
 
+#, fuzzy
 msgid "Delete Log?"
-msgstr ""
+msgstr "አጥፉ"
 
+#, fuzzy
 msgid "Delete Log..."
-msgstr ""
+msgstr "አጥፉ"
 
 #, c-format
 msgid "<span size='larger' weight='bold'>Conversation in %s on %s</span>"
@@ -11933,9 +12912,9 @@ msgstr ""
 msgid "Unable to open URL"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Error launching \"%s\": %s"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
@@ -11944,17 +12923,20 @@ msgstr ""
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
 msgstr ""
 
+#, fuzzy
 msgid "No message"
-msgstr ""
+msgstr "(1 መልዕክት)"
 
+#, fuzzy
 msgid "Open All Messages"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
 msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
 msgstr ""
 
+#, fuzzy
 msgid "New Pounces"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 #. Translators: Make sure you translate "Dismiss" differently than
 #. "close"!  This string is used in the "You have pounced" dialog
@@ -11975,11 +12957,13 @@ msgstr ""
 msgid "Multiple plugins will be unloaded."
 msgstr ""
 
+#, fuzzy
 msgid "Unload Plugins"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
+#, fuzzy
 msgid "Could not unload plugin"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
 msgid ""
 "The plugin could not be unloaded now, but will be disabled at the next "
@@ -11995,14 +12979,17 @@ msgstr ""
 msgid "Author"
 msgstr ""
 
+#, fuzzy
 msgid "<b>Written by:</b>"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
+#, fuzzy
 msgid "<b>Web site:</b>"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
+#, fuzzy
 msgid "<b>Filename:</b>"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
 msgid "Configure Pl_ugin"
 msgstr ""
@@ -12013,8 +13000,9 @@ msgstr ""
 msgid "Select a file"
 msgstr ""
 
+#, fuzzy
 msgid "Modify Buddy Pounce"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
@@ -12023,14 +13011,17 @@ msgstr ""
 msgid "_Account:"
 msgstr ""
 
+#, fuzzy
 msgid "_Buddy name:"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Si_gns on"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
+#, fuzzy
 msgid "Signs o_ff"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 msgid "Goes a_way"
 msgstr ""
@@ -12053,17 +13044,20 @@ msgstr ""
 msgid "Stops t_yping"
 msgstr ""
 
+#, fuzzy
 msgid "Sends a _message"
-msgstr ""
+msgstr "[መልዕክት የለም]"
 
 msgid "Ope_n an IM window"
 msgstr ""
 
+#, fuzzy
 msgid "_Pop up a notification"
-msgstr ""
+msgstr "አያያዝ ቦታ ቅጂ"
 
+#, fuzzy
 msgid "Send a _message"
-msgstr ""
+msgstr "[መልዕክት የለም]"
 
 msgid "E_xecute a command"
 msgstr ""
@@ -12071,11 +13065,13 @@ msgstr ""
 msgid "P_lay a sound"
 msgstr ""
 
+#, fuzzy
 msgid "Brows_e..."
-msgstr ""
+msgstr "ቃኝ"
 
+#, fuzzy
 msgid "Br_owse..."
-msgstr ""
+msgstr "ቃኝ"
 
 msgid "Pre_view"
 msgstr ""
@@ -12089,14 +13085,16 @@ msgstr ""
 msgid "Pounce Target"
 msgstr ""
 
+#, fuzzy
 msgid "Started typing"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 msgid "Paused while typing"
 msgstr ""
 
+#, fuzzy
 msgid "Signed on"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
 msgid "Returned from being idle"
 msgstr ""
@@ -12104,20 +13102,25 @@ msgstr ""
 msgid "Returned from being away"
 msgstr ""
 
+#, fuzzy
 msgid "Stopped typing"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
+#, fuzzy
 msgid "Signed off"
-msgstr ""
+msgstr "ጌም -  ምልክትን አስቀምጥ"
 
+#, fuzzy
 msgid "Became idle"
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
+#, fuzzy
 msgid "Went away"
-msgstr ""
+msgstr "ድረ-ገጽ፦"
 
+#, fuzzy
 msgid "Sent a message"
-msgstr ""
+msgstr "[መልዕክት የለም]"
 
 msgid "Unknown.... Please report this!"
 msgstr ""
@@ -12131,8 +13134,9 @@ msgstr ""
 msgid "The default Pidgin sound theme"
 msgstr ""
 
+#, fuzzy
 msgid "The default Pidgin buddy list theme"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "The default Pidgin status icon theme"
 msgstr ""
@@ -12146,8 +13150,9 @@ msgstr ""
 msgid "Theme failed to copy."
 msgstr ""
 
+#, fuzzy
 msgid "Theme Selections"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 #. Instructions
 msgid ""
@@ -12156,23 +13161,28 @@ msgid ""
 "list."
 msgstr ""
 
+#, fuzzy
 msgid "Buddy List Theme:"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Status Icon Theme:"
-msgstr ""
+msgstr "ሁኔታ፦ %s"
 
 msgid "Sound Theme:"
 msgstr ""
 
+#, fuzzy
 msgid "Smiley Theme:"
-msgstr ""
+msgstr "ምስሉን አስቀምጥ... (_S)"
 
+#, fuzzy
 msgid "Keyboard Shortcuts"
-msgstr ""
+msgstr "አቋራጮች"
 
+#, fuzzy
 msgid "Cl_ose conversations with the Escape key"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. System Tray
 msgid "System Tray Icon"
@@ -12181,20 +13191,24 @@ msgstr ""
 msgid "_Show system tray icon:"
 msgstr ""
 
+#, fuzzy
 msgid "On unread messages"
-msgstr ""
+msgstr "[መልዕክት የለም]"
 
+#, fuzzy
 msgid "Conversation Window"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "_Hide new IM conversations:"
-msgstr ""
+msgstr "<አዲስ ተጠቃሚ>"
 
 msgid "When away"
 msgstr ""
 
+#, fuzzy
 msgid "Minimi_ze new conversation windows"
-msgstr ""
+msgstr "<አዲስ ተጠቃሚ>"
 
 #. All the tab options!
 msgid "Tabs"
@@ -12227,8 +13241,9 @@ msgstr ""
 msgid "Right Vertical"
 msgstr ""
 
+#, fuzzy
 msgid "N_ew conversations:"
-msgstr ""
+msgstr "<አዲስ ተጠቃሚ>"
 
 msgid "Show _formatting on incoming messages"
 msgstr ""
@@ -12236,8 +13251,9 @@ msgstr ""
 msgid "Close IMs immediately when the tab is closed"
 msgstr ""
 
+#, fuzzy
 msgid "Show _detailed information"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Enable buddy ic_on animation"
 msgstr ""
@@ -12263,17 +13279,20 @@ msgstr ""
 msgid "Minimum input area height in lines:"
 msgstr ""
 
+#, fuzzy
 msgid "Font"
-msgstr ""
+msgstr "የፊደል ቅርጾች"
 
 msgid "Use font from _theme"
 msgstr ""
 
+#, fuzzy
 msgid "Conversation _font:"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Default Formatting"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid ""
 "This is how your outgoing message text will appear when you use protocols "
@@ -12283,18 +13302,21 @@ msgstr ""
 msgid "Cannot start proxy configuration program."
 msgstr ""
 
+#, fuzzy
 msgid "Cannot start browser configuration program."
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Disabled"
-msgstr ""
+msgstr "ትእዛዝ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Use _automatically detected IP address: %s"
-msgstr ""
+msgstr "አድራሻ፦"
 
+#, fuzzy
 msgid "ST_UN server:"
-msgstr ""
+msgstr "ሰርቨር፦"
 
 msgid "<span style=\"italic\">Example: stunserver.org</span>"
 msgstr ""
@@ -12302,8 +13324,9 @@ msgstr ""
 msgid "Public _IP:"
 msgstr ""
 
+#, fuzzy
 msgid "Ports"
-msgstr ""
+msgstr "ፖርት"
 
 msgid "_Enable automatic router port forwarding"
 msgstr ""
@@ -12311,30 +13334,37 @@ msgstr ""
 msgid "_Manually specify range of ports to listen on:"
 msgstr ""
 
+#, fuzzy
 msgid "_Start:"
-msgstr ""
+msgstr "ሁኔታ፦"
 
+#, fuzzy
 msgid "_End:"
-msgstr ""
+msgstr "ፖርት፦"
 
 #. TURN server
 msgid "Relay Server (TURN)"
 msgstr ""
 
+#, fuzzy
 msgid "_TURN server:"
-msgstr ""
+msgstr "ሰርቨር፦"
 
+#, fuzzy
 msgid "_UDP Port:"
-msgstr ""
+msgstr "ፖርት፦"
 
+#, fuzzy
 msgid "T_CP Port:"
-msgstr ""
+msgstr "ፖርት፦"
 
+#, fuzzy
 msgid "Use_rname:"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
+#, fuzzy
 msgid "Pass_word:"
-msgstr ""
+msgstr "ሚስጢራዊ ቃል፦"
 
 msgid "Seamonkey"
 msgstr ""
@@ -12356,11 +13386,13 @@ msgstr ""
 
 #. Do not move the line below.  Code below expects gnome-open to be in
 #. * this list immediately after xdg-open!
+#, fuzzy
 msgid "Desktop Default"
-msgstr ""
+msgstr "አጥፉ"
 
+#, fuzzy
 msgid "GNOME Default"
-msgstr ""
+msgstr "አጥፉ"
 
 msgid "Galeon"
 msgstr "ጋልዮን"
@@ -12394,23 +13426,28 @@ msgstr ""
 msgid "<b>Browser configuration program was not found.</b>"
 msgstr ""
 
+#, fuzzy
 msgid "Configure _Browser"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "_Browser:"
-msgstr ""
+msgstr "መቃኛ (_B)"
 
+#, fuzzy
 msgid "_Open link in:"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "Browser default"
-msgstr ""
+msgstr "መቃኛ"
 
 msgid "Existing window"
 msgstr ""
 
+#, fuzzy
 msgid "New tab"
-msgstr ""
+msgstr "አዲስ"
 
 #, c-format
 msgid ""
@@ -12427,8 +13464,9 @@ msgstr ""
 msgid "<b>Proxy configuration program was not found.</b>"
 msgstr ""
 
+#, fuzzy
 msgid "Configure _Proxy"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. This is a global option that affects SOCKS4 usage even with
 #. * account-specific proxy settings
@@ -12441,17 +13479,20 @@ msgstr ""
 msgid "No proxy"
 msgstr ""
 
+#, fuzzy
 msgid "P_ort:"
-msgstr ""
+msgstr "ፖርት፦"
 
+#, fuzzy
 msgid "User_name:"
-msgstr ""
+msgstr "ተጠቃሚ፦ (_U)"
 
 msgid "Log _format:"
 msgstr ""
 
+#, fuzzy
 msgid "Log all _instant messages"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
 msgid "Log all c_hats"
 msgstr ""
@@ -12462,29 +13503,29 @@ msgstr ""
 msgid "Sound Selection"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "Quietest"
-msgstr ""
+msgstr "ውጣ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Quieter"
-msgstr ""
+msgstr "ውጣ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Quiet"
-msgstr ""
+msgstr "ውጣ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Loud"
-msgstr ""
+msgstr "ጫን"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Louder"
-msgstr ""
+msgstr "ሰዓት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Loudest"
-msgstr ""
+msgstr "ድምፆች"
 
 msgid "_Method:"
 msgstr ""
@@ -12492,8 +13533,9 @@ msgstr ""
 msgid "Console beep"
 msgstr ""
 
+#, fuzzy
 msgid "No sounds"
-msgstr ""
+msgstr "ድምፆች"
 
 #, c-format
 msgid ""
@@ -12501,14 +13543,16 @@ msgid ""
 "(%s for filename)"
 msgstr ""
 
+#, fuzzy
 msgid "M_ute sounds"
-msgstr ""
+msgstr "ድምፆች"
 
 msgid "Sounds when conversation has _focus"
 msgstr ""
 
+#, fuzzy
 msgid "_Enable sounds:"
-msgstr ""
+msgstr "ሴት"
 
 msgid "V_olume:"
 msgstr ""
@@ -12516,11 +13560,13 @@ msgstr ""
 msgid "Play"
 msgstr "አጫውት"
 
+#, fuzzy
 msgid "_Browse..."
-msgstr ""
+msgstr "ቃኝ"
 
+#, fuzzy
 msgid "_Reset"
-msgstr ""
+msgstr "እንደነበረ አድረግ"
 
 msgid "_Report idle time:"
 msgstr ""
@@ -12531,8 +13577,9 @@ msgstr ""
 msgid "_Minutes before becoming idle:"
 msgstr ""
 
+#, fuzzy
 msgid "Change to this status when _idle:"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 msgid "_Auto-reply:"
 msgstr ""
@@ -12550,17 +13597,20 @@ msgstr ""
 msgid "Status to a_pply at startup:"
 msgstr ""
 
+#, fuzzy
 msgid "Interface"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 msgid "Browser"
 msgstr "መቃኛ"
 
+#, fuzzy
 msgid "Status / Idle"
-msgstr ""
+msgstr "ሁኔታ፦"
 
+#, fuzzy
 msgid "Themes"
-msgstr ""
+msgstr "ፈተና"
 
 msgid "Allow all users to contact me"
 msgstr ""
@@ -12587,8 +13637,9 @@ msgid "Set privacy for:"
 msgstr ""
 
 #. Remove All button
+#, fuzzy
 msgid "Remove Al_l"
-msgstr ""
+msgstr "አስወግድ"
 
 msgid "Permit User"
 msgstr ""
@@ -12599,8 +13650,9 @@ msgstr ""
 msgid "Please enter the name of the user you wish to be able to contact you."
 msgstr ""
 
+#, fuzzy
 msgid "_Permit"
-msgstr ""
+msgstr "ፖርት፦"
 
 #, c-format
 msgid "Allow %s to contact you?"
@@ -12627,8 +13679,9 @@ msgstr ""
 msgid "Are you sure you want to block %s?"
 msgstr ""
 
+#, fuzzy
 msgid "Apply"
-msgstr ""
+msgstr "ተጠቀም (_Y)"
 
 msgid "That file already exists"
 msgstr ""
@@ -12642,23 +13695,26 @@ msgstr ""
 msgid "Choose New Name"
 msgstr ""
 
+#, fuzzy
 msgid "Select Folder..."
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 #. list button
 msgid "_Get List"
 msgstr ""
 
 #. add button
+#, fuzzy
 msgid "_Add Chat"
-msgstr ""
+msgstr "ውሪ"
 
 msgid "Are you sure you want to delete the selected saved statuses?"
 msgstr ""
 
 #. Use button
+#, fuzzy
 msgid "_Use"
-msgstr ""
+msgstr "ተጠቀም"
 
 msgid "Title already in use.  You must choose a unique title."
 msgstr ""
@@ -12666,59 +13722,71 @@ msgstr ""
 msgid "Different"
 msgstr ""
 
+#, fuzzy
 msgid "_Title:"
-msgstr ""
+msgstr "አርእስት"
 
+#, fuzzy
 msgid "_Status:"
-msgstr ""
+msgstr "ሁኔታ፦"
 
 #. Different status message expander
 msgid "Use a _different status for some accounts"
 msgstr ""
 
 #. Save & Use button
+#, fuzzy
 msgid "Sa_ve & Use"
-msgstr ""
+msgstr "አስቀምጥ እና ተጠቀም"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Status for %s"
-msgstr ""
+msgstr "ሁኔታ፦ %s"
 
 #, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr ""
 
+#, fuzzy
 msgid "Custom Smiley"
-msgstr ""
+msgstr "ምስል አስገባ"
 
+#, fuzzy
 msgid "Duplicate Shortcut"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Edit Smiley"
-msgstr ""
+msgstr "ምስል አስገባ"
 
+#, fuzzy
 msgid "Add Smiley"
-msgstr ""
+msgstr "ምስል አስገባ"
 
+#, fuzzy
 msgid "_Image:"
-msgstr ""
+msgstr "ምስሉን አስቀምጥ... (_S)"
 
 #. Shortcut text
+#, fuzzy
 msgid "S_hortcut text:"
-msgstr ""
+msgstr "አቋራጮች"
 
+#, fuzzy
 msgid "Smiley"
-msgstr ""
+msgstr "ምስል አስገባ"
 
+#, fuzzy
 msgid "Shortcut Text"
-msgstr ""
+msgstr "አቋራጮች"
 
 msgid "Custom Smiley Manager"
 msgstr ""
 
+#, fuzzy
 msgid "Select Buddy Icon"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 msgid "Click to change your buddyicon for this account."
 msgstr ""
@@ -12729,14 +13797,17 @@ msgstr ""
 msgid "Waiting for network connection"
 msgstr ""
 
+#, fuzzy
 msgid "New status..."
-msgstr ""
+msgstr "አዲስ መልእክት..."
 
+#, fuzzy
 msgid "Saved statuses..."
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
+#, fuzzy
 msgid "Status Selector"
-msgstr ""
+msgstr "ሁኔታ፦"
 
 msgid "Google Talk"
 msgstr ""
@@ -12769,14 +13840,17 @@ msgid ""
 "use it as the buddy icon for this user."
 msgstr ""
 
+#, fuzzy
 msgid "Set as buddy icon"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Send image file"
-msgstr ""
+msgstr "[መልዕክት የለም]"
 
+#, fuzzy
 msgid "Insert in message"
-msgstr ""
+msgstr "ምስል አስገባ"
 
 msgid "Would you like to set it as the buddy icon for this user?"
 msgstr ""
@@ -12818,85 +13892,105 @@ msgstr ""
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
 msgstr ""
 
+#, fuzzy
 msgid "Icon Error"
-msgstr ""
+msgstr "ያልታወቀ ስህተት"
 
+#, fuzzy
 msgid "Could not set icon"
-msgstr ""
+msgstr "መድረክን አስወግድ"
 
+#, fuzzy
 msgid "_Open Link"
-msgstr ""
+msgstr "ኦንላይን"
 
 msgid "_Copy Link Location"
 msgstr "አያያዝ ቦታ ቅጂ"
 
+#, fuzzy
 msgid "_Copy Email Address"
-msgstr ""
+msgstr "ኢሜያል አድራሻ"
 
+#, fuzzy
 msgid "_Open File"
-msgstr ""
+msgstr "ጌም - ክፈት..."
 
+#, fuzzy
 msgid "Open _Containing Directory"
-msgstr ""
+msgstr "ሰርቨር፦"
 
+#, fuzzy
 msgid "Save File"
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
+#, fuzzy
 msgid "_Play Sound"
-msgstr ""
+msgstr "ድምፆች"
 
+#, fuzzy
 msgid "_Save File"
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "Do you really want to clear?"
 msgstr ""
 
+#, fuzzy
 msgid "Select color"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
+#, fuzzy
 msgid "Pidgin"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
 msgid "_Alias"
 msgstr ""
 
+#, fuzzy
 msgid "Close _tabs"
-msgstr ""
+msgstr "ዝጋ"
 
+#, fuzzy
 msgid "_Get Info"
-msgstr ""
+msgstr "መረጃ አግኝ"
 
 msgid "_Invite"
 msgstr ""
 
+#, fuzzy
 msgid "_Modify..."
-msgstr ""
+msgstr "ለውጡ (_M)"
 
+#, fuzzy
 msgid "_Add..."
-msgstr ""
+msgstr "ጨምር"
 
+#, fuzzy
 msgid "_Open Mail"
-msgstr ""
+msgstr "እሜይልን ክፈት"
 
+#, fuzzy
 msgid "_Edit"
-msgstr ""
+msgstr "አስተካክል (_E)"
 
+#, fuzzy
 msgid "Pidgin Tooltip"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
 msgid "Pidgin smileys"
 msgstr ""
 
+#, fuzzy
 msgid "none"
-msgstr ""
+msgstr "ምንም"
 
 msgid "Selecting this disables graphical emoticons."
 msgstr ""
 
+#, fuzzy
 msgid "Small"
-msgstr ""
+msgstr "ኢሜይል"
 
 msgid "Smaller versions of the default smileys"
 msgstr ""
@@ -12904,15 +13998,17 @@ msgstr ""
 msgid "Response Probability:"
 msgstr ""
 
+#, fuzzy
 msgid "Statistics Configuration"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. msg_difference spinner
 msgid "Maximum response timeout:"
 msgstr ""
 
+#, fuzzy
 msgid "minutes"
-msgstr ""
+msgstr "ደቂቃዎች።"
 
 #. last_seen spinner
 msgid "Maximum last-seen difference:"
@@ -12950,11 +14046,13 @@ msgid "Buddy is \"extended\" away"
 msgstr ""
 
 #. Not used yet.
+#, fuzzy
 msgid "Buddy is mobile"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Buddy is offline"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Point values to use when..."
 msgstr ""
@@ -12992,62 +14090,75 @@ msgid ""
 "in contact priority computations."
 msgstr ""
 
+#, fuzzy
 msgid "Conversation Colors"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Customize colors in the conversation window"
 msgstr ""
 
+#, fuzzy
 msgid "Error Messages"
-msgstr ""
+msgstr "መልእክት፦ (_M)"
 
+#, fuzzy
 msgid "Highlighted Messages"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
+#, fuzzy
 msgid "System Messages"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
+#, fuzzy
 msgid "Sent Messages"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
+#, fuzzy
 msgid "Received Messages"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Select Color for %s"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 msgid "Ignore incoming format"
 msgstr ""
 
+#, fuzzy
 msgid "Apply in Chats"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 msgid "Apply in IMs"
 msgstr ""
 
 #. Note to translators: The string "Enter an XMPP Server" is asking the
 #. user to type the name of an XMPP server which will then be queried
+#, fuzzy
 msgid "Server name request"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
+#, fuzzy
 msgid "Enter an XMPP Server"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
+#, fuzzy
 msgid "Select an XMPP server to query"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
+#, fuzzy
 msgid "Find Services"
-msgstr ""
+msgstr "ኦንላይን"
 
+#, fuzzy
 msgid "Add to Buddy List"
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "Gateway"
 msgstr ""
 
+#, fuzzy
 msgid "Directory"
-msgstr ""
+msgstr "ሰርቨር፦"
 
 msgid "PubSub Collection"
 msgstr ""
@@ -13055,29 +14166,34 @@ msgstr ""
 msgid "PubSub Leaf"
 msgstr ""
 
+#, fuzzy
 msgid "Other"
-msgstr ""
+msgstr "ኦፔራ"
 
+#, fuzzy
 msgid ""
 "\n"
 "<b>Description:</b> "
-msgstr ""
+msgstr "መግለጫ"
 
 #. Create the window.
 msgid "Service Discovery"
 msgstr ""
 
+#, fuzzy
 msgid "_Browse"
-msgstr ""
+msgstr "መቃኛ (_B)"
 
+#, fuzzy
 msgid "Server does not exist"
-msgstr ""
+msgstr "የቤት አድራሻ፦"
 
 msgid "Server does not support service discovery"
 msgstr ""
 
+#, fuzzy
 msgid "XMPP Service Discovery"
-msgstr ""
+msgstr "የJabber ስህተት %s"
 
 msgid "Allows browsing and registering services."
 msgstr ""
@@ -13090,8 +14206,9 @@ msgstr ""
 msgid "By conversation count"
 msgstr ""
 
+#, fuzzy
 msgid "Conversation Placement"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. Translators: "New conversations" should match the text in the preferences dialog and "By conversation count" should be the same text used above
 msgid ""
@@ -13171,16 +14288,19 @@ msgstr ""
 msgid "Select a person from your address book below, or add a new person."
 msgstr ""
 
+#, fuzzy
 msgid "Group:"
-msgstr ""
+msgstr "መድረክ፦ (_G)"
 
 #. "New Person" button
+#, fuzzy
 msgid "New Person"
-msgstr ""
+msgstr "<አዲስ ተጠቃሚ>"
 
 #. "Select Buddy" button
+#, fuzzy
 msgid "Select Buddy"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 #. Add the label.
 msgid ""
@@ -13189,15 +14309,17 @@ msgid ""
 msgstr ""
 
 #. Add the expander
+#, fuzzy
 msgid "User _details"
-msgstr ""
+msgstr "ተጠቃሚ መርጫዎች"
 
 #. "Associate Buddy" button
 msgid "_Associate Buddy"
 msgstr ""
 
+#, fuzzy
 msgid "Unable to send email"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "The evolution executable was not found in the PATH."
 msgstr ""
@@ -13208,8 +14330,9 @@ msgstr ""
 msgid "Add to Address Book"
 msgstr ""
 
+#, fuzzy
 msgid "Send Email"
-msgstr ""
+msgstr "ኢሜይል"
 
 #. Configuration frame
 msgid "Evolution Integration Configuration"
@@ -13225,8 +14348,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "Evolution Integration"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 #. *< name
 #. *< version
@@ -13245,17 +14369,21 @@ msgid "Account type:"
 msgstr ""
 
 #. Optional Information section
+#, fuzzy
 msgid "Optional information:"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "First name:"
-msgstr ""
+msgstr "ስም"
 
+#, fuzzy
 msgid "Last name:"
-msgstr ""
+msgstr "የአባት ስም፦"
 
+#, fuzzy
 msgid "Email:"
-msgstr ""
+msgstr "ኢሜይል"
 
 #. *< type
 #. *< ui_requirement
@@ -13273,11 +14401,11 @@ msgstr ""
 msgid "Test to see that all ui signals are working properly."
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "<b>Buddy Note</b>: %s"
-msgstr ""
+msgstr "<b>ሁኔታ፦</b> %s"
 
 msgid "History"
 msgstr "ታሪክ"
@@ -13307,14 +14435,16 @@ msgstr ""
 msgid "Adds a small box to the buddy list that shows if you have new mail."
 msgstr ""
 
+#, fuzzy
 msgid "Markerline"
-msgstr ""
+msgstr "የስር መስመር"
 
 msgid "Draw a line to indicate new messages in a conversation."
 msgstr ""
 
+#, fuzzy
 msgid "Jump to markerline"
-msgstr ""
+msgstr "የስር መስመር"
 
 msgid "Draw Markerline in "
 msgstr ""
@@ -13322,8 +14452,9 @@ msgstr ""
 msgid "_IM windows"
 msgstr ""
 
+#, fuzzy
 msgid "C_hat windows"
-msgstr ""
+msgstr "የውሪ ዝርዝር"
 
 msgid ""
 "A music messaging session has been requested. Please click the MM icon to "
@@ -13339,8 +14470,9 @@ msgstr ""
 msgid "There was a conflict in running the command:"
 msgstr ""
 
+#, fuzzy
 msgid "Error Running Editor"
-msgstr ""
+msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
 
 msgid "The following error has occurred:"
 msgstr ""
@@ -13379,8 +14511,9 @@ msgstr ""
 msgid "\t_Only when someone says your username"
 msgstr ""
 
+#, fuzzy
 msgid "_Focused windows"
-msgstr ""
+msgstr "አዲስ መስኮት"
 
 #. ---------- "Notification Methods" ----------
 msgid "Notification Methods"
@@ -13401,16 +14534,18 @@ msgstr ""
 msgid "Set window manager \"_URGENT\" hint"
 msgstr ""
 
+#, fuzzy
 msgid "_Flash window"
-msgstr ""
+msgstr "የውሪ ዝርዝር"
 
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr ""
 
 #. Present conversation method button
+#, fuzzy
 msgid "_Present conversation window"
-msgstr ""
+msgstr "<አዲስ ተጠቃሚ>"
 
 #. ---------- "Notification Removals" ----------
 msgid "Notification Removal"
@@ -13481,20 +14616,24 @@ msgstr ""
 msgid "Visited Hyperlink Color"
 msgstr ""
 
+#, fuzzy
 msgid "Highlighted Message Name Color"
-msgstr ""
+msgstr "አዲስ መልእክት"
 
+#, fuzzy
 msgid "Typing Notification Color"
-msgstr ""
+msgstr "አያያዝ ቦታ ቅጂ"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr ""
 
+#, fuzzy
 msgid "Conversation Entry"
-msgstr ""
+msgstr "ተገናኝቷል"
 
+#, fuzzy
 msgid "Conversation History"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "Request Dialog"
 msgstr ""
@@ -13502,16 +14641,17 @@ msgstr ""
 msgid "Notify Dialog"
 msgstr ""
 
+#, fuzzy
 msgid "Select Color"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Select Interface Font"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
-#, c-format
+#, fuzzy, c-format
 msgid "Select Font for %s"
-msgstr ""
+msgstr "የፊደል ቅርጽ ምረጡ"
 
 msgid "GTK+ Interface Font"
 msgstr ""
@@ -13519,14 +14659,16 @@ msgstr ""
 msgid "GTK+ Text Shortcut Theme"
 msgstr ""
 
+#, fuzzy
 msgid "Disable Typing Notification Text"
-msgstr ""
+msgstr "አያያዝ ቦታ ቅጂ"
 
 msgid "GTK+ Theme Control Settings"
 msgstr ""
 
+#, fuzzy
 msgid "Colors"
-msgstr ""
+msgstr "ቀለም"
 
 msgid "Fonts"
 msgstr "የፊደል ቅርጾች"
@@ -13568,8 +14710,9 @@ msgstr ""
 msgid "New Version Available"
 msgstr ""
 
+#, fuzzy
 msgid "Later"
-msgstr ""
+msgstr "ቀን"
 
 msgid "Download Now"
 msgstr ""
@@ -13603,13 +14746,15 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "Send Button"
-msgstr ""
+msgstr "ላክ"
 
 #. *< name
 #. *< version
+#, fuzzy
 msgid "Conversation Window Send Button."
-msgstr ""
+msgstr "ተገናኝቷል"
 
 #. *< summary
 msgid ""
@@ -13666,8 +14811,11 @@ msgstr ""
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr ""
 
+#, fuzzy
 msgid "Just logged in"
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 msgid "Just logged out"
 msgstr ""
@@ -13677,32 +14825,39 @@ msgid ""
 "Icon for Unknown person"
 msgstr ""
 
+#, fuzzy
 msgid "Icon for Chat"
-msgstr ""
+msgstr "ውሪን አገጣጥም"
 
+#, fuzzy
 msgid "Ignored"
-msgstr ""
+msgstr "ተዉት"
 
+#, fuzzy
 msgid "Founder"
-msgstr ""
+msgstr "ሰዓት"
 
 #. A user in a chat room who has special privileges.
+#, fuzzy
 msgid "Operator"
-msgstr ""
+msgstr "ኦፔራ"
 
 #. A half operator is someone who has a subset of the privileges
 #. that an operator has.
 msgid "Half Operator"
 msgstr ""
 
+#, fuzzy
 msgid "Authorization dialog"
-msgstr ""
+msgstr "ተዉት"
 
+#, fuzzy
 msgid "Error dialog"
-msgstr ""
+msgstr "የIRC ስህተት"
 
+#, fuzzy
 msgid "Information dialog"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Mail dialog"
 msgstr ""
@@ -13710,32 +14865,39 @@ msgstr ""
 msgid "Question dialog"
 msgstr ""
 
+#, fuzzy
 msgid "Warning dialog"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
 msgid "What kind of dialog is this?"
 msgstr ""
 
+#, fuzzy
 msgid "Status Icons"
-msgstr ""
+msgstr "ሁኔታ፦ %s"
 
+#, fuzzy
 msgid "Chatroom Emblems"
-msgstr ""
+msgstr "የውሪ ቤቶች"
 
+#, fuzzy
 msgid "Dialog Icons"
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "Pidgin Icon Theme Editor"
 msgstr ""
 
+#, fuzzy
 msgid "Contact"
-msgstr ""
+msgstr "መረጃ አግኝ"
 
+#, fuzzy
 msgid "Pidgin Buddylist Theme Editor"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
+#, fuzzy
 msgid "Edit Buddylist Theme"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 msgid "Edit Icon Theme"
 msgstr ""
@@ -13800,8 +14962,9 @@ msgstr ""
 msgid "_Force timestamp format:"
 msgstr ""
 
+#, fuzzy
 msgid "Use system default"
-msgstr ""
+msgstr "አጥፉ"
 
 msgid "12 hour time format"
 msgstr ""
@@ -13809,11 +14972,13 @@ msgstr ""
 msgid "24 hour time format"
 msgstr ""
 
+#, fuzzy
 msgid "Show dates in..."
-msgstr ""
+msgstr "ተጨማሪ ምርጫዎች አሳይ"
 
+#, fuzzy
 msgid "Co_nversations:"
-msgstr ""
+msgstr "ተገናኝቷል"
 
 msgid "For delayed messages"
 msgstr ""
@@ -13821,8 +14986,9 @@ msgstr ""
 msgid "For delayed messages and in chats"
 msgstr ""
 
+#, fuzzy
 msgid "_Message Logs:"
-msgstr ""
+msgstr "መልእክት፦ (_M)"
 
 #. *< type
 #. *< ui_requirement
@@ -13846,15 +15012,17 @@ msgid ""
 msgstr ""
 
 #. Alerts
+#, fuzzy
 msgid "Chatroom alerts"
-msgstr ""
+msgstr "የውሪ ቤቶች"
 
 msgid "Chatroom message alerts _only where someone says your username"
 msgstr ""
 
 #. Launcher integration
+#, fuzzy
 msgid "Launcher Icon"
-msgstr ""
+msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
 msgid "_Disable launcher integration"
 msgstr ""
@@ -13866,8 +15034,9 @@ msgid "Show number of unread co_nversations on launcher icon"
 msgstr ""
 
 #. Messaging menu integration
+#, fuzzy
 msgid "Messaging Menu"
-msgstr ""
+msgstr "መልእክት፦ (_M)"
 
 msgid "Show number of _unread messages for conversations in messaging menu"
 msgstr ""
@@ -13881,8 +15050,9 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#, fuzzy
 msgid "Unity Integration"
-msgstr ""
+msgstr "የቢሮ መረጃ፦"
 
 #. *< name
 #. *< version
@@ -13894,26 +15064,31 @@ msgstr ""
 msgid "Provides integration with Unity's messaging menu and launcher."
 msgstr ""
 
+#, fuzzy
 msgid "Audio"
-msgstr ""
+msgstr "አውቶማቲክ"
 
+#, fuzzy
 msgid "Video"
-msgstr ""
+msgstr "ውሪ"
 
 msgid "Output"
 msgstr ""
 
+#, fuzzy
 msgid "_Plugin"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
+#, fuzzy
 msgid "_Device"
-msgstr ""
+msgstr "የስር መስመር (_U)"
 
 msgid "Input"
 msgstr ""
 
+#, fuzzy
 msgid "P_lugin"
-msgstr ""
+msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
 msgid "D_evice"
 msgstr ""
@@ -13970,8 +15145,9 @@ msgstr ""
 msgid "Remove IM window transparency on focus"
 msgstr ""
 
+#, fuzzy
 msgid "Always on top"
-msgstr ""
+msgstr "የጌም ማውሪያ"
 
 #. Buddy List trans options
 msgid "Buddy List Window"
@@ -14028,8 +15204,9 @@ msgstr ""
 msgid "Only when docked"
 msgstr ""
 
+#, fuzzy
 msgid "Windows Pidgin Options"
-msgstr ""
+msgstr "የዝምብለህ ይግባ መርጫዎች"
 
 msgid "Options specific to Pidgin for Windows."
 msgstr ""
@@ -14050,8 +15227,11 @@ msgstr ""
 msgid "XMPP Console"
 msgstr ""
 
+#, fuzzy
 msgid "Account: "
 msgstr ""
+"\n"
+"<b>ቅጽል ስም፦</b>"
 
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr ""
@@ -14093,20 +15273,24 @@ msgid "GTK+ Runtime (required if not present)"
 msgstr ""
 
 #. Installer Subsection Text
+#, fuzzy
 msgid "Shortcuts"
-msgstr ""
+msgstr "አቋራጮች"
 
 #. Installer Subsection Text
+#, fuzzy
 msgid "Desktop"
-msgstr ""
+msgstr "አጥፉ"
 
 #. Installer Subsection Text
+#, fuzzy
 msgid "Start Menu"
-msgstr ""
+msgstr "ሁኔታ"
 
 #. Installer Subsection Text
+#, fuzzy
 msgid "Localizations"
-msgstr ""
+msgstr "አካባቢ"
 
 #. Installer Subsection Detailed Description
 msgid "Core Pidgin files and dlls"
@@ -14188,3 +15372,1395 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Token Error"
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "Unable to fetch the token.\n"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Captcha"
+#~ msgstr "ምስሉን አስቀምጥ... (_S)"
+
+#, fuzzy
+#~ msgid "Change password for the Gadu-Gadu account"
+#~ msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+#, fuzzy
+#~ msgid "Password was changed successfully!"
+#~ msgstr "ሚስጢራዊ ቃል፦"
+
+#, fuzzy
+#~ msgid "Current password"
+#~ msgstr "አዲስ ሚስጢራዊ ቃል"
+
+#, fuzzy
+#~ msgid "Password (retype)"
+#~ msgstr "ሚስጢራዊ ቃል፦"
+
+#, fuzzy
+#~ msgid "Change Gadu-Gadu Password"
+#~ msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+#, fuzzy
+#~ msgid "Change password..."
+#~ msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+#, fuzzy
+#~ msgid "Hidden Number"
+#~ msgstr "የሞቢል ስልክ፦"
+
+#, fuzzy
+#~ msgid "No Sametime Community Server specified"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Meanwhile Connection Setup"
+#~ msgstr "መድረክን አስወግድ"
+
+#, fuzzy
+#~ msgid "No Sametime Community Server Specified"
+#~ msgstr "ተገናኝቷል"
+
+#~ msgid "Connect"
+#~ msgstr "አገናኝ"
+
+#, fuzzy
+#~ msgid "Pisces"
+#~ msgstr "ሥዕሎች"
+
+#, fuzzy
+#~ msgid "Aries"
+#~ msgstr "አድራሻ፦"
+
+#, fuzzy
+#~ msgid "Taurus"
+#~ msgstr "መክፈቻዎች"
+
+#, fuzzy
+#~ msgid "Cancer"
+#~ msgstr "ተወው"
+
+#, fuzzy
+#~ msgid "Leo"
+#~ msgstr "ዝምብለህ ይግባ"
+
+#, fuzzy
+#~ msgid "Scorpio"
+#~ msgstr "መግለጫ"
+
+#, fuzzy
+#~ msgid "Tiger"
+#~ msgstr "አርእስት"
+
+#, fuzzy
+#~ msgid "Snake"
+#~ msgstr "አስቀምጥ"
+
+#, fuzzy
+#~ msgid "Horse"
+#~ msgstr "ፖርት"
+
+#, fuzzy
+#~ msgid "Monkey"
+#~ msgstr "ምንም"
+
+#, fuzzy
+#~ msgid "Rooster"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Dog"
+#~ msgstr "ዝምብለህ ይግባ"
+
+#, fuzzy
+#~ msgid "Pig"
+#~ msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
+
+#, fuzzy
+#~ msgid "Private"
+#~ msgstr "ቀን"
+
+#, fuzzy
+#~ msgid "Country/Region"
+#~ msgstr "አገር"
+
+#, fuzzy
+#~ msgid "Phone Number"
+#~ msgstr "ስልክ"
+
+#, fuzzy
+#~ msgid "Authorize adding"
+#~ msgstr "ተዉት"
+
+#, fuzzy
+#~ msgid "Cellphone Number"
+#~ msgstr "ስልክ"
+
+#, fuzzy
+#~ msgid "Personal Introduction"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "City/Area"
+#~ msgstr "ከተማ"
+
+#, fuzzy
+#~ msgid "Publish Mobile"
+#~ msgstr "ድረ-ገጽ፦"
+
+#, fuzzy
+#~ msgid "Publish Contact"
+#~ msgstr "የጌም ማውሪያ"
+
+#, fuzzy
+#~ msgid "Horoscope"
+#~ msgstr "ፖርት"
+
+#, fuzzy
+#~ msgid "Blood"
+#~ msgstr "ደማቅ"
+
+#, fuzzy
+#~ msgid "True"
+#~ msgstr "መክፈቻዎች"
+
+#, fuzzy
+#~ msgid "False"
+#~ msgstr "ሴት"
+
+#, fuzzy
+#~ msgid "Modify Contact"
+#~ msgstr "የጌም ማውሪያ"
+
+#, fuzzy
+#~ msgid "Modify Address"
+#~ msgstr "የቤት አድራሻ፦"
+
+#, fuzzy
+#~ msgid "Modify Extended Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Modify Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Update"
+#~ msgstr "የአባት ስም"
+
+#, fuzzy
+#~ msgid "Could not change buddy information."
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Buddy Memo"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "_Modify"
+#~ msgstr "ለውጡ (_M)"
+
+#, fuzzy
+#~ msgid "Memo Modify"
+#~ msgstr "ለውጡ (_M)"
+
+#, fuzzy
+#~ msgid "Server says:"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid "Add buddy question"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Enter answer here"
+#~ msgstr "የጌም ማውሪያ"
+
+#, fuzzy
+#~ msgid "Send"
+#~ msgstr "ላክ"
+
+#, fuzzy
+#~ msgid "Invalid answer."
+#~ msgstr "እስክሪን ስም"
+
+#, fuzzy
+#~ msgid "%u needs authorization"
+#~ msgstr "መድረክን አስወግድ"
+
+#, fuzzy
+#~ msgid "Add buddy authorize"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Enter request here"
+#~ msgstr "የጌም ማውሪያ"
+
+#, fuzzy
+#~ msgid "QQ Buddy"
+#~ msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
+
+#, fuzzy
+#~ msgid "Add buddy"
+#~ msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
+
+#, fuzzy
+#~ msgid "Invalid QQ Number"
+#~ msgstr "የውስጥ ብልሽት"
+
+#, fuzzy
+#~ msgid "Failed sending authorize"
+#~ msgstr "ፋይልን ላክ"
+
+#, fuzzy
+#~ msgid "Rejected by %s"
+#~ msgstr "እንደነበረ አድረግ"
+
+#, fuzzy
+#~ msgid "Message: %s"
+#~ msgstr "መልእክት፦ (_M)"
+
+#, fuzzy
+#~ msgid "Group ID"
+#~ msgstr "መድረክ፦ (_G)"
+
+#, fuzzy
+#~ msgid "Please enter Qun number"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Room Title"
+#~ msgstr "አርእስት"
+
+#, fuzzy
+#~ msgid "Notice"
+#~ msgstr "ምንም"
+
+#, fuzzy
+#~ msgid "Detail"
+#~ msgstr "ዝርዝሮች"
+
+#, fuzzy
+#~ msgid "Creator"
+#~ msgstr "ሰርዝ"
+
+#, fuzzy
+#~ msgid "Category"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Join QQ Qun"
+#~ msgstr "ውሪን አገጣጥም"
+
+#, fuzzy
+#~ msgid "Successfully joined Qun %s (%u)"
+#~ msgstr "ስልክ"
+
+#, fuzzy
+#~ msgid "QQ Qun Operation"
+#~ msgstr "የድምፅ ምርጫዎች"
+
+#, fuzzy
+#~ msgid "Failed:"
+#~ msgstr "ሴት"
+
+#, fuzzy
+#~ msgid "Quit Qun"
+#~ msgstr "ውሪን አገጣጥም"
+
+#, fuzzy
+#~ msgid "Successfully changed Qun members"
+#~ msgstr "ስልክ"
+
+#, fuzzy
+#~ msgid "Successfully changed Qun information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Would you like to set up detailed information now?"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Setup"
+#~ msgstr "አድርግ"
+
+#, fuzzy
+#~ msgid "<b>Removed buddy %u.</b>"
+#~ msgstr "አስወግድ (_R)"
+
+#, fuzzy
+#~ msgid "<b>New buddy %u joined.</b>"
+#~ msgstr "አስወግድ (_R)"
+
+#, fuzzy
+#~ msgid "Unknown-%d"
+#~ msgstr "ያልታወቀ"
+
+#, fuzzy
+#~ msgid "Level"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid " FromMobile"
+#~ msgstr "የሞቢል ስልክ፦"
+
+#, fuzzy
+#~ msgid " BindMobile"
+#~ msgstr "የሞቢል ስልክ፦"
+
+#, fuzzy
+#~ msgid " Video"
+#~ msgstr "ውሪ"
+
+#, fuzzy
+#~ msgid " Zone"
+#~ msgstr "ምንም"
+
+#, fuzzy
+#~ msgid "Invalid name"
+#~ msgstr "እስክሪን ስም"
+
+#, fuzzy
+#~ msgid "Select icon..."
+#~ msgstr "የፊደል ቅርጽ ምረጡ"
+
+#, fuzzy
+#~ msgid "<b>Login time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Total Online Buddies</b>: %d<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Last Refresh</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Server</b>: %s<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Client Tag</b>: %s<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Connection Mode</b>: %s<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>My Internet IP</b>: %s:%d<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Sent</b>: %lu<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Resend</b>: %lu<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Lost</b>: %lu<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Received</b>: %lu<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Received Duplicate</b>: %lu<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Time</b>: %d-%d-%d, %d:%d:%d<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>IP</b>: %s<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<p><b>Lovely Patch Writers</b>:<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<p><b>Acknowledgement</b>:<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<p><b>Scrupulous Testers</b>:<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#~ msgid "Change Password"
+#~ msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+#, fuzzy
+#~ msgid "Account Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Modify Buddy Memo"
+#~ msgstr "የቤት አድራሻ፦"
+
+#, fuzzy
+#~ msgid "Auto"
+#~ msgstr "አውቶማቲክ"
+
+#, fuzzy
+#~ msgid "Select Server"
+#~ msgstr "የፊደል ቅርጽ ምረጡ"
+
+#, fuzzy
+#~ msgid "Connect by TCP"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Show server notice"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid "Show server news"
+#~ msgstr "የቤት አድራሻ፦"
+
+#, fuzzy
+#~ msgid "Keep alive interval (seconds)"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Update interval (seconds)"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Unable to decrypt server reply"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Invalid token len, %d"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid "Captcha Image"
+#~ msgstr "ምስሉን አስቀምጥ... (_S)"
+
+#, fuzzy
+#~ msgid "Enter code"
+#~ msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+#, fuzzy
+#~ msgid "Enter the text from the image"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Socket error"
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "Getting server"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Invalid server or port"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid "Connecting to server"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "QQ Error"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid ""
+#~ "Server News:\n"
+#~ "%s\n"
+#~ "%s\n"
+#~ "%s"
+#~ msgstr "የቤት አድራሻ፦"
+
+#, fuzzy
+#~ msgid "%s:%s"
+#~ msgstr ""
+#~ "%s\n"
+#~ "%s፦ %s"
+
+#, fuzzy
+#~ msgid ""
+#~ "Server notice From %s: \n"
+#~ "%s"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Unknown SERVER CMD"
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "QQ Qun Command"
+#~ msgstr "ትእዛዝ"
+
+#, fuzzy
+#~ msgid "Unable to decrypt login reply"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Unknown LOGIN CMD"
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "Unknown CLIENT CMD"
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "%d has declined the file %s"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "File Send"
+#~ msgstr "ፋይልን ላክ"
+
+#, fuzzy
+#~ msgid "%d cancelled the transfer of %s"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Transfer was closed."
+#~ msgstr "ፋይልን ላክ"
+
+#, fuzzy
+#~ msgid "Error requesting %s"
+#~ msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
+
+#, fuzzy
+#~ msgid "Search for Buddy by Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Nick Name"
+#~ msgstr "ቅጽል ስም"
+
+#, fuzzy
+#~ msgid "Your Mobile Number..."
+#~ msgstr "የሞቢል ስልክ፦"
+
+#, fuzzy
+#~ msgid "Unknown reason."
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "Artist"
+#~ msgstr "አድራሻ፦"
+
+#, fuzzy
+#~ msgid "Current Mood"
+#~ msgstr "አዲስ ሚስጢራዊ ቃል"
+
+#, fuzzy
+#~ msgid "New Mood"
+#~ msgstr "ተጠቃሚ መርጫዎች"
+
+#, fuzzy
+#~ msgid "Change your Mood"
+#~ msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+#, fuzzy
+#~ msgid "Pager server"
+#~ msgstr "ሰርቨርን የለም"
+
+#, fuzzy
+#~ msgid "Orientation"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Error creating conference."
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Unable to bind socket to port: %s"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Unable to listen on socket: %s"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "%s just sent you a Nudge!"
+#~ msgstr "[መልዕክት የለም]"
+
+#, fuzzy
+#~ msgid "Unknown error."
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "%s on %s (%s)"
+#~ msgstr ""
+#~ "%s\n"
+#~ "%s፦ %s"
+
+#, fuzzy
+#~ msgid "Unable to add user on %s (%s)"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Unable to block user on %s (%s)"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Unable to permit user on %s (%s)"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Unable to rename group"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Debugging Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "(Default)"
+#~ msgstr "አጥፉ"
+
+#~ msgid "Icon"
+#~ msgstr "ምልክት"
+
+#, fuzzy
+#~ msgid "Insert a <message/> stanza."
+#~ msgstr "ምስል አስገባ"
+
+#, fuzzy
+#~ msgid "_Start port:"
+#~ msgstr "ፖርት፦"
+
+#, fuzzy
+#~ msgid "_User:"
+#~ msgstr "ተጠቃሚ (_U)"
+
+#, fuzzy
+#~ msgid "Malformed BOSH Connect Server"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Failed to open the file"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Unable to not load SILC key pair"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "_Proxy"
+#~ msgstr "ፖርት"
+
+#~ msgid "_Resume"
+#~ msgstr "ቀጥል (_R)"
+
+#, fuzzy
+#~ msgid "Connection failed."
+#~ msgstr "መድረክን አስወግድ"
+
+#, fuzzy
+#~ msgid "Server has disconnected"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Read error"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Multi-User Chat"
+#~ msgstr "የጌም ማውሪያ"
+
+#, fuzzy
+#~ msgid "Ad-Hoc Commands"
+#~ msgstr "ትእዛዝ"
+
+#, fuzzy
+#~ msgid "In-Band Registration"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Stream Initiation"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "User Activity"
+#~ msgstr "ተጠቃሚ (_U)"
+
+#, fuzzy
+#~ msgid "Entity Capabilities"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>ሁኔታ፦</b>"
+
+#, fuzzy
+#~ msgid "User Tune"
+#~ msgstr "ተጠቃሚ፦ (_U)"
+
+#, fuzzy
+#~ msgid "Reachability Address"
+#~ msgstr "ኢሜያል አድራሻ"
+
+#, fuzzy
+#~ msgid "User Nickname"
+#~ msgstr "ቅጽል ስም"
+
+#, fuzzy
+#~ msgid "Message Receipts"
+#~ msgstr "መልእክት፦ (_M)"
+
+#, fuzzy
+#~ msgid "Public Key Publishing"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "User Chatting"
+#~ msgstr "ተጠቃሚ መርጫዎች"
+
+#, fuzzy
+#~ msgid "User Browsing"
+#~ msgstr "ተጠቃሚ መርጫዎች"
+
+#, fuzzy
+#~ msgid "User Viewing"
+#~ msgstr "ተጠቃሚ (_U)"
+
+#, fuzzy
+#~ msgid "Read Error"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Failed to connect to server."
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Unparseable message"
+#~ msgstr "አዲስ መልእክት"
+
+#, fuzzy
+#~ msgid ""
+#~ "Could not connect to BOS server:\n"
+#~ "%s"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Invalid username."
+#~ msgstr "እስክሪን ስም"
+
+#, fuzzy
+#~ msgid "Could not decrypt server reply"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Connection lost"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Couldn't resolve host"
+#~ msgstr "መድረክን አስወግድ"
+
+#, fuzzy
+#~ msgid "Connection closed (writing)"
+#~ msgstr "መድረክን አስወግድ"
+
+#, fuzzy
+#~ msgid "Error reading from socket: %s"
+#~ msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
+
+#, fuzzy
+#~ msgid "Unable to connect to host"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Could not write"
+#~ msgstr "መድረክን አስወግድ"
+
+#, fuzzy
+#~ msgid ""
+#~ "Lost connection with server\n"
+#~ "%s"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Interface colors"
+#~ msgstr "የውስጥ ብልሽት"
+
+#, fuzzy
+#~ msgid "Unable to retrieve MSN Address Book"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Add buddy Q&A"
+#~ msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
+
+#, fuzzy
+#~ msgid "Can not decrypt get server reply"
+#~ msgstr "ሰርቨርን የለም"
+
+#, fuzzy
+#~ msgid "Keep alive error"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid ""
+#~ "Lost connection with server:\n"
+#~ "%d, %s"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Incorrect username or password."
+#~ msgstr "አዲስ ሚስጢራዊ ቃል"
+
+#, fuzzy
+#~ msgid "Invalid Groupname"
+#~ msgstr "እስክሪን ስም"
+
+#, fuzzy
+#~ msgid "Save As..."
+#~ msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
+
+#~ msgid "%s Options"
+#~ msgstr "%s ምርጫዎች"
+
+#, fuzzy
+#~ msgid "Smiley S_hortcut"
+#~ msgstr "አቋራጮች"
+
+#, fuzzy
+#~ msgid "Primary Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Update information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Invalid QQ Face"
+#~ msgstr "የውስጥ ብልሽት"
+
+#, fuzzy
+#~ msgid "QQ Number Error"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "Group Description"
+#~ msgstr "መግለጫ"
+
+#, fuzzy
+#~ msgid "Unknown status"
+#~ msgstr "ያልታወቀ ስህተት"
+
+#, fuzzy
+#~ msgid "Remove from Qun"
+#~ msgstr "መድረክን አስወግድ"
+
+#, fuzzy
+#~ msgid "System Message"
+#~ msgstr "አዲስ መልእክት"
+
+#, fuzzy
+#~ msgid "<b>Last Login IP</b>: %s<br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Last Login Time</b>: %s\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "Set My Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Error password: %s"
+#~ msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
+
+#, fuzzy
+#~ msgid "Failed to connect all servers"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Connecting server %s, retries %d"
+#~ msgstr "ያልታወቀ የስህተት ኮድ"
+
+#, fuzzy
+#~ msgid "QQ Server Notice"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid "Network disconnected"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "<b>ChangeLog:</b><br>%s"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "Screen name:"
+#~ msgstr "እስክሪን ስም፦"
+
+#, fuzzy
+#~ msgid "Sort by status"
+#~ msgstr "ሁኔታ፦"
+
+#, fuzzy
+#~ msgid "Couldn't open file"
+#~ msgstr "መድረክን አስወግድ"
+
+#, fuzzy
+#~ msgid "Screen name sent"
+#~ msgstr "እስክሪን ስም"
+
+#, fuzzy
+#~ msgid "Invalid screen name."
+#~ msgstr "የውስጥ ብልሽት"
+
+#, fuzzy
+#~ msgid "Available Message"
+#~ msgstr "አዲስ መልእክት"
+
+#, fuzzy
+#~ msgid "Away Message"
+#~ msgstr "አዲስ መልእክት"
+
+#, fuzzy
+#~ msgid "Invalid QQid"
+#~ msgstr " የመጀመሪያው ሚስጢራዊ ቃል"
+
+#, fuzzy
+#~ msgid "Group Operation Error"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "TCP Address"
+#~ msgstr "አድራሻ፦"
+
+#, fuzzy
+#~ msgid "UDP Address"
+#~ msgstr "አድራሻ፦"
+
+#, fuzzy
+#~ msgid "Show Login Information"
+#~ msgstr "የቢሮ መረጃ፦"
+
+#, fuzzy
+#~ msgid "Screen _name:"
+#~ msgstr "እስክሪን ስም፦"
+
+#, fuzzy
+#~ msgid "_Send File"
+#~ msgstr "ፋይልን ላክ"
+
+#, fuzzy
+#~ msgid "Add a C_hat"
+#~ msgstr "ውሪ"
+
+#, fuzzy
+#~ msgid "/Accounts/Add\\/Edit"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>ቅጽል ስም፦</b>"
+
+#, fuzzy
+#~ msgid "_Screen name:"
+#~ msgstr "እስክሪን ስም፦ (_S)"
+
+#, fuzzy
+#~ msgid "_Send To"
+#~ msgstr "ላክ"
+
+#, fuzzy
+#~ msgid "Display Statistics"
+#~ msgstr "የቤት አድራሻ፦"
+
+#, fuzzy
+#~ msgid "Log Viewer"
+#~ msgstr "ሰርቨርን የለም"
+
+#, fuzzy
+#~ msgid "Unable to connect to contact server"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "_Merge"
+#~ msgstr "መልእክት፦ (_M)"
+
+#, fuzzy
+#~ msgid "Hide Disconnect Errors"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Hide Reconnecting Dialog"
+#~ msgstr "ተገናኝቷል"
+
+#, fuzzy
+#~ msgid "Pidgin - Signed off"
+#~ msgstr "ጌም -  ምልክትን አስቀምጥ"
+
+#, fuzzy
+#~ msgid "Pidgin - Away"
+#~ msgstr "ጌም - አዲስ እሜይል"
+
+#~ msgid "WinPidgin Options"
+#~ msgstr "የWinPidgin ምርጫዎች"
+
+#, fuzzy
+#~ msgid "(+%d more)"
+#~ msgstr "(%d መልዕክቶች)"
+
+#~ msgid "Screen Name:"
+#~ msgstr "እስክሪን ስም፦"
+
+#, fuzzy
+#~ msgid "Alias Contact..."
+#~ msgstr "የጌም ማውሪያ"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "<b>Contact Alias:</b> %s"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>ሁኔታ፦</b>"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "<b>Alias:</b> %s"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "<b>Nickname:</b> %s"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>ቅጽል ስም፦</b>"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "<b>Status:</b> Offline"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>ሁኔታ፦</b>"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "<b>Status:</b> Awesome"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>ሁኔታ፦</b>"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "<b>Status:</b> Rockin'"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>ሁኔታ፦</b>"
+
+#~ msgid "Insert link"
+#~ msgstr "አያያዝ አስገባ"
+
+#~ msgid "Insert image"
+#~ msgstr "ምስል አስገባ"
+
+#, fuzzy
+#~ msgid "Bro_wse..."
+#~ msgstr "ቃኝ"
+
+#~ msgid "Tab Options"
+#~ msgstr "የመክፈቻዎች ምርጫዎች"
+
+#, fuzzy
+#~ msgid "Custom status"
+#~ msgstr "ሁኔታ፦"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "<b>Status:</b> %s"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "<b>Message:</b> %s"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>ቅጽል ስም፦</b>"
+
+#, fuzzy
+#~ msgid "Change password"
+#~ msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+#, fuzzy
+#~ msgid "<b>%s:</b> %s"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "Change Jabber Password"
+#~ msgstr "ሚስጢራዊ ቃልን ለውጥ"
+
+#~ msgid "Hidden"
+#~ msgstr "የተደበቀ"
+
+#, fuzzy
+#~ msgid "Unable to log into file transfer proxy."
+#~ msgstr "ተገናኝቷል"
+
+#~ msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
+#~ msgstr "<B>UIN:</B> %s<BR><B>ሁኔታ:</B> %s<HR>%s"
+
+#, fuzzy
+#~ msgid "EMail"
+#~ msgstr "ኢሜይል"
+
+#, fuzzy
+#~ msgid "TOC host"
+#~ msgstr "የTOC እንግዳ ተቀባይ"
+
+#, fuzzy
+#~ msgid "TOC port"
+#~ msgstr "የTOC ፖርት፦"
+
+#, fuzzy
+#~ msgid "Stealth"
+#~ msgstr "ሁኔታ"
+
+#, fuzzy
+#~ msgid "YCHT Port"
+#~ msgstr "ፖርት"
+
+#, fuzzy
+#~ msgid "(%d message)"
+#~ msgid_plural "(%d messages)"
+#~ msgstr[0] "(%d መልዕክቶች)"
+#~ msgstr[1] "(%d መልዕክቶች)"
+
+#, fuzzy
+#~ msgid "Mail Server"
+#~ msgstr "ሰርቨር፦"
+
+#, fuzzy
+#~ msgid "Check Mail"
+#~ msgstr "እሜይልን ክፈት"
+
+#~ msgid "Rename Group"
+#~ msgstr "መድረክን እንደገና ሰይም"
+
+#, fuzzy
+#~ msgid "New group name"
+#~ msgstr "አዲስ ስም፦"
+
+#~ msgid "%d%%"
+#~ msgstr "%d%%"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "<b>Account:</b>"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>ቅጽል ስም፦</b>"
+
+#, fuzzy
+#~ msgid "_Chat"
+#~ msgstr "ውሪ"
+
+#~ msgid "Join a chat room"
+#~ msgstr "የውሪ ቤትን አገጣጥም"
+
+#~ msgid "Done."
+#~ msgstr "ጨርሷል።"
+
+#, fuzzy
+#~ msgid "Reason Unknown."
+#~ msgstr "ያልታወቀ።"
+
+#, fuzzy
+#~ msgid "Azerbaijani"
+#~ msgstr "የጌም ማውሪያ"
+
+#, fuzzy
+#~ msgid "Chinese"
+#~ msgstr "ጣቢያ፦"
+
+#, fuzzy
+#~ msgid "Insertions"
+#~ msgstr "አያያዝ አስገባ"
+
+#~ msgid "Pidgin usage"
+#~ msgstr "የጌም አጠቃቀም"
+
+#~ msgid "X usage"
+#~ msgstr "የX አጠቃቀም"
+
+#~ msgid "Windows usage"
+#~ msgstr "የWindows አጠቃቀም"
+
+#, fuzzy
+#~ msgid "<b>_Account:</b>"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>ቅጽል ስም፦</b>"
+
+#, fuzzy
+#~ msgid "P_references"
+#~ msgstr "ምርጫዎች"
+
+#~ msgid "Unknown Error Code."
+#~ msgstr "ያልታወቀ የስህተት ኮድ።"
+
+#~ msgid "Sex"
+#~ msgstr "ጾታ"
+
+#~ msgid "Nick:"
+#~ msgstr "ቅጽል፦"
+
+#, fuzzy
+#~ msgid "Roomlist Error"
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid "User Properties"
+#~ msgstr "ተጠቃሚ መርጫዎች"
+
+#, fuzzy
+#~ msgid "Set Available Message..."
+#~ msgstr "አዲስ መልእክት"
+
+#, fuzzy
+#~ msgid "Local Addressbook"
+#~ msgstr "ኢሜያል አድራሻ"
+
+#, fuzzy
+#~ msgid "_Preferences"
+#~ msgstr "ምርጫዎች"
+
+#~ msgid "Style"
+#~ msgstr "ዓይነት"
+
+#~ msgid "_Bold"
+#~ msgstr "ደማቅ (_B)"
+
+#~ msgid "Face"
+#~ msgstr "የፊደል ቅርጽ ዘይቤ"
+
+#~ msgid "Window"
+#~ msgstr "መስኮት"
+
+#, fuzzy
+#~ msgid "Co_lorize screen names"
+#~ msgstr "እስክሪን ስም፦ (_S)"
+
+#, fuzzy
+#~ msgid "IO Error."
+#~ msgstr "የIRC ስህተት"
+
+#, fuzzy
+#~ msgid ""
+#~ "<b>Status:</b> %s\n"
+#~ "<b>Message:</b> %s"
+#~ msgstr "<b>ሁኔታ፦</b> %s%s%s"
+
+#~ msgid "(No"
+#~ msgstr "(አይ"
+
+#~ msgid "_Screenname:"
+#~ msgstr "እስክሪን ስም፦ (_S)"
+
+#~ msgid "Pidgin - Information"
+#~ msgstr "ጌም - መረጃ"
+
+#~ msgid "Pidgin - Insert Image"
+#~ msgstr "ጌም - ምስል አስገባ"
+
+#~ msgid "Pa_ssword"
+#~ msgstr "ሚስጢራዊ ቃል (_S)"
+
+#~ msgid "Browser Options"
+#~ msgstr "የመቃኛ ምርጫዎች"
+
+#~ msgid "Pidgin - Save Icon"
+#~ msgstr "ጌም -  ምልክትን አስቀምጥ"
+
+#, fuzzy
+#~ msgid "Username: <b>%s</b><br>\n"
+#~ msgstr "<b>ሁኔታ፦</b> %s"
+
+#, fuzzy
+#~ msgid "<b>Available:</b> "
+#~ msgstr ""
+#~ "\n"
+#~ "<b>ቅጽል ስም፦</b>"
+
+#, fuzzy
+#~ msgid "<b>Status:</b> Not Authorized"
+#~ msgstr ""
+#~ "\n"
+#~ "<b>ሁኔታ፦</b>"
+
+#, fuzzy
+#~ msgid "Event Test"
+#~ msgstr "ኩነት"
+
+#~ msgid "Appl_y"
+#~ msgstr "ተጠቀም (_Y)"
+
+#~ msgid "IRC CTCP info"
+#~ msgstr "የIRC CTCP መረጃ"
+
+#~ msgid "DCC Chat"
+#~ msgstr "የDCC ውሪ"
+
+#~ msgid "<B>Status:</B> %s<HR>%s"
+#~ msgstr "<B>ሁኔታ፦</B> %s<HR>%s"
+
+#~ msgid "ICQ Unknown"
+#~ msgstr "ICQ ያልታወቀ"
+
+#~ msgid "UIN:"
+#~ msgstr "UIN፦"
+
+#~ msgid "Birthday:"
+#~ msgstr "የልደት በዓል፦"
+
+#~ msgid "Age:"
+#~ msgstr "ዕድሜ፦"
+
+#~ msgid "City:"
+#~ msgstr "ከተማ፦"
+
+#~ msgid "State:"
+#~ msgstr "ሁኔታ፦"
+
+#, fuzzy
+#~ msgid "Pidgin - Popup"
+#~ msgstr "ጌም - ክፈት..."
+
+#~ msgid "Preferences..."
+#~ msgstr "ምርጫዎች..."
+
+#~ msgid "Refresh"
+#~ msgstr "በድጋሚ ጀምር"
+
+#~ msgid "%dm"
+#~ msgstr "%dm"
+
+#~ msgid "Pidgin - Save Image"
+#~ msgstr "ጌም - ምስሉን አስቀምት"
+
+#~ msgid "IM Tabs"
+#~ msgstr "የIM መክፈቻዎች"
+
+#~ msgid "Chat Tabs"
+#~ msgstr "የማውሪያ መክፈቻዎች"
+
+#~ msgid "C_ancel"
+#~ msgstr "ተወው (_A)"

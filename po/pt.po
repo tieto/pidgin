@@ -3,15 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Gonçalo Silva <de2a9293@opayq.com>, 2013
-# Gonçalo Silva <de2a9293@opayq.com>, 2013
+# kongshaolong <de2a9293@opayq.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"PO-Revision-Date: 2014-01-22 10:55+0000\n"
+"Last-Translator: Paulo Ribeiro <paulo@diffraction.pt>\n"
 "Language-Team: Portuguese (http://www.transifex.com/projects/p/pidgin/"
 "language/pt/)\n"
 "Language: pt\n"
@@ -1669,6 +1668,7 @@ msgstr "Este protocolo não suporta a obtenção da alcunha pública."
 msgid "Unknown"
 msgstr "Desconhecido"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Contactos"
 
@@ -1780,31 +1780,26 @@ msgstr ""
 "Em vez disso o certificado afirma ser de \"%s\". Isto pode querer dizer que "
 "não se está a ligar ao serviço que pensa."
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Informação de Certificado"
-
-msgid "Unable to find Issuer Certificate"
-msgstr ""
-
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
-"\n"
-"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
+"Nome comum: %s\n"
+"\n"
+"Impressão digital (SHA1): %s\n"
+"\n"
+"Data de activação: %s\n"
+"Data de expiração: %s\n"
 
-msgid "(self-signed)"
-msgstr ""
-
-msgid "View Issuer Certificate"
-msgstr ""
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Informação de Certificado"
 
 #. show error to user
 msgid "Registration Error"
@@ -3213,14 +3208,14 @@ msgstr "Adicionar ao chat"
 msgid "Chat _name:"
 msgstr "_nome de chat:"
 
+#, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr "Não foi possível resolver o hostname '%s': %s"
+
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Ligando"
-
-#, c-format
-msgid "Unable to resolve hostname: %s"
-msgstr "Impossível resolver hostname: %s"
 
 msgid "Chat error"
 msgstr "Erro de chat"
@@ -3429,11 +3424,13 @@ msgstr " <i>(identificado)</i>"
 msgid "Nick"
 msgstr "Nome"
 
+#, fuzzy
 msgid "Login name"
-msgstr "Nome de login"
+msgstr "Sem nome"
 
+#, fuzzy
 msgid "Host name"
-msgstr "Nome do host"
+msgstr "Hostname"
 
 msgid "Currently on"
 msgstr "Actualmente em"
@@ -6217,7 +6214,7 @@ msgid "Your Country"
 msgstr "País"
 
 msgid "Your Language"
-msgstr "A Sua Língua"
+msgstr "O Seu Idioma"
 
 #. display the form to the user and wait for his/her input
 msgid "MXit Authorization"
@@ -9924,9 +9921,6 @@ msgstr "Definições de Presença"
 msgid "Start Doodling"
 msgstr "Começar a Doodlar"
 
-msgid "Activate which ID?"
-msgstr "Activar qual ID?"
-
 msgid "Select the ID you want to activate"
 msgstr "Seleccione o ID que quer activar"
 
@@ -11121,7 +11115,7 @@ msgid "%s disabled"
 msgstr "%s desactivado"
 
 msgid "Reconnect"
-msgstr "Ligar de novo"
+msgstr "Re-ligar"
 
 msgid "Re-enable"
 msgstr "Re-activar"
@@ -11692,7 +11686,7 @@ msgid "Assamese"
 msgstr "Assamês"
 
 msgid "Asturian"
-msgstr "Asturiano"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Latim Bielorrusso"
@@ -11705,9 +11699,6 @@ msgstr "Bengali"
 
 msgid "Bengali-India"
 msgstr "Bengali-Índia"
-
-msgid "Bodo"
-msgstr "Bodo"
 
 msgid "Bosnian"
 msgstr "Bósnio"
@@ -11748,9 +11739,6 @@ msgstr "Esperanto"
 msgid "Spanish"
 msgstr "Espanhol"
 
-msgid "Argentine Spanish"
-msgstr "Espanhol Argentino"
-
 msgid "Estonian"
 msgstr "Estoniano"
 
@@ -11790,6 +11778,9 @@ msgstr "Croata"
 msgid "Hungarian"
 msgstr "Húngaro"
 
+msgid "Armenian"
+msgstr "Arménio"
+
 msgid "Indonesian"
 msgstr "Indonésio"
 
@@ -11805,9 +11796,6 @@ msgstr "Georgiano"
 msgid "Ubuntu Georgian Translators"
 msgstr "Tradutores do Ubuntu Georgianos"
 
-msgid "Kazakh"
-msgstr "Cazaque"
-
 msgid "Khmer"
 msgstr "Khmer"
 
@@ -11820,17 +11808,14 @@ msgstr "Equipa de Tradução Kannada"
 msgid "Korean"
 msgstr "Coreano"
 
-msgid "Kashmiri"
-msgstr "Caxemira"
-
 msgid "Kurdish"
 msgstr "Curdo"
 
+msgid "Lao"
+msgstr "Laosiano"
+
 msgid "Lithuanian"
 msgstr "Lituano"
-
-msgid "Latvian"
-msgstr "Letão"
 
 msgid "Maithili"
 msgstr "Maithili"
@@ -11849,6 +11834,9 @@ msgstr "Mongol"
 
 msgid "Marathi"
 msgstr "Marati"
+
+msgid "Malay"
+msgstr "Malaio"
 
 msgid "Burmese"
 msgstr "Birmanês"
@@ -11892,9 +11880,6 @@ msgstr "Romeno"
 msgid "Russian"
 msgstr "Russo"
 
-msgid "Sindhi"
-msgstr "Sindi"
-
 msgid "Slovak"
 msgstr "Eslovaco"
 
@@ -11928,17 +11913,11 @@ msgstr "Telegu"
 msgid "Thai"
 msgstr "Tailandês"
 
-msgid "Tatar"
-msgstr "Tártaro"
-
 msgid "Ukranian"
 msgstr "Ucraniano"
 
 msgid "Urdu"
 msgstr "Urdu"
-
-msgid "Uzbek"
-msgstr "Uzbeque"
 
 msgid "Vietnamese"
 msgstr "Vietnamita"
@@ -11954,15 +11933,6 @@ msgstr "Chinês Tradicional"
 
 msgid "Amharic"
 msgstr "Amhárico"
-
-msgid "Armenian"
-msgstr "Arménio"
-
-msgid "Lao"
-msgstr "Laosiano"
-
-msgid "Malay"
-msgstr "Malaio"
 
 msgid "Turkish"
 msgstr "Turco"
@@ -14713,8 +14683,9 @@ msgstr "_Desactivar integração com o iniciador"
 msgid "Show number of unread _messages on launcher icon"
 msgstr "Mostrar número de _mensagens por ler no ícone do iniciador"
 
+#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "Mostrar número de co_nversas por ler no ícone do iniciador"
+msgstr "Mostrar número de _conversas por ler no ícone do iniciador"
 
 #. Messaging menu integration
 msgid "Messaging Menu"

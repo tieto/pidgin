@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
 "PO-Revision-Date: 2010-11-22 14:17+0300\n"
 "Last-Translator: Andrey Chemyshev <chemyshev.andrey@gmail.com>\n"
 "Language-Team: Mari <muter@lists.linux-ink.ru>\n"
@@ -1679,6 +1679,7 @@ msgstr "Тиде ойвозыш тототлымвер-влаклан ок эҥ�
 msgid "Unknown"
 msgstr "Палыме огыл"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Мутланыше-влак"
 
@@ -1789,20 +1790,10 @@ msgstr ""
 "Тидын олмеш сертификат \"%s\" деч улмыжым ойла. Тиде ончыкта, тый вес вер "
 "дене ушналтынат, шонымет семын огыл."
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Сертификат нерген увераҥар"
-
-#, fuzzy
-msgid "Unable to find Issuer Certificate"
-msgstr "Сертификатым пеҥгыдемден кертме огыл"
-
 #. Make messages
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Common name: %s\n"
-"\n"
-"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1816,12 +1807,9 @@ msgstr ""
 "Активаций кече: %s\n"
 "Кучылтмо жап пытыме кече: %s\n"
 
-msgid "(self-signed)"
-msgstr ""
-
-#, fuzzy
-msgid "View Issuer Certificate"
-msgstr "_Сертификатым ончен лекташ..."
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Сертификат нерген увераҥар"
 
 #. show error to user
 msgid "Registration Error"
@@ -3209,14 +3197,14 @@ msgstr "Тототлымверыш ешараш"
 msgid "Chat _name:"
 msgstr "_Тототлымверын лӱмжӧ:"
 
+#, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr "'%s' хостлӱмым шындаш ыш лий: %s"
+
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Ушымаш"
-
-#, fuzzy, c-format
-msgid "Unable to resolve hostname: %s"
-msgstr "Хостлӱмым налын кертме огыл"
 
 msgid "Chat error"
 msgstr "Тототлымвер йоҥылыш"
@@ -9980,9 +9968,6 @@ msgstr "Лиймаш келыштарымаш-влак"
 msgid "Start Doodling"
 msgstr "Пашадыме лиймым тӱҥалаш"
 
-msgid "Activate which ID?"
-msgstr "Могай ID тыршышым ышташ?"
-
 msgid "Select the ID you want to activate"
 msgstr "ID-м ойыро, кудым тый чӱктынет"
 
@@ -11790,9 +11775,6 @@ msgstr "Бенгал"
 msgid "Bengali-India"
 msgstr "Бенгал-индий"
 
-msgid "Bodo"
-msgstr ""
-
 msgid "Bosnian"
 msgstr "Босний"
 
@@ -11831,9 +11813,6 @@ msgstr "Эсперанто"
 
 msgid "Spanish"
 msgstr "Испан"
-
-msgid "Argentine Spanish"
-msgstr ""
 
 msgid "Estonian"
 msgstr "Эстон"
@@ -11874,6 +11853,9 @@ msgstr ""
 msgid "Hungarian"
 msgstr "Венгыр"
 
+msgid "Armenian"
+msgstr "Армян"
+
 msgid "Indonesian"
 msgstr "Индонезий"
 
@@ -11889,9 +11871,6 @@ msgstr "Грузин"
 msgid "Ubuntu Georgian Translators"
 msgstr "Ubuntu-м грузин йылмыш кусарыше-влак"
 
-msgid "Kazakh"
-msgstr ""
-
 msgid "Khmer"
 msgstr "Кхмер"
 
@@ -11904,17 +11883,14 @@ msgstr "Каннада йылмыш кусарыше тӱшка"
 msgid "Korean"
 msgstr "Корей"
 
-msgid "Kashmiri"
-msgstr ""
-
 msgid "Kurdish"
 msgstr "Курд"
 
+msgid "Lao"
+msgstr "Лаос"
+
 msgid "Lithuanian"
 msgstr "Литов"
-
-msgid "Latvian"
-msgstr ""
 
 #, fuzzy
 msgid "Maithili"
@@ -11936,6 +11912,9 @@ msgstr "Монгол"
 
 msgid "Marathi"
 msgstr "Маратхи"
+
+msgid "Malay"
+msgstr "Малай"
 
 msgid "Burmese"
 msgstr ""
@@ -11980,9 +11959,6 @@ msgstr "Румын"
 msgid "Russian"
 msgstr "Руш"
 
-msgid "Sindhi"
-msgstr ""
-
 msgid "Slovak"
 msgstr "Словак"
 
@@ -12017,17 +11993,11 @@ msgstr "Телугу"
 msgid "Thai"
 msgstr "Тай"
 
-msgid "Tatar"
-msgstr ""
-
 msgid "Ukranian"
 msgstr "Украин"
 
 msgid "Urdu"
 msgstr "Урду"
-
-msgid "Uzbek"
-msgstr ""
 
 msgid "Vietnamese"
 msgstr "Вьетнам"
@@ -12043,15 +12013,6 @@ msgstr "Тыглай китай"
 
 msgid "Amharic"
 msgstr "Амхар"
-
-msgid "Armenian"
-msgstr "Армян"
-
-msgid "Lao"
-msgstr "Лаос"
-
-msgid "Malay"
-msgstr "Малай"
 
 msgid "Turkish"
 msgstr "Турций"
@@ -12101,8 +12062,8 @@ msgid ""
 msgstr ""
 "<font size=\"4\">Pidgin вес пайдаланыше-влак деч полыш:</font> <a href="
 "\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>Тиде <b>публичне</b> "
-"почто колтылмаш! (<a href=\"http://pidgin.im/pipermail/support/\">чондай</"
-"a>)<br/>Ме ӧрдыж ойвозыш да плагин дене полшен огына керт!<br/>Тиде почто "
+"почто колтылмаш! (<a href=\"http://pidgin.im/pipermail/support/\">чондай</a>)"
+"<br/>Ме ӧрдыж ойвозыш да плагин дене полшен огына керт!<br/>Тиде почто "
 "колтылмашын тӱҥ йылме - <b>англичан</b>.  Тый вес йылме денат возен кертат, "
 "да вашмут-влакын пайдаже изирак лийын кертыт.<br/><br/>"
 
@@ -15181,9 +15142,6 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr "Тиде приложенийым кораҥдашлан тыйын прават уке."
 
-#~ msgid "Unable to resolve hostname '%s': %s"
-#~ msgstr "'%s' хостлӱмым шындаш ыш лий: %s"
-
 #~ msgid "Token Error"
 #~ msgstr "Маркер йоҥылыш"
 
@@ -16720,6 +16678,9 @@ msgstr "Тиде приложенийым кораҥдашлан тыйын пр
 
 #~ msgid "Please provide a shortcut to associate with the smiley."
 #~ msgstr "Шырий дене кылдалтше ярлыкым ыште."
+
+#~ msgid "Activate which ID?"
+#~ msgstr "Могай ID тыршышым ышташ?"
 
 #~ msgid "Cursor Color"
 #~ msgstr "Курсор тӱс"

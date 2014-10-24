@@ -1,24 +1,22 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Croatian translation for Pidgin
+# Copyright (C) 2011
 # This file is distributed under the same license as the PACKAGE package.
+# Sabina Drempetić <bina91991@googlemail.com>, 2011.
 #
-# Translators:
-# Sabina Drempetić <bina91991@googlemail.com>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Croatian (http://www.transifex.com/projects/p/pidgin/language/"
-"hr/)\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"PO-Revision-Date: 2011-03-27 15:42+0100\n"
+"Last-Translator: Sabina Drempetić <bina91991@googlemail.com>\n"
+"Language-Team: Croatian <LL@li.org>\n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -636,7 +634,6 @@ msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 msgid "Supported debug options are: plugins version"
 msgstr ""
@@ -731,7 +728,6 @@ msgid "File Transfers - %d%% of %d file"
 msgid_plural "File Transfers - %d%% of %d files"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #. Create the window.
 msgid "File Transfers"
@@ -897,7 +893,6 @@ msgid "%s (%s) has %d new message."
 msgid_plural "%s (%s) has %d new messages."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 msgid "New Mail"
 msgstr "Nova Poruka"
@@ -1616,6 +1611,7 @@ msgstr ""
 msgid "Unknown"
 msgstr "Nepoznato"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Prijatelji"
 
@@ -1715,19 +1711,10 @@ msgid ""
 "are not connecting to the service you believe you are."
 msgstr ""
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr ""
-
-msgid "Unable to find Issuer Certificate"
-msgstr ""
-
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
-"\n"
-"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1735,10 +1722,8 @@ msgid ""
 "Expiration date: %s\n"
 msgstr ""
 
-msgid "(self-signed)"
-msgstr ""
-
-msgid "View Issuer Certificate"
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
 msgstr ""
 
 #. show error to user
@@ -3056,13 +3041,13 @@ msgstr ""
 msgid "Chat _name:"
 msgstr ""
 
+#, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr ""
+
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
-msgstr ""
-
-#, c-format
-msgid "Unable to resolve hostname: %s"
 msgstr ""
 
 msgid "Chat error"
@@ -3218,8 +3203,9 @@ msgstr ""
 msgid "Auto-detect incoming UTF-8"
 msgstr ""
 
+#, fuzzy
 msgid "Ident name"
-msgstr ""
+msgstr "Preimenuj"
 
 msgid "Real name"
 msgstr ""
@@ -3271,11 +3257,13 @@ msgstr ""
 msgid "Nick"
 msgstr ""
 
+#, fuzzy
 msgid "Login name"
-msgstr ""
+msgstr "Nema imena"
 
+#, fuzzy
 msgid "Host name"
-msgstr ""
+msgstr "Nema imena"
 
 msgid "Currently on"
 msgstr ""
@@ -3436,8 +3424,9 @@ msgstr ""
 msgid "SASL authentication failed: Initializing SASL failed."
 msgstr ""
 
+#, fuzzy
 msgid "Incorrect Password"
-msgstr ""
+msgstr "Unesite Lozinku"
 
 msgid "SASL authentication failed: No worthy mechanisms found"
 msgstr ""
@@ -5542,7 +5531,6 @@ msgid_plural ""
 "sign in."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 msgid ""
 "Message was not sent because the system is unavailable. This normally "
@@ -5715,8 +5703,9 @@ msgid "Where I Live"
 msgstr ""
 
 #. relationship status
+#, fuzzy
 msgid "Relationship Status"
-msgstr ""
+msgstr "Ukloni Stanje"
 
 #. mobile number
 msgid "Mobile Number"
@@ -5780,8 +5769,9 @@ msgstr ""
 msgid "Search for a MXit contact"
 msgstr ""
 
+#, fuzzy
 msgid "Type search information"
-msgstr ""
+msgstr "Promijeni informacije o korisniku %s"
 
 msgid "_Search"
 msgstr ""
@@ -5815,12 +5805,14 @@ msgid "The file you are trying to send is too large!"
 msgstr ""
 
 #. file read error
+#, fuzzy
 msgid "Unable to access the local file"
-msgstr ""
+msgstr "Neoguće otvaranje datoteke."
 
 #. file write error
+#, fuzzy
 msgid "Unable to save the file"
-msgstr ""
+msgstr "Neoguće otvaranje datoteke."
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -5983,8 +5975,9 @@ msgstr ""
 msgid "Last Online"
 msgstr ""
 
+#, fuzzy
 msgid "Invite Message"
-msgstr ""
+msgstr "Poalji Poruku"
 
 msgid "No results"
 msgstr ""
@@ -6004,14 +5997,12 @@ msgid "You have %i suggested friend."
 msgid_plural "You have %i suggested friends."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "We found %i contact that matches your search."
 msgid_plural "We found %i contacts that match your search."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6201,7 +6192,6 @@ msgid_plural ""
 "on the server-side list)"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 msgid "Add contacts from server"
 msgstr ""
@@ -7167,14 +7157,12 @@ msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid ""
@@ -7183,7 +7171,6 @@ msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid ""
@@ -7192,7 +7179,6 @@ msgid_plural ""
 "You missed %hu messages from %s because his/her warning level is too high."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "You missed %hu message from %s because your warning level is too high."
@@ -7200,14 +7186,12 @@ msgid_plural ""
 "You missed %hu messages from %s because your warning level is too high."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 msgid "Your AIM connection may be lost."
 msgstr ""
@@ -7230,7 +7214,6 @@ msgid "The following username is associated with %s"
 msgid_plural "The following usernames are associated with %s"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "No results found for email address %s"
@@ -7313,7 +7296,6 @@ msgid_plural ""
 "truncated for you."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 msgid "Profile too long."
 msgstr ""
@@ -7327,7 +7309,6 @@ msgid_plural ""
 "truncated for you."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 msgid "Away message too long."
 msgstr ""
@@ -9346,9 +9327,6 @@ msgstr ""
 msgid "Start Doodling"
 msgstr ""
 
-msgid "Activate which ID?"
-msgstr ""
-
 msgid "Select the ID you want to activate"
 msgstr ""
 
@@ -9780,42 +9758,36 @@ msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "%s, %d hour"
 msgid_plural "%s, %d hours"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "%s, %d minute"
 msgid_plural "%s, %d minutes"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "Could not open %s: Redirected too many times"
@@ -10026,8 +9998,9 @@ msgstr ""
 msgid "%s%s%s%s wants to add you (%s) to his or her buddy list%s%s"
 msgstr ""
 
+#, fuzzy
 msgid "Send Instant Message"
-msgstr ""
+msgstr "Nova Izravna Poruka"
 
 #. Buddy List
 msgid "Background Color"
@@ -10151,7 +10124,6 @@ msgid_plural ""
 "You currently have %d contacts named %s. Would you like to merge them?"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 msgid ""
 "Merging these contacts will cause them to share a single entry on the buddy "
@@ -10388,8 +10360,9 @@ msgstr ""
 msgid "/Help/De_veloper Information"
 msgstr ""
 
+#, fuzzy
 msgid "/Help/_Plugin Information"
-msgstr ""
+msgstr "Informacije o Prijatelju"
 
 msgid "/Help/_Translator Information"
 msgstr ""
@@ -10478,7 +10451,6 @@ msgid "%d unread message from %s\n"
 msgid_plural "%d unread messages from %s\n"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 msgid "Manually"
 msgstr ""
@@ -10515,7 +10487,6 @@ msgid_plural ""
 "%d accounts were disabled because you signed on from another location:"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 msgid "<b>Username:</b>"
 msgstr ""
@@ -10893,7 +10864,6 @@ msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 msgid "Stopped Typing"
 msgstr ""
@@ -10907,10 +10877,13 @@ msgstr ""
 msgid "New Event"
 msgstr ""
 
+#, fuzzy
 msgid ""
 "The account has disconnected and you are no longer in this chat. You will "
 "automatically rejoin the chat when the account reconnects."
 msgstr ""
+"Račun je odspojen i vie niste u ovom čavrljanju. Bit ćete aautomatski opet "
+"dodani u čavrljanje kad se račun ponovno spoji."
 
 msgid "clear: Clears all conversation scrollbacks."
 msgstr ""
@@ -11071,9 +11044,6 @@ msgstr ""
 msgid "Bengali-India"
 msgstr ""
 
-msgid "Bodo"
-msgstr ""
-
 msgid "Bosnian"
 msgstr ""
 
@@ -11111,9 +11081,6 @@ msgid "Esperanto"
 msgstr ""
 
 msgid "Spanish"
-msgstr ""
-
-msgid "Argentine Spanish"
 msgstr ""
 
 msgid "Estonian"
@@ -11155,6 +11122,9 @@ msgstr ""
 msgid "Hungarian"
 msgstr ""
 
+msgid "Armenian"
+msgstr ""
+
 msgid "Indonesian"
 msgstr ""
 
@@ -11170,9 +11140,6 @@ msgstr ""
 msgid "Ubuntu Georgian Translators"
 msgstr ""
 
-msgid "Kazakh"
-msgstr ""
-
 msgid "Khmer"
 msgstr ""
 
@@ -11185,16 +11152,13 @@ msgstr ""
 msgid "Korean"
 msgstr ""
 
-msgid "Kashmiri"
-msgstr ""
-
 msgid "Kurdish"
 msgstr ""
 
-msgid "Lithuanian"
+msgid "Lao"
 msgstr ""
 
-msgid "Latvian"
+msgid "Lithuanian"
 msgstr ""
 
 msgid "Maithili"
@@ -11213,6 +11177,9 @@ msgid "Mongolian"
 msgstr ""
 
 msgid "Marathi"
+msgstr ""
+
+msgid "Malay"
 msgstr ""
 
 msgid "Burmese"
@@ -11257,9 +11224,6 @@ msgstr ""
 msgid "Russian"
 msgstr ""
 
-msgid "Sindhi"
-msgstr ""
-
 msgid "Slovak"
 msgstr ""
 
@@ -11293,16 +11257,10 @@ msgstr ""
 msgid "Thai"
 msgstr ""
 
-msgid "Tatar"
-msgstr ""
-
 msgid "Ukranian"
 msgstr ""
 
 msgid "Urdu"
-msgstr ""
-
-msgid "Uzbek"
 msgstr ""
 
 msgid "Vietnamese"
@@ -11318,15 +11276,6 @@ msgid "Traditional Chinese"
 msgstr ""
 
 msgid "Amharic"
-msgstr ""
-
-msgid "Armenian"
-msgstr ""
-
-msgid "Lao"
-msgstr ""
-
-msgid "Malay"
 msgstr ""
 
 msgid "Turkish"
@@ -11401,12 +11350,13 @@ msgstr ""
 msgid "%s Translator Information"
 msgstr ""
 
-#, c-format
+#, fuzzy, c-format
 msgid "%s Plugin Information"
-msgstr ""
+msgstr "Informacije"
 
+#, fuzzy
 msgid "Plugin Information"
-msgstr ""
+msgstr "Informacije"
 
 msgid "_Name"
 msgstr ""
@@ -11453,7 +11403,6 @@ msgid_plural ""
 "your buddy list.  Do you want to continue?"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 msgid "Remove Contact"
 msgstr ""
@@ -11982,14 +11931,12 @@ msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "<b>%d new email.</b>"
 msgid_plural "<b>%d new emails.</b>"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #, c-format
 msgid "The browser command \"%s\" is invalid."
@@ -13931,8 +13878,9 @@ msgid "Show number of unread co_nversations on launcher icon"
 msgstr ""
 
 #. Messaging menu integration
+#, fuzzy
 msgid "Messaging Menu"
-msgstr ""
+msgstr "Poruka poslana"
 
 msgid "Show number of _unread messages for conversations in messaging menu"
 msgstr ""

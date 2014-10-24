@@ -3,15 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Besnik <besnik@programeshqip.org>, 2013-2014
-# Besnik <besnik@programeshqip.org>, 2014
 # Besnik <besnik@programeshqip.org>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"PO-Revision-Date: 2014-01-21 08:25+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Albanian (http://www.transifex.com/projects/p/pidgin/language/"
 "sq/)\n"
@@ -71,7 +69,7 @@ msgid "Account was not added"
 msgstr "Nuk u shtua llogaria"
 
 msgid "Username of an account must be non-empty."
-msgstr "Emri i përdoruesit për një llogari nuk mund të jetë i zbrazët."
+msgstr "Emri i përdoruesit për një llogari nuk mund të jetë bosh."
 
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
@@ -131,7 +129,7 @@ msgstr "Ruaj"
 
 #, c-format
 msgid "Are you sure you want to delete %s?"
-msgstr "Jeni i sigurt se doni të fshini %s?"
+msgstr "jeni të sigurtë se doni të fshini %s?"
 
 msgid "Delete Account"
 msgstr "Fshi Llogari"
@@ -179,7 +177,7 @@ msgid ""
 "Online: %d\n"
 "Total: %d"
 msgstr ""
-"Në linjë: %d\n"
+"Online: %d\n"
 "Gjithsej: %d"
 
 #, c-format
@@ -207,7 +205,7 @@ msgid "You must select an account."
 msgstr "Lypset të përzgjidhni një llogari."
 
 msgid "The selected account is not online."
-msgstr "Llogaria e përzgjedhur nuk është në linjë."
+msgstr "Llogaria e përzgjedhur nuk është \"online\""
 
 msgid "Error adding buddy"
 msgstr "Gabim në shtim shoku"
@@ -254,7 +252,7 @@ msgstr "Shto Fjalosje"
 
 msgid "You can edit more information from the context menu later."
 msgstr ""
-"Nga menuja e kontekstit mund të përpunoni më të tepër të dhëna më vonë."
+"Nga menuja e kontekstit mund të përpunoni më të tepër të dhëna më vonë "
 
 msgid "Error adding group"
 msgstr "Gabim në shtim grupi"
@@ -312,7 +310,7 @@ msgid "Set Alias"
 msgstr "Caktoni Alias"
 
 msgid "Enter empty string to reset the name."
-msgstr "Jepni varg të zbrazët për ricaktim të emrit."
+msgstr "Jepni varg bosh për ricaktim të emrit."
 
 msgid "Removing this contact will also remove all the buddies in the contact"
 msgstr "Heqja e këtij kontakti do të heqë gjithashtu tërë shokët te kontakti"
@@ -436,7 +434,7 @@ msgid "Show"
 msgstr "Shfaq"
 
 msgid "Empty groups"
-msgstr "Grupe të zbrazët"
+msgstr "Grupe bosh"
 
 msgid "Offline buddies"
 msgstr "Shokë jo të lidhur"
@@ -500,7 +498,7 @@ msgid "Certificate Export Error"
 msgstr "Gabim Eksportimi Dëshmie"
 
 msgid "X.509 certificate export failed"
-msgstr "Eksportimi i dëshmisë X.509 dështoi X"
+msgstr "Eksportimi i dëshmisë X.509 dështoi X."
 
 msgid "PEM X.509 Certificate Export"
 msgstr "Eksport Dëshmie PEM X.509"
@@ -542,7 +540,7 @@ msgstr "Të dhëna"
 
 #. Close button
 msgid "Close"
-msgstr "Mbylle"
+msgstr "Mbyll"
 
 #, c-format
 msgid "%s (%s)"
@@ -586,7 +584,7 @@ msgid "That command doesn't work on this protocol."
 msgstr "Ai urdhër nuk punon nën këtë protokoll."
 
 msgid "Message was not sent, because you are not signed on."
-msgstr "Mesazhi nuk u dërgua, ngaqë nuk keni nënshkruar për hyrje."
+msgstr "Mesazhi nuk u dërgua dot, ngaqë nuk keni nënshkruar për hyrje."
 
 #, c-format
 msgid "%s (%s -- %s)"
@@ -653,16 +651,16 @@ msgid "You are not connected."
 msgstr "Nuk jeni i lidhur."
 
 msgid "<AUTO-REPLY> "
-msgstr "<VETËPËRGJIGJU> "
+msgstr "<VETËPËRGJIGJU>"
 
 #, c-format
 msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
 msgstr[0] "Listë e %d përdoruesi:\n"
-msgstr[1] "Listë e %d përdoruesish:\n"
+msgstr[1] "Listë e %d përdoruesash:\n"
 
 msgid "Supported debug options are: plugins version"
-msgstr "Mundësitë që mbulohen për diagnostikimin janë: version shtojcash"
+msgstr "Mundësitë që mbulohen për \"debug\"-un janë: version shtojcash"
 
 msgid "No such command (in this context)."
 msgstr "Pa urdhër të tillë (në këtë kontekst)."
@@ -672,7 +670,7 @@ msgid ""
 "The following commands are available in this context:\n"
 msgstr ""
 "Përdorni \"/help &lt;command&gt;\" për ndihmë mbi një urdhër të caktuar.\n"
-"Në këtë frymë, mund të kihen urdhrat vijues:\n"
+"Në këtë frymë, janë të mundshëm urdhërat vijues:\n"
 
 #, c-format
 msgid ""
@@ -726,7 +724,7 @@ msgid "accounts: Show the accounts window."
 msgstr "accounts: Shfaq dritare llogarish."
 
 msgid "debugwin: Show the debug window."
-msgstr "debugwin: Shfaq dritaren e diagnostikimeve."
+msgstr "debugwin: Shfaq dritarene diagnostikimeve."
 
 msgid "prefs: Show the preference window."
 msgstr "prefs: Shfaq dritare parapëlqimesh."
@@ -748,7 +746,7 @@ msgstr ""
 "cyan, default<br><br>SHEMBULL:<br>    msgcolor send cyan default"
 
 msgid "Unable to open file."
-msgstr "Nuk arrin të hapë kartelë."
+msgstr "I pazoti të hapë kartelë."
 
 msgid "Debug Window"
 msgstr "Dritare Diagnostikimesh"
@@ -777,7 +775,7 @@ msgid "File Transfers"
 msgstr "Shpërngulje Kartelash"
 
 msgid "Progress"
-msgstr "Përparim"
+msgstr " Përparim"
 
 msgid "Filename"
 msgstr "Emër kartele"
@@ -859,7 +857,7 @@ msgid ""
 "Instant messages will only be logged if the \"Log all instant messages\" "
 "preference is enabled."
 msgstr ""
-"Mesazhe të atypëratyshëm do të regjistrohen vetëm nëse është i aktivizuar "
+"mesazhe të atypëratyshëm do të regjistrohen vetëm nëse është i aktivizuar "
 "parapëlqimi \"Regjistro tërë mesazhet e atypëratyshëm\"."
 
 msgid ""
@@ -876,7 +874,7 @@ msgstr "Madhësi tërësore regjistrimi:"
 
 #. Search box *********
 msgid "Scroll/Search: "
-msgstr "Parakaloji/Kërko: "
+msgstr "Parakaloji/Kërko:"
 
 #, c-format
 msgid "Conversations in %s"
@@ -993,7 +991,7 @@ msgstr ""
 "Version: %s\n"
 "Përshkrim: %s\n"
 "Autor: %s\n"
-"Sajt Web: %s\n"
+"Website: %s\n"
 "Emër kartele: %s\n"
 
 msgid "Plugin need to be loaded before you can configure it."
@@ -1123,7 +1121,7 @@ msgstr "Duhet të krijoni një llogari përpara se të mund të krijonit një cy
 
 #, c-format
 msgid "Are you sure you want to delete the pounce on %s for %s?"
-msgstr "Jeni i sigurt se doni të fshini cytjen te %s për %s?"
+msgstr "Jeni i sigurtë se doni të fshini cytjen te %s për %s?"
 
 msgid "Buddy Pounces"
 msgstr "Cytje Shokësh"
@@ -1150,7 +1148,7 @@ msgstr "%s është kthyer nga largimi (%s)"
 
 #, c-format
 msgid "%s has stopped typing to you (%s)"
-msgstr "%s ka reshtur së shkruari për ju (%s)"
+msgstr "%s ka reshtur së shkruajturi për ju (%s)"
 
 #, c-format
 msgid "%s has signed off (%s)"
@@ -1214,7 +1212,7 @@ msgid "Change status to"
 msgstr "Ndryshoji gjendjen si"
 
 msgid "Conversations"
-msgstr "Bashkëbisedime"
+msgstr "bashkëbisedime"
 
 msgid "Logging"
 msgstr "Hyrje"
@@ -1314,7 +1312,7 @@ msgid "Sound Method"
 msgstr "Metodë Tingulli"
 
 msgid "Method: "
-msgstr "Metodë: "
+msgstr "Metodë:"
 
 #, c-format
 msgid ""
@@ -1398,10 +1396,10 @@ msgid "Invalid title"
 msgstr "Titull i pavlefshëm"
 
 msgid "Please enter a non-empty title for the status."
-msgstr "Ju lutemi, jepni për gjendjen një titull jo të zbrazët."
+msgstr "Ju lutemi, jepni për gjendjen një titull jo bosh."
 
 msgid "Duplicate title"
-msgstr "Dyfisho titullin"
+msgstr "Dyfisho Titullin"
 
 msgid "Please enter a different title for the status."
 msgstr "Ju lutemi, jepni një tjetër titull për gjendjen."
@@ -1524,13 +1522,13 @@ msgstr ""
 "Regjistrimi mund të aktivizohet prej Mjete -> Parapëlqime -> Regjistrim.\n"
 "\n"
 "Aktivizimi i regjistrimit të mesazheve të atypëratyshëm dhe/ose fjalosjeve "
-"aktivizon historikun për të njëjtin lloj bashkëbisedimi."
+"aktivizon historikun për të njëjtin tip bashkëbisedimi."
 
 msgid "GntHistory"
 msgstr "GntHistory"
 
 msgid "Shows recently logged conversations in new conversations."
-msgstr "Shfaq në bashkëbisedime të rinj bashkëbisedime të përdorur së fundmi."
+msgstr "Shfaq në bashkëbisedime të rinj bashkëbisedime të përdorur së fundmi ."
 
 msgid ""
 "When a new conversation is opened this plugin will insert the last "
@@ -1578,13 +1576,13 @@ msgid "Offline"
 msgstr "Jo i lidhur"
 
 msgid "Online Buddies"
-msgstr "Shokë Në Linjë"
+msgstr "Shokë të Lidhur"
 
 msgid "Offline Buddies"
 msgstr "Shokë Jo të lidhur"
 
 msgid "Online/Offline"
-msgstr "Në linjë/Jo në linjë"
+msgstr "Online/Offline"
 
 msgid "Meebo"
 msgstr "Meebo"
@@ -1622,7 +1620,7 @@ msgstr "Fjalëkalimi është i domosdoshëm për hyrjen."
 
 #, c-format
 msgid "Enter password for %s (%s)"
-msgstr "Jepni fjalëkalim për %s (%s)"
+msgstr "Jepni fjalëkalim për %s (%s) "
 
 msgid "Enter Password"
 msgstr "Jepni Fjalëkalimin"
@@ -1654,7 +1652,7 @@ msgstr "Fjalëkalim i ri (sërish)"
 
 #, c-format
 msgid "Change password for %s"
-msgstr "Ndrysho fjalëkalimin për %s"
+msgstr "Ndrysho fjalëklim për %s"
 
 msgid "Please enter your current password and your new password."
 msgstr ""
@@ -1676,6 +1674,7 @@ msgstr "Ky protokoll nuk mbulon dhënie aliasi publik."
 msgid "Unknown"
 msgstr "E panjohur"
 
+#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Shokë"
 
@@ -1703,8 +1702,8 @@ msgid ""
 "The certificate has expired and should not be considered valid.  Check that "
 "your computer's date and time are accurate."
 msgstr ""
-"Dëshmia ka skaduar dhe nuk duhet marrë si e vlefshme.  Kontrolloni në janë "
-"të sakta data dhe ora e kompjuterit."
+"Dëshmia ka skaduar dhe nuk duhet marrë si e vlefshme. Kontrolloni në janë të "
+"sakta data dhe ora e kompjuterit."
 
 #. Translators: "domain" refers to a DNS domain (e.g. talk.google.com)
 msgid "The certificate presented is not issued to this domain."
@@ -1777,41 +1776,36 @@ msgid "SSL Certificate Error"
 msgstr "Gabim Dëshmie SSL"
 
 msgid "Unable to validate certificate"
-msgstr "Nuk arrin të vleftësojë dëshmi"
+msgstr "I pazoti të vleftësojë dëshmi"
 
 #, c-format
 msgid ""
 "The certificate claims to be from \"%s\" instead. This could mean that you "
 "are not connecting to the service you believe you are."
 msgstr ""
-"Dëshmia pretendon të jetë prej \"%s\". Kjo mundet të thotë se nuk po lidheni "
-"te shërbimi që kujtoni se po lidheni."
-
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Të dhëna Dëshmie"
-
-msgid "Unable to find Issuer Certificate"
-msgstr ""
+"Dëshmia pretendon të jetë prej \"%s\".  Kjo mundet të thotë se nuk po "
+"lidheni te shërbimi që kujtoni se po lidheni."
 
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
 "\n"
-"Issued By: %s\n"
-"\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
+"Emër i zakonshëm: %s\n"
+"\n"
+"Shenjë gishtash (SHA1): %s\n"
+"\n"
+"Datë aktivizimi: %s\n"
+"Datë shfuqizimi: %s\n"
 
-msgid "(self-signed)"
-msgstr ""
-
-msgid "View Issuer Certificate"
-msgstr ""
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Të dhëna Dëshmie"
 
 #. show error to user
 msgid "Registration Error"
@@ -1834,17 +1828,17 @@ msgid "Unknown error"
 msgstr "Gabim i panjohur"
 
 msgid "Unable to send message: The message is too large."
-msgstr "Nuk arrin të dërgojë mesazh: Mesazhi është shumë i madh."
+msgstr "I pazoti të dërgojë mesazh: Mesazhi është shumë i madh."
 
 #, c-format
 msgid "Unable to send message to %s."
-msgstr "Nuk arrin të dërgojë mesazh te %s."
+msgstr "I pazoti të dërgojë mesazh te %s."
 
 msgid "The message is too large."
 msgstr "Mesazhi është shumë i madh."
 
 msgid "Unable to send message."
-msgstr "Nuk arrin të dërgojë mesazh."
+msgstr "I pazoti të dërgojë mesazh."
 
 msgid "Send Message"
 msgstr "Dërgo Mesazh"
@@ -1907,29 +1901,29 @@ msgid "No name"
 msgstr "Pa emër"
 
 msgid "Unable to create new resolver process\n"
-msgstr "Nuk arrin të krijojë proces të ri shquarjeje\n"
+msgstr "I pazoti të krijojë proces të ri shquajtjeje\n"
 
 msgid "Unable to send request to resolver process\n"
-msgstr "Nuk arrin të dërgojë kërkesë te proces shquarjeje\n"
+msgstr "I pazoti të dërgojë kërkesë te proces shquajtjeje\n"
 
 #, c-format
 msgid ""
 "Error resolving %s:\n"
 "%s"
 msgstr ""
-"Gabim në shquarjen e %s:\n"
+"Gabim në shquajtjen e %s:\n"
 "%s"
 
 #, c-format
 msgid "Error resolving %s: %d"
-msgstr "Gabim në shquarjen e %s: %d"
+msgstr "Gabim në shquajtjen e %s: %d"
 
 #, c-format
 msgid ""
 "Error reading from resolver process:\n"
 "%s"
 msgstr ""
-"Gabim gjatë leximit prej procesi të shquarjes:\n"
+"Gabim gjatë leximit prej procesi të shquajtjes:\n"
 "%s"
 
 #, c-format
@@ -2010,7 +2004,7 @@ msgid ""
 "Remote host: %s\n"
 "Remote port: %d"
 msgstr ""
-"Ka një kartelë të mundshme për shkarkim prej:\n"
+"Ka një kartelë të munshme për shkarkim prej:\n"
 "Strehë e largët: %s\n"
 "Portë e largët: %d"
 
@@ -2065,7 +2059,7 @@ msgid "File transfer from %s failed."
 msgstr "Shpërngulja e kartelës prej %s dështoi."
 
 msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"aim\" urdhri i treguar"
+msgstr "Në duhet a jo të trajtojë URL-ra  \"aim\" urdhri i treguar"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
@@ -2092,7 +2086,7 @@ msgstr ""
 "duhej xhiruar në një terminal."
 
 msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"gg\" urdhri i treguar"
+msgstr "Në duhet a jo të trajtojë URL-ra  \"gg\" urdhri i treguar"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"gg\" "
@@ -2109,7 +2103,7 @@ msgstr ""
 "Urdhri i përdorur për të trajtuar URL-ra \"gg\", në qoftë i aktivizuar."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"icq\" urdhri i treguar"
+msgstr "Në duhet a jo të trajtojë URL-ra  \"icq\" urdhri i treguar"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"icq\" "
@@ -2126,7 +2120,7 @@ msgstr ""
 "Urdhri i përdorur për të trajtuar URL-ra \"icq\", në qoftë i aktivizuar."
 
 msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"irc\" urdhri i treguar"
+msgstr "Në duhet a jo të trajtojë URL-ra  \"irc\" urdhri i treguar"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"irc\" "
@@ -2143,7 +2137,7 @@ msgstr ""
 "Urdhri i përdorur për të trajtuar URL-ra \"irc\", në qoftë i aktivizuar."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"msnim\" urdhri i treguar"
+msgstr "Në duhet a jo të trajtojë URL-ra  \"msnim\" urdhri i treguar"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"msnim\" "
@@ -2160,7 +2154,7 @@ msgstr ""
 "Urdhri i përdorur për të trajtuar URL-ra \"msnim\", në qoftë i aktivizuar."
 
 msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"sip\" urdhri i treguar"
+msgstr "Në duhet a jo të trajtojë URL-ra  \"sip\" urdhri i treguar"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"sip\" "
@@ -2177,7 +2171,7 @@ msgstr ""
 "Urdhri i përdorur për të trajtuar URL-ra \"sip\", në qoftë i aktivizuar."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"xmpp\" urdhri i treguar"
+msgstr "Në duhet a jo të trajtojë URL-ra  \"xmpp\" urdhri i treguar"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"xmpp\" "
@@ -2194,7 +2188,7 @@ msgstr ""
 "Urdhri i përdorur për të trajtuar URL-ra \"xmpp\", në qoftë i aktivizuar."
 
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"ymsgr\" urdhri i treguar"
+msgstr "Në duhet a jo të trajtojë URL-ra  \"ymsgr\" urdhri i treguar"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"ymsgr\" "
@@ -2245,8 +2239,7 @@ msgstr ""
 "PËRGJIGJU&gt;:</b></font> %s<br/>\n"
 
 msgid "<font color=\"red\"><b>Unable to find log path!</b></font>"
-msgstr ""
-"<font color=\"red\"><b>Nuk arrin të gjejë shteg regjistrimi!</b></font>"
+msgstr "<font color=\"red\"><b>I pazoti të gjejë shteg regjistrimi!</b></font>"
 
 #, c-format
 msgid "<font color=\"red\"><b>Could not read file: %s</b></font>"
@@ -2260,13 +2253,13 @@ msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
-"Nuk u gjetën kodues/çkodues. Instaloni ca të tillë GStreamer, nga ata që "
+"Nuk u gjetën koduesa/çkoduesa. Instaloni ca të tillë GStreamer, nga ata që "
 "gjendet te paketat për shtojca GStreamer."
 
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
-"Nuk janë lënë kodues/çkodues. Parapëlqimet tuaja për to te fs-codecs janë "
+"Nuk janë lënë koduesa/çkoduesa. Parapëlqimet tuaja për to te fs-codecs janë "
 "shumë të ngurta."
 
 msgid "A non-recoverable Farsight2 error has occurred."
@@ -2279,7 +2272,7 @@ msgid "Error with your microphone"
 msgstr "Gabim me mikrofonin tuaj"
 
 msgid "Error with your webcam"
-msgstr "Gabim me kamerën tuaj web"
+msgstr "Gabim me kameran tuaj web"
 
 msgid "Conference error"
 msgstr "Gabim konference"
@@ -2318,11 +2311,11 @@ msgstr ""
 "riprovoni."
 
 msgid "Unable to load the plugin"
-msgstr "Nuk qe e mundur të ngarkohej shtojca"
+msgstr "Nuk qe e mundur të ngarkohet shtojca"
 
 #, c-format
 msgid "The required plugin %s was unable to load."
-msgstr "Nuk qe e mundur të ngarkohej shtojca e nevojshme %s."
+msgstr "Nuk qe e mundur të ngarkohet shtojca e nevojshme %s."
 
 msgid "Unable to load your plugin."
 msgstr "Nuk qe e mundur të ngarkohej shtojca juaj."
@@ -2336,7 +2329,7 @@ msgstr "Vetëprano"
 
 msgid "Auto-accept file transfer requests from selected users."
 msgstr ""
-"Vetëprano kërkesa shpërnguljeje kartelash prej përdorues të përzgjedhur."
+"Vetëprano kërkesa shpërnguljeje kartelash prej përdoruesa të përzgjedhur."
 
 #, c-format
 msgid "Autoaccepted file transfer of \"%s\" from \"%s\" completed."
@@ -2560,7 +2553,7 @@ msgid "For rooms with more than this many people"
 msgstr "Për dhoma me më tepër se sa kaq shumë persona"
 
 msgid "If user has not spoken in this many minutes"
-msgstr "Nëse përdoruesi nuk ka folur për kaq minuta"
+msgstr "Nëse përdoruesi nuk ka foluar për kaq minuta"
 
 msgid "Apply hiding rules to buddies"
 msgstr "Zbato për shokët rregulla fshehjesh"
@@ -2572,7 +2565,7 @@ msgstr "Zbato për shokët rregulla fshehjesh"
 #. *< priority
 #. *< id
 msgid "Join/Part Hiding"
-msgstr "Fshehje Hyrje/Daljesh"
+msgstr "Fshjehje Hyrje/Daljesh"
 
 #. *< name
 #. *< version
@@ -2618,10 +2611,10 @@ msgstr ""
 "Hëpërhë jeni i palidhur. Nuk do të merren mesazhe, po qe se nuk bëni hyrjen."
 
 msgid "Message could not be sent because the maximum length was exceeded."
-msgstr "Mesazhi nuk u dërgua dot, ngaqë u tejkalua gjatësia më e madhe."
+msgstr "Mesazhi nuk u dërgua dot ngaqë u tejkalua gjatësia më e madhe."
 
 msgid "Message could not be sent."
-msgstr "Mesazhi nuk u dërgua dot."
+msgstr "Mesazhi nuk mund të dërgohej."
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
@@ -2736,7 +2729,7 @@ msgstr "Resht i Ri"
 #. *< name
 #. *< version
 msgid "Prepends a newline to displayed message."
-msgstr "Shton një rresht të ri zbrazët përpara mesazhit të shfaqur."
+msgstr "Shton një rresht të ri bosh përpara mesazhit të shfaqur."
 
 #. *< summary
 msgid ""
@@ -2747,7 +2740,7 @@ msgstr ""
 "mesazhit të shfaqet nën emrin e përdoruesit te dritarja e bashkëbisedimit."
 
 msgid "Offline Message Emulation"
-msgstr "Simulim Mesazhi për Jo Në Linjë"
+msgstr "Simulim Mesazhi për Offline"
 
 msgid "Save messages sent to an offline user as pounce."
 msgstr "Ruaji si cytje mesazhet e dërguar te një përdorues jo në linjë."
@@ -2757,7 +2750,7 @@ msgid ""
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 "Ç'mbetet nga mesazhi do të ruhet si cytje. Mund ta përpunoni/fshini cytjen "
-"përmes dialogut `Cytje Shoku'."
+"përmes dialogut  `Cytje Shoku'."
 
 #, c-format
 msgid ""
@@ -2768,10 +2761,10 @@ msgstr ""
 "mesazheve si cytje dhe të dërgohen vetvetiu kur të rifutet \"%s\"?"
 
 msgid "Offline Message"
-msgstr "Mesazh për Jo Në Linjë"
+msgstr "Mesazh për Offline"
 
 msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
-msgstr "Mund ta përpunoni/fshini cytjen përmes dialogut `Cytje Shoku'"
+msgstr "Mund ta përpunoni/fshini cytjen përmes dialogut  `Cytje Shoku'."
 
 msgid "Yes"
 msgstr "Po"
@@ -2780,7 +2773,7 @@ msgid "No"
 msgstr "Jo"
 
 msgid "Save offline messages in pounce"
-msgstr "Gjatë gjendjes jo në linjë mesazhet ruaji si cytje"
+msgstr "Ruaji mesazhet offline si cytje"
 
 msgid "Do not ask. Always save in pounce."
 msgstr "Mos pyet. Ruaji përherë si cytje."
@@ -2828,7 +2821,7 @@ msgstr "Ngarkues Shtojcash Perl"
 #. *< version
 #. *< summary
 msgid "Provides support for loading perl plugins."
-msgstr "Mundëson mbulim për ngarkim shtojcash perl."
+msgstr "Mundëson suport për ngarkim shtojcash perl"
 
 msgid "Psychic Mode"
 msgstr "Gjendje Psiqike"
@@ -2840,14 +2833,14 @@ msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
 "This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
 msgstr ""
-"Bën që të shfaqen dritare bashkëbisedimi sapo përdorues të tjerë nisin të "
-"shkruajnë mesazhe për ju.  Funksionon për AIM, ICQ, XMPP, Sametime dhe Yahoo!"
+"Bën që të shfaqen dritare bashkëbisedimi sapo përdoruesa të tjerë nisin të "
+"shkruajnë mesazhe për ju. Funksionon për AIM, ICQ, XMPP, Sametime dhe Yahoo!"
 
 msgid "You feel a disturbance in the force..."
 msgstr "Ndjeni veprimin e forcës..."
 
 msgid "Only enable for users on the buddy list"
-msgstr "Aktivizoje vetëm për përdorues në listën e shokëve"
+msgstr "Aktivizoje vetëm për përdoruesa në listën e shokëve"
 
 msgid "Disable when away"
 msgstr "Çaktivizoje, në qoftë i larguar"
@@ -2908,7 +2901,7 @@ msgstr "GNUTLS"
 #. *  summary
 #. *  description
 msgid "Provides SSL support through GNUTLS."
-msgstr "Mundëson mbulim SSL përmes GNUTLS."
+msgstr "Mundëson suport SSL përmes GNUTLS."
 
 #. *< type
 #. *< ui_requirement
@@ -2924,7 +2917,7 @@ msgstr "NSS"
 #. *  summary
 #. *  description
 msgid "Provides SSL support through Mozilla NSS."
-msgstr "Mundëson mbulim SSL përmes Mozilla NSS."
+msgstr "Mundëson suport SSL përmes Mozilla NSS."
 
 #. *< type
 #. *< ui_requirement
@@ -2940,7 +2933,7 @@ msgstr "SSL"
 #. *  summary
 #. *  description
 msgid "Provides a wrapper around SSL support libraries."
-msgstr "Ofron librari mbulimi për mbështjellës rreth SSL-je."
+msgstr "Ofron librari suporti për mbështjellës rreth SSL-je."
 
 #, c-format
 msgid "%s is no longer away."
@@ -2998,7 +2991,7 @@ msgid "Tcl Plugin Loader"
 msgstr "Ngarkues Shtojce Tcl"
 
 msgid "Provides support for loading Tcl plugins"
-msgstr "Mundëson mbulim për ngarkim shtojcash Tcl"
+msgstr "Mundëson suport për ngarkim shtojcash Tcl"
 
 msgid ""
 "Unable to detect ActiveTCL installation. If you wish to use TCL plugins, "
@@ -3011,16 +3004,16 @@ msgid ""
 "Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
 "im/BonjourWindows for more information."
 msgstr ""
-"Nuk arrin të gjejë grup mjetesh Apple \"Bonjour For Windows\", për më tepër "
-"të dhëna, shihni te https://d.pidgin.im/BonjourWindows."
+"I pazoti të gjejë grupin e mjeteve Apple \"Bonjour for Windows\", për më "
+"tepër të dhëna shihni http://d.pidgin.im/BonjourWindows."
 
 msgid "Unable to listen for incoming IM connections"
-msgstr "Nuk arrin të kapë për lidhje MA ardhëse"
+msgstr "I pazoti të presë për lidhje MA ardhëse"
 
 msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
 msgstr ""
-"Nuk arrin të vendosë lidhje me shërbyesin mDNS vendor.  A është duke xhiruar?"
+"I pazoti të vendosë lidhje me shërbyesin mDNS vendor.  A është duke xhiruar?"
 
 msgid "First name"
 msgstr "Emër"
@@ -3063,39 +3056,39 @@ msgstr "Bonjour"
 
 #, c-format
 msgid "%s has closed the conversation."
-msgstr "%s mbylli bashkëbisedimin."
+msgstr "%s mbylli bashkëbisedimin"
 
 msgid "Unable to send the message, the conversation couldn't be started."
-msgstr "Nuk arrin të dërgojë mesazh, nuk u nis dot bashkëbisedimi."
+msgstr "I pazoti të dërgojë mesazh, nuk u nis dot bashkëbisedimi."
 
 msgid "Error communicating with local mDNSResponder."
 msgstr "Gabim gjatë komunikimit me mDNSResponder vendor."
 
 msgid "Invalid proxy settings"
-msgstr "Rregullime të pavlefshme ndërmjetësi"
+msgstr "Rregullime \"proxy\" të pavlefshme"
 
 msgid ""
 "Either the host name or port number specified for your given proxy type is "
 "invalid."
 msgstr ""
-"Ose emri i strehës, ose numri i portës së treguar për llojin tuaj të "
-"ndërmjetësit është i pavlefshëm."
+"Ose emri i strehës, ose numri i portës së treguar për tipin tuaj të \"proxy"
+"\"-it  është i pavlefshëm."
 
 msgid "Save Buddylist..."
 msgstr "Ruani Listë Shokësh..."
 
 msgid "Your buddylist is empty, nothing was written to the file."
-msgstr "Lista juaj e shokëve është e zbrazët, nuk u shkrua gjë tek kartela."
+msgstr "Lista juaj e shokëve është e zbrazët, nuk u shkruajt gjë tek kartela."
 
 msgid "Buddylist saved successfully!"
 msgstr "Lista e shokëve u ruajt me sukses!"
 
 #, c-format
 msgid "Couldn't write buddy list for %s to %s"
-msgstr "S'u shkrua dot listë shokësh për %s te %s"
+msgstr "S'u shkruajt dot listë shokësh për %s te %s"
 
 msgid "Couldn't load buddylist"
-msgstr "S'u ngarkua dot listë shokësh"
+msgstr "Nuk ngarkoi dot listë shokësh"
 
 msgid "Load Buddylist..."
 msgstr "Ngarkoni Listë shokësh..."
@@ -3139,7 +3132,7 @@ msgid "Please, enter your search criteria below"
 msgstr "Ju lutemi, jepni më poshtë kriterin tuaj të kërkimit"
 
 msgid "Show status to:"
-msgstr "Shfaqua gjendjen:"
+msgstr "Shfaqua gjendjen: "
 
 msgid "All people"
 msgstr "Krejt personave"
@@ -3163,7 +3156,7 @@ msgstr "Shtoni te fjalosje..."
 #. 0
 #. Global
 msgid "Available"
-msgstr "Gati"
+msgstr "I mundshëm"
 
 #. 2
 msgid "Chatty"
@@ -3204,10 +3197,10 @@ msgid "No matching users found"
 msgstr "S'u gjetën përputhje me ndonjë përdorues"
 
 msgid "There are no users matching your search criteria."
-msgstr "Kriteri juaj i kërkimit nuk ka përputhje për asnjë përdorues."
+msgstr "Kriteri juaj i kërkimit nuk ka përputhje për asnjë përdorues. "
 
 msgid "Unable to read from socket"
-msgstr "I pazoti të lexojë prej socket-i"
+msgstr "I pazoti të lexojë prej \"socket\"-i"
 
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
@@ -3224,14 +3217,14 @@ msgstr "Shto te fjalosje"
 msgid "Chat _name:"
 msgstr "_Emër fjalosjeje:"
 
+#, c-format
+msgid "Unable to resolve hostname '%s': %s"
+msgstr "I pazoti të gjejë emër strehe: '%s': %s"
+
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Po bëhet lidhja"
-
-#, c-format
-msgid "Unable to resolve hostname: %s"
-msgstr ""
 
 msgid "Chat error"
 msgstr "Gabim fjalosjeje"
@@ -3283,7 +3276,7 @@ msgid "Require encryption"
 msgstr "Lyp kodim"
 
 msgid "Connection security"
-msgstr "Siguri lidhjeje"
+msgstr "Siguri Lidhjeje"
 
 #, c-format
 msgid "Unknown command: %s"
@@ -3338,7 +3331,7 @@ msgid "IRC nick and server may not contain whitespace"
 msgstr "Nofka IRC nuk duhet të përmbajnë hapësira"
 
 msgid "SSL support unavailable"
-msgstr "Nuk ka gati mbulim për SSL"
+msgstr "Suport SSL jo i mundshëm"
 
 msgid "Unable to connect"
 msgstr "I pazoti të lidhet"
@@ -3352,7 +3345,7 @@ msgid "Server closed the connection"
 msgstr "Shërbyesi e mbylli lidhjen"
 
 msgid "Users"
-msgstr "Përdorues"
+msgstr "Përdoruesa"
 
 msgid "Topic"
 msgstr "Temë"
@@ -3370,7 +3363,7 @@ msgstr "Shtojcë Protokolli IRC"
 
 #. *  summary
 msgid "The IRC Protocol Plugin that Sucks Less"
-msgstr "Shtojca e Protokollit IRC e cila Është më pak e Bezdissme"
+msgstr "Shtojca e Protokollit IRC e cila Është më pak e Bezdishme"
 
 #. set up account ID as user:server
 msgid "Server"
@@ -3440,11 +3433,13 @@ msgstr " <i>(identifikuar)</i>"
 msgid "Nick"
 msgstr "Nofkë"
 
+#, fuzzy
 msgid "Login name"
-msgstr "Emër hyrjeje"
+msgstr "Pa emër"
 
+#, fuzzy
 msgid "Host name"
-msgstr "Emër strehe"
+msgstr "Emërstrehë"
 
 msgid "Currently on"
 msgstr "Hëpërhë, në"
@@ -3482,17 +3477,17 @@ msgid "Unknown message '%s'"
 msgstr "Mesazh i panjohur '%s'"
 
 msgid "Unknown message"
-msgstr "Mesazh i panjohur"
+msgstr "Mesazh i panjohur "
 
 msgid "The IRC server received a message it did not understand."
 msgstr "Shërbyesi IRC mori një mesazh që nuk e kuptoi."
 
 #, c-format
 msgid "Users on %s: %s"
-msgstr "Përdorues në %s: %s"
+msgstr "Përdoruesa në %s: %s"
 
 msgid "Time Response"
-msgstr "Kohë Përgjigjeje"
+msgstr "Kohë Përgjigjjeje"
 
 msgid "The IRC server's local time is:"
 msgstr "Koha vendore e shërbyesit IRC është:"
@@ -3508,7 +3503,7 @@ msgid "User is not logged in"
 msgstr "Përdoruesi nuk ka hyrë"
 
 msgid "No such nick or channel"
-msgstr "S'ka kanal apo nofkë të tillë"
+msgstr "S'ka kanal apo nofkë të tillë!"
 
 msgid "Could not send"
 msgstr "S'munda të dërgoj"
@@ -3540,14 +3535,14 @@ msgid ""
 "Your selected nickname was rejected by the server.  It probably contains "
 "invalid characters."
 msgstr ""
-"Emri nofkë i përzgjedhur prej jush u hodh tej nga shërbyesi.  Ka të ngjarë "
+"Emri i përzgjedhur prej jush si nofkë u hodh tej nga shërbyesi. Ka të ngjarë "
 "përmban shenja të pavlefshme."
 
 msgid ""
 "Your selected account name was rejected by the server.  It probably contains "
 "invalid characters."
 msgstr ""
-"Emri i llogarisë përzgjedhur prej jush u hodh tej nga shërbyesi.  Ka të "
+"Emri i llogarisë përzgjedhur prej jush u hodh tej nga shërbyesi. Ka të "
 "ngjarë përmban shenja të pavlefshme."
 
 #. We only want to do the following dance if the connection
@@ -3585,7 +3580,7 @@ msgid "Cannot join channel"
 msgstr "S'hyhet dot te kanali"
 
 msgid "Nick or channel is temporarily unavailable."
-msgstr "Nofka ose kanali është përkohësisht jo gati."
+msgstr "Nofka ose kanali është përkohësisht i pamundshëm."
 
 #, c-format
 msgid "Wallops from %s"
@@ -3622,7 +3617,7 @@ msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "veprim &lt;veprim për t'u kryer&gt;:  Kryej një veprim."
 
 msgid "authserv: Send a command to authserv"
-msgstr "authserv: Dërgoni një urdhër te authserv"
+msgstr "authserv:  Dërgoni një urdhër te authserv"
 
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
@@ -3635,14 +3630,14 @@ msgid "ctcp <nick> <msg>: sends ctcp msg to nick."
 msgstr "ctcp <nofkë> <mesazh>, i dërgon nofkës mesazh ctcp-je."
 
 msgid "chanserv: Send a command to chanserv"
-msgstr "chanserv: Dërgo një urdhër te chanserv"
+msgstr "chanserv:  Dërgo një urdhër te chanserv."
 
 msgid ""
 "deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from "
 "someone. You must be a channel operator to do this."
 msgstr ""
 "deop &lt;nofkë1&gt; [nofkë2] ...:  Hiqi dikujt gjendje operatori kanali. "
-"Duhet të jeni operator kanali për të bërë këtë."
+"Duhet të jeni operator kanali pët të bërë këtë."
 
 msgid ""
 "devoice &lt;nick1&gt; [nick2] ...:  Remove channel voice status from "
@@ -3674,7 +3669,7 @@ msgid ""
 msgstr ""
 "join &lt;dhomë1&gt;[,dhomë2][,...] [kyç1[,kyç2][,...]]:  Futuni në një ose "
 "më shumë kanale, mbase edhe duke dhënë një kyç kanali për secilin, nëse "
-"nevojitet."
+"nevojitet"
 
 msgid ""
 "kick &lt;nick&gt; [message]:  Remove someone from a channel. You must be a "
@@ -3745,7 +3740,7 @@ msgid ""
 "with an optional message."
 msgstr ""
 "part [dhomë] [mesazh]:  Lër kanalin e tanishëm, ose një kanal të treguar, me "
-"një mesazh, në daçi."
+"një mesazh të mundshëm."
 
 msgid ""
 "ping [nick]:  Asks how much lag a user (or the server if no user specified) "
@@ -3762,7 +3757,8 @@ msgstr ""
 "vetjak (jo një kanali)."
 
 msgid "quit [message]:  Disconnect from the server, with an optional message."
-msgstr "quit [mesazh]:  Shkëputu prej një shërbyesi, me një mesazh, në daçi."
+msgstr ""
+"quit [mesazh]:  Shkëputu prej një shërbyesi, me një mesazh të mundshëm."
 
 msgid "quote [...]:  Send a raw command to the server."
 msgstr "quote [...]:  Dërgo një urdhër të papërpunuar te shërbyesi."
@@ -3800,14 +3796,14 @@ msgstr ""
 "wallops &lt;mesazh&gt;:  Nëse nuk dini ç'është kjo, mbase nuk e përdorni dot."
 
 msgid "whois [server] &lt;nick&gt;:  Get information on a user."
-msgstr "whois [server] &lt;nick&gt;:  Merr të dhëna mbi një përdorues."
+msgstr "whois [server] &lt;nick&gt;: Merr të dhëna mbi një përdorues."
 
 msgid "whowas &lt;nick&gt;: Get information on a user that has logged off."
 msgstr "whowas &lt;nick&gt;: Merr të dhëna mbi një përdorues që doli."
 
 #, c-format
 msgid "Reply time from %s: %lu seconds"
-msgstr "Kohë përgjigjeje prej %s: %lu sekonda"
+msgstr "Kohë përgjigjjeje prej %s: %lu sekonda"
 
 msgid "PONG"
 msgstr "PONG"
@@ -3819,7 +3815,7 @@ msgid "Disconnected."
 msgstr "I shkëputur."
 
 msgid "Unknown Error"
-msgstr "Gabim i Panjohur"
+msgstr "Gabim i Panjohur "
 
 msgid "Ad-Hoc Command Failed"
 msgstr "Urdhri Ad-Hoc Dështoi"
@@ -3829,8 +3825,8 @@ msgstr "përmbush"
 
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
-"Kundrejt një rrjedhe të pakoduar, shërbyesi lyp mirëfilltësim me bazë tekst "
-"të thjeshtë"
+"karshi një rrjedhe të pakoduar shërbyesi lyp mirëfilltësim me bazë tekst të "
+"thjeshtë"
 
 #. This happens when the server sends back jibberish
 #. * in the "additional data with success" case.
@@ -3848,26 +3844,26 @@ msgid ""
 "this and continue authentication?"
 msgstr ""
 "%s lyp mirëfilltësim në trajtë teksti të thjeshtë përmes një lidhjeje të "
-"pakoduar.  Ta lejojë këtë dhe të vazhdojë me mirëfilltësimin?"
+"pakoduar. Ta lejojë këtë dhe të vazhdojë me mirëfilltësimin? "
 
 msgid "Plaintext Authentication"
 msgstr "Mirëfilltësim me bazë Tekst të Thjeshtë"
 
 msgid "You require encryption, but it is not available on this server."
-msgstr "Kërkoni kodim, por ky nuk është gati në këtë shërbyes."
+msgstr "Kërkoni kodim, por ky nuk është i mundshëm në këtë shërbyes."
 
 msgid "Invalid challenge from server"
-msgstr "Sfidë e pavlefshme prej shërbyesit"
+msgstr "Sfidë e pavlefshme prej shërbyesit."
 
 msgid "Server thinks authentication is complete, but client does not"
 msgstr ""
 "Shërbyesi mendon se mirëfilltësimi është i plotë, por klienti nuk mendon "
-"kështu"
+"kështu."
 
 msgid "Server may require plaintext authentication over an unencrypted stream"
 msgstr ""
 "Shërbyesi mund të kërkojë mirëfilltësim në trajtë teksti të thjeshtë përmes "
-"një lidhjeje të pakoduar"
+"një lidhjeje të pakoduar."
 
 #, c-format
 msgid ""
@@ -3875,7 +3871,7 @@ msgid ""
 "Allow this and continue authentication?"
 msgstr ""
 "%s mund të kërkojë mirëfilltësim në trajtë teksti të thjeshtë përmes një "
-"lidhjeje të pakoduar.  Të lejohet kjo dhe të vazhdohet me mirëfilltësimin?"
+"lidhjeje të pakoduar. Të lejohet kjo dhe të vazhdohet me mirëfilltësimin? "
 
 msgid "SASL authentication failed"
 msgstr "Mirëfilltësimi SASL dështoi"
@@ -3894,7 +3890,7 @@ msgid ""
 "Unexpected response from the server.  This may indicate a possible MITM "
 "attack"
 msgstr ""
-"Përgjigje e papritur prej shërbyesit.  Kjo mund të jetë shenjë e një sulmi "
+"Përgjigje e papritur prej shërbyesit. Kjo mund të jetë shenjë e një sulmi "
 "MITM të mundshëm"
 
 msgid ""
@@ -3920,10 +3916,10 @@ msgid "Resource Constraint"
 msgstr "Kufizim Burimesh"
 
 msgid "Unable to canonicalize username"
-msgstr "Nuk arrin të kanonikalizojë emër përdoruesi"
+msgstr "I pazoti të kanonikalizojë emër përdoruesi"
 
 msgid "Unable to canonicalize password"
-msgstr "Nuk arrin të kanonikalizojë fjalëkalim"
+msgstr "I pazoti të kanonikalizojë fjalëkalim"
 
 msgid "Malicious challenge from server"
 msgstr "Sfidë dashakeqe prej shërbyesit"
@@ -3980,7 +3976,7 @@ msgid "Region"
 msgstr "Rajon"
 
 msgid "Postal Code"
-msgstr "Kod Postar"
+msgstr "Kod Postal"
 
 msgid "Country"
 msgstr "Vend"
@@ -4018,7 +4014,7 @@ msgid ""
 "comfortable."
 msgstr ""
 "Tërë elementët më poshtë janë si mundësi. Jepni vetëm të dhënat të cilat "
-"mendoni se nuk ju prishin punë."
+"mendoni se nuk ju prishin punë. "
 
 msgid "Client"
 msgstr "Klient"
@@ -4116,7 +4112,7 @@ msgid "Directory Query Failed"
 msgstr "Kërkimi për Drejtori Dështoi"
 
 msgid "Could not query the directory server."
-msgstr "Nuk u kërkua dot te shërbyesi i drejtorisë."
+msgstr "Nuk u kërkua dot te shërbyesi i drejtorisë"
 
 #. Try to translate the message (see static message
 #. list in jabber_user_dir_comments[])
@@ -4127,13 +4123,13 @@ msgstr "Udhëzime Shërbyesi: %s"
 msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 "Plotësoni një ose më tepër kuti për të kërkuar përputhje me cilindo "
-"përdorues XMPP."
+"përdorues XMPP"
 
 msgid "Email Address"
 msgstr "Adresë Email"
 
 msgid "Search for XMPP users"
-msgstr "Kërko për përdorues XMPP"
+msgstr "Kërko për përdoruesa XMPP"
 
 #. "Search"
 msgid "Search"
@@ -4149,7 +4145,7 @@ msgid "Select a user directory to search"
 msgstr "Përzgjidhni drejtori përdoruesi për kërkim"
 
 msgid "Search Directory"
-msgstr "Drejtori Kërkimi"
+msgstr "Drejtori Kërkimi:"
 
 msgid "_Room:"
 msgstr "_Dhomë:"
@@ -4185,10 +4181,10 @@ msgid "Configuration error"
 msgstr "Gabim formësimi"
 
 msgid "Unable to configure"
-msgstr "Nuk arrin ta formësojë"
+msgstr "I pazoti të formësojë"
 
 msgid "Room Configuration Error"
-msgstr "Gabim Formësimi Dhome"
+msgstr "Gabim Formësimi Dhome "
 
 msgid "This room is not capable of being configured"
 msgstr "Kjo dhomë nuk është e aftë të formësohet"
@@ -4250,10 +4246,10 @@ msgstr "Regjistrim i %s@%s i suksesshëm"
 
 #, c-format
 msgid "Registration to %s successful"
-msgstr "Regjistrim i suksesshëm te %s"
+msgstr "Regjistrim i sukseshëm te %s"
 
 msgid "Registration Successful"
-msgstr "Regjistrim i Suksesshëm"
+msgstr "Regjistrim i Sukseshëm"
 
 msgid "Registration Failed"
 msgstr "Dështoi Regjistrimi"
@@ -4272,7 +4268,7 @@ msgid "State"
 msgstr "Shtet"
 
 msgid "Postal code"
-msgstr "Kod postar"
+msgstr "Kod Postal"
 
 msgid "Phone"
 msgstr "Telefon"
@@ -4292,13 +4288,13 @@ msgstr "Çregjistrohuni"
 msgid ""
 "Please fill out the information below to change your account registration."
 msgstr ""
-"Për të ndryshuar regjistrimin e llogarisë suaj, ju lutemi, plotësoni të "
-"dhënat më poshtë."
+"Për ndryshimin e regjistrimit të llogarisë suaj, ju lutemi, plotësoni të "
+"dhënat më poshtë. "
 
 msgid "Please fill out the information below to register your new account."
 msgstr ""
 "Për të regjistruar llogarinë tuaj të re, ju lutemi, plotësoni të dhënat më "
-"poshtë."
+"poshtë. "
 
 msgid "Register New XMPP Account"
 msgstr "Regjistro Llogari të Re XMPP"
@@ -4336,7 +4332,7 @@ msgid "Re-initializing Stream"
 msgstr "Po rigatitet Rrjedha"
 
 msgid "Server doesn't support blocking"
-msgstr "Shërbyesi nuk mbulon bllokime"
+msgstr "Shërbyesi nuk mbulon bblokime"
 
 msgid "Not Authorized"
 msgstr "I pa Autorizuar"
@@ -4388,7 +4384,7 @@ msgstr "Koment Humori"
 #. should be user_settable some day
 #. independent
 msgid "Tune Artist"
-msgstr "Autor Melodie"
+msgstr "Autor Melodie "
 
 msgid "Tune Title"
 msgstr "Titull Melodie"
@@ -4421,7 +4417,7 @@ msgid "Your password has been changed."
 msgstr "Fjalëkalimi juaj është ndryshuar."
 
 msgid "Error changing password"
-msgstr "Gabim në ndryshim fjalëkalimi"
+msgstr "Gabim në ndryshim fjalëkalimi "
 
 msgid "Password (again)"
 msgstr "Fjalëkalim (sërish)"
@@ -4441,7 +4437,7 @@ msgstr "Ndryshoni Fjalëkalim..."
 
 #. }
 msgid "Search for Users..."
-msgstr "Kërkoni për Përdorues..."
+msgstr "Kërkoni për Përdoruesa..."
 
 msgid "Bad Request"
 msgstr "Kërkesë e Gabuar"
@@ -4450,7 +4446,7 @@ msgid "Conflict"
 msgstr "Kundërshti"
 
 msgid "Feature Not Implemented"
-msgstr "Veçori e Pasendërtuar"
+msgstr "Karakteristikë e Pajetësuar"
 
 msgid "Forbidden"
 msgstr "E ndaluar"
@@ -4504,7 +4500,7 @@ msgid "Authorization Aborted"
 msgstr "Autorizimi u Ndërpre"
 
 msgid "Incorrect encoding in authorization"
-msgstr "Kodim i pasaktë te mirëfilltësimi"
+msgstr "Kodim i pasaktë te mirëfilltesimi"
 
 msgid "Invalid authzid"
 msgstr "ID autorizimi i pavlefshëm"
@@ -4570,26 +4566,26 @@ msgid "System Shutdown"
 msgstr "Fikje Sistemi"
 
 msgid "Undefined Condition"
-msgstr "Kusht i Papërcaktuar"
+msgstr "Kusht i Papërcaktuar "
 
 msgid "Unsupported Encoding"
 msgstr "Kodim i Pambuluar"
 
 msgid "Unsupported Stanza Type"
-msgstr "Lloj Stanza i Pambuluar"
+msgstr "Tip Stanza i Pambuluar"
 
 msgid "Unsupported Version"
 msgstr "Version i Pambuluar"
 
 msgid "XML Not Well Formed"
-msgstr "XML Jo e Formuar Mirë"
+msgstr "XML Jo e MirëFormuar"
 
 msgid "Stream Error"
 msgstr "Gabim Rrjedhe"
 
 #, c-format
 msgid "Unable to ban user %s"
-msgstr "Nuk arrin të ndalojë përdoruesin %s"
+msgstr "I pazoti të ndalojë përdoruesin %s"
 
 #, c-format
 msgid "Unknown affiliation: \"%s\""
@@ -4597,7 +4593,7 @@ msgstr "Degëzim i panjohur: \"%s\""
 
 #, c-format
 msgid "Unable to affiliate user %s as \"%s\""
-msgstr "Nuk arrin të degëzojë përdoruesin %s si \"%s\""
+msgstr "I pazoti të degëzojë përdoruesin %s si \"%s\""
 
 #, c-format
 msgid "Unknown role: \"%s\""
@@ -4605,15 +4601,15 @@ msgstr "Rol i panjohur: \"%s\""
 
 #, c-format
 msgid "Unable to set role \"%s\" for user: %s"
-msgstr "Nuk arrin të caktojë rolin \"%s\" për përdoruesin: %s"
+msgstr "I pazoti të caktojë rolin \"%s\" për përdoruesin: %s"
 
 #, c-format
 msgid "Unable to kick user %s"
-msgstr "Nuk arrin të përzërë përdoruesin %s"
+msgstr "I pazoti të përzërë përdoruesin %s"
 
 #, c-format
 msgid "Unable to ping user %s"
-msgstr "Nuk arrin të dërgojë ping për përdoruesin %s"
+msgstr "I pazoti të dërgojë ping për përdoruesin %s"
 
 #, c-format
 msgid "Unable to buzz, because there is nothing known about %s."
@@ -4647,19 +4643,19 @@ msgstr "Po dërgohet bzzz për %s..."
 
 #, c-format
 msgid "Unable to initiate media with %s: invalid JID"
-msgstr "Nuk arrin të nisë media me %s: JID i pavlefshëm"
+msgstr "I pazoti të nisë media me %s: JID i pavlefshëm"
 
 #, c-format
 msgid "Unable to initiate media with %s: user is not online"
-msgstr "Nuk arrin të nisë media me %s: përdoruesi nuk është në linjë"
+msgstr "I pazoti të nisë media me %s: përdoruesi nuk është në linjë"
 
 #, c-format
 msgid "Unable to initiate media with %s: resource is not online"
-msgstr "Nuk arrin të nisë media me %s: burimi nuk gjendet në linjë"
+msgstr ""
 
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
-msgstr "Nuk arrin të nisë media me %s: pa pajtim te prani përdoruesi"
+msgstr "I pazoti të nisë media me %s: pa pajtim te prani përdoruesi"
 
 msgid "Media Initiation Failed"
 msgstr "Gatitja e Medias Dështoi"
@@ -4670,7 +4666,7 @@ msgid ""
 "session."
 msgstr ""
 "Ju lutemi, përzgjidhni burimin e %s me të cilin dëshironi të nisni një "
-"sesion media."
+"sesion media"
 
 msgid "Select a Resource"
 msgstr "Përzgjidhni Burim"
@@ -4717,7 +4713,7 @@ msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;përdorues&gt; [mesazh]:  Fto një përdorues te dhoma."
 
 msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
-msgstr "join: &lt;dhomë[@shërbyes]&gt; [fjalëkalim]:  Hyni në një fjalosje."
+msgstr "join: &lt;dhomë[@shërbyes]&gt; [fjalëkalim]:  Hyni një një fjalosje."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;përdorues&gt; [arsye]:  Përzër një përdorues prej dhomës."
@@ -4773,7 +4769,7 @@ msgid "Connect server"
 msgstr "Lidhu me shërbyes"
 
 msgid "File transfer proxies"
-msgstr "Ndërmjetës shpërnguljesh kartelash"
+msgstr "Ndërmjetësa shpërnguljesh kartelash"
 
 msgid "BOSH URL"
 msgstr "URL BOSH"
@@ -4808,7 +4804,7 @@ msgstr "Gabim Mesazhi XMPP"
 
 #, c-format
 msgid "(Code %s)"
-msgstr "(Kod %s)"
+msgstr " (Kod %s)"
 
 msgid "A custom smiley in the message is too large to send."
 msgstr ""
@@ -4867,24 +4863,24 @@ msgstr "Gabim i Panjohur te prania"
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
-"Nuk arrin të dërgojë kartelë te %s, përdoruesi nuk mbulon shpërngulje "
+"I pazoti të dërgojë kartelë te %s, përdoruesi nuk mbulon shpërngulje "
 "kartelash"
 
 #. not success
 msgid "File Send Failed"
-msgstr "Dështoi Dërgimi i Kartelës"
+msgstr "Dështoi Dërgimi i Kartelës  "
 
 #, c-format
 msgid "Unable to send file to %s, invalid JID"
-msgstr "Nuk arrin të dërgojë mesazh te %s, JID i pavlefshëm"
+msgstr "I pazoti të dërgojë mesazh te %s, JID i pavlefshëm"
 
 #, c-format
 msgid "Unable to send file to %s, user is not online"
-msgstr "Nuk arrin të dërgojë kartelë te %s, përdoruesi nuk është në linjë"
+msgstr "I pazoti të dërgojë kartelë te %s, përdoruesi nuk është i lidhur"
 
 #, c-format
 msgid "Unable to send file to %s, not subscribed to user presence"
-msgstr "Nuk arrin të dërgojë kartelë te %s, pa pajtim te prani përdoruesi"
+msgstr "I pazoti të dërgojë kartelë te %s, pa pajtim te prani përdoruesi"
 
 #, c-format
 msgid "Please select the resource of %s to which you would like to send a file"
@@ -5070,7 +5066,7 @@ msgid "Offended"
 msgstr "I fyer"
 
 msgid "Outraged"
-msgstr "I tërbuar"
+msgstr "I cënuar"
 
 msgid "Playful"
 msgstr "Lodrues"
@@ -5079,7 +5075,7 @@ msgid "Proud"
 msgstr "Krenar"
 
 msgid "Relaxed"
-msgstr "I çlodhur"
+msgstr "I shlodhur"
 
 msgid "Relieved"
 msgstr "I lehtësuar"
@@ -5149,7 +5145,7 @@ msgid "Set User Nickname"
 msgstr "Caktoni Nofkë Përdoruesi"
 
 msgid "Please specify a new nickname for you."
-msgstr "Ju lutemi, caktoni një nofkë të re për veten."
+msgstr "Ju lutemi, caktoni një nokë të re për veten."
 
 msgid ""
 "This information is visible to all contacts on your contact list, so choose "
@@ -5175,7 +5171,7 @@ msgstr "Përzgjidhni veprim"
 #. * won't cause too many problems if we just ignore it
 #, c-format
 msgid "Unable to add \"%s\"."
-msgstr "Nuk arrin të lexojë kartelën \"%s\"."
+msgstr "I pazoti të lexojë kartelën \"%s\"."
 
 msgid "Buddy Add error"
 msgstr "Gabim Shtimi Shokësh"
@@ -5184,7 +5180,7 @@ msgid "The username specified does not exist."
 msgstr "Emri i dhënë i përdoruesit nuk ekziston."
 
 msgid "Unable to parse message"
-msgstr "Nuk arrin të përtypë mesazh"
+msgstr "I pazoti të përtypë mesazh"
 
 msgid "Syntax Error (probably a client bug)"
 msgstr "Gabim Sintakse (mundet një e metë klienti)"
@@ -5256,7 +5252,7 @@ msgid "Too many hits to a FND"
 msgstr "Shumë goditjeje te në FND"
 
 msgid "Not logged in"
-msgstr "Jo i futur"
+msgstr "Jo i futur."
 
 msgid "Service temporarily unavailable"
 msgstr "Shërbim përkohësisht i pakapshëm"
@@ -5268,7 +5264,7 @@ msgid "Command disabled"
 msgstr "Urdhër i çaktivizuar"
 
 msgid "File operation error"
-msgstr "Gabim veprimi mbi kartelë"
+msgstr "Gabim Veprimi mbi Kartelë"
 
 msgid "Memory allocation error"
 msgstr "Gabim sigurimi kujtese"
@@ -5298,7 +5294,7 @@ msgid "CVR parameters are either unknown or not allowed"
 msgstr "Parametrat CVR ose janë të panjohur ose të palejuar"
 
 msgid "Unable to write"
-msgstr "Nuk arrin të shkruajë"
+msgstr "I pazoti të shkruajë"
 
 msgid "Session overload"
 msgstr "Sesion i mbingarkuar"
@@ -5325,7 +5321,7 @@ msgid "Server too busy"
 msgstr "Shërbyesi shumë i zënë"
 
 msgid "Authentication failed"
-msgstr "Dështoi mirëfilltësimi"
+msgstr "Dështoi mirëflltësimi"
 
 msgid "Not allowed when offline"
 msgstr "E palejueshme kur jeni të lidhur"
@@ -5404,7 +5400,7 @@ msgid "%s sent you a voice chat invite, which is not yet supported."
 msgstr "%s ju dërgoi një ftesë për fjalosje me zë, çka nuk mbulohet ende."
 
 msgid "Nudge"
-msgstr "Futi një bërryl"
+msgstr "Dërgoji një Bërryl"
 
 #, c-format
 msgid "%s has nudged you!"
@@ -5458,7 +5454,7 @@ msgid ""
 "Do you want to allow or disallow connecting from multiple locations "
 "simultaneously?"
 msgstr ""
-"Dëshironi të lejoni ose të mos lejoni lidhjen prej disa vendesh njëherësh?"
+"Dëshironi të lejoni ose të mosj lejoni lidhjen prej disa vendesh njëherësh?"
 
 msgid "Allow"
 msgstr "Lejo"
@@ -5467,13 +5463,13 @@ msgid "Disallow"
 msgstr "Ndalo"
 
 msgid "Set your home phone number."
-msgstr "Vendosni numrin tuaj të telefonit."
+msgstr "Vini numrin tuaj të telefonit."
 
 msgid "Set your work phone number."
-msgstr "Vendosni numrin e telefonit tuaj të punës."
+msgstr "Caktoni numrin e telefonit tuaj të punës."
 
 msgid "Set your mobile phone number."
-msgstr "Vendosni numrin e telefonit tuaj celular."
+msgstr "Caktoni numrin e telefonit tuaj celular."
 
 msgid "Allow MSN Mobile pages?"
 msgstr "Të lejojë faqe MSN Mobile?"
@@ -5550,13 +5546,13 @@ msgid "View Locations..."
 msgstr "Shihni Vendet..."
 
 msgid "Set Home Phone Number..."
-msgstr "Vendosni Numër Telefoni të Shtëpisë..."
+msgstr "Vini Numër Telefoni të Shtëpisë..."
 
 msgid "Set Work Phone Number..."
-msgstr "Vendosni Numër Telefoni të Punës..."
+msgstr "Vini Numër Telefoni të Punës..."
 
 msgid "Set Mobile Phone Number..."
-msgstr "Vendosni Numër Telefoni Celular..."
+msgstr "Vini Numër Telefoni Celular..."
 
 msgid "Enable/Disable Mobile Devices..."
 msgstr "Aktivizoni/Çaktivizoni Pajisje të Lëvizshme..."
@@ -5577,7 +5573,8 @@ msgid "Send to Mobile"
 msgstr "Dërgoje te Celular"
 
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
-msgstr "Lypset mbulim SSL për MSN. Ju lutemi, instaloni një librari mbulimi."
+msgstr ""
+"Lypset mbulim SSL për MSN. Ju lutemi, instaloni një librari suporti SSL."
 
 #, c-format
 msgid ""
@@ -5588,7 +5585,7 @@ msgstr ""
 "Emrat e përdoruesve duhet të jenë adresa email e vlefshme."
 
 msgid "Unable to Add"
-msgstr "Nuk arrin të Shtojë"
+msgstr "I pazoti të Shtoj"
 
 msgid "Error retrieving profile"
 msgstr "Gabim në marrje profili"
@@ -5606,7 +5603,7 @@ msgid "Location"
 msgstr "Vendndodhje"
 
 msgid "Hobbies and Interests"
-msgstr "Hobi dhe Interesa"
+msgstr "Hobi dhe Interese"
 
 msgid "A Little About Me"
 msgstr "Pakëz Rreth Meje"
@@ -5639,7 +5636,7 @@ msgid "Music"
 msgstr "Muzikë"
 
 msgid "Favorite Quote"
-msgstr "Thënie e Pëlqyer"
+msgstr "Thënie e Pëlqyer "
 
 msgid "Contact Info"
 msgstr "Të dhëna Kontakti"
@@ -5776,7 +5773,7 @@ msgid "nudge: nudge a user to get their attention"
 msgstr "nudge: preke një përdorues me bërryl për t'i tërhequr vëmendjen"
 
 msgid "Windows Live ID authentication:Unable to connect"
-msgstr "Mirëfilltësim ID-je Windows Live:Nuk arrin të lidhet"
+msgstr "Mirëfilltësim ID-je Windows Live:I pazoti të lidhej"
 
 msgid "Windows Live ID authentication:Invalid response"
 msgstr "Mirëfilltësim ID-je Windows Live:Përgjigje e pavlefshme"
@@ -5786,10 +5783,10 @@ msgstr "Mungojnë përdoruesit vijues te libri juaj i adresave"
 
 #, c-format
 msgid "Unknown error (%d): %s"
-msgstr "Gabim i panjohur (%d): %s"
+msgstr "Gabim i panjohur  (%d): %s"
 
 msgid "Unable to add user"
-msgstr "Nuk arrin të shtojë përdorues"
+msgstr "I pazoti të shtojë përdorues"
 
 #. Unknown error!
 #, c-format
@@ -5797,13 +5794,14 @@ msgid "Unknown error (%d)"
 msgstr "Gabim i panjohur (%d)"
 
 msgid "Unable to remove user"
-msgstr "Nuk arrin të heqë përdoruesin"
+msgstr "I pazoti të heqë përdoruesin"
 
 msgid "Mobile message was not sent because it was too long."
-msgstr "Mesazhi për celular nuk u dërgua, ngaqë qe shumë i gjatë."
+msgstr "Mesazhi për celular nuk u dërgua dot, ngaqë qe shumë i gjatë."
 
 msgid "Mobile message was not sent because an unknown error occurred."
-msgstr "Mesazhi për celular nuk u dërgua, ngaqë ndodhi një gabim i panjohur."
+msgstr ""
+"Mesazhi për celular nuk u dërgua dot, ngaqë ndodhi një gabim i panjohur."
 
 #, c-format
 msgid ""
@@ -5841,13 +5839,13 @@ msgstr ""
 "është bllokuar ose kur ky nuk ekziston."
 
 msgid "Message was not sent because messages are being sent too quickly."
-msgstr "Mesazhi nuk u dërgua, ngaqë mesazhet po dërgohen me shumë nxitim."
+msgstr "Mesazhi nuk u dërgua dot ngaqë mesazhet po dërgohen me shumë nxitim."
 
 msgid "Message was not sent because an unknown encoding error occurred."
-msgstr "Mesazhi nuk u dërgua, ngaqë ndodhi një gabim i panjohur kodimi."
+msgstr "Mesazhi nuk u dërgua dot ngaqë ndodhi një gabim i panjohur kodimi."
 
 msgid "Message was not sent because an unknown error occurred."
-msgstr "Mesazhi nuk u dërgua, ngaqë ndodhi një gabim i panjohur."
+msgstr "Mesazhi nuk u dërgua dot ngaqë ndodhi një gabim i panjohur."
 
 #, c-format
 msgid ""
@@ -5898,15 +5896,15 @@ msgstr "Keni nënshkruar prej një tjetër vendi"
 
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
-"Shërbyesit MSN janë përkohësisht jashtë pune. Ju lutemi, prisni dhe "
+"Shërbyesat MSN janë përkohësisht jashtë pune. Ju lutemi, prisni dhe "
 "riprovoni."
 
 msgid "The MSN servers are going down temporarily"
-msgstr "Shërbyesit MSN po ndalen përkohësisht"
+msgstr "Shërbyesat MSN po ndalen përkohësisht"
 
 #, c-format
 msgid "Unable to authenticate: %s"
-msgstr "Nuk arrin të mirëfilltësojë: %s"
+msgstr "I pazoti të mirëfilltësojë: %s"
 
 msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
@@ -5934,11 +5932,11 @@ msgstr "Po merret listë shokësh"
 
 #, c-format
 msgid "%s requests to view your webcam, but this request is not yet supported."
-msgstr "%s ju kërkoi të shohë kamerën tuaj web, por kjo nuk mbulohet ende."
+msgstr "%s ju kërkoi të shohë kameran tuaj web, por kjo nuk mbulohet ende."
 
 #, c-format
 msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr "%s ju ftoi të shihni kamerën e tij/saj web, por kjo nuk mbulohet ende."
+msgstr "%s ju ftoi të shihni kameran e tij/saj web, por kjo nuk mbulohet ende."
 
 msgid "Away From Computer"
 msgstr "Larg Prej Kompjuterit"
@@ -5950,26 +5948,26 @@ msgid "Out To Lunch"
 msgstr "Jashtë Për Drekë"
 
 msgid "Message may have not been sent because a timeout occurred:"
-msgstr "Mesazhi mund të mos jetë dërguar, ngaqë pati një përfundim afati:"
+msgstr "Mesazhi mund të mos jetë dërguar ngaqë pati një përfundim afati:"
 
 msgid "Message could not be sent, not allowed while invisible:"
 msgstr "Mesazhi nuk u dërgua dot, e palejuar kur jeni i padukshëm:"
 
 msgid "Message could not be sent because the user is offline:"
-msgstr "Mesazhi nuk u dërgua dot, ngaqë përdoruesi është i palidhur:"
+msgstr "Mesazhi nuk u dërgua dot ngaqë përdoruesi është i palidhur:"
 
 msgid "Message could not be sent because a connection error occurred:"
-msgstr "Mesazhi nuk u dërgua dot, ngaqë ndodhi një gabim lidhjeje:"
+msgstr "Mesazhi nuk u dërgua dot ngaqë ndodhi një gabim lidhjeje:"
 
 msgid "Message could not be sent because we are sending too quickly:"
-msgstr "Mesazhi nuk u dërgua dot, ngaqë po i dërgojmë me shumë nxitim:"
+msgstr "Mesazhi nuk u dërgua dot ngaqë po i dërgojmë me shumë nxitim:"
 
 msgid ""
 "Message could not be sent because we were unable to establish a session with "
 "the server. This is likely a server problem, try again in a few minutes:"
 msgstr ""
-"Mesazhi nuk u dërguar dot, ngaqë nuk qemë në gjendje të vendosnim një lidhje "
-"me shërbyesin. Ka të ngjarë që të jetë një problem i shërbyesit, riprovoni "
+"Mesazhi nuk u dërguar dot ngaqë nuk qemë në gjendje të vendosnim një lidhje "
+"me shërbyesin. Ka të ngjarë që të jetë një problem i shërbyesit, roprovoni "
 "pas pak minutash:"
 
 msgid ""
@@ -5980,7 +5978,7 @@ msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "Mesazhi nuk u dërgua dot ngaqë ndodhi një gabim i panjohur:"
 
 msgid "Delete Buddy from Address Book?"
-msgstr "Të Fshihet Shoku prej Libri Adresash?"
+msgstr "Ta Fshijë Shokun prej Libri Adresash?"
 
 msgid "Do you want to delete this buddy from your address book as well?"
 msgstr "Doni të fshihet edhe ky shok nga libri juaj i adresave?"
@@ -6126,11 +6124,11 @@ msgstr "Kartela që po provoni të dërgoni është shumë e madhe!"
 
 #. file read error
 msgid "Unable to access the local file"
-msgstr "Nuk arrin të hyjë te kartelë vendore"
+msgstr ""
 
 #. file write error
 msgid "Unable to save the file"
-msgstr "Nuk arrin të ruajë kartelën"
+msgstr ""
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6144,7 +6142,7 @@ msgstr "Po hyhet..."
 msgid ""
 "Unable to connect to the MXit server. Please check your server settings."
 msgstr ""
-"Nuk arrin të lidhet me shërbyesin MXit. Ju lutemi, kontrolloni formësimin "
+"I pazoti të lidhet me shërbyesin MXit. Ju lutemi, kontrolloni formësimin "
 "tuaj të shërbyesit."
 
 msgid "Connecting..."
@@ -6169,14 +6167,14 @@ msgstr "Ju lutemi, plotësoni kutitë vijuese:"
 
 #. no reply from the WAP site
 msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr "Gabim në kontaktimin e sajtit WAP MXit. Ju lutemi, riprovoni më vonë."
+msgstr "Gabim në kontaktimin e site-it WAP MXit. Ju lutemi, riprovoni më vonë."
 
 #. wapserver error
 #. server could not find the user
 msgid ""
 "MXit is currently unable to process the request. Please try again later."
 msgstr ""
-"MXit hëpërhë nuk është në gjendje të përpunojë kërkesën. Ju lutemi, "
+"MXit hëpërhë nuk është në gjendje të përpunojë kërkesën.  Ju lutemi, "
 "riprovoni më vonë."
 
 msgid "Wrong security code entered. Please try again later."
@@ -6190,7 +6188,7 @@ msgstr "U përzgjodh vend i pavlefshëm. Ju lutemi, riprovoni."
 
 msgid "The MXit ID you entered is not registered. Please register first."
 msgstr ""
-"ID-ja MXit që dhatë nuk është e regjistruar. Ju lutemi, së pari "
+"ID-ja MXit që dhatë nuk është e regjistruar. Ju lutemi, së pari  "
 "regjistrohuni."
 
 msgid "The MXit ID you entered is already registered. Please choose another."
@@ -6202,7 +6200,7 @@ msgid "Internal error. Please try again later."
 msgstr "Gabim i brendshëm. Ju lutemi, riprovoni më vonë."
 
 msgid "You did not enter the security code"
-msgstr "Nuk dhatë kodin e sigurisë"
+msgstr "Nuk dhatë kodin e sigurisë "
 
 msgid "Security Code"
 msgstr "Kod Sigurie"
@@ -6250,10 +6248,10 @@ msgid "Rejection Message"
 msgstr "Mesazh Mospranimi"
 
 msgid "No profile available"
-msgstr "Pa profile gati"
+msgstr "Pa profile të mundshëm"
 
 msgid "This contact does not have a profile."
-msgstr "Ky kontakt nuk ka profil."
+msgstr "Ky kontakt nuk ka profil!"
 
 msgid "Your MXit ID..."
 msgstr "ID-ja Juaj MXit..."
@@ -6301,7 +6299,7 @@ msgid "Divorced"
 msgstr "I divorcuar"
 
 msgid "Last Online"
-msgstr "Së Fundi Në Linjë"
+msgstr "Së fundi Online"
 
 msgid "Invite Message"
 msgstr "Mesazh Ftimi"
@@ -6310,14 +6308,14 @@ msgid "No results"
 msgstr "Pa përfundime"
 
 msgid "No contacts found."
-msgstr "S'u gjetën kontakte."
+msgstr "S'u gjetën kontakte"
 
 #. define columns
 msgid "UserId"
 msgstr "Id Përdoruesi"
 
 msgid "Where I live"
-msgstr "Ku banoj"
+msgstr "Ku Banoj"
 
 #, c-format
 msgid "You have %i suggested friend."
@@ -6340,7 +6338,7 @@ msgid "Message Send Error"
 msgstr "Gabim Dërgimi Mesazhi"
 
 msgid "Unable to process your request at this time"
-msgstr "Nuk arrin të përpunojë kërkesën tuaj këtë herë"
+msgstr "I pazoti të përpunojë kërkesën tuaj këtë herë"
 
 msgid "Timeout while waiting for a response from the MXit server."
 msgstr "Skadim kohe ndërkohë që pritej përgjigje prej shërbyesit MXit."
@@ -6450,7 +6448,7 @@ msgid "Rejected"
 msgstr "U hodh poshtë"
 
 msgid "Deleted"
-msgstr "U fshi"
+msgstr "U Fshi"
 
 msgid "MXit Advertising"
 msgstr "Reklamë MXit"
@@ -6478,7 +6476,7 @@ msgid "MySpaceIM - No Username Set"
 msgstr "MySpaceIM - Pa Emër Përdoruesi"
 
 msgid "You appear to have no MySpace username."
-msgstr "Duket se nuk keni emër përdoruesi te MySpace."
+msgstr "Duket se nuk keni emër përdoruesi te MySpace"
 
 msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
 msgstr ""
@@ -6540,7 +6538,7 @@ msgid ""
 "cfm?fuseaction=accountSettings.changePassword and try again."
 msgstr ""
 "%s Fjalëkalimi juaj është %zu shenja i gjatë, më tepër se gjatësia maksimum "
-"e pritshme prej %d.  Ju lutemi, shkurtojeni fjalëkalimin tuaj te http://"
+"e pritshme prej %d. Ju lutemi, shkurtojeni fjalëkalimin tuaj te http://"
 "profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword "
 "dhe riprovoni."
 
@@ -6653,7 +6651,7 @@ msgid "This username is available. Would you like to set it?"
 msgstr "Ky emër përdoruesi mund të kihet. Dëshironi të caktohet?"
 
 msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr "PASI TË CAKTOHET NJË HERË, KY NUK MUND TË NDRYSHOHET!"
+msgstr "PASI TË CAKTOHET NJË HERË, KY NUK MUND TË NDRYSHOHET! "
 
 msgid "MySpaceIM - Please Set a Username"
 msgstr "MySpaceIM - Ju lutemi, Caktoni një Emër përdoruesi"
@@ -6812,10 +6810,10 @@ msgid "Required parameters not passed in"
 msgstr "Nuk u dha parametër i nevojshëm"
 
 msgid "Unable to write to network"
-msgstr "Nuk arrin të shkruajë në rrjet"
+msgstr "I pazoti të shkruajë në rrjet"
 
 msgid "Unable to read from network"
-msgstr "Nuk arrin të lexojë prej rrjeti"
+msgstr "I pazoti të lexojë prej rrjeti"
 
 msgid "Error communicating with server"
 msgstr "Gabim gjatë komunikimit me shërbyesin"
@@ -6824,7 +6822,7 @@ msgid "Conference not found"
 msgstr "Nuk u gjet konferencë"
 
 msgid "Conference does not exist"
-msgstr "Konferenca nuk ekziston"
+msgstr "konferenca nuk ekziston"
 
 msgid "A folder with that name already exists"
 msgstr "Ka tashmë një dosje me këtë emër"
@@ -6836,7 +6834,7 @@ msgid "Password has expired"
 msgstr "Fjalëkalimi ka skaduar"
 
 msgid "Incorrect password"
-msgstr "Fjalëkalim i pasaktë"
+msgstr "Fjalëkalim i pasaktë."
 
 msgid "Account has been disabled"
 msgstr "Llogaria është çaktivizuar"
@@ -6873,7 +6871,7 @@ msgid "You cannot add the same person twice to a conversation"
 msgstr "S'mund të shtoni dot të njëjtin person dy herë te në bashkëbisedim"
 
 msgid "You have reached your limit for the number of contacts allowed"
-msgstr "Keni arritur kufirin tuaj për numrin e lidhjeve të lejuara"
+msgstr "Keni arritur kufirin tuaj për numrin e lidhjeve të lejuara  "
 
 msgid "You have entered an incorrect username"
 msgstr "Keni dhënë një emër të pavlefshëm përdoruesi"
@@ -6894,7 +6892,7 @@ msgstr ""
 "Ky version mostër nuk lejon më tepër se dhjetë përdorues të futen njëherësh"
 
 msgid "The user is either offline or you are blocked"
-msgstr "Ose përdoruesi është i palidhur, ose ju jeni të bllokuar"
+msgstr "ose përdoruesi është i palidhur ose ju jeni të bllokuar"
 
 #, c-format
 msgid "Unknown error: 0x%X"
@@ -6902,41 +6900,41 @@ msgstr "Gabim i panjohur: 0x%X"
 
 #, c-format
 msgid "Unable to login: %s"
-msgstr "Nuk arrin të hyjë: %s"
+msgstr "I pazoti të hyjë: %s"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
 msgstr ""
-"Nuk arrin të dërgojë mesazh. Nuk arriti të kem hollësi për përdoruesin (%s)."
+"I pazoti të dërgojë mesazh. Nuk arriti të kem hollësi për përdoruesin (%s)."
 
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
-msgstr "Nuk arrin të shtojë %s te listë juaja shokësh (%s)."
+msgstr "I pazoti të shtojë %s te listë juaja shokësh (%s)."
 
 #. TODO: Improve this! message to who or for what conference?
 #, c-format
 msgid "Unable to send message (%s)."
-msgstr "Nuk arrin të dërgojë mesazh (%s)."
+msgstr "I pazoti të dërgojë mesazh (%s)."
 
 #, c-format
 msgid "Unable to invite user (%s)."
-msgstr "Nuk arrin të ftojë përdorues (%s)."
+msgstr "I pazoti të ftojë përdorues (%s)"
 
 #, c-format
 msgid "Unable to send message to %s. Could not create the conference (%s)."
 msgstr ""
-"Nuk arrin të dërgojë mesazh te %s. Nuk mundi të krijojë konferencën (%s)."
+"I pazoti të dërgojë mesazh te %s. Nuk mundi të krijojë konferencën (%s)."
 
 #, c-format
 msgid "Unable to send message. Could not create the conference (%s)."
-msgstr "Nuk arrin të dërgojë mesazh. Nuk mundi të krijojë konferencën (%s)."
+msgstr "I pazoti të dërgojë mesazh. Nuk mundi të krijojë konferencën (%s)."
 
 #, c-format
 msgid ""
 "Unable to move user %s to folder %s in the server side list. Error while "
 "creating folder (%s)."
 msgstr ""
-"Nuk arrin të zhvendosë përdorues %s te dosje %s në listën nga ana e "
+"I pazoti të zhvendosë përdorues %s te dosje %s në listën nga ana e "
 "shërbyesit. Gabim gjatë krijimit të dosjes (%s)."
 
 #, c-format
@@ -6944,7 +6942,7 @@ msgid ""
 "Unable to add %s to your buddy list. Error creating folder in server side "
 "list (%s)."
 msgstr ""
-"Nuk arrin të shtojë %s te listë juaj shokësh. Gabim gjatë krijimit të dosjes "
+"I pazoti të shtojë %s te listë juaj shokësh. Gabim gjatë krijimit të dosjes "
 "në listën nga ana e shërbyesit (%s)."
 
 #, c-format
@@ -6953,28 +6951,27 @@ msgstr "S'arrita të kem hollësi për përdoruesin %s (%s)."
 
 #, c-format
 msgid "Unable to add user to privacy list (%s)."
-msgstr "Nuk arrin të shtojë përdoruesin te listë privatësie (%s)."
+msgstr "I pazoti të shtojë përdoruesin te listë vetësie (%s)."
 
 #, c-format
 msgid "Unable to add %s to deny list (%s)."
-msgstr "Nuk arrin të shtojë %s te listë mohimesh (%s)."
+msgstr "I pazoti të shtojë %s te listë mohimesh (%s)."
 
 #, c-format
 msgid "Unable to add %s to permit list (%s)."
-msgstr "Nuk arrin të shtojë %s te listë lejesh (%s)."
+msgstr "I pazoti të shtojë %s te listë lejesh (%s)."
 
 #, c-format
 msgid "Unable to remove %s from privacy list (%s)."
-msgstr "Nuk arrin të heqë %s prej liste privatësie (%s)."
+msgstr "I pazoti të heqë %s prej liste vetësie (%s)."
 
 #, c-format
 msgid "Unable to change server side privacy settings (%s)."
-msgstr ""
-"Nuk arrin të ndryshojë rregullime privatësie të anës së shërbyesit (%s)."
+msgstr "I pazoti të ndryshojë rregullime vetësie të anës së shërbyesit (%s)."
 
 #, c-format
 msgid "Unable to create conference (%s)."
-msgstr "Nuk arrin të krijojë konferencë (%s)."
+msgstr "I pazoti të krijojë konferencë (%s)."
 
 msgid "Error communicating with server. Closing connection."
 msgstr "Gabim gjatë komunikimit me shërbyesin. Po mbyllet lidhja."
@@ -7040,7 +7037,7 @@ msgid ""
 "Unable to connect to server. Please enter the address of the server to which "
 "you wish to connect."
 msgstr ""
-"Nuk arrin të lidhet me shërbyesin. Ju lutemi, jepni adresën e shërbyesit me "
+"I pazoti të lidhet me shërbyesin. Ju lutemi, jepni adresën e shërbyesit me "
 "të cilin doni të lidheni."
 
 msgid "This conference has been closed. No more messages can be sent."
@@ -7063,7 +7060,7 @@ msgid "Server address"
 msgstr "Adresë shërbyesi"
 
 msgid "Server port"
-msgstr "Portë shërbyesi"
+msgstr "Portë Shërbyesi"
 
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr ""
@@ -7100,8 +7097,8 @@ msgid ""
 "You required encryption in your account settings, but one of the servers "
 "doesn't support it."
 msgstr ""
-"Te rregullimet tuaja për llogarinë kërkuat kodim, por një nga shërbyesit nuk "
-"e mbulon atë."
+"Te rregullimet tuaja për llogarinë kërkuat kodim, por një nga shërbyesat nuk "
+"e mbulon atë. "
 
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
@@ -7117,7 +7114,7 @@ msgid ""
 "client does not currently support CAPTCHAs."
 msgstr ""
 "Shërbyesi kërkoi që të plotësoni një CAPTCHA për të mundur të bëni hyrjen, "
-"po ky klient nuk i mbulon CAPTCHA-t hëpërhë."
+"po ky klient nuk i mbulon  CAPTCHA-t hëpërhë."
 
 msgid "AOL does not allow your screen name to authenticate here"
 msgstr "AOL-i nuk e lejon emrin tuaj të ekranit të bëjë mirëfilltësimin këtu"
@@ -7145,7 +7142,7 @@ msgid "Could not join chat room"
 msgstr "Nuk u bë dot futja në dhomën e fjalosjes"
 
 msgid "Invalid chat room name"
-msgstr "Emër i pavlefshëm dhome fjalosjeje"
+msgstr "U dha emër i pavlefshëm dhome fjalosjeje."
 
 msgid "Invalid error"
 msgstr "Gabim i pavlefshëm"
@@ -7183,26 +7180,26 @@ msgid "Bot account reached monthly IM limit"
 msgstr "Llogaria bot mbërriti në kufijtë mujorë IM"
 
 msgid "Unable to receive offline messages"
-msgstr "Nuk arrin të marrë mesazhe jo në linjë"
+msgstr "I pazoti të marrë mesazhe \"offline\""
 
 msgid "Offline message store full"
-msgstr "Depoja e mesazheve jo në linjë është plot"
+msgstr "Depo mesazhesh \"offline\" plot"
 
 #, c-format
 msgid "Unable to send message: %s (%s)"
-msgstr "Nuk arrin të dërgojë mesazh: %s (%s)"
+msgstr "I pazoti të dërgojë mesazh: %s (%s)"
 
 #, c-format
 msgid "Unable to send message: %s"
-msgstr "Nuk arrin të dërgojë mesazh: %s"
+msgstr "I pazoti të dërgojë mesazh: %s"
 
 #, c-format
 msgid "Unable to send message to %s: %s (%s)"
-msgstr "Nuk arrin të dërgojë mesazh te %s: %s (%s)"
+msgstr "I pazoti të dërgojë mesazh te %s: %s (%s)"
 
 #, c-format
 msgid "Unable to send message to %s: %s"
-msgstr "Nuk arrin të dërgojë mesazh te %s: %s"
+msgstr "I pazoti të dërgojë mesazh te %s: %s"
 
 msgid "Thinking"
 msgstr "Duke u menduar"
@@ -7251,7 +7248,7 @@ msgstr ""
 
 #. "I am mobile." / "John is mobile."
 msgid "Mobile"
-msgstr "Telefon celular"
+msgstr "Telefon Celular"
 
 msgid "Searching the web"
 msgstr "Duke kërkuar në Web"
@@ -7273,7 +7270,7 @@ msgid "Smoking"
 msgstr "Duke tymosur"
 
 msgid "Writing"
-msgstr "Duke shkruar"
+msgstr "Duke shkruajtur"
 
 #. Drinking [Alcohol]
 msgid "Drinking"
@@ -7337,7 +7334,7 @@ msgid "Received invalid data on connection with remote user."
 msgstr "U morën të dhëna të pavlefshme rreth lidhjes me përdoruesin e largët."
 
 msgid "Unable to establish a connection with the remote user."
-msgstr "Nuk arrin të vendosë lidhje me përdoruesin e largët."
+msgstr "I pazoti të vendosë lidhje me përdoruesin e largët."
 
 msgid "Direct IM established"
 msgstr "U vendos MA e Drejtpërdrejtë"
@@ -7360,13 +7357,13 @@ msgid "Free For Chat"
 msgstr "I lirë Për Fjalosje"
 
 msgid "Not Available"
-msgstr "Jo i passhëm"
+msgstr "Jo i mundshëm"
 
 msgid "Occupied"
 msgstr "I zënë"
 
 msgid "Web Aware"
-msgstr "Me Web-in Parasysh"
+msgstr "Me Web-in  Parasysh"
 
 msgid "Invisible"
 msgstr "I padukshëm"
@@ -7388,11 +7385,11 @@ msgstr "Për drekë"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
-msgstr "Nuk arrin të lidhet me shërbyesin e mirëfilltësimeve: %s"
+msgstr "I pazoti të lidhet me shërbyesin e mirëfilltësimeve: %s"
 
 #, c-format
 msgid "Unable to connect to BOS server: %s"
-msgstr "Nuk arrin të lidhet shërbyesin BOS: %s"
+msgstr "I pazoti të lidhet shërbyesin BOS: %s"
 
 msgid "Username sent"
 msgstr "U dërgua emri i përdoruesit"
@@ -7410,9 +7407,9 @@ msgid ""
 "a valid email address, or start with a letter and contain only letters, "
 "numbers and spaces, or contain only numbers."
 msgstr ""
-"Nuk arrin të nënshkruajë si %s, ngaqë emri i përdoruesit është i "
-"pavlefshëm.  Emrat e përdoruesve duhet të jenë adresa email të vlefshme, ose "
-"duhet të fillojnë me një shkronjë dhe të përmbajnë vetëm shkronjë, numra dhe "
+"I pazoti të nënshkruajë si %s, ngaqë emri i përdoruesit është i pavlefshëm.  "
+"Emrat e përdoruesve duhet të jenë adresa email të vlefshme, ose duhet të "
+"fillojnë me një shkronjë dhe të përmbajnë vetëm shkronjë, numra dhe "
 "hapësira, ose të përmbajnë vetëm numra."
 
 msgid ""
@@ -7420,7 +7417,7 @@ msgid ""
 "supported by your system."
 msgstr ""
 "Te rregullimet tuaja për llogarinë kërkuat kodim, por kodimi nuk mbulohet "
-"nga sistemi juaj."
+"nga sistemi juaj. "
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -7431,7 +7428,7 @@ msgid "Unable to get a valid AIM login hash."
 msgstr "Nuk u mor dot hash i vlefshëm hyrjeje në AIM."
 
 msgid "Unable to get a valid login hash."
-msgstr "Nuk u mor dot hash i vlefshëm hyrjeje."
+msgstr "Nuk u mor dot hash i vlefshëm hyrjeje"
 
 msgid "Received authorization"
 msgstr "Mirëfilltësim i marrë"
@@ -7472,9 +7469,11 @@ msgid ""
 "minute and try again. If you continue to try, you will need to wait even "
 "longer."
 msgstr ""
-"Adresa juaj IP është lidhur dhe shkëputur ca si shumë shpesh. Prisni një "
-"minutë dhe riprovoni. Nëse vazhdoni të provoni, do t'ju duhet të prisni edhe "
-"më."
+"Your IP address has been connecting and disconnecting too frequently. Wait a "
+"minute and try again. If you continue to try, you will need to wait even "
+"longer.Adresa juaj IP është lidhur dhe shkëputur ca si shumë shpesh. Prisni "
+"një minutë dhe riprovoni. Nëse vazhdoni të provoni, do t'ju duhet të prisni "
+"edhe më."
 
 msgid "The SecurID key entered is invalid"
 msgstr "Kyçi SecurID i dhënë është i pavlefshëm"
@@ -7561,22 +7560,22 @@ msgstr "_Hidh poshtë"
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
-msgstr[0] "Humbët %hu mesazh prej %s, ngaqë qe i pavlefshëm."
-msgstr[1] "Humbët %hu mesazhe prej %s, ngaqë qenë të pavlefshëm."
+msgstr[0] "Humbët %hu mesazh prej %s sepse qe i pavlefshëm."
+msgstr[1] "Humbët %hu mesazhe prej %s sepse qenë të pavlefshëm."
 
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
-msgstr[0] "Humbët %hu mesazh prej %s, ngaqë qe shumë i madh."
-msgstr[1] "Humbët %hu mesazhe prej %s, ngaqë qenë shumë të mëdhenj."
+msgstr[0] "Humbët %hu mesazh prej %s sepse qe shumë i madh."
+msgstr[1] "Humbët %hu mesazhe prej %s sepse qenë shumë të mëdhenj."
 
 #, c-format
 msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
 msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
-msgstr[0] "Humbët %hu mesazh prej %s, ngaqë është tejkaluar niveli kufi."
-msgstr[1] "Humbët %hu mesazhe prej %s, ngaqë është tejkaluar niveli kufi."
+msgstr[0] "Humbët %hu mesazh prej %s sepse është tejkaluar niveli kufi."
+msgstr[1] "Humbët %hu mesazhe prej %s sepse është tejkaluar niveli kufi"
 
 #, c-format
 msgid ""
@@ -7584,21 +7583,21 @@ msgid ""
 msgid_plural ""
 "You missed %hu messages from %s because his/her warning level is too high."
 msgstr[0] ""
-"Humbët %hu mesazh prej %s, ngaqë shkalla e sinjalizimit për të qe shumë e "
+"Humbët %hu mesazh prej %s ngaqë shkalla e sinjalizimit për të qe shumë e "
 "lartë."
 msgstr[1] ""
-"Humbët %hu mesazhe prej %s, ngaqë shkalla e sinjalizimit për të qe shumë e "
-"lartë."
+"Humbët %hu mesazhe prej %s ngaqë shkalla e sinjalizimit për të qe shumë e "
+"lartë"
 
 #, c-format
 msgid "You missed %hu message from %s because your warning level is too high."
 msgid_plural ""
 "You missed %hu messages from %s because your warning level is too high."
 msgstr[0] ""
-"Humbët %hu mesazh prej %s, ngaqë shkalla juaj e sinjalizimit është shumë e "
+"Humbët %hu mesazh prej %s ngaqë shkalla juaj e sinjalizimit është shumë e "
 "lartë."
 msgstr[1] ""
-"Humbët %hu mesazhe prej %s, ngaqë shkalla juaj e sinjalizimit është shumë e "
+"Humbët %hu mesazhe prej %s ngaqë shkalla juaj e sinjalizimit është shumë e "
 "lartë."
 
 #, c-format
@@ -7619,8 +7618,8 @@ msgstr "Formatimi i ri është i pavlefshëm."
 
 msgid "Username formatting can change only capitalization and whitespace."
 msgstr ""
-"Formatimi i emrave të përdoruesve mund të ndryshojë vetëm shkronjat e mëdha "
-"dhe hapësirat e zbrazëta."
+"Formatimi i emrave të përdoruesve mund të ndryshojë vetëm shkronjat e "
+"mëdhaja dhe hapësirat boshe."
 
 msgid "Pop-Up Message"
 msgstr "Mesazh Flluskë"
@@ -7640,20 +7639,20 @@ msgid "You should receive an email asking to confirm %s."
 msgstr "Duhet t'ju vijë një email me kërkesën për ripohim të %s."
 
 msgid "Account Confirmation Requested"
-msgstr "Lyp Ripohim Llogarie"
+msgstr "Lyp Ripohim Llogarie "
 
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format username because the requested name differs "
 "from the original."
 msgstr ""
-"Gabim 0x%04x: Nuk arrin të formatojë emër përdoruesi, ngaqë emri i kërkuar "
+"Gabim 0x%04x: I pazoti të formatojë emër përdoruesi, ngaqë emri i kërkuar "
 "ndryshon nga origjinali."
 
 #, c-format
 msgid "Error 0x%04x: Unable to format username because it is invalid."
 msgstr ""
-"Gabim 0x%04x: Nuk arrin të formatojë emër përdoruesi, ngaqë është i "
+"Gabim 0x%04x: I pazoti të formatojë emër përdoruesi, ngaqë është i "
 "pavlefshëm."
 
 #, c-format
@@ -7661,7 +7660,7 @@ msgid ""
 "Error 0x%04x: Unable to format username because the requested name is too "
 "long."
 msgstr ""
-"Gabim 0x%04x: Nuk arrin të formatojë emër përdoruesi, ngaqë emri i kërkuar "
+"Gabim 0x%04x: I pazoti të formatojë emër përdoruesi, ngaqë emri i kërkuar "
 "është tepër i gjatë."
 
 #, c-format
@@ -7669,7 +7668,7 @@ msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
-"Gabim 0x%04x: Nuk arrin të ndryshojë adresë email, ngaqë për këtë emër "
+"Gabim 0x%04x: I pazoti të ndryshojë adresë email, ngaqë për këtë emër "
 "përdoruesi ka tashmë një kërkesë në pritje."
 
 #, c-format
@@ -7677,7 +7676,7 @@ msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
-"Gabim 0x%04x: Nuk arrin të ndryshojë adresë email sepse adresa e dhënë ka "
+"Gabim 0x%04x: I pazoti të ndryshojë adresë email sepse adresa e dhënë ka "
 "shumë emra përdoruesi shoqëruar asaj."
 
 #, c-format
@@ -7685,7 +7684,7 @@ msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
-"Gabim 0x%04x: Nuk arrin të ndryshojë adresë email sepse adresa e dhënë është "
+"Gabim 0x%04x: I pazoti të ndryshojë adresë email sepse adresa e dhënë është "
 "e pavlefshme."
 
 #, c-format
@@ -7700,7 +7699,7 @@ msgid "The email address for %s is %s"
 msgstr "Adresa email për %s është %s"
 
 msgid "Account Info"
-msgstr "Të dhëna Llogarie"
+msgstr "Të dhëna Llogarie "
 
 msgid ""
 "Your IM Image was not sent. You must be Direct Connected to send IM Images."
@@ -7709,7 +7708,7 @@ msgstr ""
 "dërguar Figura si MA."
 
 msgid "Unable to set AIM profile."
-msgstr "Nuk arrin të rregullojë profil AIM."
+msgstr "I pazoti të rregullojë profil AIM"
 
 msgid ""
 "You have probably requested to set your profile before the login procedure "
@@ -7745,11 +7744,11 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"Është tejkaluar gjatësia më e madhe prej %d bajti për mesazhe largimi.  U "
-"cungua për ju."
+"Është tejkaluar gjatësia më e madhe prej %d bajti për mesazhe largimi. U "
+"cungua për ju"
 msgstr[1] ""
-"Është tejkaluar gjatësia më e madhe prej %d bajtesh për mesazhe largimi.  U "
-"cungua për ju."
+"Është tejkaluar gjatësia më e madhe prej %d bajtesh për mesazhe largimi. U "
+"cungua për ju"
 
 msgid "Away message too long."
 msgstr "Mesazh largimi shumë i gjatë."
@@ -7766,13 +7765,13 @@ msgstr ""
 "hapësira, ose të përmbajnë vetëm numra."
 
 msgid "Unable to Retrieve Buddy List"
-msgstr "Nuk arrin Të Marrë Listë Shokësh"
+msgstr "I pazoti Të Marrë Listë  Shokësh"
 
 msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
 "list is not lost, and will probably become available in a few minutes."
 msgstr ""
-"Shërbyesit AIM s'qenë përkohësisht në gjendje të dërgojnë listën tuaj të "
+"Shërbyesat AIM s'qenë përkohësisht në gjendje të dërgojnë listën tuaj të "
 "shokëve.  Lista juaj e shokëve nuk ka humbur, dhe me gjasa do të bëhet e "
 "passhme brenda pak minutash."
 
@@ -7891,7 +7890,7 @@ msgid "Web aware (enabling this will cause you to receive SPAM!)"
 msgstr "Web aware (aktivizimi i kësaj do të bëjë që t'ju vijë SPAM!)"
 
 msgid "ICQ Privacy Options"
-msgstr "Mundësi Privatësie ICQ"
+msgstr "Mundësi Vetësie ICQ"
 
 msgid "Change Address To:"
 msgstr "Ndryshoje Adresën Në:"
@@ -7923,14 +7922,14 @@ msgstr "Caktoni Të dhëna Përdoruesi (web)..."
 
 #. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
-msgstr "Ndryshoni Fjalëkalimin për (web)"
+msgstr "Ndryshoni Fjalëklimin për (web)"
 
 msgid "Configure IM Forwarding (web)"
 msgstr "Formësoni Përcjellje MA-je (web)"
 
 #. ICQ actions
 msgid "Set Privacy Options..."
-msgstr "Caktoni Mundësi Privatësie..."
+msgstr "Caktoni Mundësi Vetësie..."
 
 msgid "Show Visible List"
 msgstr "Shfaq Listë të Dukshme"
@@ -7991,7 +7990,7 @@ msgid ""
 msgstr ""
 "Kjo lyp një lidhje të drejtpërdrejtë mes dy kompjuterave dhe është e "
 "nevojshme për figura MA.  Ngaqë do të nxirret sheshit adresa juaj IP, kjo "
-"mund të merret si rrezik privatësie."
+"mund të merret si rrezik vetësie."
 
 #. Label
 msgid "Buddy Icon"
@@ -8007,7 +8006,7 @@ msgid "Get File"
 msgstr "Merr Kartelë"
 
 msgid "Games"
-msgstr "Lojëra"
+msgstr "Lojra"
 
 msgid "ICQ Xtraz"
 msgstr "ICQ Xtraz"
@@ -8103,7 +8102,7 @@ msgid "Web Page"
 msgstr "Faqe Web"
 
 msgid "Online Since"
-msgstr "Në Linjë Që Prej"
+msgstr "I lidhur që Prej"
 
 msgid "Member Since"
 msgstr "Anëtar që Prej"
@@ -8127,7 +8126,7 @@ msgid "Service not defined"
 msgstr "Shërbim i papërcaktuar"
 
 msgid "Obsolete SNAC"
-msgstr "SNAC i vjetruar"
+msgstr "SNAC i vjetëruar"
 
 msgid "Not supported by host"
 msgstr "I pambuluar nga streha"
@@ -8163,7 +8162,7 @@ msgid "Warning level too high (receiver)"
 msgstr "Shkallë sinjalizimi shumë e lartë (marrësi)"
 
 msgid "User temporarily unavailable"
-msgstr "Përdorues përkohësisht jo i passhëm"
+msgstr "Përdorues përkohësisht jo i mundshëm"
 
 msgid "No match"
 msgstr "Pa përputhje"
@@ -8184,13 +8183,13 @@ msgstr "Jo kur jeni në AOL"
 #. you to appear online to the chosen user even when your status is set to
 #. Invisible.
 msgid "Appear Online"
-msgstr "Shfaqu Në Linjë"
+msgstr "Shfaqu I lidhur"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to appear offline to the chosen user when your status is set to
 #. Invisible (this is the default).
 msgid "Don't Appear Online"
-msgstr "Mos u Shfaq Në Linjë"
+msgstr "Mos u Shfaq Online"
 
 #. Translators: This string is a menu option that, if selected, will cause
 #. you to always appear offline to the chosen user (even when your status
@@ -8203,7 +8202,7 @@ msgstr "Shfaqet Jo i lidhur"
 #. appear online to the chosen user if you are not invisible (this is the
 #. default).
 msgid "Don't Appear Offline"
-msgstr "Mos Shfaq Jo Në Linjë"
+msgstr "Mos Shfaq Offline"
 
 msgid "you have no buddies on this list"
 msgstr "nuk keni shokë në këtë listë"
@@ -8226,7 +8225,7 @@ msgid "Invisible List"
 msgstr "Listë e Padukshme"
 
 msgid "These buddies will always see you as offline"
-msgstr "Këta shokë do t'ju shohin përherë si jo në linjë"
+msgstr "Këta shokë do t'ju shohin përherë si offline"
 
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
@@ -8287,14 +8286,14 @@ msgid "Announcement from %s"
 msgstr "Njoftim prej %s"
 
 msgid "Conference Closed"
-msgstr "Konferenca u Mbyll"
+msgstr "Koferenca u Mbyll"
 
 msgid "Unable to send message: "
-msgstr "Nuk arrin të dërgojë mesazh: "
+msgstr "I pazoti të dërgojë mesazh:"
 
 #, c-format
 msgid "Unable to send message to %s:"
-msgstr "Nuk arrin të dërgojë mesazh te %s:"
+msgstr "I pazoti të dërgojë mesazh te %s:"
 
 msgid "Place Closed"
 msgstr "Vendi u Mbyll"
@@ -8306,7 +8305,7 @@ msgid "Speakers"
 msgstr "Altoparlantë"
 
 msgid "Video Camera"
-msgstr "Kamera Video"
+msgstr "Video Kamera"
 
 msgid "File Transfer"
 msgstr "Shpërngulje Kartele"
@@ -8382,7 +8381,7 @@ msgid "Sametime ID"
 msgstr "ID Sametime"
 
 msgid "An ambiguous user ID was entered"
-msgstr "U dha një ID përdoruesi e dykuptimtë"
+msgstr "U dha një ID përdoruesi e dykuptimtë "
 
 #, c-format
 msgid ""
@@ -8397,7 +8396,7 @@ msgid "Select User"
 msgstr "Përzgjidhni Përdorues"
 
 msgid "Unable to add user: user not found"
-msgstr "Nuk arrin të shtojë përdoruesin: nuk u gjet përdorues"
+msgstr "I pazoti të shtojë përdoruesin: nuk u gjet përdorues"
 
 #, c-format
 msgid ""
@@ -8419,7 +8418,7 @@ msgid "Remotely Stored Buddy List"
 msgstr "Listë Shokësh e Ruajtur Së largëti"
 
 msgid "Buddy List Storage Mode"
-msgstr "Mënyrë Ruajtjeje Liste Shokësh"
+msgstr "Mënyrë Ruajtjej Liste Shokësh"
 
 msgid "Local Buddy List Only"
 msgstr "Vetëm Listë Vendore Shokësh"
@@ -8442,14 +8441,14 @@ msgid "Export Sametime List for Account %s"
 msgstr "Eksporto Listë Sametime për Llogarinë %s"
 
 msgid "Unable to add group: group exists"
-msgstr "Nuk arrin të shtojë grup: grupi ekziston"
+msgstr "I pazoti të shtojë grup: grupi ekziston"
 
 #, c-format
 msgid "A group named '%s' already exists in your buddy list."
 msgstr "Te lista juaj e shokëve ka tashmë një grup të quajtur '%s'."
 
 msgid "Unable to add group"
-msgstr "Nuk arrin të shtojë grup"
+msgstr "I pazoti të shtojë grup"
 
 msgid "Possible Matches"
 msgstr "Përputhje të Mundshme"
@@ -8471,7 +8470,7 @@ msgid "Select Notes Address Book"
 msgstr "Përzgjidhni Libër Adresash Notes"
 
 msgid "Unable to add group: group not found"
-msgstr "Nuk arrin të shtojë grup: nuk u gjet grup"
+msgstr "I pazoti të shtojë grup: nuk u gjet grup"
 
 #, c-format
 msgid ""
@@ -8554,31 +8553,31 @@ msgstr "Fshih identitet klienti"
 
 #, c-format
 msgid "User %s is not present in the network"
-msgstr "Përdoruesi %s nuk është i pranishëm në rrjetin"
+msgstr "Përdoruesi %s nuk është i pranishëm në rrjetin."
 
 msgid "Key Agreement"
-msgstr "Marrëveshje Kyçesh"
+msgstr "Marrëveshje Kyçash"
 
 msgid "Cannot perform the key agreement"
-msgstr "S'përmbush dot ujdi kyçesh"
+msgstr "S'përmbush dot ujdi kyçash"
 
 msgid "Error occurred during key agreement"
-msgstr "Ndodhi gabim në marrëveshje kyçesh"
+msgstr "Ndodhi gabim në marrëveshje kyçash "
 
 msgid "Key Agreement failed"
-msgstr "Marrëveshja e Kyçeve dështoi"
+msgstr "Marrëveshja e Kyçave dështoi"
 
 msgid "Timeout during key agreement"
-msgstr "Mbarim kohe gjatë ujdie kyçesh"
+msgstr "Mbarim kohe gjatë ujdie kyçash"
 
 msgid "Key agreement was aborted"
-msgstr "Marrëveshja e kyçeve u ndërpre"
+msgstr "Marrëveshja e kyçave u ndërpre"
 
 msgid "Key agreement is already started"
-msgstr "Marrëveshja e kyçeve ka zënë fill tashmë"
+msgstr "Marrëveshja e kyçave ka zënë fill tashmë"
 
 msgid "Key agreement cannot be started with yourself"
-msgstr "Nuk mund të nisni marrëveshje kyçesh me vetveten"
+msgstr "Nuk mund të nisni marrëveshje kyçash me vetveten"
 
 msgid "The remote user is not present in the network any more"
 msgstr "Përdoruesi i largët nuk është më i pranishëm në rrjet"
@@ -8588,7 +8587,7 @@ msgid ""
 "Key agreement request received from %s. Would you like to perform the key "
 "agreement?"
 msgstr ""
-"Kërkesë pranimi kyçi marrë prej %s. Do të donit të përmbushet pranimi i "
+"Kërkesë pranimi kyçi marrë prej %s. Do të donit të përmbushet  pranimi i "
 "kyçit?"
 
 #, c-format
@@ -8597,12 +8596,12 @@ msgid ""
 "Remote host: %s\n"
 "Remote port: %d"
 msgstr ""
-"Përdoruesi i largët po pret ujdi kyçesh në:\n"
+"Përdoruesi i largët po pret ujdi kyçash në:\n"
 "Strehë e largët: %s\n"
 "Portë e largët: %d"
 
 msgid "Key Agreement Request"
-msgstr "Kërkesë Marrëveshjeje Kyçesh"
+msgstr "Kërkesë Marrëveshjeje Kyçash"
 
 msgid "IM With Password"
 msgstr "MA Me Fjalëkalim"
@@ -8654,7 +8653,7 @@ msgid ""
 "To add the buddy you must import his/her public key. Press Import to import "
 "a public key."
 msgstr ""
-"Për të shtuar shokun duhet të importoni kyçin e tij/saj publik. Shtypni "
+"Për të shtuar shokun duhet të ipmortoni kyçin e tij/saj publik. Shtypni "
 "Importo për të importuar një kyç publik."
 
 msgid "_Import..."
@@ -8822,7 +8821,7 @@ msgid "Please enter the %s channel private group name and passphrase."
 msgstr "Ju lutemi, jepni emër grupi privat dhe parullë kanali %s."
 
 msgid "Add Channel Private Group"
-msgstr "Shto Grup Privat Kanali"
+msgstr "Shto Grup Privat Kanali  "
 
 msgid "User Limit"
 msgstr "Kufi Përdoruesi"
@@ -8885,13 +8884,13 @@ msgid "Call Command"
 msgstr "Urdhër Thirrje"
 
 msgid "Cannot call command"
-msgstr "S'thërret dot urdhër"
+msgstr "S'thërras dot urdhër"
 
 msgid "Unknown command"
 msgstr "Urdhër i panjohur"
 
 msgid "Secure File Transfer"
-msgstr "Shpërngulje e Sigurt Kartelash"
+msgstr "Shpërngulje e Sigurtë Kartelash"
 
 msgid "Error during file transfer"
 msgstr "Gabim gjatë shpërnguljeje kartele"
@@ -8903,7 +8902,7 @@ msgid "Permission denied"
 msgstr "Leje e mohuar"
 
 msgid "Key agreement failed"
-msgstr "Marrëveshja e kyçeve dështoi"
+msgstr "Marrëveshja e kyçave dështoi"
 
 msgid "Connection timed out"
 msgstr "Mbaroi koha e ndërlidhjes"
@@ -8915,16 +8914,16 @@ msgid "File transfer session does not exist"
 msgstr "Nuk ka sesione shpërngulje kartelash"
 
 msgid "No file transfer session active"
-msgstr "S'ka sesion shpërnguljeje kartelash veprues"
+msgstr "S'ka sesion shpërguljeje kartelash veprues"
 
 msgid "File transfer already started"
 msgstr "Shpërngulje kartelash tashmë e filluar"
 
 msgid "Could not perform key agreement for file transfer"
-msgstr "S'përmbush dot ujdi kyçesh për shpërngulje kartelash"
+msgstr "S'përmbusha dot ujdi kyçash për shpërngulje kartelash"
 
 msgid "Could not start the file transfer"
-msgstr "S'nisi dot shpërnguljen e kartelës"
+msgstr "S'munda të nis shpërnguljen e kartelës"
 
 msgid "Cannot send file"
 msgstr "S'dërgon dot kartelë"
@@ -8942,7 +8941,7 @@ msgstr "<I>%s</I> rregullon mënyra kanali <I>%s</I> në: %s"
 
 #, c-format
 msgid "<I>%s</I> removed all channel <I>%s</I> modes"
-msgstr "<I>%s</I> hoqi krejt mënyrat e kanalit <I>%s</I>"
+msgstr "<I>%s</I> hoqi krejt mënyrat e kanalit <I>%s</I> "
 
 #, c-format
 msgid "<I>%s</I> set <I>%s's</I> modes to: %s"
@@ -8950,7 +8949,7 @@ msgstr "<I>%s</I> caktoi mënyra <I>%s's</I> në: %s"
 
 #, c-format
 msgid "<I>%s</I> removed all <I>%s's</I> modes"
-msgstr "<I>%s</I> hoqi krejt mënyrat për <I>%s's</I>"
+msgstr "<I>%s</I> hoqi krejt mënyrat për <I>%s's</I> "
 
 #, c-format
 msgid "You have been kicked off <I>%s</I> by <I>%s</I> (%s)"
@@ -9015,7 +9014,7 @@ msgid "Detach From Server"
 msgstr "Shkëput Prej Serveri"
 
 msgid "Cannot detach"
-msgstr "S'shkëput dot"
+msgstr "S'shkëpus dot"
 
 msgid "Cannot set topic"
 msgstr "S'cakton dot temë"
@@ -9024,10 +9023,10 @@ msgid "Failed to change nickname"
 msgstr "Dështoi në ndryshim nofke"
 
 msgid "Roomlist"
-msgstr "Listë dhomash"
+msgstr "Listë Dhomash"
 
 msgid "Cannot get room list"
-msgstr "S'merr dot listë dhome"
+msgstr "S'marr dot listë dhome"
 
 msgid "Network is empty"
 msgstr "Rrjeti është i zbrazët"
@@ -9070,16 +9069,16 @@ msgstr ""
 "Klientë shërbyesi vendor: %d\n"
 "Kanale shërbyesi vendor: %d\n"
 "Operatorë shërbyesi vendor: %d\n"
-"Operatorë rrugëzuesii vendor: %d\n"
+"Operatorë router-i vendor: %d\n"
 "klientë qelize vendore: %d\n"
 "Kanale qelize vendore: %d\n"
 "Shërbyesa qelize vendore: %d\n"
 "Klientë gjithsej: %d\n"
 "Kanale gjithsej: %d\n"
 "Shërbyesa gjithsej: %d\n"
-"Rrugëzues gjithsej: %d\n"
+"Router-a gjithsej: %d\n"
 "Operatorë shërbyesi gjithsej: %d\n"
-"Operatorë rrugëzuesi gjithsej: %d\n"
+"Operatorë router-i gjithsej: %d\n"
 
 msgid "Network Statistics"
 msgstr "Statistika Rrjeti"
@@ -9091,7 +9090,7 @@ msgid "Ping failed"
 msgstr "Pingu dështoi"
 
 msgid "Ping reply received from server"
-msgstr "U mor prej shërbyesi përgjigje Ping"
+msgstr "Përgjigjje Ping marrë prej shërbyesi"
 
 msgid "Could not kill user"
 msgstr "Nuk mundi të asgjësojë përdorues"
@@ -9145,7 +9144,7 @@ msgid "_View..."
 msgstr "_Parje..."
 
 msgid "Unsupported public key type"
-msgstr "Lloj i pambuluar kyçi publik"
+msgstr "Tip kyçi publik i pambuluar"
 
 msgid "Disconnected by server"
 msgstr "Shkëputur prej shërbyesit"
@@ -9154,7 +9153,7 @@ msgid "Error connecting to SILC Server"
 msgstr "Gabim gjatë lidhjes te Shërbyes SILC"
 
 msgid "Key Exchange failed"
-msgstr "Shkëmbimi i Kyçeve dështoi"
+msgstr "Shkëmbimi i Kyçave dështoi"
 
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
@@ -9166,7 +9165,7 @@ msgid "Performing key exchange"
 msgstr "Po kryhet shkëmbim kyçesh"
 
 msgid "Unable to load SILC key pair"
-msgstr "Nuk arrin të ngarkojë çift kyçesh SILC"
+msgstr "I pazoti të ngarkojë çift kyçesh SILC"
 
 #. Progress
 msgid "Connecting to SILC Server"
@@ -9176,7 +9175,7 @@ msgid "Out of memory"
 msgstr "Kujtesë e pamjaftueshme"
 
 msgid "Unable to initialize SILC protocol"
-msgstr "Nuk arrin të gatisë protokollin SILC"
+msgstr "I pazoti të gatisë protokollin SILC"
 
 msgid "Error loading SILC key pair"
 msgstr "Gabim gjatë ngarkimit të çiftit të kyçeve SILC"
@@ -9197,7 +9196,7 @@ msgid ""
 "Your Preferred Contact Methods"
 msgstr ""
 "\n"
-"Metoda Kontakti Tuajat të Parapëlqyera"
+"Metoda Kontakti Tuajat të Parapëlqyera "
 
 msgid "SMS"
 msgstr "SMS"
@@ -9212,7 +9211,7 @@ msgid "Your Current Status"
 msgstr "Gjendja Juaj e Tanishme"
 
 msgid "Online Services"
-msgstr "Shërbime Në Linjë"
+msgstr "Shërbime Online"
 
 msgid "Let others see what services you are using"
 msgstr "Lëri të tjerët të shohin se ç'shërbime po përdorni"
@@ -9235,14 +9234,14 @@ msgid ""
 "about yourself."
 msgstr ""
 "Mund t'i lejoni përdoruesit e tjerë të shohin të dhëna rreth gjendjes suaj "
-"në linjë dhe të dhëna vetjake. Ju lutemi, plotësoni të dhëna rreth jush që "
-"do të donit të shiheshin nga përdoruesit e tjerë."
+"online dhe të dhëna vetjake. Ju lutemi, plotësoni të dhëna rreth jush që do "
+"të donit të shiheshin nga përdoruesit e tjerë."
 
 msgid "Message of the Day"
 msgstr "Mesazhi i Ditës"
 
 msgid "No Message of the Day available"
-msgstr "Pa Mesazh të Ditës"
+msgstr "Pa Mesazh të Ditës të mundshëm"
 
 msgid "There is no Message of the Day associated with this connection"
 msgstr "Nuk ka Mesazh të Ditës shoqëruar kësaj lidhjeje"
@@ -9272,7 +9271,7 @@ msgid "Generate Key Pair"
 msgstr "Prodho Çift Kyçesh"
 
 msgid "Online Status"
-msgstr "Gjendje për I lidhur"
+msgstr "Gjendje për I lidhur "
 
 msgid "View Message of the Day"
 msgstr "Shihni Mesazhin e Ditës"
@@ -9292,7 +9291,7 @@ msgstr "Duhet të përcaktoni nofkë"
 
 #, c-format
 msgid "channel %s not found"
-msgstr "nuk u gjet kanal %s"
+msgstr "Nuk u gjet kanal %s"
 
 #, c-format
 msgid "channel modes for %s: %s"
@@ -9304,11 +9303,11 @@ msgstr "nuk ka mënyra kanali të vendosura për %s"
 
 #, c-format
 msgid "Failed to set cmodes for %s"
-msgstr "Dështoi në caktimin e \"cmodes\" për %s"
+msgstr "Dështoi në caktimin e \"cmodes\" për %s "
 
 #, c-format
 msgid "Unknown command: %s, (may be a client bug)"
-msgstr "Urdhër i panjohur: %s, (mund të jetë edhe një e metë klienti)"
+msgstr "Urdhër i panjohur: %s, (mund të jetë edhe një \"bug\" i klientit)"
 
 msgid "part [channel]:  Leave the chat"
 msgstr "part [kanal]:  Lër fjalosjen"
@@ -9331,7 +9330,7 @@ msgstr "whois &lt;nofkë&gt;:  Shihni të dhëna nofke"
 
 msgid "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"
 msgstr ""
-"msg &lt;nofkë&gt; &lt;mesazh&gt;:  Dërgoji një përdoruesi një mesazh vetjak"
+"msg &lt;nokë&gt; &lt;mesazh&gt;:  Dërgoji një përdoruesi një mesazh vetjak"
 
 msgid "query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
 msgstr ""
@@ -9339,7 +9338,7 @@ msgstr ""
 "përdorues"
 
 msgid "motd:  View the server's Message Of The Day"
-msgstr "motd:  Shihni Mesazhin e Ditës të shërbyesit"
+msgstr "motd:  Shihni Mesazhin e Ditës (Message  Of The Day) të shërbyesit"
 
 msgid "detach:  Detach this session"
 msgstr "detach:  Shkëput këtë sesion"
@@ -9405,7 +9404,7 @@ msgid "ping:  Send PING to the connected server"
 msgstr "ping:  Dërgo PING te shërbyesi i lidhur"
 
 msgid "users &lt;channel&gt;:  List users in channel"
-msgstr "users &lt;kanal&gt;:  Listo përdorues në kanal"
+msgstr "users &lt;kanal&gt;:  Listo përdoruesa në kanal"
 
 msgid ""
 "names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt;:  List "
@@ -9446,7 +9445,7 @@ msgid "HMAC"
 msgstr "HMAC"
 
 msgid "Use Perfect Forward Secrecy"
-msgstr "Përdor Sekret të Përkryer Përcjelljesh"
+msgstr "Përdor Sekret të Përkryer Përcjelljesh "
 
 msgid "Public key authentication"
 msgstr "Mirëfilltësim kyçi publik"
@@ -9467,7 +9466,7 @@ msgid "Creating SILC key pair..."
 msgstr "Po krijohet çift kyçesh SILC..."
 
 msgid "Unable to create SILC key pair"
-msgstr "Nuk arrin të krijojë çift kyçesh SILC"
+msgstr "I pazoti të krijojë çift  kyçesh SILC"
 
 #. Hint for translators: Please check the tabulator width here and in
 #. the next strings (short strings: 2 tabs, longer strings 1 tab,
@@ -9607,7 +9606,7 @@ msgid "Unable to initialize SILC Client connection"
 msgstr "I pazoti të gatisë lidhjen mr Klientin SILC"
 
 msgid "John Noname"
-msgstr "Gjoni i Paemër"
+msgstr "Gjoni i Paemërt"
 
 #, c-format
 msgid "Unable to load SILC key pair: %s"
@@ -9620,7 +9619,7 @@ msgid "Unknown server response"
 msgstr "Përgjigje e panjohur shërbyesi"
 
 msgid "Unable to create listen socket"
-msgstr "Nuk arrin të krijojë \"socket\" dëgjimi"
+msgstr "I pazoti të krijojë \"socket\" dëgjimi"
 
 msgid "Unable to resolve hostname"
 msgstr "I pazoti të gjejë emërstrehën"
@@ -9665,10 +9664,10 @@ msgid "Auth Domain"
 msgstr "Mirëfilltësim Përkatësie"
 
 msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join &lt;dhomë&gt;:  Hyni në një dhomë fjalosjeje në rrjetin Yahoo"
+msgstr "join &lt;dhomë&gt; Hyni në një dhomë fjalosjeje në rrjetin Yahoo"
 
 msgid "list: List rooms on the Yahoo network"
-msgstr "list: Radhit dhoma te rrjeti Yahoo"
+msgstr "list:  Radhit dhoma te rrjeti Yahoo"
 
 msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle: Kërkoji përdoruesit të nisë një sesion Doodle"
@@ -9705,7 +9704,7 @@ msgid "Ignore conference and chatroom invitations"
 msgstr "Shpërfill ftesa konferencash dhe dhomash fjalosjeje"
 
 msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Për lidhjet HTTP dhe HTTPS përdor ndërmjetës llogarie"
+msgstr "Për lidhjet HTTP dhe HTTPS përdor ndërmjetës llogarie "
 
 msgid "Chat room list URL"
 msgstr "Url liste dhome fjalosjeje"
@@ -9769,24 +9768,25 @@ msgid ""
 "Account locked: Too many failed login attempts.  Logging into the Yahoo! "
 "website may fix this."
 msgstr ""
-"Llogari e kyçur: Ca si shumë përpjekje hyrjeje të dështuara.  Hyrja te sajti "
-"web Yahoo! mund ta ndreqë këtë."
+"Llogari e kyçur: Ca si shumë përpjekje hyrjeje të dështuara.  Hyrja te \"site"
+"\"-i web Yahoo! mund ta ndreqë këtë."
 
 #. indicates a lock of some description
 msgid ""
 "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
 "this."
 msgstr ""
-"Llogari e kyçur: Arsye e panjohur.  Hyrja te sajti web Yahoo! mund ta ndreqë "
-"këtë."
+"Llogari e kyçur: Arsye e panjohur.  Hyrja te \"site\"-i web Yahoo! mund ta "
+"ndreqë këtë."
 
 #. indicates a lock due to logging in too frequently
 msgid ""
 "Account locked: You have been logging in too frequently.  Wait a few minutes "
 "before trying to connect again.  Logging into the Yahoo! website may help."
 msgstr ""
-"Llogari e kyçur: Keni hyrë ca si shumë shpesh.  Prisni pak minuta përpara se "
-"provoni të lidheni sërish.  Hyrja te sajti web Yahoo! mund ta ndreqë këtë."
+"Llogari e kyçur: Keni hyrë ca si shumë shpesh. Prisni pak minuta përpara se "
+"provoni të lidheni sërish.  Hyrja te \"site\"-i web Yahoo! mund ta ndreqë "
+"këtë."
 
 #. username or password missing
 msgid "Username or password missing"
@@ -9824,10 +9824,10 @@ msgid ""
 "try logging into the Yahoo! website."
 msgstr ""
 "Llogaria juaj është kyçur, për shkak dështimi të ca si shumë përpjekjeve për "
-"hyrjeje.  Ju lutemi, provoni të hyni te sajti web Yahoo!."
+"hyrjeje.  Ju lutemi, provoni të hyni te \"site\"-i web Yahoo!."
 
 msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr "Gabim i panjohur 52.  Me rilidhjen, do të duhej të ndreqej."
+msgstr "Gabim i panjohur 52. Me rilidhjen, do të duhej të ndreqej."
 
 msgid ""
 "Error 1013: The username you have entered is invalid.  The most common cause "
@@ -9840,20 +9840,21 @@ msgstr ""
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr ""
-"Numër gabimi të panjohur %d. Hyrja te sajti web Yahoo! mund ta ndreqë këtë."
+"Numrë gabimi të panjohur %d. Hyrja te \"site\"-i web Yahoo! mund ta ndreqë "
+"këtë."
 
 #, c-format
 msgid "Unable to add buddy %s to group %s to the server list on account %s."
 msgstr ""
-"Nuk arrin të shtojë shokun %s te grupi %s i listës së shërbyesit në "
-"llogarinë %s."
+"I pazoti të shtojë shokun %s te grupi %s i listës së shërbyesit në llogarinë "
+"%s."
 
 msgid "Unable to add buddy to server list"
-msgstr "Nuk arrin të shtojë shok te listë shërbyesish"
+msgstr "I pazoti të shtojë shok te listë shërbyesish"
 
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
-msgstr "[ %s/%s/%s.swf e dëgjueshme ] %s"
+msgstr "[%s/%s/%s.swf  e dëgjueshme] %s"
 
 msgid "Received unexpected HTTP response from server"
 msgstr "Prej shërbyesit u mor përgjigje HTTP e papritur"
@@ -9867,13 +9868,13 @@ msgid "Unable to establish a connection with %s: %s"
 msgstr "I pazoti të vendosë lidhje me %s: %s"
 
 msgid "Unable to connect: The server returned an empty response."
-msgstr "Nuk arrin të lidhet: Shërbyesi u përgjigj me një përgjigje të zbrazët."
+msgstr "I pazoti të lidhet: Shërbyesi u përgjigj me një përgjigje të zbrazët."
 
 msgid ""
 "Unable to connect: The server's response did not contain the necessary "
 "information"
 msgstr ""
-"Nuk arrin të lidhet: Përgjigja e shërbyesit nuk përmbante të dhënat e "
+"I pazoti të lidhet: Përgjigja e shërbyesit nuk përmbante të dhënat e "
 "nevojshme"
 
 msgid "Not at Home"
@@ -9915,9 +9916,6 @@ msgstr "Rregullime Pranie"
 msgid "Start Doodling"
 msgstr ""
 
-msgid "Activate which ID?"
-msgstr ""
-
 msgid "Select the ID you want to activate"
 msgstr "Përzgjidhni ID-në që doni të aktivizohet"
 
@@ -9934,7 +9932,7 @@ msgid "Open Inbox"
 msgstr "Hap Të Marrë"
 
 msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr "S'mund të dërgojë SMS. Nuk arrin të sigurojë shërbim celulari."
+msgstr "S'mund të dërgojë SMS. I pazoti të sigurojë shërbim celulari."
 
 msgid "Can't send SMS. Unknown mobile carrier."
 msgstr "S'mund të dërgojë SMS. Shërbim celulari i panjohur."
@@ -9972,7 +9970,7 @@ msgid ""
 "time."
 msgstr ""
 "Më vjen keq, profile me shenjë përmbajtjeje materialesh për të rritur nuk "
-"mbulohen tani për tani."
+"mbulohen tani për tani. "
 
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
@@ -10027,7 +10025,7 @@ msgstr ""
 "riprovoni më vonë."
 
 msgid "The user's profile is empty."
-msgstr "Profili i përdoruesit është i zbrazët."
+msgstr "Profili i përdoruesit është bosh."
 
 #, c-format
 msgid "%s has declined to join."
@@ -10090,12 +10088,12 @@ msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
 msgstr ""
-"(Pati një gabim në shndërrimin e këtij mesazhi.\t Kontrolloni mundësinë "
+"(Pati një gabim në shndërrimin e këtij mesazhi.\tkontrolloni mundësinë "
 "'Kodime' te Përpunues Llogarish)"
 
 #, c-format
 msgid "Unable to send to chat %s,%s,%s"
-msgstr "Nuk arrin të dërgojë fjalosje te %s,%s,%s"
+msgstr "I pazoti të dërgojë fjalosje te %s,%s,%s"
 
 msgid "Hidden or not logged-in"
 msgstr "I fshehur ose jo i futur"
@@ -10172,7 +10170,7 @@ msgid "zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"
 msgstr "zc &lt;class&gt;: Dërgo një mesazh te &lt;<i>class</i>,VETJAKE,*&gt;"
 
 msgid "Resubscribe"
-msgstr "Riregjistrohu"
+msgstr "Riabonohu"
 
 msgid "Retrieve subscriptions from server"
 msgstr "Merr regjistrime prej shërbyesi"
@@ -10216,11 +10214,11 @@ msgstr "Ekspozim"
 
 #, c-format
 msgid "Unable to create socket: %s"
-msgstr "Nuk arrin të krijojë \"socket\": %s"
+msgstr "I pazoti të krijojw \"socket\": %s"
 
 #, c-format
 msgid "Unable to parse response from HTTP proxy: %s"
-msgstr "Nuk arrin të përtypë përgjigjen prej ndërmjetësit HTTP: %s"
+msgstr "I pazoti të përtypë përgjigjen prej ndërmjetësit HTTP: %s"
 
 #, c-format
 msgid "HTTP proxy connection error %d"
@@ -10233,7 +10231,7 @@ msgstr ""
 
 #, c-format
 msgid "Error resolving %s"
-msgstr "Gabim në shquarjen e %s"
+msgstr "Gabim në shquajtjen e %s"
 
 #, c-format
 msgid "Requesting %s's attention..."
@@ -10280,12 +10278,12 @@ msgid ""
 "%s has invited %s to the chat room %s:\n"
 "%s"
 msgstr ""
-"%s ka ftuar %s te dhoma e fjalosjes %s:\n"
+"%s ka ftuar %s te doma e fjalosjes %s:\n"
 "%s"
 
 #, c-format
 msgid "%s has invited %s to the chat room %s\n"
-msgstr "%s ka ftuar %s te dhoma e fjalosjes %s\n"
+msgstr "%s ka ftuar %s te doma e fjalosjes %s\n"
 
 msgid "Accept chat invitation?"
 msgstr "Të pranojë ftesë fjalosjeje?"
@@ -10326,7 +10324,7 @@ msgid "Extended away"
 msgstr "Largim i zgjeruar"
 
 msgid "Feeling"
-msgstr "Ndjenjë"
+msgstr ""
 
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
@@ -10400,13 +10398,13 @@ msgstr[1] "%d orë"
 msgid "%s, %d minute"
 msgid_plural "%s, %d minutes"
 msgstr[0] "%s, %d minutë"
-msgstr[1] "%s, %d minuta"
+msgstr[1] "%s, %d minuta."
 
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minutë"
-msgstr[1] "%d minuta"
+msgstr[1] "%d minuta."
 
 #, c-format
 msgid "Could not open %s: Redirected too many times"
@@ -10414,7 +10412,7 @@ msgstr "Nuk u hap dot %s: U bë ridrejtim shumë herë"
 
 #, c-format
 msgid "Unable to connect to %s"
-msgstr "I pazoti të lidhet me %s"
+msgstr "I pazoti të lidhet me %s."
 
 #, c-format
 msgid "Error reading from %s: response too long (%d bytes limit)"
@@ -10454,7 +10452,7 @@ msgstr "Lidhja u ndërpre nga tjetër program në kompjuterin tuaj."
 
 #. 10054
 msgid "Remote host closed connection."
-msgstr "Streha e largët e mbylli ndërlidhjen."
+msgstr "Streha e largët e mbylli ndërlidhjen"
 
 #. 10060
 msgid "Connection timed out."
@@ -10484,7 +10482,7 @@ msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internet Messenger"
 
 msgid "Internet Messenger"
-msgstr "Lajmsjellës Internet"
+msgstr "Lajmësjellës Internet"
 
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
@@ -10526,10 +10524,10 @@ msgid "Use GNOME Proxy Settings"
 msgstr "Përdor Rregullime GNOME për Ndërmjetësin"
 
 msgid "Use Global Proxy Settings"
-msgstr "Përdor Rregullime të Përgjithshme Ndërmjetësi"
+msgstr "Përdor Rregullime të Përgjithshme \"Proxy\""
 
 msgid "No Proxy"
-msgstr "Pa Ndërmjetës"
+msgstr "Pa \"Proxy\""
 
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
@@ -10559,7 +10557,7 @@ msgid "you can see the butterflies mating"
 msgstr "you can see the butterflies mating"
 
 msgid "Proxy _type:"
-msgstr "_Lloj ndërmjetësi:"
+msgstr "_Tip \"proxy\":"
 
 msgid "_Host:"
 msgstr "_Strehë:"
@@ -10577,7 +10575,7 @@ msgid "_Voice and Video"
 msgstr "_Zë dhe Video"
 
 msgid "Unable to save new account"
-msgstr "Nuk arrin të ruajë llogari të re"
+msgstr "I pazoti të ruajë llogari të re"
 
 msgid "An account already exists with the specified criteria."
 msgstr "Ka tashmë një llogari me veçoritë që kërkuat."
@@ -10612,7 +10610,7 @@ msgid ""
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Manage Accounts</b> in the Buddy List window"
 msgstr ""
-"<span size='larger' weight='bold'>Mirë se vini te %s!</span>\n"
+"<span size='larger' weight='bold'>Mirësevini te %s!</span>\n"
 "\n"
 "Nuk keni llogarira MA të formësuara. Për të filluar lidhjen me %s shtypni më "
 "poshtë butonin <b>Shtoni...</b> dhe formësoni llogarinë tuaj të parë. Nëse "
@@ -10703,7 +10701,7 @@ msgstr "Teksti i të dhënave për rastin kur një kontakt zgjerohet"
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is online
 msgid "Online Text"
-msgstr "Tekst për Në Linjë"
+msgstr "Tekst për \"Online\""
 
 msgid "The text information for when a buddy is online"
 msgstr "Teksti i të dhënave për rastin kur një shok është në linjë"
@@ -10719,7 +10717,7 @@ msgstr "Teksti i të dhënave për rastin kur një shok është i larguar"
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is offline
 msgid "Offline Text"
-msgstr "Tekst për Jo Në Linjë"
+msgstr "Tekst për \"Offline\""
 
 msgid "The text information for when a buddy is offline"
 msgstr "Teksti i të dhënave kur një shok nuk është në linjë"
@@ -10798,7 +10796,7 @@ msgid "Move to"
 msgstr "Kaloje te"
 
 msgid "Get _Info"
-msgstr "Merr _Të dhëna"
+msgstr "Merr  _Të dhëna"
 
 msgid "I_M"
 msgstr "I_M"
@@ -10885,7 +10883,7 @@ msgid "Unknown node type"
 msgstr "Lloj i panjohur nyjeje"
 
 msgid "Please select your mood from the list"
-msgstr "Ju lutemi, përzgjidhni prej listës humorin tuaj"
+msgstr "Ju lutemi, përzgjidhni  prej listës humorin tuaj"
 
 msgid "Message (optional)"
 msgstr "Mesazh (opsional)"
@@ -10993,7 +10991,7 @@ msgid "/_Help"
 msgstr "/_Ndihmë"
 
 msgid "/Help/Online _Help"
-msgstr "/Ndihmë/Ndihmë Në _Linjë"
+msgstr "/Ndihmë/Ndihmë _Online"
 
 msgid "/Help/_Build Information"
 msgstr "/Ndihmë/Të dhëna _Montimi"
@@ -11210,8 +11208,8 @@ msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
 msgstr ""
-"Ju lutemi, jepni alias dhe të dhënat e duhura rreth fjalosjes që do të donit "
-"të shtohej te listë juaja shokësh.\n"
+"Ju lutemi, jepni alias dhe  të dhënat e duhura rreth fjalosjes që do të "
+"donit të shtohej te listë juaja shokësh.\n"
 
 msgid "A_lias:"
 msgstr "_Alias:"
@@ -11244,7 +11242,7 @@ msgid "Set _Mood..."
 msgstr "Caktojini _Humorin..."
 
 msgid "No actions available"
-msgstr "Pa veprime të mundshme"
+msgstr "Pa veprime të mundshëm"
 
 msgid "_Disable"
 msgstr "_Çaktivizo"
@@ -11266,7 +11264,7 @@ msgid "Unknown command."
 msgstr "Urdhër i panjohur."
 
 msgid "That buddy is not on the same protocol as this chat."
-msgstr "Ai shok nuk është në të njëjtin protokoll si kjo fjalosje."
+msgstr "Ai shok nuk është në të njëjtin protokoll si kjo fjalosje"
 
 msgid ""
 "You are not currently signed on with an account that can invite that buddy."
@@ -11303,7 +11301,7 @@ msgid "Last Said"
 msgstr "Thënë Së Fundmi"
 
 msgid "Unable to save icon file to disk."
-msgstr "Nuk arrin të ruajë në disk kartelë ikone."
+msgstr "I pazoti të ruajë në disk kartelë ikone."
 
 msgid "Save Icon"
 msgstr "Ruaje Ikonën"
@@ -11501,7 +11499,7 @@ msgid ""
 "%s has stopped typing"
 msgstr ""
 "\n"
-"%s ka reshtur së shkruari"
+"%s ka reshtur së shkruajturi"
 
 #. Build the Send To menu
 msgid "S_end To"
@@ -11552,7 +11550,7 @@ msgid "Confirm close"
 msgstr "Ripohoni mbylljen"
 
 msgid "You have unread messages. Are you sure you want to close the window?"
-msgstr "Keni mesazhe të palexuar. Jeni i sigurt se doni të mbyllni dritaren?"
+msgstr "Keni mesazhe të palexuar. Jeni të sigurtë se doni të mbyllni dritaren?"
 
 msgid "Close other tabs"
 msgstr "Mbyll skedat e tjera"
@@ -11612,13 +11610,13 @@ msgid "Filter"
 msgstr "Filtër"
 
 msgid "Right click for more options."
-msgstr "Për më tepër mundësi, djathtasklikoni."
+msgstr "Për më tepër mundësi, djathtasklikoni"
 
 msgid "Level "
 msgstr "Nivel"
 
 msgid "Select the debug filter level."
-msgstr "Përzgjidhni shkallë filtri diagnostikimi."
+msgstr "Përzgjidhni shkallë filtri diagnostikimi"
 
 msgid "All"
 msgstr "Krejt"
@@ -11690,7 +11688,7 @@ msgid "Assamese"
 msgstr "Asameze"
 
 msgid "Asturian"
-msgstr "Asturiane"
+msgstr ""
 
 msgid "Belarusian Latin"
 msgstr "Bjelloruse Latine"
@@ -11702,10 +11700,7 @@ msgid "Bengali"
 msgstr "Bengali"
 
 msgid "Bengali-India"
-msgstr "Bengali-Indi"
-
-msgid "Bodo"
-msgstr ""
+msgstr "Bengali-India"
 
 msgid "Bosnian"
 msgstr "Boshnjake"
@@ -11717,37 +11712,34 @@ msgid "Valencian-Catalan"
 msgstr "Valenciane-Katalane"
 
 msgid "Czech"
-msgstr "Çeke"
+msgstr "Çekisht"
 
 msgid "Danish"
 msgstr "Daneze"
 
 msgid "German"
-msgstr "Gjermane"
+msgstr "Gjermanisht"
 
 msgid "Dzongkha"
 msgstr "Xonga"
 
 msgid "Greek"
-msgstr "Greke"
+msgstr "Greqisht"
 
 msgid "Australian English"
-msgstr "Angleze Australiane"
+msgstr "Anglishte Australiane"
 
 msgid "British English"
-msgstr "Angleze Britanike"
+msgstr "Anglishte Britanike"
 
 msgid "Canadian English"
-msgstr "Angleze Kanadeze"
+msgstr "Anglishte Kanadeze"
 
 msgid "Esperanto"
 msgstr "Esperanto"
 
 msgid "Spanish"
-msgstr "Spanjolle"
-
-msgid "Argentine Spanish"
-msgstr ""
+msgstr "Spanjisht"
 
 msgid "Estonian"
 msgstr "Estoneze"
@@ -11756,10 +11748,10 @@ msgid "Basque"
 msgstr "Baske"
 
 msgid "Persian"
-msgstr "Perse"
+msgstr "Persisht"
 
 msgid "Finnish"
-msgstr "Finlandeze"
+msgstr "Finlandisht"
 
 msgid "French"
 msgstr "Frënge"
@@ -11771,13 +11763,13 @@ msgid "Galician"
 msgstr "Galike"
 
 msgid "Gujarati"
-msgstr "Gujaratase"
+msgstr "Gujarati"
 
 msgid "Gujarati Language Team"
-msgstr "Ekipi për Gjuhën Gujaratase"
+msgstr "Ekipi për Gjuhën Gujarati"
 
 msgid "Hebrew"
-msgstr "Hebraike"
+msgstr "Hebraisht"
 
 msgid "Hindi"
 msgstr "Indiane"
@@ -11788,23 +11780,23 @@ msgstr "Kroate"
 msgid "Hungarian"
 msgstr "Hungareze"
 
+msgid "Armenian"
+msgstr "Armene"
+
 msgid "Indonesian"
 msgstr "Indoneziane"
 
 msgid "Italian"
-msgstr "Italiane"
+msgstr "Italisht"
 
 msgid "Japanese"
-msgstr "Japoneze"
+msgstr "Japonisht"
 
 msgid "Georgian"
 msgstr "Gjeorgjiane"
 
 msgid "Ubuntu Georgian Translators"
 msgstr "Përkthyesa Gjeorgjianë të Ubuntu-së"
-
-msgid "Kazakh"
-msgstr "Kazake"
 
 msgid "Khmer"
 msgstr "Khmere"
@@ -11818,20 +11810,17 @@ msgstr "Ekipi i Përkthimit Kannada"
 msgid "Korean"
 msgstr "Koreane"
 
-msgid "Kashmiri"
-msgstr ""
-
 msgid "Kurdish"
 msgstr "Kurde"
+
+msgid "Lao"
+msgstr "Lao"
 
 msgid "Lithuanian"
 msgstr "Lituaneze"
 
-msgid "Latvian"
-msgstr "Letoneze"
-
 msgid "Maithili"
-msgstr "Maitilike"
+msgstr "Maithili"
 
 msgid "Meadow Mari"
 msgstr ""
@@ -11843,10 +11832,13 @@ msgid "Malayalam"
 msgstr "Malajalame"
 
 msgid "Mongolian"
-msgstr "Mongoleze"
+msgstr "Mongolisht"
 
 msgid "Marathi"
-msgstr "Maratase"
+msgstr "Marati"
+
+msgid "Malay"
+msgstr "Malaje"
 
 msgid "Burmese"
 msgstr "Burmeze"
@@ -11858,7 +11850,7 @@ msgid "Nepali"
 msgstr "Nepaleze"
 
 msgid "Dutch, Flemish"
-msgstr "Hollandeze, Flamande"
+msgstr "Hollandishte, Flamande"
 
 msgid "Norwegian Nynorsk"
 msgstr "Norvegjeze Nynorsk"
@@ -11867,13 +11859,13 @@ msgid "Occitan"
 msgstr "Oçitane"
 
 msgid "Oriya"
-msgstr "Orijase"
+msgstr "Orija"
 
 msgid "Punjabi"
 msgstr "Panxhabe"
 
 msgid "Polish"
-msgstr "Polake"
+msgstr "Polonisht"
 
 msgid "Portuguese"
 msgstr "Portugeze"
@@ -11885,58 +11877,49 @@ msgid "Pashto"
 msgstr "Pashtune"
 
 msgid "Romanian"
-msgstr "Rumune"
+msgstr "Rumanisht"
 
 msgid "Russian"
-msgstr "Ruse"
-
-msgid "Sindhi"
-msgstr ""
+msgstr "Rusisht"
 
 msgid "Slovak"
-msgstr "Slovake"
+msgstr "Slovakisht"
 
 msgid "Slovenian"
 msgstr "Slovene"
 
 msgid "Albanian"
-msgstr "Shqipe"
+msgstr "Shqip"
 
 msgid "Serbian"
-msgstr "Serbe"
+msgstr "Serbisht"
 
 msgid "Serbian Latin"
-msgstr "Serbe Latine"
+msgstr ""
 
 msgid "Sinhala"
-msgstr "Sinhaleze"
+msgstr "Sinhala"
 
 msgid "Swedish"
-msgstr "Suedeze"
+msgstr "Suedisht"
 
 msgid "Swahili"
-msgstr "Suahile"
+msgstr "Suahili"
 
 msgid "Tamil"
 msgstr "Tamileze"
 
 msgid "Telugu"
-msgstr "Telugeze"
+msgstr "Telugu"
 
 msgid "Thai"
 msgstr "Tailandeze"
-
-msgid "Tatar"
-msgstr ""
 
 msgid "Ukranian"
 msgstr "Ukrainase"
 
 msgid "Urdu"
-msgstr "Urduase"
-
-msgid "Uzbek"
-msgstr ""
+msgstr "Urdu"
 
 msgid "Vietnamese"
 msgstr "Vietnameze"
@@ -11953,17 +11936,8 @@ msgstr "Kineze Tradicionale"
 msgid "Amharic"
 msgstr "Amharike"
 
-msgid "Armenian"
-msgstr "Armene"
-
-msgid "Lao"
-msgstr "Laosiane"
-
-msgid "Malay"
-msgstr "Malajase"
-
 msgid "Turkish"
-msgstr "Turke"
+msgstr "Turqisht"
 
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh dhe Ekipi Gnome-Vi"
@@ -11979,8 +11953,8 @@ msgid ""
 msgstr ""
 "%s është një klient shkëmbimi mesazhesh, i bazuar në libpurple, që është i "
 "aftë të lidhet njëherazi me disa shërbime shkëmbimi mesazhesh.  %s është "
-"shkruar në C duke përdorur GTK+.  %s qarkullon, dhe mund ta ndryshoni dhe "
-"rishpërndani, sipas termave të GPL-së, versioni 2 (ose i mëvonshëm).  Një "
+"shkruajtur në C duke përdorur GTK+. %s qarkullon, dhe mund ta ndryshoni dhe "
+"rishpërndani, sipas termave të GPL-së, versioni 2 ose i mëvonshëm.  Një "
 "kopje e GPL-së përfshihet te %s.  %s është e drejtë kopjimi e pjesëmarrësve "
 "në të, një listë e të cilëve shpërndahet brenda %s.  Nuk ofrohet garanci për "
 "%s.<BR><BR>"
@@ -11992,8 +11966,8 @@ msgid ""
 "Channel: #pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin."
 "im<BR><BR>"
 msgstr ""
-"<FONT SIZE=\"4\"><B>Burime të Dobishme</B></FONT><BR>\t<A HREF=\"%s\">Sajt "
-"Web</A><BR>\t<A HREF=\"%s\">Pyetje të Bëra Shpesh</A><BR>\tKanal IRC: "
+"<FONT SIZE=\"4\"><B>Burime të Dobishme</B></FONT><BR>\t<A HREF=\"%s"
+"\">Website</A><BR>\t<A HREF=\"%s\">Pyetje të Bëra Shpesh</A><BR>\tKanal IRC: "
 "#pidgin te irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
 msgid ""
@@ -12032,7 +12006,7 @@ msgid "Crazy Patch Writers"
 msgstr "Krijues të Lojtur Arnimesh"
 
 msgid "Retired Developers"
-msgstr "Zhvillues Jo më Veprues"
+msgstr "Zhvilluesa Jo më Veprues"
 
 msgid "Retired Crazy Patch Writers"
 msgstr "Krijues të Lojtur Arnash në Pension"
@@ -12078,7 +12052,7 @@ msgid "View User Log"
 msgstr "Shihni Regjistrim Përdoruesi"
 
 msgid "Alias Contact"
-msgstr "Kontakt Aliasi"
+msgstr "Kontak Aliasi"
 
 msgid "Enter an alias for this contact."
 msgstr "Jepni një alias për këtë kontakt."
@@ -12136,7 +12110,7 @@ msgid ""
 "list.  Do you want to continue?"
 msgstr ""
 "Jeni një hap larg nga heqja e grupit %s dhe tërë anëtarët e tij prej listës "
-"suaj të shokëve.  Doni të vazhdohet?"
+"suaj të shokëve. Doni të vazhdohet?"
 
 msgid "Remove Group"
 msgstr "Hiq Grup"
@@ -12199,7 +12173,7 @@ msgid "Mute _Sounds"
 msgstr "Pa _Tinguj"
 
 msgid "_Blink on New Message"
-msgstr "_Xixëllim për Mesazhe të Rinj"
+msgstr "_Xixëllim për  Mesazhe të Rinj"
 
 msgid "_Quit"
 msgstr "_Dil"
@@ -12220,7 +12194,7 @@ msgid "<b>Sending As:</b>"
 msgstr "<b>Po dërgohet Si:</b>"
 
 msgid "There is no application configured to open this type of file."
-msgstr "Nuk ka zbatim të formësuar për të hapur këtë lloj kartelash."
+msgstr "Nuk ka zbatim të formësuar për të hapur këtë tip kartelash."
 
 msgid "An error occurred while opening the file."
 msgstr "Ndodhi një gabim gjatë hapjes së kartelës."
@@ -12272,10 +12246,10 @@ msgid "Disable _smileys in selected text"
 msgstr "Çaktivizo _emotikonet në tekst të përzgjedhur"
 
 msgid "Hyperlink color"
-msgstr "Ngjyrë tejlidhjeje"
+msgstr "Ngjyrë Tejlidhjeje"
 
 msgid "Color to draw hyperlinks."
-msgstr "Ngjyrë për vizatim tejlidhjesh."
+msgstr "Ngjyrë për vizatim tejlidhjesh.."
 
 msgid "Hyperlink visited color"
 msgstr "Ngjyrë tejlidhjesh të vizituara"
@@ -12345,7 +12319,7 @@ msgid ""
 "\n"
 "Defaulting to PNG."
 msgstr ""
-"<span size='larger' weight='bold'>Lloj i papranuar kartele</span>\n"
+"<span size='larger' weight='bold'>Tip i papranuar kartele</span>\n"
 "\n"
 "Po kalon te parazgjedhja PNG."
 
@@ -12422,7 +12396,7 @@ msgid "_Manage custom smileys"
 msgstr "_Administroni emotikone të personalizuar"
 
 msgid "This theme has no available smileys."
-msgstr "Kjo temë nuk ka emotikone gati."
+msgstr "Kjo temë nuk ka emotikone të mundshëm."
 
 msgid "_Font"
 msgstr "_Shkronja"
@@ -12437,7 +12411,7 @@ msgid "Bold"
 msgstr "të Trasha"
 
 msgid "Italic"
-msgstr "të Pjerrëta"
+msgstr "të Pjerrta"
 
 msgid "Underline"
 msgstr "të Nënvizuara"
@@ -12473,7 +12447,7 @@ msgid "<b>_Bold</b>"
 msgstr "<b>të _Trasha</b>"
 
 msgid "<i>_Italic</i>"
-msgstr "<i>të _Pjerrëta</i>"
+msgstr "<i>të _Pjerrta</i>"
 
 msgid "<u>_Underline</u>"
 msgstr "<u>të _Nënvizuara</u>"
@@ -12544,7 +12518,7 @@ msgid ""
 "Are you sure you want to permanently delete the system log which started at "
 "%s?"
 msgstr ""
-"Jeni të sigurt se doni të fshihet përgjithmonë regjistri i sistemit i zënë "
+"Jeni të sigurt se doni të fshihet përgjithmonë regjistri i sistemit i znë "
 "fill më %s?"
 
 msgid "Delete Log?"
@@ -12574,7 +12548,7 @@ msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 msgstr ""
-"Përdorimi: %s [MUNDËSI]...\n"
+"Përdorimi: %s  [MUNDËSI]...\n"
 "\n"
 
 msgid "DIR"
@@ -12587,7 +12561,8 @@ msgid "print debugging messages to stdout"
 msgstr "shtyp mesazhe diagnostikimi te stdout"
 
 msgid "force online, regardless of network status"
-msgstr "shfaqe në linjë, pa marrë parasysh gjendjen e rrjetit"
+msgstr ""
+"bëje \"online\"-in të detyrueshëm, pa marrë parasysh gjendjen e rrjetit"
 
 msgid "display this help and exit"
 msgstr "shtyp këtë ndihmë dhe dil"
@@ -12632,7 +12607,7 @@ msgid ""
 "%swiki/GetABacktrace\n"
 msgstr ""
 "%s %s pësoi \"segfault\" dhe u përpoq të kryejë \"dump a core file\".\n"
-"Kjo është e metë te programi dhe ndodhi jo për fajin tuaj.\n"
+"Ky është e metë te programi dhe ndodhi jo për fajin tuaj.\n"
 "\n"
 "Po qe se mund ta riprodhoni vithisjen, ju lutemi,\n"
 "njoftoni zhvilluesit duke e njoftuar të metën te:\n"
@@ -12690,7 +12665,7 @@ msgid "The browser command \"%s\" is invalid."
 msgstr "Urdhri i shfletuesit \"%s\" është i pavlefshëm."
 
 msgid "Unable to open URL"
-msgstr "Nuk arrin të hapë URL"
+msgstr "I pazoti të hapë URL"
 
 #, c-format
 msgid "Error launching \"%s\": %s"
@@ -12702,7 +12677,6 @@ msgstr "Është zgjedhur urdhër shfletuesi 'Dorazi', por nuk është caktuar ci
 
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
 msgstr ""
-"Nuk arrin të hapë URL-në: urdhri 'Manual' për shfletuesin duket i pavlefshëm."
 
 msgid "No message"
 msgstr "Pa mesazh"
@@ -12753,7 +12727,7 @@ msgid ""
 "Check the plugin website for an update.</span>"
 msgstr ""
 "<span foreground=\"red\" weight=\"bold\">Gabim: %s\n"
-"Shihni te sajti web i shtojcës për ndonjë përditësim.</span>"
+"Shihni te website-i i shtojcës për ndonjë përditësim.</span>"
 
 msgid "Author"
 msgstr "Autor"
@@ -12762,7 +12736,7 @@ msgid "<b>Written by:</b>"
 msgstr "<b>Shkruar nga:</b>"
 
 msgid "<b>Web site:</b>"
-msgstr "<b>Sajt Web:</b>"
+msgstr "<b>''Site''-i Web:</b>"
 
 msgid "<b>Filename:</b>"
 msgstr "<b>Emër kartele:</b>"
@@ -12901,7 +12875,7 @@ msgid "The default Pidgin status icon theme"
 msgstr "Tema parazgjedhje e Pidgin-it për ikona gjendjeje"
 
 msgid "Theme failed to unpack."
-msgstr "Dështoi shpaketimi i temës."
+msgstr "Dështoi çpaketimi i temës."
 
 msgid "Theme failed to load."
 msgstr "Ngarkimi i temës dështoi."
@@ -13011,7 +12985,7 @@ msgid "_Notify buddies that you are typing to them"
 msgstr "_Njofto shokë që po shtypni për ta"
 
 msgid "Highlight _misspelled words"
-msgstr "_Thekso fjalë të keqshkruara"
+msgstr "_Thekso fjalë të keqshkruajtura"
 
 msgid "Use smooth-scrolling"
 msgstr "Përdor rrëshqitje të butë"
@@ -13048,7 +13022,7 @@ msgstr ""
 "mbulojnë atë formatim."
 
 msgid "Cannot start proxy configuration program."
-msgstr "S'niset dot programi i formësimit të ndërmjetësve."
+msgstr "S'niset dot programi i formësimit të ndërmjetësave."
 
 msgid "Cannot start browser configuration program."
 msgstr "S'niset dot programi i formësimit të shfletuesit."
@@ -13188,7 +13162,7 @@ msgstr ""
 "(%s për URL)"
 
 msgid "Proxy Server"
-msgstr "Shërbyes Ndërmjetës"
+msgstr "Shërbyes \"Proxy\""
 
 msgid "Proxy preferences are configured in GNOME preferences"
 msgstr "Parapëlqimet për ndërmjetësin formësohen te parapëlqimet për GNOME-n"
@@ -13202,7 +13176,7 @@ msgstr "Formësoni _Ndërmjetësin"
 #. This is a global option that affects SOCKS4 usage even with
 #. * account-specific proxy settings
 msgid "Use remote _DNS with SOCKS4 proxies"
-msgstr "Përdor _DNS të largët me ndërmjetës SOCKS4"
+msgstr "Përdor _DNS të largët me ndërmjetësa SOCKS4"
 
 msgid "Proxy t_ype:"
 msgstr "_Lloj ndërmjetësi:"
@@ -13259,7 +13233,7 @@ msgid "_Method:"
 msgstr "_Metodë:"
 
 msgid "Console beep"
-msgstr "Tingull konsole"
+msgstr "Tingull Konsole"
 
 msgid "No sounds"
 msgstr "Pa tinguj"
@@ -13273,7 +13247,7 @@ msgstr ""
 "(%s për emër kartele)"
 
 msgid "M_ute sounds"
-msgstr "_Pa tinguj"
+msgstr "_Pa Tinguj"
 
 msgid "Sounds when conversation has _focus"
 msgstr "Tinguj kur bashkëbisedimi ka _fokus"
@@ -13349,13 +13323,13 @@ msgid "Block only the users below"
 msgstr "Blloko vetëm përdoruesit e mëposhtëm"
 
 msgid "Privacy"
-msgstr "Privatësi"
+msgstr "vetësi"
 
 msgid "Changes to privacy settings take effect immediately."
-msgstr "Ndryshimet në rregullime privatësie janë vepruese menjëherë."
+msgstr "Ndryshimet në rregullime vetësie janë vepruese menjëherë."
 
 msgid "Set privacy for:"
-msgstr "Caktoni privatësi për:"
+msgstr "Caktoni vetësi për:"
 
 #. Remove All button
 msgid "Remove Al_l"
@@ -13368,7 +13342,7 @@ msgid "Type a user you permit to contact you."
 msgstr "Jepni përdorues të cilit t'i lejohet lidhja me ju."
 
 msgid "Please enter the name of the user you wish to be able to contact you."
-msgstr "Ju lutemi, jepni emrin e përdoruesit që doni të mundë t'ju kontaktojë."
+msgstr "Ju lutemi, jepni emrin e përdoruesit që doni të mundë t'ju kontaktojë"
 
 msgid "_Permit"
 msgstr "_Lejo"
@@ -13388,7 +13362,7 @@ msgid "Type a user to block."
 msgstr "Jepni përdorues i cili të bllokohet."
 
 msgid "Please enter the name of the user you wish to block."
-msgstr "Ju lutemi, jepni emrin e përdoruesit që doni të bllokohet."
+msgstr "Ju lutemi, jepni emrin e përdoruesit që doni të bllokohet"
 
 #, c-format
 msgid "Block %s?"
@@ -13432,7 +13406,7 @@ msgid "_Use"
 msgstr "_Përdor"
 
 msgid "Title already in use.  You must choose a unique title."
-msgstr "Titull i përdorur tashmë.  Duhet të zgjidhni një titull unik."
+msgstr "Titull i përdorur tashmë. Duhet të zgjidhni një titull unik."
 
 msgid "Different"
 msgstr "Tjetër"
@@ -13459,7 +13433,7 @@ msgstr "Gjendje për %s"
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
 msgstr ""
-"Ka tashmë një emotikon të personalizuar për '%s'.  Ju lutemi, përdorni një "
+"Ka tashmë një emotikon të personalizuar për '%s'.  Ju lutemi, përndorni një "
 "shkurtore tjetër."
 
 msgid "Custom Smiley"
@@ -13519,7 +13493,7 @@ msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
-msgstr "Ndodhi gabimi vijues gjatë ngarkimit të %s: %s"
+msgstr "Ndodhi gabimi vijues gjatë ngarkimit të %s: %s-."
 
 msgid "Failed to load image"
 msgstr "Dështoi në ruajtje figure"
@@ -13569,7 +13543,7 @@ msgid ""
 "You can insert this image into this message, or use it as the buddy icon for "
 "this user"
 msgstr ""
-"Mund ta futni këtë figurë në këtë mesazh, ose përdorni si ikonë shoku për "
+"Mund ta fusni këtë figurë në këtë mesazh, ose përdorni si ikonë shoku për "
 "këtë përdorues"
 
 #. I don't know if we really want to do anything here.  Most of
@@ -13654,7 +13628,7 @@ msgid "Close _tabs"
 msgstr "Mbylli _skedat"
 
 msgid "_Get Info"
-msgstr "_Merr Të dhëna"
+msgstr "_Merr  Të dhëna"
 
 msgid "_Invite"
 msgstr "_Ftoni"
@@ -13690,7 +13664,7 @@ msgid "Smaller versions of the default smileys"
 msgstr "Versione më të vegjël të emotikoneve parazgjedhje"
 
 msgid "Response Probability:"
-msgstr "Probabilitet Përgjigjeje:"
+msgstr "Probabilitet Përgjigjjeje:"
 
 msgid "Statistics Configuration"
 msgstr "Formësim Statistikash"
@@ -13708,7 +13682,7 @@ msgstr "Ndryshim maksimum për parë-së-fundmi:"
 
 #. threshold spinner
 msgid "Threshold:"
-msgstr "Prag:"
+msgstr "Prag :"
 
 #. *< type
 #. *< ui_requirement
@@ -13789,7 +13763,7 @@ msgid "Conversation Colors"
 msgstr "Ngjyra Bashkëbisedimesh"
 
 msgid "Customize colors in the conversation window"
-msgstr "Përshtatni ngjyra te dritarja e bashkëbisedimit"
+msgstr "Përshtasni ngjyra te dritarja e bashkëbisedimit"
 
 msgid "Error Messages"
 msgstr "Mesazhe Gabimesh"
@@ -13798,7 +13772,7 @@ msgid "Highlighted Messages"
 msgstr "Mesazhe të Theksuar"
 
 msgid "System Messages"
-msgstr "Mesazhe Sistemi"
+msgstr "Mesazhe Sistemi "
 
 msgid "Sent Messages"
 msgstr "Mesazhe të Dërguar"
@@ -14009,7 +13983,7 @@ msgid "_Associate Buddy"
 msgstr "_Shoqëro Shok"
 
 msgid "Unable to send email"
-msgstr "Nuk arrin të dërgojë email"
+msgstr "I pazoti të dërgojë email"
 
 msgid "The evolution executable was not found in the PATH."
 msgstr "I ekzekutueshmi për Evolution nuk u gjet në PATH."
@@ -14045,17 +14019,17 @@ msgstr "Integrim me Evolucionin"
 #. *  summary
 #. *  description
 msgid "Provides integration with Evolution."
-msgstr "Mundëson integrim me Evolucionin."
+msgstr "Mundëson integrim me Eolucionin."
 
 msgid "Please enter the person's information below."
 msgstr "Ju lutemi, jepni më poshtë të dhëna personi."
 
 msgid "Please enter the buddy's username and account type below."
 msgstr ""
-"Ju lutemi, jepni më poshtë lloj llogarie dhe emër përdoruesi për shokun."
+"Ju lutemi, jepni më poshtë tip llogarie dhe emër përdoruesi për shokun."
 
 msgid "Account type:"
-msgstr "Lloj llogarie:"
+msgstr "Tip llogarie:"
 
 #. Optional Information section
 msgid "Optional information:"
@@ -14121,7 +14095,7 @@ msgstr "Kontrollon për postë të re vendore."
 
 msgid "Adds a small box to the buddy list that shows if you have new mail."
 msgstr ""
-"Shton një kuti të vogël te listë shokësh që shfaqet nëse keni postë të re."
+"Shton një kuti të vogël te listë shokësh që shfaqetnëse keni postë të re."
 
 msgid "Markerline"
 msgstr ""
@@ -14136,10 +14110,10 @@ msgid "Draw Markerline in "
 msgstr " bashkëbisedim."
 
 msgid "_IM windows"
-msgstr "Dritare _MA"
+msgstr "dritare _MA"
 
 msgid "C_hat windows"
-msgstr "Dritare C_hat"
+msgstr "dritare C_hat"
 
 msgid ""
 "A music messaging session has been requested. Please click the MM icon to "
@@ -14201,7 +14175,7 @@ msgid "\t_Only when someone says your username"
 msgstr "\t_Vetëm kur dikush përmend emrin tuaj të përdoruesit"
 
 msgid "_Focused windows"
-msgstr "Dritare të _fokusuara"
+msgstr "dritare të _fokusuara"
 
 #. ---------- "Notification Methods" ----------
 msgid "Notification Methods"
@@ -14239,23 +14213,23 @@ msgstr "Heqje Njoftimi"
 
 #. Remove on focus button
 msgid "Remove when conversation window _gains focus"
-msgstr "Hiqe kur dritarja e bashkëbisedimit _fiton fokus"
+msgstr "Hiq kur dritarja e bashkëbisedimit _fiton fokus"
 
 #. Remove on click button
 msgid "Remove when conversation window _receives click"
-msgstr "Hiqe kur dritarja e bashkëbisedimit _klikohet"
+msgstr "Hiq kur dritarja e bashkëbisedimit _klikohet"
 
 #. Remove on type button
 msgid "Remove when _typing in conversation window"
-msgstr "Hiqe kur _shtypet në dritare bashkëbisedimi"
+msgstr "Hiq kur _shtypet në dritare bashkëbisedimi"
 
 #. Remove on message send button
 msgid "Remove when a _message gets sent"
-msgstr "Hiqe kur mesazhi dërgohet"
+msgstr "Hiq kur mesazhi dërgohet"
 
 #. Remove on conversation switch button
 msgid "Remove on switch to conversation ta_b"
-msgstr "Hiqe gjatë kalimit te një ske_dë bashkëbisedimi"
+msgstr "Remove gjatë kalimit te një ske_dë bashkëbisedimi"
 
 #. *< type
 #. *< ui_requirement
@@ -14286,7 +14260,7 @@ msgstr "Shtojcë Demonstrimi Pidgin"
 #. *< version
 #. *  summary
 msgid "An example plugin that does stuff - see the description."
-msgstr "Shtojcë shembull që bën gjëra - shihni përshkrimin."
+msgstr "Shtojcë shembull që bën gjëra - shihni përshkrimin"
 
 #. *  description
 msgid ""
@@ -14296,7 +14270,7 @@ msgid ""
 "- It sends a message to people on your list immediately when they sign on"
 msgstr ""
 "Kjo është vërtetë një shtojcë e lezetshme që kryen plot gjëra:\n"
-"- Ju tregon gjatë hyrjes tuaj kush e shkroi programin\n"
+"- Ju tregon  gjatë hyrjes tuaj kush e shkrojti programin\n"
 "- Kthen tërë tekstet ardhës\n"
 "- U dërgon personave në listën tuaj një mesazh sapo futen"
 
@@ -14379,15 +14353,16 @@ msgid "Raw"
 msgstr "Bruto"
 
 msgid "Lets you send raw input to text-based protocols."
-msgstr "Ju lejon të dërgoni input bruto te protokolle me bazë teksti. "
+msgstr "Ju lejon të dërgoni input bruto te protokolle me bazë teksti "
 
 msgid ""
 "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Ju lejon të futni të dhëna bruto në protokolle me bazë teksti (XMPP, MSN, "
-"IRC, TOC). Për dërgime, shtypni 'Enter' te kuti futjesh. Kqyrni dritaren e "
-"diagnostikimeve."
+"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"'Enter' in the entry box to send. Watch the debug window.Ju lejon të fusni "
+"të dhëna bruto në protokolle me bazë teksti (XMPP, MSN, IRC, TOC). Për "
+"dërgime, shtypni 'Enter' te kuti futjesh. Kqyrni dritaren \"debug\"."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -14415,7 +14390,7 @@ msgstr "Njoftim Versioni"
 #. *< version
 #. *  summary
 msgid "Checks periodically for new releases."
-msgstr "Kontrollon periodikisht për versione të rinj."
+msgstr "Kontrollon periodikisht për versione të rinj"
 
 #. *  description
 msgid ""
@@ -14423,7 +14398,7 @@ msgid ""
 "ChangeLog."
 msgstr ""
 "Kontrollon periodikisht për versione të rinj dhe njofton përdoruesin me "
-"Shënime Ndryshimesh."
+"Shënime Ndryshimi"
 
 #. *< major version
 #. *< minor version
@@ -14468,10 +14443,10 @@ msgid "Whole words only"
 msgstr "Vetëm fjalë të plota"
 
 msgid "Case sensitive"
-msgstr "Siç është shkruar"
+msgstr "Siç është shkruajtur"
 
 msgid "Add a new text replacement"
-msgstr "Shto një zëvendësim të ri teksti"
+msgstr "Shto një zëvendësim të ri teksti "
 
 msgid "You _type:"
 msgstr "Sh_typni:"
@@ -14482,20 +14457,20 @@ msgstr "_Dërgoni:"
 #. Created here so it can be passed to whole_words_button_toggled.
 msgid "_Exact case match (uncheck for automatic case handling)"
 msgstr ""
-"_Saktësisht siç është shkruar (çaktivizoni trajtimin e vetvetishëm për këto "
-"raste)"
+"_Saktësisht siç është shkruajtur (çaktivizoni trajtimin e vetvetishëm për "
+"këto raste)"
 
 msgid "Only replace _whole words"
 msgstr "Zëvendëso vetëm fjalë të _plota"
 
 msgid "General Text Replacement Options"
-msgstr "Mundësi të Përgjithshme Zëvendësimi Teksti"
+msgstr "Mundësi të Përgjithshme Zëvendësimi Teksti "
 
 msgid "Enable replacement of last word on send"
 msgstr "Aktivizo zëvendësimin e fjalës së fundit gjatë dërgimesh"
 
 msgid "Text replacement"
-msgstr "Zëvendësim teksti"
+msgstr "Zëvendësim Teksti"
 
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr ""
@@ -14561,7 +14536,7 @@ msgid "Chatroom Emblems"
 msgstr "Emblema Dhome Fjalosjesh"
 
 msgid "Dialog Icons"
-msgstr "Ikona Dialogësh"
+msgstr "Ikona Dialogjesh"
 
 msgid "Pidgin Icon Theme Editor"
 msgstr "Përpunues Teme Ikonash Pidgin"
@@ -14682,44 +14657,39 @@ msgid ""
 "This plugin allows the user to customize conversation and logging message "
 "timestamp formats."
 msgstr ""
-"Kjo shtojcë i lejon përdoruesit të përshtatë formate vulash kohore të "
+"Kjo shtojcë i lejon përdoruesit të përshtasë formate vulash kohore të "
 "bashkëbisedimeve dhe regjistrimit të mesazheve."
 
 #. Alerts
 msgid "Chatroom alerts"
-msgstr "Sinjalizime dhome fjalosjeje"
+msgstr ""
 
 msgid "Chatroom message alerts _only where someone says your username"
 msgstr ""
-"Sinjalizime mesazhesh dhome fjalosjeje _vetëm kur dikush thotë emrin tuaj të "
-"përdoruesit"
 
 #. Launcher integration
 msgid "Launcher Icon"
-msgstr "Ikonë Nisësi"
+msgstr ""
 
 msgid "_Disable launcher integration"
-msgstr "_Çaktivizo integrim nisësi"
+msgstr ""
 
 msgid "Show number of unread _messages on launcher icon"
-msgstr "Shfaq në ikonë nisësi numër _mesazhesh të palexuar"
+msgstr ""
 
+#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "Shfaq në ikonë nisësi numër _bashkëbisedimesh të palexuara"
+msgstr "Numër bashkëbisedimesh për dritare"
 
 #. Messaging menu integration
 msgid "Messaging Menu"
-msgstr "Menu Shkëmbimi Mesazhesh"
+msgstr ""
 
 msgid "Show number of _unread messages for conversations in messaging menu"
 msgstr ""
-"Shfaq në menu shkëmbimi mesazhesh numër mesazhesh të _palexuar për "
-"bashkëbisedime"
 
 msgid "Show _elapsed time for unread conversations in messaging menu"
 msgstr ""
-"Shfaq në menu shkëmbimi mesazhesh kohë të _rrjedhur për bashkëbisedime të "
-"palexuara"
 
 #. *< type
 #. *< ui_requirement
@@ -14728,18 +14698,17 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "Unity Integration"
-msgstr "Integrim me Unity-n"
+msgstr ""
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Provides integration with Unity."
-msgstr "Mundëson integrim me Unity-n."
+msgstr ""
 
 #. *  description
 msgid "Provides integration with Unity's messaging menu and launcher."
 msgstr ""
-"Ofron integrim me nisësin dhe menunë e shkëmbimit të mesazheve te Unity."
 
 msgid "Audio"
 msgstr "Audio"
@@ -14795,7 +14764,7 @@ msgstr "Rregullime Zë/Figurë"
 #. *< name
 #. *< version
 msgid "Configure your microphone and webcam."
-msgstr "Formësoni mikrofonin dhe kamerën tuaj web."
+msgstr "Formësoni mikrofonin dhe kameran tuaj web."
 
 #. *< summary
 msgid "Configure microphone and webcam settings for voice/video calls."
@@ -14817,7 +14786,7 @@ msgid "_Show slider bar in IM window"
 msgstr "_Shfaq shtyllë rrëshqitësi në dritare MA"
 
 msgid "Remove IM window transparency on focus"
-msgstr "Hiq tejdukshmëri dritareje MA kur fokusohet"
+msgstr "Hiq tejdukshmëri dritareje MA kur fokusohet "
 
 msgid "Always on top"
 msgstr "Përherë sipër"
@@ -14827,7 +14796,7 @@ msgid "Buddy List Window"
 msgstr "Dritare Listë Shokësh"
 
 msgid "_Buddy List window transparency"
-msgstr "Tejdukshmëri dritareje Liste _Shokësh"
+msgstr "tejdukshmëri dritareje Liste _Shokësh"
 
 msgid "Remove Buddy List window transparency on focus"
 msgstr "Hiq tejdukshmëri dritareje Liste Shokësh kur fokusohet"
@@ -14882,7 +14851,7 @@ msgid "Only when docked"
 msgstr "Vetëm kur gjendet në një panel"
 
 msgid "Windows Pidgin Options"
-msgstr "Mundësi për Pidgin-in nën Windows"
+msgstr "Mundësi për Pidgin-in nën Windows."
 
 msgid "Options specific to Pidgin for Windows."
 msgstr "Mundësi vetëm për Pidgin-in nën Windows."
@@ -14890,8 +14859,8 @@ msgstr "Mundësi vetëm për Pidgin-in nën Windows."
 msgid ""
 "Provides options specific to Pidgin for Windows, such as buddy list docking."
 msgstr ""
-"Furnizon mundësi karakteristike për Pidgin-in nën Windows, bie fjala, listë "
-"të lëvizshme shokësh."
+"Furnizon mundësi karakteristike për Pidgin-in nën Windows, si bie fjala "
+"listë të lëvizshme shokësh."
 
 msgid "<font color='#777777'>Logged out.</font>"
 msgstr "<font color='#777777'>I dalë.</font>"
@@ -14906,7 +14875,7 @@ msgid "XMPP Console"
 msgstr "Konsolë XMPP"
 
 msgid "Account: "
-msgstr "Llogari: "
+msgstr "Llogari:"
 
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr "<font color='#777777'>I palidhur te XMPP</font>"
@@ -14941,7 +14910,7 @@ msgid ""
 "$(^Name) is released under the GNU General Public License (GPL). The license "
 "is provided here for information purposes only. $_CLICK"
 msgstr ""
-"$(^Name) qarkullon nën licencën GNU General Public License (GPL). Licenca "
+"$(^Name) qarkullon nën lejen GNU General Public License (GPL). Leja këtu "
 "jepet vetëm për qëllime informimi. $_CLICK"
 
 #. Installer Subsection Text
@@ -14978,7 +14947,7 @@ msgstr "Shkurtore për nisjen e Pidgin-it"
 
 #. Installer Subsection Detailed Description
 msgid "Create a shortcut to Pidgin on the Desktop"
-msgstr "Krijo në Desktop një shkurtore për Pidgin-in"
+msgstr "Krijo në Desktop një shkurtire për Pidgin-in"
 
 #. Installer Subsection Detailed Description
 msgid "Create a Start Menu entry for Pidgin"
@@ -15000,8 +14969,8 @@ msgid ""
 "Unable to uninstall the currently installed version of Pidgin. The new "
 "version will be installed without removing the currently installed version."
 msgstr ""
-"Nuk arrin të çinstaloj versionin e tanishëm të Pidgin-it. Versioni i ri do "
-"të instalohet pa hequr versionin e tanishëm."
+"I pazoti të çinstaloj versionin e tanishëm të Pidgin-it. Versioni i ri do të "
+"instalohet pa hequr versionin e tanishëm."
 
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
@@ -15013,7 +14982,7 @@ msgstr ""
 
 #. Installer Subsection Text
 msgid "URI Handlers"
-msgstr "Trajtues URI"
+msgstr "Trajtuesa URI"
 
 #. Installer Subsection Text
 msgid "Spellchecking Support"
@@ -15035,8 +15004,7 @@ msgstr ""
 msgid ""
 "Support for Spellchecking.  (Internet connection required for installation)"
 msgstr ""
-"Mbulim i Kontrollit të Drejtshkrimit.  (Lyp lidhje në Internet për "
-"instalimin)"
+"Mbulim i Kontrollit të Drejtshkrimit. (Lyp lidhje në Internet për instalimin)"
 
 #. $R2 will display the URL that the Debug Symbols failed to download from
 msgid ""
@@ -15044,8 +15012,8 @@ msgid ""
 "use the 'Offline Installer' from http://pidgin.im/download/windows/ ."
 msgstr ""
 "Gabim gjatë Instalimit të Simboleve të Diagnostikimit ($R2).$\\rNëse "
-"riprovoni dhe prapë dështon, mund t'ju duhet të përdorni 'Instaluesin Jo Në "
-"Linjë' prej http://pidgin.im/download/windows/ ."
+"riprovoni dhe prapë dështon, mund t'ju duhet të përdorni 'Instaluesin "
+"Offline' prej http://pidgin.im/download/windows/ ."
 
 #. $R2 will display the URL that the GTK+ Runtime failed to download from
 msgid ""
@@ -15055,13 +15023,13 @@ msgid ""
 msgstr ""
 "Gabim në shkarkimin e GTK+ Runtime ($R2).$\\rE domosdoshme që të funksionojë "
 "Pidgin-i; nëse riprovoni dhe prapë dështon, mund t'ju duhet të përdorni "
-"'Instaluesin Jo Në Linjë' prej http://pidgin.im/download/windows/ ."
+"'Instaluesin Offline' prej http://pidgin.im/download/windows/ ."
 
 msgid ""
 "The uninstaller could not find registry entries for Pidgin.$\\rIt is likely "
 "that another user installed this application."
 msgstr ""
-"Instaluesi nuk gjeti dot zërat e regjistrit për Pidgin-in.$\\rKa gjasa që "
+"instaluesi nuk gjeti dot zërat e regjistrit për Pidgin-in.$\\rKa gjasa që "
 "këtë zbatim ta ketë instaluar një përdorues tjetër."
 
 msgid "You do not have permission to uninstall this application."
