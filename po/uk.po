@@ -1,18 +1,17 @@
-# Ukrainian translation to Pidgin.
-# Copyright (C) 2004 Free Software Foundation, Inc.
-# This file is distributed under the same license as the Pidgin package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 #
-# Maxim V. Dziumanenko <mvd@mylinux.com.ua>, 2004-2005.
-# Oleksandr Kovalenko <alx.kovalenko@gmail.com>, 2009-2011.
-#
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2011-08-11 10:21+0300\n"
-"Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
-"Language-Team: Ukrainian <uk@li.org>\n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"Language-Team: Ukrainian (http://www.transifex.com/projects/p/pidgin/"
+"language/uk/)\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1678,7 +1677,6 @@ msgstr "Цей протокол не підтримує отримання за�
 msgid "Unknown"
 msgstr "Невідомо"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Користувачі"
 
@@ -1791,26 +1789,31 @@ msgstr ""
 "Замість цього сертифікат стверджує, що він від \"%s\". Це може означати, що "
 "ви не з'єдані з послугою, хоча вважаєте, що це так."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Відомості про сертифікат"
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
-"Загальна назва: %s\n"
-"\n"
-"Відбиток (SHA1): %s\n"
-"\n"
-"Дата початку дії: %s\n"
-"Дійсний до: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Відомості про сертифікат"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
+msgstr ""
 
 #. show error to user
 msgid "Registration Error"
@@ -2267,9 +2270,8 @@ msgstr ""
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Сталася невиправна помилка Farsight2."
 
-#, fuzzy
 msgid "A non-recoverable Farstream error has occurred."
-msgstr "Сталася невиправна помилка Farsight2."
+msgstr ""
 
 msgid "Error with your microphone"
 msgstr "Помилка мікрофона"
@@ -3218,14 +3220,14 @@ msgstr "Додати до балачки"
 msgid "Chat _name:"
 msgstr "_Прізвисько:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Не вдається визначити назву вузла '%s': %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "З'єднання"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr ""
 
 msgid "Chat error"
 msgstr "Помилка балачки"
@@ -3380,9 +3382,8 @@ msgstr "Кодування"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Автоматично виявляти вхідні повідомлення з UTF-8"
 
-#, fuzzy
 msgid "Ident name"
-msgstr "Прізвище"
+msgstr ""
 
 msgid "Real name"
 msgstr "Справжнє ім'я"
@@ -3394,13 +3395,11 @@ msgstr "Справжнє ім'я"
 msgid "Use SSL"
 msgstr "Використовувати SSL"
 
-#, fuzzy
 msgid "Authenticate with SASL"
-msgstr "Автентифікація"
+msgstr ""
 
-#, fuzzy
 msgid "Allow plaintext SASL auth over unencrypted connection"
-msgstr "Дозволити автентифікацію звичайним текстом через нешифровані потоки"
+msgstr ""
 
 msgid "Bad mode"
 msgstr "Неправильний режим"
@@ -3436,13 +3435,11 @@ msgstr " <i>(ідентифікований)</i>"
 msgid "Nick"
 msgstr "Прізвисько"
 
-#, fuzzy
 msgid "Login name"
-msgstr "Немає імені"
+msgstr ""
 
-#, fuzzy
 msgid "Host name"
-msgstr "Назва вузла"
+msgstr ""
 
 msgid "Currently on"
 msgstr "Наразі на"
@@ -3589,32 +3586,29 @@ msgstr "Прізвисько або канал тимчасово недосту
 msgid "Wallops from %s"
 msgstr "Голос від %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to initialize SASL authentication: %s"
-msgstr "Не вдалося ініціалізувати з'єднання клієнта SILC"
+msgstr ""
 
 msgid "SASL authentication failed: No worthy authentication mechanisms found."
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "SASL authentication failed: %s"
-msgstr "Помилка автентифікації SASL"
+msgstr ""
 
 msgid ""
 "SASL authentication failed: Server does not support SASL authentication."
 msgstr ""
 
-#, fuzzy
 msgid "SASL authentication failed: Initializing SASL failed."
-msgstr "Помилка автентифікації SASL"
+msgstr ""
 
-#, fuzzy
 msgid "Incorrect Password"
-msgstr "Неправильний пароль"
+msgstr ""
 
-#, fuzzy
 msgid "SASL authentication failed: No worthy mechanisms found"
-msgstr "Помилка автентифікації SASL"
+msgstr ""
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;дія для виконання&gt;:  Виконати дію."
@@ -4639,9 +4633,9 @@ msgstr "Не вдалося розпочати сеанс медіа з %s: не
 msgid "Unable to initiate media with %s: user is not online"
 msgstr "Не вдалося розпочати сеанс медіа з %s: користувач не в мережі"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to initiate media with %s: resource is not online"
-msgstr "Не вдалося розпочати сеанс медіа з %s: користувач не в мережі"
+msgstr ""
 
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
@@ -5843,29 +5837,23 @@ msgstr ""
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Повідомлення не надіслано, тому що трапилась невідома помилка."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. Converting the encoding from "
 "%s to UTF-8 failed.)"
 msgstr ""
-"(Помилка перетворення повідомлення. Перевірте параметр \"Кодування\" у "
-"редакторі облікових записів)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was %s, but it "
 "was not valid UTF-8.)"
 msgstr ""
-"(Сталася помилка отримання цього повідомлення. Або ви та %s обрали різні "
-"кодування, або %s користується клієнтом з помилками.)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was missing, but "
 "it was not valid UTF-8.)"
 msgstr ""
-"(Помилка перетворення повідомлення. Перевірте параметр \"Кодування\" у "
-"редакторі облікових записів)"
 
 msgid "Writing error"
 msgstr "Помилка запису"
@@ -6017,9 +6005,8 @@ msgid "Where I Live"
 msgstr "Де я живу"
 
 #. relationship status
-#, fuzzy
 msgid "Relationship Status"
-msgstr "Видалити стан"
+msgstr ""
 
 #. mobile number
 msgid "Mobile Number"
@@ -6118,14 +6105,12 @@ msgid "The file you are trying to send is too large!"
 msgstr "Файл, який ви намагаєтесь надіслати, занадто великий!"
 
 #. file read error
-#, fuzzy
 msgid "Unable to access the local file"
-msgstr "Не вдається завантажити додаток"
+msgstr ""
 
 #. file write error
-#, fuzzy
 msgid "Unable to save the file"
-msgstr "Не вдається відкрити файл."
+msgstr ""
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6273,20 +6258,17 @@ msgstr ""
 msgid "Engaged"
 msgstr ""
 
-#, fuzzy
 msgid "Married"
-msgstr "Занепокоєний"
+msgstr ""
 
-#, fuzzy
 msgid "It's complicated"
-msgstr "П'яний"
+msgstr ""
 
 msgid "Widowed"
 msgstr ""
 
-#, fuzzy
 msgid "Separated"
-msgstr "Департамент"
+msgstr ""
 
 msgid "Divorced"
 msgstr ""
@@ -8381,9 +8363,8 @@ msgstr "Надіслати оголошення TEST"
 msgid "Topic:"
 msgstr "Тема:"
 
-#, fuzzy
 msgid "A server is required to connect this account"
-msgstr "Сервер закрив з'єднання"
+msgstr ""
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -9544,7 +9525,6 @@ msgstr ""
 "%s\n"
 "\n"
 
-# TODO: закінчити переклад
 #, c-format
 msgid ""
 "Public Key Babbleprint:\n"
@@ -9940,6 +9920,9 @@ msgstr "Налаштування присутності"
 
 msgid "Start Doodling"
 msgstr "Розпочати балачку"
+
+msgid "Activate which ID?"
+msgstr ""
 
 msgid "Select the ID you want to activate"
 msgstr "Виберіть ID, який хочете активувати"
@@ -11577,13 +11560,10 @@ msgstr "Непрочитані повідомлення"
 msgid "New Event"
 msgstr "Нова подія"
 
-#, fuzzy
 msgid ""
 "The account has disconnected and you are no longer in this chat. You will "
 "automatically rejoin the chat when the account reconnects."
 msgstr ""
-"Обліковий запис від'єднаний і ви вже не у балачці. Ви приєднаєтесь до неї "
-"автоматично, коли обліковий запис перез'єднається."
 
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Очищає всі прокрутки розмов."
@@ -11744,6 +11724,9 @@ msgstr "Бенгальська"
 msgid "Bengali-India"
 msgstr "Бенгальська Індія"
 
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "Боснійська"
 
@@ -11782,6 +11765,9 @@ msgstr "Есперанто"
 
 msgid "Spanish"
 msgstr "Іспанська"
+
+msgid "Argentine Spanish"
+msgstr ""
 
 msgid "Estonian"
 msgstr "Естонська"
@@ -11822,9 +11808,6 @@ msgstr "Хорватська"
 msgid "Hungarian"
 msgstr "Угорська"
 
-msgid "Armenian"
-msgstr "Вірменська"
-
 msgid "Indonesian"
 msgstr "Індонезійська"
 
@@ -11840,6 +11823,9 @@ msgstr "Грузинська"
 msgid "Ubuntu Georgian Translators"
 msgstr "Перекладачі Ubuntu грузинською"
 
+msgid "Kazakh"
+msgstr ""
+
 msgid "Khmer"
 msgstr "Кхмерська"
 
@@ -11852,14 +11838,17 @@ msgstr "Канадська команда перекладачів"
 msgid "Korean"
 msgstr "Корейська"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "Курдська"
 
-msgid "Lao"
-msgstr "Лао"
-
 msgid "Lithuanian"
 msgstr "Литовська"
+
+msgid "Latvian"
+msgstr ""
 
 msgid "Maithili"
 msgstr "Майтхілі"
@@ -11878,9 +11867,6 @@ msgstr "Монгольська"
 
 msgid "Marathi"
 msgstr "Мараті"
-
-msgid "Malay"
-msgstr "Малайська"
 
 msgid "Burmese"
 msgstr ""
@@ -11924,6 +11910,9 @@ msgstr "Румунська"
 msgid "Russian"
 msgstr "Російська"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "Словацька"
 
@@ -11936,9 +11925,8 @@ msgstr "Албанська"
 msgid "Serbian"
 msgstr "Сербська"
 
-#, fuzzy
 msgid "Serbian Latin"
-msgstr "Білоруська (латиниця)"
+msgstr ""
 
 msgid "Sinhala"
 msgstr "Сингалійська"
@@ -11958,11 +11946,17 @@ msgstr "Телугу"
 msgid "Thai"
 msgstr "Тайська"
 
+msgid "Tatar"
+msgstr ""
+
 msgid "Ukranian"
 msgstr "Українська"
 
 msgid "Urdu"
 msgstr "Урду"
+
+msgid "Uzbek"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "В'єтнамська"
@@ -11978,6 +11972,15 @@ msgstr "Китайська традиційна"
 
 msgid "Amharic"
 msgstr "Амхарська"
+
+msgid "Armenian"
+msgstr "Вірменська"
+
+msgid "Lao"
+msgstr "Лао"
+
+msgid "Malay"
+msgstr "Малайська"
 
 msgid "Turkish"
 msgstr "Турецька"
@@ -12714,9 +12717,8 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Було вибрано переглядач тенет \"інший\", але команду не було задано."
 
-#, fuzzy
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
-msgstr "Команда переглядача тенет \"%s\" неправильна."
+msgstr ""
 
 msgid "No message"
 msgstr "Немає повідомлень"
@@ -14694,18 +14696,15 @@ msgstr ""
 "повідомлень журналу."
 
 #. Alerts
-#, fuzzy
 msgid "Chatroom alerts"
-msgstr "Емблеми кімнат балачок"
+msgstr ""
 
-#, fuzzy
 msgid "Chatroom message alerts _only where someone says your username"
-msgstr "\t_Тільки коли хтось говорить ваше ім'я"
+msgstr ""
 
 #. Launcher integration
-#, fuzzy
 msgid "Launcher Icon"
-msgstr "Збереження значка"
+msgstr ""
 
 msgid "_Disable launcher integration"
 msgstr ""
@@ -14713,14 +14712,12 @@ msgstr ""
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "Кількість розмов на вікно"
+msgstr ""
 
 #. Messaging menu integration
-#, fuzzy
 msgid "Messaging Menu"
-msgstr "Повідомлення відправлено"
+msgstr ""
 
 msgid "Show number of _unread messages for conversations in messaging menu"
 msgstr ""
@@ -14734,21 +14731,18 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#, fuzzy
 msgid "Unity Integration"
-msgstr "Інтеграція з Evolution"
+msgstr ""
 
 #. *< name
 #. *< version
 #. *  summary
-#, fuzzy
 msgid "Provides integration with Unity."
-msgstr "Забезпечує інтеграцію з Evolution."
+msgstr ""
 
 #. *  description
-#, fuzzy
 msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr "Забезпечує інтеграцію з Evolution."
+msgstr ""
 
 msgid "Audio"
 msgstr "Аудіо"
@@ -15070,116 +15064,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Ви не маєте права на видалення цієї програми."
-
-#~ msgid "Token Error"
-#~ msgstr "Помилка символу"
-
-#~ msgid "Unable to fetch the token.\n"
-#~ msgstr "Не вдається отримати символ.\n"
-
-#~ msgid "You must fill in all registration fields"
-#~ msgstr "Ви маєте заповнити всі реєстраційні поля"
-
-#~ msgid "Passwords do not match"
-#~ msgstr "Паролі не збігаються"
-
-#~ msgid "Unable to register new account.  An unknown error occurred."
-#~ msgstr ""
-#~ "Не вдається зареєструвати новий обліковий запис. Сталася невідома помилка."
-
-#~ msgid "New Gadu-Gadu Account Registered"
-#~ msgstr "Зареєстрований новий обліковий запис Gadu-Gadu"
-
-#~ msgid "Registration completed successfully!"
-#~ msgstr "Реєстрація успішно завершена!"
-
-#~ msgid "Enter captcha text"
-#~ msgstr "Введіть текст captcha"
-
-#~ msgid "Captcha"
-#~ msgstr "Captcha"
-
-#~ msgid "Register New Gadu-Gadu Account"
-#~ msgstr "Зареєструвати новий обліковий запис Gadu-Gadu"
-
-#~ msgid "Please, fill in the following fields"
-#~ msgstr "Заповніть ці поля"
-
-#~ msgid "Fill in the fields."
-#~ msgstr "Заповніть поля."
-
-#~ msgid "Your current password is different from the one that you specified."
-#~ msgstr "Ваш поточний пароль і той, який ви ввели відрізняються."
-
-#~ msgid "Unable to change password. Error occurred.\n"
-#~ msgstr "Не вдалося змінити пароль. Сталася помилка.\n"
-
-#~ msgid "Change password for the Gadu-Gadu account"
-#~ msgstr "Змінити пароль для облікового запису Gadu-Gadu"
-
-#~ msgid "Password was changed successfully!"
-#~ msgstr "Пароль був успішно змінений!"
-
-#~ msgid "Current password"
-#~ msgstr "Поточний пароль"
-
-#~ msgid "Password (retype)"
-#~ msgstr "Пароль (ще раз)"
-
-#~ msgid "Enter current token"
-#~ msgstr "Введіть поточний символ"
-
-#~ msgid "Current token"
-#~ msgstr "Поточний символ"
-
-#~ msgid "Please, enter your current password and your new password for UIN: "
-#~ msgstr "Введіть ваш поточний пароль та новий пароль для UIN: "
-
-#~ msgid "Change Gadu-Gadu Password"
-#~ msgstr "Замінити пароль Gadu-Gadu"
-
-#~ msgid "Buddy list downloaded"
-#~ msgstr "Перелік контактів звантажений"
-
-#~ msgid "Your buddy list was downloaded from the server."
-#~ msgstr "Перелік контактів звантажений з сервера."
-
-#~ msgid "Buddy list uploaded"
-#~ msgstr "Перелік контактів оновлений"
-
-#~ msgid "Your buddy list was stored on the server."
-#~ msgstr "Ваш перелік контактів був збережений на сервері."
-
-#~ msgid "Change password..."
-#~ msgstr "Змінити пароль..."
-
-#~ msgid "Upload buddylist to Server"
-#~ msgstr "Вивантажити перелік контактів до сервера"
-
-#~ msgid "Download buddylist from Server"
-#~ msgstr "Звантажити перелік контактів з сервера"
-
-#~ msgid "Delete buddylist from Server"
-#~ msgstr "Видалити перелік контактів з сервера"
-
-#~ msgid "Hidden Number"
-#~ msgstr "Схований номер"
-
-#~ msgid "No Sametime Community Server specified"
-#~ msgstr "Не визначено жодного серверу Sametime Community"
-
-#~ msgid ""
-#~ "No host or IP address has been configured for the Meanwhile account %s. "
-#~ "Please enter one below to continue logging in."
-#~ msgstr ""
-#~ "Ні вузол, ні адреса IP не були налаштовані для облікового запису "
-#~ "Meanwhile %s. Введіть якійсь, щоб налаштувати вхід."
-
-#~ msgid "Meanwhile Connection Setup"
-#~ msgstr "Встановлення з'єднання Meanwhile"
-
-#~ msgid "No Sametime Community Server Specified"
-#~ msgstr "Не визначено жодного серверу Sametime Community"
-
-#~ msgid "Connect"
-#~ msgstr "З'єднатися"

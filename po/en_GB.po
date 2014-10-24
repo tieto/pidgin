@@ -1,15 +1,17 @@
-# Pidgin British English (en_GB) translations
-# Copyright (C) 2003-2005 Luke Ross <lukeross@sys3175.co.uk>
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Phil Hannent <phil@hannent.co.uk>, 2014
+# Philip Hannent <phil@hannent.co.uk>, 2014
+# Philip Hannent <phil@hannent.co.uk>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-01-23 10:01+0000\n"
-"Last-Translator: Phil Hannent <phil@hannent.co.uk>\n"
+"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: English (United Kingdom) (http://www.transifex.com/projects/p/"
 "pidgin/language/en_GB/)\n"
 "Language: en_GB\n"
@@ -1658,7 +1660,6 @@ msgstr "This protocol does not support fetching the public alias."
 msgid "Unknown"
 msgstr "Unknown"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Buddies"
 
@@ -1770,26 +1771,31 @@ msgstr ""
 "The certificate claims to be from \"%s\" instead. This could mean that you "
 "are not connecting to the service you believe you are."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Certificate Information"
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
-"Common name: %s\n"
-"\n"
-"Fingerprint (SHA1): %s\n"
-"\n"
-"Activation date: %s\n"
-"Expiration date: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Certificate Information"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
+msgstr ""
 
 #. show error to user
 msgid "Registration Error"
@@ -3183,14 +3189,14 @@ msgstr "Add to chat"
 msgid "Chat _name:"
 msgstr "Chat _name:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Unable to resolve hostname '%s': %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Connecting"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr ""
 
 msgid "Chat error"
 msgstr "Chat error"
@@ -9805,6 +9811,9 @@ msgstr "Presence Settings"
 msgid "Start Doodling"
 msgstr "Start Doodling"
 
+msgid "Activate which ID?"
+msgstr ""
+
 msgid "Select the ID you want to activate"
 msgstr "Select the ID you want to activate"
 
@@ -11585,6 +11594,9 @@ msgstr "Bengali"
 msgid "Bengali-India"
 msgstr "Bengali-India"
 
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "Bosnian"
 
@@ -11623,6 +11635,9 @@ msgstr "Esperanto"
 
 msgid "Spanish"
 msgstr "Spanish"
+
+msgid "Argentine Spanish"
+msgstr ""
 
 msgid "Estonian"
 msgstr "Estonian"
@@ -11663,9 +11678,6 @@ msgstr "Croatian"
 msgid "Hungarian"
 msgstr "Hungarian"
 
-msgid "Armenian"
-msgstr "Armenian"
-
 msgid "Indonesian"
 msgstr "Indonesian"
 
@@ -11681,6 +11693,9 @@ msgstr "Georgian"
 msgid "Ubuntu Georgian Translators"
 msgstr "Ubuntu Georgian Translators"
 
+msgid "Kazakh"
+msgstr ""
+
 msgid "Khmer"
 msgstr "Khmer"
 
@@ -11693,14 +11708,17 @@ msgstr "Kannada Translation team"
 msgid "Korean"
 msgstr "Korean"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "Kurdish"
 
-msgid "Lao"
-msgstr "Lao"
-
 msgid "Lithuanian"
 msgstr "Lithuanian"
+
+msgid "Latvian"
+msgstr ""
 
 msgid "Maithili"
 msgstr "Maithili"
@@ -11719,9 +11737,6 @@ msgstr "Mongolian"
 
 msgid "Marathi"
 msgstr "Marathi"
-
-msgid "Malay"
-msgstr "Malay"
 
 msgid "Burmese"
 msgstr "Burmese"
@@ -11765,6 +11780,9 @@ msgstr "Romanian"
 msgid "Russian"
 msgstr "Russian"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "Slovak"
 
@@ -11798,11 +11816,17 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Thai"
 
+msgid "Tatar"
+msgstr ""
+
 msgid "Ukranian"
 msgstr "Ukranian"
 
 msgid "Urdu"
 msgstr "Urdu"
+
+msgid "Uzbek"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vietnamese"
@@ -11818,6 +11842,15 @@ msgstr "Traditional Chinese"
 
 msgid "Amharic"
 msgstr "Amharic"
+
+msgid "Armenian"
+msgstr "Armenian"
+
+msgid "Lao"
+msgstr "Lao"
+
+msgid "Malay"
+msgstr "Malay"
 
 msgid "Turkish"
 msgstr "Turkish"

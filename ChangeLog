@@ -75,10 +75,18 @@ version 3.0.0 (??/??/????):
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
 
-version 2.10.10 (?/?/?):
+version 2.10.10 (10/22/14):
 	General:
-	* Allow and prefer TLS 1.2 and 1.1 when using libnss. (Elrond and
-	  Ashish Gupta) (#15909)
+	* Check the basic constraints extension when validating SSL/TLS
+	  certificates. This fixes a security hole that allowed a malicious
+	  man-in-the-middle to impersonate an IM server or any other https
+	  endpoint. This affected both the NSS and GnuTLS plugins. (Discovered
+	  by an anonymous person and Jacob Appelbaum of the Tor Project, with
+	  thanks to Moxie Marlinspike for first publishing about this type of
+	  vulnerability. Thanks to Kai Engert for guidance and for some of the
+	  NSS changes) (CVE-2014-3694)
+	* Allow and prefer TLS 1.2 and 1.1 when using the NSS plugin for SSL.
+	  (Elrond and Ashish Gupta) (#15909)
 
 	libpurple3 compatibility:
 	* Encrypted account passwords are preserved until the new one is set.
@@ -87,7 +95,7 @@ version 2.10.10 (?/?/?):
 	Windows-Specific Changes:
 	* Don't allow overwriting arbitrary files on the file system when the
 	  user installs a smiley theme via drag-and-drop. (Discovered by Yves
-	  Younan of Sourcefire VRT)
+	  Younan of Cisco Talos) (CVE-2014-3697)
 	* Updates to dependencies:
 		* NSS 3.17.1 and NSPR 4.10.7
 
@@ -100,7 +108,7 @@ version 2.10.10 (?/?/?):
 	Groupwise:
 	* Fix potential remote crash parsing server message that indicates that
 	  a large amount of memory should be allocated. (Discovered by Yves Younan
-	  and Richard Johnson of Sourcefire VRT) (CVE-2014-NNNN)
+	  and Richard Johnson of Cisco Talos) (CVE-2014-3696)
 
 	IRC:
 	* Fix a possible leak of unencrypted data when using /me command
@@ -108,10 +116,15 @@ version 2.10.10 (?/?/?):
 
 	MXit:
 	* Fix potential remote crash parsing a malformed emoticon response.
-	  (Discovered by Yves Younan and Richard Johnson of Sourcefire VRT)
-	  (CVE-2014-NNNN)
+	  (Discovered by Yves Younan and Richard Johnson of Cisco Talos)
+	  (CVE-2014-3695)
 
 	XMPP:
+	* Fix potential information leak where a malicious XMPP server and
+	  possibly even a malicious remote user could create a carefully crafted
+	  XMPP message that causes libpurple to send an XMPP message containing
+	  arbitrary memory. (Discovered and fixed by Thijs Alkemade and Paul
+	  Aurich) (CVE-2014-3698)
 	* Fix Facebook XMPP roster quirks. (#15041, #15957)
 
 	Yahoo:

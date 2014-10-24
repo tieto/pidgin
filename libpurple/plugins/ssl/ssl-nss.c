@@ -45,6 +45,7 @@
 #include <nspr.h>
 #include <nss.h>
 #include <nssb64.h>
+#include <ocsp.h>
 #include <pk11func.h>
 #include <prio.h>
 #include <secerr.h>
@@ -52,6 +53,11 @@
 #include <ssl.h>
 #include <sslerr.h>
 #include <sslproto.h>
+
+/* There's a bug in some versions of this header that requires that some of
+   the headers above be included first. This is true for at least libnss
+   3.15.4. */
+#include <certdb.h>
 
 /* This is defined in NSPR's <private/pprio.h>, but to avoid including a
  * private header we duplicate the prototype here */
@@ -183,6 +189,9 @@ ssl_nss_init_nss(void)
 		}
 	}
 #endif /* NSS >= 3.14 */
+
+	/** Disable OCSP Checking until we can make that use our HTTP & Proxy stuff */
+	CERT_EnableOCSPChecking(PR_FALSE);
 
 	_identity = PR_GetUniqueIdentity("Purple");
 	_nss_methods = PR_GetDefaultIOMethods();
@@ -980,6 +989,108 @@ x509_get_der_data(PurpleCertificate *crt)
 	return data;
 }
 
+static gboolean
+x509_register_trusted_tls_cert(PurpleCertificate *crt, gboolean ca)
+{
+	CERTCertDBHandle *certdb = CERT_GetDefaultCertDB();
+	CERTCertificate *crt_dat;
+	CERTCertTrust trust;
+
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_nss, FALSE);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, FALSE);
+
+	purple_debug_info("nss", "Trusting %s\n", crt_dat->subjectName);
+
+	if (ca && !CERT_IsCACert(crt_dat, NULL)) {
+		purple_debug_error("nss",
+			"Refusing to set non-CA cert as trusted CA\n");
+		return FALSE;
+	}
+
+	if (crt_dat->isperm) {
+		purple_debug_info("nss",
+			"Skipping setting trust for cert in permanent DB\n");
+		return TRUE;
+	}
+
+	if (ca) {
+		trust.sslFlags = CERTDB_TRUSTED_CA | CERTDB_TRUSTED_CLIENT_CA;
+	} else {
+		trust.sslFlags = CERTDB_TRUSTED;
+	}
+	trust.emailFlags = 0;
+	trust.objectSigningFlags = 0;
+
+	CERT_ChangeCertTrust(certdb, crt_dat, &trust);
+
+	return TRUE;
+}
+
+static void x509_verify_cert(PurpleCertificateVerificationRequest *vrq, PurpleCertificateInvalidityFlags *flags)
+{
+	CERTCertDBHandle *certdb = CERT_GetDefaultCertDB();
+	CERTCertificate *crt_dat;
+	PRTime now = PR_Now();
+	SECStatus          rv;
+	PurpleCertificate *first_cert = vrq->cert_chain->data;
+	CERTVerifyLog log;
+
+	crt_dat = X509_NSS_DATA(first_cert);
+
+	log.arena = PORT_NewArena(512);
+	log.head = log.tail = NULL;
+	log.count = 0;
+	rv = CERT_VerifyCert(certdb, crt_dat, PR_TRUE, certUsageSSLServer, now, NULL, &log);
+
+	if (rv != SECSuccess || log.count > 0) {
+		CERTVerifyLogNode *node   = NULL;
+		unsigned int depth = (unsigned int)-1;
+
+		for (node = log.head; node; node = node->next) {
+			if (depth != node->depth) {
+				depth = node->depth;
+				purple_debug_error("nss", "CERT %d. %s %s:\n", depth,
+					node->cert->subjectName,
+					depth ? "[Certificate Authority]": "");
+			}
+			purple_debug_error("nss", "  ERROR %ld: %s\n", node->error,
+				PR_ErrorToName(node->error));
+			switch (node->error) {
+				case SEC_ERROR_EXPIRED_CERTIFICATE:
+					*flags |= PURPLE_CERTIFICATE_EXPIRED;
+					break;
+				case SEC_ERROR_REVOKED_CERTIFICATE:
+					*flags |= PURPLE_CERTIFICATE_REVOKED;
+					break;
+				case SEC_ERROR_UNTRUSTED_ISSUER:
+					if (crt_dat->isRoot) {
+						*flags |= PURPLE_CERTIFICATE_SELF_SIGNED;
+					} else {
+						*flags |= PURPLE_CERTIFICATE_CA_UNKNOWN;
+					}
+					break;
+				case SEC_ERROR_CERT_SIGNATURE_ALGORITHM_DISABLED:
+				case SEC_ERROR_BAD_SIGNATURE:
+				default:
+					*flags |= PURPLE_CERTIFICATE_INVALID_CHAIN;
+			}
+			if (node->cert)
+				CERT_DestroyCertificate(node->cert);
+		}
+	} else {
+		rv = CERT_VerifyCertName(crt_dat, vrq->subject_name);
+		if (rv != SECSuccess) {
+			purple_debug_error("nss", "Cert chain valid, but name not verified\n");
+			*flags |= PURPLE_CERTIFICATE_NAME_MISMATCH;
+		}
+	}
+
+	PORT_FreeArena(log.arena, PR_FALSE);
+}
+
 static PurpleCertificateScheme x509_nss = {
 	"x509",                          /* Scheme name */
 	N_("X.509 Certificates"),        /* User-visible scheme name */
@@ -996,7 +1107,11 @@ static PurpleCertificateScheme x509_nss = {
 	x509_times,                      /* Activation/Expiration time */
 	x509_importcerts_from_file,      /* Multiple certificate import function */
 	x509_get_der_data,               /* Binary DER data */
+	x509_register_trusted_tls_cert,  /* Register a certificate as trusted for TLS */
+	x509_verify_cert,                /* Verify that the specified cert chain is trusted */
 
+	NULL,
+	NULL,
 	NULL
 };
 
@@ -1011,7 +1126,6 @@ static PurpleSslOps ssl_ops =
 	ssl_nss_peer_certs,
 
 	/* padding */
-	NULL,
 	NULL,
 	NULL,
 	NULL

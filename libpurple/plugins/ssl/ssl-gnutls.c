@@ -1024,7 +1024,7 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 	crt_dat = X509_GET_GNUTLS_DATA(crt);
 	issuer_dat = X509_GET_GNUTLS_DATA(issuer);
 
-	/* First, let's check that crt.issuer is actually issuer */
+	/* Ensure crt issuer matches the name on the issuer cert. */
 	ret = gnutls_x509_crt_check_issuer(crt_dat, issuer_dat);
 	if (ret <= 0) {
 
@@ -1050,6 +1050,41 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 		}
 
 		/* The issuer is not correct, or there were errors */
+		return FALSE;
+	}
+
+	/* Check basic constraints extension (if it exists then the CA flag must
+	   be set to true, and it must exist for certs with version 3 or higher. */
+	ret = gnutls_x509_crt_get_basic_constraints(issuer_dat, NULL, NULL, NULL);
+	if (ret == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE) {
+		if (gnutls_x509_crt_get_version(issuer_dat) >= 3) {
+			/* Reject cert (no basic constraints and cert version is >= 3). */
+			gchar *issuer_id = purple_certificate_get_unique_id(issuer);
+			purple_debug_info("gnutls/x509", "Rejecting cert because the "
+					"basic constraints extension is missing from issuer cert "
+					"for %s. The basic constraints extension is required on "
+					"all version 3 or higher certs (this cert is version %d).",
+					issuer_id ? issuer_id : "(null)",
+					gnutls_x509_crt_get_version(issuer_dat));
+			g_free(issuer_id);
+			return FALSE;
+		} else {
+			/* Allow cert (no basic constraints and cert version is < 3). */
+			purple_debug_info("gnutls/x509", "Basic constraint extension is "
+					"missing from issuer cert for %s. Allowing this because "
+					"the cert is version %d and the basic constraints "
+					"extension is only required for version 3 or higher "
+					"certs.", issuer_id ? issuer_id : "(null)",
+					gnutls_x509_crt_get_version(issuer_dat));
+		}
+	} else if (ret <= 0) {
+		/* Reject cert (CA flag is false in basic constraints). */
+		gchar *issuer_id = purple_certificate_get_unique_id(issuer);
+		purple_debug_info("gnutls/x509", "Rejecting cert because the CA flag "
+				"is set to false in the basic constraints extension for "
+				"issuer cert %s. ret=%d\n",
+				issuer_id ? issuer_id : "(null)", ret);
+		g_free(issuer_id);
 		return FALSE;
 	}
 
