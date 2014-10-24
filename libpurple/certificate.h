@@ -63,30 +63,6 @@ typedef enum
 {
 	PURPLE_CERTIFICATE_UNKNOWN_ERROR = -1,
 	PURPLE_CERTIFICATE_VALID = 0,
-	PURPLE_CERTIFICATE_NON_FATALS_MASK = 0x0000FFFF,
-	PURPLE_CERTIFICATE_SELF_SIGNED = 0x01,
-	PURPLE_CERTIFICATE_CA_UNKNOWN = 0x02,
-	PURPLE_CERTIFICATE_NOT_ACTIVATED = 0x04,
-	PURPLE_CERTIFICATE_EXPIRED = 0x08,
-	PURPLE_CERTIFICATE_NAME_MISMATCH = 0x10,
-	PURPLE_CERTIFICATE_NO_CA_POOL = 0x20,
-	PURPLE_CERTIFICATE_FATALS_MASK = 0xFFFF0000,
-	PURPLE_CERTIFICATE_INVALID_CHAIN = 0x10000,
-	PURPLE_CERTIFICATE_REVOKED = 0x20000,
-	PURPLE_CERTIFICATE_REJECTED = 0x40000,
-
-	/*< private >*/
-	PURPLE_CERTIFICATE_LAST = 0x80000,
-} PurpleCertificateVerificationStatus;
-
-/*
- * TODO: Merge this with PurpleCertificateVerificationStatus for 3.0.0
- */
-typedef enum {
-	PURPLE_CERTIFICATE_UNKNOWN_ERROR = -1,
-
-	/* Not an error */
-	PURPLE_CERTIFICATE_NO_PROBLEMS = 0,
 
 	/* Non-fatal */
 	PURPLE_CERTIFICATE_NON_FATALS_MASK = 0x0000FFFF,
@@ -122,8 +98,11 @@ typedef enum {
 	/* The signature has been revoked. */
 	PURPLE_CERTIFICATE_REVOKED = 0x20000,
 
-	PURPLE_CERTIFICATE_LAST = 0x40000,
-} PurpleCertificateInvalidityFlags;
+	PURPLE_CERTIFICATE_REJECTED = 0x40000,
+
+	/*< private >*/
+	PURPLE_CERTIFICATE_LAST = 0x80000,
+} PurpleCertificateVerificationStatus;
 
 #define PURPLE_TYPE_CERTIFICATE   (purple_certificate_get_type())
 typedef struct _PurpleCertificate PurpleCertificate;
@@ -327,7 +306,7 @@ struct _PurpleCertificateScheme
 	 * Verify that a certificate is valid, performing all necessary checks
 	 * including date range, valid cert chain, recognized and valid CAs, etc.
 	 */
-	void (* verify_cert)(PurpleCertificateVerificationRequest *vrq, PurpleCertificateInvalidityFlags *flags);
+	void (* verify_cert)(PurpleCertificateVerificationRequest *vrq, PurpleCertificateVerificationStatus *flags);
 
 	/*< private >*/
 	void (*_purple_reserved1)(void);

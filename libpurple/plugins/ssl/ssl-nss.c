@@ -1029,7 +1029,7 @@ x509_register_trusted_tls_cert(PurpleCertificate *crt, gboolean ca)
 	return TRUE;
 }
 
-static void x509_verify_cert(PurpleCertificateVerificationRequest *vrq, PurpleCertificateInvalidityFlags *flags)
+static void x509_verify_cert(PurpleCertificateVerificationRequest *vrq, PurpleCertificateVerificationStatus *flags)
 {
 	CERTCertDBHandle *certdb = CERT_GetDefaultCertDB();
 	CERTCertificate *crt_dat;
