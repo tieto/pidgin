@@ -252,7 +252,10 @@ static const struct translator translators[] = {
 	{N_("Tatar"),               "tt", "ILDAR Valeev", "v_ildar@bk.ru"},
 	{N_("Ukranian"),            "uk", "Oleksandr Kovalenko", "alx.kovalenko@gmail.com"},
 	{N_("Urdu"),                "ur", "RKVS Raman", "rkvsraman@gmail.com"},
-	{N_("Uzbek"),               "uz", "Akmal Khushvakov", "uzbadmin@gmail.com"},
+	{N_("Uzbek"),               "uz",
+	/* Translators: This is a person's name. For most languages we recommend
+	   not translating it. */
+                                          N_("Akmal Khushvakov"), "uzbadmin@gmail.com"},
 	{N_("Vietnamese"),          "vi", "Nguyễn Vũ Hưng", "vuhung16plus@gmail.com"},
 	{N_("Simplified Chinese"),  "zh_CN", "Aron Xu", "happyaron.xu@gmail.com"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Abel Cheung", "abelindsay@gmail.com"},
