@@ -1679,19 +1679,25 @@ purple_media_manager_send_application_data (
 	if (info && info->appsrc && info->connected) {
 		GstBuffer *gstbuffer = gst_buffer_new_wrapped (g_memdup (buffer, size),
 			size);
-		if (gst_app_src_push_buffer (info->appsrc, gstbuffer) == GST_FLOW_OK) {
+		GstAppSrc *appsrc = gst_object_ref (info->appsrc);
+
+		g_mutex_unlock (&manager->priv->appdata_mutex);
+		if (gst_app_src_push_buffer (appsrc, gstbuffer) == GST_FLOW_OK) {
 			if (blocking) {
 				GstPad *srcpad;
 
-				srcpad = gst_element_get_static_pad (GST_ELEMENT (info->appsrc),
+				srcpad = gst_element_get_static_pad (GST_ELEMENT (appsrc),
 					"src");
 				if (srcpad) {
 					gst_pad_peer_query (srcpad, gst_query_new_drain ());
 					gst_object_unref (srcpad);
 				}
 			}
-			g_mutex_unlock (&manager->priv->appdata_mutex);
+			gst_object_unref (appsrc);
 			return size;
+		} else {
+			gst_object_unref (appsrc);
+			return -1;
 		}
 	}
 	g_mutex_unlock (&manager->priv->appdata_mutex);
