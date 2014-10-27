@@ -1075,6 +1075,7 @@ static void x509_verify_cert(PurpleCertificateVerificationRequest *vrq, PurpleCe
 				case SEC_ERROR_REVOKED_CERTIFICATE:
 					*flags |= PURPLE_CERTIFICATE_REVOKED;
 					break;
+				case SEC_ERROR_UNKNOWN_ISSUER:
 				case SEC_ERROR_UNTRUSTED_ISSUER:
 					if (crt_dat->isRoot) {
 						*flags |= PURPLE_CERTIFICATE_SELF_SIGNED;
