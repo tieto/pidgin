@@ -1724,7 +1724,7 @@ purple_media_manager_receive_application_data (
 		 * data as possible
 		 */
 		do {
-			if (info->current_sample == NULL && info->appsink) {
+			if (!info->current_sample && info->appsink && info->num_samples > 0) {
 				info->current_sample = gst_app_sink_pull_sample (info->appsink);
 				info->sample_offset = 0;
 				if (info->current_sample)
