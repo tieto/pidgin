@@ -1781,7 +1781,7 @@ static void load_conf(void)
 	gboolean case_sensitive = FALSE;
 
 	buf = g_build_filename(purple_user_dir(), "dict", NULL);
-	if (g_file_get_contents(buf, &ibuf, &size, NULL) && ibuf) {
+	if (!(g_file_get_contents(buf, &ibuf, &size, NULL) && ibuf)) {
 		ibuf = g_strdup(defaultconf);
 		size = strlen(defaultconf);
 	}
