@@ -139,6 +139,37 @@ static gchar *get_error_text(void)
 	return ret;
 }
 
+static void ssl_nss_log_ciphers(void) {
+	const PRUint16 *cipher;
+	for (cipher = SSL_GetImplementedCiphers(); *cipher != 0; ++cipher) {
+		const PRUint16 suite = *cipher;
+		SECStatus rv;
+		PRBool enabled;
+		PRErrorCode err;
+		SSLCipherSuiteInfo info;
+
+		rv = SSL_CipherPrefGetDefault(suite, &enabled);
+		if (rv != SECSuccess) {
+			err = PR_GetError();
+			purple_debug_warning("nss",
+					"SSL_CipherPrefGetDefault didn't like value 0x%04x: %s\n",
+					suite, PORT_ErrorToString(err));
+			continue;
+		}
+		rv = SSL_GetCipherSuiteInfo(suite, &info, (int)(sizeof info));
+		if (rv != SECSuccess) {
+			err = PR_GetError();
+			purple_debug_warning("nss",
+					"SSL_GetCipherSuiteInfo didn't like value 0x%04x: %s\n",
+					suite, PORT_ErrorToString(err));
+			continue;
+		}
+		purple_debug_info("nss", "Cipher - %s: %s\n",
+				info.cipherSuiteName,
+				enabled ? "Enabled" : "Disabled");
+	}
+}
+
 static void
 ssl_nss_init_nss(void)
 {
@@ -195,6 +226,8 @@ ssl_nss_init_nss(void)
 
 	_identity = PR_GetUniqueIdentity("Purple");
 	_nss_methods = PR_GetDefaultIOMethods();
+
+	ssl_nss_log_ciphers();
 }
 
 static SECStatus
