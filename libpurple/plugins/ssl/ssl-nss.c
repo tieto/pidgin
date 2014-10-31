@@ -148,7 +148,9 @@ ssl_nss_init_nss(void)
 
 	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
 	NSS_NoDB_Init(".");
+#if (NSS_VMAJOR == 3 && (NSS_VMINOR < 15 || (NSS_VMINOR == 15 && NSS_VMICRO < 2)))
 	NSS_SetDomesticPolicy();
+#endif /* NSS < 3.15.2 */
 
 	SSL_CipherPrefSetDefault(TLS_DHE_RSA_WITH_AES_256_CBC_SHA, 1);
 	SSL_CipherPrefSetDefault(TLS_DHE_DSS_WITH_AES_256_CBC_SHA, 1);
