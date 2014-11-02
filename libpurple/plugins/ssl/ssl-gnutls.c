@@ -118,6 +118,9 @@ static gnutls_priority_t default_priority = NULL;
 static GHashTable *host_priorities = NULL;
 #endif
 
+static gchar *x509_cert_dn(PurpleCertificate *crt);
+static gchar *x509_issuer_dn(PurpleCertificate *crt);
+
 static void
 ssl_gnutls_log(int level, const char *str)
 {
@@ -1034,10 +1037,9 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 					   ret);
 		} else {
 			gchar *crt_id, *issuer_id, *crt_issuer_id;
-			crt_id = purple_certificate_get_unique_id(crt);
-			issuer_id = purple_certificate_get_unique_id(issuer);
-			crt_issuer_id =
-				purple_certificate_get_issuer_unique_id(crt);
+			crt_id = x509_cert_dn(crt);
+			issuer_id = x509_cert_dn(issuer);
+			crt_issuer_id = x509_issuer_dn(crt);
 			purple_debug_info("gnutls/x509",
 					  "Certificate %s is issued by "
 					  "%s, which does not match %s.\n",
@@ -1059,7 +1061,7 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 	if (ret == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE) {
 		if (gnutls_x509_crt_get_version(issuer_dat) >= 3) {
 			/* Reject cert (no basic constraints and cert version is >= 3). */
-			gchar *issuer_id = purple_certificate_get_unique_id(issuer);
+			gchar *issuer_id = x509_cert_dn(issuer);
 			purple_debug_info("gnutls/x509", "Rejecting cert because the "
 					"basic constraints extension is missing from issuer cert "
 					"for %s. The basic constraints extension is required on "
@@ -1079,7 +1081,7 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 		}
 	} else if (ret <= 0) {
 		/* Reject cert (CA flag is false in basic constraints). */
-		gchar *issuer_id = purple_certificate_get_unique_id(issuer);
+		gchar *issuer_id = x509_cert_dn(issuer);
 		purple_debug_info("gnutls/x509", "Rejecting cert because the CA flag "
 				"is set to false in the basic constraints extension for "
 				"issuer cert %s. ret=%d\n",
@@ -1113,8 +1115,8 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 		 * perfectly clear as soon as someone looks at the debug log is
 		 * generated.
 		 */
-		crt_id = purple_certificate_get_unique_id(crt);
-		issuer_id = purple_certificate_get_issuer_unique_id(crt);
+		crt_id = x509_cert_dn(crt);
+		issuer_id = x509_issuer_dn(crt);
 		purple_debug_warning("gnutls/x509",
 				"Insecure hash algorithm used by %s to sign %s\n",
 				issuer_id, crt_id);
@@ -1125,9 +1127,9 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 		/* Signature didn't check out, but at least
 		   there were no errors*/
 		if (!crt_id)
-			crt_id = purple_certificate_get_unique_id(crt);
+			crt_id = x509_cert_dn(crt);
 		if (!issuer_id)
-			issuer_id = purple_certificate_get_issuer_unique_id(crt);
+			issuer_id = x509_issuer_dn(crt);
 		purple_debug_error("gnutls/x509",
 				  "Bad signature from %s on %s\n",
 				  issuer_id, crt_id);
