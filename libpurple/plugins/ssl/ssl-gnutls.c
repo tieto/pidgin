@@ -1373,8 +1373,11 @@ static PurpleCertificateScheme x509_gnutls = {
 	x509_times,                      /* Activation/Expiration time */
 	x509_importcerts_from_file,      /* Multiple certificates import function */
 	x509_get_der_data,               /* Binary DER data */
-
-	NULL
+	NULL,                            /* register_trusted_tls_cert */
+	NULL,                            /* verify_cert */
+	NULL,                            /* _purple_reserved1 */
+	NULL,                            /* _purple_reserved2 */
+	NULL                             /* _purple_reserved3 */
 
 };
 
