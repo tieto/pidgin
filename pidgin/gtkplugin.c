@@ -248,8 +248,12 @@ pidgin_plugin_open_config(PurplePlugin *plugin, GtkWindow *parent)
 
 		g_signal_connect(G_OBJECT(dialog), "response",
 			G_CALLBACK(pref_dialog_response_cb), plugin);
+
 		gtk_container_add(GTK_CONTAINER(
-			gtk_dialog_get_content_area(GTK_DIALOG(dialog))), box);
+			gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+			pidgin_make_scrollable(box, GTK_POLICY_AUTOMATIC,
+				GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, 400, 400));
+
 		gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
 		gtk_window_set_title(GTK_WINDOW(dialog),
 			_(purple_plugin_get_name(plugin)));
@@ -880,7 +884,7 @@ void pidgin_plugin_dialog_show()
 	gtk_tree_view_column_set_sort_column_id(col, 1);
 	g_object_unref(G_OBJECT(ls));
 	gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(plugin_dialog))),
-		pidgin_make_scrollable(event_view, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1), 
+		pidgin_make_scrollable(event_view, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1),
 		TRUE, TRUE, 0);
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(event_view), 1);
 	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(event_view),

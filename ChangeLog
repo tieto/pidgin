@@ -75,6 +75,11 @@ version 3.0.0 (??/??/????):
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
 
+version 2.10.11 (?/?/?):
+	General:
+	* Fix handling of Self-Signed SSL/TLS Certificates when using the NSS
+          plugin (#16412)
+
 version 2.10.10 (10/22/14):
 	General:
 	* Check the basic constraints extension when validating SSL/TLS
@@ -1550,7 +1555,7 @@ version 2.6.4 (11/29/2009):
 	Finch:
 	* The TinyURL plugin now creates shorter URLs for long non-conversation
 	  URLs, e.g. URLs to open Inbox in Yahoo/MSN protocols, or the Yahoo
-	  CAPTCHA when joining chat rooms.
+	  Captcha when joining chat rooms.
 	* Fix displaying umlauts etc. in non-utf8 locale (fix in libgnt).
 
 	Pidgin:

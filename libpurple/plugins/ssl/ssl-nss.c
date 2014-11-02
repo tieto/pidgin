@@ -139,6 +139,37 @@ static gchar *get_error_text(void)
 	return ret;
 }
 
+static void ssl_nss_log_ciphers(void) {
+	const PRUint16 *cipher;
+	for (cipher = SSL_GetImplementedCiphers(); *cipher != 0; ++cipher) {
+		const PRUint16 suite = *cipher;
+		SECStatus rv;
+		PRBool enabled;
+		PRErrorCode err;
+		SSLCipherSuiteInfo info;
+
+		rv = SSL_CipherPrefGetDefault(suite, &enabled);
+		if (rv != SECSuccess) {
+			err = PR_GetError();
+			purple_debug_warning("nss",
+					"SSL_CipherPrefGetDefault didn't like value 0x%04x: %s\n",
+					suite, PORT_ErrorToString(err));
+			continue;
+		}
+		rv = SSL_GetCipherSuiteInfo(suite, &info, (int)(sizeof info));
+		if (rv != SECSuccess) {
+			err = PR_GetError();
+			purple_debug_warning("nss",
+					"SSL_GetCipherSuiteInfo didn't like value 0x%04x: %s\n",
+					suite, PORT_ErrorToString(err));
+			continue;
+		}
+		purple_debug_info("nss", "Cipher - %s: %s\n",
+				info.cipherSuiteName,
+				enabled ? "Enabled" : "Disabled");
+	}
+}
+
 static void
 ssl_nss_init_nss(void)
 {
@@ -148,7 +179,9 @@ ssl_nss_init_nss(void)
 
 	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
 	NSS_NoDB_Init(".");
+#if (NSS_VMAJOR == 3 && (NSS_VMINOR < 15 || (NSS_VMINOR == 15 && NSS_VMICRO < 2)))
 	NSS_SetDomesticPolicy();
+#endif /* NSS < 3.15.2 */
 
 	SSL_CipherPrefSetDefault(TLS_DHE_RSA_WITH_AES_256_CBC_SHA, 1);
 	SSL_CipherPrefSetDefault(TLS_DHE_DSS_WITH_AES_256_CBC_SHA, 1);
@@ -195,6 +228,8 @@ ssl_nss_init_nss(void)
 
 	_identity = PR_GetUniqueIdentity("Purple");
 	_nss_methods = PR_GetDefaultIOMethods();
+
+	ssl_nss_log_ciphers();
 }
 
 static SECStatus
@@ -1034,9 +1069,10 @@ static void x509_verify_cert(PurpleCertificateVerificationRequest *vrq, PurpleCe
 	CERTCertDBHandle *certdb = CERT_GetDefaultCertDB();
 	CERTCertificate *crt_dat;
 	PRTime now = PR_Now();
-	SECStatus          rv;
+	SECStatus rv;
 	PurpleCertificate *first_cert = vrq->cert_chain->data;
 	CERTVerifyLog log;
+	gboolean self_signed = FALSE;
 
 	crt_dat = X509_NSS_DATA(first_cert);
 
@@ -1049,6 +1085,14 @@ static void x509_verify_cert(PurpleCertificateVerificationRequest *vrq, PurpleCe
 		CERTVerifyLogNode *node   = NULL;
 		unsigned int depth = (unsigned int)-1;
 
+		if (crt_dat->isRoot) {
+			self_signed = TRUE;
+			*flags |= PURPLE_CERTIFICATE_SELF_SIGNED;
+		}
+
+		/* Handling of untrusted, etc. modeled after
+		 * source/security/manager/ssl/src/TransportSecurityInfo.cpp in Firefox
+		 */
 		for (node = log.head; node; node = node->next) {
 			if (depth != node->depth) {
 				depth = node->depth;
@@ -1065,14 +1109,20 @@ static void x509_verify_cert(PurpleCertificateVerificationRequest *vrq, PurpleCe
 				case SEC_ERROR_REVOKED_CERTIFICATE:
 					*flags |= PURPLE_CERTIFICATE_REVOKED;
 					break;
+				case SEC_ERROR_UNKNOWN_ISSUER:
 				case SEC_ERROR_UNTRUSTED_ISSUER:
-					if (crt_dat->isRoot) {
-						*flags |= PURPLE_CERTIFICATE_SELF_SIGNED;
-					} else {
+					if (!self_signed) {
 						*flags |= PURPLE_CERTIFICATE_CA_UNKNOWN;
 					}
 					break;
+				case SEC_ERROR_CA_CERT_INVALID:
+				case SEC_ERROR_EXPIRED_ISSUER_CERTIFICATE:
+				case SEC_ERROR_UNTRUSTED_CERT:
 				case SEC_ERROR_CERT_SIGNATURE_ALGORITHM_DISABLED:
+					if (!self_signed) {
+						*flags |= PURPLE_CERTIFICATE_INVALID_CHAIN;
+					}
+					break;
 				case SEC_ERROR_BAD_SIGNATURE:
 				default:
 					*flags |= PURPLE_CERTIFICATE_INVALID_CHAIN;
@@ -1080,12 +1130,12 @@ static void x509_verify_cert(PurpleCertificateVerificationRequest *vrq, PurpleCe
 			if (node->cert)
 				CERT_DestroyCertificate(node->cert);
 		}
-	} else {
-		rv = CERT_VerifyCertName(crt_dat, vrq->subject_name);
-		if (rv != SECSuccess) {
-			purple_debug_error("nss", "Cert chain valid, but name not verified\n");
-			*flags |= PURPLE_CERTIFICATE_NAME_MISMATCH;
-		}
+	}
+
+	rv = CERT_VerifyCertName(crt_dat, vrq->subject_name);
+	if (rv != SECSuccess) {
+		purple_debug_error("nss", "subject name not verified\n");
+		*flags |= PURPLE_CERTIFICATE_NAME_MISMATCH;
 	}
 
 	PORT_FreeArena(log.arena, PR_FALSE);
