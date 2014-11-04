@@ -1,6 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.10.11 (?/?/?):
+	Gadu-Gadu:
+	* Fix a bug that prevented plugin to load when compiled without GnuTLS.
+	  (mancha) (#16431)
+
 	General:
 	* Fix handling of Self-Signed SSL/TLS Certificates when using the NSS
           plugin (#16412)
