@@ -139,8 +139,60 @@ static gchar *get_error_text(void)
 	return ret;
 }
 
-static void ssl_nss_log_ciphers(void) {
+static const PRUint16 default_ciphers[] = {
+#if NSS_VMAJOR > 3 || ( NSS_VMAJOR == 3 && NSS_VMINOR > 15 ) \
+		|| ( NSS_VMAJOR == 3 && NSS_VMINOR == 15 && NSS_VPATCH >= 1 )
+	TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+	TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,
+	TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,
+# if NSS_VMAJOR > 3 || ( NSS_VMAJOR == 3 && NSS_VMINOR > 15 ) \
+		|| ( NSS_VMAJOR == 3 && NSS_VMINOR == 15 && NSS_VPATCH >= 2 )
+	TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+	TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+	TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+# endif
+#endif
+	TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+	TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+
+	TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+	TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+
+	TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
+
+	TLS_DHE_RSA_WITH_AES_256_CBC_SHA,
+
+	TLS_DHE_DSS_WITH_AES_128_CBC_SHA, /* deprecated (DSS) */
+	/* TLS_DHE_DSS_WITH_AES_256_CBC_SHA, false }, // deprecated (DSS) */
+
+	TLS_ECDHE_RSA_WITH_RC4_128_SHA,		/* deprecated (RC4) */
+	TLS_ECDHE_ECDSA_WITH_RC4_128_SHA, 	/* deprecated (RC4) */
+
+	/* RFC 6120 Mandatory */
+	TLS_RSA_WITH_AES_128_CBC_SHA,		/* deprecated (RSA key exchange) */
+	TLS_RSA_WITH_AES_256_CBC_SHA,		/* deprecated (RSA key exchange) */
+	/* TLS_RSA_WITH_3DES_EDE_CBC_SHA, 	 deprecated (RSA key exchange, 3DES) */
+
+	0 /* end marker */
+};
+
+/* It's unfortunate we need to manage these manually,
+ * ideally NSS would choose good defaults.
+ * This is mostly based on FireFox's list:
+ * https://hg.mozilla.org/mozilla-central/log/default/security/manager/ssl/src/nsNSSComponent.cpp */
+static void ssl_nss_init_ciphers(void) {
+	/* Disable any ciphers that NSS might have enabled by default */
 	const PRUint16 *cipher;
+	for (cipher = SSL_GetImplementedCiphers(); *cipher != 0; ++cipher) {
+		SSL_CipherPrefSetDefault(*cipher, PR_FALSE);
+	}
+
+	/* Now only set SSL/TLS ciphers we knew about at compile time */
+	for (cipher = default_ciphers; *cipher != 0; ++cipher) {
+		SSL_CipherPrefSetDefault(*cipher, PR_TRUE);
+	}
+
+	/* Now log the available and enabled Ciphers */
 	for (cipher = SSL_GetImplementedCiphers(); *cipher != 0; ++cipher) {
 		const PRUint16 suite = *cipher;
 		SECStatus rv;
@@ -150,18 +202,20 @@ static void ssl_nss_log_ciphers(void) {
 
 		rv = SSL_CipherPrefGetDefault(suite, &enabled);
 		if (rv != SECSuccess) {
-			err = PR_GetError();
+			gchar *error_txt = get_error_text();
 			purple_debug_warning("nss",
 					"SSL_CipherPrefGetDefault didn't like value 0x%04x: %s\n",
-					suite, PORT_ErrorToString(err));
+					suite, error_txt);
+			g_free(error_txt);
 			continue;
 		}
 		rv = SSL_GetCipherSuiteInfo(suite, &info, (int)(sizeof info));
 		if (rv != SECSuccess) {
-			err = PR_GetError();
+			gchar *error_txt = get_error_text();
 			purple_debug_warning("nss",
 					"SSL_GetCipherSuiteInfo didn't like value 0x%04x: %s\n",
-					suite, PORT_ErrorToString(err));
+					suite, error_txt);
+			g_free(error_txt);
 			continue;
 		}
 		purple_debug_info("nss", "Cipher - %s: %s\n",
@@ -179,22 +233,11 @@ ssl_nss_init_nss(void)
 
 	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
 	NSS_NoDB_Init(".");
-#if (NSS_VMAJOR == 3 && (NSS_VMINOR < 15 || (NSS_VMINOR == 15 && NSS_VMICRO < 2)))
+#if (NSS_VMAJOR == 3 && (NSS_VMINOR < 15 || (NSS_VMINOR == 15 && NSS_VPATCH < 2)))
 	NSS_SetDomesticPolicy();
 #endif /* NSS < 3.15.2 */
 
-	SSL_CipherPrefSetDefault(TLS_DHE_RSA_WITH_AES_256_CBC_SHA, 1);
-	SSL_CipherPrefSetDefault(TLS_DHE_DSS_WITH_AES_256_CBC_SHA, 1);
-	SSL_CipherPrefSetDefault(TLS_RSA_WITH_AES_256_CBC_SHA, 1);
-	SSL_CipherPrefSetDefault(TLS_DHE_DSS_WITH_RC4_128_SHA, 1);
-	SSL_CipherPrefSetDefault(TLS_DHE_RSA_WITH_AES_128_CBC_SHA, 1);
-	SSL_CipherPrefSetDefault(TLS_DHE_DSS_WITH_AES_128_CBC_SHA, 1);
-	SSL_CipherPrefSetDefault(SSL_RSA_WITH_RC4_128_SHA, 1);
-	SSL_CipherPrefSetDefault(TLS_RSA_WITH_AES_128_CBC_SHA, 1);
-	SSL_CipherPrefSetDefault(SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA, 1);
-	SSL_CipherPrefSetDefault(SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA, 1);
-	SSL_CipherPrefSetDefault(SSL_DHE_RSA_WITH_DES_CBC_SHA, 1);
-	SSL_CipherPrefSetDefault(SSL_DHE_DSS_WITH_DES_CBC_SHA, 1);
+	ssl_nss_init_ciphers();
 
 #if NSS_VMAJOR > 3 || ( NSS_VMAJOR == 3 && NSS_VMINOR >= 14 )
 	/* Get the ranges of supported and enabled SSL versions */
@@ -229,7 +272,6 @@ ssl_nss_init_nss(void)
 	_identity = PR_GetUniqueIdentity("Purple");
 	_nss_methods = PR_GetDefaultIOMethods();
 
-	ssl_nss_log_ciphers();
 }
 
 static SECStatus
@@ -1118,7 +1160,9 @@ static void x509_verify_cert(PurpleCertificateVerificationRequest *vrq, PurpleCe
 				case SEC_ERROR_CA_CERT_INVALID:
 				case SEC_ERROR_EXPIRED_ISSUER_CERTIFICATE:
 				case SEC_ERROR_UNTRUSTED_CERT:
+#ifdef SEC_ERROR_CERT_SIGNATURE_ALGORITHM_DISABLED
 				case SEC_ERROR_CERT_SIGNATURE_ALGORITHM_DISABLED:
+#endif
 					if (!self_signed) {
 						*flags |= PURPLE_CERTIFICATE_INVALID_CHAIN;
 					}
