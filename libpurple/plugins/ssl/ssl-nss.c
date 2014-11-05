@@ -197,7 +197,6 @@ static void ssl_nss_init_ciphers(void) {
 		const PRUint16 suite = *cipher;
 		SECStatus rv;
 		PRBool enabled;
-		PRErrorCode err;
 		SSLCipherSuiteInfo info;
 
 		rv = SSL_CipherPrefGetDefault(suite, &enabled);

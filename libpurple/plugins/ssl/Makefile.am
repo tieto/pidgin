@@ -6,8 +6,10 @@ plugindir = @PURPLE_PLUGINDIR@
 ssl_la_LDFLAGS        = -module @PLUGIN_LDFLAGS@
 ssl_gnutls_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 ssl_nss_la_LDFLAGS    = -module @PLUGIN_LDFLAGS@
+nss_prefs_la_LDFLAGS  = -module -avoid-version
 
 if PLUGINS
+
 
 plugin_LTLIBRARIES = \
 	ssl.la
@@ -17,16 +19,19 @@ plugin_LTLIBRARIES += \
 endif
 if USE_NSS
 plugin_LTLIBRARIES += \
-	ssl-nss.la
+	ssl-nss.la	\
+	nss-prefs.la
 endif
 
 ssl_la_SOURCES        = ssl.c
 ssl_gnutls_la_SOURCES = ssl-gnutls.c
 ssl_nss_la_SOURCES    = ssl-nss.c
+nss_prefs_la_SOURCES  = nss-prefs.c
 
 ssl_la_LIBADD        = @PURPLE_LIBS@
 ssl_gnutls_la_LIBADD = @PURPLE_LIBS@ $(GNUTLS_LIBS)
 ssl_nss_la_LIBADD    = @PURPLE_LIBS@ $(NSS_LIBS)
+nss_prefs_la_LIBADD  = $(GLIB_LIBS) $(NSS_LIBS)
 
 endif # PLUGINS
 
@@ -39,4 +44,5 @@ AM_CPPFLAGS = \
 
 ssl_gnutls_la_CFLAGS = $(AM_CPPFLAGS) $(GNUTLS_CFLAGS)
 ssl_nss_la_CFLAGS = $(AM_CPPFLAGS) $(NSS_CFLAGS)
+nss_prefs_la_CFLAGS = $(AM_CPPFLAGS) $(NSS_CFLAGS)
 
