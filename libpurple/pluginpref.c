@@ -154,8 +154,6 @@ purple_plugin_pref_destroy(PurplePluginPref *pref)
 		tmp = g_list_delete_link(tmp, tmp);
 		tmp = g_list_delete_link(tmp, tmp);
 	}
-
-	g_list_free(pref->choices);
 	g_free(pref);
 }
 
