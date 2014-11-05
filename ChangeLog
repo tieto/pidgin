@@ -7,7 +7,7 @@ version 2.10.11 (?/?/?):
 
 	General:
 	* Fix handling of Self-Signed SSL/TLS Certificates when using the NSS
-          plugin (#16412)
+	  plugin (#16412)
 
 version 2.10.10 (10/22/14):
 	General:
