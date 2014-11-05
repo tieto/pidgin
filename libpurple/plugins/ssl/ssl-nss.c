@@ -150,18 +150,20 @@ static void ssl_nss_log_ciphers(void) {
 
 		rv = SSL_CipherPrefGetDefault(suite, &enabled);
 		if (rv != SECSuccess) {
-			err = PR_GetError();
+			gchar *error_txt = get_error_text();
 			purple_debug_warning("nss",
 					"SSL_CipherPrefGetDefault didn't like value 0x%04x: %s\n",
-					suite, PORT_ErrorToString(err));
+					suite, error_txt);
+			g_free(error_txt);
 			continue;
 		}
 		rv = SSL_GetCipherSuiteInfo(suite, &info, (int)(sizeof info));
 		if (rv != SECSuccess) {
-			err = PR_GetError();
+			gchar *error_txt = get_error_text();
 			purple_debug_warning("nss",
 					"SSL_GetCipherSuiteInfo didn't like value 0x%04x: %s\n",
-					suite, PORT_ErrorToString(err));
+					suite, error_txt);
+			g_free(error_txt);
 			continue;
 		}
 		purple_debug_info("nss", "Cipher - %s: %s\n",
@@ -179,7 +181,7 @@ ssl_nss_init_nss(void)
 
 	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
 	NSS_NoDB_Init(".");
-#if (NSS_VMAJOR == 3 && (NSS_VMINOR < 15 || (NSS_VMINOR == 15 && NSS_VMICRO < 2)))
+#if (NSS_VMAJOR == 3 && (NSS_VMINOR < 15 || (NSS_VMINOR == 15 && NSS_VPATCH < 2)))
 	NSS_SetDomesticPolicy();
 #endif /* NSS < 3.15.2 */
 
@@ -1128,7 +1130,9 @@ static void x509_verify_cert(PurpleCertificateVerificationRequest *vrq, PurpleCe
 				case SEC_ERROR_CA_CERT_INVALID:
 				case SEC_ERROR_EXPIRED_ISSUER_CERTIFICATE:
 				case SEC_ERROR_UNTRUSTED_CERT:
+#ifdef SEC_ERROR_CERT_SIGNATURE_ALGORITHM_DISABLED
 				case SEC_ERROR_CERT_SIGNATURE_ALGORITHM_DISABLED:
+#endif
 					if (!self_signed) {
 						*flags |= PURPLE_CERTIFICATE_INVALID_CHAIN;
 					}
