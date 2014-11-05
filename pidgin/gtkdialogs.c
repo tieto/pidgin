@@ -342,7 +342,7 @@ static const struct translator past_translators[] = {
 	{N_("Slovenian"),           "sl", "Matjaz Horvat", NULL},
 	{N_("Serbian"),             "sr", "Danilo Šegan", NULL},
 	{NULL,                      NULL, "Aleksandar Urosevic", NULL},
-	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
+	{N_("Swedish"),             "sv", "Peter Hjalmarsson", NULL},
 	{N_("Swedish"),             NULL, "Tore Lundqvist", NULL},
 	{NULL,                      NULL, "Christian Rose", NULL},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", NULL},
