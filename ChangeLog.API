@@ -78,6 +78,7 @@ version 3.0.0 (??/??/????):
 		* purple_menu_action_set_data
 		* purple_menu_action_set_callback
 		* purple_menu_action_set_children
+		* PurplePluginUiInfo.get_plugin_pref_request
 		* purple_request_certificate
 		* purple_request_field_certificate_new
 		* purple_request_field_certificate_get_value
@@ -408,6 +409,8 @@ version 3.0.0 (??/??/????):
 		* PurplePluginProtocolInfo.add_buddy_with_invite
 		* PurplePluginProtocolInfo.add_buddies_with_invite
 		* PurplePluginProtocolInfo.get_cb_away
+		* PurplePluginUiInfo.page_num
+		* PurplePluginUiInfo.frame
 		* PurpleValue, use GValue instead.
 		* serv_got_attention
 		* serv_send_attention
