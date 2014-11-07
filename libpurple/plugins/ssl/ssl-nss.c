@@ -1221,6 +1221,7 @@ static PurpleSslOps ssl_ops =
 	/* padding */
 	NULL,
 	NULL,
+	NULL,
 	NULL
 };
 

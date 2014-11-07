@@ -317,10 +317,10 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 
 		ppref = purple_plugin_pref_new_with_name_and_label(MIN_TLS,
 				_("Minimum Version"));
-		purple_plugin_pref_set_type(ppref, PURPLE_PLUGIN_PREF_CHOICE);
+		purple_plugin_pref_set_pref_type(ppref, PURPLE_PLUGIN_PREF_CHOICE);
 		ppref_max = purple_plugin_pref_new_with_name_and_label(MAX_TLS,
 				_("Maximum Version"));
-		purple_plugin_pref_set_type(ppref_max, PURPLE_PLUGIN_PREF_CHOICE);
+		purple_plugin_pref_set_pref_type(ppref_max, PURPLE_PLUGIN_PREF_CHOICE);
 
 		for (tmp_version = supported.min; tmp_version <= supported.max; tmp_version++) {
 			gchar *ver;
@@ -474,8 +474,8 @@ plugin_unload(PurplePlugin *plugin) {
 
 static PurplePluginUiInfo prefs_info = {
 	get_plugin_pref_frame,
-	0,   /* page_num (Reserved) */
-	NULL, /* frame (Reserved) */
+	NULL,
+
 	/* Padding */
 	NULL,
 	NULL,
