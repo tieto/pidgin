@@ -337,9 +337,11 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 				case SSL_LIBRARY_VERSION_TLS_1_1:
 					ver = g_strdup(_("TLS 1.1"));
 					break;
+#ifdef SSL_LIBRARY_VERSION_TLS_1_2
 				case SSL_LIBRARY_VERSION_TLS_1_2:
 					ver = g_strdup(_("TLS 1.2"));
 					break;
+#endif
 #ifdef SSL_LIBRARY_VERSION_TLS_1_3
 				case SSL_LIBRARY_VERSION_TLS_1_3:
 					ver = g_strdup(_("TLS 1.3"));
