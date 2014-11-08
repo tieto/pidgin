@@ -89,6 +89,7 @@ pidgin-[0-9a-z.-]+/
 pidgin.apspec$
 pidgin.spec$
 pidgin/pidgin$
+pidgin/data/pidgin.appdata.xml$
 pidgin/data/pidgin.desktop$
 pidgin/data/pidgin.desktop.in$
 pidgin/pixmaps/emotes/default/24/theme
