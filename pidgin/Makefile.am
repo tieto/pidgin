@@ -5,6 +5,7 @@ EXTRA_DIST = \
 		gtk3compat.h \
 		gtkdebug.html \
 		Makefile.mingw \
+		data/pidgin.appdata.xml.in \
 		data/pidgin.desktop.in \
 		data/pidgin-3.pc.in \
 		data/pidgin-3-uninstalled.pc.in \
@@ -246,8 +247,15 @@ apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 %.desktop: %.desktop.in $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po/*.po)
 	$(AM_V_GEN) LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(top_builddir)/po/.intltool-merge-cache $(top_srcdir)/po $< $@ > /dev/null
 
+appdatadir = $(datarootdir)/appdata
+appdata_DATA = $(appdata_in_files:.xml.in=.xml)
+appdata_in_files = data/pidgin.appdata.xml.in
+
+@INTLTOOL_XML_RULE@
+
 endif # INSTALL_I18N
 
+CLEANFILES += $(appdata_DATA)
 DISTCLEANFILES = $(DESKTOP_FILE)
 
 endif  # ENABLE_GTK
