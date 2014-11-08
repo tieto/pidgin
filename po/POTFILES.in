@@ -46,11 +46,11 @@ libpurple/certificate.c
 libpurple/connection.c
 libpurple/conversation.c
 libpurple/conversationtypes.c
+libpurple/data/gconf/purple.schemas.in
 libpurple/dbus-server.c
 libpurple/dbus-server.h
 libpurple/desktopitem.c
 libpurple/dnsquery.c
-libpurple/gconf/purple.schemas.in
 libpurple/http.c
 libpurple/keyring.c
 libpurple/log.c
@@ -208,7 +208,7 @@ libpurple/util.c
 libpurple/win32/libc_interface.c
 libpurple/xfer.c
 libpurple/xmlnode.c
-pidgin.desktop.in
+pidgin/data/pidgin.desktop.in
 pidgin/gtkaccount.c
 pidgin/gtkblist-theme.c
 pidgin/gtkblist.c

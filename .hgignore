@@ -73,7 +73,7 @@ libpurple/dbus-signals.c
 libpurple/dbus-types.[ch]
 libpurple/enums.[ch]
 libpurple/example/nullclient
-libpurple/gconf/purple.schemas$
+libpurple/data/gconf/purple.schemas$
 libpurple/marshallers.[ch]
 libpurple/plugins/dbus-example-bindings.c
 libpurple/plugins/perl/common/Makefile.PL$
@@ -111,10 +111,10 @@ pidgin-.*.tar.bz2
 pidgin-.*.tar.gz
 pidgin-[0-9a-z.-]+/
 pidgin.apspec$
-pidgin.desktop$
-pidgin.desktop.in$
 pidgin/.*\.html\.h$
 pidgin/pidgin$
+pidgin/data/pidgin.desktop$
+pidgin/data/pidgin.desktop.in$
 pidgin/pixmaps/emotes/default/24/theme
 pidgin/pixmaps/emotes/none/theme
 pidgin/pixmaps/emotes/small/16/theme

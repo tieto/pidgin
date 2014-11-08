@@ -3028,8 +3028,9 @@ AC_CONFIG_FILES([Makefile
 		   m4macros/Makefile
 		   pidgin.apspec
 		   pidgin/Makefile
-		   pidgin/pidgin-3.pc
-		   pidgin/pidgin-3-uninstalled.pc
+		   pidgin/data/pidgin.desktop.in
+		   pidgin/data/pidgin-3.pc
+		   pidgin/data/pidgin-3-uninstalled.pc
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/small/16/Makefile
@@ -3047,10 +3048,10 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/themes/Makefile
 		   pidgin/win32/pidgin_dll_rc.rc
 		   pidgin/win32/pidgin_exe_rc.rc
+		   libpurple/data/gconf/Makefile
+		   libpurple/data/purple-3.pc
+		   libpurple/data/purple-3-uninstalled.pc
 		   libpurple/example/Makefile
-		   libpurple/gconf/Makefile
-		   libpurple/purple-3.pc
-		   libpurple/purple-3-uninstalled.pc
 		   libpurple/plugins/Makefile
 		   libpurple/plugins/keyrings/Makefile
 		   libpurple/plugins/mono/Makefile
@@ -3092,7 +3093,6 @@ AC_CONFIG_FILES([Makefile
 		   finch/libgnt/wms/Makefile
 		   finch/plugins/Makefile
 		   po/Makefile.in
-		   pidgin.desktop.in
 		  ])
 AC_OUTPUT
 

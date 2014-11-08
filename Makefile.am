@@ -13,7 +13,6 @@ EXTRA_DIST = \
 		intltool-update.in \
 		package_revision.h \
 		pidgin.apspec.in \
-		pidgin.desktop.in \
 		po/Makefile.mingw \
 		valgrind-suppressions
 
@@ -83,20 +82,7 @@ release: commit-check version-check distcheck sign-packages
 
 if INSTALL_I18N
 PO_DIR=po
-DESKTOP_FILE=pidgin.desktop
-
-if ENABLE_GTK
-appsdir = $(datadir)/applications
-apps_in_files = pidgin.desktop.in
-apps_DATA = $(apps_in_files:.desktop.in=.desktop)
-
-# silenced INTLTOOL_DESKTOP_RULE
-%.desktop: %.desktop.in $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po/*.po)
-	$(AM_V_GEN) LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(top_builddir)/po/.intltool-merge-cache $(top_srcdir)/po $< $@ > /dev/null
-
-endif #ENABLE_GTK
-
-endif #INSTALL_I18N
+endif
 
 if ENABLE_GTK
 GTK_DIR=pidgin
@@ -157,5 +143,5 @@ SUBDIRS = . m4macros libpurple $(GNT_DIR) $(GTK_DIR) $(PO_DIR) share/ca-certs sh
 distuninstallcheck_listfiles = \
 	find . -type f -print | grep -v perl | grep -v Purple.3pm | grep -v Pidgin.3pm
 
-DISTCLEANFILES= $(DESKTOP_FILE) libpurple/gconf/purple.schemas intltool-extract \
+DISTCLEANFILES= libpurple/gconf/purple.schemas intltool-extract \
 			intltool-merge intltool-update package_revision_raw.txt
