@@ -143,5 +143,5 @@ SUBDIRS = . m4macros libpurple $(GNT_DIR) $(GTK_DIR) $(PO_DIR) share/ca-certs sh
 distuninstallcheck_listfiles = \
 	find . -type f -print | grep -v perl | grep -v Purple.3pm | grep -v Pidgin.3pm
 
-DISTCLEANFILES= libpurple/gconf/purple.schemas intltool-extract \
-			intltool-merge intltool-update package_revision_raw.txt
+DISTCLEANFILES= intltool-extract intltool-merge intltool-update \
+			package_revision_raw.txt
