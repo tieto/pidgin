@@ -43,12 +43,12 @@ libpurple/blist.c
 libpurple/certificate.c
 libpurple/connection.c
 libpurple/conversation.c
+libpurple/data/gconf/purple.schemas.in
 libpurple/dbus-server.c
 libpurple/dbus-server.h
 libpurple/desktopitem.c
 libpurple/dnsquery.c
 libpurple/ft.c
-libpurple/gconf/purple.schemas.in
 libpurple/log.c
 libpurple/media/backend-fs2.c
 libpurple/plugin.c
@@ -193,7 +193,7 @@ libpurple/status.c
 libpurple/util.c
 libpurple/win32/libc_interface.c
 libpurple/xmlnode.c
-pidgin.desktop.in
+pidgin/data/pidgin.desktop.in
 pidgin/gtkaccount.c
 pidgin/gtkblist-theme.c
 pidgin/gtkblist.c
