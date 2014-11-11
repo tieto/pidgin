@@ -123,6 +123,28 @@ gtk_grid_attach_defaults(GtkGrid *grid, GtkWidget *child, gint left, gint top,
 	gtk_widget_set_vexpand(child, TRUE);
 }
 
+static inline void
+gtk_grid_attach_full(GtkGrid *grid, GtkWidget *child, guint left, guint top,
+	guint width, guint height, GtkAttachOptions xoptions,
+	GtkAttachOptions yoptions, guint xpadding, guint ypadding)
+{
+	gtk_grid_attach(grid, child, left, top, width, height);
+
+	if (xoptions & GTK_EXPAND)
+		gtk_widget_set_hexpand(child, TRUE);
+	if (!(xoptions & GTK_FILL))
+		gtk_widget_set_halign(child, GTK_ALIGN_CENTER);
+	gtk_widget_set_margin_left(child, xpadding);
+	gtk_widget_set_margin_right(child, xpadding);
+
+	if (yoptions & GTK_EXPAND)
+		gtk_widget_set_vexpand(child, TRUE);
+	if (!(yoptions & GTK_FILL))
+		gtk_widget_set_valign(child, GTK_ALIGN_CENTER);
+	gtk_widget_set_margin_top(child, ypadding);
+	gtk_widget_set_margin_bottom(child, ypadding);
+}
+
 #else /* 3.0.0 and gtk_grid_ */
 
 #define GTK_GRID GTK_TABLE
@@ -152,6 +174,15 @@ gtk_grid_attach_defaults(GtkGrid *grid, GtkWidget *child, gint left, gint top,
 {
 	gtk_table_attach_defaults(grid, child, left, left + width,
 		top, top + height);
+}
+
+static inline void
+gtk_grid_attach_full(GtkGrid *grid, GtkWidget *child, guint left, guint top,
+	guint width, guint height, GtkAttachOptions xoptions,
+	GtkAttachOptions yoptions, guint xpadding, guint ypadding)
+{
+	gtk_table_attach(grid, child, left, left + width, top, top + height,
+		xoptions, yoptions, xpadding, ypadding);
 }
 
 #endif /* 3.0.0 and gtk_grid_ */
