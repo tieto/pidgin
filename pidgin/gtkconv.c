@@ -919,7 +919,7 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		PidginConvWindow *gtkwin;
 		GtkWidget *label;
 		GtkWidget *vbox, *hbox;
-		GtkWidget *table;
+		GtkWidget *grid;
 		GtkWidget *img;
 
 		img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
@@ -969,42 +969,42 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
-		/* hbox for the table, and to give it some spacing on the left. */
+		/* hbox for the grid, and to give it some spacing on the left. */
 		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-		/* Setup the table we're going to use to lay stuff out. */
-		table = gtk_table_new(2, 2, FALSE);
-		gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
-		gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
-		gtk_container_set_border_width(GTK_CONTAINER(table), PIDGIN_HIG_BORDER);
-		gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
+		/* Setup the grid we're going to use to lay stuff out. */
+		grid = gtk_grid_table_new(2, 2);
+		gtk_grid_set_row_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE);
+		gtk_grid_set_column_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE);
+		gtk_container_set_border_width(GTK_CONTAINER(grid), PIDGIN_HIG_BORDER);
+		gtk_box_pack_start(GTK_BOX(vbox), grid, FALSE, FALSE, 0);
 
 		/* Now the Buddy label */
 		label = gtk_label_new(NULL);
 		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Buddy:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
+		gtk_grid_attach_defaults(GTK_GRID(grid), label, 0, 0, 1, 1);
 
 		/* Now the Buddy drop-down entry field. */
 		info->entry = gtk_entry_new();
 		pidgin_setup_screenname_autocomplete(info->entry, NULL, chat_invite_filter,
 				purple_conversation_get_account(PURPLE_CONVERSATION(chat)));
-		gtk_table_attach_defaults(GTK_TABLE(table), info->entry, 1, 2, 0, 1);
+		gtk_grid_attach_defaults(GTK_GRID(grid), info->entry, 1, 0, 1, 1);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->entry);
 
 		/* Now the label for "Message" */
 		label = gtk_label_new(NULL);
 		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Message:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
+		gtk_grid_attach_defaults(GTK_GRID(grid), label, 0, 1, 1, 1);
 
 
 		/* And finally, the Message entry field. */
 		info->message = gtk_entry_new();
 		gtk_entry_set_activates_default(GTK_ENTRY(info->message), TRUE);
 
-		gtk_table_attach_defaults(GTK_TABLE(table), info->message, 1, 2, 1, 2);
+		gtk_grid_attach_defaults(GTK_GRID(grid), info->message, 1, 1, 1, 1);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->message);
 
 		/* Connect the signals. */
