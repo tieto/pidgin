@@ -32,6 +32,8 @@
 #include "pidginstock.h"
 #include "gtkutils.h"
 
+#include "gtk3compat.h"
+
 #ifdef _WIN32
 #  include <shellapi.h>
 #endif
@@ -56,7 +58,7 @@ struct _PidginXferDialog
 
 	GtkWidget *expander;
 
-	GtkWidget *table;
+	GtkWidget *grid;
 
 	GtkWidget *local_user_desc_label;
 	GtkWidget *local_user_label;
@@ -634,9 +636,9 @@ setup_tree(PidginXferDialog *dialog)
 }
 
 static GtkWidget *
-make_info_table(PidginXferDialog *dialog)
+make_info_grid(PidginXferDialog *dialog)
 {
-	GtkWidget *table;
+	GtkWidget *grid;
 	GtkWidget *label;
 	gsize i;
 
@@ -659,10 +661,10 @@ make_info_table(PidginXferDialog *dialog)
 		{ &label, &dialog->time_remaining_label, _("Time Remaining:") }
 	};
 
-	/* Setup the initial table */
-	dialog->table = table = gtk_table_new(G_N_ELEMENTS(labels) + 1, 2, FALSE);
-	gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
-	gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
+	/* Setup the initial grid */
+	dialog->grid = grid = gtk_grid_table_new(G_N_ELEMENTS(labels) + 1, 2);
+	gtk_grid_set_row_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE);
+	gtk_grid_set_column_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE);
 
 	/* Setup the labels */
 	for (i = 0; i < G_N_ELEMENTS(labels); i++) {
@@ -676,26 +678,25 @@ make_info_table(PidginXferDialog *dialog)
 		gtk_label_set_markup(GTK_LABEL(label), buf);
 		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_RIGHT);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach(GTK_TABLE(table), label, 0, 1, i, i + 1,
-						 GTK_FILL, 0, 0, 0);
+		gtk_grid_attach_full(GTK_GRID(grid), label, 0, i, 1, 1,
+			GTK_FILL, 0, 0, 0);
 		gtk_widget_show(label);
 
 		*labels[i].val_label = label = gtk_label_new(NULL);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach(GTK_TABLE(table), label, 1, 2, i, i + 1,
-						 GTK_FILL | GTK_EXPAND, 0, 0, 0);
+		gtk_grid_attach_full(GTK_GRID(grid), label, 1, i, 1, 1,
+			GTK_FILL | GTK_EXPAND, 0, 0, 0);
 		gtk_widget_show(label);
 	}
 
 	/* Setup the progress bar */
 	dialog->progress = gtk_progress_bar_new();
-	gtk_table_attach(GTK_TABLE(table), dialog->progress,
-					 0, 2,
-					 G_N_ELEMENTS(labels), G_N_ELEMENTS(labels) + 1,
-					 GTK_FILL, GTK_FILL, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->progress,
+		0, G_N_ELEMENTS(labels), 2, 1,
+		GTK_FILL, GTK_FILL, 0, 0);
 	gtk_widget_show(dialog->progress);
 
-	return table;
+	return grid;
 }
 
 PidginXferDialog *
@@ -706,7 +707,7 @@ pidgin_xfer_dialog_new(void)
 	GtkWidget *vbox;
 	GtkWidget *expander;
 	GtkWidget *alignment;
-	GtkWidget *table;
+	GtkWidget *grid;
 	GtkWidget *checkbox;
 	GtkWidget *bbox;
 
@@ -763,16 +764,16 @@ pidgin_xfer_dialog_new(void)
 
 	gtk_widget_set_sensitive(expander, FALSE);
 
-	/* Small indent make table fall under GtkExpander's label */
+	/* Small indent make grid fall under GtkExpander's label */
 	alignment = gtk_alignment_new(1, 0, 1, 1);
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 20, 0);
 	gtk_container_add(GTK_CONTAINER(expander), alignment);
 	gtk_widget_show(alignment);
 
-	/* The table of information. */
-	table = make_info_table(dialog);
-	gtk_container_add(GTK_CONTAINER(alignment), table);
-	gtk_widget_show(table);
+	/* The grid of information. */
+	grid = make_info_grid(dialog);
+	gtk_container_add(GTK_CONTAINER(alignment), grid);
+	gtk_widget_show(grid);
 
 	bbox = pidgin_dialog_get_action_area(GTK_DIALOG(window));
 
