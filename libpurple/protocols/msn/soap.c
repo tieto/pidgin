@@ -256,6 +256,7 @@ msn_soap_service_send_message_simple(MsnSoapService *soaps,
 	sreq->message = message;
 
 	hreq = purple_http_request_new(url);
+	purple_http_request_set_max_len(hreq, 16 * 1024 * 1024);
 	purple_http_request_set_method(hreq, "POST");
 	purple_http_request_set_keepalive_pool(hreq, soaps->keepalive_pool);
 	purple_http_request_header_set(hreq, "SOAPAction",
