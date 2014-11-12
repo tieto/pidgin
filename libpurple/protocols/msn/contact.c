@@ -487,12 +487,6 @@ msn_parse_contact_list(MsnSession *session, PurpleXmlNode *node)
 	 * this is not handled yet
 	 */
 	if ((fault = purple_xmlnode_get_child(node, "Body/Fault"))) {
-		if ((faultnode = purple_xmlnode_get_child(fault, "faultstring"))) {
-			char *faultstring = purple_xmlnode_get_data(faultnode);
-			purple_debug_info("msn", "Retrieving contact list failed: %s\n",
-				faultstring);
-			g_free(faultstring);
-		}
 		if ((faultnode = purple_xmlnode_get_child(fault, "detail/errorcode"))) {
 			char *errorcode = purple_xmlnode_get_data(faultnode);
 
@@ -505,7 +499,15 @@ msn_parse_contact_list(MsnSession *session, PurpleXmlNode *node)
 			g_free(errorcode);
 		}
 
-		msn_get_contact_list(session, MSN_PS_INITIAL, NULL);
+		if ((faultnode = purple_xmlnode_get_child(fault, "faultstring"))) {
+			char *faultstring = purple_xmlnode_get_data(faultnode);
+			purple_debug_info("msn", "Retrieving contact list failed: %s\n",
+				faultstring);
+			msn_session_set_error(session, MSN_ERROR_BAD_BLIST, faultstring);
+			g_free(faultstring);
+		} else {
+			msn_session_set_error(session, MSN_ERROR_BAD_BLIST, NULL);
+		}
 		return FALSE;
 	} else {
 		PurpleXmlNode *service;
