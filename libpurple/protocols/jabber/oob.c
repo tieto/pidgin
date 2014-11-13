@@ -87,7 +87,8 @@ static void jabber_oob_xfer_end(PurpleXfer *xfer)
 static void jabber_oob_xfer_request_send(gpointer data, gint source, PurpleInputCondition cond) {
 	PurpleXfer *xfer = data;
 	JabberOOBXfer *jox = xfer->data;
-	int len, total_len = strlen(jox->write_buffer);
+	int len;
+	size_t total_len = strlen(jox->write_buffer);
 
 	len = write(xfer->fd, jox->write_buffer + jox->written_len,
 		total_len - jox->written_len);

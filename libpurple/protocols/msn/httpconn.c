@@ -126,7 +126,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 	if ((s = purple_strcasestr(header, "Content-Length: ")) != NULL)
 	{
-		int tmp_len;
+		size_t tmp_len;
 
 		s += strlen("Content-Length: ");
 
@@ -400,7 +400,7 @@ write_raw(MsnHttpConn *httpconn, const char *data, size_t data_len)
 		return FALSE;
 	}
 
-	if (res < 0 || res < data_len)
+	if (res < 0 || (size_t)res < data_len)
 	{
 		if (res < 0)
 			res = 0;

@@ -184,7 +184,7 @@ static gboolean
 show_suggest_dropdown(GntEntry *entry)
 {
 	char *suggest = NULL;
-	int len;
+	gsize len;
 	int offset = 0, x, y;
 	int count = 0;
 	GList *iter;
@@ -815,7 +815,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 
 		for (str = text; *str; str = next)
 		{
-			int len;
+			gsize len;
 			next = g_utf8_find_next_char(str, NULL);
 			len = next - str;
 
@@ -834,7 +834,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 			if (entry->max && g_utf8_pointer_to_offset(entry->start, entry->end) >= entry->max)
 				continue;
 
-			if (entry->end + len - entry->start >= entry->buffer)
+			if ((gsize)(entry->end + len - entry->start) >= entry->buffer)
 			{
 				/* This will cause the buffer to grow */
 				char *tmp = g_strdup(entry->start);
@@ -1184,8 +1184,11 @@ void gnt_entry_add_to_history(GntEntry *entry, const char *text)
 {
 	g_return_if_fail(entry->history != NULL);   /* Need to set_history_length first */
 
-	if (g_list_length(entry->history) >= entry->histlength)
+	if (entry->histlength >= 0 &&
+		g_list_length(entry->history) >= (gsize)entry->histlength)
+	{
 		return;
+	}
 
 	entry->history = g_list_first(entry->history);
 	g_free(entry->history->data);

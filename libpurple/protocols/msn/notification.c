@@ -240,7 +240,7 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnTransaction *trans;
 	PurpleAccount *account;
 	gboolean protocol_supported = FALSE;
-	int proto_ver;
+	guint proto_ver;
 	size_t i;
 
 	session = cmdproc->session;

@@ -443,7 +443,7 @@ switch_window(GntWM *wm, int direction, gboolean urgent)
 		if (pos < 0) {
 			wid = g_list_last(wm->cws->list)->data;
 			pos = g_list_length(wm->cws->list) - 1;
-		} else if (pos >= g_list_length(wm->cws->list)) {
+		} else if ((guint)pos >= g_list_length(wm->cws->list)) {
 			wid = wm->cws->list->data;
 			pos = 0;
 		} else

@@ -245,7 +245,7 @@ write_to_parent(int fd, const void *buf, size_t count)
 	ssize_t written;
 
 	written = write(fd, buf, count);
-	if (written != count) {
+	if (written < 0 || (gsize)written != count) {
 		if (written < 0)
 			fprintf(stderr, "dns[%d]: Error writing data to "
 					"parent: %s\n", getpid(), strerror(errno));
@@ -554,7 +554,7 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;
 	}
-	if (rc < sizeof(dns_params)) {
+	if ((gsize)rc < sizeof(dns_params)) {
 		purple_debug_error("dns", "Tried to write %" G_GSSIZE_FORMAT
 				" bytes to child but only wrote %" G_GSSIZE_FORMAT "\n",
 				sizeof(dns_params), rc);

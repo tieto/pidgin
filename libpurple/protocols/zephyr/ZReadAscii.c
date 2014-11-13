@@ -10,7 +10,7 @@
 
 #include "internal.h"
 
-#define Z_cnvt_xtoi(c)  ((temp=(c)-'0'),(temp<10)?temp:((temp-='A'-'9'-1),(temp<16)?temp:-1))
+#define Z_cnvt_xtoi(c)  ((temp=(c)-'0'),(temp<10)?(int)temp:((temp-='A'-'9'-1),(temp<16)?(int)temp:-1))
 
 Code_t ZReadAscii(ptr, len, field, num)
     char *ptr;

@@ -429,7 +429,7 @@ regex_filter_all_cb(GtkTreeModel *m, GtkTreePath *p, GtkTreeIter *iter,
 
 	gtk_tree_model_get(m, iter, 0, &text, 1, &level, -1);
 
-	if (level >= purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel"))
+	if (level >= (PurpleDebugLevel)purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel"))
 		regex_match(win, text);
 
 	g_free(text);
@@ -457,7 +457,7 @@ regex_show_all_cb(GtkTreeModel *m, GtkTreePath *p, GtkTreeIter *iter,
 	PurpleDebugLevel level;
 
 	gtk_tree_model_get(m, iter, 0, &text, 1, &level, -1);
-	if (level >= purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel"))
+	if (level >= (PurpleDebugLevel)purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel"))
 		gtk_imhtml_append_text(GTK_IMHTML(win->text), text, 0);
 	g_free(text);
 
@@ -584,7 +584,7 @@ regex_row_changed_cb(GtkTreeModel *model, GtkTreePath *path,
 
 	gtk_tree_model_get(model, iter, 0, &text, 1, &level, -1);
 
-	if (level >= purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel")) {
+	if (level >= (PurpleDebugLevel)purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel")) {
 		if(gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter))) {
 			regex_match(win, text);
 		} else {
@@ -722,7 +722,7 @@ toolbar_context(GtkWidget *toolbar, GdkEventButton *event, gpointer null)
 		item = gtk_check_menu_item_new_with_mnemonic(text[i]);
 		g_object_set_data(G_OBJECT(item), "user_data", GINT_TO_POINTER(value[i]));
 		g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(toolbar_icon_pref_changed), toolbar);
-		if (value[i] == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/style"))
+		if (value[i] == (GtkToolbarStyle)purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/style"))
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	}

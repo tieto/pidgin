@@ -172,7 +172,7 @@ msn_slpmsgpart_ack(MsnSlpMessagePart *part, void *data)
 {
 	MsnSlpMessage *slpmsg;
 	guint64 offset;
-	long long real_size;
+	gsize real_size;
 
 	slpmsg = data;
 

@@ -595,8 +595,8 @@ struct chat_connection
 	int id;
 	PurpleConnection *gc;
 	PurpleConversation *conv;
-	int maxlen;
-	int maxvis;
+	guint16 maxlen;
+	guint16 maxvis;
 };
 
 /*
@@ -1212,7 +1212,7 @@ void aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint
 int byte_stream_new(ByteStream *bs, size_t len);
 int byte_stream_init(ByteStream *bs, guint8 *data, size_t len);
 void byte_stream_destroy(ByteStream *bs);
-int byte_stream_bytes_left(ByteStream *bs);
+size_t byte_stream_bytes_left(ByteStream *bs);
 int byte_stream_curpos(ByteStream *bs);
 int byte_stream_setpos(ByteStream *bs, size_t off);
 void byte_stream_rewind(ByteStream *bs);

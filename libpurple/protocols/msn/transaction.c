@@ -158,7 +158,7 @@ msn_transaction_unqueue(MsnTransaction *trans, MsnCmdProc *cmdproc)
 
 void
 msn_transaction_set_payload(MsnTransaction *trans,
-							const char *payload, int payload_len)
+							const char *payload, gsize payload_len)
 {
 	g_return_if_fail(trans   != NULL);
 	g_return_if_fail(payload != NULL);

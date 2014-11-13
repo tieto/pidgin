@@ -1254,7 +1254,7 @@ if test "x$GCC" = "xyes"; then
 			"-Wdeclaration-after-statement" \
 			"-Wendif-labels" \
 			"-Werror-implicit-function-declaration" \
-			"-Wextra -Wno-sign-compare -Wno-unused-parameter" \
+			"-Wextra -Wno-unused-parameter" \
 			"-Wformat-security" \
 				"-Werror=format-security" \
 			"-Winit-self" \

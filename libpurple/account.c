@@ -3038,7 +3038,8 @@ purple_accounts_reorder(PurpleAccount *account, gint new_index)
 	GList *l;
 
 	g_return_if_fail(account != NULL);
-	g_return_if_fail(new_index <= g_list_length(accounts));
+	g_return_if_fail(new_index >= 0);
+	g_return_if_fail((guint)new_index <= g_list_length(accounts));
 
 	index = g_list_index(accounts, account);
 

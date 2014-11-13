@@ -57,7 +57,7 @@ struct _MsnSlpMessage
 	 * This is the size of buffer, unless this is an outgoing file transfer,
 	 * in which case this is the size of the file.
 	 */
-	long long size;
+	gsize size;
 
 	GList *parts; /**< A list with the SlpMsgParts */
 

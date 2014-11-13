@@ -98,7 +98,7 @@ purple_xfer_status_type_to_string(PurpleXferStatusType type)
 		{ PURPLE_XFER_STATUS_CANCEL_LOCAL, "cancelled locally" },
 		{ PURPLE_XFER_STATUS_CANCEL_REMOTE, "cancelled remotely" }
 	};
-	int i;
+	gsize i;
 
 	for (i = 0; i < G_N_ELEMENTS(type_names); ++i)
 		if (type_names[i].type == type)
@@ -1073,7 +1073,7 @@ purple_xfer_read(PurpleXfer *xfer, guchar **buffer)
 			r = -1;
 	}
 
-	if (r == xfer->current_buffer_size)
+	if (r >= 0 && (gsize)r == xfer->current_buffer_size)
 		/*
 		 * We managed to read the entire buffer.  This means our this
 		 * network is fast and our buffer is too small, so make it
@@ -1128,7 +1128,7 @@ do_transfer(PurpleXfer *xfer)
 			else
 				wc = fwrite(buffer, 1, r, xfer->dest_fp);
 
-			if (wc != r) {
+			if (wc != (gsize)r) {
 				purple_debug_error("filetransfer", "Unable to write whole buffer.\n");
 				purple_xfer_cancel_local(xfer);
 				g_free(buffer);
@@ -1221,7 +1221,7 @@ do_transfer(PurpleXfer *xfer)
 				   that case buffer doesn't belong to us. */
 				g_free(buffer);
 			return;
-		} else if (r == result) {
+		} else if (r >= 0 && (gsize)r == result) {
 			/*
 			 * We managed to write the entire buffer.  This means our
 			 * network is fast and our buffer is too small, so make it

@@ -42,8 +42,8 @@ void purple_circ_buffer_destroy(PurpleCircBuffer *buf) {
 }
 
 static void grow_circ_buffer(PurpleCircBuffer *buf, gsize len) {
-	int in_offset = 0, out_offset = 0;
-	int start_buflen;
+	gsize in_offset = 0, out_offset = 0;
+	gsize start_buflen;
 
 	g_return_if_fail(buf != NULL);
 
@@ -70,10 +70,8 @@ static void grow_circ_buffer(PurpleCircBuffer *buf, gsize len) {
 	 * pointer, we need to shift the data */
 	if (in_offset < out_offset
 			|| (in_offset == out_offset && buf->bufused > 0)) {
-		int shift_n = MIN(buf->buflen - start_buflen,
-			in_offset);
-		memcpy(buf->buffer + start_buflen, buf->buffer,
-			shift_n);
+		gsize shift_n = MIN(buf->buflen - start_buflen, in_offset);
+		memcpy(buf->buffer + start_buflen, buf->buffer, shift_n);
 
 		/* If we couldn't fit the wrapped read buffer
 		 * at the end */
@@ -92,7 +90,7 @@ static void grow_circ_buffer(PurpleCircBuffer *buf, gsize len) {
 
 void purple_circ_buffer_append(PurpleCircBuffer *buf, gconstpointer src, gsize len) {
 
-	int len_stored;
+	gsize len_stored;
 
 	g_return_if_fail(buf != NULL);
 
@@ -105,8 +103,7 @@ void purple_circ_buffer_append(PurpleCircBuffer *buf, gconstpointer src, gsize l
 	 * One copy from inptr to the end of the buffer, and the
 	 * second copy from the start of the buffer to the end of src. */
 	if (buf->inptr >= buf->outptr)
-		len_stored = MIN(len, buf->buflen
-			- (buf->inptr - buf->buffer));
+		len_stored = MIN(len, buf->buflen - (buf->inptr - buf->buffer));
 	else
 		len_stored = len;
 
@@ -145,7 +142,7 @@ gboolean purple_circ_buffer_mark_read(PurpleCircBuffer *buf, gsize len) {
 	buf->outptr += len;
 	buf->bufused -= len;
 	/* wrap to the start if we're at the end */
-	if ((buf->outptr - buf->buffer) == buf->buflen)
+	if ((gsize)(buf->outptr - buf->buffer) == buf->buflen)
 		buf->outptr = buf->buffer;
 
 	return TRUE;

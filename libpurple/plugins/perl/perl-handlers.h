@@ -25,7 +25,7 @@ typedef struct
 	SV *callback;
 	SV *data;
 	PurplePlugin *plugin;
-	int iotag;
+	guint iotag;
 
 } PurplePerlTimeoutHandler;
 
@@ -44,7 +44,7 @@ typedef struct
 	SV *callback;
 	SV *data;
 	PurplePlugin *plugin;
-	int iotag;
+	guint iotag;
 
 } PurplePerlPrefsHandler;
 

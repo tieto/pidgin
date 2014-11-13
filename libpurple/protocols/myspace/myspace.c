@@ -1776,10 +1776,10 @@ msim_process_reply(MsimSession *session, MsimMessage *msg)
 	lid = msim_msg_get_integer(msg, "lid");
 
 	/* Unsolicited messages */
-	if (cmd == (MSIM_CMD_BIT_REPLY | MSIM_CMD_GET)) {
-		if (dsn == MG_SERVER_INFO_DSN && lid == MG_SERVER_INFO_LID) {
+	if (cmd == (guint)(MSIM_CMD_BIT_REPLY | MSIM_CMD_GET)) {
+		if (dsn == (guint)MG_SERVER_INFO_DSN && lid == (guint)MG_SERVER_INFO_LID) {
 			return msim_process_server_info(session, msg);
-		} else if (dsn == MG_WEB_CHALLENGE_DSN && lid == MG_WEB_CHALLENGE_LID) {
+		} else if (dsn == (guint)MG_WEB_CHALLENGE_DSN && lid == (guint)MG_WEB_CHALLENGE_LID) {
 			return msim_web_challenge(session, msg);
 		}
 	}
@@ -2989,7 +2989,7 @@ msim_send_raw(MsimSession *session, const gchar *msg)
 	purple_debug_info("msim", "msim_send_raw: writing <%s>\n", msg);
 	len = strlen(msg);
 
-	return msim_send_really_raw(session->gc, msg, len) == len;
+	return msim_send_really_raw(session->gc, msg, len) == (int)len;
 }
 
 static GHashTable *
@@ -3563,7 +3563,7 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 	l = purple_accounts_get_all();
 	while (l) {
 		if (purple_account_is_connected(l->data) &&
-			(uid == 0 || purple_account_get_int(l->data, "uid", 0) == uid)) {
+			(uid == 0 || purple_account_get_int(l->data, "uid", 0) == (int)uid)) {
 			account = l->data;
 			break;
 		}

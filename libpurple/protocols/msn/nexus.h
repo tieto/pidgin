@@ -206,7 +206,7 @@ struct _MsnNexus
 	char *cipher;
 	char *secret;
 	MsnTicketToken *tokens;
-	int token_len;
+	gsize token_len;
 };
 
 void msn_nexus_connect(MsnNexus *nexus);
