@@ -593,7 +593,7 @@ static void emoticon_returned(PurpleHttpConnection *http_conn,
 	purple_debug_info( MXIT_PLUGIN_ID, "read the length '%i'\n", em_size );
 #endif
 
-	if ( len - pos < em_size ) {
+	if ( len - pos < (gsize)em_size ) {
 		/* not enough bytes left in data! */
 		purple_debug_error( MXIT_PLUGIN_ID, "Invalid emoticon received from wapsite (data length too long)\n");
 		g_free( em_id );

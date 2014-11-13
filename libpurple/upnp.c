@@ -577,7 +577,7 @@ purple_upnp_discover_send_broadcast(UPnPDiscoveryData *dd)
 			gssize sent = sendto(dd->fd, sendMessage, totalSize, 0,
 				(struct sockaddr*) &(dd->server),
 				sizeof(struct sockaddr_in));
-			if(sent >= 0 && (gsize)sent == totalSize) {
+			if (sent >= 0 && (gsize)sent == totalSize) {
 				sentSuccess = TRUE;
 				break;
 			}

@@ -370,7 +370,7 @@ privacy_dialog_new(void)
 		                          _(menu_entries[i].text));
 
 		if (menu_entries[i].type == purple_account_get_privacy_type(dialog->account))
-			selected = i;
+			selected = (gssize)i;
 	}
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->type_menu), selected);
