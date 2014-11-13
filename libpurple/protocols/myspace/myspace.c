@@ -1040,7 +1040,7 @@ msim_add_contact_from_server_cb(MsimSession *session, const MsimMessage *user_lo
 	/* TODO: use 'Position' in contact_info to take into account where buddy is */
 	purple_blist_add_buddy(buddy, NULL, group, NULL /* insertion point */);
 
-	if (strtol(username, NULL, 10) == uid) {
+	if (strtoul(username, NULL, 10) == uid) {
 		/*
 		 * This user has not set their username!  Set their server
 		 * alias to their display name so that we don't see a bunch

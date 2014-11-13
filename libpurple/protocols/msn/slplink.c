@@ -422,7 +422,7 @@ msn_slplink_send_ack(MsnSlpLink *slplink, MsnP2PInfo *info)
 }
 
 static MsnSlpMessage *
-msn_slplink_message_find(MsnSlpLink *slplink, long session_id, long id)
+msn_slplink_message_find(MsnSlpLink *slplink, guint32 session_id, long id)
 {
 	GList *e;
 
