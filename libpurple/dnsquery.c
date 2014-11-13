@@ -421,7 +421,7 @@ cope_with_gdb_brokenness(void)
 	if(n < 0)
 		return;
 
-	e[MIN(n,sizeof(e)-1)] = '\0';
+	e[MIN((gsize)n,sizeof(e)-1)] = '\0';
 
 	if(strstr(e,"gdb")) {
 		purple_debug_info("dns",
