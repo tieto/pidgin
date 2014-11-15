@@ -82,6 +82,7 @@ static void irc_view_motd(PurplePluginAction *action)
 	body = g_strdup_printf("<span style=\"font-family: monospace;\">%s</span>", irc->motd->str);
 	purple_notify_formatted(gc, title, title, NULL, body, NULL, NULL);
 	g_free(title);
+	g_free(body);
 }
 
 static int do_send(struct irc_conn *irc, const char *buf, gsize len)
