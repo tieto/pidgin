@@ -1,0 +1,33 @@
+Description: Update the MSN_APPLICATION_ID to fix MSN login issues
+ Microsoft recently updated the MSN_APPLICATION_ID that the client
+ sends to the server in order to identify its version. The old ID
+ used is the application ID of Windows Live Messenger 2008 (8.5)
+ which Microsoft apparently no longer supports. When the client
+ attempts to retrieve the contact list, the server will reject
+ the request. This patch fixes the issue by updating the
+ MSN_APPLICATION_ID sent by Pidgin.
+ .
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: upstream, https://hg.pidgin.im/pidgin/main/diff/f6a91e6c77a4/libpurple/protocols/msn/contact.h
+Bug: (none)
+Bug-Debian: https://bugs.debian.org/769491
+Bug-Ubuntu: (none)
+Forwarded: (already fixed upstream)
+Reviewed-By: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Last-Update: 2014-11-14
+
+--- pidgin-2.10.10.orig/libpurple/protocols/msn/contact.h
++++ pidgin-2.10.10/libpurple/protocols/msn/contact.h
+@@ -60,7 +60,7 @@ typedef enum
+ #include "session.h"
+ #include "soap.h"
+ 
+-#define MSN_APPLICATION_ID "CFE80F9D-180F-4399-82AB-413F33A1FA11"
++#define MSN_APPLICATION_ID "484AAC02-7F59-41B7-9601-772045DCC569"
+ 
+ #define MSN_CONTACT_SERVER	"local-bay.contacts.msn.com"
+ 
