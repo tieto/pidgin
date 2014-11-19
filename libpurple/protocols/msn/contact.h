@@ -61,7 +61,7 @@ typedef enum
 #include "soap.h"
 
 /* Thanks to TReKiE on the #pidgin channel for this new ID. */
-#define MSN_APPLICATION_ID "484AAC02-7F59-41B7-9601-772045DCC569"
+#define MSN_APPLICATION_ID "F6D2794D-501F-443A-ADBE-8F1490FF30FD"
 
 #define MSN_CONTACT_SERVER	"local-bay.contacts.msn.com"
 
