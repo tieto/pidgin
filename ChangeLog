@@ -12,6 +12,11 @@ version 2.10.11 (?/?/?):
 	* Fix a bug that prevented plugin to load when compiled without GnuTLS.
 	  (mancha) (#16431)
 
+	MSN:
+	* Fix broken login due to server change (dx, TReKiE). (#16451, #16455)
+	* Fail early when buddy list is unavailable instead of wasting bandwidth
+	  endlessly re-trying.
+
 version 2.10.10 (10/22/14):
 	General:
 	* Check the basic constraints extension when validating SSL/TLS
