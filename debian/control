@@ -40,7 +40,8 @@ Description: multi-protocol instant messaging library
 Package: pidgin
 Architecture: any
 Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}
-Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
+Recommends: gstreamer0.10-alsa, gstreamer0.10-ffmpeg,
+ gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
 Suggests: ${shlibs:Suggests}
 Description: graphical multi-protocol instant messaging client for X
  Pidgin is a graphical, modular instant messaging client capable of using
