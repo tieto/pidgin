@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/pidgin/"
 "language/uk/)\n"
@@ -1889,6 +1889,150 @@ msgstr ""
 "Введіть ім'я користувача, якого ви бажаєте запросити, та введіть "
 "необов'язковий текст запрошення."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Чи визначена команда має оброблювати \"aim\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"aim\" URL-"
+"посилання."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Обробник URL-посилань \"aim\""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"aim\" URL-адрес, якщо увімкнено."
+
+msgid "Run the command in a terminal"
+msgstr "Запустити команду в терміналі"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Так, якщо команда, що використовується для обробки цього типу URL-посилань, "
+"має бути запущена у терміналі."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Чи визначена команда має оброблювати \"gg\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"gg\" URL-посилання."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Обробник URL-посилань \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Команда використовується для обробки \"gg\" URL-адрес, якщо увімкнено."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Чи визначена команда має оброблювати \"icq\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"icq\" URL-"
+"посилання."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Обробник URL-посилань \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"icq\" URL-адрес, якщо увімкнено."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Чи визначена команда має оброблювати \"irc\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"irc\" URL-"
+"посилання."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Обробник URL-посилань \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"irc\" URL-адрес, якщо увімкнено."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Чи визначена команда має оброблювати \"msnim\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"msnim\" URL-"
+"посилання."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Обробник URL-посилань \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"msnim\" URL-адрес, якщо увімкнено."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Чи визначена команда має оброблювати \"sip\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"sip\" URL-"
+"посилання."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Обробник URL-посилань \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"sip\" URL-адрес, якщо увімкнено."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Чи визначена команда має оброблювати \"xmpp\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"xmpp\" URL-"
+"посилання."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Обробник URL-посилань \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"xmpp\" URL-адрес, якщо увімкнено."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Чи визначена команда має оброблювати \"ymsgr\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"ymsgr\" URL-"
+"посилання."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Обробник URL-посилань \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"ymsgr\" URL-адрес, якщо увімкнено."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Не вдається отримати з'єднання: %s"
@@ -2062,150 +2206,6 @@ msgstr "Невдале передавання файлу до '%s'."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Невдале передавання файлу від %s."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Чи визначена команда має оброблювати \"aim\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"aim\" URL-"
-"посилання."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Обробник URL-посилань \"aim\""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"aim\" URL-адрес, якщо увімкнено."
-
-msgid "Run the command in a terminal"
-msgstr "Запустити команду в терміналі"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Так, якщо команда, що використовується для обробки цього типу URL-посилань, "
-"має бути запущена у терміналі."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Чи визначена команда має оброблювати \"gg\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"gg\" URL-посилання."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Обробник URL-посилань \"gg\""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Команда використовується для обробки \"gg\" URL-адрес, якщо увімкнено."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Чи визначена команда має оброблювати \"icq\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"icq\" URL-"
-"посилання."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Обробник URL-посилань \"icq\""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"icq\" URL-адрес, якщо увімкнено."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Чи визначена команда має оброблювати \"irc\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"irc\" URL-"
-"посилання."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Обробник URL-посилань \"irc\""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"irc\" URL-адрес, якщо увімкнено."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Чи визначена команда має оброблювати \"msnim\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"msnim\" URL-"
-"посилання."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Обробник URL-посилань \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"msnim\" URL-адрес, якщо увімкнено."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Чи визначена команда має оброблювати \"sip\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"sip\" URL-"
-"посилання."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Обробник URL-посилань \"sip\""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"sip\" URL-адрес, якщо увімкнено."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Чи визначена команда має оброблювати \"xmpp\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"xmpp\" URL-"
-"посилання."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Обробник URL-посилань \"xmpp\""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"xmpp\" URL-адрес, якщо увімкнено."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Чи визначена команда має оброблювати \"ymsgr\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"ymsgr\" URL-"
-"посилання."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Обробник URL-посилань \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"ymsgr\" URL-адрес, якщо увімкнено."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2886,6 +2886,56 @@ msgstr "Простий додаток"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Перевіряє, чи усе працює."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5889,11 +5939,9 @@ msgstr "Сервери MSN тимчасово вимикаються"
 msgid "Unable to authenticate: %s"
 msgstr "Не вдається пройти автентифікацію: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Перелік контактів MSN тимчасово недоступний. Зачекайте, та пізніше спробуйте "
-"ще раз."
 
 msgid "Handshaking"
 msgstr "Встановлення з'єднання"
@@ -10496,6 +10544,22 @@ msgstr ""
 "Сталася помилка під час читання %s. Файл не завантажений, а назва старого "
 "змінена на %s~."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Клієнт обміну миттєвими повідомленнями Pidgin"
 
@@ -11844,6 +11908,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Курдська"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Литовська"
 
@@ -11956,6 +12023,11 @@ msgid "Urdu"
 msgstr "Урду"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

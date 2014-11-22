@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Basque (http://www.transifex.com/projects/p/pidgin/language/"
 "eu/)\n"
@@ -1872,6 +1872,144 @@ msgstr ""
 "Gonbidatu nahi duzun erabiltzailearen izena idatzi ezazu, gonbidapen-mezu "
 "batekin (nahi baduzu)."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Ea zehaztutako aginduak \"aim\" URLak kudeatu beharko lituzkeen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"aim\" URLak kudeatu beharko "
+"balitu"
+
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" URLen kudeatzailea"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "\"aim\" URLak kudeatzeko erabilitako agindua, gaituz gero."
+
+msgid "Run the command in a terminal"
+msgstr "Terminalean exekutatu agindua"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Egia, URL-mota hau kudeatzeko erabilitako agindua terminalean exekutatu "
+"beharko balitz"
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Ea zehaztutako aginduak \"gg\" URLak kudeatu beharko lituzkeen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"gg\" URLak kudeatu beharko "
+"balitu"
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" URLen kudeatzailea"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "\"gg\" URLak kudeatzeko erabilitako agindua, gaituz gero."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Ea zehaztutako aginduak \"icq\" URLak kudeatu beharko lituzkeen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"icq\" URLak kudeatu beharko "
+"balitu"
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" URLen kudeatzailea"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "\"icq\" URLak kudeatzeko erabilitako agindua, gaituz gero."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Ea zehaztutako aginduak \"irc\" URLak kudeatu beharko lituzkeen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"irc\" URLak kudeatu beharko "
+"balitu"
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" URLen kudeatzailea"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "\"irc\" URLak kudeatzeko erabilitako agindua, gaituz gero."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Ea zehaztutako aginduak \"msnim\" URLak kudeatu beharko lituzkeen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"msnim\" URLak kudeatu "
+"beharko balitu"
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" URLen kudeatzailea"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "\"msnim\" URLak kudeatzeko erabilitako agindua, gaituz gero."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Ea zehaztutako aginduak \"sip\" URLak kudeatu beharko lituzkeen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"sip\" URLak kudeatu beharko "
+"balitu"
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" URLen kudeatzailea"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "\"sip\" URLak kudeatzeko erabilitako agindua, gaituz gero."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Ea zehaztutako aginduak \"xmpp\" URLak kudeatu beharko lituzkeen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"xmpp\" URLak kudeatu beharko "
+"balitu"
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" URLen kudeatzailea"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "\"xmpp\" URLak kudeatzeko erabilitako agindua, gaituz gero."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Ea zehaztutako aginduak \"ymsgr\" URLak kudeatu beharko lituzkeen"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Egia, \"agindua\" gakoan zehaztutako aginduak \"ymsgr\" URLak kudeatu "
+"beharko balitu"
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" URLen kudeatzailea"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "\"ymsgr\" URLak kudeatzeko erabilitako agindua, gaituz gero."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Ezin konexioa lortu: %s"
@@ -2045,144 +2183,6 @@ msgstr "Errorea fitxategia hona bidaltzean: %s"
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Errorea fitxategia hemendik jasotzean: %s"
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Ea zehaztutako aginduak \"aim\" URLak kudeatu beharko lituzkeen"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"aim\" URLak kudeatu beharko "
-"balitu"
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" URLen kudeatzailea"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "\"aim\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "Run the command in a terminal"
-msgstr "Terminalean exekutatu agindua"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Egia, URL-mota hau kudeatzeko erabilitako agindua terminalean exekutatu "
-"beharko balitz"
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Ea zehaztutako aginduak \"gg\" URLak kudeatu beharko lituzkeen"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"gg\" URLak kudeatu beharko "
-"balitu"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" URLen kudeatzailea"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "\"gg\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Ea zehaztutako aginduak \"icq\" URLak kudeatu beharko lituzkeen"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"icq\" URLak kudeatu beharko "
-"balitu"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" URLen kudeatzailea"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "\"icq\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Ea zehaztutako aginduak \"irc\" URLak kudeatu beharko lituzkeen"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"irc\" URLak kudeatu beharko "
-"balitu"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" URLen kudeatzailea"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "\"irc\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Ea zehaztutako aginduak \"msnim\" URLak kudeatu beharko lituzkeen"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"msnim\" URLak kudeatu "
-"beharko balitu"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" URLen kudeatzailea"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "\"msnim\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Ea zehaztutako aginduak \"sip\" URLak kudeatu beharko lituzkeen"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"sip\" URLak kudeatu beharko "
-"balitu"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" URLen kudeatzailea"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "\"sip\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Ea zehaztutako aginduak \"xmpp\" URLak kudeatu beharko lituzkeen"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"xmpp\" URLak kudeatu beharko "
-"balitu"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" URLen kudeatzailea"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "\"xmpp\" URLak kudeatzeko erabilitako agindua, gaituz gero."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Ea zehaztutako aginduak \"ymsgr\" URLak kudeatu beharko lituzkeen"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Egia, \"agindua\" gakoan zehaztutako aginduak \"ymsgr\" URLak kudeatu "
-"beharko balitu"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" URLen kudeatzailea"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "\"ymsgr\" URLak kudeatzeko erabilitako agindua, gaituz gero."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2857,6 +2857,56 @@ msgstr "Plugin Sinplea"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Gauza gehienak ondo dabiltzan frogatzeko proba."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5846,11 +5896,9 @@ msgstr "MSN zerbitzariak aldi baterako deskonektatuko dira"
 msgid "Unable to authenticate: %s"
 msgstr "Ezin balioztatu: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"MSN lagun-zerrenda ez dago eskuragarri une honetan. Itxaron, eta saiatu "
-"berriro."
 
 msgid "Handshaking"
 msgstr "Negoziaketa"
@@ -10363,6 +10411,22 @@ msgstr ""
 "Errore bat aurkitu da zure %s irakurtzean.  Ez da fitxategia kargatu, eta "
 "fitxategi zaharra berrizendatu da: %s~."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internet-Mezularia"
 
@@ -11692,6 +11756,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Kurduera"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Lituaniera"
 
@@ -11804,6 +11871,11 @@ msgid "Urdu"
 msgstr "Urdu"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

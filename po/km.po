@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Khmer (http://www.transifex.com/projects/p/pidgin/language/"
 "km/)\n"
@@ -1842,6 +1842,129 @@ msgid ""
 "invite message."
 msgstr "សូម​បញ្ចូល​ឈ្មោះ​របស់​អ្នកប្រើ​ដែល​អ្នក​ចង់​អញ្ជើញ រួម​ជា​មួយ​នឹង​សារ​អញ្ជើញ​ជា​ជម្រើស ។"
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "ថាតើ​ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរគ្រប់គ្រង URLs \"aim\" ។"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បានបញ្ជាក់​នៅ​​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"aim\" ។"
+
+msgid "The handler for \"aim\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"aim\""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"aim\" URLs ប្រសិន​បើ​បាន​បើក ។"
+
+msgid "Run the command in a terminal"
+msgstr "រត់​ពាក្យ​បញ្ជា​នៅ​ក្នុង​ស្ថានីយ"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​​រត់​នៅ​ក្នុង​ស្ថានីយ ។"
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "ថាតើ​ពាក្យ​បញ្ជា​ដែលបាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"gg\" ។"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"gg\" ។"
+
+msgid "The handler for \"gg\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រ​ងសម្រាប់ URLs \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​​ដើម្បី​គ្រប់គ្រង \"gg\" URLs ប្រសិនបើ​បាន​បើក ។"
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បានប​ញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"icq\" ។"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"icq\" ។"
+
+msgid "The handler for \"icq\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"icq\" URLs ប្រសិន​បើ​បាន​បើក ។"
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "ថាតើ​ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់គួរ​គ្រប់គ្រង URLs \"irc\" ។"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"irc\" ។"
+
+msgid "The handler for \"irc\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"irc\" URLs ប្រសិន​បើ​បានបើក ។"
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែលបានបញ្ជាក់គួរ​គ្រប់គ្រង URLs \"msnim\" ។"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"msnim\" ។"
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"msnim\" URLs ប្រសិន​បើ​បានបើក ។"
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"sip\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"sip\" ។"
+
+msgid "The handler for \"sip\" URLs"
+msgstr "កម្ម​វិធី​គ្រប់គ្រង​សម្រាប់ URLs \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"sip\" URLs ប្រសិនបើ​បានបើក ។"
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"xmpp\" ។"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"xmpp\" ។"
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"xmpp\" URLs ប្រសិន​បើ​បានបើក ។"
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "ថាតើ ពាក្យ​បញ្ជាក់​ដែលបានបញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"ymsgr\" ។"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"ymsgr\" ។"
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"ymsgr\" URLs ប្រសិន​បើ​បានបើក ។"
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "បានបរាជ័យ​ក្នុងការ​តភ្ជាប់ ៖ %s"
@@ -2015,129 +2138,6 @@ msgstr "បាន​បរាជ័យ​ក្នុងកា​រផ្ទេ
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "បាន​បរាជ័យ​ក្នុងការ​ផ្ទេរ​ពី %s ។"
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "ថាតើ​ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរគ្រប់គ្រង URLs \"aim\" ។"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បានបញ្ជាក់​នៅ​​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"aim\" ។"
-
-msgid "The handler for \"aim\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"aim\""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"aim\" URLs ប្រសិន​បើ​បាន​បើក ។"
-
-msgid "Run the command in a terminal"
-msgstr "រត់​ពាក្យ​បញ្ជា​នៅ​ក្នុង​ស្ថានីយ"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​​រត់​នៅ​ក្នុង​ស្ថានីយ ។"
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "ថាតើ​ពាក្យ​បញ្ជា​ដែលបាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"gg\" ។"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"gg\" ។"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រ​ងសម្រាប់ URLs \"gg\""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​​ដើម្បី​គ្រប់គ្រង \"gg\" URLs ប្រសិនបើ​បាន​បើក ។"
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បានប​ញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"icq\" ។"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"icq\" ។"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"icq\""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"icq\" URLs ប្រសិន​បើ​បាន​បើក ។"
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "ថាតើ​ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់គួរ​គ្រប់គ្រង URLs \"irc\" ។"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"irc\" ។"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"irc\""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"irc\" URLs ប្រសិន​បើ​បានបើក ។"
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែលបានបញ្ជាក់គួរ​គ្រប់គ្រង URLs \"msnim\" ។"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"msnim\" ។"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"msnim\" URLs ប្រសិន​បើ​បានបើក ។"
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"sip\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr "ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"sip\" ។"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "កម្ម​វិធី​គ្រប់គ្រង​សម្រាប់ URLs \"sip\""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"sip\" URLs ប្រសិនបើ​បានបើក ។"
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"xmpp\" ។"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"xmpp\" ។"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"xmpp\""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"xmpp\" URLs ប្រសិន​បើ​បានបើក ។"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "ថាតើ ពាក្យ​បញ្ជាក់​ដែលបានបញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"ymsgr\" ។"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"ymsgr\" ។"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"ymsgr\" URLs ប្រសិន​បើ​បានបើក ។"
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">មិនមាន​មុខងារ​អាន​ទៀតទេ</font></b>"
@@ -2799,6 +2799,56 @@ msgstr "កម្មវិធី​ជំនួយ​ធម្មតា"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "សាកល្បង​ដើម្បី​ដឹង​ថា អ្វីៗ​ជា​ច្រើន​កំពុង​ដំណើរការ ។"
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5742,9 +5792,9 @@ msgstr "ម៉ាស៊ីន​បម្រើ MSN នឹង​ត្រូវ�
 msgid "Unable to authenticate: %s"
 msgstr "មិនអាច​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ ៖ %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr "បញ្ជី​​មិត្តភក្ដិ​របស់​អ្នក MSN ​មិន​អាច​ប្រើ​បាន​ជា​បណ្ដោះ​អាសន្ន ។ សូម​រង់ចាំ ហើយ​ព្យាយាម​ម្ដង​ទៀត ។"
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
+msgstr ""
 
 msgid "Handshaking"
 msgstr "ការ​ចាប់ដៃ"
@@ -10164,6 +10214,22 @@ msgstr ""
 "មានកំហុស​មួយ​ក្នុងការ​អាន​ %s របស់​អ្នក ។ ឯកសារ​មិន​ត្រូវ​បានផ្ទុក​ទេ ហើយ​ឯកសារ​ចាស់​ត្រូវ​បាន​ប្ដូរ​ឈ្មោះ​ទៅ​"
 "ជា %s~ ។"
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "កម្មវិធី​ផ្ញើសារ​អ៊ីនធឺណិត​របស់ Pidgin"
 
@@ -11485,6 +11551,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "ឃឺដ"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "លីទុយអានី"
 
@@ -11597,6 +11666,11 @@ msgid "Urdu"
 msgstr "​អ៊ូរ្ឌូ"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

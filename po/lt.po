@@ -10,9 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-07-10 06:30+0000\n"
-"Last-Translator: Algimantas Margevičius <gymka@archlinux.lt>\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Lithuanian (http://www.transifex.com/projects/p/pidgin/"
 "language/lt/)\n"
 "Language: lt\n"
@@ -1903,6 +1903,144 @@ msgstr ""
 "Prašom įvesti naudotojo, kurį norite pakviesti, vardą, kartu su neprivaloma "
 "pakvietimo žinute."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Ar nurodytoji komanda turėtų apdoroti „aim“ universaliuosius adresus"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „aim“ "
+"universaliuosius adresus."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Komanda „aim“ universaliųjų adresų apdorojimui"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Komanda „aim“ universaliųjų adresų apdorojimui, jei aktyvuota."
+
+msgid "Run the command in a terminal"
+msgstr "Vykdyti komandą terminale"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"„True“, jeigu komanda, turinti apdoroti šio tipo universaliuosius adresus, "
+"turi būti leidžiama terminale."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Ar nurodytoji komanda turėtų apdoroti „gg“ universaliuosius adresus"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „gg“ "
+"universaliuosius adresus."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Komanda „aim“ universaliųjų adresų apdorojimui"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Komanda „gg“ universaliųjų adresų apdorojimui, jei aktyvuota."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Ar nurodytoji komanda turėtų apdoroti „icq“ universaliuosius adresus"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „icq“ "
+"universaliuosius adresus."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Komanda „icq“ universaliųjų adresų apdorojimui"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Komanda „icq“ universaliųjų adresų apdorojimui, jei aktyvuota."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Ar nurodytoji komanda turėtų apdoroti „irc“ universaliuosius adresus"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „irc“ "
+"universaliuosius adresus."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Komanda „irc“ universaliųjų adresų apdorojimui"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Komanda „irc“ universaliųjų adresų apdorojimui, jei aktyvuota."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Ar nurodytoji komanda turėtų apdoroti „msnim“ universaliuosius adresus"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „msnim“ "
+"universaliuosius adresus."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Komanda „msnim“ universaliųjų adresų apdorojimui"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Komanda „msnim“ universaliųjų adresų apdorojimui, jei aktyvuota."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Ar nurodytoji komanda turėtų apdoroti „sip“ universaliuosius adresus"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „sip“ "
+"universaliuosius adresus."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Komanda „sip“ universaliųjų adresų apdorojimui"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Komanda „sip“ universaliųjų adresų apdorojimui, jei aktyvuota."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Ar nurodytoji komanda turėtų apdoroti „xmpp“ universaliuosius adresus"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „xmpp“ "
+"universaliuosius adresus."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Komanda „xmpp“ universaliųjų adresų apdorojimui"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Komanda „xmpp“ universaliųjų adresų apdorojimui, jei aktyvuota."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Ar nurodytoji komanda turėtų apdoroti „ysmgr“ universaliuosius adresus"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „ysmgr“ "
+"universaliuosius adresus."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Komanda „ysmgr“ universaliųjų adresų apdorojimui"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Komanda „ysmgr“ universaliųjų adresų apdorojimui, jei aktyvuota."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Nepavyko gauti jungties: %s"
@@ -2076,144 +2214,6 @@ msgstr "Įvyko failo perdavimo bičiuliui %s klaida."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Įvyko failo gavimo iš %s klaida."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Ar nurodytoji komanda turėtų apdoroti „aim“ universaliuosius adresus"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „aim“ "
-"universaliuosius adresus."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Komanda „aim“ universaliųjų adresų apdorojimui"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Komanda „aim“ universaliųjų adresų apdorojimui, jei aktyvuota."
-
-msgid "Run the command in a terminal"
-msgstr "Vykdyti komandą terminale"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"„True“, jeigu komanda, turinti apdoroti šio tipo universaliuosius adresus, "
-"turi būti leidžiama terminale."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Ar nurodytoji komanda turėtų apdoroti „gg“ universaliuosius adresus"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „gg“ "
-"universaliuosius adresus."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Komanda „aim“ universaliųjų adresų apdorojimui"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Komanda „gg“ universaliųjų adresų apdorojimui, jei aktyvuota."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Ar nurodytoji komanda turėtų apdoroti „icq“ universaliuosius adresus"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „icq“ "
-"universaliuosius adresus."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Komanda „icq“ universaliųjų adresų apdorojimui"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Komanda „icq“ universaliųjų adresų apdorojimui, jei aktyvuota."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Ar nurodytoji komanda turėtų apdoroti „irc“ universaliuosius adresus"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „irc“ "
-"universaliuosius adresus."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Komanda „irc“ universaliųjų adresų apdorojimui"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Komanda „irc“ universaliųjų adresų apdorojimui, jei aktyvuota."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Ar nurodytoji komanda turėtų apdoroti „msnim“ universaliuosius adresus"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „msnim“ "
-"universaliuosius adresus."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Komanda „msnim“ universaliųjų adresų apdorojimui"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Komanda „msnim“ universaliųjų adresų apdorojimui, jei aktyvuota."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Ar nurodytoji komanda turėtų apdoroti „sip“ universaliuosius adresus"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „sip“ "
-"universaliuosius adresus."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Komanda „sip“ universaliųjų adresų apdorojimui"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Komanda „sip“ universaliųjų adresų apdorojimui, jei aktyvuota."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Ar nurodytoji komanda turėtų apdoroti „xmpp“ universaliuosius adresus"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „xmpp“ "
-"universaliuosius adresus."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Komanda „xmpp“ universaliųjų adresų apdorojimui"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Komanda „xmpp“ universaliųjų adresų apdorojimui, jei aktyvuota."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Ar nurodytoji komanda turėtų apdoroti „ysmgr“ universaliuosius adresus"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"„True“, jeigu komanda, nurodyta „command“ rakte, turi apdoroti „ysmgr“ "
-"universaliuosius adresus."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Komanda „ysmgr“ universaliųjų adresų apdorojimui"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Komanda „ysmgr“ universaliųjų adresų apdorojimui, jei aktyvuota."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2890,6 +2890,56 @@ msgstr "Paprastas papildinys"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Patikrina, ar dauguma dalykų veikia"
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5903,11 +5953,9 @@ msgstr "MSN serveriai yra laikinai išjungiami"
 msgid "Unable to authenticate: %s"
 msgstr "Negalima patikrinti tapatybės: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Jūsų MSN bičiulių sąrašas yra laikinai neprieinamas. Prašome palaukti ir "
-"pabandyti iš naujo."
 
 msgid "Handshaking"
 msgstr "Pasisveikinimas"
@@ -10506,6 +10554,22 @@ msgstr ""
 "Failo %s skaitymo metu įvyko klaida.  Failas įkeltas nebuvo, o senasis "
 "failas pervadintas į %s~."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin pokalbiai internete"
 
@@ -11851,6 +11915,9 @@ msgstr "Kašmyro"
 msgid "Kurdish"
 msgstr "Kurdų kalba"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Lietuvių kalba"
 
@@ -11964,6 +12031,11 @@ msgstr "Urdu kalba"
 
 msgid "Uzbek"
 msgstr "Uzbekų"
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vietnamiečių kalba"

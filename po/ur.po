@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Urdu (http://www.transifex.com/projects/p/pidgin/language/"
 "ur/)\n"
@@ -1811,6 +1811,144 @@ msgstr ""
 "براہ کرمصارف کا نام داخل کریں جسے آپ مدعو کرنا چاہتےہیں، آپشنل دعوتی پیام کے "
 "ساتھ۔"
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "خواہ  مختص كیا گیا كمانڈ \"aim\" URLs كو ہینڈل كرتا ہے۔"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے \"aim\" URLs. ہینڈل كرنا "
+"چاہیے۔"
+
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" URLs كے لیے ہینڈل كرنے  والا"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "كمانڈ  ہینڈل كرنے كے لیے استعمال كرتے ہیں  \"aim\" URLs، اگر ممكن ہو"
+
+msgid "Run the command in a terminal"
+msgstr "ٹرمینل میں كمانڈ رن كیجیے"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"صحیح اگر  كمانڈ اس ٹائپ كے URL كو ہینڈل كرنے لیے استعمال كیا جاتا ہے ٹرمینل "
+"میں رن كرنا ضروری ہے۔"
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "خواہ  مختص كیا گیا كمانڈ \"gg\" URLs كو ہینڈل كرتا ہے۔"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے \"gg\" URLs.. ہینڈل كرنا "
+"چاہیے۔"
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" URLs كے لیے ہینڈل كرنے  والا"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "كمانڈ  \"gg\" URLs,  استعمال كے لیے ہینڈل كیا جاتا ہے۔ اگر ممكن ۔"
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "خواہ  مختص كیا گیا كمانڈ \"icq\" URLsكو ہینڈل كرتا ہے۔"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے \"icq\" URLs... ہینڈل "
+"كرنا چاہیے۔"
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" URLsكے لیے ہینڈل كرنے  والا"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "كمانڈ \"icq\" URLs  ہینڈل كے لیے استعمال كیا جاتا ہے، اگر ممكن ہو۔"
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "خواہ  مختص كیا گیا كمانڈ \"irc\" URLsكو ہینڈل كرتا ہے۔"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے  \"irc\" URLs... ہینڈل "
+"كرنا چاہیے۔"
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" URLsكے لیے ہینڈل كرنے والا"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "كمانڈ \"irc\" URLs,ہینڈل كے لیے استعمال كیا جاتا ہے، اگر ممكن ہو۔"
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "خواہ  مختص كیا گیا كمانڈ \"msnim\" URLsكو ہینڈل كرتا ہے۔"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے  \"msnim\" URLs.... "
+"ہینڈل كرنا چاہیے۔"
+
+msgid "The handler for \"msnim\" URLs"
+msgstr " \"msnim\" URLsكے لیے ہینڈل كرنے والا"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "كمانڈ\"msnim\" URLsہینڈل كے لیے استعمال كیا جاتا ہے، اگر ممكن ہو۔"
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "خواہ  مختص كیا گیا كمانڈ  \"sip\" URLsكو ہینڈل كرتا ہے۔"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے  \"sip\" URLs..... ہینڈل "
+"كرنا چاہیے۔"
+
+msgid "The handler for \"sip\" URLs"
+msgstr "r \"sip\" URLsكے لیے ہینڈل كرنے والا"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "كمانڈ\"sip\" URLsہینڈل كے لیے استعمال كیا جاتا ہے، اگر ممكن ہو۔"
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "خواہ  مختص كیا گیا كمانڈ  \"xmpp\" URLsكو ہینڈل كرتا ہے۔"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے  \"xmpp\" URLs...... "
+"ہینڈل كرنا چاہیے۔"
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" URLsكے لیے ہینڈل كرنے والا"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "كمانڈ\"xmpp\" URLsہینڈل كے لیے استعمال كیا جاتا ہے، اگر ممكن ہو۔"
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "خواہ  مختص كیا گیا كمانڈ  \"ymsgr\" URLsكو ہینڈل كرتا ہے۔"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے  \"ymsgr\" URLs....... "
+"ہینڈل كرنا چاہیے۔"
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr " \"ymsgr\" URLsكے لیے ہینڈل كرنے والا"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "كمانڈ \"ymsgr\" URLsہینڈل كے لیے استعمال كیا جاتا ہے، اگر ممكن ہو۔"
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "كنیكشن لینے میں نا كامیاب:%s"
@@ -1984,144 +2122,6 @@ msgstr "%sمیں فائل ٹرانسفر ناکام ہوا۔"
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "%sسے فائل ٹرانسفر ناکام ہوا۔"
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "خواہ  مختص كیا گیا كمانڈ \"aim\" URLs كو ہینڈل كرتا ہے۔"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے \"aim\" URLs. ہینڈل كرنا "
-"چاہیے۔"
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" URLs كے لیے ہینڈل كرنے  والا"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "كمانڈ  ہینڈل كرنے كے لیے استعمال كرتے ہیں  \"aim\" URLs، اگر ممكن ہو"
-
-msgid "Run the command in a terminal"
-msgstr "ٹرمینل میں كمانڈ رن كیجیے"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"صحیح اگر  كمانڈ اس ٹائپ كے URL كو ہینڈل كرنے لیے استعمال كیا جاتا ہے ٹرمینل "
-"میں رن كرنا ضروری ہے۔"
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "خواہ  مختص كیا گیا كمانڈ \"gg\" URLs كو ہینڈل كرتا ہے۔"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے \"gg\" URLs.. ہینڈل كرنا "
-"چاہیے۔"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" URLs كے لیے ہینڈل كرنے  والا"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "كمانڈ  \"gg\" URLs,  استعمال كے لیے ہینڈل كیا جاتا ہے۔ اگر ممكن ۔"
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "خواہ  مختص كیا گیا كمانڈ \"icq\" URLsكو ہینڈل كرتا ہے۔"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے \"icq\" URLs... ہینڈل "
-"كرنا چاہیے۔"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" URLsكے لیے ہینڈل كرنے  والا"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "كمانڈ \"icq\" URLs  ہینڈل كے لیے استعمال كیا جاتا ہے، اگر ممكن ہو۔"
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "خواہ  مختص كیا گیا كمانڈ \"irc\" URLsكو ہینڈل كرتا ہے۔"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے  \"irc\" URLs... ہینڈل "
-"كرنا چاہیے۔"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" URLsكے لیے ہینڈل كرنے والا"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "كمانڈ \"irc\" URLs,ہینڈل كے لیے استعمال كیا جاتا ہے، اگر ممكن ہو۔"
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "خواہ  مختص كیا گیا كمانڈ \"msnim\" URLsكو ہینڈل كرتا ہے۔"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے  \"msnim\" URLs.... "
-"ہینڈل كرنا چاہیے۔"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr " \"msnim\" URLsكے لیے ہینڈل كرنے والا"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "كمانڈ\"msnim\" URLsہینڈل كے لیے استعمال كیا جاتا ہے، اگر ممكن ہو۔"
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "خواہ  مختص كیا گیا كمانڈ  \"sip\" URLsكو ہینڈل كرتا ہے۔"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے  \"sip\" URLs..... ہینڈل "
-"كرنا چاہیے۔"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "r \"sip\" URLsكے لیے ہینڈل كرنے والا"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "كمانڈ\"sip\" URLsہینڈل كے لیے استعمال كیا جاتا ہے، اگر ممكن ہو۔"
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "خواہ  مختص كیا گیا كمانڈ  \"xmpp\" URLsكو ہینڈل كرتا ہے۔"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے  \"xmpp\" URLs...... "
-"ہینڈل كرنا چاہیے۔"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" URLsكے لیے ہینڈل كرنے والا"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "كمانڈ\"xmpp\" URLsہینڈل كے لیے استعمال كیا جاتا ہے، اگر ممكن ہو۔"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "خواہ  مختص كیا گیا كمانڈ  \"ymsgr\" URLsكو ہینڈل كرتا ہے۔"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"صحیح اگر كمانڈ \"command\" كلید میں مختص كی جاتی ہے  \"ymsgr\" URLs....... "
-"ہینڈل كرنا چاہیے۔"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr " \"ymsgr\" URLsكے لیے ہینڈل كرنے والا"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "كمانڈ \"ymsgr\" URLsہینڈل كے لیے استعمال كیا جاتا ہے، اگر ممكن ہو۔"
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><فانٹ رنگ=\"   </فانٹ></b>\">لاگر میں کوئی پڑھنے کا فنکشن نہیں ہے "
@@ -2766,6 +2766,56 @@ msgstr "سادہ پلگ ان"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "زیادہ چیزیں کام کررہی ہیں یا نہیں دیکھنے کے لئے جانچ کرتاہے۔"
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5718,11 +5768,9 @@ msgstr ""
 msgid "Unable to authenticate: %s"
 msgstr " کی تصدیق کرنے میں ناقابل:%s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"آپ کی MSN  بڈی فہرست عارضی طور پر غیر دستیاب ہے۔ براہ کرم انتظار کریں اور "
-"دوبارہ کوشش کریں۔"
 
 msgid "Handshaking"
 msgstr "مصافحہ کرنا"
@@ -10153,6 +10201,22 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr ""
 
@@ -11464,6 +11528,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "كرڈش"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "لتھو نین"
 
@@ -11576,6 +11643,11 @@ msgid "Urdu"
 msgstr ""
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

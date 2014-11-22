@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Norwegian Nynorsk (http://www.transifex.com/projects/p/pidgin/"
 "language/nn/)\n"
@@ -1880,6 +1880,144 @@ msgstr ""
 "Skriv inn namnet på brukaren du ønskjer å invitera. Du kan ta med ei valfri "
 "velkomstmelding."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"aim\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"aim\"-adresser."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Handteraren av \"aim\"-adresser"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"aim\"-adresser (dersom teken i bruk)."
+
+msgid "Run the command in a terminal"
+msgstr "Kjør kommandoen i eit terminalvindauge"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Sann dersom kommandoen som skal handtera denne adressetypen bør kjørast i "
+"ein terminal."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"gg\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera \"gg"
+"\"-adresser."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Handteraren av \"gg\"-adresser"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"gg\"-adresser (dersom teken i bruk)."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"icq\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"icq\"-adresser."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Handteraren av \"icq\"-adresser"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"icq\"-adresser (dersom teken i bruk)."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"irc\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"irc\"-adresser."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Handteraren av \"irc\"-adresser"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"irc\"-adresser (dersom teken i bruk)."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"msnim\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"msnim\"-adresser."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Handteraren av \"msnim\"-adresser"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"msnim\"-adresser (dersom teken i bruk)."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"sip\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"sip\"-adresser."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Handteraren av \"sip\"-adresser"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"sip\"-adresser (dersom teken i bruk)."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"xmpp\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"xmpp\"-adresser."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Handteraren av \"xmpp\"-adresser"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"xmpp\"-adresser (dersom teken i bruk)."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"ymsgr\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"ymsgr\"-adresser."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Handteraren av \"ymsgr\"-adresser"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"ymsgr\"-adresser (dersom teken i bruk)."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Klarte ikkje å oppnå samband: %s"
@@ -2054,144 +2192,6 @@ msgstr "Filoverføringa til %s feila."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Filoverføringa frå %s feila."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"aim\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"aim\"-adresser."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Handteraren av \"aim\"-adresser"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"aim\"-adresser (dersom teken i bruk)."
-
-msgid "Run the command in a terminal"
-msgstr "Kjør kommandoen i eit terminalvindauge"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Sann dersom kommandoen som skal handtera denne adressetypen bør kjørast i "
-"ein terminal."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"gg\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera \"gg"
-"\"-adresser."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Handteraren av \"gg\"-adresser"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"gg\"-adresser (dersom teken i bruk)."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"icq\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"icq\"-adresser."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Handteraren av \"icq\"-adresser"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"icq\"-adresser (dersom teken i bruk)."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"irc\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"irc\"-adresser."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Handteraren av \"irc\"-adresser"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"irc\"-adresser (dersom teken i bruk)."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"msnim\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"msnim\"-adresser."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Handteraren av \"msnim\"-adresser"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"msnim\"-adresser (dersom teken i bruk)."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"sip\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"sip\"-adresser."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Handteraren av \"sip\"-adresser"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"sip\"-adresser (dersom teken i bruk)."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"xmpp\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"xmpp\"-adresser."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Handteraren av \"xmpp\"-adresser"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"xmpp\"-adresser (dersom teken i bruk)."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"ymsgr\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"ymsgr\"-adresser."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Handteraren av \"ymsgr\"-adresser"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"ymsgr\"-adresser (dersom teken i bruk)."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Loggaren har ingen lesefunksjon</font></b>"
@@ -2865,6 +2865,56 @@ msgstr "Enkelt programtillegg"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Testar om dei fleste tinga verkar som dei skal."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5856,10 +5906,9 @@ msgstr "MSN-tenarane vil vera mellombels nede"
 msgid "Unable to authenticate: %s"
 msgstr "Klarte ikkje å autentisera: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"MSN-vennelista di er mellombels utilgjengeleg. Vent ei stund og prøv igjen."
 
 msgid "Handshaking"
 msgstr "Protokollsjekk"
@@ -10403,6 +10452,22 @@ msgstr ""
 "Ein feil oppstod under lesinga av %s di. Fila er ikkje blitt lasta og den "
 "gamle fila har fått det nye namnet %s~."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internett meldingsklient"
 
@@ -11742,6 +11807,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Kurdisk"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Litauisk"
 
@@ -11854,6 +11922,11 @@ msgid "Urdu"
 msgstr "Urdu"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"
