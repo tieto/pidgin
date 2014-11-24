@@ -75,7 +75,7 @@ version 3.0.0 (??/??/????):
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
 
-version 2.10.11 (?/?/?):
+version 2.10.11 (11/23/14):
 	General:
 	* Fix handling of Self-Signed SSL/TLS Certificates when using the NSS
 	  plugin (#16412)
@@ -86,6 +86,12 @@ version 2.10.11 (?/?/?):
 	Gadu-Gadu:
 	* Fix a bug that prevented plugin to load when compiled without GnuTLS.
 	  (mancha) (#16431)
+	* Fix build for platforms without AF_LOCAL definition. (#16404)
+
+	MSN:
+	* Fix broken login due to server change (dx, TReKiE). (#16451, #16455)
+	* Fail early when buddy list is unavailable instead of wasting bandwidth
+	  endlessly re-trying.
 
 version 2.10.10 (10/22/14):
 	General:

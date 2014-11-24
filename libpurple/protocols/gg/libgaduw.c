@@ -87,6 +87,14 @@ static void ggp_libgaduw_debug_handler(int level, const char * format,
 
 	msg = g_strdup_vprintf(format, args);
 
+	if (!msg) {
+		purple_debug_fatal("gg",
+			"failed to vprintf the following message: %s",
+			format ? format : "(null)\n");
+
+		return;
+	}
+
 	if (level & GG_DEBUG_ERROR)
 		purple_level = PURPLE_DEBUG_ERROR;
 	else if (level & GG_DEBUG_WARNING)

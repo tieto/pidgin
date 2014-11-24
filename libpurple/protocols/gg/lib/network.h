@@ -105,6 +105,10 @@ static inline void gg_win32_init_network(void)
 #  define INADDR_NONE ((in_addr_t) 0xffffffff)
 #endif
 
+#ifndef AF_LOCAL
+#  define AF_LOCAL AF_UNIX
+#endif
+
 static inline int gg_fd_set_nonblocking(int fd)
 {
 	int success;

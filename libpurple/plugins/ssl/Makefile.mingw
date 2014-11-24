@@ -13,7 +13,7 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 TARGET = ssl
 TARGET_NSS = ssl-nss
 TARGET_GNUTLS = ssl-gnutls
-TARGET_NSSPREEFS = nss-prefs
+TARGET_NSSPREFS = nss-prefs
 
 ##
 ## INCLUDE PATHS

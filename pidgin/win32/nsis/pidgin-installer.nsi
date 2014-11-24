@@ -338,6 +338,8 @@ Section $(PIDGINSECTIONTITLE) SecPidgin
     ;Delete old liboscar and libjabber since they tend to be problematic
     Delete "$INSTDIR\plugins\liboscar.dll"
     Delete "$INSTDIR\plugins\libjabber.dll"
+    ;Delete misnamed nss-prefs plugin from 2.10.11
+    Delete "$INSTDIR\plugins\.dll"
 
     File /r /x locale /x Gtk ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
 

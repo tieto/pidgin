@@ -96,7 +96,8 @@ msn_callback_state_free(MsnCallbackState *state)
 	g_free(state->old_group_name);
 	g_free(state->new_group_name);
 	g_free(state->guid);
-	purple_xmlnode_free(state->body);
+	if (state->body)
+		purple_xmlnode_free(state->body);
 
 	g_free(state);
 }
