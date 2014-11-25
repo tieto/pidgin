@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
 "PO-Revision-Date: 2010-11-22 14:17+0300\n"
 "Last-Translator: Andrey Chemyshev <chemyshev.andrey@gmail.com>\n"
 "Language-Team: Mari <muter@lists.linux-ink.ru>\n"
@@ -1895,6 +1895,133 @@ msgid ""
 "invite message."
 msgstr "Пайдаланышын лӱмжым пурто, кудым тый тыглай ешартыш текст дене ӱжнет."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Палемдыме команде \"aim\" URL-ым келыштарышаш мо"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Чын, \"command\" сравочышто ойлымо команде \"aim\" кыл деке эҥерта гын."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "\"aim\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Run the command in a terminal"
+msgstr "Терминалыште командым шукташ"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr "Чын, тыгай кылвер дене ончыктымо командым терминалыште шуктыман гын."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Палемдыме команде \"gg\" URL-ым келыштарышаш мо"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr "Чын, \"command\" сравочышто ойлымо команде \"gg\" кыл деке эҥерта гын."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" URL -лан келыштарыше"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "\"gg\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Палемдыме команде \"icq\" URL-ым келыштарышаш мо"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Чын, \"command\" сравочышто ойлымо команде \"icq\" кыл деке эҥерта гын."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "\"icq\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Палемдыме команде \"irc\" URL-ым келыштарышаш мо"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Чын, \"command\" сравочышто ойлымо команде \"irc\" кыл деке эҥерта гын."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "\"irc\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Палемдыме команде \"msnim\" URL-ым келыштарышаш мо"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Чын, \"command\" сравочышто ойлымо команде \"msnim\" кыл деке эҥерта гын."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "\"msnim\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Палемдыме команде \"sip\" URL-ым келыштарышаш мо"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Чын, \"command\" сравочышто ойлымо команде \"sip\" кыл деке эҥерта гын."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "\"sip\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Палемдыме команде \"xmpp\" URL-ым келыштарышаш мо"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Чын, \"command\" сравочышто ойлымо команде \"xmpp\" кыл деке эҥерта гын."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "\"xmpp\" URL дене кучылталтше команде, чӱктымӧ гын."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Палемдыме команде \"ymsgr\" URL-ым келыштарышаш мо"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Чын, \"command\" сравочышто ойлымо команде \"ymsgr\" кыл деке эҥерта гын."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" URL-лан келыштарыше"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "\"ymsgr\" URL дене кучылталтше команде, чӱктымӧ гын."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Ушымашым налын кертме огыл: %s"
@@ -2068,133 +2195,6 @@ msgstr "%s-лан файл колтымашым ыштен кертме огыл
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "%s деч файл колтымашым ыштен кертме огыл."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Палемдыме команде \"aim\" URL-ым келыштарышаш мо"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Чын, \"command\" сравочышто ойлымо команде \"aim\" кыл деке эҥерта гын."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" URL-лан келыштарыше"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "\"aim\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "Run the command in a terminal"
-msgstr "Терминалыште командым шукташ"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr "Чын, тыгай кылвер дене ончыктымо командым терминалыште шуктыман гын."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Палемдыме команде \"gg\" URL-ым келыштарышаш мо"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr "Чын, \"command\" сравочышто ойлымо команде \"gg\" кыл деке эҥерта гын."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" URL -лан келыштарыше"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "\"gg\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Палемдыме команде \"icq\" URL-ым келыштарышаш мо"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Чын, \"command\" сравочышто ойлымо команде \"icq\" кыл деке эҥерта гын."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" URL-лан келыштарыше"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "\"icq\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Палемдыме команде \"irc\" URL-ым келыштарышаш мо"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Чын, \"command\" сравочышто ойлымо команде \"irc\" кыл деке эҥерта гын."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" URL-лан келыштарыше"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "\"irc\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Палемдыме команде \"msnim\" URL-ым келыштарышаш мо"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Чын, \"command\" сравочышто ойлымо команде \"msnim\" кыл деке эҥерта гын."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" URL-лан келыштарыше"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "\"msnim\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Палемдыме команде \"sip\" URL-ым келыштарышаш мо"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Чын, \"command\" сравочышто ойлымо команде \"sip\" кыл деке эҥерта гын."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" URL-лан келыштарыше"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "\"sip\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Палемдыме команде \"xmpp\" URL-ым келыштарышаш мо"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Чын, \"command\" сравочышто ойлымо команде \"xmpp\" кыл деке эҥерта гын."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" URL-лан келыштарыше"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "\"xmpp\" URL дене кучылталтше команде, чӱктымӧ гын."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Палемдыме команде \"ymsgr\" URL-ым келыштарышаш мо"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Чын, \"command\" сравочышто ойлымо команде \"ymsgr\" кыл деке эҥерта гын."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" URL-лан келыштарыше"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "\"ymsgr\" URL дене кучылталтше команде, чӱктымӧ гын."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2873,6 +2873,62 @@ msgstr "Тыглай плагин"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Чыла чын ыштымым терга."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+#, fuzzy
+msgid "Minimum Version"
+msgstr "Клиент версий"
+
+#, fuzzy
+msgid "Maximum Version"
+msgstr "Вашмутын эн кугу вучымо жап:"
+
+#, fuzzy
+msgid "SSL 2"
+msgstr "SSL FAQ"
+
+#, fuzzy
+msgid "SSL 3"
+msgstr "SSL FAQ"
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+#, fuzzy
+msgid "Ciphers"
+msgstr "Шифр"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "NSS Preferences"
+msgstr "Келыштарымаш-влак"
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5925,8 +5981,8 @@ msgstr "MSN сервер-влак жаплан йӧрыкталтыт."
 msgid "Unable to authenticate: %s"
 msgstr "Чынлыкым терген керташ ыш лий: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, fuzzy, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
 "Тыйын MSN мутланыше лӱмер жаплан лиймеямде огыл. Тидым варарак ыштен ончо."
 
@@ -10546,6 +10602,24 @@ msgstr ""
 "%s лудмо годым йоҥылыш лийын. Файлым налме огыл, тошто файллан %s~ лӱмым "
 "пуымо."
 
+#, fuzzy
+msgid "Instant Messaging Client"
+msgstr "Писе каласымаш алмаш"
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+#, fuzzy
+msgid "The buddy list showing friends on different networks."
+msgstr "%s мутланыше вотышто уке"
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin писе каласымаш алмаш клиент"
 
@@ -11910,6 +11984,10 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Курд"
 
+#, fuzzy
+msgid "Kurdish (Sorani)"
+msgstr "Курд"
+
 msgid "Lithuanian"
 msgstr "Литов"
 
@@ -12027,6 +12105,11 @@ msgid "Urdu"
 msgstr "Урду"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

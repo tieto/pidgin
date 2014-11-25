@@ -89,8 +89,6 @@ host_triplet = @host@
 @INSTALL_SSL_CERTIFICATES_FALSE@am__append_1 = -DSSL_CERTIFICATES_DIR=\"$(SSL_CERTIFICATES_DIR)\"
 subdir = libpurple
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(srcdir)/purple.pc.in $(srcdir)/purple-uninstalled.pc.in \
-	$(srcdir)/purple-2.pc.in $(srcdir)/purple-2-uninstalled.pc.in \
 	$(srcdir)/purple.h.in $(srcdir)/version.h.in \
 	$(top_srcdir)/depcomp $(am__libpurpleinclude_HEADERS_DIST) \
 	$(mediainclude_HEADERS) $(noinst_HEADERS)
@@ -101,8 +99,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = purple.pc purple-uninstalled.pc purple-2.pc \
-	purple-2-uninstalled.pc purple.h version.h
+CONFIG_CLEAN_FILES = purple.h version.h
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -286,7 +283,7 @@ am__define_uniq_tagged_files = \
   done | $(am__uniquify_input)`
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = gconf plugins protocols ciphers . tests example
+DIST_SUBDIRS = data/gconf plugins protocols ciphers . tests example
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
   dir0=`pwd`; \
@@ -579,10 +576,10 @@ EXTRA_DIST = \
 		purple-send-async \
 		purple-url-handler \
 		purple.h.in \
-		purple.pc.in \
-		purple-uninstalled.pc.in \
 		version.h.in \
 		Makefile.mingw \
+		data/purple.pc.in \
+		data/purple-uninstalled.pc.in \
 		win32/global.mak \
 		win32/libc_interface.c \
 		win32/libc_interface.h \
@@ -595,9 +592,7 @@ EXTRA_DIST = \
 		win32/giowin32.c \
 		win32/win32dep.h
 
-@USE_GCONFTOOL_TRUE@GCONF_DIR = gconf
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = purple.pc
+@USE_GCONFTOOL_TRUE@GCONF_DIR = data/gconf
 SUBDIRS = $(GCONF_DIR) plugins protocols ciphers . tests example
 purple_coresources = \
 	account.c \
@@ -812,6 +807,8 @@ mediaincludedir = $(includedir)/libpurple/media
 mediainclude_HEADERS = \
 	$(addprefix $(srcdir)/media/, $(purple_mediaheaders))
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = data/purple.pc
 libpurple_la_DEPENDENCIES = $(STATIC_LINK_LIBS)
 libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) -no-undefined
 libpurple_la_LIBADD = \
@@ -870,14 +867,6 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-purple.pc: $(top_builddir)/config.status $(srcdir)/purple.pc.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-purple-uninstalled.pc: $(top_builddir)/config.status $(srcdir)/purple-uninstalled.pc.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-purple-2.pc: $(top_builddir)/config.status $(srcdir)/purple-2.pc.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-purple-2-uninstalled.pc: $(top_builddir)/config.status $(srcdir)/purple-2-uninstalled.pc.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 purple.h: $(top_builddir)/config.status $(srcdir)/purple.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 version.h: $(top_builddir)/config.status $(srcdir)/version.h.in

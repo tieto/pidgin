@@ -309,7 +309,7 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 				menu->selected = g_list_length(menu->list) - 1;
 		} else if (strcmp(text, GNT_KEY_RIGHT) == 0) {
 			menu->selected++;
-			if (menu->selected >= g_list_length(menu->list))
+			if ((guint)menu->selected >= g_list_length(menu->list))
 				menu->selected = 0;
 		} else if (strcmp(text, GNT_KEY_ENTER) == 0 ||
 				strcmp(text, GNT_KEY_DOWN) == 0) {

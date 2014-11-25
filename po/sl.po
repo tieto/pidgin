@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-07-01 20:44+0000\n"
-"Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Slovenian (http://www.transifex.com/projects/p/pidgin/"
 "language/sl/)\n"
 "Language: sl\n"
@@ -1894,6 +1894,143 @@ msgstr ""
 "Prosim vnesite ime uporabnika, ki ga želite povabiti, dodate pa lahko še "
 "povabilo."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"aim\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
+"ji \"aim\""
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Upravljač za URL-je \"aim"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Ukaz za ravnanje z URL-ji \"aim\", če je to omogočeno."
+
+msgid "Run the command in a terminal"
+msgstr "Zaženi ukaz v sistemskem oknu"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Resnično, če naj bo ukaz, ki naj ravna s to vrsto URL-ja, zagnan v konzoli."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"gg\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
+"ji \"gg\""
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Upravljač za URL-je \"gg"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Ukaz za ravnanje z URL-ji \"gg\", če je to omogočeno."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"icq\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
+"ji \"icq\""
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Upravljač za URL-je \"icq"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Ukaz za ravnanje z URL-ji \"icq\", če je to omogočeno."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"irc\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
+"ji \"irc\""
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Upravljač za URL-je \"irc"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Ukaz za ravnanje z URL-ji \"irc\", če je to omogočeno."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"msnim\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
+"ji \"msnim\""
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Upravljač za URL-je \"msnim"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Ukaz za ravnanje z URL-ji \"msnim\", če je to omogočeno."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"sip\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
+"ji \"sip\""
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Upravljač za URL-je \"sip"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Ukaz za ravnanje z URL-ji \"sip\", če je to omogočeno."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"xmpp\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
+"ji \"xmpp\""
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Upravljač za URL-je \"xmpp"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Ukaz za ravnanje z URL-ji \"xmpp\", če je to omogočeno."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"ymsgr\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
+"ji \"ymsgr\""
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Upravljač za URL-je \"ymsgr"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Ukaz za ravnanje z URL-ji \"ymsgr\", če je to omogočeno."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Povezave ni mogoče vzpostaviti: %s"
@@ -2067,143 +2204,6 @@ msgstr "Prenos datoteke do %s ni uspel."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Prenos datoteke od %s ni uspel."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"aim\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
-"ji \"aim\""
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Upravljač za URL-je \"aim"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Ukaz za ravnanje z URL-ji \"aim\", če je to omogočeno."
-
-msgid "Run the command in a terminal"
-msgstr "Zaženi ukaz v sistemskem oknu"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Resnično, če naj bo ukaz, ki naj ravna s to vrsto URL-ja, zagnan v konzoli."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"gg\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
-"ji \"gg\""
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Upravljač za URL-je \"gg"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Ukaz za ravnanje z URL-ji \"gg\", če je to omogočeno."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"icq\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
-"ji \"icq\""
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Upravljač za URL-je \"icq"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Ukaz za ravnanje z URL-ji \"icq\", če je to omogočeno."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"irc\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
-"ji \"irc\""
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Upravljač za URL-je \"irc"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Ukaz za ravnanje z URL-ji \"irc\", če je to omogočeno."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"msnim\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
-"ji \"msnim\""
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Upravljač za URL-je \"msnim"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Ukaz za ravnanje z URL-ji \"msnim\", če je to omogočeno."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"sip\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
-"ji \"sip\""
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Upravljač za URL-je \"sip"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Ukaz za ravnanje z URL-ji \"sip\", če je to omogočeno."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"xmpp\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
-"ji \"xmpp\""
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Upravljač za URL-je \"xmpp"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Ukaz za ravnanje z URL-ji \"xmpp\", če je to omogočeno."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Ali naj navedeni ukaz upravlja z URL-ji \"ymsgr\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Resnično, če naj navedeni ukaz v polju \"ukaz\" (\"command\") upravlja z URL-"
-"ji \"ymsgr\""
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Upravljač za URL-je \"ymsgr"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Ukaz za ravnanje z URL-ji \"ymsgr\", če je to omogočeno."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Beleženje nima možnosti branja</font></b>"
@@ -2884,6 +2884,56 @@ msgstr "Enostavni vtičnik"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Preveri večino stvari, če delujejo."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5893,11 +5943,9 @@ msgstr "Strežniki MSN se bodo začasno zaustavili"
 msgid "Unable to authenticate: %s"
 msgstr "Ni možno overoviti: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Vaš seznam prijateljev MSN je trenutno nedostopen. Prosimo počakajte in "
-"poskusite znova."
 
 msgid "Handshaking"
 msgstr "Rokovanje"
@@ -10492,6 +10540,22 @@ msgstr ""
 "Pri branju vašega %s je prišlo do napake. Datoteka ni bial naložena, stara "
 "datoteka pa je bila preimenovana v %s~."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Spletni sel Pidgin"
 
@@ -11843,6 +11907,9 @@ msgstr "kašmirsko"
 msgid "Kurdish"
 msgstr "kurdsko"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "litvansko"
 
@@ -11956,6 +12023,11 @@ msgstr "urdujsko"
 
 msgid "Uzbek"
 msgstr "uzbeško"
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "vietnamsko"

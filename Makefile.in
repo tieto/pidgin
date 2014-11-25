@@ -14,7 +14,6 @@
 
 @SET_MAKE@
 
-
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -85,11 +84,19 @@ DIST_COMMON = INSTALL NEWS README AUTHORS ChangeLog \
 	$(top_srcdir)/configure $(am__configure_deps) \
 	$(srcdir)/config.h.in $(srcdir)/Doxyfile.in \
 	$(srcdir)/pidgin.apspec.in \
+	$(top_srcdir)/pidgin/data/pidgin.desktop.in.in \
+	$(top_srcdir)/pidgin/data/pidgin.pc.in \
+	$(top_srcdir)/pidgin/data/pidgin-uninstalled.pc.in \
+	$(top_srcdir)/pidgin/data/pidgin-2.pc.in \
+	$(top_srcdir)/pidgin/data/pidgin-2-uninstalled.pc.in \
 	$(top_srcdir)/pidgin/plugins/perl/common/Makefile.PL.in \
+	$(top_srcdir)/libpurple/data/purple.pc.in \
+	$(top_srcdir)/libpurple/data/purple-uninstalled.pc.in \
+	$(top_srcdir)/libpurple/data/purple-2.pc.in \
+	$(top_srcdir)/libpurple/data/purple-2-uninstalled.pc.in \
 	$(top_srcdir)/libpurple/plugins/perl/common/Makefile.PL.in \
-	$(srcdir)/pidgin.desktop.in.in $(srcdir)/pidgin.spec.in \
-	$(noinst_HEADERS) COPYING compile config.guess config.sub \
-	install-sh missing ltmain.sh
+	$(srcdir)/pidgin.spec.in $(noinst_HEADERS) COPYING compile \
+	config.guess config.sub install-sh missing ltmain.sh
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
@@ -100,9 +107,14 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = Doxyfile pidgin.apspec \
+	pidgin/data/pidgin.desktop.in pidgin/data/pidgin.pc \
+	pidgin/data/pidgin-uninstalled.pc pidgin/data/pidgin-2.pc \
+	pidgin/data/pidgin-2-uninstalled.pc \
 	pidgin/plugins/perl/common/Makefile.PL \
-	libpurple/plugins/perl/common/Makefile.PL pidgin.desktop.in \
-	pidgin.spec
+	libpurple/data/purple.pc libpurple/data/purple-uninstalled.pc \
+	libpurple/data/purple-2.pc \
+	libpurple/data/purple-2-uninstalled.pc \
+	libpurple/plugins/perl/common/Makefile.PL pidgin.spec
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -131,35 +143,6 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__uninstall_files_from_dir = { \
-  test -z "$$files" \
-    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
-         $(am__cd) "$$dir" && rm -f $$files; }; \
-  }
-am__installdirs = "$(DESTDIR)$(appsdir)"
-DATA = $(apps_DATA)
 HEADERS = $(noinst_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
@@ -508,16 +491,11 @@ EXTRA_DIST = \
 		package_revision.h \
 		pidgin.apspec.in \
 		pidgin.spec.in \
-		pidgin.desktop.in \
 		po/Makefile.mingw \
 		valgrind-suppressions
 
 noinst_HEADERS = config.h package_revision.h
 @INSTALL_I18N_TRUE@PO_DIR = po
-@INSTALL_I18N_TRUE@DESKTOP_FILE = pidgin.desktop
-@ENABLE_GTK_TRUE@@INSTALL_I18N_TRUE@appsdir = $(datadir)/applications
-@ENABLE_GTK_TRUE@@INSTALL_I18N_TRUE@apps_in_files = pidgin.desktop.in
-@ENABLE_GTK_TRUE@@INSTALL_I18N_TRUE@apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @ENABLE_GTK_TRUE@GTK_DIR = pidgin
 @ENABLE_GNT_TRUE@GNT_DIR = finch
 
@@ -542,8 +520,8 @@ SUBDIRS = . libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros $(PO_DIR) share/ca-cert
 distuninstallcheck_listfiles = \
 	find . -type f -print | grep -v perl | grep -v Purple.3pm | grep -v Pidgin.3pm
 
-DISTCLEANFILES = $(DESKTOP_FILE) libpurple/gconf/purple.schemas intltool-extract \
-			intltool-merge intltool-update package_revision_raw.txt
+DISTCLEANFILES = intltool-extract intltool-merge intltool-update \
+			package_revision_raw.txt
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -602,11 +580,27 @@ Doxyfile: $(top_builddir)/config.status $(srcdir)/Doxyfile.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 pidgin.apspec: $(top_builddir)/config.status $(srcdir)/pidgin.apspec.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
+pidgin/data/pidgin.desktop.in: $(top_builddir)/config.status $(top_srcdir)/pidgin/data/pidgin.desktop.in.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+pidgin/data/pidgin.pc: $(top_builddir)/config.status $(top_srcdir)/pidgin/data/pidgin.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+pidgin/data/pidgin-uninstalled.pc: $(top_builddir)/config.status $(top_srcdir)/pidgin/data/pidgin-uninstalled.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+pidgin/data/pidgin-2.pc: $(top_builddir)/config.status $(top_srcdir)/pidgin/data/pidgin-2.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+pidgin/data/pidgin-2-uninstalled.pc: $(top_builddir)/config.status $(top_srcdir)/pidgin/data/pidgin-2-uninstalled.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 pidgin/plugins/perl/common/Makefile.PL: $(top_builddir)/config.status $(top_srcdir)/pidgin/plugins/perl/common/Makefile.PL.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
-libpurple/plugins/perl/common/Makefile.PL: $(top_builddir)/config.status $(top_srcdir)/libpurple/plugins/perl/common/Makefile.PL.in
+libpurple/data/purple.pc: $(top_builddir)/config.status $(top_srcdir)/libpurple/data/purple.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
-pidgin.desktop.in: $(top_builddir)/config.status $(srcdir)/pidgin.desktop.in.in
+libpurple/data/purple-uninstalled.pc: $(top_builddir)/config.status $(top_srcdir)/libpurple/data/purple-uninstalled.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+libpurple/data/purple-2.pc: $(top_builddir)/config.status $(top_srcdir)/libpurple/data/purple-2.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+libpurple/data/purple-2-uninstalled.pc: $(top_builddir)/config.status $(top_srcdir)/libpurple/data/purple-2-uninstalled.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+libpurple/plugins/perl/common/Makefile.PL: $(top_builddir)/config.status $(top_srcdir)/libpurple/plugins/perl/common/Makefile.PL.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 pidgin.spec: $(top_builddir)/config.status $(srcdir)/pidgin.spec.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
@@ -619,27 +613,6 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
-install-appsDATA: $(apps_DATA)
-	@$(NORMAL_INSTALL)
-	@list='$(apps_DATA)'; test -n "$(appsdir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(appsdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(appsdir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(appsdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(appsdir)" || exit $$?; \
-	done
-
-uninstall-appsDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(apps_DATA)'; test -n "$(appsdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(appsdir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -940,12 +913,9 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(DATA) $(HEADERS) config.h
+all-am: Makefile $(HEADERS) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(appsdir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
@@ -999,7 +969,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-appsDATA
+install-data-am:
 
 install-dvi: install-dvi-recursive
 
@@ -1045,7 +1015,7 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-appsDATA
+uninstall-am:
 
 .MAKE: $(am__recursive_targets) all install-am install-strip
 
@@ -1057,15 +1027,14 @@ uninstall-am: uninstall-appsDATA
 	distclean-generic distclean-hdr distclean-libtool \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-appsDATA install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am tags tags-am uninstall uninstall-am \
-	uninstall-appsDATA
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am
 
 
 dist-hook: pidgin.spec
@@ -1105,7 +1074,6 @@ sign-packages: dist
 	gpg --verify pidgin-$(PACKAGE_VERSION).tar.bz2.asc pidgin-$(PACKAGE_VERSION).tar.bz2
 
 release: commit-check version-check distcheck sign-packages
-@ENABLE_GTK_TRUE@@INSTALL_I18N_TRUE@@INTLTOOL_DESKTOP_RULE@
 
 # We always try to rebuild all objects that depends on this dummy target.
 .FORCE:

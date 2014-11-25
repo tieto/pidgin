@@ -949,17 +949,15 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 	buf = g_strdup_printf("GET " AIMHASHDATA "?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
 			pos->offset, pos->len, pos->modname ? pos->modname : "");
 	result = send(pos->fd, buf, strlen(buf), 0);
-	if (result != strlen(buf)) {
-		if (result < 0)
-			purple_debug_error("oscar", "Error writing %" G_GSIZE_FORMAT
-					" bytes to fetch AIM hash data: %s\n",
-					strlen(buf), g_strerror(errno));
-		else
-			purple_debug_error("oscar", "Tried to write %"
-					G_GSIZE_FORMAT " bytes to fetch AIM hash data but "
-					"instead wrote %" G_GSSIZE_FORMAT " bytes\n",
-					strlen(buf), result);
-	}
+	if (result < 0)
+		purple_debug_error("oscar", "Error writing %" G_GSIZE_FORMAT
+				" bytes to fetch AIM hash data: %s\n",
+				strlen(buf), g_strerror(errno));
+	else if ((gsize)result != strlen(buf))
+		purple_debug_error("oscar", "Tried to write %"
+				G_GSIZE_FORMAT " bytes to fetch AIM hash data but "
+				"instead wrote %" G_GSSIZE_FORMAT " bytes\n",
+				strlen(buf), result);
 	g_free(buf);
 	g_free(pos->modname);
 	pos->inpa = purple_input_add(pos->fd, PURPLE_INPUT_READ, damn_you, pos);
@@ -1068,7 +1066,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	PurpleConnection *gc = od->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	char *host; int port;
-	int i;
+	size_t i;
 	FlapConnection *newconn;
 	va_list ap;
 	struct aim_authresp_info *info;

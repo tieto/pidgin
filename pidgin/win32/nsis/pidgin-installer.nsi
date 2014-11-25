@@ -592,6 +592,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\markerline.dll"
     Delete "$INSTDIR\plugins\newline.dll"
     Delete "$INSTDIR\plugins\notify.dll"
+    Delete "$INSTDIR\plugins\nss-prefs.dll"
     Delete "$INSTDIR\plugins\offlinemsg.dll"
     Delete "$INSTDIR\plugins\perl.dll"
     Delete "$INSTDIR\plugins\pidginrc.dll"

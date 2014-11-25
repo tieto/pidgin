@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Romanian (http://www.transifex.com/projects/p/pidgin/language/"
 "ro/)\n"
@@ -1893,6 +1893,152 @@ msgstr ""
 "Introduceți numele utilizatorului pe care doriți să-l invitați. Puteți "
 "adăuga un mesaj de invitare opțional."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr ""
+"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „aim”"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
+"asociată URL-urilor „aim”."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Comanda asociată URL-urilor „aim”"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Comanda utilizată pentru URL-urile „aim”, în caz de activare"
+
+msgid "Run the command in a terminal"
+msgstr "Execută comanda într-un terminal"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Adevărat când comanda asociată acestui tip de URL ar trebui pornită într-un "
+"terminal."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr ""
+"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „gg”"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
+"asociată URL-urilor „gg”."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Comanda asociată URL-urilor „gg”"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Comanda utilizată pentru URL-urile „gg”, în caz de activare"
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr ""
+"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „icq”"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
+"asociată URL-urilor „icq”."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Comanda asociată URL-urilor „icq”"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Comanda utilizată pentru URL-urile „icq”, în caz de activare"
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr ""
+"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „irc”"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
+"asociată URL-urilor „irc”."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Comanda asociată URL-urilor „irc”"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Comanda utilizată pentru URL-urile „irc”, în caz de activare"
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr ""
+"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „msnim”"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
+"asociată URL-urilor „msnim”."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Comanda asociată URL-urilor „msnim”"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Comanda utilizată pentru URL-urile „msnim”, în caz de activare"
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr ""
+"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „sip”"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
+"asociată URL-urilor „sip”."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Comanda asociată URL-urilor „sip”"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Comanda utilizată pentru URL-urile „sip”, în caz de activare"
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr ""
+"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „xmpp”"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
+"asociată URL-urilor „xmpp”."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Comanda asociată URL-urilor „xmpp”"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Comanda utilizată pentru URL-urile „xmpp”, în caz de activare"
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr ""
+"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „ymsgr”"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
+"asociată URL-urilor „ymsgr”."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Comanda asociată URL-urilor „ymsgr”"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Comanda utilizată pentru URL-urile „ymsgr”, în caz de activare"
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Conectare eșuată: %s"
@@ -2066,152 +2212,6 @@ msgstr "Transferul fișierului către %s a eșuat."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Transferul de fișiere de la %s a eșuat."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr ""
-"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „aim”"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
-"asociată URL-urilor „aim”."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Comanda asociată URL-urilor „aim”"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Comanda utilizată pentru URL-urile „aim”, în caz de activare"
-
-msgid "Run the command in a terminal"
-msgstr "Execută comanda într-un terminal"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Adevărat când comanda asociată acestui tip de URL ar trebui pornită într-un "
-"terminal."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr ""
-"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „gg”"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
-"asociată URL-urilor „gg”."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Comanda asociată URL-urilor „gg”"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Comanda utilizată pentru URL-urile „gg”, în caz de activare"
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr ""
-"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „icq”"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
-"asociată URL-urilor „icq”."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Comanda asociată URL-urilor „icq”"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Comanda utilizată pentru URL-urile „icq”, în caz de activare"
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr ""
-"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „irc”"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
-"asociată URL-urilor „irc”."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Comanda asociată URL-urilor „irc”"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Comanda utilizată pentru URL-urile „irc”, în caz de activare"
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr ""
-"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „msnim”"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
-"asociată URL-urilor „msnim”."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Comanda asociată URL-urilor „msnim”"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Comanda utilizată pentru URL-urile „msnim”, în caz de activare"
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr ""
-"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „sip”"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
-"asociată URL-urilor „sip”."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Comanda asociată URL-urilor „sip”"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Comanda utilizată pentru URL-urile „sip”, în caz de activare"
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr ""
-"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „xmpp”"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
-"asociată URL-urilor „xmpp”."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Comanda asociată URL-urilor „xmpp”"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Comanda utilizată pentru URL-urile „xmpp”, în caz de activare"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr ""
-"Specifică dacă această comandă ar trebui să fie asociată URL-urilor „ymsgr”"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Adevărat când comanda specificată în cheia „command” ar trebui să fie "
-"asociată URL-urilor „ymsgr”."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Comanda asociată URL-urilor „ymsgr”"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Comanda utilizată pentru URL-urile „ymsgr”, în caz de activare"
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2891,6 +2891,56 @@ msgstr "Modul simplu"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Testează dacă lucrurile merg cum trebuie."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5907,10 +5957,9 @@ msgstr "Serverele MSN vor fi oprite momentan."
 msgid "Unable to authenticate: %s"
 msgstr "Autentificare eșuată: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Lista contactelor MSN este momentan indisponibilă. Încercați mai târziu."
 
 msgid "Handshaking"
 msgstr "Sincronizare"
@@ -10524,6 +10573,22 @@ msgstr ""
 "A apărut o eroare la citirea %s. Fișierul nu a fost încărcat și vechiul "
 "fișier a fost redenumit în „%s~”."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Mesagerul Pidgin"
 
@@ -11872,6 +11937,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Kurdă"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Lituaniană"
 
@@ -11984,6 +12052,11 @@ msgid "Urdu"
 msgstr "Urdu"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

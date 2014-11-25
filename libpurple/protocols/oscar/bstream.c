@@ -49,7 +49,7 @@ void byte_stream_destroy(ByteStream *bs)
 	g_free(bs->data);
 }
 
-int byte_stream_bytes_left(ByteStream *bs)
+size_t byte_stream_bytes_left(ByteStream *bs)
 {
 	return bs->len - bs->offset;
 }
@@ -79,7 +79,7 @@ void byte_stream_rewind(ByteStream *bs)
 int byte_stream_advance(ByteStream *bs, int n)
 {
 	g_return_val_if_fail(byte_stream_curpos(bs) + n >= 0, 0);
-	g_return_val_if_fail(n <= byte_stream_bytes_left(bs), 0);
+	g_return_val_if_fail((gsize)n <= byte_stream_bytes_left(bs), 0);
 
 	bs->offset += n;
 	return n;

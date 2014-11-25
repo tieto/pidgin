@@ -2369,6 +2369,14 @@ static void purple_gg_debug_handler(int level, const char * format, va_list args
 	PurpleDebugLevel purple_level;
 	char *msg = g_strdup_vprintf(format, args);
 
+	if (!msg) {
+		purple_debug_fatal("gg",
+			"failed to vprintf the following message: %s",
+			format ? format : "(null)\n");
+
+		return;
+	}
+
 	/* This is pretty pointless since the GG_DEBUG levels don't correspond to
 	 * the purple ones */
 	switch (level) {

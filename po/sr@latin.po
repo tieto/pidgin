@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Serbian (Latin) (http://www.transifex.com/projects/p/pidgin/"
 "language/sr@latin/)\n"
@@ -1850,6 +1850,136 @@ msgstr ""
 "Unesite ime korisnika koga želite da pozovete, a po želji dodajte i poruku u "
 "pozivnicu."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Da li da unesena komanda rukovodi aim adresama"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „aim“ adrese."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Rukovodilac aim adresa"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Komanda za rad sa aim adresama, ukoliko je omogućeno."
+
+msgid "Run the command in a terminal"
+msgstr "Pokreni komandu u terminalu"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"„Tačno“ ukoliko bi komanda za rad sa ovim tipom adresa trebala biti "
+"pokrenuta u terminalu."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Da li da unesena komanda rukovodi qq adresama"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „gg“ adrese"
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Rukovodilac qq adresama"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Komanda za rad sa qq adresama, ukoliko je omogućeno"
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Da li da unesena komanda rukovodi icq adresama"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „icq“ adrese"
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Rukovodilac icq adresama"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Komanda za rad sa icq adresama, ukoliko je omogućeno."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Da li da unesena komanda rukovodi irc adresama"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „irc“ adrese"
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Rukovodilac irc adresama"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Komanda za rad sa irc adresama, ukoliko je omogućno."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Da li da unesena komanda rukovodi msn adresama"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „msn“ adrese"
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Rukovodilac msn adresama"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Komanda za rad sa msn adresama, ukoliko je omogućeno."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Da li da unesena komanda rukovodi sip adresama"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „sip“ adrese"
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Rukovodilac sip adresama"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Komanda za rad sa sip adresama, ukoliko je omogućeno."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Da li da unesena komanda rukovodi džaber adresama"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „džaber“ adrese"
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Rukovodilac džaber adresama"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Komanda za rad sa džaber adresama, ukoliko je omogućeno"
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Da li da unesena komanda rukovodi jahu adresama"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „jahu“ adrese"
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Rukovodilac jahu adresama"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Komanda za rad sa jahu adresama, ukoliko je omogućeno."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Ne mogu da dobijem vezu: %s"
@@ -2023,136 +2153,6 @@ msgstr "Prenos datoteke do %s prekinut."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Prenos datoteke od %s propao."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Da li da unesena komanda rukovodi aim adresama"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „aim“ adrese."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Rukovodilac aim adresa"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Komanda za rad sa aim adresama, ukoliko je omogućeno."
-
-msgid "Run the command in a terminal"
-msgstr "Pokreni komandu u terminalu"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"„Tačno“ ukoliko bi komanda za rad sa ovim tipom adresa trebala biti "
-"pokrenuta u terminalu."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Da li da unesena komanda rukovodi qq adresama"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „gg“ adrese"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Rukovodilac qq adresama"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Komanda za rad sa qq adresama, ukoliko je omogućeno"
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Da li da unesena komanda rukovodi icq adresama"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „icq“ adrese"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Rukovodilac icq adresama"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Komanda za rad sa icq adresama, ukoliko je omogućeno."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Da li da unesena komanda rukovodi irc adresama"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „irc“ adrese"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Rukovodilac irc adresama"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Komanda za rad sa irc adresama, ukoliko je omogućno."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Da li da unesena komanda rukovodi msn adresama"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „msn“ adrese"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Rukovodilac msn adresama"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Komanda za rad sa msn adresama, ukoliko je omogućeno."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Da li da unesena komanda rukovodi sip adresama"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „sip“ adrese"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Rukovodilac sip adresama"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Komanda za rad sa sip adresama, ukoliko je omogućeno."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Da li da unesena komanda rukovodi džaber adresama"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „džaber“ adrese"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Rukovodilac džaber adresama"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Komanda za rad sa džaber adresama, ukoliko je omogućeno"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Da li da unesena komanda rukovodi jahu adresama"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"„Tačno“ ukoliko komanda unesena u ključu „komanda“ podržava „jahu“ adrese"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Rukovodilac jahu adresama"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Komanda za rad sa jahu adresama, ukoliko je omogućeno."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Dnevnik ne omogućava čitanje</font></b>"
@@ -2809,6 +2809,56 @@ msgstr "Jednostavan dodatak"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Proverava da li većina stvari radi."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5767,11 +5817,9 @@ msgstr ""
 msgid "Unable to authenticate: %s"
 msgstr "Ne mogu da identifikujem: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Vaš spisak MSN drugara je privremeno nedostupan. Sačekajte malo pa pokušajte "
-"ponovo."
 
 msgid "Handshaking"
 msgstr "Rukovanje"
@@ -10245,6 +10293,22 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidžin Internet pismonoša"
 
@@ -11578,6 +11642,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "kurdski"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "litvanski"
 
@@ -11690,6 +11757,11 @@ msgid "Urdu"
 msgstr ""
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

@@ -62,7 +62,7 @@ static const char * const msgerrreason[] = {
 	N_("Queue full"),
 	N_("Not while on AOL")
 };
-static const int msgerrreasonlen = G_N_ELEMENTS(msgerrreason);
+static const gsize msgerrreasonlen = G_N_ELEMENTS(msgerrreason);
 
 const char *oscar_get_msgerr_reason(size_t reason)
 {

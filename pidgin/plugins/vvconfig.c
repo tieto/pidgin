@@ -109,7 +109,7 @@ get_element_devices(const gchar *element_name)
 			!(pspec = gst_property_probe_get_property(probe, "device"))) {
 		purple_debug_info("vvconfig", "'%s' - no device\n", element_name);
 	} else {
-		gint n;
+		gsize n;
 		GValueArray *array;
 
 		/* Set autoprobe[-fps] to FALSE to avoid delays when probing. */

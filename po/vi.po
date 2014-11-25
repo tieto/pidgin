@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Vietnamese (http://www.transifex.com/projects/p/pidgin/"
 "language/vi/)\n"
@@ -1876,6 +1876,144 @@ msgid ""
 "invite message."
 msgstr "Hãy nhập tên người dùng mà bạn muốn mời, kèm theo lời mời tùy ý."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « aim » hay không"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« aim »."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « aim »"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « aim », nếu bật."
+
+msgid "Run the command in a terminal"
+msgstr "Chạy lệnh trong thiết bị cuối"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Đúng nếu lệnh được dùng để quản lý địa chỉ URL kiểu này nên được chạy trong "
+"thiết bị cuối."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « gg » hay không"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« gg »."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « gg »"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « gg », nếu bật."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « icq » hay không"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« icq »."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « icq »"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « icq », nếu bật."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « irc » hay không"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« irc »."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « irc »"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « irc », nếu bật."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « msnim » hay không"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« msnim »."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « msnim »"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « msnim », nếu bật."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « sip » hay không"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« sip »."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « sip »"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « sip », nếu bật."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « xmpp » hay không"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« xmpp »."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « xmpp »"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « xmpp », nếu bật."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « ymsgr » hay không"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
+"« ymsgr »."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Bộ quản lý địa chỉ URL « ymsgr »"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Lệnh dùng để quản lý địa chỉ URL « ymsgr », nếu bật."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Không lấy được kết nối: %s"
@@ -2049,144 +2187,6 @@ msgstr "Tiến trình truyền tập tin cho %s bị lỗi."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Tiến trình truyền tập tin từ %s bị lỗi."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « aim » hay không"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« aim »."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « aim »"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « aim », nếu bật."
-
-msgid "Run the command in a terminal"
-msgstr "Chạy lệnh trong thiết bị cuối"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Đúng nếu lệnh được dùng để quản lý địa chỉ URL kiểu này nên được chạy trong "
-"thiết bị cuối."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « gg » hay không"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« gg »."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « gg »"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « gg », nếu bật."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « icq » hay không"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« icq »."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « icq »"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « icq », nếu bật."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « irc » hay không"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« irc »."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « irc »"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « irc », nếu bật."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « msnim » hay không"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« msnim »."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « msnim »"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « msnim », nếu bật."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « sip » hay không"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« sip »."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « sip »"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « sip », nếu bật."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « xmpp » hay không"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« xmpp »."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « xmpp »"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « xmpp », nếu bật."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Lệnh đã ghi rõ có nên quản lý địa chỉ URL kiểu « ymsgr » hay không"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Đúng nếu lệnh được ghi rõ trong koá « command » nên quản lý địa chỉ URL kiểu "
-"« ymsgr »."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Bộ quản lý địa chỉ URL « ymsgr »"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Lệnh dùng để quản lý địa chỉ URL « ymsgr », nếu bật."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Trình ghi lưu không có chức năng đọc</font></b>"
@@ -2867,6 +2867,56 @@ msgstr "Phần bổ sung đơn giản"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Kiểm tra để biết phần lớn thứ đang hoạt động."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5867,11 +5917,9 @@ msgstr "Các máy phục vụ MSN tạm thời bị ngừng"
 msgid "Unable to authenticate: %s"
 msgstr "Không thể xác thực: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Danh sách bạn bè MSN của bạn tạm thời không dùng được. Vui lòng chờ và thử "
-"lại lần nữa."
 
 msgid "Handshaking"
 msgstr "Đang thiết lập quan hệ"
@@ -10380,6 +10428,22 @@ msgstr ""
 "Gặp lỗi khi đọc %s của bạn nên chưa nạp và tên tập tin cũ đã bị thay đổi "
 "thành « %s~ »."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Tin Nhắn Pidgin"
 
@@ -11715,6 +11779,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Tiếng Kuổ-đít"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Tiếng Li-tu-a-ni"
 
@@ -11827,6 +11894,11 @@ msgid "Urdu"
 msgstr "Tiếng Ổ-đu"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

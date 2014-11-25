@@ -80,7 +80,7 @@ static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
                                    GHashTable *users)
 {
 	PurpleConvChat *chat;
-	int threshold;
+	guint threshold;
 	struct joinpart_key key;
 	time_t *last_said;
 

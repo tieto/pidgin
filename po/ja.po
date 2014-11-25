@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Japanese (http://www.transifex.com/projects/p/pidgin/language/"
 "ja/)\n"
@@ -1849,6 +1849,147 @@ msgid ""
 "invite message."
 msgstr "招待したい相手の名前と、オプションで招待メッセージを入力してください:"
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "指定したコマンドで \"aim\" の URL を処理するかどうか"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"\"command\" キーで指定したコマンドで \"aim\" の URL を処理する場合は TRUE で"
+"す。"
+
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" 向けのハンドラ"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "\"aim\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
+
+msgid "Run the command in a terminal"
+msgstr "端末からコマンドを起動する"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"この種類の URL を処理するために使用するコマンドを端末から起動する場合は TRUE "
+"です。"
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "指定したコマンドで \"gg\" の URL を処理するかどうか"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"\"command\" キーで指定したコマンドで \"gg\" の URL を処理する場合は TRUE で"
+"す。"
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" 向けのハンドラ"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "\"gg\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "指定したコマンドで \"icq\" の URL を処理するかどうか"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"\"command\" キーで指定したコマンドで \"icq\" の URL を処理する場合は TRUE で"
+"す。"
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" 向けのハンドラ"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "\"icq\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "指定したコマンドで \"irc\" の URL を処理するかどうか"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"\"command\" キーで指定したコマンドで \"irc\" の URL を処理する場合は TRUE で"
+"す。"
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" 向けのハンドラ"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "\"irc\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "指定したコマンドで \"msnim\" の URL を処理するかどうか"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"\"command\" キーで指定したコマンドで \"msnim\" の URL を処理する場合は TRUE "
+"です。"
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" 向けのハンドラ"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"\"msnim\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "指定したコマンドで \"sip\" の URL を処理するかどうか"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"\"command\" キーで指定したコマンドで \"sip\" の URL を処理する場合は TRUE で"
+"す。"
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" 向けのハンドラ"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "\"sip\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "指定したコマンドで \"xmpp\" の URL を処理するかどうか"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"\"command\" キーで指定したコマンドで \"xmpp\" の URL を処理する場合は TRUE で"
+"す。"
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" 向けのハンドラ"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+"\"xmpp\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "指定したコマンドで \"ymsgr\" の URL を処理するかどうか"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"\"command\" キーで指定したコマンドで \"ymsgr\" の URL を処理する場合は TRUE "
+"です。"
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" 向けのハンドラ"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr ""
+"\"ymsgr\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "新しい接続を開けません: %s"
@@ -2022,147 +2163,6 @@ msgstr "%s へのファイルの転送が失敗しました。"
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "%s からのファイルの転送が失敗しました。"
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "指定したコマンドで \"aim\" の URL を処理するかどうか"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"\"command\" キーで指定したコマンドで \"aim\" の URL を処理する場合は TRUE で"
-"す。"
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" 向けのハンドラ"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "\"aim\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
-
-msgid "Run the command in a terminal"
-msgstr "端末からコマンドを起動する"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"この種類の URL を処理するために使用するコマンドを端末から起動する場合は TRUE "
-"です。"
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "指定したコマンドで \"gg\" の URL を処理するかどうか"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"\"command\" キーで指定したコマンドで \"gg\" の URL を処理する場合は TRUE で"
-"す。"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" 向けのハンドラ"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "\"gg\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "指定したコマンドで \"icq\" の URL を処理するかどうか"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"\"command\" キーで指定したコマンドで \"icq\" の URL を処理する場合は TRUE で"
-"す。"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" 向けのハンドラ"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "\"icq\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "指定したコマンドで \"irc\" の URL を処理するかどうか"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"\"command\" キーで指定したコマンドで \"irc\" の URL を処理する場合は TRUE で"
-"す。"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" 向けのハンドラ"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "\"irc\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "指定したコマンドで \"msnim\" の URL を処理するかどうか"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"\"command\" キーで指定したコマンドで \"msnim\" の URL を処理する場合は TRUE "
-"です。"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" 向けのハンドラ"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"\"msnim\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "指定したコマンドで \"sip\" の URL を処理するかどうか"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"\"command\" キーで指定したコマンドで \"sip\" の URL を処理する場合は TRUE で"
-"す。"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" 向けのハンドラ"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "\"sip\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "指定したコマンドで \"xmpp\" の URL を処理するかどうか"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"\"command\" キーで指定したコマンドで \"xmpp\" の URL を処理する場合は TRUE で"
-"す。"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" 向けのハンドラ"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-"\"xmpp\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "指定したコマンドで \"ymsgr\" の URL を処理するかどうか"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"\"command\" キーで指定したコマンドで \"ymsgr\" の URL を処理する場合は TRUE "
-"です。"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" 向けのハンドラ"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"\"ymsgr\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">ログ記録には読み込み関数がありません</font></b>"
@@ -2831,6 +2831,56 @@ msgstr "シンプルなプラグイン"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "主要な機能が動作しているかどうかテストします"
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5796,11 +5846,9 @@ msgstr ""
 msgid "Unable to authenticate: %s"
 msgstr "認証できません: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"お使いの MSN 仲間リストが一時的に利用不可になっています。時間をあけて後で試し"
-"てみてください。"
 
 msgid "Handshaking"
 msgstr "通信を接続しています"
@@ -10254,6 +10302,22 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin インターネット・メッセンジャー"
 
@@ -11571,6 +11635,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "クルド語"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "リトアニア語"
 
@@ -11683,6 +11750,11 @@ msgid "Urdu"
 msgstr "ウルドゥー語"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

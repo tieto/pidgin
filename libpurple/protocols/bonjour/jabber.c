@@ -1169,7 +1169,7 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 			/* Send the end of the stream to the other end of the conversation */
 			if (bconv->sent_stream_start == FULLY_SENT) {
 				size_t len = strlen(STREAM_END);
-				if (send(bconv->socket, STREAM_END, len, 0) != len) {
+				if (send(bconv->socket, STREAM_END, len, 0) != (gssize)len) {
 					purple_debug_error("bonjour",
 						"bonjour_jabber_close_conversation: "
 						"couldn't send data\n");

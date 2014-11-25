@@ -658,7 +658,7 @@ void aim_tlvlist_remove(GSList **list, const guint16 type)
  */
 int aim_tlvlist_write(ByteStream *bs, GSList **list)
 {
-	int goodbuflen;
+	size_t goodbuflen;
 	GSList *cur;
 	aim_tlv_t *tlv;
 

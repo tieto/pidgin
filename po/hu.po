@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-30 18:02+0000\n"
-"Last-Translator: kelemeng <kelemeng@ubuntu.com>\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/projects/p/pidgin/"
 "language/hu/)\n"
 "Language: hu\n"
@@ -1894,6 +1894,144 @@ msgstr ""
 "Adja meg annak a partnernek a nevét, akit meg szeretne hívni, egy "
 "tetszőleges meghívóüzenettel együtt."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "A megadott parancs kezelje-e az „aim” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
+"„aim” URL címeket."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "„aim” URL címek kezelője"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Az „aim” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Run the command in a terminal"
+msgstr "Parancs futtatása terminálban"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Ha igazra van állítva, az ilyen típusú URL címeket kezelő parancsnak "
+"terminálban kell futnia."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "A megadott parancs kezelje-e a „gg” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli a „gg” "
+"URL címeket."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "„gg” URL címek kezelője"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "A „gg” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "A megadott parancs kezelje-e az „icq” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
+"„icq” URL címeket."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "„icq” URL címek kezelője"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Az „icq” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "A megadott parancs kezelje-e az „irc” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
+"„irc” URL címeket."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "„irc” URL címek kezelője"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Az „irc” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "A megadott parancs kezelje-e az „msnim” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
+"„msnim” URL címeket."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "„msnim” URL címek kezelője"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Az „msnim” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "A megadott parancs kezelje-e a „sip” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli a "
+"„sip” URL címeket."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "„sip” URL címek kezelője"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "A „sip” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "A megadott parancs kezelje-e az „xmpp” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
+"„xmpp” URL címeket."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "„xmpp” URL címek kezelője"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Az „xmpp” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "A megadott parancs kezelje-e az „ymsgr” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
+"„ymsgr” URL címeket."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "„ymsgr” URL címek kezelője"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Az „ymsgr” URL címek kezelésére használt parancs, ha engedélyezve van."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Nem hozható létre kapcsolat: %s"
@@ -2067,144 +2205,6 @@ msgstr "A fájlátvitel %s partnerhez félbeszakadt."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "A fájlátvitel %s partnertől félbeszakadt."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "A megadott parancs kezelje-e az „aim” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
-"„aim” URL címeket."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "„aim” URL címek kezelője"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Az „aim” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Run the command in a terminal"
-msgstr "Parancs futtatása terminálban"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Ha igazra van állítva, az ilyen típusú URL címeket kezelő parancsnak "
-"terminálban kell futnia."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "A megadott parancs kezelje-e a „gg” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli a „gg” "
-"URL címeket."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "„gg” URL címek kezelője"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "A „gg” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "A megadott parancs kezelje-e az „icq” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
-"„icq” URL címeket."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "„icq” URL címek kezelője"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Az „icq” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "A megadott parancs kezelje-e az „irc” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
-"„irc” URL címeket."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "„irc” URL címek kezelője"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Az „irc” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "A megadott parancs kezelje-e az „msnim” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
-"„msnim” URL címeket."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "„msnim” URL címek kezelője"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Az „msnim” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "A megadott parancs kezelje-e a „sip” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli a "
-"„sip” URL címeket."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "„sip” URL címek kezelője"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "A „sip” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "A megadott parancs kezelje-e az „xmpp” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
-"„xmpp” URL címeket."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "„xmpp” URL címek kezelője"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Az „xmpp” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "A megadott parancs kezelje-e az „ymsgr” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
-"„ymsgr” URL címeket."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "„ymsgr” URL címek kezelője"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Az „ymsgr” URL címek kezelésére használt parancs, ha engedélyezve van."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2887,6 +2887,56 @@ msgstr "Egyszerű bővítmény"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Tesztek, hogy a legtöbb dolog működik-e."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5912,11 +5962,9 @@ msgstr "Az MSN kiszolgálók átmenetileg leállnak"
 msgid "Unable to authenticate: %s"
 msgstr "Nem sikerült a hitelesítés: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Az Ön MSN partnerlistája átmenetileg nem érhető el. Kérem várjon, és "
-"próbálja újra később."
 
 msgid "Handshaking"
 msgstr "Kézfogás"
@@ -10505,6 +10553,22 @@ msgstr ""
 "Hiba történt a(z) %s olvasásakor. Ez a fájl nem lett betöltve, a régi fájl "
 "%s~ néven lett elmentve."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin üzenetküldő"
 
@@ -11850,6 +11914,9 @@ msgstr "Kasmíri"
 msgid "Kurdish"
 msgstr "Kurd"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Litván"
 
@@ -11963,6 +12030,11 @@ msgstr "Urdu"
 
 msgid "Uzbek"
 msgstr "Üzbég"
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vietnami"

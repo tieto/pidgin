@@ -423,8 +423,8 @@ msim_store_user_info(MsimSession *session, const MsimMessage *msg, MsimUser *use
 		return FALSE;
 	}
 
-	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
-		msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID)
+	if (msim_msg_get_integer(msg, "dsn") == (guint)MG_OWN_IM_INFO_DSN &&
+		msim_msg_get_integer(msg, "lid") == (guint)MG_OWN_IM_INFO_LID)
 	{
 		/*
 		 * Some of this info will be available on the buddy list if the
@@ -452,8 +452,8 @@ msim_store_user_info(MsimSession *session, const MsimMessage *msg, MsimUser *use
 								session->show_only_to_list ? 1 : 0,
 								session->privacy_mode & 1),
 				NULL);
-	} else if (msim_msg_get_integer(msg, "dsn") == MG_OWN_MYSPACE_INFO_DSN &&
-			msim_msg_get_integer(msg, "lid") == MG_OWN_MYSPACE_INFO_LID) {
+	} else if (msim_msg_get_integer(msg, "dsn") == (guint)MG_OWN_MYSPACE_INFO_DSN &&
+			msim_msg_get_integer(msg, "lid") == (guint)MG_OWN_MYSPACE_INFO_LID) {
 		/* TODO: same as above, but for MySpace info. */
 	}
 

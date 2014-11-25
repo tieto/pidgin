@@ -1104,7 +1104,7 @@ http_connection_send_request(PurpleHTTPConnection *conn, const GString *req)
 				tmp);
 		g_free(tmp);
 		return;
-	} else if (ret < len) {
+	} else if ((size_t)ret < len) {
 		if (ret < 0)
 			ret = 0;
 		if (conn->writeh == 0)

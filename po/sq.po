@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Albanian (http://www.transifex.com/projects/p/pidgin/language/"
 "sq/)\n"
@@ -1887,6 +1887,152 @@ msgstr ""
 "Ju lutemi, jepni emrin e përdoruesit që doni të ftoni, bashkë me një mesazh "
 "ftese në daçi."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Nëse duhet a jo të trajtojë URL-ra \"aim\" urdhri i treguar"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
+"trajtonte URL-ra \"aim\"."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Trajtuesi për URL-ra \"aim\""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr ""
+"Urdhri i përdorur për të trajtuar URL-ra \"aim\", në qoftë i aktivizuar."
+
+msgid "Run the command in a terminal"
+msgstr "Xhiroje urdhrin në terminal"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"E vërtetë nëse urdhri i përdorur për trajtimin e këtij lloji URL-je do të "
+"duhej xhiruar në një terminal."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Nëse duhet a jo të trajtojë URL-ra \"gg\" urdhri i treguar"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
+"trajtonte URL-ra \"gg\"."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Trajtuesi për URL-ra \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr ""
+"Urdhri i përdorur për të trajtuar URL-ra \"gg\", në qoftë i aktivizuar."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Nëse duhet a jo të trajtojë URL-ra \"icq\" urdhri i treguar"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
+"trajtonte URL-ra \"icq\"."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Trajtuesi për URL-ra \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr ""
+"Urdhri i përdorur për të trajtuar URL-ra \"icq\", në qoftë i aktivizuar."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Nëse duhet a jo të trajtojë URL-ra \"irc\" urdhri i treguar"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
+"trajtonte URL-ra \"irc\"."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Trajtuesi për URL-ra \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr ""
+"Urdhri i përdorur për të trajtuar URL-ra \"irc\", në qoftë i aktivizuar."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Nëse duhet a jo të trajtojë URL-ra \"msnim\" urdhri i treguar"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
+"trajtonte URL-ra \"msnim\"."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Trajtuesi për URL-ra \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"Urdhri i përdorur për të trajtuar URL-ra \"msnim\", në qoftë i aktivizuar."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Nëse duhet a jo të trajtojë URL-ra \"sip\" urdhri i treguar"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
+"trajtonte URL-ra \"sip\"."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Trajtuesi për URL-ra \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr ""
+"Urdhri i përdorur për të trajtuar URL-ra \"sip\", në qoftë i aktivizuar."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Nëse duhet a jo të trajtojë URL-ra \"xmpp\" urdhri i treguar"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
+"trajtonte URL-ra \"xmpp\"."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Trajtuesi për URL-ra \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+"Urdhri i përdorur për të trajtuar URL-ra \"xmpp\", në qoftë i aktivizuar."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Nëse duhet a jo të trajtojë URL-ra \"ymsgr\" urdhri i treguar"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
+"trajtonte URL-ra \"ymsgr\"."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Trajtuesi për URL-ra \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr ""
+"Urdhri i përdorur për të trajtuar URL-ra \"ymsgr\", në qoftë i aktivizuar."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Pasja e lidhjes dështoi: %s"
@@ -2063,152 +2209,6 @@ msgstr "Shpërngulja e kartelës drejt %s dështoi."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Shpërngulja e kartelës prej %s dështoi."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"aim\" urdhri i treguar"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
-"trajtonte URL-ra \"aim\"."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Trajtuesi për URL-ra \"aim\""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr ""
-"Urdhri i përdorur për të trajtuar URL-ra \"aim\", në qoftë i aktivizuar."
-
-msgid "Run the command in a terminal"
-msgstr "Xhiroje urdhrin në terminal"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"E vërtetë nëse urdhri i përdorur për trajtimin e këtij lloji URL-je do të "
-"duhej xhiruar në një terminal."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"gg\" urdhri i treguar"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
-"trajtonte URL-ra \"gg\"."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Trajtuesi për URL-ra \"gg\""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr ""
-"Urdhri i përdorur për të trajtuar URL-ra \"gg\", në qoftë i aktivizuar."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"icq\" urdhri i treguar"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
-"trajtonte URL-ra \"icq\"."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Trajtuesi për URL-ra \"icq\""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-"Urdhri i përdorur për të trajtuar URL-ra \"icq\", në qoftë i aktivizuar."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"irc\" urdhri i treguar"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
-"trajtonte URL-ra \"irc\"."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Trajtuesi për URL-ra \"irc\""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-"Urdhri i përdorur për të trajtuar URL-ra \"irc\", në qoftë i aktivizuar."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"msnim\" urdhri i treguar"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
-"trajtonte URL-ra \"msnim\"."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Trajtuesi për URL-ra \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Urdhri i përdorur për të trajtuar URL-ra \"msnim\", në qoftë i aktivizuar."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"sip\" urdhri i treguar"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
-"trajtonte URL-ra \"sip\"."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Trajtuesi për URL-ra \"sip\""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-"Urdhri i përdorur për të trajtuar URL-ra \"sip\", në qoftë i aktivizuar."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"xmpp\" urdhri i treguar"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
-"trajtonte URL-ra \"xmpp\"."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Trajtuesi për URL-ra \"xmpp\""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-"Urdhri i përdorur për të trajtuar URL-ra \"xmpp\", në qoftë i aktivizuar."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Nëse duhet a jo të trajtojë URL-ra \"ymsgr\" urdhri i treguar"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"E vërtetë nëse urdhri i treguar te pjesa \"command\" do të duhej të "
-"trajtonte URL-ra \"ymsgr\"."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Trajtuesi për URL-ra \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Urdhri i përdorur për të trajtuar URL-ra \"ymsgr\", në qoftë i aktivizuar."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Regjistruesi nuk ka funksion leximi</font></b>"
@@ -2889,6 +2889,56 @@ msgstr "Shtojcë e Thjeshtë"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Provon nëse shumica e gjërave funksionojnë."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5908,11 +5958,9 @@ msgstr "Shërbyesit MSN po ndalen përkohësisht"
 msgid "Unable to authenticate: %s"
 msgstr "Nuk arrin të mirëfilltësojë: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Lista juaj shokësh MSN është përkohësisht e pakapshme. Ju lutemi, prisni dhe "
-"riprovoni."
 
 msgid "Handshaking"
 msgstr "Duarshtrëngim"
@@ -10480,6 +10528,22 @@ msgstr ""
 "U has një gabim gjatë leximit të %s tuaj.  Kartela nuk u ngarkua, dhe "
 "kartela e vjetër është riemërtuar si %s~."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internet Messenger"
 
@@ -11824,6 +11888,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Kurde"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Lituaneze"
 
@@ -11936,6 +12003,11 @@ msgid "Urdu"
 msgstr "Urduase"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

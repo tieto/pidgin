@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Afrikaans (http://www.transifex.com/projects/p/pidgin/"
 "language/af/)\n"
@@ -1890,6 +1890,151 @@ msgstr ""
 "Tik gerus die naam van die gebruiker om uit te nooi, saam met 'n opsionele "
 "uitnodigingsboodskap."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Of die gespesifiseerde bevel \"aim\"-URL'e moet hanteer"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"aim\"-URL'e "
+"moet hanteer."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Die vatsel vir \"aim\"-URL'e"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"aim\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Run the command in a terminal"
+msgstr "Loop die bevel in 'n terminaal"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Waar indien die bevel wat hierdie tipe URL hanteer in 'n terminaal moet loop."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Of die gespesifiseerde bevel \"gg\"-URL'e moet hanteer"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"gg\"-URL'e "
+"moet hanteer."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Die vatsel vir \"gg\"-URL'e"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"gg\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Of die gespesifiseerde bevel \"icq\"-URL'e moet hanteer"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"icq\"-URL'e "
+"moet hanteer."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Die vatsel vir \"icq\"-URL'e"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"icq\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Of die gespesifiseerde bevel \"irc\"-URL'e moet hanteer"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"irc\"-URL'e "
+"moet hanteer."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Die vatsel vir \"irc\"-URL'e"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"irc\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Of die gespesifiseerde bevel \"msnim\"-URL'e moet hanteer"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"msnim\"-"
+"URL'e moet hanteer."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Die vatsel vir \"msnim\"-URL'e"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"msnim\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Of die gespesifiseerde bevel \"sip\"-URL'e moet hanteer"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"sip\"-URL'e "
+"moet hanteer."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Die vatsel vir \"sip\"-URL'e"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"sip\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Of die gespesifiseerde bevel \"xmpp\"-URL'e moet hanteer"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"xmpp\"-"
+"URL'e moet hanteer."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Die vatsel vir \"xmpp\"-URL'e"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"xmpp\"-URL'e te hanteer, indien geaktiveer."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Of die gespesifiseerde bevel \"ymsgr\"-URL'e moet hanteer"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"ymsgr\"-"
+"URL'e moet hanteer."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Die vatsel vir \"ymsgr\"-URL'e"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr ""
+"Die bevel wat gebruik word om \"ymsgr\"-URL'e te hanteer, indien geaktiveer."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Kon nie koppeling kry nie: %s"
@@ -2064,151 +2209,6 @@ msgstr "Lêeroordrag na %s het misluk."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Lêeroordrag vanaf %s het misluk."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Of die gespesifiseerde bevel \"aim\"-URL'e moet hanteer"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"aim\"-URL'e "
-"moet hanteer."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Die vatsel vir \"aim\"-URL'e"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"aim\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "Run the command in a terminal"
-msgstr "Loop die bevel in 'n terminaal"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Waar indien die bevel wat hierdie tipe URL hanteer in 'n terminaal moet loop."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Of die gespesifiseerde bevel \"gg\"-URL'e moet hanteer"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"gg\"-URL'e "
-"moet hanteer."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Die vatsel vir \"gg\"-URL'e"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"gg\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Of die gespesifiseerde bevel \"icq\"-URL'e moet hanteer"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"icq\"-URL'e "
-"moet hanteer."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Die vatsel vir \"icq\"-URL'e"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"icq\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Of die gespesifiseerde bevel \"irc\"-URL'e moet hanteer"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"irc\"-URL'e "
-"moet hanteer."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Die vatsel vir \"irc\"-URL'e"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"irc\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Of die gespesifiseerde bevel \"msnim\"-URL'e moet hanteer"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"msnim\"-"
-"URL'e moet hanteer."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Die vatsel vir \"msnim\"-URL'e"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"msnim\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Of die gespesifiseerde bevel \"sip\"-URL'e moet hanteer"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"sip\"-URL'e "
-"moet hanteer."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Die vatsel vir \"sip\"-URL'e"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"sip\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Of die gespesifiseerde bevel \"xmpp\"-URL'e moet hanteer"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"xmpp\"-"
-"URL'e moet hanteer."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Die vatsel vir \"xmpp\"-URL'e"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"xmpp\"-URL'e te hanteer, indien geaktiveer."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Of die gespesifiseerde bevel \"ymsgr\"-URL'e moet hanteer"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Waar indien die bevel gespesifiseer in die \"command\"-sleutel \"ymsgr\"-"
-"URL'e moet hanteer."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Die vatsel vir \"ymsgr\"-URL'e"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Die bevel wat gebruik word om \"ymsgr\"-URL'e te hanteer, indien geaktiveer."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2881,6 +2881,56 @@ msgstr "Eenvoudige inprop"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Toets om te sien of meeste dinge werk."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5872,10 +5922,9 @@ msgstr "Die MSN-bedieners gaan tydelik afskakel"
 msgid "Unable to authenticate: %s"
 msgstr "Kon nie magtig nie: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"U MSN-vriendelys is tydelik nie beskikbaar nie. Wag gerus en probeer weer."
 
 msgid "Handshaking"
 msgstr "Bladskud"
@@ -10434,6 +10483,22 @@ msgstr ""
 "Kon nie volledig u %s lees nie.  Die lêer is nie gelaai nie, en die ou lêer "
 "is hernoem na %s~."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internetboodskapper"
 
@@ -11770,6 +11835,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Koerdies"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Litous"
 
@@ -11882,6 +11950,11 @@ msgid "Urdu"
 msgstr "Oerdoe"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

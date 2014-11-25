@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Esperanto (http://www.transifex.com/projects/p/pidgin/"
 "language/eo/)\n"
@@ -1814,6 +1814,144 @@ msgstr ""
 "Bonvolu enigi la nomon de uzanto kiun vi deziras inviti, kun fakultativan "
 "invitmesaĝon."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Ĉu la donita komando devu trakti \"aim\" URL-ojn"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"aim\" URL-"
+"ojn."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "La traktilo por \"aim\" URL-oj"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"aim\" URL-ojn, se enŝaltita."
+
+msgid "Run the command in a terminal"
+msgstr "Eku komandon en terminalo"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Vera se la komando uzata por trakti tiun tipon de URL-o devu esti lanĉita en "
+"terminalo."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Ĉu la donita komando devu trakti \"gg\" URL-ojn"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"gg\" URL-"
+"ojn."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "La traktilo por \"gg\" URL-oj"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"gg\" URL-ojn, se enŝaltita."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Ĉu la donita komando devu trakti \"icq\" URL-ojn"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"icq\" URL-"
+"ojn."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "La traktilo por \"icq\" URL-oj"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"icq\" URL-ojn, se enŝaltita."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Ĉu la donita komando devu trakti \"irc\" URL-ojn"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"irc\" URL-"
+"ojn."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "La traktilo por \"irc\" URL-oj"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"irc\" URL-ojn, se enŝaltita."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Ĉu la donita komando devu trakti \"msnim\" URL-ojn"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"msnim\" "
+"URL-ojn."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "La traktilo por \"msnim\" URL-oj"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"msnim\" URL-ojn, se enŝaltita."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Ĉu la donita komando devu trakti \"sip\" URL-ojn"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"sip\" URL-"
+"ojn."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "La traktilo por \"sip\" URL-oj"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"sip\" URL-ojn, se enŝaltita."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Ĉu la donita komando devu trakti \"xmpp\" URL-ojn"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"xmpp\" URL-"
+"ojn."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "La traktilo por \"xmpp\" URL-oj"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"xmpp\" URL-ojn, se enŝaltita."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Ĉu la donita komando devu trakti \"ymsgr\" URL-ojn"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"ymsgr\" "
+"URL-ojn."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "La traktilo por \"ymsgr\" URL-oj"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "La uzata komando por trakti \"ymsgr\" URL-ojn, se enŝaltita."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Malsukcesis konekti: %s"
@@ -1974,144 +2112,6 @@ msgstr "Dosiero alŝuto al %s malsukcesis."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Dosiero elŝuto de %s malsukcesis."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Ĉu la donita komando devu trakti \"aim\" URL-ojn"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"aim\" URL-"
-"ojn."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "La traktilo por \"aim\" URL-oj"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"aim\" URL-ojn, se enŝaltita."
-
-msgid "Run the command in a terminal"
-msgstr "Eku komandon en terminalo"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Vera se la komando uzata por trakti tiun tipon de URL-o devu esti lanĉita en "
-"terminalo."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Ĉu la donita komando devu trakti \"gg\" URL-ojn"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"gg\" URL-"
-"ojn."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "La traktilo por \"gg\" URL-oj"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"gg\" URL-ojn, se enŝaltita."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Ĉu la donita komando devu trakti \"icq\" URL-ojn"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"icq\" URL-"
-"ojn."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "La traktilo por \"icq\" URL-oj"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"icq\" URL-ojn, se enŝaltita."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Ĉu la donita komando devu trakti \"irc\" URL-ojn"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"irc\" URL-"
-"ojn."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "La traktilo por \"irc\" URL-oj"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"irc\" URL-ojn, se enŝaltita."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Ĉu la donita komando devu trakti \"msnim\" URL-ojn"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"msnim\" "
-"URL-ojn."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "La traktilo por \"msnim\" URL-oj"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"msnim\" URL-ojn, se enŝaltita."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Ĉu la donita komando devu trakti \"sip\" URL-ojn"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"sip\" URL-"
-"ojn."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "La traktilo por \"sip\" URL-oj"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"sip\" URL-ojn, se enŝaltita."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Ĉu la donita komando devu trakti \"xmpp\" URL-ojn"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"xmpp\" URL-"
-"ojn."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "La traktilo por \"xmpp\" URL-oj"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"xmpp\" URL-ojn, se enŝaltita."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Ĉu la donita komando devu trakti \"ymsgr\" URL-ojn"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Vera se la komando donita en la \"komando\" ŝlosilo devu trakti \"ymsgr\" "
-"URL-ojn."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "La traktilo por \"ymsgr\" URL-oj"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "La uzata komando por trakti \"ymsgr\" URL-ojn, se enŝaltita."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">La protokolilo ne havas legkapablon</font></b>"
@@ -2751,6 +2751,56 @@ msgstr "Simpla Kromaĵo"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Provu por vidi ke plej parto de aĵoj bonfunkcias."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5638,8 +5688,8 @@ msgstr ""
 msgid "Unable to authenticate: %s"
 msgstr ""
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
 
 msgid "Handshaking"
@@ -9916,6 +9966,22 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Piĝin Interreta Mesaĝilo"
 
@@ -11233,6 +11299,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Kurda"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Litova"
 
@@ -11345,6 +11414,11 @@ msgid "Urdu"
 msgstr "Urdua"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

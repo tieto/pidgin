@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-07-19 02:36+0000\n"
-"Last-Translator: Renato Silva <br.renatosilva@gmail.com>\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/"
 "pidgin/language/pt_BR/)\n"
 "Language: pt_BR\n"
@@ -1900,6 +1900,144 @@ msgstr ""
 "Favor digitar o nome do usuário que você gostaria de convidar, junto com uma "
 "mensagem de convite opcional."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Diz se o comando especificado deve ser associado a URLs \"aim\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
+"a URLs \"aim\""
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Associar URLs \"aim\" a"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "O comando usado para lidar com URLs \"aim\", se ativado."
+
+msgid "Run the command in a terminal"
+msgstr "Execute o comando num terminal"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Verdadeiro se o comando usado para lidar com este tipo de URL deve ser "
+"executado num terminal."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Diz se o comando especificado deve ser associado a URLs \"gg\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
+"a URLs \"gg\""
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Associar URLs \"gg\" a"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "O comando usado para lidar com URLs \"gg\", se ativado."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Diz se o comando especificado deve ser associado a URLs \"icq\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
+"a URLs \"icq\""
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Associar URLs \"icq\" a"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "O comando usado para lidar com URLs \"icq\", se ativado."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Diz se o comando especificado deve ser associado a URLs \"irc\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
+"a URLs \"irc\""
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Associar URLs \"irc\" a"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "O comando usado para lidar com URLs \"irc\", se ativado."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Diz se o comando especificado deve ser associado a URLs \"msnim\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
+"a URLs \"msnim\""
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Associar URLs \"msnim\" a"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "O comando usado para lidar com URLs \"msnim\", se ativado."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Diz se o comando especificado deve ser associado a URLs \"sip\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
+"a URLs \"sip\""
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Associar URLs \"sip\" a"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "O comando usado para lidar com URLs \"sip\", se ativado."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Diz se o comando especificado deve ser associado a URLs \"xmpp\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
+"a URLs \"xmpp\""
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Associar URLs \"xmpp\" a"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "O comando usado para lidar com URLs \"xmpp\", se ativado."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Diz se o comando especificado deve ser associado a URLs \"ymsgr\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
+"a URLs \"ymsgr\""
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Associar URLs \"ymsgr\" a"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "O comando usado para lidar com URLs \"ymsgr\", se ativado."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Falha ao obter conexão: %s"
@@ -2073,144 +2211,6 @@ msgstr "Transferência de arquivo para %s falhou."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Transferência de arquivo de %s falhou."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Diz se o comando especificado deve ser associado a URLs \"aim\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
-"a URLs \"aim\""
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Associar URLs \"aim\" a"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "O comando usado para lidar com URLs \"aim\", se ativado."
-
-msgid "Run the command in a terminal"
-msgstr "Execute o comando num terminal"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Verdadeiro se o comando usado para lidar com este tipo de URL deve ser "
-"executado num terminal."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Diz se o comando especificado deve ser associado a URLs \"gg\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
-"a URLs \"gg\""
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Associar URLs \"gg\" a"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "O comando usado para lidar com URLs \"gg\", se ativado."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Diz se o comando especificado deve ser associado a URLs \"icq\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
-"a URLs \"icq\""
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Associar URLs \"icq\" a"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "O comando usado para lidar com URLs \"icq\", se ativado."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Diz se o comando especificado deve ser associado a URLs \"irc\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
-"a URLs \"irc\""
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Associar URLs \"irc\" a"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "O comando usado para lidar com URLs \"irc\", se ativado."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Diz se o comando especificado deve ser associado a URLs \"msnim\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
-"a URLs \"msnim\""
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Associar URLs \"msnim\" a"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "O comando usado para lidar com URLs \"msnim\", se ativado."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Diz se o comando especificado deve ser associado a URLs \"sip\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
-"a URLs \"sip\""
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Associar URLs \"sip\" a"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "O comando usado para lidar com URLs \"sip\", se ativado."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Diz se o comando especificado deve ser associado a URLs \"xmpp\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
-"a URLs \"xmpp\""
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Associar URLs \"xmpp\" a"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "O comando usado para lidar com URLs \"xmpp\", se ativado."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Diz se o comando especificado deve ser associado a URLs \"ymsgr\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"comando\" deve ser associado "
-"a URLs \"ymsgr\""
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Associar URLs \"ymsgr\" a"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "O comando usado para lidar com URLs \"ymsgr\", se ativado."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2904,6 +2904,56 @@ msgstr "Plug-in trivial"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Verifica se a maioria das coisas estão funcionando."
+
+msgid "TLS/SSL Versions"
+msgstr "Versões do TLS/SSL"
+
+msgid "Minimum Version"
+msgstr "Versão mínima"
+
+msgid "Maximum Version"
+msgstr "Versão máxima"
+
+msgid "SSL 2"
+msgstr "SSL 2"
+
+msgid "SSL 3"
+msgstr "SSL 3"
+
+msgid "TLS 1.0"
+msgstr "TLS 1.0"
+
+msgid "TLS 1.1"
+msgstr "TLS 1.1"
+
+msgid "TLS 1.2"
+msgstr "TLS 1.2"
+
+msgid "TLS 1.3"
+msgstr "TLS 1.3"
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr "Não suportado para NSS < 3.14"
+
+msgid "Ciphers"
+msgstr "Cifras"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr "Preferências do NSS"
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr "Configurar cifras e outras preferências para o plugin de SSL/TLS NSS"
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5930,11 +5980,9 @@ msgstr "Os servidores MSN vão sair do ar temporariamente."
 msgid "Unable to authenticate: %s"
 msgstr "Não foi possível autenticar: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr ""
-"Sua lista de amigos do MSN está temporariamente indisponível. Favor aguardar "
-"e tentar novamente."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
+msgstr "A sua lista de amigos do MSN está temporariamente indisponível: %s"
 
 msgid "Handshaking"
 msgstr "Negociando"
@@ -10523,6 +10571,26 @@ msgstr ""
 "Um erro foi encontrado ao ler sua %s. Eles(as) não foram carregados(as), e o "
 "antigo arquivo foi renomeado para %s~."
 
+msgid "Instant Messaging Client"
+msgstr "Cliente de mensagens instantâneas"
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+"Pidgin é um programa de bate-papo que permite entrar em múltiplas redes de "
+"bate-papo ao mesmo tempo."
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+"Isso permite que você possa conversar com amigos do MSN, falar com um amigo "
+"pelo Google Talk e entrar num bate-papo do Yahoo, tudo isso ao mesmo tempo."
+
+msgid "The buddy list showing friends on different networks."
+msgstr "A lista de amigos mostrando amigos em diferentes redes."
+
 msgid "Pidgin Internet Messenger"
 msgstr "Mensageiro da Internet Pidgin"
 
@@ -11870,6 +11938,9 @@ msgstr "Caxemira"
 msgid "Kurdish"
 msgstr "Curdo"
 
+msgid "Kurdish (Sorani)"
+msgstr "Curdo (Sorâni)"
+
 msgid "Lithuanian"
 msgstr "Lituano"
 
@@ -11983,6 +12054,11 @@ msgstr "Urdu"
 
 msgid "Uzbek"
 msgstr "Uzbeque"
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "Vietnamita"

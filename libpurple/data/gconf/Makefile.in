@@ -78,7 +78,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = libpurple/gconf
+subdir = libpurple/data/gconf
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
@@ -398,6 +398,7 @@ schemadir = @GCONF_SCHEMA_FILE_DIR@
 EXTRA_DIST = purple.schemas.in
 @INSTALL_I18N_TRUE@schema_in_files = purple.schemas.in
 @INSTALL_I18N_TRUE@schema_DATA = $(schema_in_files:.schemas.in=.schemas)
+@INSTALL_I18N_TRUE@DISTCLEANFILES = purple.schemas
 all: all-am
 
 .SUFFIXES:
@@ -410,9 +411,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libpurple/gconf/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libpurple/data/gconf/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu libpurple/gconf/Makefile
+	  $(AUTOMAKE) --gnu libpurple/data/gconf/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -528,6 +529,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"

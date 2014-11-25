@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Irish (http://www.transifex.com/projects/p/pidgin/language/"
 "ga/)\n"
@@ -1894,6 +1894,144 @@ msgstr ""
 "Cuir isteach ainm an úsáideora ar mhaith leat cuireadh a thabhairt dó/di, "
 "chomh maith le teachtaireacht más mian leat."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"aim\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"aim\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"aim\""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"aim\" a láimhseáil."
+
+msgid "Run the command in a terminal"
+msgstr "Cuir an t-ordú i bhfeidhm i dteirminéal"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Fíor más mian leat URLanna den chineál seo a láimhseáil le hordú i "
+"dteirminéal."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"gg\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"gg\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"gg\" a láimhseáil."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"icq\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"icq\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"icq\" a láimhseáil."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"irc\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"irc\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"irc\" a láimhseáil."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"msnim\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"msnim\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"msnim\" a láimhseáil."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"sip\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"sip\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"sip\" a láimhseáil."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"xmpp\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"xmpp\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"xmpp\" a láimhseáil."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"ymsgr\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"ymsgr\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"ymsgr\" a láimhseáil."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Níorbh fhéidir ceangal a fháil: %s"
@@ -2069,144 +2207,6 @@ msgstr "Theip ar aistriú comhaid go %s."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Theip ar aistriú comhaid ó %s."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"aim\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"aim\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"aim\""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"aim\" a láimhseáil."
-
-msgid "Run the command in a terminal"
-msgstr "Cuir an t-ordú i bhfeidhm i dteirminéal"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Fíor más mian leat URLanna den chineál seo a láimhseáil le hordú i "
-"dteirminéal."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"gg\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"gg\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"gg\""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"gg\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"icq\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"icq\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"icq\""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"icq\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"irc\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"irc\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"irc\""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"irc\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"msnim\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"msnim\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"msnim\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"sip\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"sip\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"sip\""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"sip\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"xmpp\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"xmpp\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"xmpp\""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"xmpp\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"ymsgr\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"ymsgr\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"ymsgr\" a láimhseáil."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Ní féidir leis an logálaí léamh</font></b>"
@@ -2897,6 +2897,56 @@ msgstr "Breiseán Simplí"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Féach an bhfuil rudaí ag feidhmiú mar is ceart."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5949,11 +5999,9 @@ msgstr "Tá na freastalaithe MSN ag dul as líne ar feadh tamaill"
 msgid "Unable to authenticate: %s"
 msgstr "Ní féidir fíordheimhniú: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Níl do liosta cairde MSN ar fáil faoi láthair. Fan nóiméad agus déan "
-"iarracht eile."
 
 msgid "Handshaking"
 msgstr "Croitheadh láimhe"
@@ -10634,6 +10682,22 @@ msgstr ""
 "Tharla earráid agus do %s á léamh. Níor luchtaíodh an comhad, agus tugadh "
 "ainm nua ar an seanchomhad: %s~."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Teachtaire Idirlín Pidgin"
 
@@ -11994,6 +12058,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Coirdis"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Liotuáinis"
 
@@ -12106,6 +12173,11 @@ msgid "Urdu"
 msgstr "Urdais"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Slovak (http://www.transifex.com/projects/p/pidgin/language/"
 "sk/)\n"
@@ -1880,6 +1880,136 @@ msgstr ""
 "Zadajte, prosím, meno používateľa, ktorého chcete pozvať, spolu s nepovinnou "
 "pozývacou správou."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Či má zadaný príkaz obsluhovať adresy „aim“"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „aim“."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Príkaz pre adresy „aim“"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Príkaz na obsluhu adries typu „aim“, ak je povolené."
+
+msgid "Run the command in a terminal"
+msgstr "Spustiť príkaz v termináli"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Pravda, ak bude príkaz používaný na spracovanie tohto druhu adries spustený "
+"v termináli."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Či má zadaný príkaz obsluhovať adresy „gg“"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „aim“."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Príkaz pre adresy „gg“"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Príkaz na obsluhu adries typu „gg“, ak je povolené."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Či má zadaný príkaz obsluhovať adresy „icq“"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „icq“."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Príkaz pre adresy „icq“"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Príkaz na obsluhu adries typu „icq“, ak je povolené."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Či má zadaný príkaz obsluhovať adresy „irc“"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „irc“."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Príkaz pre adresy „irc“"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Príkaz na obsluhu adries typu „irc“, ak je povolené."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Či má zadaný príkaz obsluhovať adresy „msnim“"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „msnim“."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Príkaz pre adresy „msnim“"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Príkaz na obsluhu adries typu „msnim“, ak je povolené."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Či má zadaný príkaz obsluhovať adresy „sip“"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „sip“."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Príkaz pre adresy „sip“"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Príkaz na obsluhu adries typu „sip“, ak je povolené."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Či má zadaný príkaz obsluhovať adresy „xmpp“"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „xmpp“."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Príkaz pre adresy „xmpp“"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Príkaz na obsluhu adries typu „xmpp“, ak je povolené."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Či má zadaný príkaz obsluhovať adresy „ymsgr“"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „ymsgr“."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Príkaz pre adresy „ymsgr“"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Príkaz na obsluhu adries typu „ymsgr“, ak je povolené."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Nepodarilo sa nadviazať spojenie: %s"
@@ -2053,136 +2183,6 @@ msgstr "Prenos súboru ku používateľovi %s zlyhal."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Prenos súboru od používateľa %s zlyhal."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Či má zadaný príkaz obsluhovať adresy „aim“"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „aim“."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Príkaz pre adresy „aim“"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Príkaz na obsluhu adries typu „aim“, ak je povolené."
-
-msgid "Run the command in a terminal"
-msgstr "Spustiť príkaz v termináli"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Pravda, ak bude príkaz používaný na spracovanie tohto druhu adries spustený "
-"v termináli."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Či má zadaný príkaz obsluhovať adresy „gg“"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „aim“."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Príkaz pre adresy „gg“"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Príkaz na obsluhu adries typu „gg“, ak je povolené."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Či má zadaný príkaz obsluhovať adresy „icq“"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „icq“."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Príkaz pre adresy „icq“"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Príkaz na obsluhu adries typu „icq“, ak je povolené."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Či má zadaný príkaz obsluhovať adresy „irc“"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „irc“."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Príkaz pre adresy „irc“"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Príkaz na obsluhu adries typu „irc“, ak je povolené."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Či má zadaný príkaz obsluhovať adresy „msnim“"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „msnim“."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Príkaz pre adresy „msnim“"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Príkaz na obsluhu adries typu „msnim“, ak je povolené."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Či má zadaný príkaz obsluhovať adresy „sip“"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „sip“."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Príkaz pre adresy „sip“"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Príkaz na obsluhu adries typu „sip“, ak je povolené."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Či má zadaný príkaz obsluhovať adresy „xmpp“"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „xmpp“."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Príkaz pre adresy „xmpp“"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Príkaz na obsluhu adries typu „xmpp“, ak je povolené."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Či má zadaný príkaz obsluhovať adresy „ymsgr“"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „ymsgr“."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Príkaz pre adresy „ymsgr“"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Príkaz na obsluhu adries typu „ymsgr“, ak je povolené."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Záznamník nepodporuje čítanie</font></b>"
@@ -2857,6 +2857,56 @@ msgstr "Jednoduchý modul"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Test pre zistenie, či väčšina vecí funguje."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5852,10 +5902,9 @@ msgstr "MSN servery sa dočasne vypínajú"
 msgid "Unable to authenticate: %s"
 msgstr "Nepodarilo sa autentifikovať: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Váš zoznam priateľov MSN je dočasne nedostupný. Skúste to, prosím, neskôr."
 
 msgid "Handshaking"
 msgstr "Prevzatie"
@@ -10425,6 +10474,22 @@ msgstr ""
 "Počas načítavania vášho %s sa vyskytla chyba. Súbor nebol načítaný a starý "
 "súbor bol premenovaný na %s~."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Internetový komunikátor Pidgin"
 
@@ -11766,6 +11831,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "kurdčina"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "litovčina"
 
@@ -11878,6 +11946,11 @@ msgid "Urdu"
 msgstr "urdčina"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"
