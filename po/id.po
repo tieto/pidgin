@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Indonesian (http://www.transifex.com/projects/p/pidgin/"
 "language/id/)\n"
@@ -1841,6 +1841,147 @@ msgstr ""
 "Mohon masukkan nama dari pengguna yang ingin anda undang, berikut dengan "
 "pesan undangan pilihan."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Perlukah perintah yang ditetapkan menangani URL \"aim\" "
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL-URL\"aim\" ."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Penanganan untuk URL \"aim\" "
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Perintah yang digunakan untuk menangani URL \"aim\" , jika diaktifkan."
+
+msgid "Run the command in a terminal"
+msgstr "Jalankan perintah dalam terminal"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Benar jika perintah yang digunakan untuk menangani jenis URL ini dijalankan "
+"dalamterminal."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Perlukah perintah yang ditetapkan menangani URL \"gg\" "
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL \"gg\" ."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Penanganan untuk URL \"gg\" "
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Perintah yang digunakan untuk menangani URL \"gg\" , jika diaktifkan."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Perlukah perintah yang ditetapkan menangani URL \"icq\" "
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL\"icq\" ."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Penanganan untuk URL \"icq\" "
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Perintah yang digunakan untuk menangani URL \"icq\" , jika diaktifkan."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Perlukah perintah yang ditetapkan menangani URL \"irc\" "
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL\"irc\" ."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Penanganan untuk URL \"irc\" "
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Perintah yang digunakan untuk menangani URL \"irc\"  jika diaktifkan."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Perlukah perintah yang ditetapkan menangani URL \"msnim\" "
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL\"msnim\" ."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Penanganan untuk URL \"msnim\" "
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"Perintah yang digunakan untuk menangani URL \"msnim\" , jika diaktifkan."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Perlukah perintah yang ditetapkan menangani URL \"sip\" "
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL\"sip\" ."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Penanganan untuk URL \"sip\" "
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Perintah yang digunakan untuk menangani URL \"sip\" , jika diaktifkan."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Perlukah perintah yang ditetapkan menangani URL \"xmpp\" "
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL\"xmpp\" ."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Penanganan untuk URL \"xmpp\" "
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+"Perintah yang digunakan untuk menangani URL \"xmpp\" , jika diaktifkan."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Perlukah perintah yang ditetapkan menangani URL \"ymsgr\" "
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
+"URL\"ymsgr\" ."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Penanganan untuk URL \"ymsgr\" "
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr ""
+"Perintah yang digunakan untuk menangani URL \"ymsgr\" , jika diaktifkan."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Gagal mendapatkan sambungan: %s"
@@ -2014,147 +2155,6 @@ msgstr "Transfer file kepada %s gagal."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Transfer file dari %s gagal."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Perlukah perintah yang ditetapkan menangani URL \"aim\" "
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL-URL\"aim\" ."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Penanganan untuk URL \"aim\" "
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Perintah yang digunakan untuk menangani URL \"aim\" , jika diaktifkan."
-
-msgid "Run the command in a terminal"
-msgstr "Jalankan perintah dalam terminal"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Benar jika perintah yang digunakan untuk menangani jenis URL ini dijalankan "
-"dalamterminal."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Perlukah perintah yang ditetapkan menangani URL \"gg\" "
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL \"gg\" ."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Penanganan untuk URL \"gg\" "
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Perintah yang digunakan untuk menangani URL \"gg\" , jika diaktifkan."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Perlukah perintah yang ditetapkan menangani URL \"icq\" "
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL\"icq\" ."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Penanganan untuk URL \"icq\" "
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Perintah yang digunakan untuk menangani URL \"icq\" , jika diaktifkan."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Perlukah perintah yang ditetapkan menangani URL \"irc\" "
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL\"irc\" ."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Penanganan untuk URL \"irc\" "
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Perintah yang digunakan untuk menangani URL \"irc\"  jika diaktifkan."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Perlukah perintah yang ditetapkan menangani URL \"msnim\" "
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL\"msnim\" ."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Penanganan untuk URL \"msnim\" "
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Perintah yang digunakan untuk menangani URL \"msnim\" , jika diaktifkan."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Perlukah perintah yang ditetapkan menangani URL \"sip\" "
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL\"sip\" ."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Penanganan untuk URL \"sip\" "
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Perintah yang digunakan untuk menangani URL \"sip\" , jika diaktifkan."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Perlukah perintah yang ditetapkan menangani URL \"xmpp\" "
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL\"xmpp\" ."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Penanganan untuk URL \"xmpp\" "
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-"Perintah yang digunakan untuk menangani URL \"xmpp\" , jika diaktifkan."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Perlukah perintah yang ditetapkan menangani URL \"ymsgr\" "
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu menangani "
-"URL\"ymsgr\" ."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Penanganan untuk URL \"ymsgr\" "
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Perintah yang digunakan untuk menangani URL \"ymsgr\" , jika diaktifkan."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Logger tidak memiliki fungsi baca</font></b>"
@@ -2812,6 +2812,56 @@ msgstr "Plugin Sederhana"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Ujian untuk melihat sebagian besar hal bekerja."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5773,10 +5823,9 @@ msgstr ""
 msgid "Unable to authenticate: %s"
 msgstr "Tidak dapat mengotentikasi: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Daftar teman MSN anda sementara tidak tersedia. Mohon tunggu dan coba lagi."
 
 msgid "Handshaking"
 msgstr "Jabat Tangan"
@@ -10215,6 +10264,22 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pesan Internet Pidgin"
 
@@ -11529,6 +11594,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Kurdi"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Lithuania"
 
@@ -11641,6 +11709,11 @@ msgid "Urdu"
 msgstr ""
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

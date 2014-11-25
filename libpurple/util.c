@@ -129,7 +129,7 @@ purple_util_uninit(void)
 gchar *
 purple_base16_encode(const guchar *data, gsize len)
 {
-	int i;
+	gsize i;
 	gchar *ascii = NULL;
 
 	g_return_val_if_fail(data != NULL, NULL);
@@ -146,7 +146,7 @@ purple_base16_encode(const guchar *data, gsize len)
 guchar *
 purple_base16_decode(const char *str, gsize *ret_len)
 {
-	int len, i, accumulator = 0;
+	gsize len, i, accumulator = 0;
 	guchar *data;
 
 	g_return_val_if_fail(str != NULL, NULL);
@@ -193,7 +193,7 @@ purple_base16_decode(const char *str, gsize *ret_len)
 gchar *
 purple_base16_encode_chunked(const guchar *data, gsize len)
 {
-	int i;
+	gsize i;
 	gchar *ascii = NULL;
 
 	g_return_val_if_fail(data != NULL, NULL);
@@ -1993,13 +1993,12 @@ purple_markup_strip_html(const char *str)
 				 * address the link was pointing to. */
 				else if (href != NULL && g_ascii_strncasecmp(str2 + i, "</a>", 4) == 0)
 				{
-
 					size_t hrlen = strlen(href);
 
 					/* Only insert the href if it's different from the CDATA. */
-					if ((hrlen != j - href_st ||
+					if ((hrlen != (gsize)(j - href_st) ||
 					     strncmp(str2 + href_st, href, hrlen)) &&
-					    (hrlen != j - href_st + 7 || /* 7 == strlen("http://") */
+					    (hrlen != (gsize)(j - href_st + 7) || /* 7 == strlen("http://") */
 					     strncmp(str2 + href_st, href + 7, hrlen - 7)))
 					{
 						str2[j++] = ' ';
@@ -2701,7 +2700,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	 * It causes TOCTOU coverity warning (against g_rename below),
 	 * but it's not a threat for us.
 	 */
-	if ((g_stat(filename_temp, &st) == -1) || (st.st_size != real_size))
+	if ((g_stat(filename_temp, &st) == -1) || ((gsize)st.st_size != real_size))
 	{
 		purple_debug_error("util", "Error writing data to file %s: "
 				   "Incomplete file written; is your disk "
@@ -3306,7 +3305,7 @@ purple_str_size_to_units(size_t size)
 	float size_mag;
 	int size_index = 0;
 
-	if (size == -1) {
+	if (size == (size_t)-1) {
 		return g_strdup(_("Calculating..."));
 	}
 	else if (size == 0) {
@@ -3421,7 +3420,7 @@ void purple_got_protocol_handler_uri(const char *uri)
 		return;
 	}
 
-	len = MIN(sizeof(proto) - 1, (tmp - uri));
+	len = MIN(sizeof(proto) - 1, (gsize)(tmp - uri));
 
 	strncpy(proto, uri, len);
 	proto[len] = '\0';
@@ -4107,7 +4106,7 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 	}
 	gfud->request_written += len;
 
-	if (gfud->request_written < total_len)
+	if (gfud->request_written < (gsize)total_len)
 		return;
 
 	/* We're done writing our request, now start reading the response */
@@ -4349,7 +4348,7 @@ purple_url_encode(const char *str)
 			buf[j++] = c;
 		} else {
 			int bytes = g_unichar_to_utf8(c, utf_char);
-			for (i = 0; i < bytes; i++) {
+			for (i = 0; (int)i < bytes; i++) {
 				if (j > (BUF_LEN - 4))
 					break;
 				if (i >= sizeof(utf_char)) {
@@ -4842,7 +4841,7 @@ purple_utf8_has_word(const char *haystack, const char *needle)
 
 	while ((p = strstr(start, pin)) != NULL) {
 		prev_char = g_utf8_find_prev_char(hay, p);
-		before = -2;
+		before = (gunichar)-2;
 		if (prev_char) {
 			before = g_utf8_get_char(prev_char);
 		}
@@ -4853,8 +4852,8 @@ purple_utf8_has_word(const char *haystack, const char *needle)
 				   ("!g_unichar_isalnum()" is not a valid way to determine word
 				    boundaries, but it is the only reasonable thing to do here),
 				   and isn't the '&' from a "&amp;" or some such entity*/
-				(before != -2 && !g_unichar_isalnum(before) && *(p - 1) != '&'))
-				&& after != -2 && !g_unichar_isalnum(after)) {
+				(before != (gunichar)-2 && !g_unichar_isalnum(before) && *(p - 1) != '&'))
+				&& after != (gunichar)-2 && !g_unichar_isalnum(after)) {
 			ret = TRUE;
 			break;
 		}
@@ -5008,7 +5007,7 @@ purple_escape_filename(const char *str)
 			buf[j++] = c;
 		} else {
 			int bytes = g_unichar_to_utf8(c, utf_char);
-			for (i = 0; i < bytes; i++) {
+			for (i = 0; (int)i < bytes; i++) {
 				if (j > (BUF_LEN - 4))
 					break;
 				if (i >= sizeof(utf_char)) {

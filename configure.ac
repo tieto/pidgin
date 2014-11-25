@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [10])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [10])
-m4_define([purple_micro_version], [10])
+m4_define([purple_micro_version], [11])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -304,7 +304,7 @@ if test x$enable_i18n = xyes; then
 	GETTEXT_PACKAGE=pidgin
 	AC_SUBST(GETTEXT_PACKAGE)
 
-	ALL_LINGUAS="af am ar ast az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hr hu id it ja ka kk km kn ko ku lt lv mai mhr mk mn mr my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr tt uk ur vi xh zh_CN zh_HK zh_TW"
+	ALL_LINGUAS="af am ar ast az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hr hu id it ja ka kk km kn ko ku ku_IQ lt lv mai mhr mk mn mr my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr tt uk ur vi xh zh_CN zh_HK zh_TW"
 	AM_GLIB_GNU_GETTEXT
 
 	dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -1254,7 +1254,7 @@ if test "x$GCC" = "xyes"; then
 			"-Wdeclaration-after-statement" \
 			"-Wendif-labels" \
 			"-Werror-implicit-function-declaration" \
-			"-Wextra -Wno-sign-compare -Wno-unused-parameter" \
+			"-Wextra -Wno-unused-parameter" \
 			"-Wformat-security" \
 				"-Werror=format-security" \
 			"-Winit-self" \
@@ -2525,10 +2525,11 @@ AC_CONFIG_FILES([Makefile
 		   m4macros/Makefile
 		   pidgin.apspec
 		   pidgin/Makefile
-		   pidgin/pidgin.pc
-		   pidgin/pidgin-uninstalled.pc
-		   pidgin/pidgin-2.pc
-		   pidgin/pidgin-2-uninstalled.pc
+		   pidgin/data/pidgin.desktop.in
+		   pidgin/data/pidgin.pc
+		   pidgin/data/pidgin-uninstalled.pc
+		   pidgin/data/pidgin-2.pc
+		   pidgin/data/pidgin-2-uninstalled.pc
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
@@ -2542,13 +2543,13 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/plugins/perl/Makefile
 		   pidgin/plugins/perl/common/Makefile.PL
 		   pidgin/plugins/ticker/Makefile
+		   libpurple/data/gconf/Makefile
+		   libpurple/data/purple.pc
+		   libpurple/data/purple-uninstalled.pc
+		   libpurple/data/purple-2.pc
+		   libpurple/data/purple-2-uninstalled.pc
 		   libpurple/ciphers/Makefile
 		   libpurple/example/Makefile
-		   libpurple/gconf/Makefile
-		   libpurple/purple.pc
-		   libpurple/purple-uninstalled.pc
-		   libpurple/purple-2.pc
-		   libpurple/purple-2-uninstalled.pc
 		   libpurple/plugins/Makefile
 		   libpurple/plugins/mono/Makefile
 		   libpurple/plugins/mono/api/Makefile
@@ -2587,7 +2588,6 @@ AC_CONFIG_FILES([Makefile
 		   finch/libgnt/wms/Makefile
 		   finch/plugins/Makefile
 		   po/Makefile.in
-		   pidgin.desktop.in
 		   pidgin.spec
 		  ])
 AC_OUTPUT

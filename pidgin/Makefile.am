@@ -3,8 +3,10 @@ EXTRA_DIST = \
 		getopt.h \
 		getopt1.c \
 		Makefile.mingw \
-		pidgin.pc.in \
-		pidgin-uninstalled.pc.in \
+		data/pidgin.appdata.xml.in \
+		data/pidgin.desktop.in \
+		data/pidgin.pc.in \
+		data/pidgin-uninstalled.pc.in \
 		win32/MinimizeToTray.h \
 		win32/MinimizeToTray.c \
 		win32/pidgin_dll_rc.rc.in \
@@ -30,9 +32,6 @@ EXTRA_DIST = \
 		win32/nsis/nsis_translations.desktop.in
 
 if ENABLE_GTK
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = pidgin.pc
 
 SUBDIRS = pixmaps plugins
 
@@ -177,4 +176,27 @@ AM_CPPFLAGS = \
 	$(GTKSPELL_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(INTGG_CFLAGS)
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = data/pidgin.pc
+
+if INSTALL_I18N
+DESKTOP_FILE=data/pidgin.desktop
+
+appsdir = $(datadir)/applications
+apps_in_files = data/pidgin.desktop.in
+apps_DATA = $(apps_in_files:.desktop.in=.desktop)
+@INTLTOOL_DESKTOP_RULE@
+
+appdatadir = $(datarootdir)/appdata
+appdata_DATA = $(appdata_in_files:.xml.in=.xml)
+appdata_in_files = data/pidgin.appdata.xml.in
+
+@INTLTOOL_XML_RULE@
+
+endif # INSTALL_I18N
+
+CLEANFILES = $(appdata_DATA)
+DISTCLEANFILES = $(DESKTOP_FILE)
+
 endif  # ENABLE_GTK

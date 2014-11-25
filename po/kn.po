@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Kannada (http://www.transifex.com/projects/p/pidgin/language/"
 "kn/)\n"
@@ -1870,6 +1870,144 @@ msgstr ""
 "ನೀವು ಆಮಂತ್ರಿಸಬಯಸುವ ಬಳಕೆದಾರನ ಹೆಸರು ಬರೆಯಿರಿ (ಬೇಕೆಂದರೆ ನೀವು ಬಯಸುವ ಆಮಂತ್ರಣ "
 "ಸಂದೇಶದೊಂದಿಗೆ)"
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"aim\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"aim\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
+"ಇದು ನಿಜವಾಗುತ್ತದೆ."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"aim\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
+
+msgid "Run the command in a terminal"
+msgstr "ಆಜ್ಞೆಯನ್ನು ಒಂದು ಟರ್ಮಿನಲ್ಲಿನಲ್ಲಿ ಚಲಾಯಿಸು"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"ನಿಜ ಈ ಬಗೆಯ URL ಅನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾದ ಆಜ್ಞೆಯನ್ನು ಟರ್ಮಿನಲ್ಲಿನಲ್ಲಿ ಚಲಾಯಿಸಬೇಕು "
+"ಎಂದಾದಲ್ಲಿ ಇದು ನಿಜವಾಗುತ್ತದೆ."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"gg\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"gg\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
+"ಇದು ನಿಜವಾಗುತ್ತದೆ."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"gg\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"icq\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"icq\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
+"ಇದು ನಿಜವಾಗುತ್ತದೆ."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"icq\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"irc\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"irc\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
+"ಇದು ನಿಜವಾಗುತ್ತದೆ ."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" URLಗಳಿಗಾಗಿನ ಹ್ಯಾಂಡ್ಲರ್"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"irc\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"msnim\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"msnim\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
+"ಇದು ನಿಜವಾಗುತ್ತದೆ."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"msnim\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"sip\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"sip\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
+"ಇದು ನಿಜವಾಗುತ್ತದೆ."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"sip\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"xmpp\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"xmpp\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
+"ಇದು ನಿಜವಾಗುತ್ತದೆ."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"xmpp\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"ymsgr\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"ymsgr\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
+"ಇದು ನಿಜವಾಗುತ್ತದೆ."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"ymsgr\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "%s  ಸಂಪರ್ಕ ಪಡೆಯಲು ವಿಫಲ."
@@ -2041,144 +2179,6 @@ msgstr " %s ರಿಗೆ ಕಡತವರ್ಗಾವಣೆ ವಿಫಲಗೊಂ
 #, c-format
 msgid "File transfer from %s failed."
 msgstr " %s ರಿಂದ ಕಡತವರ್ಗಾವಣೆ ವಿಫಲ."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"aim\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"aim\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
-"ಇದು ನಿಜವಾಗುತ್ತದೆ."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"aim\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
-
-msgid "Run the command in a terminal"
-msgstr "ಆಜ್ಞೆಯನ್ನು ಒಂದು ಟರ್ಮಿನಲ್ಲಿನಲ್ಲಿ ಚಲಾಯಿಸು"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"ನಿಜ ಈ ಬಗೆಯ URL ಅನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾದ ಆಜ್ಞೆಯನ್ನು ಟರ್ಮಿನಲ್ಲಿನಲ್ಲಿ ಚಲಾಯಿಸಬೇಕು "
-"ಎಂದಾದಲ್ಲಿ ಇದು ನಿಜವಾಗುತ್ತದೆ."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"gg\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"gg\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
-"ಇದು ನಿಜವಾಗುತ್ತದೆ."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"gg\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"icq\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"icq\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
-"ಇದು ನಿಜವಾಗುತ್ತದೆ."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"icq\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"irc\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"irc\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
-"ಇದು ನಿಜವಾಗುತ್ತದೆ ."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" URLಗಳಿಗಾಗಿನ ಹ್ಯಾಂಡ್ಲರ್"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"irc\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"msnim\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"msnim\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
-"ಇದು ನಿಜವಾಗುತ್ತದೆ."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"msnim\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"sip\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"sip\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
-"ಇದು ನಿಜವಾಗುತ್ತದೆ."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"sip\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"xmpp\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"xmpp\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
-"ಇದು ನಿಜವಾಗುತ್ತದೆ."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"xmpp\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "ಸೂಚಿಸಿರುವ ಆಜ್ಞೆಯು \"ymsgr\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆ"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"\"ಆಜ್ಞೆ\" ಕೀಲಿಯಿಂದ ಸೂಚಿಸಲಾಗಿರುವ ಆಜ್ಞೆಯು \"ymsgr\" URLಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕೆಂದಿದ್ದಲ್ಲಿ "
-"ಇದು ನಿಜವಾಗುತ್ತದೆ."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" URLಗಳನ್ನು ನಿಭಾಯಿಸುವವ"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "ಶಕ್ತಗೊಂಡಲ್ಲಿ, ಆಜ್ಞೆಯನ್ನು \"ymsgr\" URLಗಳನ್ನು ನಿಭಾಯಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">ದಾಖಲೆಗಾರನಲ್ಲಿ ಯಾವುದೆ ಓದುವ ಕ್ರಿಯೆ ಇಲ್ಲ</font></b>"
@@ -2859,6 +2859,56 @@ msgstr "ಸರಳ ಪ್ಲಗ್ಗಿನ್ನು"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "ಹೆಚ್ಚಿನ ಎಲ್ಲಾ ಸಂಜ್ಞೆಗಳು ಸರಿಯಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತಿವೆಯೆ ಎಂದು ಪರಿಶೀಲಿಸಿ."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5852,11 +5902,9 @@ msgstr "MSN ಪರಿಚಾರಕಗಳನ್ನು ತಾತ್ಕಾಲಿಕ�
 msgid "Unable to authenticate: %s"
 msgstr "ದೃಢೀಕರಿಸಲು ಸಾಧ್ಯವಾಗಿಲ್ಲ: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"ನಿಮ್ಮ MSN ಗೆಳೆಯರ ಪಟ್ಟಿಯು ತಾತ್ಕಾಲಿಕವಾಗಿ ಅಲಭ್ಯವಾಗಿವೆ. ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ "
-"ಪ್ರಯತ್ನಿಸಿ."
 
 msgid "Handshaking"
 msgstr "ಕೈ ಕುಲುಕಲಾಗುತ್ತಿದೆ"
@@ -10392,6 +10440,22 @@ msgstr ""
 "ನಿಮ್ಮ %s ಅನ್ನು ಓದುವಾಗ ಒಂದು ದೋಷ ಎದುರಾಗಿದೆ.  ಕಡತವನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಿಲ್ಲ, ಹಾಗು ಹಳೆಯ "
 "ಕಡತವನ್ನು %s~ ಎಂದು ಹೆಸರಿಸಲಾಗಿದೆ."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "ಪಿಜಿನ್ ಇಂಟರ್ನೆಟ್ ಮೆಸೆಂಜರ್"
 
@@ -11722,6 +11786,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "ಕುರ್ದಿಷ್"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "ಲಿಥುವೇನಿಯನ್"
 
@@ -11834,6 +11901,11 @@ msgid "Urdu"
 msgstr "ಉರ್ದು"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

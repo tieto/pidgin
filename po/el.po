@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-08-06 19:53+0000\n"
-"Last-Translator: Panos Bouklis <panos@echidna-band.com>\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/pidgin/language/"
 "el/)\n"
 "Language: el\n"
@@ -1911,6 +1911,160 @@ msgstr ""
 "Παρακαλούμε εισάγετε το όνομα του χρήστη που επιθυμείτε να προσκαλέσετε, "
 "μαζί με ένα προαιρετικό μήνυμα πρόσκλησης."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"aim\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"aim\" URLs."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Διαχειριστής των \"aim\" URLs"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"aim\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Run the command in a terminal"
+msgstr "Εκτέλεση της εντολής σε τερματικό"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Ισχύει αν αν η εντολή που χρησιμοποιείται για να διαχειριστεί τα URL αυτού "
+"του τύπου πρέπει να τρέχει σε τερματικό."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"gg\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"gg\" URLs."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Διαχειριστής των \"gg\" URLs"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"gg\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"icq\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"icq\" URLs."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Διαχειριστής των \"icq\" URLs"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"icq\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"irc\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"irc\" URLs."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Διαχειριστής των \"irc\" URLs"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"irc\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"msnim\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"msnim\" URLs."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Διαχειριστής των \"msnim\" URLs"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"msnim\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"sip\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"sip\" URLs."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Διαχειριστής των \"sip\" URLs"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"sip\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"xmpp\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"xmpp\" URLs."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Διαχειριστής των \"xmpp\" URLs"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"xmpp\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"ymsgr\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"ymsgr\" URLs."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Διαχειριστής των \"ymsgr\" URLs"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"ymsgr\" URLs, αν είναι "
+"ενεργοποιημένα."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Αποτυχία δημιουργίας σύνδεσης:  %s"
@@ -2086,160 +2240,6 @@ msgstr "Η μεταφορά αρχείου σε %s απέτυχε."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Η μεταφορά αρχείου από %s απέτυχε."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"aim\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"aim\" URLs."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Διαχειριστής των \"aim\" URLs"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"aim\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Run the command in a terminal"
-msgstr "Εκτέλεση της εντολής σε τερματικό"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Ισχύει αν αν η εντολή που χρησιμοποιείται για να διαχειριστεί τα URL αυτού "
-"του τύπου πρέπει να τρέχει σε τερματικό."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"gg\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"gg\" URLs."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Διαχειριστής των \"gg\" URLs"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"gg\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"icq\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"icq\" URLs."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Διαχειριστής των \"icq\" URLs"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"icq\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"irc\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"irc\" URLs."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Διαχειριστής των \"irc\" URLs"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"irc\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"msnim\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"msnim\" URLs."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Διαχειριστής των \"msnim\" URLs"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"msnim\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"sip\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"sip\" URLs."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Διαχειριστής των \"sip\" URLs"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"sip\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"xmpp\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"xmpp\" URLs."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Διαχειριστής των \"xmpp\" URLs"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"xmpp\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"ymsgr\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"ymsgr\" URLs."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Διαχειριστής των \"ymsgr\" URLs"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"ymsgr\" URLs, αν είναι "
-"ενεργοποιημένα."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2934,6 +2934,56 @@ msgstr "Απλό πρόσθετο"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Δοκιμάζει αν τα περισσότερα πράγματα δουλεύουν σωστά."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5974,11 +6024,9 @@ msgstr "Οι εξυπηρετητές του MSN κλείνουν προσωρι
 msgid "Unable to authenticate: %s"
 msgstr "Αδυναμία ταυτοποίησης: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Ο λίστα φίλων σας του MSN είναι προσωρινά μη διαθέσιμη. Παρακαλούμε "
-"περιμένετε και ξαναπροσπαθήστε."
 
 msgid "Handshaking"
 msgstr "Γίνεται χειραψία"
@@ -10616,6 +10664,22 @@ msgstr ""
 "Ένα σφάλμα συνέβη κατά την ανάγνωση του %s σας.  Δεν φορτώθηκε, και το παλιό "
 "αρχείο μετονομάστηκε σε %s~."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Αποστολέας μηνυμάτων διαδικτύου Pidgin"
 
@@ -11970,6 +12034,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Κουρδικά"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Λιθουανικά"
 
@@ -12082,6 +12149,11 @@ msgid "Urdu"
 msgstr "Ούρντου"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

@@ -412,7 +412,7 @@ static void yahoo_xfer_start(PurpleXfer *xfer)
 
 static guint calculate_length(const gchar *l, size_t len)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < len; i++) {
 		if (!g_ascii_isdigit(l[i]))

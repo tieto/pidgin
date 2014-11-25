@@ -444,8 +444,7 @@ purple_cipher_context_digest_to_str(PurpleCipherContext *context, size_t in_len,
 {
 	/* 8k is a bit excessive, will tweak later. */
 	guchar digest[BUF_LEN * 4];
-	gint n = 0;
-	size_t dlen = 0;
+	size_t n, dlen = 0;
 
 	g_return_val_if_fail(context, FALSE);
 	g_return_val_if_fail(digest_s, FALSE);

@@ -175,19 +175,29 @@ my %result;
 open (MYFILE, $translations);
 while (<MYFILE>) {
     chomp $_;
-    if ($_ =~ /Encoding=UTF-8/)
+    if ($_ =~ /^Encoding=UTF-8/ || $_ =~ /^\s*$/ || $_ =~ /^\[Desktop Entry\]/ || $_ =~ /^#/)
     {
-	next;
+        next;
     }
     elsif ($_ =~ /^(\w+)=(.*)/)
     {
-	my $line = "!define $1 \"$2\"\n";
-	$result{"en"}{"$1"} = $line;
+        my $key = $1;
+        my $lang = "en";
+        my $value = $2;
+        $value =~ s/["]/\$\\"/g;
+        $result{"$lang"}{"$key"} = "!define $key \"$value\"\n";
     }
-    elsif ($_ =~ /^(\w+)\[(\w+)\]=(.*)/)
+    elsif ($_ =~ /^(\w+)\[([\w@]+)\]=(.*)/)
     {
-	my $line = "!define $1 \"$3\"\n";
-	$result{"$2"}{"$1"} = $line;
+        my $key = $1;
+        my $lang = $2;
+        my $value = $3;
+        $value =~ s/["]/\$\\"/g;
+        $result{"$lang"}{"$key"} = "!define $key \"$value\"\n";
+    }
+    else
+    {
+        print "Found unrecognized line: '$_'\n";
     }
 }
 close (MYFILE);

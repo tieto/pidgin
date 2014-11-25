@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Asturian (http://www.transifex.com/projects/p/pidgin/language/"
 "ast/)\n"
@@ -1883,6 +1883,144 @@ msgstr ""
 "Por favor, pon el viesu d'un usuariu que deseyes convidar, xunto a un mensax "
 "de convidáu opcional."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Si'l comandu especificáu debería remanar enllaces \"aim\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
+"\"aim\"."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "El controlador pa enllaces \"aim\""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "El comandu usáu pa remanar enllaces \"aim\", si ta habilitáu."
+
+msgid "Run the command in a terminal"
+msgstr "Executar el comandu nuna terminal"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Marcar si'l comandu usáu pa remanar esti tipu d'enllaces deberá executase "
+"nuna terminal."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Si'l comandu especificáu debería remanar enllaces \"gg\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
+"\"gg\"."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "El controlador pa enllaces \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "El comandu usáu pa remanar enllaces \"gg\", si ta habiitáu."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Si'l comandu especificáu debería remanar enllaces \"icq\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
+"\"icq\"."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "El controlador pa enllaces \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "El comandu usáu pa remanar enllaces \"icq\", si ta habilitáu."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Si'l comandu especificáu debería remanar enllaces \"irc\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
+"\"irc\"."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "El controlador pa enllaces \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "El comandu usáu pa remanar enllaces \"irc\", si ta habilitáu."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Si'l comandu especificáu debería remanar enllaces \"msnim\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
+"\"msnim\"."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "El controlador pa enllaces \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "El comandu usáu pa remanar enllaces \"msnim\", si ta habilitáu."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Si'l comandu especificáu debería remanar enllaces \"sip\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
+"\"sip\"."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "El controlador pa enllaces \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "El comandu usáu pa remanar enllaces \"sip\", si ta habilitáu."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Si'l comandu especificáu debería remanar enllaces \"xmpp\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
+"\"xmpp\"."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "El controlador pa enllaces \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "El comandu usáu pa remanar enllaces \"xmpp\", si ta habilitáu."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Si'l comandu especificáu debería remanar enllaces \"ymsgr\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
+"\"ymsgr\"."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "El controlador pa enllaces \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "El comandu usáu pa remanar enllaces \"ymsgr\", si ta habilitáu."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Fallu al consiguir conexón: %s"
@@ -2058,144 +2196,6 @@ msgstr "La tresferencia de ficheru a %s falló."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "La tresferencia de ficheru dende %s falló."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Si'l comandu especificáu debería remanar enllaces \"aim\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
-"\"aim\"."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "El controlador pa enllaces \"aim\""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "El comandu usáu pa remanar enllaces \"aim\", si ta habilitáu."
-
-msgid "Run the command in a terminal"
-msgstr "Executar el comandu nuna terminal"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Marcar si'l comandu usáu pa remanar esti tipu d'enllaces deberá executase "
-"nuna terminal."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Si'l comandu especificáu debería remanar enllaces \"gg\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
-"\"gg\"."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "El controlador pa enllaces \"gg\""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "El comandu usáu pa remanar enllaces \"gg\", si ta habiitáu."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Si'l comandu especificáu debería remanar enllaces \"icq\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
-"\"icq\"."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "El controlador pa enllaces \"icq\""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "El comandu usáu pa remanar enllaces \"icq\", si ta habilitáu."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Si'l comandu especificáu debería remanar enllaces \"irc\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
-"\"irc\"."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "El controlador pa enllaces \"irc\""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "El comandu usáu pa remanar enllaces \"irc\", si ta habilitáu."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Si'l comandu especificáu debería remanar enllaces \"msnim\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
-"\"msnim\"."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "El controlador pa enllaces \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "El comandu usáu pa remanar enllaces \"msnim\", si ta habilitáu."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Si'l comandu especificáu debería remanar enllaces \"sip\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
-"\"sip\"."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "El controlador pa enllaces \"sip\""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "El comandu usáu pa remanar enllaces \"sip\", si ta habilitáu."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Si'l comandu especificáu debería remanar enllaces \"xmpp\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
-"\"xmpp\"."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "El controlador pa enllaces \"xmpp\""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "El comandu usáu pa remanar enllaces \"xmpp\", si ta habilitáu."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Si'l comandu especificáu debería remanar enllaces \"ymsgr\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Marcar si'l comandu especificáu na clave \"command\" deberá remanar enllaces "
-"\"ymsgr\"."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "El controlador pa enllaces \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "El comandu usáu pa remanar enllaces \"ymsgr\", si ta habilitáu."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2879,6 +2879,56 @@ msgstr "Plugin Simple"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Probar p'agüeyar que la meyoría de coses tan furrulando."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5845,11 +5895,9 @@ msgstr "Los sirividores MSN zarraranse temporalmente"
 msgid "Unable to authenticate: %s"
 msgstr "Nun pue autenticase: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"El llistáu de collacios/es MSN nun ta disponible temporalmente. Por favor, "
-"aspera ya prueba bis más sero."
 
 msgid "Handshaking"
 msgstr ""
@@ -10155,6 +10203,22 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Mensaxeru d'internet Pidgin"
 
@@ -11457,6 +11521,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr ""
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr ""
 
@@ -11569,6 +11636,11 @@ msgid "Urdu"
 msgstr ""
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

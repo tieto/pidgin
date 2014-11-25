@@ -635,11 +635,11 @@ notify_email_cb(char *subject, char *from, char *to, char *url) {
 
 static void
 notify_emails_cb(char **subjects, char **froms, char **tos, char **urls, guint count) {
-	int i;
-	purple_debug_misc("signals test", "notify emails: count=%d\n", count);
+	guint i;
+	purple_debug_misc("signals test", "notify emails: count=%u\n", count);
 	for(i=0; i<count && i<5; i++) {
 		if(subjects[i]==NULL || froms[i]==NULL || tos[i]==NULL || urls[i]==NULL) continue;
-		purple_debug_misc("signals test", "notify emails[%d]: subject=%s, from=%s, to=%s, url=%s\n",
+		purple_debug_misc("signals test", "notify emails[%u]: subject=%s, from=%s, to=%s, url=%s\n",
 			i, subjects[i], froms[i], tos[i], urls[i]);
 	}
 }

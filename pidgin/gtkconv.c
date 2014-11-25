@@ -157,7 +157,7 @@ static void update_typing_message(PidginConversation *gtkconv, const char *messa
 static const char *item_factory_translate_func (const char *path, gpointer func_data);
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
 static GdkColor* generate_nick_colors(guint *numcolors, GdkColor background);
-static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
+static gboolean color_is_visible(GdkColor foreground, GdkColor background, guint color_contrast, guint brightness_contrast);
 static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, PurpleMessageFlags flag, gboolean create);
 static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields);
 static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
@@ -4117,7 +4117,7 @@ tab_complete_process_item(int *most_matched, const char *entered, gsize entered_
 
 		while (purple_utf8_strcasecmp(tmp, *partial)) {
 			(*partial)[*most_matched] = '\0';
-			if (*most_matched < strlen(tmp))
+			if (*most_matched < (goffset)strlen(tmp))
 				tmp[*most_matched] = '\0';
 			(*most_matched)--;
 		}
@@ -10195,7 +10195,7 @@ pidgin_conv_is_hidden(PidginConversation *gtkconv)
 
 /* Algorithm from http://www.w3.org/TR/AERT#color-contrast */
 static gboolean
-color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast)
+color_is_visible(GdkColor foreground, GdkColor background, guint color_contrast, guint brightness_contrast)
 {
 	gulong fg_brightness;
 	gulong bg_brightness;

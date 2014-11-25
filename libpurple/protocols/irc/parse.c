@@ -390,7 +390,7 @@ char *irc_mirc2html(const char *string)
 	do {
 		end = strpbrk(cur, "\002\003\007\017\026\037");
 
-		decoded = g_string_append_len(decoded, cur, end ? end - cur : strlen(cur));
+		decoded = g_string_append_len(decoded, cur, (end ? (gssize)(end - cur) : (gssize)strlen(cur)));
 		cur = end ? end : cur + strlen(cur);
 
 		switch (*cur) {

@@ -17,9 +17,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-09-03 14:58+0000\n"
-"Last-Translator: Georg\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Estonian (http://www.transifex.com/projects/p/pidgin/language/"
 "et/)\n"
 "Language: et\n"
@@ -1888,6 +1888,144 @@ msgstr ""
 "Palun sisesta selle kasutaja nimi, keda sa soovid jututuppa kutsuda. Kui "
 "sisestad sõnumi, siis saadetakse see kasutajale koos kutsega."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Kas määratud käsk peaks käsitlema \"aim\" URL-e või mitte"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"aim\" "
+"URL-e."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" URL-ide käsitleja"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "\"aim\" URL-ide käsitlemise käsk (kui on lubatud)."
+
+msgid "Run the command in a terminal"
+msgstr "Käsu käivitamine terminalis"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Kui märgitud, siis seda liiki URL-ide jaoks kasutatav käsk käivitatakse "
+"terminalis."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Kas määratud käsk peaks käsitlema \"gg\" URL-e või mitte"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"gg\" "
+"URL-e."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" URL-ide käsitleja"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "\"gg\" URL-ide käsitlemise käsk (kui on lubatud)."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Kas määratud käsk peaks käsitlema \"icq\" URL-e või mitte"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"icq\" "
+"URL-e."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" URL-ide käsitleja"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "\"icq\" URL-ide käsitlemise käsk (kui on lubatud)."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Kas määratud käsk peaks käsitlema \"irc\" URL-e või mitte"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"irc\" "
+"URL-e."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" URL-ide käsitleja"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "\"irc\" URL-ide käsitlemise käsk (kui on lubatud)."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Kas määratud käsk peaks käsitlema \"msnim\" URL-e või mitte"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"msnim"
+"\" URL-e."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" URL-ide käsitleja"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "\"msnim\" URL-ide käsitlemise käsk (kui on lubatud)."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Kas määratud käsk peaks käsitlema \"sip\" URL-e või mitte"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"sip\" "
+"URL-e."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" URL-ide käsitleja"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "\"sip\" URL-ide käsitlemise käsk (kui on lubatud)."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Kas määratud käsk peaks käsitlema \"xmpp\" URL-e või mitte"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"xmpp\" "
+"URL-e."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" URL-ide käsitleja"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "\"xmpp\" URL-ide käsitlemise käsk (kui on lubatud)."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Kas määratud käsk peaks käsitlema \"ymsgr\" URL-e või mitte"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"ymsgr"
+"\" URL-e."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" URL-ide käsitleja"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "\"ymsgr\" URL-ide käsitlemise käsk (kui on lubatud)."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Tõrge ühenduse hankimisel: %s"
@@ -2061,144 +2199,6 @@ msgstr "Tõrge faili ülekandmisel kasutajale %s."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Tõrge faili ülekandmisel kasutajalt %s."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Kas määratud käsk peaks käsitlema \"aim\" URL-e või mitte"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"aim\" "
-"URL-e."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" URL-ide käsitleja"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "\"aim\" URL-ide käsitlemise käsk (kui on lubatud)."
-
-msgid "Run the command in a terminal"
-msgstr "Käsu käivitamine terminalis"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Kui märgitud, siis seda liiki URL-ide jaoks kasutatav käsk käivitatakse "
-"terminalis."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Kas määratud käsk peaks käsitlema \"gg\" URL-e või mitte"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"gg\" "
-"URL-e."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" URL-ide käsitleja"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "\"gg\" URL-ide käsitlemise käsk (kui on lubatud)."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Kas määratud käsk peaks käsitlema \"icq\" URL-e või mitte"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"icq\" "
-"URL-e."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" URL-ide käsitleja"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "\"icq\" URL-ide käsitlemise käsk (kui on lubatud)."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Kas määratud käsk peaks käsitlema \"irc\" URL-e või mitte"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"irc\" "
-"URL-e."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" URL-ide käsitleja"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "\"irc\" URL-ide käsitlemise käsk (kui on lubatud)."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Kas määratud käsk peaks käsitlema \"msnim\" URL-e või mitte"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"msnim"
-"\" URL-e."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" URL-ide käsitleja"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "\"msnim\" URL-ide käsitlemise käsk (kui on lubatud)."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Kas määratud käsk peaks käsitlema \"sip\" URL-e või mitte"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"sip\" "
-"URL-e."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" URL-ide käsitleja"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "\"sip\" URL-ide käsitlemise käsk (kui on lubatud)."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Kas määratud käsk peaks käsitlema \"xmpp\" URL-e või mitte"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"xmpp\" "
-"URL-e."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" URL-ide käsitleja"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "\"xmpp\" URL-ide käsitlemise käsk (kui on lubatud)."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Kas määratud käsk peaks käsitlema \"ymsgr\" URL-e või mitte"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema \"ymsgr"
-"\" URL-e."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" URL-ide käsitleja"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "\"ymsgr\" URL-ide käsitlemise käsk (kui on lubatud)."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Logijal pole lugemisfunktsiooni</font></b>"
@@ -2877,6 +2877,56 @@ msgstr "Lihtne plugin"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Test veendumaks, kas enamus asju töötavad korrektselt."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5838,11 +5888,9 @@ msgstr "MSN-serverid võetakse ajutiselt maha"
 msgid "Unable to authenticate: %s"
 msgstr "Pole võimalik autentida: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Sinu MSN-i sõbranimekiri pole ajutiselt saadaval. Palun oota ja proovi "
-"uuesti."
 
 msgid "Handshaking"
 msgstr "Käepigistus"
@@ -10222,6 +10270,22 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin, Interneti sõnumivahetus"
 
@@ -11549,6 +11613,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Kurdi"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Leedu"
 
@@ -11661,6 +11728,11 @@ msgid "Urdu"
 msgstr "Urdu"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

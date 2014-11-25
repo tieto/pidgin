@@ -371,7 +371,7 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 
 	body = msn_message_get_bin_data(msg, &body_len);
 
-	if (body != NULL && (end - n) > body_len)
+	if (body != NULL && (end - n) > (gssize)body_len)
 	{
 		memcpy(n, body, body_len);
 		n += body_len;

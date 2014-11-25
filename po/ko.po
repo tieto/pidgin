@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Korean (http://www.transifex.com/projects/p/pidgin/language/"
 "ko/)\n"
@@ -1810,6 +1810,139 @@ msgid ""
 msgstr ""
 "초대하고자 하는 상대의 이름과 초대 메시지(선택 사항)을 입력해 주십시오."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "지정한 명령으로 \"aim\" URL을 처리할까 말까"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"aim\" URL을 처리하는 경우에는 TRUE 입니다."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" 용 핸들"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "\"aim\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
+
+msgid "Run the command in a terminal"
+msgstr "터미널로부터 명령 수행"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"이 형식의 URL을 처리하기 위해 사용하는 명령을 터미널로부터 시작하는 경우에는 "
+"TRUE 입니다."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "지정한 명령으로 \"gg\" URL을 처리할까 말까"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"gg\" URL을 처리하는 경우에는 TRUE 입니다."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" 용 핸들"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "\"gg\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "지정한 명령으로 \"icq\" URL을 처리할까 말까"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"icq\" URL을 처리하는 경우에는 TRUE 입니다."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" 용 핸들"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "\"icq\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "지정한 명령으로 \"irc\" URL을 처리할까 말까"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"irc\" URL을 처리하는 경우에는 TRUE 입니다."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" 용 핸들"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "\"irc\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "지정한 명령으로 \"msnim\" URL을 처리할까 말까"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"msnim\" URL을 처리하는 경우에는 TRUE 입니"
+"다."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" 용 핸들"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "\"msnim\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "지정한 명령으로 \"sip\" URL을 처리할까 말까"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"sip\" URL을 처리하는 경우에는 TRUE 입니다."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" 용 핸들"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "\"sip\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "지정한 명령으로 \"xmpp\" URL을 처리할까 말까"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"xmpp\" URL을 처리하는 경우에는 TRUE 입니"
+"다."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" 용 핸들"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "\"xmpp\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "지정한 명령으로 \"ymsgr\" URL을 처리할까 말까"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"\"command\" 키로 지정한 명령으로 \"ymsgr\" URL을 처리하는 경우에는 TRUE 입니"
+"다."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" 용 핸들"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "\"ymsgr\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "새 접속을 열 수 없습니다: %s"
@@ -1983,139 +2116,6 @@ msgstr "%s (으)로의 파일 전송에 실패했습니다."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "%s (으)로부터의 파일 전송에 실패했습니다."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "지정한 명령으로 \"aim\" URL을 처리할까 말까"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"aim\" URL을 처리하는 경우에는 TRUE 입니다."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" 용 핸들"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "\"aim\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "Run the command in a terminal"
-msgstr "터미널로부터 명령 수행"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"이 형식의 URL을 처리하기 위해 사용하는 명령을 터미널로부터 시작하는 경우에는 "
-"TRUE 입니다."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "지정한 명령으로 \"gg\" URL을 처리할까 말까"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"gg\" URL을 처리하는 경우에는 TRUE 입니다."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" 용 핸들"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "\"gg\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "지정한 명령으로 \"icq\" URL을 처리할까 말까"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"icq\" URL을 처리하는 경우에는 TRUE 입니다."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" 용 핸들"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "\"icq\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "지정한 명령으로 \"irc\" URL을 처리할까 말까"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"irc\" URL을 처리하는 경우에는 TRUE 입니다."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" 용 핸들"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "\"irc\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "지정한 명령으로 \"msnim\" URL을 처리할까 말까"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"msnim\" URL을 처리하는 경우에는 TRUE 입니"
-"다."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" 용 핸들"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "\"msnim\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "지정한 명령으로 \"sip\" URL을 처리할까 말까"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"sip\" URL을 처리하는 경우에는 TRUE 입니다."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" 용 핸들"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "\"sip\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "지정한 명령으로 \"xmpp\" URL을 처리할까 말까"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"xmpp\" URL을 처리하는 경우에는 TRUE 입니"
-"다."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" 용 핸들"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "\"xmpp\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "지정한 명령으로 \"ymsgr\" URL을 처리할까 말까"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"\"command\" 키로 지정한 명령으로 \"ymsgr\" URL을 처리하는 경우에는 TRUE 입니"
-"다."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" 용 핸들"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "\"ymsgr\" URL을 처리할 때 사용하는 명령입니다 (이용 가능한 경우)."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">로그 기록에는 읽기 함수가 없습니다.</font></b>"
@@ -2768,6 +2768,56 @@ msgstr "심플 플러그인"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "중요한 기능이 동작하고 있는지 시험합니다."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5716,11 +5766,9 @@ msgstr ""
 msgid "Unable to authenticate: %s"
 msgstr "인증할 수 없습니다: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"사용 중인 MSN 친구 목록이 일시적으로 사용할수 없게 되었습니다. 잠시 후 다시 "
-"시도해 보시기 바랍니다."
 
 msgid "Handshaking"
 msgstr "통신에 접속 중입니다."
@@ -10134,6 +10182,22 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin 인터넷 메신저"
 
@@ -11433,6 +11497,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "쿠르드어"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "리투아니아어"
 
@@ -11545,6 +11612,11 @@ msgid "Urdu"
 msgstr ""
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

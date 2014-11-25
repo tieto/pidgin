@@ -74,7 +74,7 @@ typedef struct
 static struct
 {
 	const char *text;
-	int num;
+	PurplePrivacyType type;
 
 } const menu_entries[] =
 {
@@ -206,12 +206,12 @@ static void
 select_account_cb(GtkWidget *dropdown, PurpleAccount *account,
 				  PidginPrivacyDialog *dialog)
 {
-	int i;
+	gsize i;
 
 	dialog->account = account;
 
 	for (i = 0; i < menu_entry_count; i++) {
-		if (menu_entries[i].num == account->perm_deny) {
+		if (menu_entries[i].type == account->perm_deny) {
 			gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->type_menu), i);
 			break;
 		}
@@ -228,7 +228,8 @@ select_account_cb(GtkWidget *dropdown, PurpleAccount *account,
 static void
 type_changed_cb(GtkComboBox *combo, PidginPrivacyDialog *dialog)
 {
-	int new_type = menu_entries[gtk_combo_box_get_active(combo)].num;
+	PurplePrivacyType new_type =
+		menu_entries[gtk_combo_box_get_active(combo)].type;
 
 	dialog->account->perm_deny = new_type;
 	serv_set_permit_deny(purple_account_get_connection(dialog->account));
@@ -335,8 +336,8 @@ privacy_dialog_new(void)
 	GtkWidget *button;
 	GtkWidget *dropdown;
 	GtkWidget *label;
-	int selected = -1;
-	int i;
+	gssize selected = -1;
+	gsize i;
 
 	dialog = g_new0(PidginPrivacyDialog, 1);
 
@@ -371,8 +372,8 @@ privacy_dialog_new(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(dialog->type_menu),
 		                          _(menu_entries[i].text));
 
-		if (menu_entries[i].num == dialog->account->perm_deny)
-			selected = i;
+		if (menu_entries[i].type == dialog->account->perm_deny)
+			selected = (gssize)i;
 	}
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->type_menu), selected);

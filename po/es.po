@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/pidgin/language/"
 "es/)\n"
@@ -1896,6 +1896,144 @@ msgstr ""
 "Introduzca el nombre de usuario al que desea invitar, junto con un mensaje "
 "de invitación opcional."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Si la orden debería gestionar URLs «aim»"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«aim»."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "El manejador para URLs «aim»"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "La orden para gestionar URLs «aim», si se activan."
+
+msgid "Run the command in a terminal"
+msgstr "Ejecutar la orden en un terminal"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Cierto si la orden especifica para gestionar este tipo de URLs debería "
+"ejecutarse en un terminal."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Si la orden debería gestionar URLs «gg»"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«gg»."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "El manejador para URLs «gg»"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "La orden para gestionar URLs «gg», si se activan."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Si la orden debería gestionar URLs «icq»"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«icq»."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "El manejador para URLs «icq»"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "La orden para gestionar URLs «icq», si se activan."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Si la orden debería gestionar URLs «irc»"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«irc»."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "El manejador para URLs «irc»"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "La orden para gestionar URLs «irc», si se activan."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Si la orden debería gestionar URLs «msnim»"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«msnim»."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "El manejador para URLs «msnim»"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "La orden para gestionar URLs «msnim», si se activan."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Si la orden debería gestionar URLs «sip»"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«sip»."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "El manejador para URLs «sip»"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "La orden para gestionar URLs «sip», si se activan."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Si la orden debería gestionar URLs «xmpp»"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«xmpp»."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "El manejador para URLs «xmpp»"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "La orden para gestionar URLs «xmpp», si se activan."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Si la orden debería gestionar URLs «ymsgr»"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«ymsgr»."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "El manejador para URLs «ymsgr»"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "La orden para gestionar URLs «ymsgr», si se activan."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "No se pudo obtener la conexión: %s"
@@ -2071,144 +2209,6 @@ msgstr "Falló la transferencia del archivo a %s."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Falló la transferencia del archivo de %s."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Si la orden debería gestionar URLs «aim»"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
-"«aim»."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "El manejador para URLs «aim»"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "La orden para gestionar URLs «aim», si se activan."
-
-msgid "Run the command in a terminal"
-msgstr "Ejecutar la orden en un terminal"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Cierto si la orden especifica para gestionar este tipo de URLs debería "
-"ejecutarse en un terminal."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Si la orden debería gestionar URLs «gg»"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
-"«gg»."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "El manejador para URLs «gg»"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "La orden para gestionar URLs «gg», si se activan."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Si la orden debería gestionar URLs «icq»"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
-"«icq»."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "El manejador para URLs «icq»"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "La orden para gestionar URLs «icq», si se activan."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Si la orden debería gestionar URLs «irc»"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
-"«irc»."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "El manejador para URLs «irc»"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "La orden para gestionar URLs «irc», si se activan."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Si la orden debería gestionar URLs «msnim»"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
-"«msnim»."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "El manejador para URLs «msnim»"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "La orden para gestionar URLs «msnim», si se activan."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Si la orden debería gestionar URLs «sip»"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
-"«sip»."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "El manejador para URLs «sip»"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "La orden para gestionar URLs «sip», si se activan."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Si la orden debería gestionar URLs «xmpp»"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
-"«xmpp»."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "El manejador para URLs «xmpp»"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "La orden para gestionar URLs «xmpp», si se activan."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Si la orden debería gestionar URLs «ymsgr»"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
-"«ymsgr»."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "El manejador para URLs «ymsgr»"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "La orden para gestionar URLs «ymsgr», si se activan."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
@@ -2895,6 +2895,56 @@ msgstr "Complemento sencillo"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Hace pruebas para determinar si la mayor parte de las cosas funcionan."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5926,11 +5976,9 @@ msgstr "Los servidores de MSN van a sufrir un apagado temporal"
 msgid "Unable to authenticate: %s"
 msgstr "No se pudo autenticar: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Su lista de amigos MSN está indisponible temporalmente. Por favor, espere y "
-"vuelva a intentarlo más tarde."
 
 msgid "Handshaking"
 msgstr "Negociación"
@@ -10525,6 +10573,22 @@ msgstr ""
 "Se ha encontrado un error al leer su %s. No se ha cargado, y el archivo "
 "antiguo se ha renombrado a %s~."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Cliente de mensajería de Internet Pidgin"
 
@@ -11866,6 +11930,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Kurdo"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Lituano"
 
@@ -11978,6 +12045,11 @@ msgid "Urdu"
 msgstr "Urdu"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Telugu (http://www.transifex.com/projects/p/pidgin/language/"
 "te/)\n"
@@ -1846,6 +1846,127 @@ msgid ""
 "invite message."
 msgstr "మీరు ఆహ్వానించదల్చుకున్న మిత్రుని పేరును ఐచ్చిక ఆహ్వాన సందేశంతో పాటుగా ఎంటర్ చేయండి."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "\"గురిచూచు\" URLs అయినను నిర్థేశింపబడిన ఆదేశం ఉపయోగించవలెను"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"\"ఆదేశం\" లో నిర్థేశించిబడిన ఆదేశం ఒకవేళ నిజము ఐతే \"గురి చూచు\" మీట ఉపయోగించవలెను URLs."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "\"గురిచూచుటను\" ఉపయోగించుట కొరకు URLs"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "\"గురిచూచు\" ఆదేశం వాడుటకు ఉపయోగించుటకు URLs, ఒకవేళ క్రియాశీలీకరించితే."
+
+msgid "Run the command in a terminal"
+msgstr "ఒక అగ్రం లో ఆదేశం నడుపుము"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr "ఈ రకమైన URL ఉపయోగించుటకు ఆదేశం వాడుదురు ఒకవేళ నిజమైతే అగ్రంలో  నడుపవలెను."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "నిర్దిష్ట కమాండ్ \"gg\" URLs ను హ్యాండిల్ చేయాలా"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"gg\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" URLs కోసం హ్యాండిల్ చేసేది"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "URLs సాధ్యమైతే, \"gg\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "నిర్దిష్ట కమాండ్ \"icq\" URLs ను హ్యాండిల్ చేయాలా"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"icq\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" URLs కోసం హ్యాండిల్ చేసేది"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "URLs సాధ్యమైతే, \"icq\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "నిర్దిష్ట కమాండ్ \"irc\" URLs ను హ్యాండిల్ చేయాలా"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"irc\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" URLs కోసం హ్యాండిల్ చేసేది"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "URLs సాధ్యమైతే, \"irc\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "నిర్దిష్ట కమాండ్ \"msnim\" URLs ను హ్యాండిల్ చేయాలా"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"msnim\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" URLs కోసం హ్యాండిల్ చేసేది"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "URLs సాధ్యమైతే, \"msnim\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "నిర్దిష్ట కమాండ్ \"sip\" URLs ను హ్యాండిల్ చేయాలా"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"sip\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" URLs కోసం హ్యాండిల్ చేసేది"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "URLs సాధ్యమైతే, \"sip\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "నిర్దిష్ట కమాండ్ \"xmpp\" URLs ను హ్యాండిల్ చేయాలా"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"xmpp\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" URLs కోసం హ్యాండిల్ చేసేది"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "URLs సాధ్యమైతే, \"xmpp\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "నిర్దిష్ట కమాండ్ \"ymsgr\" URLs ను హ్యాండిల్ చేయాలా"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"ymsgr\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" URLs కోసం హ్యాండిల్ చేసేది"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "URLs సాధ్యమైతే, \"ymsgr\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "కనెక్షన్ పొందడంలో వైఫల్యం: %s"
@@ -2019,127 +2140,6 @@ msgstr "%s కు ఫైలును ట్రాన్స్ఫర్ చేయ
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "%s నుంచి ఫైలును ట్రాన్స్ఫర్ చేయడంలో వైఫల్యం."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "\"గురిచూచు\" URLs అయినను నిర్థేశింపబడిన ఆదేశం ఉపయోగించవలెను"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"\"ఆదేశం\" లో నిర్థేశించిబడిన ఆదేశం ఒకవేళ నిజము ఐతే \"గురి చూచు\" మీట ఉపయోగించవలెను URLs."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"గురిచూచుటను\" ఉపయోగించుట కొరకు URLs"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "\"గురిచూచు\" ఆదేశం వాడుటకు ఉపయోగించుటకు URLs, ఒకవేళ క్రియాశీలీకరించితే."
-
-msgid "Run the command in a terminal"
-msgstr "ఒక అగ్రం లో ఆదేశం నడుపుము"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr "ఈ రకమైన URL ఉపయోగించుటకు ఆదేశం వాడుదురు ఒకవేళ నిజమైతే అగ్రంలో  నడుపవలెను."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "నిర్దిష్ట కమాండ్ \"gg\" URLs ను హ్యాండిల్ చేయాలా"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"gg\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" URLs కోసం హ్యాండిల్ చేసేది"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "URLs సాధ్యమైతే, \"gg\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "నిర్దిష్ట కమాండ్ \"icq\" URLs ను హ్యాండిల్ చేయాలా"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"icq\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" URLs కోసం హ్యాండిల్ చేసేది"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "URLs సాధ్యమైతే, \"icq\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "నిర్దిష్ట కమాండ్ \"irc\" URLs ను హ్యాండిల్ చేయాలా"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"irc\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" URLs కోసం హ్యాండిల్ చేసేది"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "URLs సాధ్యమైతే, \"irc\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "నిర్దిష్ట కమాండ్ \"msnim\" URLs ను హ్యాండిల్ చేయాలా"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"msnim\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" URLs కోసం హ్యాండిల్ చేసేది"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "URLs సాధ్యమైతే, \"msnim\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "నిర్దిష్ట కమాండ్ \"sip\" URLs ను హ్యాండిల్ చేయాలా"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"sip\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" URLs కోసం హ్యాండిల్ చేసేది"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "URLs సాధ్యమైతే, \"sip\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "నిర్దిష్ట కమాండ్ \"xmpp\" URLs ను హ్యాండిల్ చేయాలా"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"xmpp\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" URLs కోసం హ్యాండిల్ చేసేది"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "URLs సాధ్యమైతే, \"xmpp\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "నిర్దిష్ట కమాండ్ \"ymsgr\" URLs ను హ్యాండిల్ చేయాలా"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr "\"command\" కీలో నిర్దేశించిన కమాండ్ \"ymsgr\" URLs ను హ్యాండిల్ చేసేది నిజమేనా."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" URLs కోసం హ్యాండిల్ చేసేది"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "URLs సాధ్యమైతే, \"ymsgr\" హ్యాండిల్ చేయడానికి ఉపయోగించే కమాండ్."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">లాగర్‌లో రీడ్ ఫంక్షన్ లేదు.</font></b>"
@@ -2803,6 +2803,56 @@ msgstr "సింపుల్ ప్లగ్‌ఇన్ "
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "ఎక్కువభాగం పనిచేస్తున్నాయో లేదో తెలుసుకునే పరీక్షలు."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5744,9 +5794,9 @@ msgstr "MSN సేవికలు తాత్కాలికంగా డౌన
 msgid "Unable to authenticate: %s"
 msgstr "ప్రమాణీకరణలో అసమర్థత: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr "మీ MSN మిత్రుల జాబితా తాత్కాలికంగా అందుబాటులో లేదు. దయచేసి కొంచెం సేపుఆగి  మళ్ళీ ప్రయత్నించండి. "
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
+msgstr ""
 
 msgid "Handshaking"
 msgstr "హాండ్‌షేకింగ్ "
@@ -10189,6 +10239,22 @@ msgstr ""
 "మీ %sను చదువుటలో వొక దోషము యెదురైంది.  ఫైలు లోడుకాలేదు, మరియు పాత ఫైలు %s~కు పునఃనామకరణ "
 "చేయబడింది."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "పిడ్జిన్ ఇంటర్నెట్ మెసెంజర్"
 
@@ -11516,6 +11582,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "కుర్దిష్"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Lithuanian"
 
@@ -11628,6 +11697,11 @@ msgid "Urdu"
 msgstr "ఉర్దు"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

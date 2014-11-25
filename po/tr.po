@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/projects/p/pidgin/language/"
 "tr/)\n"
@@ -1826,6 +1826,145 @@ msgstr ""
 "İsterseniz bir davet mesajıyla beraber davet etmek istediğiniz kişinin "
 "ismini girin."
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Belirtilen komut \"aim\" adreslerini yakalayabiliyor mu"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"\"komut\" içerisinde belirtilen komut kısayolu \"aim\" adreslerini "
+"yakalayabiliyorsa doğru."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Bu komut etkinleştirilirse \"aim\" adreslerini açmak için kullanılır."
+
+msgid "Run the command in a terminal"
+msgstr "Komutu bir terminalde çalıştır."
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Bu komut bir uçbirimde çalıştırılabilen adresleri yakalayabiliyorsa doğru."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Belirtilen komut \"gg\" adreslerini yakalayabiliyor mu"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"\"komut\" içerisinde belirtilen komut kısayolu \"gg\" adreslerini "
+"yakalayabiliyorsa doğru."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Bu komut etkinleştirilirse \"gg\" adreslerini açmak için kullanılır."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Belirtilen komut \"icq\" adreslerini yakalayabiliyor mu"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"\"komut\" içerisinde belirtilen komut kısayolu \"icq\" adreslerini "
+"yakalayabiliyorsa doğru."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Bu komut etkinleştirilirse \"icq\" adreslerini açmak için kullanılır."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Belirtilen komut \"irc\" adreslerini yakalayabiliyor mu"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"\"komut\" içerisinde belirtilen komut kısayolu \"irc\" adreslerini "
+"yakalayabiliyorsa doğru."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Bu komut etkinleştirilirse \"irc\" adreslerini açmak için kullanılır."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Belirtilen komut \"msnim\" adreslerini yakalayabiliyor mu"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"\"komut\" içerisinde belirtilen komut kısayolu \"msnim\" adreslerini "
+"yakalayabiliyorsa doğru."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"Bu komut etkinleştirilirse \"msnim\" adreslerini açmak için kullanılır."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Belirtilen komut \"sip\" adreslerini yakalayabiliyor mu"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"\"komut\" içerisinde belirtilen komut kısayolu \"sip\" adreslerini "
+"yakalayabiliyorsa doğru."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Bu komut etkinleştirilirse \"sip\" adreslerini açmak için kullanılır."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Belirtilen komut \"xmpp\" adreslerini yakalayabiliyor mu"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"\"komut\" içerisinde belirtilen komut kısayolu \"xmpp\" adreslerini "
+"yakalayabiliyorsa doğru."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Bu komut etkinleştirilirse \"xmpp\" adreslerini açmak için kullanılır."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Belirtilen komut \"ymsgr\" adreslerini yakalayabiliyor mu"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"\"komut\" içerisinde belirtilen komut kısayolu \"ymsgr\" adreslerini "
+"yakalayabiliyorsa doğru."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" adresleri için yakalayıcı"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr ""
+"Bu komut etkinleştirilirse \"ymsgr\" adreslerini açmak için kullanılır."
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "Bağlantı sağlanamadı: %s"
@@ -1999,145 +2138,6 @@ msgstr "%s kullanıcısında dosya transferi yapılamadı."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "%s kullanıcısından dosya transferi yapılamadı."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Belirtilen komut \"aim\" adreslerini yakalayabiliyor mu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"\"komut\" içerisinde belirtilen komut kısayolu \"aim\" adreslerini "
-"yakalayabiliyorsa doğru."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" adresleri için yakalayıcı"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Bu komut etkinleştirilirse \"aim\" adreslerini açmak için kullanılır."
-
-msgid "Run the command in a terminal"
-msgstr "Komutu bir terminalde çalıştır."
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Bu komut bir uçbirimde çalıştırılabilen adresleri yakalayabiliyorsa doğru."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Belirtilen komut \"gg\" adreslerini yakalayabiliyor mu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"\"komut\" içerisinde belirtilen komut kısayolu \"gg\" adreslerini "
-"yakalayabiliyorsa doğru."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" adresleri için yakalayıcı"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Bu komut etkinleştirilirse \"gg\" adreslerini açmak için kullanılır."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Belirtilen komut \"icq\" adreslerini yakalayabiliyor mu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"\"komut\" içerisinde belirtilen komut kısayolu \"icq\" adreslerini "
-"yakalayabiliyorsa doğru."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" adresleri için yakalayıcı"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Bu komut etkinleştirilirse \"icq\" adreslerini açmak için kullanılır."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Belirtilen komut \"irc\" adreslerini yakalayabiliyor mu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"\"komut\" içerisinde belirtilen komut kısayolu \"irc\" adreslerini "
-"yakalayabiliyorsa doğru."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" adresleri için yakalayıcı"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Bu komut etkinleştirilirse \"irc\" adreslerini açmak için kullanılır."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Belirtilen komut \"msnim\" adreslerini yakalayabiliyor mu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"\"komut\" içerisinde belirtilen komut kısayolu \"msnim\" adreslerini "
-"yakalayabiliyorsa doğru."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" adresleri için yakalayıcı"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Bu komut etkinleştirilirse \"msnim\" adreslerini açmak için kullanılır."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Belirtilen komut \"sip\" adreslerini yakalayabiliyor mu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"\"komut\" içerisinde belirtilen komut kısayolu \"sip\" adreslerini "
-"yakalayabiliyorsa doğru."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" adresleri için yakalayıcı"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Bu komut etkinleştirilirse \"sip\" adreslerini açmak için kullanılır."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Belirtilen komut \"xmpp\" adreslerini yakalayabiliyor mu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"\"komut\" içerisinde belirtilen komut kısayolu \"xmpp\" adreslerini "
-"yakalayabiliyorsa doğru."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" adresleri için yakalayıcı"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Bu komut etkinleştirilirse \"xmpp\" adreslerini açmak için kullanılır."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Belirtilen komut \"ymsgr\" adreslerini yakalayabiliyor mu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"\"komut\" içerisinde belirtilen komut kısayolu \"ymsgr\" adreslerini "
-"yakalayabiliyorsa doğru."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" adresleri için yakalayıcı"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Bu komut etkinleştirilirse \"ymsgr\" adreslerini açmak için kullanılır."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Kaydedicinin okuma fonksiyonu yok</font></b>"
@@ -2784,6 +2784,56 @@ msgstr "Basit Eklenti"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "Çoğu şeyin çalışıp çalışmadığını görmek için test edin."
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5712,10 +5762,9 @@ msgstr ""
 msgid "Unable to authenticate: %s"
 msgstr "Doğruluk kanıtlanamıyor: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"MSN listenize geçici olarak bağlanılamıyor. Lütfen daha sonra tekrar deneyin."
 
 msgid "Handshaking"
 msgstr "El Sıkışma"
@@ -10097,6 +10146,22 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin İnternet Mesajlaşma Aracı"
 
@@ -11407,6 +11472,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "Kürtçe"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "Litvanca"
 
@@ -11519,6 +11587,11 @@ msgid "Urdu"
 msgstr ""
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

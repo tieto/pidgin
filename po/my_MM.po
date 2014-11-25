@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 15:56-0700\n"
-"PO-Revision-Date: 2014-06-27 08:27+0000\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Burmese (Myanmar) (http://www.transifex.com/projects/p/pidgin/"
 "language/my_MM/)\n"
@@ -1847,6 +1847,135 @@ msgid ""
 "invite message."
 msgstr "ဖိတ်ခေါ်လိုသော မိတ်ဆွေအမည် ရေးပေးပါ။ (ဖိတ်ခေါ်စာ တစ်ပါတည်းရေးပေးလိုလျှင် ပေးနိုင်သည်။)"
 
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"aim\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"aim\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
+
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" URLs ကို ကိုင်တွယ်သူ"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "အကယ်၍ ဖွင့်ထားပါက၊  \"aim\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
+
+msgid "Run the command in a terminal"
+msgstr "ညွှန်ကြားချက်ကို terminal တွင် လုပ်ဆောင်ပါ"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"ဤ URL အမျိုးအစားကို ကိုင်တွယ်ရန် သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် terminal ထဲ၌ သုံးစွဲပါက အမှန်ဟု သတ်မှတ်မည်။"
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"gg\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"gg\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" URLs ကို ကိုင်တွယ်သူ"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "အကယ်၍ ဖွင့်ထားပါက၊  \"gg\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"icq\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"icq\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" URLs ကို ကိုင်တွယ်သူ"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"icq\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"irc\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"irc\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
+
+msgid "The handler for \"irc\" URLs"
+msgstr " \"irc\" URLs ကို ကိုင်တွယ်သူ"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"irc\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"msnim\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"msnim\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" URLs ကို ကိုင်တွယ်သူ"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"msnim\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"sip\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"sip\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" URLs ကို ကိုင်တွယ်သူ"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"sip\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"xmpp\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"xmpp\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" URLs ကို ကိုင်တွယ်သူ"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"xmpp\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"ymsgr\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည \"ymsgr\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" URLs ကို ကိုင်တွယ်သူ"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"ymsgr\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
+
 #, c-format
 msgid "Failed to get connection: %s"
 msgstr "%s ကို ဆက်သွယ်၍ မရပါ"
@@ -2021,135 +2150,6 @@ msgstr "%s သို့ ဖိုင်ဝေမျှမှု မအောင�
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "%s မှ ဖိုင်ဝေမျှမှု မအောင်မြင်ပါ။"
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"aim\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"aim\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" URLs ကို ကိုင်တွယ်သူ"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "အကယ်၍ ဖွင့်ထားပါက၊  \"aim\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
-
-msgid "Run the command in a terminal"
-msgstr "ညွှန်ကြားချက်ကို terminal တွင် လုပ်ဆောင်ပါ"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"ဤ URL အမျိုးအစားကို ကိုင်တွယ်ရန် သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် terminal ထဲ၌ သုံးစွဲပါက အမှန်ဟု သတ်မှတ်မည်။"
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"gg\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"gg\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" URLs ကို ကိုင်တွယ်သူ"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "အကယ်၍ ဖွင့်ထားပါက၊  \"gg\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"icq\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"icq\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" URLs ကို ကိုင်တွယ်သူ"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"icq\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"irc\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"irc\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
-
-msgid "The handler for \"irc\" URLs"
-msgstr " \"irc\" URLs ကို ကိုင်တွယ်သူ"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"irc\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"msnim\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"msnim\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" URLs ကို ကိုင်တွယ်သူ"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"msnim\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"sip\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"sip\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" URLs ကို ကိုင်တွယ်သူ"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"sip\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"xmpp\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"xmpp\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" URLs ကို ကိုင်တွယ်သူ"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"xmpp\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"ymsgr\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည \"ymsgr\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" URLs ကို ကိုင်တွယ်သူ"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"ymsgr\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Logger ၌ ဖတ်ရှုနိုင်သော ဆောင်ရွတ်ချက် မပါရှိပါ။</font></b>"
@@ -2815,6 +2815,56 @@ msgstr "ရိုးရိုး ပလပ်အင်"
 #. *  description
 msgid "Tests to see that most things are working."
 msgstr "အ​များအားဖြင့် အလုပ်လုပ်ကြောင်း သိရှိရန် စစ်ဆေးချက်များ။"
+
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5764,9 +5814,9 @@ msgstr "MSN ဆာဗာများသည် ခေတ္တ အလုပ်မ
 msgid "Unable to authenticate: %s"
 msgstr "အတည်ပြု၍ မရသောအရာ - %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr "သင့် MSN မိတ်ဆွေစာရင်းကို လောလောဆယ် ဖွင့်မရပါ။ ခဏစောင့်ဆိုင်းပြီး ထပ်ကြိုးစားပါ။"
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
+msgstr ""
 
 msgid "Handshaking"
 msgstr "လက်ဆွဲနှုတ်ဆက်ခြင်း"
@@ -10204,6 +10254,22 @@ msgstr ""
 "သင့် %s ကို ဖတ်ရှုရာတွင် ချို့ယွင်းမှု ဖြစ်ပေါ်ခဲ့သည်။ ဖိုင်ကို ဖွင့်မရပါ။ ထို့ပြင် ဖိုင်ဟောင်းကို %s အဖြစ် "
 "အမည်ပြောင်းလိုက်သည် ~."
 
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
+
 msgid "Pidgin Internet Messenger"
 msgstr "ပင်ဂျင်း အင်တာနက် မစ်ဆင်းဂျာ"
 
@@ -11530,6 +11596,9 @@ msgstr ""
 msgid "Kurdish"
 msgstr "ကူဒစ်ရှ်"
 
+msgid "Kurdish (Sorani)"
+msgstr ""
+
 msgid "Lithuanian"
 msgstr "လစ်သူယန်းနီယန်း"
 
@@ -11642,6 +11711,11 @@ msgid "Urdu"
 msgstr "အူရ်ဒူ"
 
 msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"

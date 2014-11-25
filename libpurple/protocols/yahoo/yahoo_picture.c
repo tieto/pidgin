@@ -420,7 +420,7 @@ static void yahoo_buddy_icon_upload_pending(gpointer data, gint source, PurpleIn
 		return;
 	}
 	d->pos += wrote;
-	if (d->pos >= d->str->len) {
+	if ((size_t)d->pos >= d->str->len) {
 		purple_debug_misc("yahoo", "Finished uploading buddy icon.\n");
 		purple_input_remove(d->watcher);
 		/* Clean out the sent buffer and reuse it to read the result */

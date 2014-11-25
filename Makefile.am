@@ -19,7 +19,6 @@ EXTRA_DIST = \
 		package_revision.h \
 		pidgin.apspec.in \
 		pidgin.spec.in \
-		pidgin.desktop.in \
 		po/Makefile.mingw \
 		valgrind-suppressions
 
@@ -65,16 +64,7 @@ release: commit-check version-check distcheck sign-packages
 
 if INSTALL_I18N
 PO_DIR=po
-DESKTOP_FILE=pidgin.desktop
-
-if ENABLE_GTK
-appsdir = $(datadir)/applications
-apps_in_files = pidgin.desktop.in
-apps_DATA = $(apps_in_files:.desktop.in=.desktop)
-@INTLTOOL_DESKTOP_RULE@
-endif #ENABLE_GTK
-
-endif #INSTALL_I18N
+endif
 
 if ENABLE_GTK
 GTK_DIR=pidgin
@@ -149,5 +139,5 @@ endif
 distuninstallcheck_listfiles = \
 	find . -type f -print | grep -v perl | grep -v Purple.3pm | grep -v Pidgin.3pm
 
-DISTCLEANFILES= $(DESKTOP_FILE) libpurple/gconf/purple.schemas intltool-extract \
-			intltool-merge intltool-update package_revision_raw.txt
+DISTCLEANFILES= intltool-extract intltool-merge intltool-update \
+			package_revision_raw.txt
