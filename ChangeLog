@@ -92,16 +92,45 @@ version 3.0.0 (??/??/????):
 	* A single jabber plugin provides XMPP, GTalk and Facebook protocols.
 	* A single yahoo plugin provides both Yahoo and Yahoo JAPAN protocols.
 
-version 2.10.10 (?/?/?):
+version 2.10.11 (11/23/14):
 	General:
-	* Allow and prefer TLS 1.2 and 1.1 when using libnss. (Elrond and
-	  Ashish Gupta) (#15909)
+	* Fix handling of Self-Signed SSL/TLS Certificates when using the NSS
+	  plugin (#16412)
+	* Improve default cipher suites used with the NSS plugin (#16262)
+	* Add NSS Preferences plugin which allows the SSL/TLS Versions and
+	  cipher suites to be configured (#8061)
+
+	Gadu-Gadu:
+	* Fix a bug that prevented plugin to load when compiled without GnuTLS.
+	  (mancha) (#16431)
+	* Fix build for platforms without AF_LOCAL definition. (#16404)
+
+	MSN:
+	* Fix broken login due to server change (dx, TReKiE). (#16451, #16455)
+	* Fail early when buddy list is unavailable instead of wasting bandwidth
+	  endlessly re-trying.
+
+version 2.10.10 (10/22/14):
+	General:
+	* Check the basic constraints extension when validating SSL/TLS
+	  certificates. This fixes a security hole that allowed a malicious
+	  man-in-the-middle to impersonate an IM server or any other https
+	  endpoint. This affected both the NSS and GnuTLS plugins. (Discovered
+	  by an anonymous person and Jacob Appelbaum of the Tor Project, with
+	  thanks to Moxie Marlinspike for first publishing about this type of
+	  vulnerability. Thanks to Kai Engert for guidance and for some of the
+	  NSS changes) (CVE-2014-3694)
+	* Allow and prefer TLS 1.2 and 1.1 when using the NSS plugin for SSL.
+	  (Elrond and Ashish Gupta) (#15909)
 
 	libpurple3 compatibility:
 	* Encrypted account passwords are preserved until the new one is set.
 	* Fix loading Google Talk and Facebook XMPP accounts.
 
 	Windows-Specific Changes:
+	* Don't allow overwriting arbitrary files on the file system when the
+	  user installs a smiley theme via drag-and-drop. (Discovered by Yves
+	  Younan of Cisco Talos) (CVE-2014-3697)
 	* Updates to dependencies:
 		* NSS 3.17.1 and NSPR 4.10.7
 
@@ -111,11 +140,26 @@ version 2.10.10 (?/?/?):
 	Gadu-Gadu:
 	* Updated internal libgadu to version 1.12.0.
 
+	Groupwise:
+	* Fix potential remote crash parsing server message that indicates that
+	  a large amount of memory should be allocated. (Discovered by Yves Younan
+	  and Richard Johnson of Cisco Talos) (CVE-2014-3696)
+
 	IRC:
 	* Fix a possible leak of unencrypted data when using /me command
 	  with OTR. (Thijs Alkemade) (#15750)
 
+	MXit:
+	* Fix potential remote crash parsing a malformed emoticon response.
+	  (Discovered by Yves Younan and Richard Johnson of Cisco Talos)
+	  (CVE-2014-3695)
+
 	XMPP:
+	* Fix potential information leak where a malicious XMPP server and
+	  possibly even a malicious remote user could create a carefully crafted
+	  XMPP message that causes libpurple to send an XMPP message containing
+	  arbitrary memory. (Discovered and fixed by Thijs Alkemade and Paul
+	  Aurich) (CVE-2014-3698)
 	* Fix Facebook XMPP roster quirks. (#15041, #15957)
 
 	Yahoo:
@@ -1541,7 +1585,7 @@ version 2.6.4 (11/29/2009):
 	Finch:
 	* The TinyURL plugin now creates shorter URLs for long non-conversation
 	  URLs, e.g. URLs to open Inbox in Yahoo/MSN protocols, or the Yahoo
-	  CAPTCHA when joining chat rooms.
+	  Captcha when joining chat rooms.
 	* Fix displaying umlauts etc. in non-utf8 locale (fix in libgnt).
 
 	Pidgin:

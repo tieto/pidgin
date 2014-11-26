@@ -187,7 +187,7 @@ purple_base16_encode(const guchar *data, gsize len)
 guchar *
 purple_base16_decode(const char *str, gsize *ret_len)
 {
-	int len, i, accumulator = 0;
+	gsize len, i, accumulator = 0;
 	guchar *data;
 
 	g_return_val_if_fail(str != NULL, NULL);
@@ -2402,7 +2402,6 @@ purple_markup_strip_html(const char *str)
 				 * address the link was pointing to. */
 				else if (href != NULL && g_ascii_strncasecmp(str2 + i, "</a>", 4) == 0)
 				{
-
 					size_t hrlen = strlen(href);
 
 					/* Only insert the href if it's different from the CDATA. */

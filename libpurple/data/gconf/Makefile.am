@@ -18,4 +18,6 @@ else
 install-data-local:
 endif #GCONF_SCHEMAS_INSTALL
 
+DISTCLEANFILES= purple.schemas
+
 endif #INSTALL_I18N

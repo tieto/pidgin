@@ -1595,7 +1595,6 @@ msn_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 	g_free(msgformat);
 	g_free(msgtext);
 
-	purple_debug_info("msn", "prepare to send online Message\n");
 	if (g_ascii_strcasecmp(rcpt, username))
 	{
 		if (flags & PURPLE_MESSAGE_AUTO_RESP) {
@@ -1604,7 +1603,7 @@ msn_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 
 		if (msn_user_is_yahoo(account, rcpt) || !(msn_user_is_online(account, rcpt) || swboard != NULL)) {
 			/*we send the online and offline Message to Yahoo User via UBM*/
-			purple_debug_info("msn", "send to Yahoo User\n");
+			purple_debug_info("msn", "send to offline or Yahoo user\n");
 			msn_notification_send_uum(session, msg);
 		} else {
 			purple_debug_info("msn", "send via switchboard\n");

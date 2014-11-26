@@ -449,7 +449,7 @@ if test x$enable_i18n = xyes; then
 	GETTEXT_PACKAGE=pidgin
 	AC_SUBST(GETTEXT_PACKAGE)
 
-	ALL_LINGUAS="af am ar ast az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hr hu id it ja ka kk km kn ko ku lt lv mai mhr mk mn mr my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr tt uk ur vi xh zh_CN zh_HK zh_TW"
+	ALL_LINGUAS="af am ar ast az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hr hu id it ja ka kk km kn ko ku ku_IQ lt lv mai mhr mk mn mr my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr tt uk ur vi xh zh_CN zh_HK zh_TW"
 	AM_GLIB_GNU_GETTEXT
 
 	dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -2713,8 +2713,9 @@ AC_CONFIG_FILES([Makefile
 		   m4macros/Makefile
 		   pidgin.apspec
 		   pidgin/Makefile
-		   pidgin/pidgin-3.pc
-		   pidgin/pidgin-3-uninstalled.pc
+		   pidgin/data/pidgin.desktop.in
+		   pidgin/data/pidgin-3.pc
+		   pidgin/data/pidgin-3-uninstalled.pc
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/small/16/Makefile
@@ -2730,10 +2731,10 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/themes/Makefile
 		   pidgin/win32/pidgin_dll_rc.rc
 		   pidgin/win32/pidgin_exe_rc.rc
+		   libpurple/data/gconf/Makefile
+		   libpurple/data/purple-3.pc
+		   libpurple/data/purple-3-uninstalled.pc
 		   libpurple/example/Makefile
-		   libpurple/gconf/Makefile
-		   libpurple/purple-3.pc
-		   libpurple/purple-3-uninstalled.pc
 		   libpurple/plugins/Makefile
 		   libpurple/plugins/keyrings/Makefile
 		   libpurple/plugins/ssl/Makefile
@@ -2769,7 +2770,6 @@ AC_CONFIG_FILES([Makefile
 		   finch/libgnt/wms/Makefile
 		   finch/plugins/Makefile
 		   po/Makefile.in
-		   pidgin.desktop.in
 		  ])
 AC_OUTPUT
 

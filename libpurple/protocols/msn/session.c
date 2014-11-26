@@ -406,9 +406,9 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 			break;
 		case MSN_ERROR_BAD_BLIST:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
-			msg = g_strdup(_("Your MSN buddy list is temporarily "
-							 "unavailable. Please wait and try "
-							 "again."));
+			msg = g_strdup_printf(_("Your MSN buddy list is temporarily "
+			                        "unavailable: %s"),
+			                      (info == NULL) ? _("Unknown error") : info);
 			break;
 		default:
 			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;

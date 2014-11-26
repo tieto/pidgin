@@ -77,7 +77,7 @@ pidgin_color_chooser_get_rgb(GtkWidget *widget, GdkColor *color)
 		gtk_color_button_get_color(GTK_COLOR_BUTTON(widget), color);
 }
 
-#else
+#else /* 3.4.0 */
 
 static inline void
 pidgin_color_chooser_set_rgb(GtkColorChooser *chooser, const GdkColor *rgb)
@@ -104,6 +104,88 @@ pidgin_color_chooser_get_rgb(GtkColorChooser *chooser, GdkColor *rgb)
 }
 
 #endif /* 3.4.0 and gtk_color_chooser_ */
+
+
+#if GTK_CHECK_VERSION(3,0,0)
+
+static inline GtkWidget *
+gtk_grid_table_new(guint rows, guint columns)
+{
+	return gtk_grid_new();
+}
+
+static inline void
+gtk_grid_attach_defaults(GtkGrid *grid, GtkWidget *child, gint left, gint top,
+	gint width, gint height)
+{
+	gtk_grid_attach(grid, child, left, top, width, height);
+	gtk_widget_set_hexpand(child, TRUE);
+	gtk_widget_set_vexpand(child, TRUE);
+}
+
+static inline void
+gtk_grid_attach_full(GtkGrid *grid, GtkWidget *child, guint left, guint top,
+	guint width, guint height, GtkAttachOptions xoptions,
+	GtkAttachOptions yoptions, guint xpadding, guint ypadding)
+{
+	gtk_grid_attach(grid, child, left, top, width, height);
+
+	if (xoptions & GTK_EXPAND)
+		gtk_widget_set_hexpand(child, TRUE);
+	if (!(xoptions & GTK_FILL))
+		gtk_widget_set_halign(child, GTK_ALIGN_CENTER);
+	gtk_widget_set_margin_left(child, xpadding);
+	gtk_widget_set_margin_right(child, xpadding);
+
+	if (yoptions & GTK_EXPAND)
+		gtk_widget_set_vexpand(child, TRUE);
+	if (!(yoptions & GTK_FILL))
+		gtk_widget_set_valign(child, GTK_ALIGN_CENTER);
+	gtk_widget_set_margin_top(child, ypadding);
+	gtk_widget_set_margin_bottom(child, ypadding);
+}
+
+#else /* 3.0.0 and gtk_grid_ */
+
+#define GTK_GRID GTK_TABLE
+#define GtkGrid GtkTable
+
+static inline GtkWidget *
+gtk_grid_table_new(guint rows, guint columns)
+{
+	return gtk_table_new(rows, columns, FALSE);
+}
+
+static inline void
+gtk_grid_set_row_spacing(GtkGrid *grid, guint spacing)
+{
+	gtk_table_set_row_spacings(grid, spacing);
+}
+
+static inline void
+gtk_grid_set_column_spacing(GtkGrid *grid, guint spacing)
+{
+	gtk_table_set_col_spacings(grid, spacing);
+}
+
+static inline void
+gtk_grid_attach_defaults(GtkGrid *grid, GtkWidget *child, gint left, gint top,
+	gint width, gint height)
+{
+	gtk_table_attach_defaults(grid, child, left, left + width,
+		top, top + height);
+}
+
+static inline void
+gtk_grid_attach_full(GtkGrid *grid, GtkWidget *child, guint left, guint top,
+	guint width, guint height, GtkAttachOptions xoptions,
+	GtkAttachOptions yoptions, guint xpadding, guint ypadding)
+{
+	gtk_table_attach(grid, child, left, left + width, top, top + height,
+		xoptions, yoptions, xpadding, ypadding);
+}
+
+#endif /* 3.0.0 and gtk_grid_ */
 
 
 #if !GTK_CHECK_VERSION(3,2,0)

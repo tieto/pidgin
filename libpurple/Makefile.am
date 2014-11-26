@@ -12,11 +12,11 @@ EXTRA_DIST = \
 		purple-send-async \
 		purple-url-handler \
 		purple.h.in \
-		purple-3.pc.in \
-		purple-3-uninstalled.pc.in \
 		tag.sh \
 		version.h.in \
 		Makefile.mingw \
+		data/purple-3.pc.in \
+		data/purple-3-uninstalled.pc.in \
 		win32/global.mak \
 		win32/libc_interface.c \
 		win32/libc_interface.h \
@@ -30,11 +30,8 @@ EXTRA_DIST = \
 		win32/win32dep.h
 
 if USE_GCONFTOOL
-GCONF_DIR=gconf
+GCONF_DIR=data/gconf
 endif
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = purple-3.pc
 
 SUBDIRS = $(GCONF_DIR) . plugins protocols tests example
 
@@ -407,6 +404,9 @@ cipherinclude_HEADERS = \
 mediaincludedir=$(includedir)/libpurple/media
 mediainclude_HEADERS = \
 	$(addprefix $(srcdir)/media/, $(purple_mediaheaders))
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = data/purple-3.pc
 
 libpurple_la_DEPENDENCIES = \
 	$(STATIC_LINK_LIBS) $(LIBPURPLE_WIN32RES)

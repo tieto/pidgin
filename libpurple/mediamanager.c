@@ -441,7 +441,11 @@ purple_media_manager_set_video_caps(PurpleMediaManager *manager, GstCaps *caps)
 
 		if (src) {
 			GstElement *capsfilter = gst_bin_get_by_name(GST_BIN(src), "protocol_video_caps");
-			g_object_set(G_OBJECT(capsfilter), "caps", caps, NULL);
+			if (capsfilter) {
+				g_object_set(G_OBJECT(capsfilter), "caps", caps, NULL);
+				gst_object_unref (capsfilter);
+			}
+			gst_object_unref (src);
 		}
 
 		g_free(id);
@@ -556,6 +560,11 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 	} else {
 		ret = purple_media_element_info_call_create(info,
 				media, session_id, participant);
+		if (element_type & PURPLE_MEDIA_ELEMENT_SRC) {
+			gst_object_ref(ret);
+			gst_bin_add(GST_BIN(purple_media_manager_get_pipeline(manager)),
+				ret);
+		}
 	}
 
 	if (ret == NULL)

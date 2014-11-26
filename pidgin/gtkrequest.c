@@ -1966,7 +1966,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	GtkWidget *hbox, *vbox;
 	GtkWidget *frame;
 	GtkWidget *label;
-	GtkWidget *table;
+	GtkWidget *grid;
 	GtkWidget *button;
 	GtkWidget *img;
 	GtkSizeGroup *sg, *datasheet_buttons_sg;
@@ -2246,15 +2246,15 @@ pidgin_request_fields(const char *title, const char *primary,
 		}
 
 		if (compact)
-			table = gtk_table_new(rows, cols, FALSE);
+			grid = gtk_grid_table_new(rows, cols);
 		else
-			table = gtk_table_new(rows, 2 * cols, FALSE);
-		gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
-		gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
+			grid = gtk_grid_table_new(rows, 2 * cols);
+		gtk_grid_set_row_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE);
+		gtk_grid_set_column_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE);
 
 		frame_fill = (notebook == NULL || contains_resizable);
-		gtk_box_pack_start(GTK_BOX(frame), table, frame_fill, frame_fill, 0);
-		gtk_widget_show(table);
+		gtk_box_pack_start(GTK_BOX(frame), grid, frame_fill, frame_fill, 0);
+		gtk_widget_show(grid);
 
 		for (row_num = 0, fl = field_list;
 			 row_num < rows && fl != NULL;
@@ -2322,9 +2322,8 @@ pidgin_request_fields(const char *title, const char *primary,
 							row_num++;
 #endif
 
-						gtk_table_attach_defaults(GTK_TABLE(table), label,
-												  0, 2 * cols,
-												  row_num, row_num + 1);
+						gtk_grid_attach_defaults(GTK_GRID(grid), label,
+							0, row_num, 2 * cols, 1);
 
 						row_num++;
 #if 0
@@ -2333,9 +2332,8 @@ pidgin_request_fields(const char *title, const char *primary,
 					}
 					else
 					{
-						gtk_table_attach_defaults(GTK_TABLE(table), label,
-												  col_offset, col_offset + 1,
-												  row_num, row_num + 1);
+						gtk_grid_attach_defaults(GTK_GRID(grid), label,
+							col_offset, row_num, 1, 1);
 					}
 
 					gtk_widget_show(label);
@@ -2376,46 +2374,41 @@ pidgin_request_fields(const char *title, const char *primary,
 				if (type == PURPLE_REQUEST_FIELD_STRING &&
 					purple_request_field_string_is_multiline(field))
 				{
-					gtk_table_attach(GTK_TABLE(table), widget,
-									 0, 2 * cols,
-									 row_num, row_num + 1,
-									 GTK_FILL | GTK_EXPAND,
-									 GTK_FILL | GTK_EXPAND,
-									 5, 0);
+					gtk_grid_attach_full(GTK_GRID(grid), widget,
+						0, row_num, 2 * cols, 1,
+						GTK_FILL | GTK_EXPAND,
+						GTK_FILL | GTK_EXPAND,
+						5, 0);
 				}
 				else if (type == PURPLE_REQUEST_FIELD_LIST)
 				{
-									gtk_table_attach(GTK_TABLE(table), widget,
-									0, 2 * cols,
-									row_num, row_num + 1,
-									GTK_FILL | GTK_EXPAND,
-									GTK_FILL | GTK_EXPAND,
-									5, 0);
+					gtk_grid_attach_full(GTK_GRID(grid), widget,
+						0, row_num, 2 * cols, 1,
+						GTK_FILL | GTK_EXPAND,
+						GTK_FILL | GTK_EXPAND,
+						5, 0);
 				}
 				else if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
 				{
-					gtk_table_attach(GTK_TABLE(table), widget,
-									 col_offset, col_offset + 1,
-									 row_num, row_num + 1,
-									 GTK_FILL | GTK_EXPAND,
-									 GTK_FILL | GTK_EXPAND,
-									 5, 0);
+					gtk_grid_attach_full(GTK_GRID(grid), widget,
+						col_offset, row_num, 1, 1,
+						GTK_FILL | GTK_EXPAND,
+						GTK_FILL | GTK_EXPAND,
+						5, 0);
 				}
 				else if (compact) {
 					row_num++;
-					gtk_table_attach(GTK_TABLE(table), widget,
-									 0, 2 * cols,
-									 row_num, row_num + 1,
-									 GTK_FILL | GTK_EXPAND,
-									 GTK_FILL | GTK_EXPAND,
-									 5, 0);
+					gtk_grid_attach_full(GTK_GRID(grid), widget,
+						0, row_num, 2 * cols, 1,
+						GTK_FILL | GTK_EXPAND,
+						GTK_FILL | GTK_EXPAND,
+						5, 0);
 				} else {
-					gtk_table_attach(GTK_TABLE(table), widget,
-							 		 1, 2 * cols,
-									 row_num, row_num + 1,
-									 GTK_FILL | GTK_EXPAND,
-									 GTK_FILL | GTK_EXPAND,
-									 5, 0);
+					gtk_grid_attach_full(GTK_GRID(grid), widget,
+						1, row_num, 2 * cols - 1, 1,
+						GTK_FILL | GTK_EXPAND,
+						GTK_FILL | GTK_EXPAND,
+						5, 0);
 				}
 
 				gtk_widget_show(widget);

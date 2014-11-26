@@ -5,8 +5,10 @@ EXTRA_DIST = \
 		gtk3compat.h \
 		gtkdebug.html \
 		Makefile.mingw \
-		pidgin-3.pc.in \
-		pidgin-3-uninstalled.pc.in \
+		data/pidgin.appdata.xml.in \
+		data/pidgin.desktop.in \
+		data/pidgin-3.pc.in \
+		data/pidgin-3-uninstalled.pc.in \
 		win32/MinimizeToTray.h \
 		win32/MinimizeToTray.c \
 		win32/pidgin_dll_rc.rc.in \
@@ -30,9 +32,6 @@ EXTRA_DIST = \
 		win32/nsis/nsis_translations.desktop.in
 
 if ENABLE_GTK
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = pidgin-3.pc
 
 SUBDIRS = . pixmaps plugins themes
 
@@ -237,6 +236,31 @@ AM_CPPFLAGS = \
 	$(LIBXML_CFLAGS) \
 	$(WEBKIT_CFLAGS) \
 	$(INTROSPECTION_CFLAGS)
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = data/pidgin-3.pc
+
+if INSTALL_I18N
+DESKTOP_FILE=data/pidgin.desktop
+
+appsdir = $(datadir)/applications
+apps_in_files = data/pidgin.desktop.in
+apps_DATA = $(apps_in_files:.desktop.in=.desktop)
+
+# silenced INTLTOOL_DESKTOP_RULE
+%.desktop: %.desktop.in $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po/*.po)
+	$(AM_V_GEN) LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(top_builddir)/po/.intltool-merge-cache $(top_srcdir)/po $< $@ > /dev/null
+
+appdatadir = $(datarootdir)/appdata
+appdata_DATA = $(appdata_in_files:.xml.in=.xml)
+appdata_in_files = data/pidgin.appdata.xml.in
+
+@INTLTOOL_XML_RULE@
+
+endif # INSTALL_I18N
+
+CLEANFILES += $(appdata_DATA)
+DISTCLEANFILES = $(DESKTOP_FILE)
 
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS =

@@ -60,7 +60,8 @@ typedef enum
 #include "session.h"
 #include "soap.h"
 
-#define MSN_APPLICATION_ID "CFE80F9D-180F-4399-82AB-413F33A1FA11"
+/* Thanks to TReKiE on the #pidgin channel for this new ID. */
+#define MSN_APPLICATION_ID "F6D2794D-501F-443A-ADBE-8F1490FF30FD"
 
 #define MSN_CONTACT_SERVER	"local-bay.contacts.msn.com"
 

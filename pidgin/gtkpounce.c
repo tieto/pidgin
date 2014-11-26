@@ -501,7 +501,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	GtkWidget *hbox;
 	GtkWidget *button;
 	GtkWidget *frame;
-	GtkWidget *table;
+	GtkWidget *grid;
 	GtkSizeGroup *sg;
 	GPtrArray *sound_widgets;
 	GPtrArray *exec_widgets;
@@ -615,10 +615,10 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	/* Create the "Pounce When Buddy..." frame. */
 	frame = pidgin_make_frame(vbox2, _("Pounce When Buddy..."));
 
-	table = gtk_table_new(5, 2, FALSE);
-	gtk_container_add(GTK_CONTAINER(frame), table);
-	gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BORDER);
-	gtk_widget_show(table);
+	grid = gtk_grid_table_new(5, 2);
+	gtk_container_add(GTK_CONTAINER(frame), grid);
+	gtk_grid_set_column_spacing(GTK_GRID(grid), PIDGIN_HIG_BORDER);
+	gtk_widget_show(grid);
 
 	dialog->signon =
 		gtk_check_button_new_with_mnemonic(_("Si_gns on"));
@@ -641,26 +641,26 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	dialog->message_recv =
 		gtk_check_button_new_with_mnemonic(_("Sends a _message"));
 
-	gtk_table_attach(GTK_TABLE(table), dialog->message_recv, 0, 1, 0, 1,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->signon,       0, 1, 1, 2,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->signoff,      0, 1, 2, 3,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->away,         1, 2, 0, 1,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->away_return,  1, 2, 1, 2,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->idle,         1, 2, 2, 3,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->idle_return,  2, 3, 0, 1,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->typing,       2, 3, 1, 2,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->typed,        2, 3, 2, 3,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing,  3, 4, 0, 1,
-					 GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->message_recv, 0, 0, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->signon,       0, 1, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->signoff,      0, 2, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->away,         1, 0, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->away_return,  1, 1, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->idle,         1, 2, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->idle_return,  2, 0, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->typing,       2, 1, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->typed,        2, 2, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->stop_typing,  3, 0, 1, 1,
+		GTK_FILL, 0, 0, 0);
 
 	gtk_widget_show(dialog->signon);
 	gtk_widget_show(dialog->signoff);
@@ -676,10 +676,10 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	/* Create the "Action" frame. */
 	frame = pidgin_make_frame(vbox2, _("Action"));
 
-	table = gtk_table_new(3, 6, FALSE);
-	gtk_container_add(GTK_CONTAINER(frame), table);
-	gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BORDER);
-	gtk_widget_show(table);
+	grid = gtk_grid_table_new(3, 6);
+	gtk_container_add(GTK_CONTAINER(frame), grid);
+	gtk_grid_set_column_spacing(GTK_GRID(grid), PIDGIN_HIG_BORDER);
+	gtk_widget_show(grid);
 
 	dialog->open_win
 		= gtk_check_button_new_with_mnemonic(_("Ope_n an IM window"));
@@ -731,34 +731,34 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	g_object_unref(sg);
 	sg = NULL;
 
-	gtk_table_attach(GTK_TABLE(table), dialog->open_win,         0, 1, 0, 1,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->popup,            0, 1, 1, 2,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->popup_entry,      1, 5, 1, 2,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->send_msg,         0, 5, 2, 3,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), send_msg_webview,         0, 5, 3, 4,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->exec_cmd,         0, 1, 4, 5,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->exec_cmd_entry,   1, 2, 4, 5,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->exec_cmd_browse,  2, 3, 4, 5,
-					 GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->play_sound,       0, 1, 5, 6,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->play_sound_entry, 1, 2, 5, 6,
-					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->play_sound_browse,2, 3, 5, 6,
-					 GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->play_sound_test,  3, 4, 5, 6,
-					 GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->play_sound_reset, 4, 5, 5, 6,
-					 GTK_FILL | GTK_EXPAND, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->open_win,         0, 0, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->popup,            0, 1, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->popup_entry,      1, 1, 4, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->send_msg,         0, 2, 5, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), send_msg_webview,         0, 3, 5, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->exec_cmd,         0, 4, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->exec_cmd_entry,   1, 4, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->exec_cmd_browse,  2, 4, 1, 1,
+		GTK_FILL | GTK_EXPAND, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->play_sound,       0, 5, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->play_sound_entry, 1, 5, 1, 1,
+		GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->play_sound_browse,2, 5, 1, 1,
+		GTK_FILL | GTK_EXPAND, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->play_sound_test,  3, 5, 1, 1,
+		GTK_FILL | GTK_EXPAND, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->play_sound_reset, 4, 5, 1, 1,
+		GTK_FILL | GTK_EXPAND, 0, 0, 0);
 
-	gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE / 2);
+	gtk_grid_set_row_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE / 2);
 
 	gtk_widget_show(dialog->open_win);
 	gtk_widget_show(dialog->popup);
@@ -835,20 +835,20 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	/* Create the "Options" frame. */
 	frame = pidgin_make_frame(vbox2, _("Options"));
 
-	table = gtk_table_new(2, 1, FALSE);
-	gtk_container_add(GTK_CONTAINER(frame), table);
-	gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BORDER);
-	gtk_widget_show(table);
+	grid = gtk_grid_table_new(2, 1);
+	gtk_container_add(GTK_CONTAINER(frame), grid);
+	gtk_grid_set_column_spacing(GTK_GRID(grid), PIDGIN_HIG_BORDER);
+	gtk_widget_show(grid);
 
 	dialog->on_away =
 		gtk_check_button_new_with_mnemonic(_("P_ounce only when my status is not Available"));
-	gtk_table_attach(GTK_TABLE(table), dialog->on_away, 0, 1, 0, 1,
-					 GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->on_away, 0, 0, 1, 1,
+		GTK_FILL, 0, 0, 0);
 
 	dialog->save_pounce = gtk_check_button_new_with_mnemonic(
 		_("_Recurring"));
-	gtk_table_attach(GTK_TABLE(table), dialog->save_pounce, 0, 1, 1, 2,
-					 GTK_FILL, 0, 0, 0);
+	gtk_grid_attach_full(GTK_GRID(grid), dialog->save_pounce, 0, 1, 1, 1,
+		GTK_FILL, 0, 0, 0);
 
 	gtk_widget_show(dialog->on_away);
 	gtk_widget_show(dialog->save_pounce);

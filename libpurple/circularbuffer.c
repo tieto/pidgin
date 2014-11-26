@@ -104,7 +104,7 @@ purple_circular_buffer_real_grow(PurpleCircularBuffer *buffer, gsize len) {
 
 	/* If the fill pointer is wrapped to before the remove
 	 * pointer, we need to shift the data */
-	if(in_offset < out_offset
+	if (in_offset < out_offset
 			|| (in_offset == out_offset && priv->bufused > 0))
 	{
 		gsize shift_n = MIN(priv->buflen - start_buflen, in_offset);
@@ -200,7 +200,7 @@ purple_circular_buffer_real_mark_read(PurpleCircularBuffer *buffer,
 	priv->bufused -= len;
 
 	/* wrap to the start if we're at the end */
-	if((gsize)(priv->output - priv->buffer) == priv->buflen)
+	if ((gsize)(priv->output - priv->buffer) == priv->buflen)
 		priv->output = priv->buffer;
 
 	obj = G_OBJECT(buffer);

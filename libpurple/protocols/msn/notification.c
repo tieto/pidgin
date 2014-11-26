@@ -628,6 +628,15 @@ msn_notification_dump_contact(MsnSession *session)
 		}
 
 		if (user->networkid != MSN_NETWORK_UNKNOWN) {
+			if ((user->list_op & (MSN_LIST_OP_MASK | MSN_LIST_PL_OP)) == MSN_LIST_FL_OP) {
+				purple_debug_warning("msn",
+				                     "User %s is on neither Allow nor Block list, "
+				                     "and not Pending addition; "
+				                     "adding to Allow list.\n",
+				                     user->passport);
+				msn_user_set_op(user, MSN_LIST_AL_OP);
+			}
+
 			msn_add_contact_xml(adl_node, user->passport,
 			                    user->list_op & MSN_LIST_OP_MASK,
 			                    user->networkid);

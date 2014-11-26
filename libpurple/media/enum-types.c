@@ -170,7 +170,7 @@ purple_media_session_type_get_type()
 			{ PURPLE_MEDIA_RECV_VIDEO,
 				"PURPLE_MEDIA_RECV_VIDEO", "recv-video" },
 			{ PURPLE_MEDIA_SEND_VIDEO,
-				"PURPLE_MEDIA_SEND_VIDEO", "send-audio" },
+				"PURPLE_MEDIA_SEND_VIDEO", "send-video" },
 			{ PURPLE_MEDIA_AUDIO,
 				"PURPLE_MEDIA_AUDIO", "audio" },
 			{ PURPLE_MEDIA_VIDEO,

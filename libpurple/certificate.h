@@ -63,16 +63,41 @@ typedef enum
 {
 	PURPLE_CERTIFICATE_UNKNOWN_ERROR = -1,
 	PURPLE_CERTIFICATE_VALID = 0,
+
+	/* Non-fatal */
 	PURPLE_CERTIFICATE_NON_FATALS_MASK = 0x0000FFFF,
+
+	/* The certificate is self-signed. */
 	PURPLE_CERTIFICATE_SELF_SIGNED = 0x01,
+
+	/* The CA is not in libpurple's pool of certificates. */
 	PURPLE_CERTIFICATE_CA_UNKNOWN = 0x02,
+
+	/* The current time is before the certificate's specified
+	 * activation time.
+	 */
 	PURPLE_CERTIFICATE_NOT_ACTIVATED = 0x04,
+
+	/* The current time is after the certificate's specified expiration time */
 	PURPLE_CERTIFICATE_EXPIRED = 0x08,
+
+	/* The certificate's subject name doesn't match the expected */
 	PURPLE_CERTIFICATE_NAME_MISMATCH = 0x10,
+
+	/* No CA pool was found. This shouldn't happen... */
 	PURPLE_CERTIFICATE_NO_CA_POOL = 0x20,
+
+	/* Fatal */
 	PURPLE_CERTIFICATE_FATALS_MASK = 0xFFFF0000,
+
+	/* The signature chain could not be validated. Due to limitations in the
+	 * the current API, this also indicates one of the CA certificates in the
+	 * chain is expired (or not yet activated). FIXME 3.0.0 */
 	PURPLE_CERTIFICATE_INVALID_CHAIN = 0x10000,
+
+	/* The signature has been revoked. */
 	PURPLE_CERTIFICATE_REVOKED = 0x20000,
+
 	PURPLE_CERTIFICATE_REJECTED = 0x40000,
 
 	/*< private >*/
@@ -256,6 +281,9 @@ struct _PurpleCertificateScheme
 	PurpleCertificate * (* copy_certificate)(PurpleCertificate *crt);
 	void (* destroy_certificate)(PurpleCertificate * crt);
 
+	/** Find whether "crt" has a valid signature from "issuer," including
+	 * appropriate values for the CA flag in the basic constraints extension.
+	 *  @see purple_certificate_signed_by() */
 	gboolean (*signed_by)(PurpleCertificate *crt, PurpleCertificate *issuer);
 	GByteArray * (* get_fingerprint_sha1)(PurpleCertificate *crt);
 	gchar * (* get_unique_id)(PurpleCertificate *crt);
@@ -269,8 +297,21 @@ struct _PurpleCertificateScheme
 	GSList * (* import_certificates)(const gchar * filename);
 	GByteArray * (* get_der_data)(PurpleCertificate *crt);
 
+	/**
+	 * Register a certificate as "trusted."
+	 */
+	gboolean (* register_trusted_tls_cert)(PurpleCertificate *crt, gboolean ca);
+
+	/**
+	 * Verify that a certificate is valid, performing all necessary checks
+	 * including date range, valid cert chain, recognized and valid CAs, etc.
+	 */
+	void (* verify_cert)(PurpleCertificateVerificationRequest *vrq, PurpleCertificateVerificationStatus *flags);
+
 	/*< private >*/
 	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
 };
 
 /**

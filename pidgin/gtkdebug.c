@@ -311,11 +311,18 @@ regex_changed_cb(GtkWidget *w, DebugWindow *win) {
 
 static void
 regex_key_release_cb(GtkWidget *w, GdkEventKey *e, DebugWindow *win) {
-	if(e->keyval == GDK_KEY_Return &&
-	   gtk_widget_is_sensitive(win->filter) &&
-	   !gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(win->filter)))
-	{
-		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(win->filter), TRUE);
+	if (gtk_widget_is_sensitive(win->filter)) {
+		GtkToggleToolButton *tb = GTK_TOGGLE_TOOL_BUTTON(win->filter);
+		if ((e->keyval == GDK_KEY_Return || e->keyval == GDK_KEY_KP_Enter) &&
+			!gtk_toggle_tool_button_get_active(tb))
+		{
+			gtk_toggle_tool_button_set_active(tb, TRUE);
+		}
+		if (e->keyval == GDK_KEY_Escape &&
+			gtk_toggle_tool_button_get_active(tb))
+		{
+			gtk_toggle_tool_button_set_active(tb, FALSE);
+		}
 	}
 }
 

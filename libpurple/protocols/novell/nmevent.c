@@ -149,7 +149,7 @@ handle_receive_message(NMUser * user, NMEvent * event, gboolean autoreply)
 
 	/* Read the conference guid */
 	rc = nm_read_uint32(conn, &size);
-	if (size == MAX_UINT32)	return NMERR_PROTOCOL;
+	if (size > 1000)	return NMERR_PROTOCOL;
 
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
@@ -164,7 +164,7 @@ handle_receive_message(NMUser * user, NMEvent * event, gboolean autoreply)
 	/* Read the message text */
 	if (rc == NM_OK) {
 		rc = nm_read_uint32(conn, &size);
-		if (size == MAX_UINT32)	return NMERR_PROTOCOL;
+		if (size > 100000)	return NMERR_PROTOCOL;
 
 		if (rc == NM_OK) {
 			msg = g_new0(char, size + 1);
@@ -270,7 +270,7 @@ handle_conference_invite(NMUser * user, NMEvent * event)
 
 	/* Read the conference guid */
 	rc = nm_read_uint32(conn, &size);
-	if (size == MAX_UINT32)	return NMERR_PROTOCOL;
+	if (size > 1000)	return NMERR_PROTOCOL;
 
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
@@ -280,7 +280,7 @@ handle_conference_invite(NMUser * user, NMEvent * event)
 	/* Read the the message */
 	if (rc == NM_OK) {
 		rc = nm_read_uint32(conn, &size);
-		if (size == MAX_UINT32)	return NMERR_PROTOCOL;
+		if (size > 100000)	return NMERR_PROTOCOL;
 
 		if (rc == NM_OK) {
 			msg = g_new0(char, size + 1);
@@ -349,7 +349,7 @@ handle_conference_invite_notify(NMUser * user, NMEvent * event)
 
 	/* Read the conference guid */
 	rc = nm_read_uint32(conn, &size);
-	if (size == MAX_UINT32)	return NMERR_PROTOCOL;
+	if (size > 1000)	return NMERR_PROTOCOL;
 
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
@@ -401,7 +401,7 @@ handle_conference_reject(NMUser * user, NMEvent * event)
 
 	/* Read the conference guid */
 	rc = nm_read_uint32(conn, &size);
-	if (size == MAX_UINT32)	return NMERR_PROTOCOL;
+	if (size > 1000)	return NMERR_PROTOCOL;
 
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
@@ -440,7 +440,7 @@ handle_conference_left(NMUser * user, NMEvent * event)
 
 	/* Read the conference guid */
 	rc = nm_read_uint32(conn, &size);
-	if (size == MAX_UINT32)	return NMERR_PROTOCOL;
+	if (size > 1000)	return NMERR_PROTOCOL;
 
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
@@ -490,7 +490,7 @@ handle_conference_closed(NMUser * user, NMEvent * event)
 
 	/* Read the conference guid */
 	rc = nm_read_uint32(conn, &size);
-	if (size == MAX_UINT32)	return NMERR_PROTOCOL;
+	if (size > 1000)	return NMERR_PROTOCOL;
 
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
@@ -530,7 +530,7 @@ handle_conference_joined(NMUser * user, NMEvent * event)
 
 	/* Read the conference guid */
 	rc = nm_read_uint32(conn, &size);
-	if (size == MAX_UINT32)	return NMERR_PROTOCOL;
+	if (size > 1000)	return NMERR_PROTOCOL;
 
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
@@ -589,7 +589,7 @@ handle_typing(NMUser * user, NMEvent * event)
 
 	/* Read the conference guid */
 	rc = nm_read_uint32(conn, &size);
-	if (size == MAX_UINT32)	return NMERR_PROTOCOL;
+	if (size > 1000)	return NMERR_PROTOCOL;
 
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
@@ -632,7 +632,7 @@ handle_status_change(NMUser * user, NMEvent * event)
 
 		/* Read the status text */
 		rc = nm_read_uint32(conn, &size);
-		if (size == MAX_UINT32)	return NMERR_PROTOCOL;
+		if (size > 10000)	return NMERR_PROTOCOL;
 
 		if (rc == NM_OK) {
 			text = g_new0(char, size + 1);
@@ -670,7 +670,7 @@ handle_undeliverable_status(NMUser * user, NMEvent * event)
 
 	/* Read the conference guid */
 	rc = nm_read_uint32(conn, &size);
-	if (size == MAX_UINT32)	return NMERR_PROTOCOL;
+	if (size > 1000)	return NMERR_PROTOCOL;
 
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
@@ -833,7 +833,10 @@ nm_process_event(NMUser * user, int type)
 	/* Read the event source */
 	rc = nm_read_uint32(conn, &size);
 	if (rc == NM_OK) {
-		if (size > 0) {
+		if (size > 1000000) {
+			/* Size is larger than our 1MB sanity check. Ignore it. */
+			rc = NMERR_PROTOCOL;
+		} else {
 			source = g_new0(char, size);
 
 			rc = nm_read_all(conn, source, size);
