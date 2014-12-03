@@ -103,8 +103,8 @@ typedef struct {
 	guint sample_offset;
 	gboolean writable;
 	gboolean connected;
-	GSource *writable_source;
-	GSource *readable_source;
+	guint writable_timer_id;
+	guint readable_timer_id;
 	GCond readable_cond;
 } PurpleMediaAppDataInfo;
 #endif
@@ -542,16 +542,14 @@ free_appdata_info_locked (PurpleMediaAppDataInfo *info)
 	g_free (info->session_id);
 	g_free (info->participant);
 
-	if (info->readable_source) {
-		g_source_destroy (info->readable_source);
-		g_source_unref (info->readable_source);
-		info->readable_source = NULL;
+	if (info->readable_timer_id) {
+		purple_timeout_remove (info->readable_timer_id);
+		info->readable_timer_id = 0;
 	}
 
-	if (info->writable_source) {
-		g_source_destroy (info->writable_source);
-		g_source_unref (info->writable_source);
-		info->writable_source = NULL;
+	if (info->writable_timer_id) {
+		purple_timeout_remove (info->writable_timer_id);
+		info->writable_timer_id = 0;
 	}
 
 	if (info->current_sample)
@@ -732,10 +730,23 @@ appsrc_writable (gpointer user_data)
 	gchar *participant;
 	gboolean writable;
 	gpointer cb_data;
+	guint *timer_id_ptr = &info->writable_timer_id;
+	guint timer_id = *timer_id_ptr;
+
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
-	if (g_source_is_destroyed (g_main_current_source ())) {
-		/* Avoided a race condition */
+	if (timer_id == 0 || timer_id != *timer_id_ptr) {
+		/* In case info was freed while we were waiting for the mutex to unlock
+		 * we still have a pointer to the timer_id which should still be
+		 * accessible since it's in the Glib slice allocator. It gets set to 0
+		 * just after the timeout is canceled which happens also before the
+		 * AppDataInfo is freed, so even if that memory slice gets reused, the
+		 * timer_id would be different from its previous value (unless
+		 * extremely unlucky). So checking if the value for the timer_id changed
+		 * should be enough to prevent any kind of race condition in which the
+		 * media/AppDataInfo gets destroyed in one thread while the timeout was
+		 * triggered and is waiting on the mutex to get unlocked in this thread
+		 */
 		g_mutex_unlock (&manager->priv->appdata_mutex);
 		return FALSE;
 	}
@@ -746,9 +757,7 @@ appsrc_writable (gpointer user_data)
 	writable = info->writable && info->connected;
 	cb_data = info->user_data;
 
-    g_source_destroy (info->writable_source);
-    g_source_unref (info->writable_source);
-    info->writable_source = NULL;
+    info->writable_timer_id = 0;
 	g_mutex_unlock (&manager->priv->appdata_mutex);
 
 
@@ -777,12 +786,10 @@ static void
 call_appsrc_writable_locked (PurpleMediaAppDataInfo *info)
 {
 	/* We already have a writable callback scheduled, don't create another one */
-	if (info->writable_source || info->callbacks.writable == NULL)
+	if (info->writable_timer_id || info->callbacks.writable == NULL)
 		return;
 
-	info->writable_source = g_timeout_source_new (0);
-	g_source_set_callback (info->writable_source, appsrc_writable, info, NULL);
-	g_source_attach (info->writable_source, NULL);
+	info->writable_timer_id = purple_timeout_add (0, appsrc_writable, info);
 }
 
 static void
@@ -903,10 +910,12 @@ appsink_readable (gpointer user_data)
 	gchar *session_id;
 	gchar *participant;
 	gpointer cb_data;
+	guint *timer_id_ptr = &info->readable_timer_id;
+	guint timer_id = *timer_id_ptr;
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
-	if (g_source_is_destroyed (g_main_current_source ())) {
-		/* Avoided a race condition */
+	if (timer_id == 0 || timer_id != *timer_id_ptr) {
+		/* Avoided a race condition (see writable callback) */
 		g_mutex_unlock (&manager->priv->appdata_mutex);
 		return FALSE;
 	}
@@ -927,15 +936,13 @@ appsink_readable (gpointer user_data)
 		g_object_unref (media);
 		g_free (session_id);
 		g_free (participant);
-		if (g_source_is_destroyed (g_main_current_source ())) {
+		if (timer_id == 0 || timer_id != *timer_id_ptr) {
 			/* We got cancelled */
 			g_mutex_unlock (&manager->priv->appdata_mutex);
 			return FALSE;
 		}
 	}
-    g_source_destroy (info->readable_source);
-    g_source_unref (info->readable_source);
-    info->readable_source = NULL;
+    info->readable_timer_id = 0;
 	g_mutex_unlock (&manager->priv->appdata_mutex);
 	return FALSE;
 }
@@ -947,12 +954,10 @@ call_appsink_readable_locked (PurpleMediaAppDataInfo *info)
 	g_cond_broadcast (&info->readable_cond);
 
 	/* We already have a writable callback scheduled, don't create another one */
-	if (info->readable_source || info->callbacks.readable == NULL)
+	if (info->readable_timer_id || info->callbacks.readable == NULL)
 		return;
 
-	info->readable_source = g_timeout_source_new (0);
-	g_source_set_callback (info->readable_source, appsink_readable, info, NULL);
-	g_source_attach (info->readable_source, NULL);
+	info->readable_timer_id = purple_timeout_add (0, appsink_readable, info);
 }
 
 static GstFlowReturn
@@ -1638,16 +1643,14 @@ purple_media_manager_set_application_data_callbacks(PurpleMediaManager *manager,
 	if (info->notify)
 		info->notify (info->user_data);
 
-	if (info->readable_source) {
-		g_source_destroy (info->readable_source);
-		g_source_unref (info->readable_source);
-		info->readable_source = NULL;
+	if (info->readable_timer_id) {
+		purple_timeout_remove (info->readable_timer_id);
+		info->readable_timer_id = 0;
 	}
 
-	if (info->writable_source) {
-		g_source_destroy (info->writable_source);
-		g_source_unref (info->writable_source);
-		info->writable_source = NULL;
+	if (info->writable_timer_id) {
+		purple_timeout_remove (info->writable_timer_id);
+		info->writable_timer_id = 0;
 	}
 
 	if (callbacks) {
