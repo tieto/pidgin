@@ -48,6 +48,8 @@ static const JabberScramHash *mech_to_hash(const char *mech)
 	g_return_val_if_reached(NULL);
 }
 
+#if 0
+/* XXX: this code is not (yet) used */
 static const struct {
 	const char *error;
 	const char *meaning;
@@ -73,6 +75,7 @@ static const struct {
 	{ "other-error",
 		N_("Unknown Error") }
 };
+#endif
 
 guchar *jabber_scram_hi(const JabberScramHash *hash, const GString *str,
                         GString *salt, guint iterations)

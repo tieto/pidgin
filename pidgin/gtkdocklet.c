@@ -71,12 +71,6 @@ static void docklet_gtk_status_destroy(void);
 /**************************************************************************
  * docklet status and utility functions
  **************************************************************************/
-static inline gboolean
-docklet_is_blinking()
-{
-	return flags && !(flags & PIDGIN_DOCKLET_CONNECTING);
-}
-
 static void
 docklet_gtk_status_update_icon(PurpleStatusPrimitive status, PidginDockletFlag newflag)
 {

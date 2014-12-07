@@ -259,10 +259,6 @@ purple_base16_encode_chunked(const guchar *data, gsize len)
 /**************************************************************************
  * Base64 Functions
  **************************************************************************/
-static const char alphabet[] =
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-	"0123456789+/";
-
 static const char xdigits[] =
 	"0123456789abcdef";
 
