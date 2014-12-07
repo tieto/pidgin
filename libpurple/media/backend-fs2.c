@@ -174,7 +174,10 @@ enum {
 
 static void
 purple_media_backend_fs2_init(PurpleMediaBackendFs2 *self)
-{}
+{
+	/* silence a warning */
+	(void)purple_media_backend_fs2_get_instance_private;
+}
 
 static FsCandidateType
 purple_media_candidate_type_to_fs(PurpleMediaCandidateType type)

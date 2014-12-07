@@ -92,6 +92,9 @@ purple_media_candidate_init(PurpleMediaCandidate *info)
 	priv->username = NULL;
 	priv->password = NULL;
 	priv->ttl = 0;
+
+	/* silence a warning */
+	(void)purple_media_candidate_get_instance_private;
 }
 
 static void

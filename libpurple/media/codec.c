@@ -74,6 +74,9 @@ purple_media_codec_init(PurpleMediaCodec *info)
 			PURPLE_MEDIA_CODEC_GET_PRIVATE(info);
 	priv->encoding_name = NULL;
 	priv->optional_params = NULL;
+
+	/* silence a warning */
+	(void)purple_media_codec_get_instance_private;
 }
 
 static void

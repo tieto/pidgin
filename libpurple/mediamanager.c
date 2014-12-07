@@ -167,6 +167,9 @@ purple_media_manager_init (PurpleMediaManager *media)
 	purple_prefs_add_none("/purple/media/audio/volume");
 	purple_prefs_add_int("/purple/media/audio/volume/input", 10);
 	purple_prefs_add_int("/purple/media/audio/volume/output", 10);
+
+	/* silence a warning */
+	(void)purple_media_element_info_get_instance_private;
 }
 
 static void
