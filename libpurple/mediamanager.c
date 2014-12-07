@@ -167,9 +167,6 @@ purple_media_manager_init (PurpleMediaManager *media)
 	purple_prefs_add_none("/purple/media/audio/volume");
 	purple_prefs_add_int("/purple/media/audio/volume/input", 10);
 	purple_prefs_add_int("/purple/media/audio/volume/output", 10);
-
-	/* silence a warning */
-	(void)purple_media_element_info_get_instance_private;
 }
 
 static void
@@ -1260,6 +1257,10 @@ purple_media_element_info_get_id(PurpleMediaElementInfo *info)
 {
 #ifdef USE_VV
 	gchar *id;
+
+	/* Silence a warning. This could be anywhere below G_DEFINE_TYPE */
+	(void)purple_media_element_info_get_instance_private;
+
 	g_return_val_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(info), NULL);
 	g_object_get(info, "id", &id, NULL);
 	return id;
