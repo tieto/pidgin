@@ -1530,20 +1530,21 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			else if (prpl_info && prpl_info->send_file)
 				ft = TRUE;
 
-			if (im && ft)
+			if (im && ft) {
 				purple_request_choice(NULL, NULL,
-						    _("You have dragged an image"),
-						    _("You can send this image as a file transfer, "
-						      "embed it into this message, or use it as the buddy icon for this user."),
-						    DND_FILE_TRANSFER, _("OK"), (GCallback)dnd_image_ok_callback,
-						    _("Cancel"), (GCallback)dnd_image_cancel_callback,
-							purple_request_cpar_from_account(account),
-							data,
-							_("Set as buddy icon"), DND_BUDDY_ICON,
-						    _("Send image file"), DND_FILE_TRANSFER,
-						    _("Insert in message"), DND_IM_IMAGE,
-							NULL);
-			else if (!(im || ft))
+					_("You have dragged an image"),
+					_("You can send this image as a file "
+					"transfer, embed it into this message, "
+					"or use it as the buddy icon for this user."),
+					(gpointer)DND_FILE_TRANSFER, _("OK"),
+					(GCallback)dnd_image_ok_callback, _("Cancel"),
+					(GCallback)dnd_image_cancel_callback,
+					purple_request_cpar_from_account(account), data,
+					_("Set as buddy icon"), DND_BUDDY_ICON,
+					_("Send image file"), DND_FILE_TRANSFER,
+					_("Insert in message"), DND_IM_IMAGE,
+					NULL);
+			} else if (!(im || ft))
 				purple_request_yes_no(NULL, NULL, _("You have dragged an image"),
 							_("Would you like to set it as the buddy icon for this user?"),
 							PURPLE_DEFAULT_ACTION_NONE,
