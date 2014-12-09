@@ -175,8 +175,10 @@ enum {
 static void
 purple_media_backend_fs2_init(PurpleMediaBackendFs2 *self)
 {
+#if GLIB_CHECK_VERSION(2, 37, 3)
 	/* silence a warning */
 	(void)purple_media_backend_fs2_get_instance_private;
+#endif
 }
 
 static FsCandidateType
