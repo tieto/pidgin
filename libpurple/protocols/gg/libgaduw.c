@@ -69,7 +69,8 @@ static void ggp_libgaduw_debug_handler(int level, const char * format,
 	va_list args)
 {
 	PurpleDebugLevel purple_level;
-	char *msg;
+	char msgbuff[1000];
+	int ret;
 
 	if ((level & GG_DEBUG_NET) || (level & GG_DEBUG_FUNCTION) ||
 		(level & GG_DEBUG_VERBOSE))
@@ -85,11 +86,13 @@ static void ggp_libgaduw_debug_handler(int level, const char * format,
 			return;
 	}
 
-	msg = g_strdup_vprintf(format, args);
+	/* Don't use glib's printf family, since it might not support
+	 * system-specific formatting modifiers (like %Iu for size on win32). */
+	ret = vsnprintf(msgbuff, sizeof(msgbuff) / sizeof(char), format, args);
 
-	if (!msg) {
+	if (ret <= 0) {
 		purple_debug_fatal("gg",
-			"failed to vprintf the following message: %s",
+			"failed to printf the following message: %s",
 			format ? format : "(null)\n");
 
 		return;
@@ -102,7 +105,7 @@ static void ggp_libgaduw_debug_handler(int level, const char * format,
 	else
 		purple_level = PURPLE_DEBUG_MISC;
 
-	purple_debug(purple_level, "gg", "%s", msg);
+	purple_debug(purple_level, "gg", "%s", msgbuff);
 	g_free(msg);
 }
 

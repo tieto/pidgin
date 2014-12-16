@@ -21,7 +21,6 @@ ENCHANT_TOP ?= $(WIN32_DEV_TOP)/enchant-1.6
 GNUTLS_TOP ?= $(WIN32_DEV_TOP)/gnutls-3.1
 GTK_TOP ?= $(WIN32_DEV_TOP)/gtk2-2.24
 GTK_BIN ?= $(GTK_TOP)/bin
-BONJOUR_TOP ?= $(WIN32_DEV_TOP)/bonjour-sdk
 JSON_GLIB_TOP ?= $(WIN32_DEV_TOP)/json-glib-0.14
 LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2-2.9
 MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0
