@@ -14,7 +14,6 @@ GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.16
 ENCHANT_TOP ?= $(WIN32_DEV_TOP)/enchant_1.6.0_win32
 GTK_TOP ?= $(WIN32_DEV_TOP)/gtk_2_0-2.14
 GTK_BIN ?= $(GTK_TOP)/bin
-BONJOUR_TOP ?= $(WIN32_DEV_TOP)/Bonjour_SDK
 LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2-2.9.0
 MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0.2_daa3
 NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.17.1-nspr-4.10.7

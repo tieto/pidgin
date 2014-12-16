@@ -29,7 +29,6 @@ INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(BONJOUR_TOP)/Include \
 			-I$(LIBXML2_TOP)/include/libxml2 \
 			-I$(PURPLE_TOP) \
 			-I$(PURPLE_TOP)/win32 \
@@ -63,12 +62,6 @@ LIBS =	\
 			-lnetapi32 \
 			-lxml2 \
 			-lpurple
-
-ifeq ($(LINK_DNS_SD_DIRECTLY), 1)
-	CFLAGS += -DLINK_DNS_SD_DIRECTLY
-	LIB_PATHS += -L$(BONJOUR_TOP)/lib/win32 -L$(BONJOUR_TOP)/lib
-	LIBS += -ldnssd
-endif
 
 include $(PIDGIN_COMMON_RULES)
 
