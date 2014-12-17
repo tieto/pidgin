@@ -106,7 +106,6 @@ static void ggp_libgaduw_debug_handler(int level, const char * format,
 		purple_level = PURPLE_DEBUG_MISC;
 
 	purple_debug(purple_level, "gg", "%s", msgbuff);
-	g_free(msg);
 }
 
 /*******************************************************************************
