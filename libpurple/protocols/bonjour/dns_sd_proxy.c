@@ -22,7 +22,6 @@
 #include "internal.h"
 #include "dns_sd_proxy.h"
 
-#ifndef LINK_DNS_SD_DIRECTLY
 static DNSServiceErrorType (DNSSD_API* _DNSServiceAddRecord)(DNSServiceRef sdRef, DNSRecordRef *RecordRef, DNSServiceFlags flags,
 		uint16_t rrtype, uint16_t rdlen, const void *rdata, uint32_t ttl);
 static DNSServiceErrorType (DNSSD_API* _DNSServiceBrowse)(DNSServiceRef *sdRef, DNSServiceFlags flags, uint32_t interfaceIndex,
@@ -50,10 +49,8 @@ static int16_t (DNSSD_API* _TXTRecordGetLength)(const TXTRecordRef *txtRecord);
 static const void * (DNSSD_API* _TXTRecordGetValuePtr)(uint16_t txtLen, const void *txtRecord, const char *key, uint8_t *valueLen);
 static DNSServiceErrorType (DNSSD_API* _TXTRecordSetValue)(TXTRecordRef *txtRecord, const char *key, uint8_t valueSize, const void *value);
 
-#endif
 
 gboolean dns_sd_available(void) {
-#ifndef LINK_DNS_SD_DIRECTLY
 	static gboolean initialized = FALSE;
 	static gboolean loaded = FALSE;
 
@@ -81,12 +78,8 @@ gboolean dns_sd_available(void) {
 		}
 	}
 	return loaded;
-#else
-	return TRUE;
-#endif
 }
 
-#ifndef LINK_DNS_SD_DIRECTLY
 
 DNSServiceErrorType _wpurple_DNSServiceAddRecord(DNSServiceRef sdRef, DNSRecordRef *RecordRef, DNSServiceFlags flags,
 		uint16_t rrtype, uint16_t rdlen, const void *rdata, uint32_t ttl) {
@@ -186,6 +179,4 @@ DNSServiceErrorType _wpurple_TXTRecordSetValue(TXTRecordRef *txtRecord, const ch
 	g_return_val_if_fail(_TXTRecordSetValue != NULL, kDNSServiceErr_Unknown);
 	return (_TXTRecordSetValue)(txtRecord, key, valueSize, value);
 }
-
-#endif /*LINK_DNS_SD_DIRECTLY*/
 
