@@ -59,12 +59,8 @@ PIDGIN_INST_DEP_DIR="$(WIN32_DEV_TOP)/pidgin-inst-deps-20130214"
 # Any *.dll or *.exe files included in win32-install-dir that we don't compile
 # should be included in this list so they don't get stripped
 EXTERNAL_DLLS = \
-	comerr32.dll \
 	exchndl.dll \
 	freebl3.dll \
-	gssapi32.dll \
-	k5sprt32.dll \
-	krb5_32.dll \
 	libenchant.dll \
 	libenchant_ispell.dll \
 	libenchant_myspell.dll \
@@ -73,19 +69,17 @@ EXTERNAL_DLLS = \
 	libnspr4.dll \
 	libplc4.dll \
 	libplds4.dll \
-	libsasl.dll \
+	libsasl2-3.dll \
 	libssp-0.dll \
 	libxml2-2.dll \
 	nss3.dll \
 	nssutil3.dll \
-	saslANONYMOUS.dll \
-	saslCRAMMD5.dll \
-	saslDIGESTMD5.dll \
-	saslGSSAPI.dll \
-	saslLOGIN.dll \
-	saslPLAIN.dll \
-	libsilc-1-1-2.dll \
-	libsilcclient-1-1-3.dll \
+	libanonymous-3.dll \
+	libcrammd5-3.dll \
+	libdigestmd5-3.dll \
+	libplain-3.dll \
+	libsilc-1-1-4.dll \
+	libsilcclient-1-1-4.dll \
 	smime3.dll \
 	softokn3.dll \
 	sqlite3.dll \

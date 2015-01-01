@@ -3,6 +3,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.10.12 (MM/DD/YY):
 	Windows-Specific Changes:
 	* Updates to dependencies:
+	        * Cyrus SASL 2.1.26
 		* NSS 3.17.3 and NSPR 4.10.7
 		* SILC 1.1.12
 
