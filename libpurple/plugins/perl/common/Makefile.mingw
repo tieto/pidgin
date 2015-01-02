@@ -28,9 +28,9 @@ INCLUDE_PATHS +=		-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(PERL_LIB_TOP)/CORE
+			-I$(PERL_LIB_TOP)/lib/CORE
 
-LIB_PATHS += 		-L$(PERL_LIB_TOP) \
+LIB_PATHS += 		-L$(PERL_LIB_TOP)/lib/CORE \
 			-L$(PERL_PLUGIN_TOP) \
 			-L$(PURPLE_TOP) \
 			-L$(GTK_TOP)/lib
@@ -84,7 +84,7 @@ OBJECTS = $(C_FILES:%.c=%.o)
 ##
 ## LIBRARIES
 ##
-LIBS =			-lperl510 \
+LIBS =			-lperl520 \
 			-lperl \
 			-lpurple \
 			-lglib-2.0

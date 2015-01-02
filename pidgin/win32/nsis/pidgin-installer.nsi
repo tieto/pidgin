@@ -67,8 +67,6 @@ RequestExecutionLevel highest
 !define PIDGIN_UNINST_EXE			"pidgin-uninst.exe"
 
 !define GTK_MIN_VERSION				"2.14.0"
-!define PERL_REG_KEY				"SOFTWARE\Perl"
-!define PERL_DLL				"perl510.dll"
 
 !define DOWNLOADER_URL				"https://pidgin.im/win32/download_redir.php?version=${PIDGIN_VERSION}"
 
@@ -342,20 +340,6 @@ Section $(PIDGINSECTIONTITLE) SecPidgin
     Delete "$INSTDIR\plugins\.dll"
 
     File /r /x locale /x Gtk ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
-
-    ; Check if Perl is installed, if so add it to the AppPaths
-    ReadRegStr $R2 HKLM ${PERL_REG_KEY} ""
-    StrCmp $R2 "" 0 perl_exists
-      ReadRegStr $R2 HKCU ${PERL_REG_KEY} ""
-      StrCmp $R2 "" perl_done perl_exists
-
-      perl_exists:
-        IfFileExists "$R2\bin\${PERL_DLL}" 0 perl_done
-        StrCmp $R0 "HKLM" 0 perl_done
-          ReadRegStr $R3 HKLM "${HKLM_APP_PATHS_KEY}" "Path"
-          WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R3;$R2\bin"
-
-    perl_done:
 
     SetOutPath "$INSTDIR"
 
