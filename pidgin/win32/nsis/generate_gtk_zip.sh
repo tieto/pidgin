@@ -17,7 +17,7 @@ CONTENTS_FILE=$INSTALL_DIR/CONTENTS
 PIDGIN_VERSION=$( < $PIDGIN_BASE/VERSION )
 
 #This needs to be changed every time there is any sort of change.
-BUNDLE_VERSION=2.16.6.2
+BUNDLE_VERSION=2.16.6.3
 BUNDLE_SHA1SUM=e1b1ec8d2159fa98b2a9f516dbfe745bf7a22169
 ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
 SRC_ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION-src.zip"
@@ -55,7 +55,7 @@ GLIB="http://ftp.gnome.org/pub/gnome/binaries/win32/glib/2.28/glib_2.28.8-1_win3
 GTK="http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.16/gtk+_2.16.6-2_win32.zip GTK+ 2.16.6-2 sha1sum:012853e6de814ebda0cc4459f9eed8ae680e6d17 http://ftp.acc.umu.se/pub/gnome/sources/gtk+/2.16/gtk+-2.16.6.tar.bz2|https://developer.pidgin.im/static/win32/gtk+_2.16.6-2_win32.sh sha256sum:18e0f9792028e6cc5108447678f17d396f9a2cdfec1e6ab5dca98cb844f954af|sha256sum:47ac17cf3f638464ae8ed54a0a9532693373b5f81752cf92590e3d79c5c976ec"
 LIBPNG="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libpng_1.4.12-1_win32.zip libpng 1.4.12-1 gpg:0x71D4DDE53F188CBE http://download.sourceforge.net/libpng/libpng-1.4.12.tar.gz|https://raw.githubusercontent.com/dieterv/legacynativebuilds/cff4e06f877242f8db485318eccd5f8aa01fb199/devel/src/dieterv/packaging/libpng_1.4.12-1_win32.sh sha1sum:d22b339f3261140fb9de83784d05ce5b86c077fb|sha1sum:e00bc64d84ca50127c0233c045ff0147175f705b"
 PANGO="https://developer.pidgin.im/static/win32/pango_1.29.4-1daa_win32.zip Pango 1.29.4-1daa gpg:0x86723FEEDE890574 http://ftp.gnome.org/pub/gnome/sources/pango/1.29/pango-1.29.4.tar.bz2|https://raw.githubusercontent.com/dieterv/legacynativebuilds/692072d1c571ef50f8bbe01cd005313d2302bef0/devel/src/dieterv/packaging/pango_1.29.4-1_win32.sh|https://developer.pidgin.im/static/win32/pango_1.29.4-1daa_win32.zip.patch sha256sum:f15deecaecf1e9dcb7db0e4947d12b5bcff112586434f8d30a5afd750747ff2b|sha256sum:743bb703b36f367b5569e031a107fff51eef409650e635e1a48a23f9ac38ef71|sha256sum:4d241c3835217deab280a8c1f2154932a4fba118f0b02a22c10fa041359381cf"
-ZLIB="http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/zlib_1.2.5-2_win32.zip zlib 1.2.5-2 sha1sum:568907188761df2d9309196e447d91bbc5555d2b http://zlib.net/fossils/zlib-1.2.5.tar.gz|https://raw.githubusercontent.com/dieterv/legacynativebuilds/692072d1c571ef50f8bbe01cd005313d2302bef0/devel/src/tml/packaging/zlib_1.2.5-2_win32.sh sha1sum:8e8b93fa5eb80df1afe5422309dca42964562d7e|sha1sum:e0ad8ae6db31577240ba13fc2b3f9823a70ce556"
+ZLIB="https://developer.pidgin.im/static/win32/zlib-1.2.8_daa1_win32.zip zlib 1.2.8_daa1 gpg:0x86723FEEDE890574 http://zlib.net/zlib-1.2.8.tar.gz|https://developer.pidgin.im/static/win32/build_zlib-1.2.8_daa1.sh sha1sum:a4d316c404ff54ca545ea71a27af7dbc29817088|sha1sum:bcac4cfea2ebf274c5b72c2507105b50bbeed1d6"
 
 ALL="ATK CAIRO EXPAT FONTCONFIG FREETYPE GETTEXT GLIB GTK LIBPNG PANGO ZLIB"
 

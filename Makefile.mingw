@@ -31,7 +31,7 @@ awk 'BEGIN {FS="."} { \
     exit; \
 }' VERSION)
 
-GTK_INSTALL_VERSION = 2.16.6.2
+GTK_INSTALL_VERSION = 2.16.6.3
 
 ifdef SIGNTOOL
 authenticode_sign = $(SIGNTOOL) sign \
