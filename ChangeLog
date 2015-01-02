@@ -7,6 +7,7 @@ version 2.10.12 (MM/DD/YY):
 		* NSS 3.17.3 and NSPR 4.10.7
 		* SILC 1.1.12
 		* Perl 5.20.1
+	* Remove support for Tcl plugins
 
 version 2.10.11 (11/23/14):
 	General:
