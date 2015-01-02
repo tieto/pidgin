@@ -70,7 +70,6 @@ EXTERNAL_DLLS = \
 	libplc4.dll \
 	libplds4.dll \
 	libssp-0.dll \
-	libxml2-2.dll \
 	nss3.dll \
 	nssutil3.dll \
 	smime3.dll \
