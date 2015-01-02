@@ -19,7 +19,6 @@ MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0.2_daa3
 NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.17.3-nspr-4.10.7
 PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl-5.20.1.1
 SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.12
-TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.4.5
 GSTREAMER_TOP ?= $(WIN32_DEV_TOP)/gstreamer-0.10.13
 GCC_SSP_TOP ?= $(shell dirname $(shell which $(CC)))
 CYRUS_SASL_TOP ?= $(WIN32_DEV_TOP)/cyrus-sasl-2.1.26_daa1
