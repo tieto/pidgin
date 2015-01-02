@@ -69,17 +69,10 @@ EXTERNAL_DLLS = \
 	libnspr4.dll \
 	libplc4.dll \
 	libplds4.dll \
-	libsasl2-3.dll \
 	libssp-0.dll \
 	libxml2-2.dll \
 	nss3.dll \
 	nssutil3.dll \
-	libanonymous-3.dll \
-	libcrammd5-3.dll \
-	libdigestmd5-3.dll \
-	libplain-3.dll \
-	libsilc-1-1-4.dll \
-	libsilcclient-1-1-4.dll \
 	smime3.dll \
 	softokn3.dll \
 	sqlite3.dll \
