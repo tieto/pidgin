@@ -10,15 +10,13 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 TARGET = libpurple
 
 ifeq ($(CYRUS_SASL), 1)
-NEEDED_DLLS = $(CYRUS_SASL_TOP)/bin/libsasl.dll
+NEEDED_DLLS = $(CYRUS_SASL_TOP)/bin/libsasl2-3.dll
 
 CYRUS_SASL_PLUGINS = \
-                        $(CYRUS_SASL_TOP)/bin/sasl2/saslANONYMOUS.dll \
-                        $(CYRUS_SASL_TOP)/bin/sasl2/saslCRAMMD5.dll \
-                        $(CYRUS_SASL_TOP)/bin/sasl2/saslDIGESTMD5.dll \
-                        $(CYRUS_SASL_TOP)/bin/sasl2/saslGSSAPI.dll \
-                        $(CYRUS_SASL_TOP)/bin/sasl2/saslLOGIN.dll \
-                        $(CYRUS_SASL_TOP)/bin/sasl2/saslPLAIN.dll
+                        $(CYRUS_SASL_TOP)/lib/sasl2/libanonymous-3.dll \
+                        $(CYRUS_SASL_TOP)/lib/sasl2/libcrammd5-3.dll \
+                        $(CYRUS_SASL_TOP)/lib/sasl2/libdigestmd5-3.dll \
+                        $(CYRUS_SASL_TOP)/lib/sasl2/libplain-3.dll
 
 endif
 

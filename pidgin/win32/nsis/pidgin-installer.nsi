@@ -67,8 +67,6 @@ RequestExecutionLevel highest
 !define PIDGIN_UNINST_EXE			"pidgin-uninst.exe"
 
 !define GTK_MIN_VERSION				"2.14.0"
-!define PERL_REG_KEY				"SOFTWARE\Perl"
-!define PERL_DLL				"perl510.dll"
 
 !define DOWNLOADER_URL				"https://pidgin.im/win32/download_redir.php?version=${PIDGIN_VERSION}"
 
@@ -343,20 +341,6 @@ Section $(PIDGINSECTIONTITLE) SecPidgin
 
     File /r /x locale /x Gtk ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
 
-    ; Check if Perl is installed, if so add it to the AppPaths
-    ReadRegStr $R2 HKLM ${PERL_REG_KEY} ""
-    StrCmp $R2 "" 0 perl_exists
-      ReadRegStr $R2 HKCU ${PERL_REG_KEY} ""
-      StrCmp $R2 "" perl_done perl_exists
-
-      perl_exists:
-        IfFileExists "$R2\bin\${PERL_DLL}" 0 perl_done
-        StrCmp $R0 "HKLM" 0 perl_done
-          ReadRegStr $R3 HKLM "${HKLM_APP_PATHS_KEY}" "Path"
-          WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R3;$R2\bin"
-
-    perl_done:
-
     SetOutPath "$INSTDIR"
 
     ; If we don't have install rights we're done
@@ -606,7 +590,6 @@ Section Uninstall
     Delete "$INSTDIR\plugins\ssl-nss.dll"
     Delete "$INSTDIR\plugins\ssl.dll"
     Delete "$INSTDIR\plugins\statenotify.dll"
-    Delete "$INSTDIR\plugins\tcl.dll"
     Delete "$INSTDIR\plugins\themeedit.dll"
     Delete "$INSTDIR\plugins\ticker.dll"
     Delete "$INSTDIR\plugins\timestamp.dll"
@@ -615,9 +598,21 @@ Section Uninstall
     Delete "$INSTDIR\plugins\winprefs.dll"
     Delete "$INSTDIR\plugins\xmppconsole.dll"
     Delete "$INSTDIR\plugins\xmppdisco.dll"
-    RMDir /r "$INSTDIR\plugins\perl"
+    Delete "$INSTDIR\plugins\perl\auto\Pidgin\Pidgin.dll"
+    RMDir "$INSTDIR\plugins\perl\auto\Pidgin"
+    Delete "$INSTDIR\plugins\perl\auto\Purple\autosplit.ix"
+    Delete "$INSTDIR\plugins\perl\auto\Purple\Purple.dll"
+    RMDir "$INSTDIR\plugins\perl\auto\Purple"
+    RMDir "$INSTDIR\plugins\perl\auto"
+    Delete "$INSTDIR\plugins\perl\Pidgin.pm"
+    Delete "$INSTDIR\plugins\perl\Purple.pm"
+    RMDir "$INSTDIR\plugins\perl"
     RMDir "$INSTDIR\plugins"
-    RMDir /r "$INSTDIR\sasl2"
+    Delete "$INSTDIR\sasl2\libanonymous-3.dll"
+    Delete "$INSTDIR\sasl2\libcrammd5-3.dll"
+    Delete "$INSTDIR\sasl2\libdigestmd5-3.dll"
+    Delete "$INSTDIR\sasl2\libplain-3.dll"
+    RMDir "$INSTDIR\sasl2"
     Delete "$INSTDIR\sounds\purple\alert.wav"
     Delete "$INSTDIR\sounds\purple\login.wav"
     Delete "$INSTDIR\sounds\purple\logout.wav"
@@ -640,9 +635,9 @@ Section Uninstall
     Delete "$INSTDIR\libplc4.dll"
     Delete "$INSTDIR\libplds4.dll"
     Delete "$INSTDIR\libpurple.dll"
-    Delete "$INSTDIR\libsasl.dll"
-    Delete "$INSTDIR\libsilc-1-1-2.dll"
-    Delete "$INSTDIR\libsilcclient-1-1-3.dll"
+    Delete "$INSTDIR\libsasl2-3.dll"
+    Delete "$INSTDIR\libsilc-1-1-4.dll"
+    Delete "$INSTDIR\libsilcclient-1-1-4.dll"
     Delete "$INSTDIR\libssp-0.dll"
     Delete "$INSTDIR\libxml2-2.dll"
     Delete "$INSTDIR\libymsg.dll"

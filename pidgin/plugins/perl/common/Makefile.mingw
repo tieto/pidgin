@@ -78,7 +78,7 @@ OBJECTS = $(C_FILES:%.c=%.o)
 ##
 ## LIBRARIES
 ##
-LIBS =			-lperl510 \
+LIBS =			-lperl520 \
 			-lperl \
 			-lpurple \
 			-lpidgin \

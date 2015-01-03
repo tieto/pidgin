@@ -3,7 +3,6 @@
 
 #include <glib.h>
 #ifdef _WIN32
-#undef STRINGIFY
 #undef pipe
 #endif
 

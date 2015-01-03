@@ -75,6 +75,16 @@ version 3.0.0 (??/??/????):
 	* The Offline Message Emulation plugin now adds a note that the message
 	  was an offline message. (Flavius Anton) (#2497)
 
+version 2.10.12 (MM/DD/YY):
+	Windows-Specific Changes:
+	* Updates to dependencies:
+		* Cyrus SASL 2.1.26
+		* libxml2 2.9.2
+		* NSS 3.17.3 and NSPR 4.10.7
+		* Perl 5.20.1
+		* SILC 1.1.12
+	* Remove support for Tcl plugins
+
 version 2.10.11 (11/23/14):
 	General:
 	* Fix handling of Self-Signed SSL/TLS Certificates when using the NSS
