@@ -11,7 +11,6 @@ typedef struct group *Purple__Group;
 #include <glib.h>
 #ifdef _WIN32
 #undef pipe
-#undef STRINGIFY
 #endif
 
 #define SILENT_NO_TAINT_SUPPORT 0

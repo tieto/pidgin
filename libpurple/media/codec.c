@@ -74,6 +74,11 @@ purple_media_codec_init(PurpleMediaCodec *info)
 			PURPLE_MEDIA_CODEC_GET_PRIVATE(info);
 	priv->encoding_name = NULL;
 	priv->optional_params = NULL;
+
+#if GLIB_CHECK_VERSION(2, 37, 3)
+	/* silence a warning */
+	(void)purple_media_codec_get_instance_private;
+#endif
 }
 
 static void

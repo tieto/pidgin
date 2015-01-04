@@ -20,6 +20,7 @@ STAGE_DIR=`readlink -f $PIDGIN_BASE/pidgin/win32/nsis/gtk_runtime_stage`
 CERT_PATH=`readlink -f $PIDGIN_BASE/pidgin/win32/nsis`/cacert.pem
 #Subdirectory of $STAGE_DIR
 INSTALL_DIR=Gtk
+SRC_INSTALL_DIR=src_install
 CONTENTS_FILE=$INSTALL_DIR/CONTENTS
 PIDGIN_VERSION=$( < $PIDGIN_BASE/VERSION )
 
@@ -27,6 +28,7 @@ PIDGIN_VERSION=$( < $PIDGIN_BASE/VERSION )
 BUNDLE_VERSION=2.24.18.0
 BUNDLE_SHA1SUM="5957b0bf3f5e520863cf8ba64db7592383e9dd42"
 ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
+SRC_ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION-src.zip"
 #BUNDLE_URL="https://pidgin.im/win32/download_redir.php?version=$PIDGIN_VERSION&gtk_version=$BUNDLE_VERSION&dl_pkg=gtk"
 BUNDLE_URL="https://pidgin.im/~twasilczyk/win32/gtk-runtime-$BUNDLE_VERSION.zip"
 
@@ -92,6 +94,8 @@ fi
 DOWNLOAD_HOST="https://pidgin.im/~twasilczyk/win32/runtime-deps/"
 
 ALL=""
+#Format for packages is "binary_url name version binary_validation src_url src_validation"
+#TODO: Fix packages SRC handling
 
 ARC_ATK="${DOWNLOAD_HOST}mingw32-atk-2.8.0-1.5.noarch.rpm ATK 2.8.0-1.5 sha1sum:0c682eadc299963aaa5d7998d655e46ead7d7515"
 ALL+="ARC_ATK "
@@ -280,10 +284,14 @@ ARC_ZLIB="${DOWNLOAD_HOST}mingw32-zlib-1.2.8-2.6.noarch.rpm zlib 1.2.8-2.6 sha1s
 ALL+="ARC_ZLIB "
 
 mkdir -p $STAGE_DIR
+mkdir -p $STAGE_DIR/src
 cd $STAGE_DIR
 
 rm -rf $INSTALL_DIR
 mkdir $INSTALL_DIR
+
+rm -rf $SRC_INSTALL_DIR
+mkdir $SRC_INSTALL_DIR
 
 #new CONTENTS file
 echo Bundle Version $BUNDLE_VERSION > $CONTENTS_FILE
@@ -334,27 +342,16 @@ function rpm_install {
 	fi
 }
 
-function download_and_extract {
-	URL=${1%%\ *}
-	VALIDATION=${1##*\ }
-	NAME=${1%\ *}
-	NAME=${NAME#*\ }
-	FILE=$(basename $URL)
-	MINGW_DIR="usr/i686-w64-mingw32/sys-root/mingw"
-	MINGW_DIR_TOP="usr"
-	if [ ! -e $FILE ]; then
-		echo "Downloading $NAME"
-		download "$URL" "$FILE" || exit 1
-	else
-		echo "Extracting $NAME"
-	fi
+function validate_file {
+	VALIDATION=$1
+	FILE=$2
 	VALIDATION_TYPE=${VALIDATION%%:*}
 	VALIDATION_VALUE=${VALIDATION##*:}
-	if [ $VALIDATION_TYPE == 'sha1sum' ]; then
-		CHECK_SHA1SUM=`sha1sum $FILE`
-		CHECK_SHA1SUM=${CHECK_SHA1SUM%%\ *}
-		if [ "$CHECK_SHA1SUM" != "$VALIDATION_VALUE" ]; then
-			echo "sha1sum ($CHECK_SHA1SUM) for $FILE doesn't match expected value of $VALIDATION_VALUE"
+	if [ $VALIDATION_TYPE == 'sha1sum' -o $VALIDATION_TYPE == 'sha256sum' ]; then
+		CHECK_SUM=`$VALIDATION_TYPE "$FILE"`
+		CHECK_SUM=${CHECK_SUM%%\ *}
+		if [ "$CHECK_SUM" != "$VALIDATION_VALUE" ]; then
+			echo "$VALIDATION_TYPE ($CHECK_SUM) for $FILE doesn't match expected value of $VALIDATION_VALUE"
 			exit 1
 		fi
 	elif [ $VALIDATION_TYPE == 'gpg' ]; then
@@ -364,36 +361,99 @@ function download_and_extract {
 		fi
 		#Use our own keyring to avoid adding stuff to the main keyring
 		#This doesn't use $GPG_SIGN because we don't this validation to be bypassed when people are skipping signing output
-		GPG_BASE="gpg -q --keyring $STAGE_DIR/$VALIDATION_VALUE-keyring.gpg" 
-		if [[ ! -e $STAGE_DIR/$VALIDATION_VALUE-keyring.gpg \
+		GPG_BASE="gpg -q --keyring $STAGE_DIR/$VALIDATION_VALUE-keyring.gpg"
+		if [[ ! -e "$STAGE_DIR/$VALIDATION_VALUE-keyring.gpg" \
 				|| `$GPG_BASE --list-keys "$VALIDATION_VALUE" > /dev/null && echo -n "0"` -ne 0 ]]; then
-			touch $STAGE_DIR/$VALIDATION_VALUE-keyring.gpg
-		       	$GPG_BASE --no-default-keyring --keyserver pgp.mit.edu --recv-key "$VALIDATION_VALUE" || exit 1
+			touch "$STAGE_DIR/$VALIDATION_VALUE-keyring.gpg"
+			$GPG_BASE --no-default-keyring --keyserver pgp.mit.edu --recv-key "$VALIDATION_VALUE" || exit 1
 		fi
 		$GPG_BASE --verify "$FILE.asc" || (echo "$FILE failed signature verification"; exit 1) || exit 1
 	else
 		echo "Unrecognized validation type of $VALIDATION_TYPE"
 		exit 1
 	fi
-	EXTENSION=${FILE##*.}
-	#This is an OpenSuSE build service RPM
-	if [ $EXTENSION == 'rpm' ]; then
-		rm -rf $MINGW_DIR_TOP
-		$BSDCPIO --quiet -f etc/fonts/conf.d -di < $FILE || exit 1
-		rpm_install
-		rm -rf $MINGW_DIR_TOP
-	else
-		unzip -q $FILE -d $INSTALL_DIR || exit 1
+}
+
+function download_and_validate {
+	PREFIX=$1
+	URLS=$2
+	VALIDATIONS=$3
+	EXTRACT=$4
+	OLD_IFS=$IFS
+	IFS='|'
+	URL_SPLIT=($URLS)
+	VALIDATION_SPLIT=($VALIDATIONS)
+	IFS=$OLD_IFS
+
+	if [ ${#URL_SPLIT[@]} -ne ${#VALIDATION_SPLIT[@]} ]; then
+		echo "URL and validation counts don't match for $VAL"
+		exit 1
 	fi
+
+	if [ "x$PREFIX" != "x" ]; then
+		mkdir -p "$PREFIX"
+	fi
+
+	LEN=${#URL_SPLIT[@]}
+	for (( i = 0; i < ${LEN}; i++ )); do
+		URL=${URL_SPLIT[$i]}
+		VALIDATION=${VALIDATION_SPLIT[$i]}
+		FILE=${PREFIX}$(basename $URL)
+		if [ ! -e "$FILE" ]; then
+			echo Downloading $FILE for $NAME ...
+			download "$URL" "$FILE" || exit 1
+		else
+			echo "Extracting $NAME"
+		fi
+		validate_file "$VALIDATION" "$FILE"
+		EXTENSION=${FILE##*.}
+		#This is an OpenSuSE build service RPM
+		if [ $EXTRACT == "1" ]; then
+			if [ $EXTENSION == 'rpm' ]; then
+				rm -rf $MINGW_DIR_TOP
+				$BSDCPIO --quiet -f etc/fonts/conf.d -di < $FILE || exit 1
+				rpm_install
+				rm -rf $MINGW_DIR_TOP
+			else
+				unzip -q "$FILE" -d "$INSTALL_DIR" || exit 1
+			fi
+		else
+			mkdir -p "$SRC_INSTALL_DIR/$PREFIX"
+			cp "$FILE" "$SRC_INSTALL_DIR/$FILE"
+		fi
+	done
+}
+
+function process_package {
+	SPLIT=($1)
+	URL=${SPLIT[0]}
+	NAME="${SPLIT[1]} ${SPLIT[2]}"
+	VALIDATION=${SPLIT[3]}
+	download_and_validate "" "$URL" "$VALIDATION" "1"
+
+#	SRC_URL=${SPLIT[4]}
+#	SRC_VALIDATION=${SPLIT[5]}
+#	download_and_validate "src/$NAME/" "$SRC_URL" "$SRC_VALIDATION" "0"
+
 	echo "$NAME" >> $CONTENTS_FILE
 }
+
+MINGW_DIR="usr/i686-w64-mingw32/sys-root/mingw"
+MINGW_DIR_TOP="usr"
 
 echo "Downloading and extracting components..."
 for VAL in $ALL
 do
 	VAR=${!VAL}
-	download_and_extract "$VAR"
+	SPLIT=($VAR)
+#	if [ ${#SPLIT[@]} -lt 6 ]; then
+	if [ ${#SPLIT[@]} -lt 4 ]; then
+		echo "$VAL has only ${#SPLIT[@]} attributes"
+		exit 1
+	fi
+	process_package "$VAR"
 done
+
 rm -rf $CPIO_DIR
 rm "$CERT_PATH"
 
@@ -422,6 +482,8 @@ zip -9 -r $ZIP_FILE Gtk
 
 if [ "`$GPG_SIGN -K 2> /dev/null`" != "" ]; then
 	($GPG_SIGN -ab $ZIP_FILE && $GPG_SIGN --verify $ZIP_FILE.asc) || exit 1
+	(cd $SRC_INSTALL_DIR/src && zip -9 -r $SRC_ZIP_FILE *)
+	($GPG_SIGN -ab $SRC_ZIP_FILE && $GPG_SIGN --verify $SRC_ZIP_FILE.asc) || exit 1
 else
 	echo "Warning: cannot sign generated bundle"
 fi

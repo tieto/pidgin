@@ -52,7 +52,7 @@ LIBS =	\
 			-lws2_32 \
 			-lintl \
 			-lpurple \
-			-lperl510
+			-lperl520
 
 include $(PIDGIN_COMMON_RULES)
 

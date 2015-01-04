@@ -1257,6 +1257,12 @@ purple_media_element_info_get_id(PurpleMediaElementInfo *info)
 {
 #ifdef USE_VV
 	gchar *id;
+
+#if GLIB_CHECK_VERSION(2, 37, 3)
+	/* Silence a warning. This could be anywhere below G_DEFINE_TYPE */
+	(void)purple_media_element_info_get_instance_private;
+#endif
+
 	g_return_val_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(info), NULL);
 	g_object_get(info, "id", &id, NULL);
 	return id;

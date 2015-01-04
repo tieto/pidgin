@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef		_MXIT_VOICEVICEO_H_
+#ifndef		_MXIT_VOICEVIDEO_H_
 #define		_MXIT_VOICEVIDEO_H_
 
 #undef		MXIT_DEV_VV

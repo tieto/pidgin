@@ -92,6 +92,11 @@ purple_media_candidate_init(PurpleMediaCandidate *info)
 	priv->username = NULL;
 	priv->password = NULL;
 	priv->ttl = 0;
+
+#if GLIB_CHECK_VERSION(2, 37, 3)
+	/* silence a warning */
+	(void)purple_media_candidate_get_instance_private;
+#endif
 }
 
 static void

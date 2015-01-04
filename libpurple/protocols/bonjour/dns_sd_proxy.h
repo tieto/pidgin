@@ -27,10 +27,8 @@
 #include <stdint.h>
 #endif
 
-#ifdef IS_WIN32_CROSS_COMPILED
-
-/* I'm not sure, if we really need to include this for the following definitions
- * modeled after Apple's dns_sd.h file.
+/* The following is a subset of Apple's dns_sd.h file
+ * http://www.opensource.apple.com/source/mDNSResponder/mDNSResponder-333.10/mDNSShared/dns_sd.h
  *
  * Copyright (c) 2003-2004, Apple Computer, Inc. All rights reserved.
  *
@@ -115,17 +113,8 @@ enum {
 	kDNSServiceProtocol_IPv4 = 0x01,
 };
 
-#else
-/* fixup to make pidgin compile against win32 bonjour */
-#  if defined(_WIN32) && !defined(_MSC_VER)
-#    define _MSL_STDINT_H
-#  endif
-#  include <dns_sd.h>
-#endif /* IS_WIN32_CROSS_COMPILED */
 
 gboolean dns_sd_available(void);
-
-#ifndef LINK_DNS_SD_DIRECTLY
 
 DNSServiceErrorType _wpurple_DNSServiceAddRecord(DNSServiceRef sdRef, DNSRecordRef *RecordRef, DNSServiceFlags flags,
 	uint16_t rrtype, uint16_t rdlen, const void *rdata, uint32_t ttl);
@@ -206,7 +195,5 @@ const void * _wpurple_TXTRecordGetValuePtr(uint16_t txtLen, const void *txtRecor
 DNSServiceErrorType _wpurple_TXTRecordSetValue(TXTRecordRef *txtRecord, const char *key, uint8_t valueSize, const void *value);
 #define TXTRecordSetValue(txtRecord, key, valueSize, value) \
 	_wpurple_TXTRecordSetValue(txtRecord, key, valueSize, value)
-
-#endif /*LINK_DNS_SD_DIRECTLY*/
 
 #endif
