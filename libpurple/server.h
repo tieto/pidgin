@@ -54,8 +54,26 @@ G_BEGIN_DECLS
 /* TODO Could probably move this into the conversation API. */
 unsigned int purple_serv_send_typing(PurpleConnection *gc, const char *name, PurpleIMTypingState state);
 
-void purple_serv_move_buddy(PurpleBuddy *, PurpleGroup *, PurpleGroup *);
-int  purple_serv_send_im(PurpleConnection *, PurpleMessage *msg);
+/**
+ * purple_serv_move_buddy:
+ * @buddy:  The Buddy.
+ * @orig:   Original group.
+ * @dest:   Destiny group.
+ *
+ * Move a buddy from one group to another on server.
+ */
+void purple_serv_move_buddy(PurpleBuddy *buddy, PurpleGroup *orig, PurpleGroup *dest);
+
+/**
+ * purple_serv_send_im:
+ * @gc:     The connection over which to send the typing notification.
+ * @msg:    The message.
+ *
+ * Sends the message to the user through the required protocol.
+ *
+ * Returns: The error value returned from the protocol interface function.
+ */
+int  purple_serv_send_im(PurpleConnection *gc, PurpleMessage *msg);
 
 /**
  * purple_get_attention_type_from_code:
@@ -66,18 +84,138 @@ int  purple_serv_send_im(PurpleConnection *, PurpleMessage *msg);
  */
 PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account, guint type_code);
 
-void purple_serv_get_info(PurpleConnection *, const char *);
-void purple_serv_set_info(PurpleConnection *, const char *);
+/**
+ * purple_serv_get_info:
+ * @gc:     The connection over which to send the typing notification.
+ * @name:   The name of the buddy we were asking information from.
+ *
+ * Request user infromation from the server.
+ */
+void purple_serv_get_info(PurpleConnection *gc, const char *name);
 
-void purple_serv_add_permit(PurpleConnection *, const char *);
-void purple_serv_add_deny(PurpleConnection *, const char *);
-void purple_serv_rem_permit(PurpleConnection *, const char *);
-void purple_serv_rem_deny(PurpleConnection *, const char *);
-void purple_serv_set_permit_deny(PurpleConnection *);
-void purple_serv_chat_invite(PurpleConnection *, int, const char *, const char *);
-void purple_serv_chat_leave(PurpleConnection *, int);
-int  purple_serv_chat_send(PurpleConnection *, int, PurpleMessage *);
-void purple_serv_alias_buddy(PurpleBuddy *);
+/**
+ * purple_serv_set_info:
+ * @gc:     The connection over which to send the typing notification.
+ * @info:   Information text to be sent to the server.
+ *
+ * Set user account information on the server.
+ */
+void purple_serv_set_info(PurpleConnection *gc, const char *info);
+
+/******************************************************************************
+ * Privacy interface
+ *****************************************************************************/
+
+/**
+ * purple_serv_add_permit:
+ * @gc:     The connection over which to send the typing notification.
+ * @name:   The name of the remote user.
+ *
+ * Add the buddy on the required authorized list.
+ */
+void purple_serv_add_permit(PurpleConnection *gc, const char *name);
+
+/**
+ * purple_serv_add_deny:
+ * @gc:     The connection over which to send the typing notification.
+ * @name:   The name of the remote user.
+ *
+ * Add the buddy on the required blocked list.
+ */
+void purple_serv_add_deny(PurpleConnection *gc, const char *name);
+
+/**
+ * purple_serv_rem_permit:
+ * @gc:     The connection over which to send the typing notification.
+ * @name:   The name of the remote user.
+ *
+ * Remove the buddy from the required authorized list.
+ */
+void purple_serv_rem_permit(PurpleConnection *gc, const char *name);
+
+/**
+ * purple_serv_rem_deny:
+ * @gc:     The connection over which to send the typing notification.
+ * @name:   The name of the remote user.
+ *
+ * Remove the buddy from the required blocked list.
+ */
+void purple_serv_rem_deny(PurpleConnection *gc, const char *name);
+
+/**
+ * purple_serv_set_permit_deny:
+ * @gc:     The connection over which to send the typing notification.
+ *
+ * Update the server with the privacy information on the permit and deny lists.
+ */
+void purple_serv_set_permit_deny(PurpleConnection *gc);
+
+/******************************************************************************
+ * Chat Interface
+ *****************************************************************************/
+
+/**
+ * purple_serv_chat_invite
+ * @gc:     The connection over which to send the typing notification.
+ * @id:     The id of the chat to invite the user to.
+ * @message:A message displayed to the user when the invitation.
+ * @name:   The name of the remote user to send the invitation to.
+ *
+ * Invite a user to join a chat.
+ */
+void purple_serv_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name);
+
+/**
+ * purple_serv_chat_leave:
+ * @gc:     The connection over which to send the typing notification.
+ * @id:     The id of the chat to leave.
+ *
+ * Called when the user requests leaving a chat.
+ */
+void purple_serv_chat_leave(PurpleConnection *gc, int id);
+
+/**
+ * purple_serv_chat_send:
+ * @gc:     The connection over which to send the typing notification.
+ * @id:     The id of the chat to send the message to.
+ * @msg:    The message to send to the chat.
+ *
+ * Send a message to a chat.
+ *
+ * This protocol function should return a positive value on
+ * success. If the message is too big to be sent, return
+ * <literal>-E2BIG</literal>. If the account is not connected,
+ * return <literal>-ENOTCONN</literal>. If the protocol is unable
+ * to send the message for another reason, return some other
+ * negative value. You can use one of the valid #errno values, or
+ * just big something.
+ *
+ * Returns:  A positive number or 0 in case of success, a
+ *           negative error number in case of failure.
+ */
+int  purple_serv_chat_send(PurpleConnection *gc, int id, PurpleMessage *msg);
+
+/******************************************************************************
+ * Server Interface
+ *****************************************************************************/
+
+/**
+ * purple_serv_alias_buddy:
+ * @buddy:  The Buddy.
+ *
+ * Save/store buddy's alias on server list/roster
+ */
+void purple_serv_alias_buddy(PurpleBuddy *buddy);
+
+/**
+ * purple_serv_got_alias:
+ * @gc:     The connection over which to send the typing notification.
+ * @who: The name of the buddy whose alias was received.
+ * @alias: The alias that was received.
+ *
+ * Protocol should call this function when it retrieves an alias form the server.
+ *
+ */
 void purple_serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);
 
 /**
@@ -120,6 +258,15 @@ void purple_serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
  */
 void purple_serv_got_typing_stopped(PurpleConnection *gc, const char *name);
 
+/**
+ * purple_serv_got_im:
+ * @gc:     The connection on which the typing message was received.
+ * @who:    The username of the buddy that sent the message.
+ * @msg:    The actual message received.
+ * @flags:  The flags applicable to this message.
+ *
+ * This function is called by the protocol when it receives an IM message.
+ */
 void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 				 PurpleMessageFlags flags, time_t mtime);
 
@@ -128,14 +275,14 @@ void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
  * @data: The hash function should be g_str_hash() and the equal
  *             function should be g_str_equal().
  */
-void purple_serv_join_chat(PurpleConnection *, GHashTable *data);
+void purple_serv_join_chat(PurpleConnection *gc, GHashTable *data);
 
 /**
  * purple_serv_reject_chat:
  * @data: The hash function should be g_str_hash() and the equal
  *             function should be g_str_equal().
  */
-void purple_serv_reject_chat(PurpleConnection *, GHashTable *data);
+void purple_serv_reject_chat(PurpleConnection *gc, GHashTable *data);
 
 /**
  * purple_serv_got_chat_invite:
@@ -199,6 +346,15 @@ void purple_serv_got_chat_left(PurpleConnection *g, int id);
  */
 void purple_serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime);
+
+/**
+ * purple_serv_send_file:
+ * @g:      The connection on which the message was received.
+ * @who:    The name of the user to who send the file.
+ * @file:   The filename to send.
+ *
+ * Send a filename to a given contact.
+ */
 void purple_serv_send_file(PurpleConnection *gc, const char *who, const char *file);
 
 G_END_DECLS

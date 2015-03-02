@@ -525,6 +525,11 @@ typedef struct _PurpleProtocolPrivacyIface PurpleProtocolPrivacyIface;
 
 /**
  * PurpleProtocolPrivacyIface:
+ * @add_permit:		Add the buddy on the required authorized list.
+ * @add_deny:		Add the buddy on the required blocked list.
+ * @rem_permit:		Remove the buddy from the requried authorized list.
+ * @rem_deny:		Remove the buddy from the required blocked list.
+ * @set_permit_deny:Update the server with the privacy information on the permit and deny lists.
  *
  * The protocol privacy interface.
  *
@@ -536,15 +541,15 @@ struct _PurpleProtocolPrivacyIface
 	GTypeInterface parent_iface;
 
 	/*< public >*/
-	void (*add_permit)(PurpleConnection *, const char *name);
+	void (*add_permit)(PurpleConnection *gc, const char *name);
 
-	void (*add_deny)(PurpleConnection *, const char *name);
+	void (*add_deny)(PurpleConnection *gc, const char *name);
 
-	void (*rem_permit)(PurpleConnection *, const char *name);
+	void (*rem_permit)(PurpleConnection *gc, const char *name);
 
-	void (*rem_deny)(PurpleConnection *, const char *name);
+	void (*rem_deny)(PurpleConnection *gc, const char *name);
 
-	void (*set_permit_deny)(PurpleConnection *);
+	void (*set_permit_deny)(PurpleConnection *gc);
 };
 
 #define PURPLE_PROTOCOL_HAS_PRIVACY_IFACE(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_PRIVACY_IFACE))

@@ -315,24 +315,24 @@ PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account,
  * it should be possible.  Probably needs to be done, someday.  Although,
  * the UI for that would be difficult, because groups are Purple-wide.
  */
-void purple_serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
+void purple_serv_move_buddy(PurpleBuddy *buddy, PurpleGroup *orig, PurpleGroup *dest)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
 	PurpleProtocol *protocol;
 
-	g_return_if_fail(b != NULL);
-	g_return_if_fail(og != NULL);
-	g_return_if_fail(ng != NULL);
+	g_return_if_fail(buddy != NULL);
+	g_return_if_fail(orig != NULL);
+	g_return_if_fail(dest != NULL);
 
-	account = purple_buddy_get_account(b);
+	account = purple_buddy_get_account(buddy);
 	gc = purple_account_get_connection(account);
 
 	if (gc) {
 		protocol = purple_connection_get_protocol(gc);
-		purple_protocol_server_iface_group_buddy(protocol, gc, purple_buddy_get_name(b),
-				purple_group_get_name(og),
-				purple_group_get_name(ng));
+		purple_protocol_server_iface_group_buddy(protocol, gc, purple_buddy_get_name(buddy),
+				purple_group_get_name(orig),
+				purple_group_get_name(dest));
 	}
 }
 
