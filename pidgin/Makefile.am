@@ -264,8 +264,8 @@ DISTCLEANFILES = $(DESKTOP_FILE)
 
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS =
-INTROSPECTION_SCANNER_ARGS = --warn-all --add-include-path=$(top_builddir)/libpurple
-INTROSPECTION_COMPILER_ARGS = --includedir=$(top_builddir)/libpurple
+INTROSPECTION_SCANNER_ARGS = --warn-all --add-include-path=$(top_builddir)/libpurple --add-include-path=$(prefix)/share/gir-1.0
+INTROSPECTION_COMPILER_ARGS = --includedir=$(top_builddir)/libpurple --includedir=$(prefix)/share/gir-1.0
 
 if HAVE_INTROSPECTION
 introspection_sources = $(libpidgininclude_HEADERS)
@@ -300,10 +300,10 @@ Pidgin_3_0_gir_LIBS = $(builddir)/libpidgin.la
 Pidgin_3_0_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
 
-girdir = $(INTROSPECTION_GIRDIR)
+girdir = $(prefix)/share/gir-1.0 $(INTROSPECTION_GIRDIR)
 gir_DATA = $(INTROSPECTION_GIRS)
 
-typelibdir = $(INTROSPECTION_TYPELIBDIR)
+typelibdir = $(prefix)/share/gir-1.0 $(INTROSPECTION_TYPELIBDIR)
 typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES += $(gir_DATA) $(typelib_DATA)
