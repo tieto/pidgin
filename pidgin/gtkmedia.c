@@ -764,7 +764,7 @@ phone_create_button(const gchar *text_hi, const gchar *text_lo)
 	GtkWidget *label_hi;
 	GtkWidget *label_lo;
 	GtkWidget *grid;
-	gchar *text_hi_local;
+	const gchar *text_hi_local;
 
 	if (text_hi)
 		text_hi_local = _(text_hi);
