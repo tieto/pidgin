@@ -1454,7 +1454,11 @@ purple_media_send_dtmf(PurpleMedia *media, const gchar *session_id,
 
 	g_return_val_if_fail(strchr("0123456789ABCD#*", dtmf), FALSE);
 
-	if (backend_iface && backend_iface->send_dtmf
+	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, media_send_dtmf)
+		&& prpl_info->media_send_dtmf(media, dtmf, volume, duration))
+	{
+		return TRUE;
+	} else if (backend_iface && backend_iface->send_dtmf
 		&& backend_iface->send_dtmf(media->priv->backend,
 				session_id, dtmf, volume, duration))
 	{

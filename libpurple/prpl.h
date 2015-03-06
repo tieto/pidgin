@@ -633,6 +633,16 @@ struct _PurplePluginProtocolInfo
 	 * Returns: Maximum message size, 0 if unspecified, -1 for infinite.
 	 */
 	gssize (*get_max_message_size)(PurpleConversation *conv);
+
+	/*
+	 * Sends DTMF codes out-of-band in a protocol-specific way if the
+	 * protocol supports it, or failing that in-band if the media backend
+	 * can do so.
+	 *
+	 * See purple_media_send_dtmf()
+	 */
+	gboolean (*media_send_dtmf)(PurpleMedia *media, gchar dtmf,
+				    guint8 volume, guint8 duration);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \

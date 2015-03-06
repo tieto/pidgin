@@ -150,7 +150,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* get_moods */
 	NULL, /* set_public_alias */
 	NULL, /* get_public_alias */
-	NULL  /* get_max_message_size */
+	NULL, /* get_max_message_size */
+	NULL  /* media_send_dtmf */
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)

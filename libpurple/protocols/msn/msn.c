@@ -2951,7 +2951,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                               /* get_moods */
 	msn_set_public_alias,               /* set_public_alias */
 	msn_get_public_alias,               /* get_public_alias */
-	msn_get_max_message_size            /* get_max_message_size */
+	msn_get_max_message_size,           /* get_max_message_size */
+	NULL                                /* media_send_dtmf */
 };
 
 static PurplePluginInfo info =

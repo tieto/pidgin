@@ -115,7 +115,8 @@ static PurplePluginProtocolInfo prpl_info =
 	oscar_get_purple_moods, /* get_moods */
 	NULL,					/* set_public_alias */
 	NULL,					/* get_public_alias */
-	icq_get_max_message_size		/* get_max_message_size */
+	icq_get_max_message_size,		/* get_max_message_size */
+	NULL					/* media_send_dtmf */
 };
 
 static PurplePluginInfo info =

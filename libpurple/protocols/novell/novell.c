@@ -3576,7 +3576,8 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,						/* get_moods */
 	NULL,						/* set_public_alias */
 	NULL,						/* get_public_alias */
-	novell_get_max_message_size			/* get_max_message_size */
+	novell_get_max_message_size,			/* get_max_message_size */
+	NULL						/* media_send_dtmf */
 };
 
 static PurplePluginInfo info = {
