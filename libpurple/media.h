@@ -437,6 +437,21 @@ gulong purple_media_set_output_window(PurpleMedia *media,
  */
 void purple_media_remove_output_windows(PurpleMedia *media);
 
+/**
+ * Sends a DTMF signal out-of-band.
+ *
+ * @param media The media instance to send a DTMF signal to.
+ * @param sess_id The session id of the session to send the DTMF signal on.
+ * @param dtmf The character representing the DTMF in the range [0-9#*A-D].
+ * @param volume The power level expressed in dBm0 after dropping the sign
+ *      in the range of 0 to 63.  A larger value represents a lower volume.
+ * @param duration The duration of the tone in milliseconds.
+ *
+ * @since 2.11
+ */
+gboolean purple_media_send_dtmf(PurpleMedia *media, const gchar *session_id,
+		gchar dtmf, guint8 volume, guint16 duration);
+
 #ifdef __cplusplus
 }
 #endif

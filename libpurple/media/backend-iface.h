@@ -71,6 +71,9 @@ struct _PurpleMediaBackendIface
 	void (*set_params) (PurpleMediaBackend *self,
 		guint num_params, GParameter *params);
 	const gchar **(*get_available_params) (void);
+	gboolean (*send_dtmf) (PurpleMediaBackend *self,
+		const gchar *sess_id, gchar dtmf, guint8 volume,
+		guint16 duration);
 };
 
 /**
