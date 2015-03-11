@@ -43,7 +43,9 @@
 #endif
 #include <gdk/gdkkeysyms.h>
 
+#if !GST_CHECK_VERSION(1,0,0)
 #include <gst/interfaces/xoverlay.h>
+#endif
 
 #define PIDGIN_TYPE_MEDIA            (pidgin_media_get_type())
 #define PIDGIN_MEDIA(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PIDGIN_TYPE_MEDIA, PidginMedia))
@@ -590,6 +592,9 @@ pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmed
 	if (conv != NULL)
 		purple_conversation_write(conv, NULL, error,
 				PURPLE_MESSAGE_ERROR, time(NULL));
+	else
+		purple_notify_error(NULL, NULL, _("Media error"), error);
+
 	gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
 			0, error);
 }
