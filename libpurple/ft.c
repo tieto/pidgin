@@ -1109,6 +1109,101 @@ purple_xfer_write(PurpleXfer *xfer, const guchar *buffer, gsize size)
 
 	return r;
 }
+gboolean
+purple_xfer_write_file(PurpleXfer *xfer, const guchar *buffer, gsize size)
+{
+	PurpleXferUiOps *ui_ops;
+	gsize wc;
+	gboolean fs_known;
+
+	g_return_val_if_fail(buffer != NULL, FALSE);
+
+	ui_ops = purple_xfer_get_ui_ops(xfer);
+	fs_known = (purple_xfer_get_size(xfer) > 0);
+
+	if (fs_known && size > purple_xfer_get_bytes_remaining(xfer)) {
+		purple_debug_warning("xfer",
+			"Got too much data (truncating at %" G_GOFFSET_FORMAT
+			").\n", purple_xfer_get_size(xfer));
+		size = purple_xfer_get_bytes_remaining(xfer);
+	}
+
+	if (ui_ops && ui_ops->ui_write)
+		wc = ui_ops->ui_write(xfer, buffer, size);
+	else {
+		if (xfer->dest_fp == NULL) {
+			purple_debug_error("xfer",
+				"File is not opened for writing\n");
+			purple_xfer_cancel_local(xfer);
+			return FALSE;
+		}
+		wc = fwrite(buffer, 1, size, xfer->dest_fp);
+	}
+
+	if (wc != size) {
+		purple_debug_error("xfer",
+			"Unable to write whole buffer.\n");
+		purple_xfer_cancel_local(xfer);
+		return FALSE;
+	}
+
+	purple_xfer_set_bytes_sent(xfer, purple_xfer_get_bytes_sent(xfer) +
+		size);
+
+	return TRUE;
+}
+
+gssize
+purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size)
+{
+	PurpleXferUiOps *ui_ops;
+	gssize got_len;
+
+	g_return_val_if_fail(buffer != NULL, FALSE);
+
+	ui_ops = purple_xfer_get_ui_ops(xfer);
+
+	if (ui_ops && ui_ops->ui_read) {
+		guchar *buffer_got = NULL;
+
+		got_len = ui_ops->ui_read(xfer, &buffer_got, size);
+
+		if (got_len >= 0 && (gsize)got_len > size) {
+			g_free(buffer_got);
+			purple_debug_error("xfer",
+				"Got too much data from UI.\n");
+			purple_xfer_cancel_local(xfer);
+			return -1;
+		}
+
+		if (got_len > 0)
+			memcpy(buffer, buffer_got, got_len);
+		g_free(buffer_got);
+	} else {
+		if (xfer->dest_fp == NULL) {
+			purple_debug_error("xfer",
+				"File is not opened for reading\n");
+			purple_xfer_cancel_local(xfer);
+			return -1;
+		}
+		got_len = fread(buffer, 1, size, xfer->dest_fp);
+		if ((got_len < 0 || (gsize)got_len != size) &&
+			ferror(xfer->dest_fp))
+		{
+			purple_debug_error("xfer",
+				"Unable to read file.\n");
+			purple_xfer_cancel_local(xfer);
+			return -1;
+		}
+	}
+
+	if (got_len > 0) {
+		purple_xfer_set_bytes_sent(xfer,
+			purple_xfer_get_bytes_sent(xfer) + got_len);
+	}
+
+	return got_len;
+}
 
 static void
 do_transfer(PurpleXfer *xfer)
