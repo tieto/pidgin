@@ -217,3 +217,44 @@ purple_media_state_changed_get_type()
 	return type;
 }
 
+/*
+ * PurpleMediaCipher
+ */
+
+GType
+purple_media_cipher_get_type()
+{
+	static GType type = 0;
+	if (type == 0) {
+		static const GEnumValue values[] = {
+			{ PURPLE_MEDIA_CIPHER_NULL,
+				"PURPLE_MEDIA_CIPHER_NULL", "null" },
+			{ PURPLE_MEDIA_CIPHER_AES_128_ICM,
+				"PURPLE_MEDIA_CIPHER_AES_128_ICM", "AES-128-ICM" },
+			{ PURPLE_MEDIA_CIPHER_AES_256_ICM,
+				"PURPLE_MEDIA_CIPHER_AES_256_ICM", "AES-256-ICM" },
+			{ 0, NULL, NULL }
+		};
+		type = g_enum_register_static("PurpleMediaCipher", values);
+	}
+	return type;
+}
+
+GType
+purple_media_authentication_get_type(void)
+{
+	static GType type = 0;
+	if (type == 0) {
+		static const GEnumValue values[] = {
+			{ PURPLE_MEDIA_AUTHENTICATION_NULL,
+				"PURPLE_MEDIA_AUTHENTICATION_NULL", "null" },
+			{ PURPLE_MEDIA_AUTHENTICATION_HMAC_SHA1_32,
+				"PURPLE_MEDIA_AUTHENTICATION_HMAC_SHA1_32", "HMAC_SHA1_32" },
+			{ PURPLE_MEDIA_AUTHENTICATION_HMAC_SHA1_80,
+				"PURPLE_MEDIA_AUTHENTICATION_HMAC_SHA1_80", "HMAC_SHA1_80" },
+			{ 0, NULL, NULL }
+		};
+		type = g_enum_register_static("PurpleMediaAuthentication", values);
+	}
+	return type;
+}

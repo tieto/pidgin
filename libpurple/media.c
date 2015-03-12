@@ -1276,6 +1276,34 @@ purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, PurpleMedi
 }
 
 gboolean
+purple_media_set_encryption_parameters(PurpleMedia *media, const gchar *sess_id,
+		const gchar *cipher, const gchar *auth,
+		const gchar *key, gsize key_len)
+{
+#ifdef USE_VV
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
+	return purple_media_backend_set_encryption_parameters(media->priv->backend,
+			sess_id, cipher, auth, key, key_len);
+#else
+	return FALSE;
+#endif
+}
+
+gboolean
+purple_media_set_decryption_parameters(PurpleMedia *media, const gchar *sess_id,
+		const gchar *participant, const gchar *cipher,
+		const gchar *auth, const gchar *key, gsize key_len)
+{
+#ifdef USE_VV
+	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
+	return purple_media_backend_set_decryption_parameters(media->priv->backend,
+			sess_id, participant, cipher, auth, key, key_len);
+#else
+	return FALSE;
+#endif
+}
+
+gboolean
 purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id)
 {
 #ifdef USE_VV
