@@ -81,6 +81,15 @@ static GList *purple_media_backend_fs2_get_codecs(PurpleMediaBackend *self,
 static GList *purple_media_backend_fs2_get_local_candidates(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant);
+#if GST_CHECK_VERSION(1,0,0)
+static gboolean purple_media_backend_fs2_set_encryption_parameters (
+	PurpleMediaBackend *self, const gchar *sess_id, const gchar *cipher,
+	const gchar *auth, const gchar *key, gsize key_len);
+static gboolean purple_media_backend_fs2_set_decryption_parameters(
+		PurpleMediaBackend *self, const gchar *sess_id,
+		const gchar *participant, const gchar *cipher,
+		const gchar *auth, const gchar *key, gsize key_len);
+#endif
 static gboolean purple_media_backend_fs2_set_remote_codecs(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
@@ -546,6 +555,12 @@ purple_media_backend_iface_init(PurpleMediaBackendIface *iface)
 			purple_media_backend_fs2_get_local_candidates;
 	iface->set_remote_codecs = purple_media_backend_fs2_set_remote_codecs;
 	iface->set_send_codec = purple_media_backend_fs2_set_send_codec;
+#if GST_CHECK_VERSION(1,0,0)
+	iface->set_encryption_parameters =
+			purple_media_backend_fs2_set_encryption_parameters;
+	iface->set_decryption_parameters =
+			purple_media_backend_fs2_set_decryption_parameters;
+#endif
 	iface->set_params = purple_media_backend_fs2_set_params;
 	iface->get_available_params = purple_media_backend_fs2_get_available_params;
 	iface->send_dtmf = purple_media_backend_fs2_send_dtmf;
@@ -2471,6 +2486,97 @@ purple_media_backend_fs2_set_remote_codecs(PurpleMediaBackend *self,
 
 	return TRUE;
 }
+
+#if GST_CHECK_VERSION(1,0,0)
+static GstStructure *
+create_fs2_srtp_structure(const gchar *cipher, const gchar *auth,
+	const gchar *key, gsize key_len)
+{
+	GstStructure *result;
+	GstBuffer *buffer;
+	GstMapInfo info;
+
+	buffer = gst_buffer_new_allocate(NULL, key_len, NULL);
+	gst_buffer_map(buffer, &info, GST_MAP_WRITE);
+	memcpy(info.data, key, key_len);
+	gst_buffer_unmap(buffer, &info);
+
+	result = gst_structure_new("FarstreamSRTP",
+			"cipher", G_TYPE_STRING, cipher,
+			"auth", G_TYPE_STRING, auth,
+			"key", GST_TYPE_BUFFER, buffer,
+			NULL);
+	gst_buffer_unref(buffer);
+
+	return result;
+}
+
+static gboolean
+purple_media_backend_fs2_set_encryption_parameters (PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *cipher, const gchar *auth,
+		const gchar *key, gsize key_len)
+{
+	PurpleMediaBackendFs2Session *session;
+	GstStructure *srtp;
+	GError *err = NULL;
+	gboolean result;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
+
+	session = get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
+	if (!session)
+		return FALSE;
+
+	srtp = create_fs2_srtp_structure(cipher, auth, key, key_len);
+	if (!srtp)
+		return FALSE;
+
+	result = fs_session_set_encryption_parameters(session->session, srtp,
+						&err);
+	if (!result) {
+		purple_debug_error("backend-fs2",
+				"Error setting encryption parameters: %s\n", err->message);
+		g_error_free(err);
+	}
+
+	gst_structure_free(srtp);
+	return result;
+}
+
+static gboolean
+purple_media_backend_fs2_set_decryption_parameters (PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant,
+		const gchar *cipher, const gchar *auth,
+		const gchar *key, gsize key_len)
+{
+	PurpleMediaBackendFs2Stream *stream;
+	GstStructure *srtp;
+	GError *err = NULL;
+	gboolean result;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
+
+	stream = get_stream(PURPLE_MEDIA_BACKEND_FS2(self), sess_id,
+			participant);
+	if (!stream)
+		return FALSE;
+
+	srtp = create_fs2_srtp_structure(cipher, auth, key, key_len);
+	if (!srtp)
+		return FALSE;
+
+	result = fs_stream_set_decryption_parameters(stream->stream, srtp,
+						&err);
+	if (!result) {
+		purple_debug_error("backend-fs2",
+				"Error setting decryption parameters: %s\n", err->message);
+		g_error_free(err);
+	}
+
+	gst_structure_free(srtp);
+	return result;
+}
+#endif /* GST 1.0+ */
 
 static gboolean
 purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
