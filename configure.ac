@@ -1143,7 +1143,7 @@ AC_ARG_ENABLE(farstream,
 	enable_farstream="$enableval", enable_farstream="yes")
 if test "x$enable_farstream" != "xno"; then
 	if test "x$with_gstreamer" == "x1.0"; then
-		PKG_CHECK_MODULES(FARSTREAM, [farstream-0.2 >= 0.2.6], [
+		PKG_CHECK_MODULES(FARSTREAM, [farstream-0.2 >= 0.2.7], [
 			AC_SUBST(FARSTREAM_CFLAGS)
 			AC_SUBST(FARSTREAM_LIBS)
 		], [
