@@ -4,6 +4,8 @@ CERTIFICATES = \
 		Baltimore_CyberTrust_Root.pem \
 		CAcert_Root.pem \
 		CAcert_Class3.pem \
+		Certum_Root_CA.pem \
+		Certum_Trusted_Network_CA.pem \
 		Deutsche_Telekom_Root_CA_2.pem \
 		DigiCertHighAssuranceEVRootCA.pem \
 		Entrust.net_Secure_Server_CA.pem \
