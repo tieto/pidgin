@@ -2901,6 +2901,7 @@ purple_media_backend_fs2_set_output_volume(PurpleMediaBackendFs2 *self,
 }
 #endif /* USE_GSTREAMER */
 
+#ifdef USE_VV
 static gboolean
 purple_media_backend_fs2_set_send_rtcp_mux(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
@@ -2921,3 +2922,4 @@ purple_media_backend_fs2_set_send_rtcp_mux(PurpleMediaBackend *self,
 
 	return FALSE;
 }
+#endif /* USE_VV */
