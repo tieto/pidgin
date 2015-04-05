@@ -83,8 +83,8 @@ static GList *purple_media_backend_fs2_get_local_candidates(
 		const gchar *sess_id, const gchar *participant);
 #if GST_CHECK_VERSION(1,0,0)
 static gboolean purple_media_backend_fs2_set_encryption_parameters (
-	PurpleMediaBackend *self, const gchar *sess_id, const gchar *cipher,
-	const gchar *auth, const gchar *key, gsize key_len);
+		PurpleMediaBackend *self, const gchar *sess_id, const gchar *cipher,
+		const gchar *auth, const gchar *key, gsize key_len);
 static gboolean purple_media_backend_fs2_set_decryption_parameters(
 		PurpleMediaBackend *self, const gchar *sess_id,
 		const gchar *participant, const gchar *cipher,
