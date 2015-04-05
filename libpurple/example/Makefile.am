@@ -8,6 +8,7 @@ nullclient_LDADD = \
 	$(INTLLIBS) \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
+	$(GSTVIDEO_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
 AM_CPPFLAGS = \

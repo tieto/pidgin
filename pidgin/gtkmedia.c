@@ -793,8 +793,9 @@ static struct phone_label {
 } phone_labels[] = {
 	{"<b>1</b>", NULL, '1'},
 	/* Translators note: These are the letters on the keys of a numeric
-	   keypad; translate according to §7.2.4 of
-	 http://www.etsi.org/deliver/etsi_es/202100_202199/202130/01.01.01_60/es_20213 */
+	   keypad; translate according to the tables in §7 of ETSI ES 202 130:
+           http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+         */
 	 /* Letters on the '2' key of a numeric keypad */
 	{"<b>2</b>", N_("ABC"), '2'},
 	 /* Letters on the '3' key of a numeric keypad */
