@@ -348,9 +348,16 @@ purple_connection_get_password(const PurpleConnection *gc)
 {
 	PurpleConnectionPrivate *priv = PURPLE_CONNECTION_GET_PRIVATE(gc);
 
-	g_return_val_if_fail(priv != NULL, NULL);
+	g_return_val_if_fail(gc != NULL, NULL);
 
-	return priv->password;
+	if(priv != NULL && priv->password)
+		return priv->password;
+
+	PurpleAccount *account = purple_connection_get_account(gc);
+	if(account != NULL)
+		return purple_account_get_password(account, NULL, NULL);
+
+	return NULL;
 }
 
 GSList *

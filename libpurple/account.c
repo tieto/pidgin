@@ -1389,18 +1389,24 @@ purple_account_get_password_got(PurpleAccount *account,
 	g_free(cbb);
 }
 
-void
+const gchar *
 purple_account_get_password(PurpleAccount *account,
 	PurpleKeyringReadCallback cb, gpointer data)
 {
 	PurpleAccountPrivate *priv;
 
 	if (account == NULL) {
-		cb(NULL, NULL, NULL, data);
-		return;
+		if(cb != NULL)
+			cb(NULL, NULL, NULL, data);
+		return NULL;
 	}
 
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	if(cb == NULL) {
+		if(priv != NULL && priv->password != NULL)
+			return priv->password;
+		return NULL;
+	}
 
 	if (priv->password != NULL) {
 		purple_debug_info("account",
@@ -1418,6 +1424,7 @@ purple_account_get_password(PurpleAccount *account,
 		purple_keyring_get_password(account, 
 			purple_account_get_password_got, cbb);
 	}
+	return NULL;
 }
 
 const char *

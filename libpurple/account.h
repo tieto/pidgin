@@ -695,7 +695,7 @@ const char *purple_account_get_username(const PurpleAccount *account);
 /**
  * purple_account_get_password:
  * @account: The account.
- * @cb:      (scope call): The callback to give the password.
+ * @cb:      (scope call): The callback to give the password. (can be NULL)
  * @data:    A pointer passed to the callback.
  *
  * Reads the password for the account.
@@ -704,8 +704,14 @@ const char *purple_account_get_username(const PurpleAccount *account);
  * once it has been read from the keyring. If the account is connected, and you
  * require the password immediately, then consider using @ref
  * purple_connection_get_password instead.
+ *
+ * If @cb is NULL, it tries to fetch the password from the local account
+ * (and not try to fetch from keyring).
+ *
+ * Returns: the password, when cb is NULL and it finds the password
+ *          NULL in all other cases (including when cb is not NULL)
  */
-void purple_account_get_password(PurpleAccount *account,
+const gchar *purple_account_get_password(PurpleAccount *account,
 	PurpleKeyringReadCallback cb, gpointer data);
 
 /**
