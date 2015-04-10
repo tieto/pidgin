@@ -80,9 +80,21 @@ struct _PurpleMediaBackendIface
 		GList *codecs);
 	gboolean (*set_send_codec) (PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec);
+	gboolean (*set_encryption_parameters) (PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *cipher,
+		const gchar *auth, const gchar *key, gsize key_len);
+	gboolean (*set_decryption_parameters) (PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant,
+		const gchar *cipher, const gchar *auth,
+		const gchar *key, gsize key_len);
 	void (*set_params) (PurpleMediaBackend *self,
 		guint num_params, GParameter *params);
 	const gchar **(*get_available_params) (void);
+	gboolean (*send_dtmf) (PurpleMediaBackend *self,
+		const gchar *sess_id, gchar dtmf, guint8 volume,
+		guint16 duration);
+	gboolean (*set_send_rtcp_mux) (PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant, gboolean send_rtcp_mux);
 };
 
 /**
@@ -200,6 +212,41 @@ gboolean purple_media_backend_set_send_codec(PurpleMediaBackend *self,
 		const gchar *sess_id, PurpleMediaCodec *codec);
 
 /**
+ * purple_media_backend_set_encryption_parameters:
+ * @self: The media backend the session is in.
+ * @sess_id: The session id of the session to set parameters of.
+ * @cipher: The cipher to use to encrypt our media in the session.
+ * @auth: The algorithm to use to compute authentication codes for our media
+ *        frames.
+ * @key: The encryption key.
+ * @key_len: Byte length of the encryption key.
+ *
+ * Sets the encryption parameters of our media in the session.
+ */
+gboolean purple_media_backend_set_encryption_parameters(PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *cipher,
+		const gchar *auth, const gchar *key, gsize key_len);
+
+/**
+ * purple_media_backend_set_decryption_parameters:
+ * @self: The media backend the session is in.
+ * @sess_id: The session id of the session to set parameters of.
+ * @participant: The participant of the session to set parameters of.
+ * @cipher: The cipher to use to decrypt media coming from this session's
+ *          participant.
+ * @auth: The algorithm to use for authentication of the media coming from
+ *        the session's participant.
+ * @key: The decryption key.
+ * @key_len: Byte length of the decryption key.
+ *
+ * Sets the decryption parameters for a session participant's media.
+ */
+gboolean purple_media_backend_set_decryption_parameters(PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant,
+		const gchar *cipher, const gchar *auth,
+		const gchar *key, gsize key_len);
+
+/**
  * purple_media_backend_set_params:
  * @self: The media backend to set the parameters on.
  * @num_params: The number of parameters to pass to backend
@@ -220,6 +267,21 @@ void purple_media_backend_set_params(PurpleMediaBackend *self,
  * Returns: NULL-terminated array of names of supported parameters.
  */
 const gchar **purple_media_backend_get_available_params(PurpleMediaBackend *self);
+
+/**
+ * purple_media_backend_set_send_rtcp_mux:
+ * @self: The media backend the session is in.
+ * @sess_id: The session id of the session to set the rtcp-mux option to
+ * @participant: The participant the stream is associated with.
+ * @send_rtcp_mux: Whether or not to enable rtcp-mux
+ *
+ * Controls whether or not the RTCP should be muxed with the RTP
+ *
+ * Returns: True if set successfully, otherwise False.
+ */
+gboolean purple_media_backend_set_send_rtcp_mux(PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant, gboolean send_rtcp_mux);
+
 
 G_END_DECLS
 

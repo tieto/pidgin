@@ -81,6 +81,15 @@ static GList *purple_media_backend_fs2_get_codecs(PurpleMediaBackend *self,
 static GList *purple_media_backend_fs2_get_local_candidates(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant);
+#if GST_CHECK_VERSION(1,0,0)
+static gboolean purple_media_backend_fs2_set_encryption_parameters (
+		PurpleMediaBackend *self, const gchar *sess_id, const gchar *cipher,
+		const gchar *auth, const gchar *key, gsize key_len);
+static gboolean purple_media_backend_fs2_set_decryption_parameters(
+		PurpleMediaBackend *self, const gchar *sess_id,
+		const gchar *participant, const gchar *cipher,
+		const gchar *auth, const gchar *key, gsize key_len);
+#endif
 static gboolean purple_media_backend_fs2_set_remote_codecs(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
@@ -91,6 +100,13 @@ static gboolean purple_media_backend_fs2_set_send_codec(
 static void purple_media_backend_fs2_set_params(PurpleMediaBackend *self,
 		guint num_params, GParameter *params);
 static const gchar **purple_media_backend_fs2_get_available_params(void);
+static gboolean purple_media_backend_fs2_send_dtmf(
+		PurpleMediaBackend *self, const gchar *sess_id,
+		gchar dtmf, guint8 volume, guint16 duration);
+static gboolean purple_media_backend_fs2_set_send_rtcp_mux(
+		PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant,
+		gboolean send_rtcp_mux);
 
 static void free_stream(PurpleMediaBackendFs2Stream *stream);
 static void free_session(PurpleMediaBackendFs2Session *session);
@@ -223,10 +239,17 @@ purple_media_network_protocol_to_fs(PurpleMediaNetworkProtocol protocol)
 	switch (protocol) {
 		case PURPLE_MEDIA_NETWORK_PROTOCOL_UDP:
 			return FS_NETWORK_PROTOCOL_UDP;
-		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP:
-			return FS_NETWORK_PROTOCOL_TCP;
+#if GST_CHECK_VERSION(1,0,0)
+		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE:
+			return FS_NETWORK_PROTOCOL_TCP_PASSIVE;
+		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_ACTIVE:
+			return FS_NETWORK_PROTOCOL_TCP_ACTIVE;
+		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_SO:
+			return FS_NETWORK_PROTOCOL_TCP_SO;
+#endif
+		default:
+			g_return_val_if_reached(FS_NETWORK_PROTOCOL_TCP);
 	}
-	g_return_val_if_reached(FS_NETWORK_PROTOCOL_TCP);
 }
 
 static PurpleMediaNetworkProtocol
@@ -235,10 +258,17 @@ purple_media_network_protocol_from_fs(FsNetworkProtocol protocol)
 	switch (protocol) {
 		case FS_NETWORK_PROTOCOL_UDP:
 			return PURPLE_MEDIA_NETWORK_PROTOCOL_UDP;
-		case FS_NETWORK_PROTOCOL_TCP:
-			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP;
+#if GST_CHECK_VERSION(1,0,0)
+		case FS_NETWORK_PROTOCOL_TCP_PASSIVE:
+			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE;
+		case FS_NETWORK_PROTOCOL_TCP_ACTIVE:
+			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_ACTIVE;
+		case FS_NETWORK_PROTOCOL_TCP_SO:
+			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_SO;
+#endif
+		default:
+			g_return_val_if_reached(PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE);
 	}
-	g_return_val_if_reached(PURPLE_MEDIA_NETWORK_PROTOCOL_TCP);
 }
 
 #if GST_CHECK_VERSION(1,0,0)
@@ -529,8 +559,16 @@ purple_media_backend_iface_init(PurpleMediaBackendIface *iface)
 			purple_media_backend_fs2_get_local_candidates;
 	iface->set_remote_codecs = purple_media_backend_fs2_set_remote_codecs;
 	iface->set_send_codec = purple_media_backend_fs2_set_send_codec;
+#if GST_CHECK_VERSION(1,0,0)
+	iface->set_encryption_parameters =
+			purple_media_backend_fs2_set_encryption_parameters;
+	iface->set_decryption_parameters =
+			purple_media_backend_fs2_set_decryption_parameters;
+#endif
 	iface->set_params = purple_media_backend_fs2_set_params;
 	iface->get_available_params = purple_media_backend_fs2_get_available_params;
+	iface->send_dtmf = purple_media_backend_fs2_send_dtmf;
+	iface->set_send_rtcp_mux = purple_media_backend_fs2_set_send_rtcp_mux;
 }
 
 static FsMediaType
@@ -540,6 +578,10 @@ session_type_to_fs_media_type(PurpleMediaSessionType type)
 		return FS_MEDIA_TYPE_AUDIO;
 	else if (type & PURPLE_MEDIA_VIDEO)
 		return FS_MEDIA_TYPE_VIDEO;
+#ifdef HAVE_MEDIA_APPLICATION
+	else if (type & PURPLE_MEDIA_APPLICATION)
+		return FS_MEDIA_TYPE_APPLICATION;
+#endif
 	else
 		return 0;
 }
@@ -548,7 +590,7 @@ static FsStreamDirection
 session_type_to_fs_stream_direction(PurpleMediaSessionType type)
 {
 	if ((type & PURPLE_MEDIA_AUDIO) == PURPLE_MEDIA_AUDIO ||
-			(type & PURPLE_MEDIA_VIDEO) == PURPLE_MEDIA_VIDEO)
+		(type & PURPLE_MEDIA_VIDEO) == PURPLE_MEDIA_VIDEO)
 		return FS_DIRECTION_BOTH;
 	else if ((type & PURPLE_MEDIA_SEND_AUDIO) ||
 			(type & PURPLE_MEDIA_SEND_VIDEO))
@@ -556,6 +598,14 @@ session_type_to_fs_stream_direction(PurpleMediaSessionType type)
 	else if ((type & PURPLE_MEDIA_RECV_AUDIO) ||
 			(type & PURPLE_MEDIA_RECV_VIDEO))
 		return FS_DIRECTION_RECV;
+#ifdef HAVE_MEDIA_APPLICATION
+	else if ((type & PURPLE_MEDIA_APPLICATION) == PURPLE_MEDIA_APPLICATION)
+		return FS_DIRECTION_BOTH;
+	else if (type & PURPLE_MEDIA_SEND_APPLICATION)
+		return FS_DIRECTION_SEND;
+	else if (type & PURPLE_MEDIA_RECV_APPLICATION)
+		return FS_DIRECTION_RECV;
+#endif
 	else
 		return FS_DIRECTION_NONE;
 }
@@ -574,6 +624,13 @@ session_type_from_fs(FsMediaType type, FsStreamDirection direction)
 			result |= PURPLE_MEDIA_SEND_VIDEO;
 		if (direction & FS_DIRECTION_RECV)
 			result |= PURPLE_MEDIA_RECV_VIDEO;
+#ifdef HAVE_MEDIA_APPLICATION
+	} else if (type == FS_MEDIA_TYPE_APPLICATION) {
+		if (direction & FS_DIRECTION_SEND)
+			result |= PURPLE_MEDIA_SEND_APPLICATION;
+		if (direction & FS_DIRECTION_RECV)
+			result |= PURPLE_MEDIA_RECV_APPLICATION;
+#endif
 	}
 	return result;
 }
@@ -1330,7 +1387,8 @@ gst_handle_message_error(GstBus *bus, GstMessage *msg,
 				& PURPLE_MEDIA_AUDIO)
 			purple_media_error(priv->media,
 					_("Error with your microphone"));
-		else
+		else if (purple_media_get_session_type(priv->media,
+                        sessions->data) & PURPLE_MEDIA_VIDEO)
 			purple_media_error(priv->media,
 					_("Error with your webcam"));
 
@@ -1753,6 +1811,21 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	session->session = fs_conference_new_session(priv->conference,
 			session_type_to_fs_media_type(type), &err);
 
+#ifdef HAVE_MEDIA_APPLICATION
+	if (type == PURPLE_MEDIA_APPLICATION) {
+		GstCaps *caps;
+		GObject *rtpsession = NULL;
+
+		caps = gst_caps_new_empty_simple ("application/octet-stream");
+		fs_session_set_allowed_caps (session->session, caps, caps, NULL);
+		gst_caps_unref (caps);
+		g_object_get (session->session, "internal-session", &rtpsession, NULL);
+		if (rtpsession) {
+			g_object_set (rtpsession, "probation", 0, NULL);
+			g_object_unref (rtpsession);
+		}
+	}
+#endif
 	if (err != NULL) {
 		purple_media_error(priv->media,
 				_("Error creating session: %s"),
@@ -1967,6 +2040,21 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			gst_bin_add(GST_BIN(priv->confbin), sink);
 			gst_element_set_state(sink, GST_STATE_PLAYING);
 			stream->fakesink = sink;
+#ifdef HAVE_MEDIA_APPLICATION
+		} else if (codec->media_type == FS_MEDIA_TYPE_APPLICATION) {
+#if GST_CHECK_VERSION(1,0,0)
+			stream->src = gst_element_factory_make("funnel", NULL);
+#else
+			stream->src = gst_element_factory_make("fsfunnel", NULL);
+#endif
+			sink = purple_media_manager_get_element(
+					purple_media_get_manager(priv->media),
+					PURPLE_MEDIA_RECV_APPLICATION, priv->media,
+					stream->session->id,
+					stream->participant);
+			gst_bin_add(GST_BIN(priv->confbin), sink);
+			gst_element_set_state(sink, GST_STATE_PLAYING);
+#endif
 		}
 		stream->tee = gst_element_factory_make("tee", NULL);
 		gst_bin_add_many(GST_BIN(priv->confbin),
@@ -2329,6 +2417,9 @@ purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
 			return FALSE;
 
 		if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
+#ifdef HAVE_MEDIA_APPLICATION
+				PURPLE_MEDIA_SEND_APPLICATION |
+#endif
 				PURPLE_MEDIA_SEND_VIDEO)) {
 #ifdef HAVE_FARSIGHT
 			g_object_get(session->session,
@@ -2352,6 +2443,9 @@ purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
 			PurpleMediaBackendFs2Session *session = values->data;
 
 			if (session->type & (PURPLE_MEDIA_SEND_AUDIO |
+#ifdef HAVE_MEDIA_APPLICATION
+					PURPLE_MEDIA_SEND_APPLICATION |
+#endif
 					PURPLE_MEDIA_SEND_VIDEO)) {
 #ifdef HAVE_FARSIGHT
 				g_object_get(session->session,
@@ -2453,6 +2547,97 @@ purple_media_backend_fs2_set_remote_codecs(PurpleMediaBackend *self,
 
 	return TRUE;
 }
+
+#if GST_CHECK_VERSION(1,0,0)
+static GstStructure *
+create_fs2_srtp_structure(const gchar *cipher, const gchar *auth,
+	const gchar *key, gsize key_len)
+{
+	GstStructure *result;
+	GstBuffer *buffer;
+	GstMapInfo info;
+
+	buffer = gst_buffer_new_allocate(NULL, key_len, NULL);
+	gst_buffer_map(buffer, &info, GST_MAP_WRITE);
+	memcpy(info.data, key, key_len);
+	gst_buffer_unmap(buffer, &info);
+
+	result = gst_structure_new("FarstreamSRTP",
+			"cipher", G_TYPE_STRING, cipher,
+			"auth", G_TYPE_STRING, auth,
+			"key", GST_TYPE_BUFFER, buffer,
+			NULL);
+	gst_buffer_unref(buffer);
+
+	return result;
+}
+
+static gboolean
+purple_media_backend_fs2_set_encryption_parameters (PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *cipher, const gchar *auth,
+		const gchar *key, gsize key_len)
+{
+	PurpleMediaBackendFs2Session *session;
+	GstStructure *srtp;
+	GError *err = NULL;
+	gboolean result;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
+
+	session = get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
+	if (!session)
+		return FALSE;
+
+	srtp = create_fs2_srtp_structure(cipher, auth, key, key_len);
+	if (!srtp)
+		return FALSE;
+
+	result = fs_session_set_encryption_parameters(session->session, srtp,
+						&err);
+	if (!result) {
+		purple_debug_error("backend-fs2",
+				"Error setting encryption parameters: %s\n", err->message);
+		g_error_free(err);
+	}
+
+	gst_structure_free(srtp);
+	return result;
+}
+
+static gboolean
+purple_media_backend_fs2_set_decryption_parameters (PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant,
+		const gchar *cipher, const gchar *auth,
+		const gchar *key, gsize key_len)
+{
+	PurpleMediaBackendFs2Stream *stream;
+	GstStructure *srtp;
+	GError *err = NULL;
+	gboolean result;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
+
+	stream = get_stream(PURPLE_MEDIA_BACKEND_FS2(self), sess_id,
+			participant);
+	if (!stream)
+		return FALSE;
+
+	srtp = create_fs2_srtp_structure(cipher, auth, key, key_len);
+	if (!srtp)
+		return FALSE;
+
+	result = fs_stream_set_decryption_parameters(stream->stream, srtp,
+						&err);
+	if (!result) {
+		purple_debug_error("backend-fs2",
+				"Error setting decryption parameters: %s\n", err->message);
+		g_error_free(err);
+	}
+
+	gst_structure_free(srtp);
+	return result;
+}
+#endif /* GST 1.0+ */
 
 static gboolean
 purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,
@@ -2557,6 +2742,65 @@ purple_media_backend_fs2_set_params(PurpleMediaBackend *self,
 	gst_structure_free(sdes);
 #endif /* HAVE_FARSIGHT */
 }
+static gboolean
+send_dtmf_callback(gpointer userdata)
+{
+	FsSession *session = userdata;
+
+	fs_session_stop_telephony_event(session);
+
+	return FALSE;
+}
+static gboolean
+purple_media_backend_fs2_send_dtmf(PurpleMediaBackend *self,
+		const gchar *sess_id, gchar dtmf, guint8 volume,
+		guint16 duration)
+{
+	PurpleMediaBackendFs2Session *session;
+	FsDTMFEvent event;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
+
+	session = get_session(PURPLE_MEDIA_BACKEND_FS2(self), sess_id);
+	if (session == NULL)
+		return FALSE;
+
+	/* Convert DTMF char into FsDTMFEvent enum */
+	switch(dtmf) {
+		case '0': event = FS_DTMF_EVENT_0; break;
+		case '1': event = FS_DTMF_EVENT_1; break;
+		case '2': event = FS_DTMF_EVENT_2; break;
+		case '3': event = FS_DTMF_EVENT_3; break;
+		case '4': event = FS_DTMF_EVENT_4; break;
+		case '5': event = FS_DTMF_EVENT_5; break;
+		case '6': event = FS_DTMF_EVENT_6; break;
+		case '7': event = FS_DTMF_EVENT_7; break;
+		case '8': event = FS_DTMF_EVENT_8; break;
+		case '9': event = FS_DTMF_EVENT_9; break;
+		case '*': event = FS_DTMF_EVENT_STAR; break;
+		case '#': event = FS_DTMF_EVENT_POUND; break;
+		case 'A': event = FS_DTMF_EVENT_A; break;
+		case 'B': event = FS_DTMF_EVENT_B; break;
+		case 'C': event = FS_DTMF_EVENT_C; break;
+		case 'D': event = FS_DTMF_EVENT_D; break;
+		default:
+			return FALSE;
+	}
+
+	if (!fs_session_start_telephony_event(session->session,
+			event, volume)) {
+		return FALSE;
+	}
+
+	if (duration <= 50) {
+		fs_session_stop_telephony_event(session->session);
+	} else {
+		purple_timeout_add(duration, send_dtmf_callback,
+				session->session);
+	}
+
+	return TRUE;
+}
 #else
 GType
 purple_media_backend_fs2_get_type(void)
@@ -2656,3 +2900,26 @@ purple_media_backend_fs2_set_output_volume(PurpleMediaBackendFs2 *self,
 #endif /* USE_VV */
 }
 #endif /* USE_GSTREAMER */
+
+#ifdef USE_VV
+static gboolean
+purple_media_backend_fs2_set_send_rtcp_mux(PurpleMediaBackend *self,
+		const gchar *sess_id, const gchar *participant,
+		gboolean send_rtcp_mux)
+{
+	PurpleMediaBackendFs2Stream *stream;
+
+	g_return_val_if_fail(PURPLE_IS_MEDIA_BACKEND_FS2(self), FALSE);
+	stream = get_stream(PURPLE_MEDIA_BACKEND_FS2(self),
+			sess_id, participant);
+
+	if (stream != NULL &&
+		g_object_class_find_property (G_OBJECT_GET_CLASS (stream->stream),
+			"send-rtcp-mux") != NULL) {
+		g_object_set (stream->stream, "send-rtcp-mux", send_rtcp_mux, NULL);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+#endif /* USE_VV */

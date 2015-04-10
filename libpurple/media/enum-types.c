@@ -140,9 +140,15 @@ purple_media_network_protocol_get_type()
 			{ PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
 					"PURPLE_MEDIA_NETWORK_PROTOCOL_UDP",
 					"udp" },
-			{ PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
-					"PURPLE_MEDIA_NETWORK_PROTOCOL_TCP",
-					"tcp" },
+			{ PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE,
+					"PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE",
+					"tcp passive" },
+			{ PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_ACTIVE,
+					"PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_ACTIVE",
+					"tcp active" },
+			{ PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_SO,
+					"PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_SO",
+					"tcp so" },
 			{ 0, NULL, NULL }
 		};
 		type = g_enum_register_static("PurpleMediaNetworkProtocol",
@@ -171,10 +177,16 @@ purple_media_session_type_get_type()
 				"PURPLE_MEDIA_RECV_VIDEO", "recv-video" },
 			{ PURPLE_MEDIA_SEND_VIDEO,
 				"PURPLE_MEDIA_SEND_VIDEO", "send-video" },
+			{ PURPLE_MEDIA_RECV_APPLICATION,
+				"PURPLE_MEDIA_RECV_APPLICATION", "recv-application" },
+			{ PURPLE_MEDIA_SEND_APPLICATION,
+				"PURPLE_MEDIA_SEND_APPLICATION", "send-application" },
 			{ PURPLE_MEDIA_AUDIO,
 				"PURPLE_MEDIA_AUDIO", "audio" },
 			{ PURPLE_MEDIA_VIDEO,
 				"PURPLE_MEDIA_VIDEO", "video" },
+			{ PURPLE_MEDIA_APPLICATION,
+				"PURPLE_MEDIA_APPLICATION", "application" },
 			{ 0, NULL, NULL }
 		};
 		type = g_flags_register_static(

@@ -82,6 +82,7 @@ libfinch_la_LIBADD = \
 	$(LIBXML_LIBS) \
 	$(GNT_LIBS) \
 	$(GSTREAMER_LIBS) \
+	$(GSTVIDEO_LIBS) \
 	$(INTROSPECTION_LIBS) \
 	./libgnt/libgnt.la \
 	$(top_builddir)/libpurple/libpurple.la

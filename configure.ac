@@ -449,7 +449,7 @@ if test x$enable_i18n = xyes; then
 	GETTEXT_PACKAGE=pidgin
 	AC_SUBST(GETTEXT_PACKAGE)
 
-	ALL_LINGUAS="af am ar ast az be@latin bg bn bn_IN bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hr hu id it ja ka kk km kn ko ku ku_IQ lt lv mai mhr mk mn mr my_MM nb ne nl nn oc or pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr tt uk ur vi xh zh_CN zh_HK zh_TW"
+	ALL_LINGUAS="af am ar as ast az be@latin bg bn_IN bn br brx bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es_AR es et eu fa fi fr ga gl gu he hi hr hu id it ja ka kk km kn ko ks ku_IQ ku lt lv mai mhr mk ml mn mr ms_MY my_MM nb ne nl nn oc or pa pl ps pt_BR pt ro ru sd si sk sl sq sr@latin sr sv sw ta te th tr tt uk ur uz vi xh zh_CN zh_HK zh_TW"
 	AM_GLIB_GNU_GETTEXT
 
 	dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -1088,6 +1088,11 @@ elif test "x$with_gtk" == "x2" -a "x$with_gstreamer" == "x1.0"; then
 	AC_MSG_ERROR([WebKitGTK+ 2.0 cannot be mixed with GStreamer 1.0.
 Please switch to WebKitGTK+ 3.0 or GStreamer 0.10.])
 fi
+if test "x$with_gstreamer" == "x0.10" -o "x$with_gstreamer" == "x1.0"; then
+	AC_SUBST(GSTREAMER_VER, [$with_gstreamer])
+else
+	AC_SUBST(GSTREAMER_VER, "")
+fi
 
 dnl #######################################################################
 dnl # Check for GStreamer Video
@@ -1137,7 +1142,7 @@ AC_ARG_ENABLE(farstream,
 	enable_farstream="$enableval", enable_farstream="yes")
 if test "x$enable_farstream" != "xno"; then
 	if test "x$with_gstreamer" == "x1.0"; then
-		PKG_CHECK_MODULES(FARSTREAM, [farstream-0.2], [
+		PKG_CHECK_MODULES(FARSTREAM, [farstream-0.2 >= 0.2.7], [
 			AC_SUBST(FARSTREAM_CFLAGS)
 			AC_SUBST(FARSTREAM_LIBS)
 		], [
@@ -1183,6 +1188,20 @@ Or use --disable-vv if you do not need voice/video support.
 	fi
 fi
 AM_CONDITIONAL(USE_VV, test "x$enable_vv" != "xno")
+
+dnl #######################################################################
+dnl # Check for Raw data streams support in Farstream 
+dnl #######################################################################
+if test "x$enable_vv" != "xno" -a "x$with_gstreamer" == "x1.0"; then
+	AC_MSG_CHECKING(for raw data support in Farstream)
+	PKG_CHECK_MODULES(GSTAPP, [gstreamer-app-1.0], [
+		AC_DEFINE(USE_GSTAPP, 1, [Use GStreamer Video Overlay support])
+		AC_SUBST(GSTAPP_CFLAGS)
+		AC_SUBST(GSTAPP_LIBS)
+		AC_DEFINE(HAVE_MEDIA_APPLICATION, 1, [Define if we have support for application media type.])
+		AC_MSG_RESULT(yes)
+		], [AC_MSG_RESULT(no)])
+fi
 
 dnl #######################################################################
 dnl # Check for Internationalized Domain Name support

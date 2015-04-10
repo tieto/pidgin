@@ -71,6 +71,7 @@ typedef GstElement *(*PurpleMediaElementCreateCallback)(PurpleMedia *media,
  *                                     time
  * @PURPLE_MEDIA_ELEMENT_SRC:          can be set as an active src
  * @PURPLE_MEDIA_ELEMENT_SINK:         can be set as an active sink
+ * @PURPLE_MEDIA_ELEMENT_APPLICATION:  supports application data
  */
 typedef enum {
 	PURPLE_MEDIA_ELEMENT_NONE = 0,
@@ -89,6 +90,7 @@ typedef enum {
 	PURPLE_MEDIA_ELEMENT_UNIQUE = 1 << 8,
 	PURPLE_MEDIA_ELEMENT_SRC = 1 << 9,
 	PURPLE_MEDIA_ELEMENT_SINK = 1 << 10,
+	PURPLE_MEDIA_ELEMENT_APPLICATION = 1 << 11,
 } PurpleMediaElementType;
 
 G_BEGIN_DECLS

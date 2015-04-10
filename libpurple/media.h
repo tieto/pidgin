@@ -31,6 +31,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+typedef struct _PurpleMedia PurpleMedia;
+
 #include "media/candidate.h"
 #include "media/codec.h"
 #include "media/enum-types.h"
@@ -41,8 +43,6 @@
 #define PURPLE_IS_MEDIA(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_MEDIA))
 #define PURPLE_IS_MEDIA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_MEDIA))
 #define PURPLE_MEDIA_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_MEDIA, PurpleMediaClass))
-
-typedef struct _PurpleMedia PurpleMedia;
 
 #include "signals.h"
 #include "util.h"
@@ -324,10 +324,10 @@ GList *purple_media_get_active_remote_candidates(PurpleMedia *media,
  * purple_media_set_remote_codecs:
  * @media: The media object to find the session in.
  * @sess_id: The session id of the session find the stream in.
- * @participant: The name of the remote user to set the candidates from.
+ * @participant: The name of the remote user to set the codecs for.
  * @codecs: The list of remote codecs to set.
  *
- * Sets remote candidates from the stream.
+ * Sets remote codecs from the stream.
  *
  * Returns: %TRUE The codecs were set successfully, or %FALSE otherwise.
  */
@@ -360,6 +360,41 @@ gboolean purple_media_candidates_prepared(PurpleMedia *media,
 gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, PurpleMediaCodec *codec);
 
 /**
+ * purple_media_set_encryption_parameters:
+ * @media: The media object to find the session in.
+ * @sess_id: The session id of the session to set parameters of.
+ * @cipher: The cipher to use to encrypt our media in the session.
+ * @auth: The algorithm to use to compute authentication codes for our media
+ *        frames.
+ * @key: The encryption key.
+ * @key_len: Byte length of the encryption key.
+ *
+ * Sets the encryption parameters of our media in the session.
+ */
+gboolean purple_media_set_encryption_parameters(PurpleMedia *media,
+		const gchar *sess_id, const gchar *cipher,
+		const gchar *auth, const gchar *key, gsize key_len);
+
+/**
+ * purple_media_set_decryption_parameters:
+ * @media: The media object to find the session in.
+ * @sess_id: The session id of the session to set parameters of.
+ * @participant: The participant of the session to set parameters of.
+ * @cipher: The cipher to use to decrypt media coming from this session's
+ *          participant.
+ * @auth: The algorithm to use for authentication of the media coming from
+ *        the session's participant.
+ * @key: The decryption key.
+ * @key_len: Byte length of the decryption key.
+ *
+ * Sets the decryption parameters for a session participant's media.
+ */
+gboolean purple_media_set_decryption_parameters(PurpleMedia *media,
+		const gchar *sess_id, const gchar *participant,
+		const gchar *cipher, const gchar *auth,
+		const gchar *key, gsize key_len);
+
+/**
  * purple_media_codecs_ready:
  * @media: The media object to find the session in.
  * @sess_id: The session id of the session to check.
@@ -370,6 +405,19 @@ gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, P
  */
 gboolean purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id);
 
+/**
+ * purple_media_set_send_rtcp_mux:
+ * @media: The media object to find the session in.
+ * @sess_id: The session id of the session find the stream in.
+ * @participant: The name of the remote user to set the rtcp-mux for.
+ * @send_rtcp_mux: Whether to enable the rtcp-mux option
+ *
+ * Sets the rtcp-mux option for the stream.
+ *
+ * Returns: %TRUE RTCP-Mux was set successfully, or %FALSE otherwise.
+ */
+gboolean purple_media_set_send_rtcp_mux(PurpleMedia *media,
+		const gchar *sess_id, const gchar *participant, gboolean send_rtcp_mux);
 /**
  * purple_media_is_initiator:
  * @media: The media instance to find the session in.
@@ -440,6 +488,22 @@ gulong purple_media_set_output_window(PurpleMedia *media,
  * Removes all output windows from a given media session.
  */
 void purple_media_remove_output_windows(PurpleMedia *media);
+
+/**
+ * purple_media_send_dtmf:
+ * @media: The media instance to send a DTMF signal to.
+ * @sess_id: The session id of the session to send the DTMF signal on.
+ * @dtmf: The character representing the DTMF in the range [0-9#*A-D].
+ * @volume: The power level expressed in dBm0 after dropping the sign in the
+ *          range of 0 to 63.  A larger value represents a lower volume.
+ * @duration: The duration of the tone in milliseconds.
+ *
+ * Sends a DTMF signal out-of-band.
+ *
+ * Returns: %TRUE DTMF sent successfully, or %FALSE otherwise.
+ */
+gboolean purple_media_send_dtmf(PurpleMedia *media, const gchar *session_id,
+		gchar dtmf, guint8 volume, guint16 duration);
 
 G_END_DECLS
 

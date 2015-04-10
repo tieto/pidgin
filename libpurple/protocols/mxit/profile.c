@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#define		_XOPEN_SOURCE
+#define		_XOPEN_SOURCE	1
 #include	<time.h>
 
 #include	"internal.h"
