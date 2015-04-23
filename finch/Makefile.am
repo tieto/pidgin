@@ -126,10 +126,12 @@ if ENABLE_GNT
 INTROSPECTION_GIRS =
 INTROSPECTION_SCANNER_ARGS = \
 	--warn-all \
+	--add-include-path=$(prefix)/share/gir-1.0 \
 	--add-include-path=$(builddir)/libgnt \
 	--add-include-path=$(top_builddir)/libpurple
 
 INTROSPECTION_COMPILER_ARGS = \
+	--includedir=$(prefix)/share/gir-1.0 \
 	--includedir=$(builddir)/libgnt \
 	--includedir=$(top_builddir)/libpurple
 
@@ -163,10 +165,14 @@ Finch_3_0_gir_LIBS = $(builddir)/libfinch.la
 Finch_3_0_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Finch-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
 
-girdir = $(INTROSPECTION_GIRDIR)
+girdir = \
+	 $(prefix)/share/gir-1.0 \
+	 $(INTROSPECTION_GIRDIR)
 gir_DATA = $(INTROSPECTION_GIRS)
 
-typelibdir = $(INTROSPECTION_TYPELIBDIR)
+typelibdir = \
+	$(prefix)/share/gir-1.0 \
+	$(INTROSPECTION_TYPELIBDIR)
 typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES = $(gir_DATA) $(typelib_DATA)

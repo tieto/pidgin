@@ -113,8 +113,10 @@ AM_CPPFLAGS = \
 
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS =
-INTROSPECTION_SCANNER_ARGS = --warn-all
-INTROSPECTION_COMPILER_ARGS =
+INTROSPECTION_SCANNER_ARGS = \
+	--add-include-path=$(prefix)/share/gir-1.0 \
+	--warn-all
+INTROSPECTION_COMPILER_ARGS = --includedir=$(prefix)/share/gir-1.0
 
 if HAVE_INTROSPECTION
 introspection_sources = $(libgnt_lainclude_HEADERS)
@@ -133,10 +135,14 @@ Gnt_2_9_gir_LIBS = $(builddir)/libgnt.la
 Gnt_2_9_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Gnt-$(GNT_MAJOR_VERSION).$(GNT_MINOR_VERSION).gir
 
-girdir = $(INTROSPECTION_GIRDIR)
+girdir = \
+	$(prefix)/share/gir-1.0 \
+	$(INTROSPECTION_GIRDIR)
 gir_DATA = $(INTROSPECTION_GIRS)
 
-typelibdir = $(INTROSPECTION_TYPELIBDIR)
+typelibdir = \
+	$(prefix)/share/gir-1.0 \
+	$(INTROSPECTION_TYPELIBDIR)
 typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES += $(gir_DATA) $(typelib_DATA)
