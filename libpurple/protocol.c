@@ -1018,6 +1018,13 @@ purple_protocol_media_iface_get_caps(PurpleProtocol *protocol,
 	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, 0, get_caps, account, who);
 }
 
+gboolean purple_protocol_media_iface_send_dtmf(PurpleProtocol *protocol,
+		PurpleMedia *media, gchar dtmf, guint8 volume, guint8 duration)
+{
+	DEFINE_PROTOCOL_FUNC_WITH_RETURN(protocol, FALSE, send_dtmf, media,
+			dtmf, volume, duration);
+}
+
 #undef DEFINE_PROTOCOL_FUNC_WITH_RETURN
 #undef DEFINE_PROTOCOL_FUNC
 

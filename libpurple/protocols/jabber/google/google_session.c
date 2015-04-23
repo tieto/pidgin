@@ -657,7 +657,7 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, Purp
 					candidate_type,
 					purple_strequal(protocol, "udp") ?
 							PURPLE_MEDIA_NETWORK_PROTOCOL_UDP :
-							PURPLE_MEDIA_NETWORK_PROTOCOL_TCP,
+							PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE,
 					address,
 					atoi(port));
 			g_object_set(info, "username", purple_xmlnode_get_attrib(cand, "username"),

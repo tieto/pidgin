@@ -73,9 +73,11 @@
 #include "facebook.h"
 
 #include "jingle/jingle.h"
+#include "jingle/content.h"
 #include "jingle/iceudp.h"
 #include "jingle/rawudp.h"
 #include "jingle/rtp.h"
+#include "jingle/session.h"
 
 #define PING_TIMEOUT 60
 /* Send a whitespace keepalive to the server if we haven't sent
@@ -4315,7 +4317,9 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	jingle_google_p2p_register_type(plugin);
 
 	jingle_content_register_type(plugin);
+#ifdef USE_VV
 	jingle_rtp_register_type(plugin);
+#endif
 
 	jabber_protocol_register_type(plugin);
 

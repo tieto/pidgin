@@ -664,6 +664,9 @@ typedef struct _PurpleProtocolMediaIface PurpleProtocolMediaIface;
  *            <sbr/>@account: The account the contact is on.
  *            <sbr/>@who: The remote user to check for media capability with.
  *            <sbr/>Returns: The media caps the contact supports.
+ * @send_dtmf: Sends DTMF codes out-of-band in a protocol-specific way if the
+ *             protocol supports it, or failing that in-band if the media backend
+ *             can do so. See purple_media_send_dtmf().
  *
  * The protocol media interface.
  *
@@ -680,6 +683,9 @@ struct _PurpleProtocolMediaIface
 
 	PurpleMediaCaps (*get_caps)(PurpleAccount *account,
 					  const char *who);
+
+	gboolean (*send_dtmf)(PurpleMedia *media, gchar dtmf,
+				    guint8 volume, guint8 duration);
 };
 
 #define PURPLE_PROTOCOL_HAS_MEDIA_IFACE(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_PROTOCOL_MEDIA_IFACE))
@@ -1153,6 +1159,9 @@ gboolean purple_protocol_media_iface_initiate_session(PurpleProtocol *,
 
 PurpleMediaCaps purple_protocol_media_iface_get_caps(PurpleProtocol *,
 		PurpleAccount *account, const char *who);
+
+gboolean purple_protocol_media_iface_send_dtmf(PurpleProtocol *,
+		PurpleMedia *media, gchar dtmf, guint8 volume, guint8 duration);
 
 /**************************************************************************/
 /* Protocol Factory Interface API                                         */
