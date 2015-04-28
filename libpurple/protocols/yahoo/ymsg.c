@@ -39,7 +39,7 @@
 #include "http.h"
 #include "network.h"
 #include "notify.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "proxy.h"
 #include "request.h"
 #include "server.h"
@@ -47,7 +47,7 @@
 #include "version.h"
 #include "xmlnode.h"
 
-#include "libymsg.h"
+#include "ymsg.h"
 #include "yahoochat.h"
 #include "yahoo_aliases.h"
 #include "yahoo_doodle.h"
@@ -139,21 +139,21 @@ static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFri
 
 	if (status) {
 		if (f->status == YAHOO_STATUS_CUSTOM)
-			purple_prpl_got_user_status(purple_connection_get_account(gc), name, status, "message",
+			purple_protocol_got_user_status(purple_connection_get_account(gc), name, status, "message",
 			                          yahoo_friend_get_status_message(f), NULL);
 		else
-			purple_prpl_got_user_status(purple_connection_get_account(gc), name, status, NULL);
+			purple_protocol_got_user_status(purple_connection_get_account(gc), name, status, NULL);
 	}
 
 	if (f->idle != 0)
-		purple_prpl_got_user_idle(purple_connection_get_account(gc), name, TRUE, f->idle);
+		purple_protocol_got_user_idle(purple_connection_get_account(gc), name, TRUE, f->idle);
 	else
-		purple_prpl_got_user_idle(purple_connection_get_account(gc), name, FALSE, 0);
+		purple_protocol_got_user_idle(purple_connection_get_account(gc), name, FALSE, 0);
 
 	if (f->sms)
-		purple_prpl_got_user_status(purple_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE, NULL);
+		purple_protocol_got_user_status(purple_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE, NULL);
 	else
-		purple_prpl_got_user_status_deactive(purple_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE);
+		purple_protocol_got_user_status_deactive(purple_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE);
 }
 
 static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -308,8 +308,8 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 				if (f)
 					f->status = YAHOO_STATUS_OFFLINE;
 				if (name) {
-					purple_prpl_got_user_status(account, name, "offline", NULL);
-					purple_prpl_got_user_status_deactive(account, name, YAHOO_STATUS_TYPE_MOBILE);
+					purple_protocol_got_user_status(account, name, "offline", NULL);
+					purple_protocol_got_user_status_deactive(account, name, YAHOO_STATUS_TYPE_MOBILE);
 				}
 				break;
 			}
@@ -1204,7 +1204,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			char *username;
 
 			username = g_markup_escape_text(im->fed_from, -1);
-			purple_prpl_got_attention(gc, username, YAHOO_BUZZ);
+			purple_protocol_got_attention(gc, username, YAHOO_BUZZ);
 			g_free(username);
 			g_free(m);
 			g_free(im->fed_from);
@@ -1378,7 +1378,7 @@ static void yahoo_buddy_denied_our_add(PurpleConnection *gc, const char *who, co
 	g_free(notify_msg);
 
 	g_hash_table_remove(yd->friends, who);
-	purple_prpl_got_user_status(purple_connection_get_account(gc), who, "offline", NULL); /* FIXME: make this set not on list status instead */
+	purple_protocol_got_user_status(purple_connection_get_account(gc), who, "offline", NULL); /* FIXME: make this set not on list status instead */
 	/* TODO: Shouldn't we remove the buddy from our local list? */
 }
 
@@ -4358,12 +4358,12 @@ yahoo_get_inbox_token_cb(PurpleHttpConnection *http_conn,
 }
 
 
-static void yahoo_show_inbox(PurplePluginAction *action)
+static void yahoo_show_inbox(PurpleProtocolAction *action)
 {
 	/* Setup a cookie that can be used by the browser */
 	/* XXX I have no idea how this will work with Yahoo! Japan. */
 
-	PurpleConnection *gc = action->context;
+	PurpleConnection *gc = action->connection;
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleHttpRequest *req;
 	PurpleHttpCookieJar *cookiejar;
@@ -4384,18 +4384,18 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 #if 0
 /* XXX: it doesn't seems to work */
 static void
-yahoo_set_userinfo_fn(PurplePluginAction *action)
+yahoo_set_userinfo_fn(PurpleProtocolAction *action)
 {
-	yahoo_set_userinfo(action->context);
+	yahoo_set_userinfo(action->connection);
 }
 #endif
 
-static void yahoo_show_act_id(PurplePluginAction *action)
+static void yahoo_show_act_id(PurpleProtocolAction *action)
 {
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = (PurpleConnection *) action->connection;
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	const char *name = purple_connection_get_display_name(gc);
 	int iter;
@@ -4419,9 +4419,9 @@ static void yahoo_show_act_id(PurplePluginAction *action)
 					   purple_request_cpar_from_connection(gc), gc);
 }
 
-static void yahoo_show_chat_goto(PurplePluginAction *action)
+static void yahoo_show_chat_goto(PurpleProtocolAction *action)
 {
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = action->connection;
 	purple_request_input(gc, NULL, _("Join whom in chat?"), NULL,
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
@@ -4430,27 +4430,27 @@ static void yahoo_show_chat_goto(PurplePluginAction *action)
 					   gc);
 }
 
-GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
+GList *yahoo_get_actions(PurpleConnection *gc) {
 	GList *m = NULL;
-	PurplePluginAction *act;
+	PurpleProtocolAction *act;
 
 #if 0
 	/* XXX: it doesn't seems to work */
-	act = purple_plugin_action_new(_("Set User Info..."),
+	act = purple_protocol_action_new(_("Set User Info..."),
 			yahoo_set_userinfo_fn);
 	m = g_list_append(m, act);
 #endif
 
-	act = purple_plugin_action_new(_("Activate ID..."),
+	act = purple_protocol_action_new(_("Activate ID..."),
 			yahoo_show_act_id);
 	m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Join User in Chat..."),
+	act = purple_protocol_action_new(_("Join User in Chat..."),
 			yahoo_show_chat_goto);
 	m = g_list_append(m, act);
 
 	m = g_list_append(m, NULL);
-	act = purple_plugin_action_new(_("Open Inbox"),
+	act = purple_protocol_action_new(_("Open Inbox"),
 			yahoo_show_inbox);
 	m = g_list_append(m, act);
 
@@ -5272,7 +5272,7 @@ yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gcha
 	if (*args && args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	purple_prpl_send_attention(purple_account_get_connection(account), purple_conversation_get_name(c), YAHOO_BUZZ);
+	purple_protocol_send_attention(purple_account_get_connection(account), purple_conversation_get_name(c), YAHOO_BUZZ);
 
 	return PURPLE_CMD_RET_OK;
 }

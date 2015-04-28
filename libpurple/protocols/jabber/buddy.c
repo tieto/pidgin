@@ -23,7 +23,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "image-store.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "notify.h"
 #include "request.h"
 #include "util.h"
@@ -624,9 +624,9 @@ jabber_format_info(PurpleConnection *gc, PurpleRequestFields *fields)
  * string (if any) into GSLists for the (multi-entry) edit dialog and
  * calls the set_vcard dialog.
  */
-void jabber_setup_set_info(PurplePluginAction *action)
+void jabber_setup_set_info(PurpleProtocolAction *action)
 {
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = (PurpleConnection *) action->connection;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
@@ -1366,7 +1366,7 @@ static void jabber_last_parse(JabberStream *js, const char *from,
 
 									if (jbr ==
 										jabber_buddy_find_resource(jb, NULL)) {
-										purple_prpl_got_user_idle(purple_connection_get_account(js->gc),
+										purple_protocol_got_user_idle(purple_connection_get_account(js->gc),
 											buddy_name, jbr->idle, jbr->idle);
 									}
 								}
@@ -2278,9 +2278,9 @@ void jabber_user_search(JabberStream *js, const char *directory)
 	jabber_iq_send(iq);
 }
 
-void jabber_user_search_begin(PurplePluginAction *action)
+void jabber_user_search_begin(PurpleProtocolAction *action)
 {
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = (PurpleConnection *) action->connection;
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 	const char *def_val = purple_account_get_string(purple_connection_get_account(js->gc), "user_directory", "");
 	if(!*def_val && js->user_directories)

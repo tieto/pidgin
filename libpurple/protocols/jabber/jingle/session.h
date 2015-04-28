@@ -67,7 +67,12 @@ struct _JingleContent;
  *
  * @return The session class's GType.
  */
-GType jingle_session_get_type(void);
+G_MODULE_EXPORT GType jingle_session_get_type(void);
+
+/**
+ * Registers the JingleSession type in the type system.
+ */
+void jingle_session_register_type(PurplePlugin *plugin);
 
 JingleSession *jingle_session_create(JabberStream *js, const gchar *sid,
 				     const gchar *local_jid, const gchar *remote_jid,

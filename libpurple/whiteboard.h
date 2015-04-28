@@ -41,7 +41,7 @@ typedef struct _PurpleWhiteboard PurpleWhiteboard;
 typedef struct _PurpleWhiteboardClass PurpleWhiteboardClass;
 
 typedef struct _PurpleWhiteboardUiOps PurpleWhiteboardUiOps;
-typedef struct _PurpleWhiteboardPrplOps PurpleWhiteboardPrplOps;
+typedef struct _PurpleWhiteboardOps PurpleWhiteboardOps;
 
 #include "account.h"
 
@@ -78,7 +78,7 @@ struct _PurpleWhiteboardUiOps
 };
 
 /**
- * PurpleWhiteboardPrplOps:
+ * PurpleWhiteboardOps:
  * @start:          start function
  * @end:            end function
  * @get_dimensions: get whiteboard dimensions
@@ -90,7 +90,7 @@ struct _PurpleWhiteboardUiOps
  *
  * Whiteboard protocol operations
  */
-struct _PurpleWhiteboardPrplOps
+struct _PurpleWhiteboardOps
 {
 	void (*start)(PurpleWhiteboard *wb);
 	void (*end)(PurpleWhiteboard *wb);
@@ -173,7 +173,7 @@ void purple_whiteboard_set_ui_ops(PurpleWhiteboardUiOps *ops);
  *
  * Sets the protocol operations for a whiteboard
  */
-void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOps *ops);
+void purple_whiteboard_set_protocol_ops(PurpleWhiteboard *wb, PurpleWhiteboardOps *ops);
 
 /**
  * purple_whiteboard_new:

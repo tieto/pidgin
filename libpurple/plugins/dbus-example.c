@@ -107,8 +107,30 @@ DBUS_EXPORT const char *dbus_example_get_buddy_name(PurpleBuddy *buddy)
 
 /* And now standard plugin stuff */
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Piotr Zielinski (http://cl.cam.ac.uk/~pz215)",
+		NULL
+	};
+
+	return purple_plugin_info_new(
+		"id",           "dbus-example",
+		"name",         N_("DBus Example"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Example"),
+		"summary",      N_("DBus Plugin Example"),
+		"description",  N_("DBus Plugin Example"),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	PURPLE_DBUS_RETURN_FALSE_IF_DISABLED(plugin);
 
@@ -131,7 +153,7 @@ plugin_load(PurplePlugin *plugin)
 
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	g_free(hello.text);
 
@@ -141,45 +163,4 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
-
-	"dbus-example",                                   /**< id             */
-	N_("DBus Example"),                               /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("DBus Plugin Example"),
-	                                                  /**  description    */
-	N_("DBus Plugin Example"),
-	"Piotr Zielinski (http://cl.cam.ac.uk/~pz215)",   /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	NULL,                                             /**< extra_info     */
-	NULL,                                       /**< prefs_info     */
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(dbus_example, init_plugin, info)
+PURPLE_PLUGIN_INIT(dbus_example, plugin_query, plugin_load, plugin_unload);

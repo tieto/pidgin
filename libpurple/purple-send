@@ -17,7 +17,7 @@ to specify the parameters.
 
 Examples:
 
-   $0 PurpleAccountsFindConnected string: string:prpl-jabber
+   $0 PurpleAccountsFindConnected string: string:jabber
    $0 PurpleAccountsGetAll
    $0 PurpleCoreQuit
 

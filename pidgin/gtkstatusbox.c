@@ -122,7 +122,7 @@ enum {
 	/*
  	 * This column stores the GdkPixbuf for the status emblem. Currently only 'saved' is stored.
 	 * In the GtkTreeModel for the dropdown, this is the stock-id (gchararray), and for the
-	 * GtkTreeModel for the cell_view (for the account-specific statusbox), this is the prpl-icon
+	 * GtkTreeModel for the cell_view (for the account-specific statusbox), this is the protocol icon
 	 * (GdkPixbuf) of the account.
  	 */
 	EMBLEM_COLUMN,
@@ -491,12 +491,13 @@ pidgin_status_box_set_property(GObject *object, guint param_id,
 	case PROP_ICON_SEL:
 		if (g_value_get_boolean(value)) {
 			if (statusbox->account) {
-				PurplePlugin *plug = purple_plugins_find_with_id(purple_account_get_protocol_id(statusbox->account));
-				if (plug) {
-					PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
-					if (prplinfo && prplinfo->icon_spec.format != NULL)
-						setup_icon_box(statusbox);
-				}
+				PurpleBuddyIconSpec *icon_spec = NULL;
+				PurpleProtocol *protocol =
+						purple_protocols_find(purple_account_get_protocol_id(statusbox->account));
+				if (protocol)
+					icon_spec = purple_protocol_get_icon_spec(protocol);
+				if (icon_spec && icon_spec->format != NULL)
+					setup_icon_box(statusbox);
 			} else {
 				setup_icon_box(statusbox);
 			}
@@ -712,7 +713,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 		text = g_strdup_printf("%s - <span size=\"smaller\" color=\"%s\">%s</span>",
 				       purple_account_get_username(status_box->account),
 				       aa_color, secondary ? secondary : primary);
-		emblem = pidgin_create_prpl_icon(status_box->account, PIDGIN_PRPL_ICON_SMALL);
+		emblem = pidgin_create_protocol_icon(status_box->account, PIDGIN_PROTOCOL_ICON_SMALL);
 	} else if (secondary != NULL) {
 		text = g_strdup_printf("%s<span size=\"smaller\" color=\"%s\"> - %s</span>",
 				       primary, aa_color, secondary);
@@ -959,11 +960,11 @@ static PurpleAccount* check_active_accounts_for_identical_statuses(void)
 {
 	GList *iter, *active_accts = purple_accounts_get_all_active();
 	PurpleAccount *acct1 = NULL;
-	const char *prpl1 = NULL;
+	const char *proto1 = NULL;
 
 	if (active_accts) {
 		acct1 = active_accts->data;
-		prpl1 = purple_account_get_protocol_id(acct1);
+		proto1 = purple_account_get_protocol_id(acct1);
 	} else {
 		/* there's no enabled account */
 		return NULL;
@@ -974,7 +975,7 @@ static PurpleAccount* check_active_accounts_for_identical_statuses(void)
 		PurpleAccount *acct2 = iter->data;
 		GList *s1, *s2;
 
-		if (!g_str_equal(prpl1, purple_account_get_protocol_id(acct2))) {
+		if (!g_str_equal(proto1, purple_account_get_protocol_id(acct2))) {
 			acct1 = NULL;
 			break;
 		}
@@ -1447,47 +1448,47 @@ static void
 buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 {
 	PurpleImage *img = NULL;
+	PurpleBuddyIconSpec *icon_spec = NULL;
 
 	if (box->account) {
-		PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(box->account));
-		if (plug) {
-			PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
-			if (prplinfo && prplinfo->icon_spec.format) {
-				gpointer data = NULL;
-				size_t len = 0;
-				if (filename)
-					data = pidgin_convert_buddy_icon(plug, filename, &len);
-				img = purple_buddy_icons_set_account_icon(box->account, data, len);
-				if (img) {
-					/*
-					 * set_account_icon doesn't give us a reference, but we
-					 * unref one below (for the other code path)
-					 */
-					g_object_ref(img);
-				}
-
-				purple_account_set_buddy_icon_path(box->account, filename);
-
-				purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
+		PurpleProtocol *protocol =
+				purple_protocols_find(purple_account_get_protocol_id(box->account));
+		if (protocol)
+			icon_spec = purple_protocol_get_icon_spec(protocol);
+		if (icon_spec && icon_spec->format) {
+			gpointer data = NULL;
+			size_t len = 0;
+			if (filename)
+				data = pidgin_convert_buddy_icon(protocol, filename, &len);
+			img = purple_buddy_icons_set_account_icon(box->account, data, len);
+			if (img) {
+				/*
+				 * set_account_icon doesn't give us a reference, but we
+				 * unref one below (for the other code path)
+				 */
+				g_object_ref(img);
 			}
+
+			purple_account_set_buddy_icon_path(box->account, filename);
+
+			purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
 		}
 	} else {
 		GList *accounts;
 		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 			PurpleAccount *account = accounts->data;
-			PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(account));
-			if (plug) {
-				PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
-				if (prplinfo != NULL &&
-				    purple_account_get_bool(account, "use-global-buddyicon", TRUE) &&
-				    prplinfo->icon_spec.format) {
-					gpointer data = NULL;
-					size_t len = 0;
-					if (filename)
-						data = pidgin_convert_buddy_icon(plug, filename, &len);
-					purple_buddy_icons_set_account_icon(account, data, len);
-					purple_account_set_buddy_icon_path(account, filename);
-				}
+			PurpleProtocol *protocol =
+					purple_protocols_find(purple_account_get_protocol_id(account));
+			if (protocol)
+				icon_spec = purple_protocol_get_icon_spec(protocol);
+			if (icon_spec && icon_spec->format &&
+			    purple_account_get_bool(account, "use-global-buddyicon", TRUE)) {
+				gpointer data = NULL;
+				size_t len = 0;
+				if (filename)
+					data = pidgin_convert_buddy_icon(protocol, filename, &len);
+				purple_buddy_icons_set_account_icon(account, data, len);
+				purple_account_set_buddy_icon_path(account, filename);
 			}
 		}
 

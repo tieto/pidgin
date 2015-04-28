@@ -30,8 +30,8 @@
 #include "glibcompat.h"
 #include "log.h"
 #include "notify.h"
-#include "prefs.h"
-#include "prpl.h"
+#include "plugins.h"
+#include "protocol.h"
 #include "pounce.h"
 #include "savedstatuses.h"
 #include "sound.h"
@@ -358,14 +358,6 @@ init_libpurple(int argc, char **argv)
 	purple_eventloop_set_ui_ops(gnt_eventloop_get_ui_ops());
 	purple_idle_set_ui_ops(finch_idle_get_ui_ops());
 
-	path = g_build_filename(purple_user_dir(), "plugins", NULL);
-	if (g_mkdir(path, S_IRUSR | S_IWUSR | S_IXUSR) != 0 && errno != EEXIST)
-		fprintf(stderr, "Couldn't create plugins dir\n");
-	purple_plugins_add_search_path(path);
-	g_free(path);
-
-	purple_plugins_add_search_path(FINCH_LIBDIR);
-
 	if (!purple_core_init(FINCH_UI))
 	{
 		fprintf(stderr,
@@ -373,6 +365,15 @@ init_libpurple(int argc, char **argv)
 				"Please report this!\n");
 		abort();
 	}
+
+	path = g_build_filename(purple_user_dir(), "plugins", NULL);
+	if (g_mkdir(path, S_IRUSR | S_IWUSR | S_IXUSR) != 0 && errno != EEXIST)
+		fprintf(stderr, "Couldn't create plugins dir\n");
+	purple_plugins_add_search_path(path);
+	g_free(path);
+
+	purple_plugins_add_search_path(FINCH_LIBDIR);
+	purple_plugins_refresh();
 
 	/* TODO: should this be moved into finch_prefs_init() ? */
 	finch_prefs_update_old();

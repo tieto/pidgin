@@ -34,13 +34,13 @@
 
 #include "debug.h"
 #include "http.h"
-#include "prpl.h"
+#include "protocol.h"
 
 #include "conversation.h"
 #include "notify.h"
 #include "util.h"
 
-#include "libymsg.h"
+#include "ymsg.h"
 #include "yahoo_packet.h"
 #include "yahoochat.h"
 #include "ycht.h"
@@ -1151,9 +1151,9 @@ int yahoo_c_send(PurpleConnection *gc, int id, PurpleMessage *msg)
 GList *yahoo_c_info(PurpleConnection *gc)
 {
 	GList *m = NULL;
-	struct proto_chat_entry *pce;
+	PurpleProtocolChatEntry *pce;
 
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _("_Room:");
 	pce->identifier = "room";
 	pce->required = TRUE;

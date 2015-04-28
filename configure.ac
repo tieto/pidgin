@@ -479,10 +479,7 @@ AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 dnl #######################################################################
 dnl # Check for GLib 2.20 (required)
 dnl #######################################################################
-# TODO: gmodule-2.0 is only needed if enable_plugins is 'yes'.  It
-#       might be nice to change this check so that it's not required
-#       if enable_plugins is 'no'.
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.20.0 gobject-2.0 gmodule-2.0 gthread-2.0], , [
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.20.0 gobject-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
@@ -619,7 +616,9 @@ running configure.  Use --disable-gstreamer if you do not need GStreamer (sound)
 	AC_SUBST(GTK_LIBS)
 
 	GTK_PC_MODULE="gtk+-${with_gtk}.0"
+	GTK_VERSION=${with_gtk}
 	AC_SUBST(GTK_PC_MODULE)
+	AC_SUBST(GTK_VERSION)
 
 	dnl We only really need Pango >= 1.4 for decent RTL support
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
@@ -1439,32 +1438,22 @@ if test "x$is_win32" = "xyes" ; then
 fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
-extern_init=
+extern_load=
 load_proto=
+extern_unload=
+unload_proto=
 for i in $STATIC_PRPLS ; do
 	dnl Ugly special case for "libsilcpurple.la":
-	dnl ... and Ugly special case for multi-protocol oscar and yahoo
-	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.la"
-		extern_init="$extern_init extern gboolean purple_init_aim_plugin();"
-		extern_init="$extern_init extern gboolean purple_init_icq_plugin();"
-		load_proto="$load_proto purple_init_aim_plugin();"
-		load_proto="$load_proto purple_init_icq_plugin();"
-	elif test "x$i" = "xyahoo"; then
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/yahoo/libymsg.la"
-		extern_init="$extern_init extern gboolean purple_init_yahoo_plugin();"
-		extern_init="$extern_init extern gboolean purple_init_yahoojp_plugin();"
-		load_proto="$load_proto purple_init_yahoo_plugin();"
-		load_proto="$load_proto purple_init_yahoojp_plugin();"
+	if test "x$i" = "xsilc"; then
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
 	else
-		if test "x$i" = "xsilc"; then
-			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
-		else
-			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.la"
-		fi
-		extern_init="$extern_init extern gboolean purple_init_${i}_plugin();"
-		load_proto="$load_proto purple_init_${i}_plugin();"
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.la"
 	fi
+	extern_load="$extern_load extern gboolean ${i}_plugin_load();"
+	load_proto="$load_proto ${i}_plugin_load();"
+	extern_unload="$extern_unload extern gboolean ${i}_plugin_unload();"
+	unload_proto="$unload_proto ${i}_plugin_unload();"
+
 	case $i in
 		bonjour)	static_bonjour=yes ;;
 		gg)			static_gg=yes ;;
@@ -1498,8 +1487,10 @@ AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
 AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
 AM_CONDITIONAL(STATIC_ZEPHYR, test "x$static_zephyr" = "xyes")
 AC_SUBST(STATIC_LINK_LIBS)
-AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init(void) { $load_proto },
-	[Loads static protocol plugin module initialization functions.])
+AC_DEFINE_UNQUOTED(STATIC_PROTO_LOAD, $extern_load static void static_proto_load(void) { $load_proto },
+	[Loads protocols from static protocol plugin modules.])
+AC_DEFINE_UNQUOTED(STATIC_PROTO_UNLOAD, $extern_unload static void static_proto_unload(void) { $unload_proto },
+	[Unloads protocols from static protocol plugin modules.])
 
 AC_ARG_WITH(dynamic_prpls, [AS_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
@@ -1900,6 +1891,30 @@ AC_SUBST(KWALLET_LIBS)
 AM_CONDITIONAL(ENABLE_KWALLET, test "x$enable_kwallet" = "xyes")
 
 dnl #######################################################################
+dnl # Check for GPlugin 0.0.17
+dnl #######################################################################
+if test "x$enable_plugins" = "xyes" ; then
+	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.17 gmodule-2.0], , [
+		AC_MSG_RESULT(no)
+		AC_MSG_ERROR([
+	GPlugin 0.0.17 development headers not found, which are required if you wish to
+	enable plugins.
+	Use --disable-plugins if you want to disable plugins.
+	])])
+	AC_SUBST(GPLUGIN_CFLAGS)
+	AC_SUBST(GPLUGIN_LIBS)
+else
+	enable_introspection=no
+fi
+
+dnl # Check for gobject introspection
+GOBJECT_INTROSPECTION_CHECK([1.30.0])
+
+if test "x$enable_introspection" = "xyes" ; then
+	AC_DEFINE(ENABLE_INTROSPECTION, 1, [Define if GObject introspection is enabled.])
+fi
+
+dnl #######################################################################
 dnl # Check for Python
 dnl #######################################################################
 
@@ -2021,195 +2036,6 @@ if test "x$enable_consoleui" = "xyes" -a ! -z "$PYTHON" -a x"$PYTHON" != x"no" ;
 fi
 AC_SUBST(PY_CFLAGS)
 AC_SUBST(PY_LIBS)
-
-dnl #######################################################################
-dnl # Check for Mono support
-dnl #######################################################################
-AC_ARG_ENABLE(mono, [AS_HELP_STRING([--enable-mono], [compile with Mono runtime support (experimental)])], , enable_mono=no)
-if test x"$enable_mono" = x"yes" ; then
-	PKG_CHECK_MODULES(MONO, mono, [
-		AC_SUBST(MONO_CFLAGS)
-		AC_SUBST(MONO_LIBS)
-		enable_mono=yes
-	], [
-		AC_MSG_RESULT(no)
-		AC_MSG_ERROR([
-Mono development headers not found.
-Use --disable-mono if you do not need Mono support.
-])
-	])
-	if test x"$enable_mono" = x"yes"; then
-		oldLIBS="$LIBS"
-		LIBS="$LIBS $MONO_LIBS"
-		AC_MSG_CHECKING(for libmono)
-		AC_CHECK_FUNCS(mono_jit_init, [], enable_mono=no)
-		LIBS="$oldLIBS"
-
-		oldCPPFLAGS="$CPPFLAGS"
-		CPPFLAGS="$CPPFLAGS $MONO_CFLAGS"
-		AC_CHECK_HEADERS(mono/jit/jit.h, [], enable_mono=no)
-		AC_CHECK_HEADERS(mono/metadata/object.h, [], enable_mono=no)
-		CPPFLAGS="$oldCPPFLAGS"
-
-		AC_DEFINE(ENABLE_MONO, 1, [Define if mono enabled.])
-	fi
-else
-	MONO_CFLAGS=
-	MONO_LIBS=
-	enable_mono=no
-fi
-
-AC_SUBST(MONO_CFLAGS)
-AC_SUBST(MONO_LIBS)
-AM_CONDITIONAL(USE_MONO, test x"$enable_mono" = x"yes")
-
-dnl #######################################################################
-dnl # Check for Perl support
-dnl #######################################################################
-
-# TODO: we could reconsider this for win32, if gobj.plugins branch fail to complete
-AC_ARG_ENABLE(perl,
-	[AS_HELP_STRING([--disable-perl], [compile without perl scripting])], ,
-	enable_perl="$is_not_win32")
-
-if test "$enable_plugins" = no ; then
-	enable_perl=no
-fi
-looked_for_perl="no"
-if test "$enable_perl" = yes ; then
-	looked_for_perl="yes"
-	AC_PATH_PROG(perlpath, perl)
-	AC_MSG_CHECKING(for Perl compile flags)
-	PERL_CFLAGS=`$perlpath -MExtUtils::Embed -e ccopts 2>/dev/null`
-	if test "_$PERL_CFLAGS" = _ ; then
-		AC_MSG_RESULT([not found, building without perl.])
-		enable_perl=no
-	else
-		PERL_LIBS=`$perlpath -MExtUtils::Embed -e ldopts 2>/dev/null |$sedpath 's/-lgdbm //'`
-		PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-ldb //'`
-		PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-lndbm //'`
-		if test "$system" = "Linux"; then
-			PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-lnsl //'`
-			PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-lposix //'`
-		fi
-		PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-lc //'`
-		AC_MSG_RESULT(ok)
-
-		oldLIBS="$LIBS"
-		LIBS="$LIBS $PERL_LIBS"
-		AC_MSG_CHECKING(for libperl)
-		AC_CHECK_FUNCS(perl_run, [], enable_perl=no)
-		LIBS="$oldLIBS"
-
-		oldCPPFLAGS="$CPPFLAGS"
-		CPPFLAGS="$CPPFLAGS $PERL_CFLAGS"
-		AC_CHECK_HEADERS(EXTERN.h)
-		AC_CHECK_HEADERS(perl.h, [], enable_perl=no,
-		[#if HAVE_EXTERN_H
-		 # include <EXTERN.h>
-		 #endif])
-		CPPFLAGS="$oldCPPFLAGS"
-	fi
-fi
-
-if test "$enable_perl" = yes ; then
-	AC_PROG_PERL_MODULES(ExtUtils::MakeMaker, , have_makemaker=no)
-
-	if test "x$have_makemaker" = "xno"; then
-		enable_perl=no
-		PERL_CFLAGS=
-		PERL_LIBS=
-		AM_CONDITIONAL(USE_PERL, false)
-		AC_MSG_WARN(Compiling perl requires ExtUtils::MakeMaker)
-	else
-		AC_DEFINE(HAVE_PERL, [1], [Compile with support for perl])
-		AC_SUBST(PERL_CFLAGS)
-		AC_SUBST(PERL_LIBS)
-		AM_CONDITIONAL(USE_PERL, true)
-
-		dnl This is almost definitely wrong, but in case there's
-		dnl something I'm missing, I'll leave it in.
-		AC_CHECK_FUNCS(Perl_eval_pv)
-
-		AC_MSG_CHECKING(for old perl)
-		PERL_OLD=`$perlpath -e 'if($]<5.006){printf"yes\n";}else{printf"no\n";}'`
-
-		if test "x$PERL_OLD" = "xyes"; then
-			AC_DEFINE(OLD_PERL, 1, [Define if old perl is installed.])
-			AC_MSG_RESULT(yes)
-		else
-			AC_MSG_RESULT(no)
-		fi
-
-		AC_MSG_CHECKING(for DynaLoader.a)
-		DYNALOADER_A=`echo $PERL_LDFLAGS | $perlpath -pe 's/^(.* )*([[^ ]]*DynaLoader\.a).*/\2/'`
-
-		dnl Don't check libperl.a if dynaloader.a wasn't found.
-		if test -n "$DYNALOADER_A"; then
-			AC_MSG_RESULT(yes)
-
-			dnl Find either libperl.a or libperl.so
-			AC_MSG_CHECKING(for libperl.a or libperl.so)
-			LIBPERL_A=`echo "$PERL_LDFLAGS -L/usr/lib"|$perlpath -e 'foreach (split(/ /, <STDIN>)) { if (/^-L(.*)/) { my $dir=$1; if (\`ls $dir/libperl.so* 2>/dev/null\`) { print "-lperl"; last; }; if (-e "$dir/libperl.a") { print "$dir/libperl.a"; last } } };'`
-			if test -z "$LIBPERL_A"; then
-				AC_MSG_RESULT(no)
-				DYNALOADER_A=
-			else
-				AC_MSG_RESULT(yes)
-
-				if test "$LIBPERL_A" = "-lperl"; then
-					LIBPERL_A=
-				fi
-			fi
-
-			PERL_LIBS=`echo $PERL_LIBS | $perlpath -pe 's/^(.* )*[[^ ]]*DynaLoader\.a/\1libperl_dynaloader.la/'`
-
-			if test -n "$LIBPERL_A"; then
-				PERL_LIBS=`echo $PERL_LDFLAGS | $sedpath -e 's/-lperl /libperl_orig.la /' -e 's/-lperl$/libperl_orig.la$/'`
-			fi
-
-			AC_SUBST(DYNALOADER_A)
-			AC_SUBST(LIBPERL_A)
-		else
-			AC_MSG_RESULT(no)
-		fi
-	fi
-else
-	PERL_CFLAGS=
-	PERL_LIBS=
-	AM_CONDITIONAL(USE_PERL, false)
-fi
-
-if test "x$looked_for_perl" = "xyes" -a "x$enable_perl" = "xno" -a "x$force_deps" = "xyes"; then
-	AC_MSG_ERROR([
-Perl development headers not found.
-Use --disable-perl if you do not need Perl scripting support.
-])
-fi
-
-if test "$enable_perl" = yes ; then
-	AC_CACHE_CHECK(for new SvUPGRADE in perl API, ac_cv_perl_have_new_svupgrade, [
-		orig_CFLAGS="$CFLAGS"
-		CFLAGS="$CFLAGS $PERL_CFLAGS"
-		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-			#include <EXTERN.h>
-			#include <perl.h>
-		]], [[
-			PerlInterpreter *my_perl;
-			SV *sv;
-			if (!SvUPGRADE(sv, SVt_PV)) {
-				/* SvUPGRADE is an expression, so it doesn't
-				 * terminate in case of failure */
-			}
-		]])],
-			[ac_cv_perl_have_new_svupgrade=no],
-			[ac_cv_perl_have_new_svupgrade=yes])
-		CFLAGS="$orig_CFLAGS"
-		])
-	if test $ac_cv_perl_have_new_svupgrade = yes; then
-		AC_DEFINE(HAVE_NEW_SVUPGRADE, 1, [Define if you have SvUPGRADE terminating in case of failure.])
-	fi
-fi
 
 dnl #######################################################################
 dnl # SSL support
@@ -2681,147 +2507,6 @@ MSN, Yahoo!, Novell Groupwise and Google Talk will not work without SSL support.
 ])
 fi
 
-dnl #######################################################################
-dnl # Check for Tcl
-dnl #######################################################################
-AC_ARG_ENABLE(tcl, [AS_HELP_STRING([--disable-tcl],
-	[compile without Tcl scripting])], enable_tcl="$enableval", enable_tcl="yes")
-AC_ARG_WITH(tclconfig, [AS_HELP_STRING([--with-tclconfig=DIR],
-	[directory containing tclConfig.sh])])
-
-if test "$enable_plugins" = no; then
-	enable_tcl=no
-fi
-
-if test "$enable_tcl" = yes; then
-	AC_MSG_CHECKING([for tclConfig.sh])
-	TCLCONFIG=no
-	TCLCONFIGDIRS="/usr/lib \
-			/usr/lib64 \
-			/usr/lib/tcl8.5 \
-			/usr/lib/tcl8.4 \
-			/usr/lib/tcl8.3 \
-			/usr/lib/tcl8.2 \
-			/usr/lib64/tcl8.5 \
-			/usr/lib64/tcl8.4 \
-			/System/Library/Tcl/8.3 \
-			/usr/local/lib"
-	for dir in $with_tclconfig $TCLCONFIGDIRS; do
-		if test -f $dir/tclConfig.sh; then
-			TCLCONFIG=$dir/tclConfig.sh
-			AC_MSG_RESULT([yes ($TCLCONFIG)])
-			break
-		fi
-	done
-	if test "$TCLCONFIG" = "no"; then
-		AC_MSG_RESULT([no])
-		enable_tcl=no
-		if test "x$force_deps" = "xyes" ; then
-			AC_MSG_ERROR([
-Tcl development headers not found.
-Use --disable-tcl if you do not need Tcl scripting support.
-])
-		fi
-	else
-		. $TCLCONFIG
-		AC_MSG_CHECKING([Tcl version compatability])
-		if test "$TCL_MAJOR_VERSION" -ne 8 -o "$TCL_MINOR_VERSION" -lt 3; then
-			AC_MSG_RESULT([bad, $TCL_VERSION found but 8.3 or later required])
-			enable_tcl=no
-		else
-			AC_MSG_RESULT([ok, $TCL_VERSION])
-			eval "TCL_LIB_SPEC=\"$TCL_LIB_SPEC\""
-			AC_MSG_CHECKING([for Tcl linkability])
-			oldCPPFLAGS=$CPPFLAGS
-			CPPFLAGS="$CPPFLAGS $TCL_INCLUDE_SPEC -I$TCL_PREFIX/include"
-			oldLIBS=$LIBS
-			LIBS="$LIBS $TCL_LIB_SPEC"
-			AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <tcl.h>]],
-				[[Tcl_Interp *interp=NULL; Tcl_Init(interp)]])],
-				[AC_MSG_RESULT([yes]);enable_tcl=yes],
-				[AC_MSG_RESULT([no]);enable_tcl=no])
-			CPPFLAGS="$oldCPPFLAGS"
-			LIBS="$oldLIBS"
-		fi
-	fi
-fi
-
-if test "$enable_tcl" = yes; then
-	AM_CONDITIONAL(USE_TCL, true)
-	TCL_LIBS=$TCL_LIB_SPEC
-	AC_DEFINE(HAVE_TCL, [1], [Compile with support for the Tcl toolkit])
-	AC_SUBST(TCL_LIBS)
-	TCL_CFLAGS="$TCL_INCLUDE_SPEC -I$TCL_PREFIX/include"
-	if test "x$GCC" = "xyes"; then
-		TCL_CFLAGS="$TCL_CFLAGS -fno-strict-aliasing"
-	fi
-	AC_SUBST(TCL_CFLAGS)
-else
-	AM_CONDITIONAL(USE_TCL, false)
-fi
-
-dnl #######################################################################
-dnl # Check for Tk
-dnl #######################################################################
-AC_ARG_ENABLE(tk, [AS_HELP_STRING([--disable-tk],
-	[compile without Tcl support for Tk])], enable_tk="$enableval", enable_tk="yes")
-AC_ARG_WITH(tkconfig, [AS_HELP_STRING([--with-tkconfig=DIR],
-	[directory containing tkConfig.sh])])
-
-if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
-	AC_MSG_CHECKING([for tkConfig.sh])
-	TKCONFIG=no
-	TKCONFIGDIRS="/usr/lib \
-			/usr/lib64 \
-			/usr/lib/tk8.5 \
-			/usr/lib/tk8.4 \
-			/usr/lib/tk8.3 \
-			/usr/lib/tk8.2 \
-			/usr/local/lib"
-	for dir in $with_tkconfig $TKCONFIGDIRS; do
-		if test -f $dir/tkConfig.sh; then
-			TKCONFIG=$dir/tkConfig.sh
-			AC_MSG_RESULT([yes ($TKCONFIG)])
-			break
-		fi
-	done
-	if test "$TKCONFIG" = "no"; then
-		AC_MSG_RESULT([no])
-		enable_tk=no
-		if test "x$force_deps" = "xyes" ; then
-			AC_MSG_ERROR([
-Tk development headers not found.
-Use --disable-tk if you do not need Tk scripting support.
-])
-		fi
-	else
-		. $TKCONFIG
-		eval "TK_LIB_SPEC=\"$TK_LIB_SPEC\""
-		AC_MSG_CHECKING([for Tk linkability])
-		oldCPPFLAGS=$CPPFLAGS
-		CPPFLAGS="$CPPFLAGS $TCL_CFLAGS"
-		oldLIBS=$LIBS
-		LIBS="$LIBS $TCL_LIB_SPEC $TK_LIB_SPEC"
-		AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <tk.h>]],
-				[[Tcl_Interp *interp=NULL; Tcl_Init(interp); Tk_Init(interp);]])],
-				[AC_MSG_RESULT([yes]);enable_tk=yes],
-				[AC_MSG_RESULT([no]);enable_tk=no])
-		CPPFLAGS="$oldCPPFLAGS"
-		LIBS="$oldLIBS"
-	fi
-else
-	enable_tk=no
-fi
-
-if test "$enable_tk" = yes; then
-	AM_CONDITIONAL(USE_TK, true)
-	AC_DEFINE(HAVE_TK, [1], [Compile with support for the Tk toolkit])
-	TK_LIBS=$TK_LIB_SPEC
-	AC_SUBST(TK_LIBS)
-else
-	AM_CONDITIONAL(USE_TK, false)
-fi
-
 if test "$ac_cv_cygwin" = yes ; then
 	LDADD="$LDADD -static"
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
@@ -3059,8 +2744,6 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/plugins/gestures/Makefile
 		   pidgin/plugins/gevolution/Makefile
 		   pidgin/plugins/musicmessaging/Makefile
-		   pidgin/plugins/perl/Makefile
-		   pidgin/plugins/perl/common/Makefile.PL
 		   pidgin/plugins/ticker/Makefile
 		   pidgin/plugins/win32/transparency/Makefile
 		   pidgin/plugins/win32/winprefs/Makefile
@@ -3073,13 +2756,7 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/example/Makefile
 		   libpurple/plugins/Makefile
 		   libpurple/plugins/keyrings/Makefile
-		   libpurple/plugins/mono/Makefile
-		   libpurple/plugins/mono/api/Makefile
-		   libpurple/plugins/mono/loader/Makefile
-		   libpurple/plugins/perl/Makefile
-		   libpurple/plugins/perl/common/Makefile.PL
 		   libpurple/plugins/ssl/Makefile
-		   libpurple/plugins/tcl/Makefile
 		   libpurple/Makefile
 		   libpurple/protocols/Makefile
 		   libpurple/protocols/bonjour/Makefile
@@ -3164,10 +2841,7 @@ echo Build with KWallet............ : $enable_kwallet
 #echo Build with Secret Service..... : $enable_secret_service
 echo
 echo Build with plugin support..... : $enable_plugins
-echo Build with Mono support....... : $enable_mono
-echo Build with Perl support....... : $enable_perl
-echo Build with Tcl support........ : $enable_tcl
-echo Build with Tk support......... : $enable_tk
+echo Enable Introspection...........: $enable_introspection
 
 if test "x$is_win32" = "xyes" ; then
 	echo

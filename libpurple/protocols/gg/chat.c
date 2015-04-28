@@ -294,9 +294,9 @@ static void ggp_chat_left(ggp_chat_local_info *chat, uin_t uin)
 GList * ggp_chat_info(PurpleConnection *gc)
 {
 	GList *m = NULL;
-	struct proto_chat_entry *pce;
+	PurpleProtocolChatEntry *pce;
 
-	pce = g_new0(struct proto_chat_entry, 1);
+	pce = g_new0(PurpleProtocolChatEntry, 1);
 	pce->label = _("_Conference identifier:");
 	pce->identifier = "id";
 	pce->required = FALSE;

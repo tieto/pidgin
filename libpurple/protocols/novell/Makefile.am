@@ -24,6 +24,7 @@ NOVELLSOURCES = \
 		nmuser.c \
 		nmuserrecord.h \
 		nmuserrecord.c \
+		novell.h \
 		novell.c
 
 AM_CFLAGS = $(st)
@@ -50,4 +51,5 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
-	$(GLIB_CFLAGS)
+	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS)

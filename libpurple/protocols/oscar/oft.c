@@ -704,7 +704,7 @@ peer_oft_sendcb_init(PurpleXfer *xfer)
  * those computers can use the same connection for transferring
  * multiple files.  So we don't want the Purple core up and closing
  * the socket all willy-nilly.  We want to do that in the oscar
- * prpl, whenever one side or the other says they're finished
+ * protocol, whenever one side or the other says they're finished
  * using the connection.  There might be a better way to intercept
  * the socket from the core...
  */

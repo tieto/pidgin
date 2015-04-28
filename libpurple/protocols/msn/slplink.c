@@ -538,7 +538,7 @@ slpmsg_add_part(MsnSlpMessage *slpmsg, MsnSlpMessagePart *part)
 	if (slpmsg->ft) {
 		slpmsg->slpcall->u.incoming_data =
 				g_byte_array_append(slpmsg->slpcall->u.incoming_data, (const guchar *)part->buffer, part->size);
-		purple_xfer_prpl_ready(slpmsg->slpcall->xfer);
+		purple_xfer_protocol_ready(slpmsg->slpcall->xfer);
 	}
 	else if (slpmsg->size && slpmsg->buffer) {
 		guint64 offset = msn_p2p_info_get_offset(part->info);

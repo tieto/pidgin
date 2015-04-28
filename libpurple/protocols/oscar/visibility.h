@@ -22,11 +22,11 @@
 #define _VISIBILITY_H_
 
 #include "oscar.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "util.h"
 
 PurpleMenuAction * create_visibility_menu_item(OscarData *od, const char *bname);
-void oscar_show_visible_list(PurplePluginAction *action);
-void oscar_show_invisible_list(PurplePluginAction *action);
+void oscar_show_visible_list(PurpleProtocolAction *action);
+void oscar_show_invisible_list(PurpleProtocolAction *action);
 
 #endif

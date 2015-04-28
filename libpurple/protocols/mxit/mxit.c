@@ -26,10 +26,11 @@
 #include	"internal.h"
 #include	"debug.h"
 #include	"accountopt.h"
+#include	"plugins.h"
 #include	"version.h"
 
 #include	"mxit.h"
-#include	"protocol.h"
+#include	"client.h"
 #include	"login.h"
 #include	"roster.h"
 #include	"chunk.h"
@@ -47,6 +48,7 @@ static void *(*mxit_pidgin_uri_cb)(const char *uri);
 static PurpleNotifyUiOps* mxit_nots_override_original;
 static PurpleNotifyUiOps mxit_nots_override;
 static int not_link_ref_count = 0;
+static PurpleProtocol *my_protocol = NULL;
 
 
 /*------------------------------------------------------------------------
@@ -721,146 +723,214 @@ static unsigned int mxit_send_typing( PurpleConnection *gc, const char *name, Pu
 
 /*========================================================================================================================*/
 
-static PurplePluginProtocolInfo proto_info = {
-	sizeof( PurplePluginProtocolInfo ),		/* struct_size */
-	OPT_PROTO_REGISTER_NOSCREENNAME | OPT_PROTO_UNIQUE_CHATNAME |
-	OPT_PROTO_INVITE_MESSAGE | OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE, /* options */
-	NULL,					/* user_splits */
-	NULL,					/* protocol_options */
-	{						/* icon_spec */
+/*------------------------------------------------------------------------
+ * Initializing the MXit protocol instance.
+ *
+ *  @param protocol	The MXit protocol
+ */
+static void
+mxit_protocol_init( PurpleProtocol *protocol )
+{
+	PurpleAccountOption *option;
+
+	protocol->id        = MXIT_PROTOCOL_ID;
+	protocol->name      = MXIT_PROTOCOL_NAME;
+	protocol->options   = OPT_PROTO_REGISTER_NOSCREENNAME |
+	                      OPT_PROTO_UNIQUE_CHATNAME |
+	                      OPT_PROTO_INVITE_MESSAGE |
+	                      OPT_PROTO_AUTHORIZATION_DENIED_MESSAGE;
+	protocol->icon_spec = purple_buddy_icon_spec_new(
 		"png,jpeg,bmp",										/* supported formats */
 		32, 32,												/* min width & height */
 		800, 800,											/* max width & height */
 		CP_MAX_FILESIZE,									/* max filesize */
 		PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY	/* scaling rules */
-	},
-	mxit_list_icon,			/* list_icon */
-	mxit_list_emblem,		/* list_emblem */
-	mxit_status_text,		/* status_text */
-	mxit_tooltip,			/* tooltip_text */
-	mxit_status_types,		/* status types				[roster.c] */
-	mxit_blist_menu,		/* blist_node_menu */
-	mxit_chat_info,			/* chat_info				[multimx.c] */
-	mxit_chat_info_defaults,/* chat_info_defaults */
-	mxit_login,				/* login					[login.c] */
-	mxit_close,				/* close */
-	mxit_send_im,			/* send_im */
-	NULL,					/* set_info */
-	mxit_send_typing,		/* send_typing */
-	mxit_get_info,			/* get_info */
-	mxit_set_status,		/* set_status */
-	NULL,					/* set_idle */
-	NULL,					/* change_passwd */
-	mxit_add_buddy,			/* add_buddy				[roster.c] */
-	NULL,					/* add_buddies */
-	mxit_remove_buddy,		/* remove_buddy				[roster.c] */
-	NULL,					/* remove_buddies */
-	NULL,					/* add_permit */
-	NULL,					/* add_deny */
-	NULL,					/* rem_permit */
-	NULL,					/* rem_deny */
-	NULL,					/* set_permit_deny */
-	mxit_chat_join,			/* join_chat				[multimx.c] */
-	mxit_chat_reject,		/* reject chat invite		[multimx.c] */
-	mxit_chat_name,			/* get_chat_name			[multimx.c] */
-	mxit_chat_invite,		/* chat_invite				[multimx.c] */
-	mxit_chat_leave,		/* chat_leave				[multimx.c] */
-	mxit_chat_send,			/* chat_send				[multimx.c] */
-	mxit_keepalive,			/* keepalive */
-	mxit_register,			/* register_user */
-	NULL,					/* get_cb_info */
-	mxit_buddy_alias,		/* alias_buddy				[roster.c] */
-	mxit_buddy_group,		/* group_buddy				[roster.c] */
-	mxit_rename_group,		/* rename_group				[roster.c] */
-	mxit_free_buddy,		/* buddy_free */
-	NULL,					/* convo_closed */
-	NULL,					/* normalize */
-	mxit_set_buddy_icon,	/* set_buddy_icon */
-	NULL,					/* remove_group */			// TODO: Add function to move all contacts out of this group (cmd=30 - remove group)?
-	NULL,					/* get_cb_real_name */
-	NULL,					/* set_chat_topic */
-	NULL,					/* find_blist_chat */
-	NULL,					/* roomlist_get_list */
-	NULL,					/* roomlist_cancel */
-	NULL,					/* roomlist_expand_category */
-	mxit_xfer_enabled,		/* can_receive_file			[filexfer.c] */
-	mxit_xfer_tx,			/* send_file				[filexfer.c */
-	mxit_xfer_new,			/* new_xfer					[filexfer.c] */
-	mxit_offline_message,	/* offline_message */
-	NULL,					/* whiteboard_prpl_ops */
-	NULL,					/* send_raw */
-	NULL,					/* roomlist_room_serialize */
-	NULL,					/* unregister_user */
-	NULL,					/* send_attention */
-	NULL,					/* attention_types */
-	mxit_get_text_table,	/* get_account_text_table */
-	mxit_media_initiate,	/* initiate_media */
-	mxit_media_caps,		/* get_media_caps */
-	mxit_get_moods,			/* get_moods */
-	NULL,					/* set_public_alias */
-	NULL,					/* get_public_alias */
-	NULL,					/* get_max_message_size */
-	NULL					/* media_send_dtmf */
-};
-
-
-static PurplePluginInfo plugin_info = {
-	PURPLE_PLUGIN_MAGIC,								/* purple magic, this must always be PURPLE_PLUGIN_MAGIC */
-	PURPLE_MAJOR_VERSION,								/* libpurple version */
-	PURPLE_MINOR_VERSION,								/* libpurple version */
-	PURPLE_PLUGIN_PROTOCOL,								/* plugin type (connecting to another network) */
-	NULL,												/* UI requirement (NULL for core plugin) */
-	0,													/* plugin flags (zero is default) */
-	NULL,												/* plugin dependencies (set this value to NULL no matter what) */
-	PURPLE_PRIORITY_DEFAULT,							/* libpurple priority */
-
-	MXIT_PLUGIN_ID,										/* plugin id (must be unique) */
-	MXIT_PLUGIN_NAME,									/* plugin name (this will be displayed in the UI) */
-	DISPLAY_VERSION,									/* version of the plugin */
-
-	MXIT_PLUGIN_SUMMARY,								/* short summary of the plugin */
-	MXIT_PLUGIN_DESC,									/* description of the plugin (can be long) */
-	MXIT_PLUGIN_EMAIL,									/* plugin author name and email address */
-	MXIT_PLUGIN_WWW,									/* plugin website (to find new versions and reporting of bugs) */
-
-	NULL,												/* function pointer for loading the plugin */
-	NULL,												/* function pointer for unloading the plugin */
-	NULL,												/* function pointer for destroying the plugin */
-
-	NULL,												/* pointer to an UI-specific struct */
-	&proto_info,										/* pointer to either a PurplePluginLoaderInfo or PurplePluginProtocolInfo struct */
-	NULL,												/* pointer to a PurplePluginUiInfo struct */
-	mxit_actions,										/* function pointer where you can define plugin-actions */
-
-	/* padding */
-	NULL,												/* pointer reserved for future use */
-	NULL,												/* pointer reserved for future use */
-	NULL,												/* pointer reserved for future use */
-	NULL												/* pointer reserved for future use */
-};
-
-
-/*------------------------------------------------------------------------
- * Initialising the MXit plugin.
- *
- *  @param plugin	The plugin object
- */
-static void init_plugin( PurplePlugin* plugin )
-{
-	PurpleAccountOption*	option;
+	);
 
 	/* Configuration options */
 
 	/* WAP server (reference: "libpurple/accountopt.h") */
 	option = purple_account_option_string_new( _( "WAP Server" ), MXIT_CONFIG_WAPSERVER, DEFAULT_WAPSITE );
-	proto_info.protocol_options = g_list_append( proto_info.protocol_options, option );
+	protocol->account_options = g_list_append( protocol->account_options, option );
 
 	option = purple_account_option_bool_new( _( "Connect via HTTP" ), MXIT_CONFIG_USE_HTTP, FALSE );
-	proto_info.protocol_options = g_list_append( proto_info.protocol_options, option );
+	protocol->account_options = g_list_append( protocol->account_options, option );
 
 	option = purple_account_option_bool_new( _( "Enable splash-screen popup" ), MXIT_CONFIG_SPLASHPOPUP, FALSE );
-	proto_info.protocol_options = g_list_append( proto_info.protocol_options, option );
+	protocol->account_options = g_list_append( protocol->account_options, option );
 }
 
-PURPLE_INIT_PLUGIN( mxit, init_plugin, plugin_info );
 
+/*------------------------------------------------------------------------
+ * Initializing the MXit class and interfaces.                          */
+
+
+static void
+mxit_protocol_class_init( PurpleProtocolClass *klass )
+{
+	klass->login        = mxit_login;			/* [login.c] */
+	klass->close        = mxit_close;
+	klass->status_types = mxit_status_types;	/* [roster.c] */
+	klass->list_icon    = mxit_list_icon;
+}
+
+
+static void
+mxit_protocol_client_iface_init( PurpleProtocolClientIface *client_iface )
+{
+	client_iface->get_actions            = mxit_get_actions;	/* [actions.c] */
+	client_iface->list_emblem            = mxit_list_emblem;
+	client_iface->status_text            = mxit_status_text;
+	client_iface->tooltip_text           = mxit_tooltip;
+	client_iface->blist_node_menu        = mxit_blist_menu;
+	client_iface->buddy_free             = mxit_free_buddy;
+	client_iface->offline_message        = mxit_offline_message;
+	client_iface->get_account_text_table = mxit_get_text_table;
+	client_iface->get_moods              = mxit_get_moods;
+}
+
+
+static void
+mxit_protocol_server_iface_init( PurpleProtocolServerIface *server_iface )
+{
+	server_iface->register_user  = mxit_register;
+	server_iface->get_info       = mxit_get_info;
+	server_iface->set_status     = mxit_set_status;
+	server_iface->add_buddy      = mxit_add_buddy;		/* [roster.c] */
+	server_iface->remove_buddy   = mxit_remove_buddy;	/* [roster.c] */
+	server_iface->keepalive      = mxit_keepalive;
+	server_iface->alias_buddy    = mxit_buddy_alias;	/* [roster.c] */
+	server_iface->group_buddy    = mxit_buddy_group;	/* [roster.c] */
+	server_iface->rename_group   = mxit_rename_group;	/* [roster.c] */
+	server_iface->set_buddy_icon = mxit_set_buddy_icon;
+
+	/* TODO: Add function to move all contacts out of this group (cmd=30 - remove group)? */
+	server_iface->remove_group       = NULL;
+}
+
+
+static void
+mxit_protocol_im_iface_init( PurpleProtocolIMIface *im_iface )
+{
+	im_iface->send        = mxit_send_im;
+	im_iface->send_typing = mxit_send_typing;
+}
+
+
+static void
+mxit_protocol_chat_iface_init( PurpleProtocolChatIface *chat_iface )
+{
+	chat_iface->info          = mxit_chat_info;		/* [multimx.c] */
+	chat_iface->info_defaults = mxit_chat_info_defaults;
+	chat_iface->join          = mxit_chat_join;		/* [multimx.c] */
+	chat_iface->reject        = mxit_chat_reject;	/* [multimx.c] */
+	chat_iface->get_name      = mxit_chat_name;		/* [multimx.c] */
+	chat_iface->invite        = mxit_chat_invite;	/* [multimx.c] */
+	chat_iface->leave         = mxit_chat_leave;	/* [multimx.c] */
+	chat_iface->send          = mxit_chat_send;		/* [multimx.c] */
+}
+
+
+static void
+mxit_protocol_media_iface_init( PurpleProtocolMediaIface *media_iface )
+{
+	media_iface->initiate_session = mxit_media_initiate;
+	media_iface->get_caps         = mxit_media_caps;
+}
+
+
+static void
+mxit_protocol_xfer_iface_init( PurpleProtocolXferIface *xfer_iface )
+{
+	xfer_iface->can_receive = mxit_xfer_enabled;	/* [filexfer.c] */
+	xfer_iface->send        = mxit_xfer_tx;		/* [filexfer.c] */
+	xfer_iface->new_xfer    = mxit_xfer_new;		/* [filexfer.c] */
+}
+
+
+PURPLE_DEFINE_TYPE_EXTENDED(
+	MXitProtocol, mxit_protocol, PURPLE_TYPE_PROTOCOL, 0,
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+	                                   mxit_protocol_client_iface_init )
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
+	                                   mxit_protocol_server_iface_init )
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_IM_IFACE,
+	                                   mxit_protocol_im_iface_init )
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_CHAT_IFACE,
+	                                   mxit_protocol_chat_iface_init )
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_MEDIA_IFACE,
+	                                   mxit_protocol_media_iface_init )
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_XFER_IFACE,
+	                                   mxit_protocol_xfer_iface_init )
+);
+
+
+/*------------------------------------------------------------------------
+ * Querying the MXit plugin.
+ *
+ *  @param error	Query error (if any)
+ */
+static PurplePluginInfo *
+plugin_query( GError **error )
+{
+	const gchar * const authors[] = MXIT_PLUGIN_AUTHORS;
+
+	return purple_plugin_info_new(
+		"id",			MXIT_PLUGIN_ID,			/* plugin id (must be unique) */
+		"name",			MXIT_PLUGIN_NAME,		/* plugin name (this will be displayed in the UI) */
+		"version",		DISPLAY_VERSION,		/* version of the plugin */
+		"category",		MXIT_PLUGIN_CATEGORY,	/* category of the plugin */
+		"summary",		MXIT_PLUGIN_SUMMARY,	/* short summary of the plugin */
+		"description",	MXIT_PLUGIN_DESC,		/* description of the plugin (can be long) */
+		"authors",		authors,				/* plugin authors' name and email addresses */
+		"website",		MXIT_PLUGIN_WWW,		/* plugin website (to find new versions and reporting of bugs) */
+		"abi-version",	PURPLE_ABI_VERSION,		/* ABI version required by the plugin */
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
+		                PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
+		NULL
+	);
+}
+
+
+/*------------------------------------------------------------------------
+ * Loading the MXit plugin.
+ *
+ *  @param plugin	The plugin object
+ *  @param error	Load error (if any)
+ */
+static gboolean
+plugin_load( PurplePlugin *plugin, GError **error )
+{
+	mxit_protocol_register_type(plugin);
+
+	my_protocol = purple_protocols_add(MXIT_TYPE_PROTOCOL, error);
+	if (!my_protocol)
+		return FALSE;
+
+	return TRUE;
+}
+
+
+/*------------------------------------------------------------------------
+ * Unloading the MXit plugin.
+ *
+ *  @param plugin	The plugin object
+ *  @param error	Unload error (if any)
+ */
+static gboolean
+plugin_unload( PurplePlugin *plugin, GError **error )
+{
+	if (!purple_protocols_remove(my_protocol, error))
+		return FALSE;
+
+	return TRUE;
+}
+
+
+PURPLE_PLUGIN_INIT( mxit, plugin_query, plugin_load, plugin_unload );

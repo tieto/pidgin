@@ -96,7 +96,7 @@ static void
 migrate_yahoo_japan(PurpleAccount *account)
 {
 	/* detect a Yahoo! JAPAN account that existed prior to 2.6.0 and convert it
-	 * to use the new prpl-yahoojp.  Also remove the account-specific settings
+	 * to use the new yahoojp protocol.  Also remove the account-specific settings
 	 * we no longer need */
 
 	if(purple_strequal(purple_account_get_protocol_id(account), "prpl-yahoo")) {

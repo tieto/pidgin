@@ -30,7 +30,7 @@
 #include "enums.h"
 #include "notify.h"
 #include "prefs.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "request.h"
 #include "signals.h"
 #include "smiley-list.h"
@@ -532,7 +532,7 @@ purple_conversation_close_logs(PurpleConversation *conv)
 void
 _purple_conversation_write_common(PurpleConversation *conv, PurpleMessage *pmsg)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc = NULL;
 	PurpleAccount *account;
 	PurpleConversationUiOps *ops;
@@ -571,10 +571,10 @@ _purple_conversation_write_common(PurpleConversation *conv, PurpleMessage *pmsg)
 		return;
 
 	if (account != NULL) {
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
+		protocol = purple_protocols_find(purple_account_get_protocol_id(account));
 
 		if (PURPLE_IS_IM_CONVERSATION(conv) ||
-			!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+			!(purple_protocol_get_options(protocol) & OPT_PROTO_UNIQUE_CHATNAME)) {
 
 			if (purple_message_get_flags(pmsg) & PURPLE_MESSAGE_SEND) {
 				const gchar *alias;
@@ -825,22 +825,16 @@ purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,
 gssize
 purple_conversation_get_max_message_size(PurpleConversation *conv)
 {
-	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	g_return_val_if_fail(PURPLE_IS_CONVERSATION(conv), 0);
 
-	prpl = purple_connection_get_prpl(
+	protocol = purple_connection_get_protocol(
 		purple_conversation_get_connection(conv));
-	g_return_val_if_fail(prpl != NULL, 0);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	g_return_val_if_fail(prpl_info != NULL, 0);
+	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), 0);
 
-	if (!PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_max_message_size))
-		return 0;
-
-	return prpl_info->get_max_message_size(conv);
+	return purple_protocol_client_iface_get_max_message_size(protocol, conv);
 }
 
 PurpleSmiley *

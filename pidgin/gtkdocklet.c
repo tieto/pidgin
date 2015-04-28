@@ -254,8 +254,8 @@ online_account_supports_chat(void)
 
 	while(c != NULL) {
 		PurpleConnection *gc = c->data;
-		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
-		if (prpl_info != NULL && prpl_info->chat_info != NULL)
+		PurpleProtocol *protocol = purple_connection_get_protocol(gc);
+		if (protocol != NULL && PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, info))
 			return TRUE;
 		c = c->next;
 	}
@@ -291,7 +291,7 @@ static void
 docklet_signed_on_cb(PurpleConnection *gc)
 {
 	if (!enable_join_chat) {
-		if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->chat_info != NULL)
+		if (PURPLE_PROTOCOL_IMPLEMENTS(purple_connection_get_protocol(gc), CHAT_IFACE, info))
 			enable_join_chat = TRUE;
 	}
 	docklet_update_status();
@@ -301,7 +301,7 @@ static void
 docklet_signed_off_cb(PurpleConnection *gc)
 {
 	if (enable_join_chat) {
-		if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->chat_info != NULL)
+		if (PURPLE_PROTOCOL_IMPLEMENTS(purple_connection_get_protocol(gc), CHAT_IFACE, info))
 			enable_join_chat = online_account_supports_chat();
 	}
 	docklet_update_status();
@@ -617,7 +617,6 @@ docklet_status_submenu(void)
 }
 
 
-
 static void
 plugin_act(GtkWidget *widget, PurplePluginAction *pam)
 {
@@ -626,14 +625,16 @@ plugin_act(GtkWidget *widget, PurplePluginAction *pam)
 }
 
 static void
-build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin,
-		gpointer context)
+build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin)
 {
 	GtkWidget *menuitem;
+	PurplePluginActionsCb actions_cb;
 	PurplePluginAction *action = NULL;
 	GList *actions, *l;
 
-	actions = PURPLE_PLUGIN_ACTIONS(plugin, context);
+	actions_cb =
+		purple_plugin_info_get_actions_cb(purple_plugin_get_info(plugin));
+	actions = actions_cb(plugin);
 
 	for (l = actions; l != NULL; l = l->next)
 	{
@@ -641,7 +642,6 @@ build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin,
 		{
 			action = (PurplePluginAction *) l->data;
 			action->plugin = plugin;
-			action->context = context;
 
 			menuitem = gtk_menu_item_new_with_label(action->label);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -666,6 +666,7 @@ docklet_plugin_actions(GtkWidget *menu)
 {
 	GtkWidget *menuitem, *submenu;
 	PurplePlugin *plugin = NULL;
+	PurplePluginInfo *info;
 	GList *l;
 	int c = 0;
 
@@ -673,21 +674,20 @@ docklet_plugin_actions(GtkWidget *menu)
 
 	/* Add a submenu for each plugin with custom actions */
 	for (l = purple_plugins_get_loaded(); l; l = l->next) {
-		plugin = (PurplePlugin *) l->data;
+		plugin = PURPLE_PLUGIN(l->data);
+		info = purple_plugin_get_info(plugin);
 
-		if (PURPLE_IS_PROTOCOL_PLUGIN(plugin))
+		if (!purple_plugin_info_get_actions_cb(info))
 			continue;
 
-		if (!PURPLE_PLUGIN_HAS_ACTIONS(plugin))
-			continue;
-
-		menuitem = gtk_image_menu_item_new_with_label(_(plugin->info->name));
+		menuitem =
+			gtk_image_menu_item_new_with_label(_(purple_plugin_info_get_name(info)));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 		submenu = gtk_menu_new();
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
-		build_plugin_actions(submenu, plugin, NULL);
+		build_plugin_actions(submenu, plugin);
 
 		c++;
 	}

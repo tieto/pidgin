@@ -631,7 +631,7 @@ int tcl_cmd_cmd(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 		break;
 	case CMD_CMD_REGISTER:
 		if (objc != 9) {
-			Tcl_WrongNumArgs(interp, 2, objv, "cmd arglist priority flags prpl_id proc helpstr");
+			Tcl_WrongNumArgs(interp, 2, objv, "cmd arglist priority flags protocol_id proc helpstr");
 			return TCL_ERROR;
 		}
 		handler = g_new0(struct tcl_cmd_handler, 1);
@@ -648,7 +648,7 @@ int tcl_cmd_cmd(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			g_free(handler);
 			return error;
 		}
-		handler->prpl_id = Tcl_GetString(objv[6]);
+		handler->protocol_id = Tcl_GetString(objv[6]);
 		handler->proc = objv[7];
 		handler->helpstr = Tcl_GetString(objv[8]);
 		handler->interp = interp;

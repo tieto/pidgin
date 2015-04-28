@@ -20,8 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
-#include "facebook_roster.h"
+#include "internal.h"
 
+#include "facebook_roster.h"
 #include "roster.h"
 
 void

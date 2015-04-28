@@ -25,7 +25,7 @@
 #ifndef _YAHOO_FRIEND_H_
 #define _YAHOO_FRIEND_H_
 
-#include "libymsg.h"
+#include "ymsg.h"
 #include "yahoo_packet.h"
 
 typedef enum {

@@ -28,7 +28,7 @@
 #include "account.h"
 #include "debug.h"
 #include "keyring.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 
 #include "ciphers/aescipher.h"
@@ -38,8 +38,9 @@
 #define INTKEYRING_NAME N_("Internal keyring")
 #define INTKEYRING_DESCRIPTION N_("This plugin provides the default password " \
 	"storage behaviour for libpurple.")
-#define INTKEYRING_AUTHOR "Tomek Wasilczyk <twasilczyk@pidgin.im>"
+#define INTKEYRING_AUTHORS { "Tomek Wasilczyk <twasilczyk@pidgin.im>",NULL }
 #define INTKEYRING_ID PURPLE_DEFAULT_KEYRING
+#define INTKEYRING_DOMAIN (g_quark_from_static_string(INTKEYRING_ID))
 
 #define INTKEYRING_VERIFY_STR "[verification-string]"
 #define INTKEYRING_PBKDF2_ITERATIONS 10000
@@ -957,9 +958,41 @@ intkeyring_apply_settings(void *notify_handle,
 	return TRUE;
 }
 
-static gboolean
-intkeyring_load(PurplePlugin *plugin)
+static PurplePluginInfo *
+plugin_query(GError **error)
 {
+	const gchar * const authors[] = INTKEYRING_AUTHORS;
+
+	return purple_plugin_info_new(
+		"id",           INTKEYRING_ID,
+		"name",         INTKEYRING_NAME,
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Keyring"),
+		"summary",      "Internal Keyring Plugin",
+		"description",  INTKEYRING_DESCRIPTION,
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL,
+		NULL
+	);
+}
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	purple_prefs_add_none("/plugins/keyrings");
+	purple_prefs_add_none("/plugins/keyrings/internal");
+	purple_prefs_add_bool(INTKEYRING_PREFS "encrypt_passwords", FALSE);
+	purple_prefs_add_string(INTKEYRING_PREFS "encryption_method",
+		INTKEYRING_ENCRYPTION_METHOD);
+	purple_prefs_add_int(INTKEYRING_PREFS "pbkdf2_desired_iterations",
+		INTKEYRING_PBKDF2_ITERATIONS);
+	purple_prefs_add_int(INTKEYRING_PREFS "pbkdf2_iterations",
+		INTKEYRING_PBKDF2_ITERATIONS);
+	purple_prefs_add_string(INTKEYRING_PREFS "pbkdf2_salt", "");
+	purple_prefs_add_string(INTKEYRING_PREFS "key_verifier", "");
+
 	keyring_handler = purple_keyring_new();
 
 	purple_keyring_set_name(keyring_handler, _(INTKEYRING_NAME));
@@ -985,9 +1018,11 @@ intkeyring_load(PurplePlugin *plugin)
 }
 
 static gboolean
-intkeyring_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	if (purple_keyring_get_inuse() == keyring_handler) {
+		g_set_error(error, INTKEYRING_DOMAIN, 0, "The keyring is currently "
+			"in use.");
 		purple_debug_warning("keyring-internal",
 			"keyring in use, cannot unload\n");
 		return FALSE;
@@ -1009,47 +1044,4 @@ intkeyring_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-PurplePluginInfo plugininfo =
-{
-	PURPLE_PLUGIN_MAGIC,		/* magic */
-	PURPLE_MAJOR_VERSION,		/* major_version */
-	PURPLE_MINOR_VERSION,		/* minor_version */
-	PURPLE_PLUGIN_STANDARD,		/* type */
-	NULL,				/* ui_requirement */
-	PURPLE_PLUGIN_FLAG_INVISIBLE,	/* flags */
-	NULL,				/* dependencies */
-	PURPLE_PRIORITY_DEFAULT,	/* priority */
-	INTKEYRING_ID,			/* id */
-	INTKEYRING_NAME,		/* name */
-	DISPLAY_VERSION,		/* version */
-	"Internal Keyring Plugin",	/* summary */
-	INTKEYRING_DESCRIPTION,		/* description */
-	INTKEYRING_AUTHOR,		/* author */
-	PURPLE_WEBSITE,			/* homepage */
-	intkeyring_load,		/* load */
-	intkeyring_unload,		/* unload */
-	NULL,				/* destroy */
-	NULL,				/* ui_info */
-	NULL,				/* extra_info */
-	NULL,				/* prefs_info */
-	NULL,				/* actions */
-	NULL, NULL, NULL, NULL		/* padding */
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-	purple_prefs_add_none("/plugins/keyrings");
-	purple_prefs_add_none("/plugins/keyrings/internal");
-	purple_prefs_add_bool(INTKEYRING_PREFS "encrypt_passwords", FALSE);
-	purple_prefs_add_string(INTKEYRING_PREFS "encryption_method",
-		INTKEYRING_ENCRYPTION_METHOD);
-	purple_prefs_add_int(INTKEYRING_PREFS "pbkdf2_desired_iterations",
-		INTKEYRING_PBKDF2_ITERATIONS);
-	purple_prefs_add_int(INTKEYRING_PREFS "pbkdf2_iterations",
-		INTKEYRING_PBKDF2_ITERATIONS);
-	purple_prefs_add_string(INTKEYRING_PREFS "pbkdf2_salt", "");
-	purple_prefs_add_string(INTKEYRING_PREFS "key_verifier", "");
-}
-
-PURPLE_INIT_PLUGIN(internal_keyring, init_plugin, plugininfo)
+PURPLE_PLUGIN_INIT(internal_keyring, plugin_query, plugin_load, plugin_unload);

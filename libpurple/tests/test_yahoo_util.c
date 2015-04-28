@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "tests.h"
-#include "../protocols/yahoo/libymsg.h"
+#include "../protocols/yahoo/ymsg.h"
 
 static void setup_codes_to_html(void)
 {

@@ -194,11 +194,6 @@ init_libpurple(void)
 	 * copy this verbatim. */
 	purple_eventloop_set_ui_ops(&glib_eventloops);
 
-	/* Set path to search for plugins. The core (libpurple) takes care of loading the
-	 * core-plugins, which includes the protocol-plugins. So it is not essential to add
-	 * any path here, but it might be desired, especially for ui-specific plugins. */
-	purple_plugins_add_search_path(CUSTOM_PLUGIN_PATH);
-
 	/* Now that all the essential stuff has been set, let's try to init the core. It's
 	 * necessary to provide a non-NULL name for the current ui to the core. This name
 	 * is used by stuff that depends on this ui, for example the ui-specific plugins. */
@@ -209,6 +204,12 @@ init_libpurple(void)
 				"Please report this!\n");
 		abort();
 	}
+
+	/* Set path to search for plugins. The core (libpurple) takes care of loading the
+	 * core-plugins, which includes the in-tree protocols. So it is not essential to add
+	 * any path here, but it might be desired, especially for ui-specific plugins. */
+	purple_plugins_add_search_path(CUSTOM_PLUGIN_PATH);
+	purple_plugins_refresh();
 
 	/* Load the preferences. */
 	purple_prefs_load();
@@ -265,10 +266,10 @@ getpass(const gchar *prompt)
 
 int main(int argc, char *argv[])
 {
-	GList *iter;
+	GList *list, *iter;
 	int i, num;
 	GList *names = NULL;
-	const char *prpl = NULL;
+	const char *protocol = NULL;
 	char name[128];
 	char *password;
 	GMainLoop *loop = g_main_loop_new(NULL, FALSE);
@@ -289,15 +290,16 @@ int main(int argc, char *argv[])
 
 	printf("libpurple initialized.\n");
 
-	iter = purple_plugins_get_protocols();
-	for (i = 0; iter; iter = iter->next) {
-		PurplePlugin *plugin = iter->data;
-		PurplePluginInfo *info = plugin->info;
-		if (info && info->name) {
-			printf("\t%d: %s\n", i++, info->name);
-			names = g_list_append(names, (gpointer)info->id);
+	list = purple_protocols_get_all();
+	for (i = 0, iter = list; iter; iter = iter->next) {
+		PurpleProtocol *protocol = iter->data;
+		if (protocol && purple_protocol_get_name(protocol)) {
+			printf("\t%d: %s\n", i++, purple_protocol_get_name(protocol));
+			names = g_list_append(names, (gpointer)purple_protocol_get_id(protocol));
 		}
 	}
+	g_list_free(list);
+
 	printf("Select the protocol [0-%d]: ", i-1);
 	res = fgets(name, sizeof(name), stdin);
 	if (!res) {
@@ -305,8 +307,8 @@ int main(int argc, char *argv[])
 		abort();
 	}
 	if (sscanf(name, "%d", &num) == 1)
-		prpl = g_list_nth_data(names, num);
-	if (!prpl) {
+		protocol = g_list_nth_data(names, num);
+	if (!protocol) {
 		fprintf(stderr, "Failed to gets protocol.");
 		abort();
 	}
@@ -320,7 +322,7 @@ int main(int argc, char *argv[])
 	name[strlen(name) - 1] = 0;  /* strip the \n at the end */
 
 	/* Create the account */
-	account = purple_account_new(name, prpl);
+	account = purple_account_new(name, protocol);
 
 	/* Get the password for the account */
 	password = getpass("Password: ");

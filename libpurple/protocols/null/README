@@ -15,8 +15,8 @@ and authentication.
 
 Nullprpl is intended as an example of how to write a libpurple protocol
 plugin. It doesn't contain networking code or an event loop, but it does
-demonstrate how to use the libpurple API to do pretty much everything a prpl
-might need to do.
+demonstrate how to use the libpurple API to do pretty much everything a
+protocol might need to do.
 
 Nullprpl is also a useful tool for hacking on Pidgin, Finch, and other
 libpurple clients. It's a full-featured protocol plugin, but doesn't depend on
@@ -37,8 +37,8 @@ To build nullprpl on Windows (with Cygwin/MinGW), use: make -f Makefile.mingw
 USAGE
 -----
 To add a nullprpl account, go to the account editor window and click Add.
-Select Nullprpl from the protocol drop-down list, and enter any username you
-want.
+Select Null Protocol from the protocol drop-down list, and enter any username
+you want.
 
 Now, use Pidgin like normal. You can add buddies, send IMs, set away messages,
 etc. If you send IMs to your own username, they will be echoed back to you.

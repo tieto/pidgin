@@ -113,16 +113,15 @@ static guint word_count(const gchar *string);
 static void insert_status_change(CapStatistics *statistics);
 static void insert_status_change_from_purple_status(CapStatistics *statistics, PurpleStatus *status);
 static void insert_word_count(const char *sender, const char *receiver, guint count);
-static gboolean plugin_load(PurplePlugin *plugin);
+static gboolean plugin_load(PurplePlugin *plugin, GError **error);
 static void add_plugin_functionality(PurplePlugin *plugin);
 static void cancel_conversation_timeouts(gpointer key, gpointer value, gpointer user_data);
 static void remove_plugin_functionality(PurplePlugin *plugin);
 static void write_stats_on_unload(gpointer key, gpointer value, gpointer user_data);
-static gboolean plugin_unload(PurplePlugin *plugin);
+static gboolean plugin_unload(PurplePlugin *plugin, GError **error);
 static CapPrefsUI * create_cap_prefs_ui(void);
 static void cap_prefs_ui_destroy_cb(GObject *object, gpointer user_data);
 static void numeric_spinner_prefs_cb(GtkSpinButton *spinbutton, gpointer user_data);
 static GtkWidget * get_config_frame(PurplePlugin *plugin);
-static void init_plugin(PurplePlugin *plugin);
 
 #endif

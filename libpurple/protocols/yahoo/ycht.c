@@ -26,7 +26,7 @@
  */
 
 #include "internal.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "notify.h"
 #include "account.h"
 #include "proxy.h"
@@ -34,7 +34,7 @@
 #include "conversation.h"
 #include "util.h"
 
-#include "libymsg.h"
+#include "ymsg.h"
 #include "yahoo_packet.h"
 #include "ycht.h"
 #include "yahoochat.h"

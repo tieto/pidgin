@@ -100,55 +100,31 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 	return frame;
 }
 
-static PurplePluginUiInfo prefs_info = {
-	get_plugin_pref_frame,
-	NULL,
-
-	/* Padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurplePluginInfo info =
+static PurplePluginInfo *
+plugin_query(GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	const gchar * const authors[] = {
+		"Gary Kramlich <amc_grim@users.sf.net>",
+		NULL
+	};
 
-	"core-pluginpref_example",                     /**< id             */
-	"Pluginpref Example",                           /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	"An example of how to use pluginprefs",
-	                                                  /**  description    */
-	"An example of how to use pluginprefs",
-	"Gary Kramlich <amc_grim@users.sf.net>",      /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
+	return purple_plugin_info_new(
+		"id",             "core-pluginpref_example",
+		"name",           "Pluginpref Example",
+		"version",        DISPLAY_VERSION,
+		"category",       "Example",
+		"summary",        "An example of how to use pluginprefs",
+		"description",    "An example of how to use pluginprefs",
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
+		NULL
+	);
+}
 
-	NULL,                                             /**< load           */
-	NULL,                                             /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	NULL,                                             /**< extra_info     */
-	&prefs_info,                                      /**< prefs_info     */
-	NULL,                                             /**< actions        */
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	purple_prefs_add_none("/plugins/core/pluginpref_example");
 	purple_prefs_add_bool("/plugins/core/pluginpref_example/bool", TRUE);
@@ -160,6 +136,14 @@ init_plugin(PurplePlugin *plugin)
 							"max length string");
 	purple_prefs_add_string("/plugins/core/pluginpref_example/masked_string", "masked");
 	purple_prefs_add_string("/plugins/core/pluginpref_example/string_choice", "red");
+
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(ppexample, init_plugin, info)
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(ppexample, plugin_query, plugin_load, plugin_unload);

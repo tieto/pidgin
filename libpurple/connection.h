@@ -192,7 +192,7 @@ struct _PurpleConnectionErrorInfo
 #include <time.h>
 
 #include "account.h"
-#include "plugin.h"
+#include "protocol.h"
 #include "status.h"
 #include "sslconn.h"
 
@@ -398,14 +398,14 @@ purple_connection_is_disconnecting(const PurpleConnection *gc);
 PurpleAccount *purple_connection_get_account(const PurpleConnection *gc);
 
 /**
- * purple_connection_get_prpl:
+ * purple_connection_get_protocol:
  * @gc: The connection.
  *
- * Returns the protocol plugin managing a connection.
+ * Returns the protocol managing a connection.
  *
- * Returns: The protocol plugin.
+ * Returns: The protocol.
  */
-PurplePlugin *purple_connection_get_prpl(const PurpleConnection *gc);
+PurpleProtocol *purple_connection_get_protocol(const PurpleConnection *gc);
 
 /**
  * purple_connection_get_password:

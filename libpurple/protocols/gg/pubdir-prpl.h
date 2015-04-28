@@ -27,8 +27,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _GGP_PUBDIR_PRPL_H
-#define _GGP_PUBDIR_PRPL_H
+#ifndef _GGP_PUBDIR_PROTOCOL_H
+#define _GGP_PUBDIR_PROTOCOL_H
 
 #include <internal.h>
 #include <libgadu.h>
@@ -62,7 +62,7 @@ typedef void (*ggp_pubdir_request_cb)(PurpleConnection *gc, int records_count,
 void ggp_pubdir_get_info(PurpleConnection *gc, uin_t uin,
 	ggp_pubdir_request_cb cb, void *user_data);
 
-void ggp_pubdir_get_info_prpl(PurpleConnection *gc, const char *name);
+void ggp_pubdir_get_info_protocol(PurpleConnection *gc, const char *name);
 void ggp_pubdir_request_buddy_alias(PurpleConnection *gc, PurpleBuddy *buddy);
 
 void ggp_pubdir_search(PurpleConnection *gc,
@@ -70,4 +70,4 @@ void ggp_pubdir_search(PurpleConnection *gc,
 
 void ggp_pubdir_set_info(PurpleConnection *gc);
 
-#endif /* _GGP_PUBDIR_PRPL_H */
+#endif /* _GGP_PUBDIR_PROTOCOL_H */

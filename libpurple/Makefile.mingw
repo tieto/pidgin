@@ -107,13 +107,14 @@ C_SRC =	\
 			network.c \
 			notify.c \
 			ntlm.c \
-			plugin.c \
+			plugins.c \
 			pluginpref.c \
 			pounce.c \
 			prefs.c \
 			presence.c \
 			proxy.c \
-			prpl.c \
+			protocol.c \
+			protocols.c \
 			purple-socket.c \
 			request.c \
 			request-datasheet.c \

@@ -93,7 +93,7 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #endif
 #include "internal.h"
 #include "debug.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "signals.h"
 #include "version.h"
 
@@ -652,69 +652,51 @@ destroy_perl_plugin(PurplePlugin *plugin)
 	}
 }
 
+static PurplePluginLoaderInfo loader_info =
+{
+	probe_perl_plugin,                                /**< probe          */
+	load_perl_plugin,                                 /**< load           */
+	unload_perl_plugin,                               /**< unload         */
+	destroy_perl_plugin,                              /**< destroy        */
+};
+
+static GPluginPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Christian Hammond <chipx86@gnupdate.org>",
+		NULL
+	};
+
+	return gplugin_plugin_info_new(
+		"id",             PERL_PLUGIN_ID,
+		"name",           N_("Perl Plugin Loader"),
+		"version",        DISPLAY_VERSION,
+		"category",       N_("Loader"),
+		"summary",        N_("Provides support for loading perl plugins."),
+		"description",    N_("Provides support for loading perl plugins."),
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"internal",       TRUE,
+		"load-on-query",  TRUE,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	perl_end();
 
 	return TRUE;
 }
-
-static PurplePluginLoaderInfo loader_info =
-{
-	NULL,                                             /**< exts           */
-	probe_perl_plugin,                                /**< probe          */
-	load_perl_plugin,                                 /**< load           */
-	unload_perl_plugin,                               /**< unload         */
-	destroy_perl_plugin,                              /**< destroy        */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_LOADER,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
-
-	PERL_PLUGIN_ID,                                   /**< id             */
-	N_("Perl Plugin Loader"),                         /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	N_("Provides support for loading perl plugins."), /**< summary        */
-	N_("Provides support for loading perl plugins."), /**< description    */
-	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	PURPLE_WEBSITE,                                   /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	&loader_info,                                     /**< extra_info     */
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
 
 static void
 init_plugin(PurplePlugin *plugin)
@@ -741,4 +723,4 @@ my_init(void)
 	g_module_open("perl.so", 0);
 }
 
-PURPLE_INIT_PLUGIN(perl, init_plugin, info)
+PURPLE_PLUGIN_INIT(perl, plugin_query, plugin_load, plugin_unload);

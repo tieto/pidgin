@@ -73,7 +73,12 @@ struct _JingleContent
  *
  * @return The content class's GType.
  */
-GType jingle_content_get_type(void);
+G_MODULE_EXPORT GType jingle_content_get_type(void);
+
+/**
+ * Registers the JingleContent type in the type system.
+ */
+void jingle_content_register_type(PurplePlugin *plugin);
 
 JingleContent *jingle_content_create(const gchar *type, const gchar *creator,
 		const gchar *disposition, const gchar *name,

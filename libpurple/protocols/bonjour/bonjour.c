@@ -35,6 +35,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "debug.h"
+#include "plugins.h"
 #include "util.h"
 #include "version.h"
 
@@ -43,6 +44,8 @@
 #include "jabber.h"
 #include "buddy.h"
 #include "bonjour_ft.h"
+
+static PurpleProtocol *my_protocol = NULL;
 
 static char *default_firstname;
 static char *default_lastname;
@@ -477,138 +480,12 @@ bonjour_get_max_message_size(PurpleConversation *conv)
 	return -1; /* 5MB successfully tested. */
 }
 
-static gboolean
-plugin_unload(PurplePlugin *plugin)
-{
-	/* These shouldn't happen here because they are allocated in _init() */
-
-	g_free(default_firstname);
-	g_free(default_lastname);
-
-	return TRUE;
-}
-
-static PurplePlugin *my_protocol = NULL;
-
-static PurplePluginProtocolInfo prpl_info =
-{
-	sizeof(PurplePluginProtocolInfo),                        /* struct_size */
-	OPT_PROTO_NO_PASSWORD,
-	NULL,                                                    /* user_splits */
-	NULL,                                                    /* protocol_options */
-	{"png,gif,jpeg", 0, 0, 96, 96, 65535, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
-	bonjour_list_icon,                                       /* list_icon */
-	NULL,                                                    /* list_emblem */
-	bonjour_status_text,                                     /* status_text */
-	bonjour_tooltip_text,                                    /* tooltip_text */
-	bonjour_status_types,                                    /* status_types */
-	NULL,                                                    /* blist_node_menu */
-	NULL,                                                    /* chat_info */
-	NULL,                                                    /* chat_info_defaults */
-	bonjour_login,                                           /* login */
-	bonjour_close,                                           /* close */
-	bonjour_send_im,                                         /* send_im */
-	NULL,                                                    /* set_info */
-	NULL,                                                    /* send_typing */
-	NULL,                                                    /* get_info */
-	bonjour_set_status,                                      /* set_status */
-	NULL,                                                    /* set_idle */
-	NULL,                                                    /* change_passwd */
-	bonjour_fake_add_buddy,                                  /* add_buddy */
-	NULL,                                                    /* add_buddies */
-	bonjour_remove_buddy,                                    /* remove_buddy */
-	NULL,                                                    /* remove_buddies */
-	NULL,                                                    /* add_permit */
-	NULL,                                                    /* add_deny */
-	NULL,                                                    /* rem_permit */
-	NULL,                                                    /* rem_deny */
-	NULL,                                                    /* set_permit_deny */
-	NULL,                                                    /* join_chat */
-	NULL,                                                    /* reject_chat */
-	NULL,                                                    /* get_chat_name */
-	NULL,                                                    /* chat_invite */
-	NULL,                                                    /* chat_leave */
-	NULL,                                                    /* chat_send */
-	NULL,                                                    /* keepalive */
-	NULL,                                                    /* register_user */
-	NULL,                                                    /* get_cb_info */
-	NULL,                                                    /* alias_buddy */
-	bonjour_group_buddy,                                     /* group_buddy */
-	bonjour_rename_group,                                    /* rename_group */
-	NULL,                                                    /* buddy_free */
-	bonjour_convo_closed,                                    /* convo_closed */
-	NULL,                                                    /* normalize */
-	bonjour_set_buddy_icon,                                  /* set_buddy_icon */
-	NULL,                                                    /* remove_group */
-	NULL,                                                    /* get_cb_real_name */
-	NULL,                                                    /* set_chat_topic */
-	NULL,                                                    /* find_blist_chat */
-	NULL,                                                    /* roomlist_get_list */
-	NULL,                                                    /* roomlist_cancel */
-	NULL,                                                    /* roomlist_expand_category */
-	bonjour_can_receive_file,                                /* can_receive_file */
-	bonjour_send_file,                                       /* send_file */
-	bonjour_new_xfer,                                        /* new_xfer */
-	NULL,                                                    /* offline_message */
-	NULL,                                                    /* whiteboard_prpl_ops */
-	NULL,                                                    /* send_raw */
-	NULL,                                                    /* roomlist_room_serialize */
-	NULL,                                                    /* unregister_user */
-	NULL,                                                    /* send_attention */
-	NULL,                                                    /* get_attention_types */
-	NULL,                                                    /* get_account_text_table */
-	NULL,                                                    /* initiate_media */
-	NULL,                                                    /* get_media_caps */
-	NULL,                                                    /* get_moods */
-	NULL,                                                    /* set_public_alias */
-	NULL,                                                    /* get_public_alias */
-	bonjour_get_max_message_size,                            /* get_max_message_size */
-	NULL                                                     /* media_send_dtmf */
-};
-
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
-
-	"prpl-bonjour",                                   /**< id             */
-	"Bonjour",                                        /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Bonjour Protocol Plugin"),
-	                                                  /**  description    */
-	N_("Bonjour Protocol Plugin"),
-	NULL,                                             /**< author         */
-	PURPLE_WEBSITE,                                   /**< homepage       */
-
-	NULL,                                             /**< load           */
-	plugin_unload,                                    /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	&prpl_info,                                       /**< extra_info     */
-	NULL,                                             /**< prefs_info     */
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
 #ifdef WIN32
 static gboolean
 _set_default_name_cb(gpointer data) {
 	gchar *fullname = data;
 	const char *splitpoint;
-	GList *tmp = prpl_info.protocol_options;
+	GList *tmp = protocol.account_options;
 	PurpleAccountOption *option;
 
 	if (!fullname) {
@@ -756,32 +633,138 @@ initialize_default_account_values(void)
 }
 
 static void
-init_plugin(PurplePlugin *plugin)
+bonjour_protocol_init(PurpleProtocol *protocol)
 {
 	PurpleAccountOption *option;
 
-	initialize_default_account_values();
+	protocol->id        = "prpl-bonjour";
+	protocol->name      = "Bonjour";
+	protocol->options   = OPT_PROTO_NO_PASSWORD;
+	protocol->icon_spec = purple_buddy_icon_spec_new("png,gif,jpeg",
+	                                                 0, 0, 96, 96, 65535,
+	                                                 PURPLE_ICON_SCALE_DISPLAY);
 
 	/* Creating the options for the protocol */
 	option = purple_account_option_int_new(_("Local Port"), "port", BONJOUR_DEFAULT_PORT);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("First name"), "first", default_firstname);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Last name"), "last", default_lastname);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Email"), "email", "");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("AIM Account"), "AIM", "");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("XMPP Account"), "jid", "");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	my_protocol = plugin;
+	protocol->account_options = g_list_append(protocol->account_options, option);
 }
 
-PURPLE_INIT_PLUGIN(bonjour, init_plugin, info);
+static void
+bonjour_protocol_class_init(PurpleProtocolClass *klass)
+{
+	klass->login        = bonjour_login;
+	klass->close        = bonjour_close;
+	klass->status_types = bonjour_status_types;
+	klass->list_icon    = bonjour_list_icon;
+}
+
+static void
+bonjour_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
+{
+	client_iface->status_text          = bonjour_status_text;
+	client_iface->tooltip_text         = bonjour_tooltip_text;
+	client_iface->convo_closed         = bonjour_convo_closed;
+	client_iface->get_max_message_size = bonjour_get_max_message_size;
+}
+
+static void
+bonjour_protocol_server_iface_init(PurpleProtocolServerIface *server_iface)
+{
+	server_iface->add_buddy      = bonjour_fake_add_buddy;
+	server_iface->remove_buddy   = bonjour_remove_buddy;
+	server_iface->group_buddy    = bonjour_group_buddy;
+	server_iface->rename_group   = bonjour_rename_group;
+	server_iface->set_buddy_icon = bonjour_set_buddy_icon;
+	server_iface->set_status     = bonjour_set_status;
+}
+
+static void
+bonjour_protocol_im_iface_init(PurpleProtocolIMIface *im_iface)
+{
+	im_iface->send = bonjour_send_im;
+}
+
+static void
+bonjour_protocol_xfer_iface_init(PurpleProtocolXferIface *xfer_iface)
+{
+	xfer_iface->can_receive = bonjour_can_receive_file;
+	xfer_iface->send        = bonjour_send_file;
+	xfer_iface->new_xfer    = bonjour_new_xfer;
+}
+
+PURPLE_DEFINE_TYPE_EXTENDED(
+	BonjourProtocol, bonjour_protocol, PURPLE_TYPE_PROTOCOL, 0,
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+	                                  bonjour_protocol_client_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
+	                                  bonjour_protocol_server_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_IM_IFACE,
+	                                  bonjour_protocol_im_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_XFER_IFACE,
+	                                  bonjour_protocol_xfer_iface_init)
+);
+
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",           "prpl-bonjour",
+		"name",         "Bonjour Protocol",
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol"),
+		"summary",      N_("Bonjour Protocol Plugin"),
+		"description",  N_("Bonjour Protocol Plugin"),
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
+		                PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
+		NULL
+	);
+}
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	bonjour_protocol_register_type(plugin);
+
+	my_protocol = purple_protocols_add(BONJOUR_TYPE_PROTOCOL, error);
+	if (!my_protocol)
+		return FALSE;
+
+	initialize_default_account_values();
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	if (!purple_protocols_remove(my_protocol, error))
+		return FALSE;
+
+	g_free(default_firstname);
+	g_free(default_lastname);
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(bonjour, plugin_query, plugin_load, plugin_unload);

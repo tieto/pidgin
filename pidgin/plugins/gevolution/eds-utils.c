@@ -166,7 +166,7 @@ gevo_search_buddy_in_contacts(PurpleBuddy *buddy, EBookQuery *query)
 	GList *sources, *s;
 	EContact *result;
 	EContactField protocol_field =
-		gevo_prpl_get_field(purple_buddy_get_account(buddy), buddy);
+		gevo_protocol_get_field(purple_buddy_get_account(buddy), buddy);
 
 	if (protocol_field == 0)
 		return NULL;

@@ -27,7 +27,7 @@ use Purple;
 
 	# We will create these on load then destroy them on unload
 	my $TEST_NAME	 	= "perlTestName";
-	my $PROTOCOL_ID 	= "prpl-aim";
+	my $PROTOCOL_ID 	= "aim";
 
 
 sub plugin_init {

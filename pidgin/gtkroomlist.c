@@ -226,13 +226,13 @@ static void do_add_room_cb(GtkWidget *w, struct _menu_cb_info *info)
 	char *name;
 	PurpleAccount *account = purple_roomlist_get_account(info->list);
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 
 	if(gc != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+		protocol = purple_connection_get_protocol(gc);
 
-	if(prpl_info != NULL && prpl_info->roomlist_room_serialize)
-		name = prpl_info->roomlist_room_serialize(info->room);
+	if(protocol != NULL && PURPLE_PROTOCOL_IMPLEMENTS(protocol, ROOMLIST_IFACE, room_serialize))
+		name = purple_protocol_roomlist_iface_room_serialize(protocol, info->room);
 	else
 		name = g_strdup(purple_roomlist_room_get_name(info->room));
 
@@ -533,12 +533,12 @@ pidgin_roomlist_create_tooltip(GtkWidget *widget, GtkTreePath *path,
 static gboolean account_filter_func(PurpleAccount *account)
 {
 	PurpleConnection *conn = purple_account_get_connection(account);
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 
 	if (conn && PURPLE_CONNECTION_IS_CONNECTED(conn))
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(conn));
+		protocol = purple_connection_get_protocol(conn);
 
-	return (prpl_info && prpl_info->roomlist_get_list != NULL);
+	return (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, ROOMLIST_IFACE, get_list));
 }
 
 gboolean

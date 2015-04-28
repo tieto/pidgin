@@ -22,7 +22,9 @@
 #include "internal.h"
 #include <glib.h>
 
-#define PLUGIN_STATIC_NAME	GntClipboard
+#define PLUGIN_ID           "gntclipboard"
+#define PLUGIN_DOMAIN       (g_quark_from_static_string(PLUGIN_ID))
+#define PLUGIN_STATIC_NAME  GntClipboard
 
 #ifdef HAVE_X11
 #include <X11/Xlib.h>
@@ -35,7 +37,7 @@
 
 #include <glib.h>
 
-#include <plugin.h>
+#include <plugins.h>
 #include <version.h>
 #include <debug.h>
 #include <notify.h>
@@ -107,8 +109,31 @@ clipboard_changed(GntWM *wm, gchar *string)
 }
 #endif
 
+static FinchPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Richard Nelson <wabz@whatsbeef.net>",
+		NULL
+	};
+
+	return finch_plugin_info_new(
+		"id",           PLUGIN_ID,
+		"name",         N_("GntClipboard"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Utility"),
+		"summary",      N_("Clipboard plugin"),
+		"description",  N_("When the gnt clipboard contents change, the "
+		                   "contents are made available to X, if possible."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 #ifdef HAVE_X11
 	if (!XOpenDisplay(NULL)) {
@@ -126,14 +151,14 @@ plugin_load(PurplePlugin *plugin)
 	sig_handle = g_signal_connect(G_OBJECT(gnt_get_clipboard()), "clipboard_changed", G_CALLBACK(clipboard_changed), NULL);
 	return TRUE;
 #else
-	purple_notify_error(NULL, _("Error"), _("Error loading the plugin."),
-			_("This plugin cannot be loaded because it was not built with X11 support."), NULL);
+	g_set_error(error, PLUGIN_DOMAIN, 0, _("This plugin cannot be loaded "
+			"because it was not built with X11 support."));
 	return FALSE;
 #endif
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 #ifdef HAVE_X11
 	if (child) {
@@ -145,42 +170,4 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	FINCH_PLUGIN_TYPE,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	"gntclipboard",
-	N_("GntClipboard"),
-	DISPLAY_VERSION,
-	N_("Clipboard plugin"),
-	N_("When the gnt clipboard contents change, "
-		"the contents are made available to X, if possible."),
-	"Richard Nelson <wabz@whatsbeef.net>",
-	PURPLE_WEBSITE,
-	plugin_load,
-	plugin_unload,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
+PURPLE_PLUGIN_INIT(PLUGIN_STATIC_NAME, plugin_query, plugin_load, plugin_unload);

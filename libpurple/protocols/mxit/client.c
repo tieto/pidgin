@@ -27,7 +27,7 @@
 #include	"debug.h"
 #include	"version.h"
 
-#include	"protocol.h"
+#include	"client.h"
 #include	"mxit.h"
 #include	"roster.h"
 #include	"chunk.h"

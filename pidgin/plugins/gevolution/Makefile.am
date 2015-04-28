@@ -15,7 +15,7 @@ gevolution_la_SOURCES = \
 	new_person_dialog.c \
 	eds-utils.c
 
-gevolution_la_LIBADD = @PIDGIN_LIBS@ $(EVOLUTION_ADDRESSBOOK_LIBS)
+gevolution_la_LIBADD = @PIDGIN_LIBS@ $(EVOLUTION_ADDRESSBOOK_LIBS) $(GPLUGIN_LIBS)
 
 endif
 
@@ -25,4 +25,5 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/pidgin \
 	$(EVOLUTION_ADDRESSBOOK_CFLAGS) \
 	$(DEBUG_CFLAGS) \
-	$(GTK_CFLAGS)
+	$(GTK_CFLAGS) \
+	$(GPLUGIN_CFLAGS)

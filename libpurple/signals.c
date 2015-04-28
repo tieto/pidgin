@@ -172,17 +172,15 @@ purple_signal_unregister(void *instance, const char *signal)
 void
 purple_signals_unregister_by_instance(void *instance)
 {
-	gboolean found;
-
 	g_return_if_fail(instance != NULL);
 
-	found = g_hash_table_remove(instance_table, instance);
+	g_hash_table_remove(instance_table, instance);
 
 	/*
 	 * Makes things easier (more annoying?) for developers who don't have
 	 * things registering and unregistering in the right order :)
 	 */
-	g_return_if_fail(found);
+	/* g_return_if_fail(found); */
 }
 
 void

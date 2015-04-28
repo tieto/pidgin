@@ -127,9 +127,9 @@ xmpp_iq_received(PurpleConnection *pc, const char *type, const char *id,
 
 	g_hash_table_remove(iq_callbacks, id);
 	if (g_hash_table_size(iq_callbacks) == 0) {
-		PurplePlugin *prpl = purple_connection_get_prpl(pc);
+		PurpleProtocol *protocol = purple_connection_get_protocol(pc);
 		iq_listening = FALSE;
-		purple_signal_disconnect(prpl, "jabber-receiving-iq", my_plugin,
+		purple_signal_disconnect(protocol, "jabber-receiving-iq", my_plugin,
 		                         PURPLE_CALLBACK(xmpp_iq_received));
 	}
 
@@ -150,9 +150,9 @@ xmpp_iq_register_callback(PurpleConnection *pc, gchar *id, gpointer data,
 	g_hash_table_insert(iq_callbacks, id, cbdata);
 
 	if (!iq_listening) {
-		PurplePlugin *prpl = purple_plugins_find_with_id(XMPP_PLUGIN_ID);
+		PurpleProtocol *protocol = purple_protocols_find(XMPP_PROTOCOL_ID);
 		iq_listening = TRUE;
-		purple_signal_connect(prpl, "jabber-receiving-iq", my_plugin,
+		purple_signal_connect(protocol, "jabber-receiving-iq", my_plugin,
 		                      PURPLE_CALLBACK(xmpp_iq_received), NULL);
 	}
 }
@@ -177,7 +177,7 @@ xmpp_disco_info_do(PurpleConnection *pc, gpointer cbdata, const char *jid,
 	/* Steals id */
 	xmpp_iq_register_callback(pc, id, cbdata, cb);
 
-	purple_signal_emit(purple_connection_get_prpl(pc), "jabber-sending-xmlnode",
+	purple_signal_emit(purple_connection_get_protocol(pc), "jabber-sending-xmlnode",
 	                   pc, &iq);
 	if (iq != NULL)
 		purple_xmlnode_free(iq);
@@ -203,7 +203,7 @@ xmpp_disco_items_do(PurpleConnection *pc, gpointer cbdata, const char *jid,
 	/* Steals id */
 	xmpp_iq_register_callback(pc, id, cbdata, cb);
 
-	purple_signal_emit(purple_connection_get_prpl(pc), "jabber-sending-xmlnode",
+	purple_signal_emit(purple_connection_get_protocol(pc), "jabber-sending-xmlnode",
 	                   pc, &iq);
 	if (iq != NULL)
 		purple_xmlnode_free(iq);
@@ -249,9 +249,9 @@ static const struct {
 	const char *from;
 	const char *to;
 } disco_type_mappings[] = {
-	{ "gadu-gadu", "gadu-gadu" }, /* the prpl is prpl-gg, but list_icon returns "gadu-gadu" */
+	{ "gadu-gadu", "gadu-gadu" }, /* the protocol is gg, but list_icon returns "gadu-gadu" */
 	{ "sametime",  "meanwhile" },
-	{ "xmpp",      "jabber" }, /* prpl-jabber (mentioned in case the prpl is renamed so this line will match) */
+	{ "xmpp",      "jabber" }, /* jabber (mentioned in case the protocol is renamed so this line will match) */
 	{ NULL,        NULL }
 };
 
@@ -576,7 +576,7 @@ void xmpp_disco_service_register(XmppDiscoService *service)
 	query = purple_xmlnode_new_child(iq, "query");
 	purple_xmlnode_set_namespace(query, NS_REGISTER);
 
-	purple_signal_emit(purple_connection_get_prpl(service->list->pc),
+	purple_signal_emit(purple_connection_get_protocol(service->list->pc),
 			"jabber-sending-xmlnode", service->list->pc, &iq);
 	if (iq != NULL)
 		purple_xmlnode_free(iq);
@@ -590,7 +590,7 @@ create_dialog(PurplePluginAction *action)
 }
 
 static GList *
-actions(PurplePlugin *plugin, gpointer context)
+actions(PurplePlugin *plugin)
 {
 	GList *l = NULL;
 	PurplePluginAction *action = NULL;
@@ -612,16 +612,42 @@ signed_off_cb(PurpleConnection *pc, gpointer unused)
 	g_hash_table_foreach_remove(iq_callbacks, remove_iq_callbacks_by_pc, pc);
 }
 
-static gboolean
-plugin_load(PurplePlugin *plugin)
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	PurplePlugin *xmpp_prpl;
+	const gchar * const authors[] = {
+		"Paul Aurich <paul@darkrain42.org>",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",           PLUGIN_ID,
+		"name",         N_("XMPP Service Discovery"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol utility"),
+		"summary",      N_("Allows browsing and registering services."),
+		"description",  N_("This plugin is useful for registering with legacy "
+		                   "transports or other XMPP services."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"actions-cb",   actions,
+		NULL
+	);
+}
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	PurpleProtocol *xmpp_protocol;
 
 	my_plugin = plugin;
 
-	xmpp_prpl = purple_plugins_find_with_id(XMPP_PLUGIN_ID);
-	if (NULL == xmpp_prpl)
+	xmpp_protocol = purple_protocols_find(XMPP_PROTOCOL_ID);
+	if (NULL == xmpp_protocol) {
+		g_set_error(error, PLUGIN_DOMAIN, 0, _("XMPP protocol is not loaded."));
 		return FALSE;
+	}
 
 	purple_signal_connect(purple_connections_get_handle(), "signing-off",
 	                      plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
@@ -632,7 +658,7 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	g_hash_table_destroy(iq_callbacks);
 	iq_callbacks = NULL;
@@ -643,42 +669,4 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	PIDGIN_PLUGIN_TYPE,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	"gtk-xmppdisco",
-	N_("XMPP Service Discovery"),
-	DISPLAY_VERSION,
-	N_("Allows browsing and registering services."),
-	N_("This plugin is useful for registering with legacy transports or other "
-	   "XMPP services."),
-	"Paul Aurich <paul@darkrain42.org>",
-	PURPLE_WEBSITE,
-	plugin_load,
-	plugin_unload,
-	NULL,               /**< destroy    */
-	NULL,               /**< ui_info    */
-	NULL,               /**< extra_info */
-	NULL,               /**< prefs_info */
-	actions,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(xmppdisco, init_plugin, info)
+PURPLE_PLUGIN_INIT(xmppdisco, plugin_query, plugin_load, plugin_unload);

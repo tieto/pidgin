@@ -31,6 +31,9 @@ excluded = [\
     "purple_account_set_register_callback",
     "purple_account_unregister",
 
+    # Similar to the above:
+    "purple_protocol_server_iface_unregister_user",
+
     # Similar to the above, again
     "purple_menu_action_new",
     "purple_menu_action_set_callback",
@@ -65,7 +68,7 @@ stringlists = [
 ]
 
 # This is a list of functions that return a GList* or GSList* that should
-# not be freed.  Ideally, this information should be obtained from the Doxygen
+# not be freed.  Ideally, this information should be obtained from the gtk-doc
 # documentation at some point.
 constlists = [
     "purple_account_get_status_types",

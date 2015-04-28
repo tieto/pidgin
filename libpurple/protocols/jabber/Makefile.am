@@ -27,6 +27,8 @@ JABBERSOURCES = \
 			  data.h \
 			  disco.c \
 			  disco.h \
+			  facebook.c \
+			  facebook.h \
 			  facebook_roster.c \
 			  facebook_roster.h \
 			  google/gmail.c \
@@ -45,6 +47,8 @@ JABBERSOURCES = \
 			  google/jingleinfo.h \
 			  google/relay.c \
 			  google/relay.h \
+			  gtalk.c \
+			  gtalk.h \
 			  ibb.c \
 			  ibb.h \
 			  iq.c \
@@ -93,13 +97,13 @@ JABBERSOURCES = \
 			  usertune.c \
 			  usertune.h \
 			  xdata.c \
-			  xdata.h
+			  xdata.h \
+			  xmpp.c \
+			  xmpp.h
 
 AM_CFLAGS = $(st)
 
-libxmpp_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
-libgtalk_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
-libfacebook_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
+libjabber_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if USE_CYRUS_SASL
 JABBERSOURCES += auth_cyrus.c
@@ -113,38 +117,17 @@ if STATIC_JABBER
 
 st = -DPURPLE_STATIC_PRPL
 noinst_LTLIBRARIES   = libjabber.la
-libjabber_la_SOURCES = $(JABBERSOURCES) libfacebook.c libgtalk.c libxmpp.c
+libjabber_la_SOURCES = $(JABBERSOURCES)
 libjabber_la_CFLAGS  = $(AM_CFLAGS)
-libjabber_la_LIBADD  = @PURPLE_LIBS@
-libjabber_la_LDFLAGS = @PLUGIN_LDFLAGS@
-
 
 else
-
-if IS_WIN32
-lib_LTLIBRARIES = libjabber.la
-pkg_LTLIBRARIES =
-else
-pkg_LTLIBRARIES = libjabber.la
-endif
 
 st =
-pkg_LTLIBRARIES += libfacebook.la libgtalk.la libxmpp.la
-
+pkg_LTLIBRARIES      = libjabber.la
 libjabber_la_SOURCES = $(JABBERSOURCES)
 libjabber_la_LIBADD  = @PURPLE_LIBS@ $(SASL_LIBS) $(LIBXML_LIBS) $(IDN_LIBS)\
 	$(FARSTREAM_LIBS) \
 	$(GSTREAMER_LIBS)
-libjabber_la_LDFLAGS = @PLUGIN_LDFLAGS@
-
-libfacebook_la_SOURCES = libfacebook.c
-libfacebook_la_LIBADD = libjabber.la
-
-libgtalk_la_SOURCES = libgtalk.c
-libgtalk_la_LIBADD = libjabber.la
-
-libxmpp_la_SOURCES = libxmpp.c
-libxmpp_la_LIBADD = libjabber.la
 
 endif
 
@@ -153,6 +136,7 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(IDN_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(FARSTREAM_CFLAGS) \

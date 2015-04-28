@@ -26,7 +26,7 @@
 #include	"internal.h"
 #include	"debug.h"
 
-#include	"protocol.h"
+#include	"client.h"
 #include	"mxit.h"
 #include	"chunk.h"
 #include	"filexfer.h"

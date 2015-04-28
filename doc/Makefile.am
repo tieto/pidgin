@@ -13,8 +13,6 @@ man_MANS += finch.1
 endif
 
 EXTRA_DIST = \
-	PERL-HOWTO.dox \
-	TCL-HOWTO.dox \
 	funniest_home_convos.txt \
 	finch.1.in \
 	gtkrc-2.0 \

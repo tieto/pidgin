@@ -7,6 +7,8 @@ pkgdir = @PURPLE_PLUGINDIR@
 
 OSCARSOURCES = \
 	authorization.c     \
+	aim.c               \
+	aim.h               \
 	bstream.c           \
 	clientlogin.c       \
 	encoding.c          \
@@ -28,7 +30,9 @@ OSCARSOURCES = \
 	family_stats.c      \
 	family_userlookup.c \
 	flap_connection.c   \
-	misc.c         \
+	icq.c               \
+	icq.h               \
+	misc.c              \
 	msgcookie.c         \
 	odc.c               \
 	oft.c               \
@@ -50,38 +54,21 @@ OSCARSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libaim_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
-libicq_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
+liboscar_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
+
 if STATIC_OSCAR
 
 st = -DPURPLE_STATIC_PRPL
 noinst_LTLIBRARIES  = liboscar.la
-liboscar_la_SOURCES = $(OSCARSOURCES) libaim.c libicq.c
+liboscar_la_SOURCES = $(OSCARSOURCES)
 liboscar_la_CFLAGS  = $(AM_CFLAGS)
-liboscar_la_LIBADD  = @PURPLE_LIBS@
-liboscar_la_LDFLAGS = @PLUGIN_LDFLAGS@
 
 else
-
-if IS_WIN32
-lib_LTLIBRARIES = liboscar.la
-pkg_LTLIBRARIES =
-else
-pkg_LTLIBRARIES = liboscar.la
-endif
 
 st =
-pkg_LTLIBRARIES    += libaim.la libicq.la
-
+pkg_LTLIBRARIES     = liboscar.la
 liboscar_la_SOURCES = $(OSCARSOURCES)
 liboscar_la_LIBADD  = @PURPLE_LIBS@
-liboscar_la_LDFLAGS = @PLUGIN_LDFLAGS@
-
-libaim_la_SOURCES   = libaim.c
-libaim_la_LIBADD    = liboscar.la
-
-libicq_la_SOURCES   = libicq.c
-libicq_la_LIBADD    = liboscar.la
 
 endif
 
@@ -89,4 +76,5 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(DEBUG_CFLAGS)

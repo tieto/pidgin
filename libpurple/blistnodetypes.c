@@ -54,7 +54,7 @@ struct _PurpleBuddyPrivate {
 	char *local_alias;           /* The user-set alias of the buddy         */
 	char *server_alias;          /* The server-specified alias of the buddy.
 	                                (i.e. MSN "Friendly Names")             */
-	void *proto_data;            /* This allows the prpl to associate
+	void *proto_data;            /* This allows the protocol to associate
 	                                whatever data it wants with a buddy.    */
 	PurpleBuddyIcon *icon;       /* The buddy icon.                         */
 	PurpleAccount *account;      /* the account this buddy belongs to       */
@@ -667,19 +667,15 @@ purple_buddy_finalize(GObject *object)
 {
 	PurpleBuddy *buddy = PURPLE_BUDDY(object);
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
-	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 
 	/*
-	 * Tell the owner PRPL that we're about to free the buddy so it
+	 * Tell the owner protocol that we're about to free the buddy so it
 	 * can free proto_data
 	 */
-	prpl = purple_find_prpl(purple_account_get_protocol_id(priv->account));
-	if (prpl) {
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-		if (prpl_info && prpl_info->buddy_free)
-			prpl_info->buddy_free(buddy);
-	}
+	protocol = purple_protocols_find(purple_account_get_protocol_id(priv->account));
+	if (protocol)
+		purple_protocol_client_iface_buddy_free(protocol, buddy);
 
 	g_free(priv->name);
 	g_free(priv->local_alias);
@@ -1134,18 +1130,16 @@ const char *purple_chat_get_name(PurpleChat *chat)
 const char *purple_chat_get_name_only(PurpleChat *chat)
 {
 	char *ret = NULL;
-	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleChatPrivate *priv = PURPLE_CHAT_GET_PRIVATE(chat);
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(priv->account));
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	protocol = purple_protocols_find(purple_account_get_protocol_id(priv->account));
 
-	if (prpl_info->chat_info) {
-		struct proto_chat_entry *pce;
-		GList *parts = prpl_info->chat_info(purple_account_get_connection(priv->account));
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, CHAT_IFACE, info)) {
+		PurpleProtocolChatEntry *pce;
+		GList *parts = purple_protocol_chat_iface_info(protocol, purple_account_get_connection(priv->account));
 		pce = parts->data;
 		ret = g_hash_table_lookup(priv->components, pce->identifier);
 		g_list_foreach(parts, (GFunc)g_free, NULL);
@@ -1471,7 +1465,7 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 		/*
 		 * TODO: This seems like a dumb way to do this... why not just
 		 * append all children from the old group to the end of the new
-		 * one?  PRPLs might be expecting to receive an add_buddy() for
+		 * one?  Protocols might be expecting to receive an add_buddy() for
 		 * each moved buddy...
 		 */
 		while (child)
@@ -1528,25 +1522,21 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 	if (ops && ops->update)
 		ops->update(purple_blist_get_buddy_list(), PURPLE_BLIST_NODE(source));
 
-	/* Notify all PRPLs */
+	/* Notify all protocols */
 	/* TODO: Is this condition needed?  Seems like it would always be TRUE */
 	if(old_name && !purple_strequal(priv->name, old_name)) {
 		for (accts = purple_group_get_accounts(source); accts; accts = g_slist_remove(accts, accts->data)) {
 			PurpleAccount *account = accts->data;
 			PurpleConnection *gc = NULL;
-			PurplePlugin *prpl = NULL;
-			PurplePluginProtocolInfo *prpl_info = NULL;
+			PurpleProtocol *protocol = NULL;
 			GList *l = NULL, *buddies = NULL;
 
 			gc = purple_account_get_connection(account);
 
 			if(gc)
-				prpl = purple_connection_get_prpl(gc);
+				protocol = purple_connection_get_protocol(gc);
 
-			if(gc && prpl)
-				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-			if(!prpl_info)
+			if(!protocol)
 				continue;
 
 			for(l = moved_buddies; l; l = l->next) {
@@ -1556,8 +1546,8 @@ void purple_group_set_name(PurpleGroup *source, const char *name)
 					buddies = g_list_append(buddies, (PurpleBlistNode *)buddy);
 			}
 
-			if(prpl_info->rename_group) {
-				prpl_info->rename_group(gc, old_name, source, buddies);
+			if(PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, rename_group)) {
+				purple_protocol_server_iface_rename_group(protocol, gc, old_name, source, buddies);
 			} else {
 				GList *cur, *groups = NULL;
 

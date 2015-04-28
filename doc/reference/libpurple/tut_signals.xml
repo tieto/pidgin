@@ -36,7 +36,7 @@
   <link linkend="purple-signal-register"><function>purple_signal_register()</function></link>.
   Here is a slightly modified example from
   <link linkend="purple-plugins-init"><function>purple_plugins_init()</function></link>
-  in <literal>plugin.c</literal>:
+  in <literal>plugins.c</literal>:
 
 <programlisting>
 purple_signal_register(purple_plugins_get_handle(), /* Instance */

@@ -102,6 +102,7 @@ content_files = version.xml \
 	signals_log.xml \
 	signals_notify.xml \
 	signals_plugin.xml \
+	signals_protocol.xml \
 	signals_savedstatus.xml \
 	signals_sound.xml \
 	signals_xfer.xml \
@@ -123,6 +124,7 @@ GTKDOC_CFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libpurple \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
@@ -134,13 +136,16 @@ GTKDOC_CFLAGS = \
 	$(NETWORKMANAGER_CFLAGS) \
 	$(JSON_CFLAGS) \
 	$(GNUTLS_CFLAGS) \
-	$(NSS_CFLAGS)
+	$(NSS_CFLAGS) \
+	$(ZLIB_CFLAGS) \
+	$(INTROSPECTION_CFLAGS)
 
 GTKDOC_LIBS = \
 	$(top_builddir)/libpurple/libpurple.la \
 	$(STATIC_LINK_LIBS) \
 	$(DBUS_LIBS) \
 	$(GLIB_LIBS) \
+	$(GPLUGIN_LIBS) \
 	$(LIBXML_LIBS) \
 	$(NETWORKMANAGER_LIBS) \
 	$(INTLLIBS) \
@@ -152,6 +157,8 @@ GTKDOC_LIBS = \
 	$(JSON_LIBS) \
 	$(GNUTLS_LIBS) \
 	$(NSS_LIBS) \
+	$(ZLIB_LIBS) \
+	$(INTROSPECTION_LIBS) \
 	-lm
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.

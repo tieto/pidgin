@@ -4,11 +4,13 @@ EXTRA_DIST = \
 pkgdir = @PURPLE_PLUGINDIR@
 
 YAHOOSOURCES = \
-	libymsg.c \
-	libymsg.h \
 	util.c \
 	yahoochat.h \
 	yahoochat.c \
+	yahoo.c \
+	yahoo.h \
+	yahoojp.c \
+	yahoojp.h \
 	yahoo_aliases.c \
 	yahoo_aliases.h \
 	yahoo_doodle.h \
@@ -23,42 +25,27 @@ YAHOOSOURCES = \
 	yahoo_picture.h \
 	yahoo_profile.c \
 	ycht.c \
-	ycht.h
+	ycht.h \
+	ymsg.c \
+	ymsg.h
 
 AM_CFLAGS = $(st)
 
-libyahoo_la_LDFLAGS   = -module @PLUGIN_LDFLAGS@
-libyahoojp_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
+libyahoo_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if STATIC_YAHOO
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LTLIBRARIES  = libymsg.la
-libymsg_la_SOURCES = $(YAHOOSOURCES) libyahoo.c libyahoojp.c
-libymsg_la_CFLAGS  = $(AM_CFLAGS)
-libymsg_la_LDFLAGS = @PLUGIN_LDFLAGS@
+noinst_LTLIBRARIES  = libyahoo.la
+libyahoo_la_SOURCES = $(YAHOOSOURCES)
+libyahoo_la_CFLAGS  = $(AM_CFLAGS)
 
 else
-
-if IS_WIN32
-lib_LTLIBRARIES = libymsg.la
-pkg_LTLIBRARIES =
-else
-pkg_LTLIBRARIES = libymsg.la
-endif
 
 st =
-pkg_LTLIBRARIES += libyahoo.la libyahoojp.la
-
-libymsg_la_SOURCES = $(YAHOOSOURCES)
-libymsg_la_LIBADD  = @PURPLE_LIBS@
-libymsg_la_LDFLAGS = @PLUGIN_LDFLAGS@
-
-libyahoo_la_SOURCES = libyahoo.c
-libyahoo_la_LIBADD = libymsg.la
-
-libyahoojp_la_SOURCES = libyahoojp.c
-libyahoojp_la_LIBADD = libymsg.la
+pkg_LTLIBRARIES     = libyahoo.la
+libyahoo_la_SOURCES = $(YAHOOSOURCES)
+libyahoo_la_LIBADD  = @PURPLE_LIBS@
 
 endif
 
@@ -66,4 +53,5 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(DEBUG_CFLAGS)

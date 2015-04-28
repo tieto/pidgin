@@ -430,12 +430,12 @@ parse_substatus(PurpleXmlNode *substatus)
  *   And I can always make them smile
  *   From White Castle to the Nile</message>
  *       <substatus>
- *           <account protocol='prpl-aim'>markdoliner</account>
+ *           <account protocol='aim'>markdoliner</account>
  *           <state>available</state>
  *           <message>The ladies man is here to answer your queries.</message>
  *       </substatus>
  *       <substatus>
- *           <account protocol='prpl-aim'>giantgraypanda</account>
+ *           <account protocol='aim'>giantgraypanda</account>
  *           <state>away</state>
  *           <message>A.C. ain't in charge no more.</message>
  *       </substatus>

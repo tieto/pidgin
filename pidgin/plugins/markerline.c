@@ -21,10 +21,11 @@
 
 #define PLUGIN_ID			"gtk-plugin_pack-markerline"
 #define PLUGIN_NAME			N_("Markerline")
+#define PLUGIN_CATEGORY		N_("User interface")
 #define PLUGIN_STATIC_NAME	Markerline
 #define PLUGIN_SUMMARY		N_("Draw a line to indicate new messages in a conversation.")
 #define PLUGIN_DESCRIPTION	N_("Draw a line to indicate new messages in a conversation.")
-#define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"
+#define PLUGIN_AUTHORS		{"Sadrul H Chowdhury <sadrul@users.sourceforge.net>", NULL}
 
 /* System headers */
 #include <gdk/gdk.h>
@@ -171,27 +172,6 @@ conv_menu_cb(PurpleConversation *conv, GList **list)
 	*list = g_list_append(*list, action);
 }
 
-static gboolean
-plugin_load(PurplePlugin *plugin)
-{
-	attach_to_all_windows();
-
-	purple_signal_connect(pidgin_conversations_get_handle(), "conversation-displayed",
-						plugin, PURPLE_CALLBACK(conv_created), NULL);
-
-	purple_signal_connect(purple_conversations_get_handle(), "conversation-extended-menu",
-						plugin, PURPLE_CALLBACK(conv_menu_cb), NULL);
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin)
-{
-	detach_from_all_windows();
-
-	return TRUE;
-}
-
 static PurplePluginPrefFrame *
 get_plugin_pref_frame(PurplePlugin *plugin)
 {
@@ -214,57 +194,49 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 	return frame;
 }
 
-static PurplePluginUiInfo prefs_info = {
-	get_plugin_pref_frame,
-	NULL,
+static PidginPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = PLUGIN_AUTHORS;
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+	return pidgin_plugin_info_new(
+		"id",             PLUGIN_ID,
+		"name",           PLUGIN_NAME,
+		"version",        DISPLAY_VERSION,
+		"category",       PLUGIN_CATEGORY,
+		"summary",        PLUGIN_SUMMARY,
+		"description",    PLUGIN_DESCRIPTION,
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
+		NULL
+	);
+}
 
-static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,			/* Magic				*/
-	PURPLE_MAJOR_VERSION,			/* Purple Major Version	*/
-	PURPLE_MINOR_VERSION,			/* Purple Minor Version	*/
-	PURPLE_PLUGIN_STANDARD,		/* plugin type			*/
-	PIDGIN_PLUGIN_TYPE,		/* ui requirement		*/
-	0,							/* flags				*/
-	NULL,						/* dependencies			*/
-	PURPLE_PRIORITY_DEFAULT,		/* priority				*/
-
-	PLUGIN_ID,					/* plugin id			*/
-	PLUGIN_NAME,			/* name					*/
-	DISPLAY_VERSION,				/* version				*/
-	PLUGIN_SUMMARY,			/* summary				*/
-	PLUGIN_DESCRIPTION,		/* description			*/
-	PLUGIN_AUTHOR,				/* author				*/
-	PURPLE_WEBSITE,				/* website				*/
-
-	plugin_load,				/* load					*/
-	plugin_unload,				/* unload				*/
-	NULL,						/* destroy				*/
-
-	NULL,						/* ui_info				*/
-	NULL,						/* extra_info			*/
-	&prefs_info,				/* prefs_info			*/
-	NULL,						/* actions				*/
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	purple_prefs_add_none(PREF_PREFIX);
 	purple_prefs_add_bool(PREF_IMS, FALSE);
 	purple_prefs_add_bool(PREF_CHATS, TRUE);
+
+	attach_to_all_windows();
+
+	purple_signal_connect(pidgin_conversations_get_handle(), "conversation-displayed",
+						plugin, PURPLE_CALLBACK(conv_created), NULL);
+
+	purple_signal_connect(purple_conversations_get_handle(), "conversation-extended-menu",
+						plugin, PURPLE_CALLBACK(conv_menu_cb), NULL);
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	detach_from_all_windows();
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(PLUGIN_STATIC_NAME, plugin_query, plugin_load, plugin_unload);

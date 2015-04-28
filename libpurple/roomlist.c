@@ -54,7 +54,7 @@ struct _PurpleRoomlistRoom {
 	gchar *name; /* The name of the room. */
 	GList *fields; /* Other fields. */
 	PurpleRoomlistRoom *parent; /* The parent room, or NULL. */
-	gboolean expanded_once; /* A flag the UI uses to avoid multiple expand prpl cbs. */
+	gboolean expanded_once; /* A flag the UI uses to avoid multiple expand protocol cbs. */
 };
 
 /*
@@ -155,19 +155,15 @@ void purple_roomlist_room_add(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 
 PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc)
 {
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 
 	g_return_val_if_fail(PURPLE_IS_CONNECTION(gc), NULL);
 	g_return_val_if_fail(PURPLE_CONNECTION_IS_CONNECTED(gc), NULL);
 
-	prpl = purple_connection_get_prpl(gc);
+	protocol = purple_connection_get_protocol(gc);
 
-	if(prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if(prpl_info && prpl_info->roomlist_get_list)
-		return prpl_info->roomlist_get_list(gc);
+	if(protocol)
+		return purple_protocol_roomlist_iface_get_list(protocol, gc);
 
 	return NULL;
 }
@@ -175,8 +171,7 @@ PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc)
 void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 {
 	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc;
 
 	g_return_if_fail(priv != NULL);
@@ -186,20 +181,16 @@ void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 
 	if(gc)
-		prpl = purple_connection_get_prpl(gc);
+		protocol = purple_connection_get_protocol(gc);
 
-	if(prpl)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if(prpl_info && prpl_info->roomlist_cancel)
-		prpl_info->roomlist_cancel(list);
+	if(protocol)
+		purple_protocol_roomlist_iface_cancel(protocol, list);
 }
 
 void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *category)
 {
 	PurpleRoomlistPrivate *priv = PURPLE_ROOMLIST_GET_PRIVATE(list);
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc;
 
 	g_return_if_fail(priv != NULL);
@@ -210,13 +201,10 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
 	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 
 	if(gc)
-		prpl = purple_connection_get_prpl(gc);
+		protocol = purple_connection_get_protocol(gc);
 
-	if(prpl)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if(prpl_info && prpl_info->roomlist_expand_category)
-		prpl_info->roomlist_expand_category(list, category);
+	if(protocol)
+		purple_protocol_roomlist_iface_expand_category(protocol, list, category);
 }
 
 GList * purple_roomlist_get_fields(PurpleRoomlist *list)
@@ -411,12 +399,26 @@ purple_roomlist_get_type(void)
 
 PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
 {
+	PurpleRoomlist *list;
+	PurpleProtocol *protocol;
+
 	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 
-	return g_object_new(PURPLE_TYPE_ROOMLIST,
-		"account", account,
-		NULL
-	);
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
+
+	g_return_val_if_fail(PURPLE_IS_PROTOCOL(protocol), NULL);
+
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, FACTORY_IFACE, roomlist_new))
+		list = purple_protocol_factory_iface_roomlist_new(protocol, account);
+	else
+		list = g_object_new(PURPLE_TYPE_ROOMLIST,
+			"account", account,
+			NULL
+		);
+
+	g_return_val_if_fail(list != NULL, NULL);
+
+	return list;
 }
 
 /**************************************************************************/

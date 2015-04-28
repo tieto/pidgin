@@ -7,7 +7,7 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/tokentype.h>
-#include "plugin.h"
+#include "plugins.h"
 #include "debug.h"
 
 typedef struct {

@@ -286,14 +286,8 @@ pidgin_blist_theme_edit(PurplePluginAction *unused)
 	g_object_unref(group);
 }
 
-static gboolean
-plugin_load(PurplePlugin *plugin)
-{
-	return TRUE;
-}
-
 static GList *
-actions(PurplePlugin *plugin, gpointer context)
+actions(PurplePlugin *plugin)
 {
 	GList *l = NULL;
 	PurplePluginAction *act = NULL;
@@ -306,46 +300,39 @@ actions(PurplePlugin *plugin, gpointer context)
 	return l;
 }
 
-static PurplePluginInfo info =
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                /**< type           */
-	PIDGIN_PLUGIN_TYPE,                    /**< ui_requirement */
-	0,                                     /**< flags          */
-	NULL,                                  /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,               /**< priority       */
+	const gchar * const authors[] = {
+		"Sadrul Habib Chowdhury <imadil@gmail.com>",
+		NULL
+	};
 
-	PLUGIN_ID,                             /**< id             */
-	N_("Pidgin Theme Editor"),             /**< name           */
-	DISPLAY_VERSION,                       /**< version        */
-	/**  summary        */
-	N_("Pidgin Theme Editor."),
-	/**  description    */
-	N_("Pidgin Theme Editor"),
-	"Sadrul Habib Chowdhury <imadil@gmail.com>",        /**< author         */
-	PURPLE_WEBSITE,                        /**< homepage       */
-
-	plugin_load,                           /**< load           */
-	NULL,                                  /**< unload         */
-	NULL,                                  /**< destroy        */
-
-	NULL,                                  /**< ui_info        */
-	NULL,                                  /**< extra_info     */
-	NULL,
-	actions,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
+	return pidgin_plugin_info_new(
+		"id",           PLUGIN_ID,
+		"name",         N_("Pidgin Theme Editor"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Theming"),
+		"summary",      N_("Pidgin Theme Editor"),
+		"description",  N_("Pidgin Theme Editor."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"actions-cb",   actions,
+		NULL
+	);
 }
 
-PURPLE_INIT_PLUGIN(themeeditor, init_plugin, info)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(themeeditor, plugin_query, plugin_load, plugin_unload);

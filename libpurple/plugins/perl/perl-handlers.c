@@ -625,7 +625,7 @@ perl_cmd_cb(PurpleConversation *conv, const gchar *command,
 PurpleCmdId
 purple_perl_cmd_register(PurplePlugin *plugin, const gchar *command,
                        const gchar *args, PurpleCmdPriority priority,
-                       PurpleCmdFlag flag, const gchar *prpl_id, SV *callback,
+                       PurpleCmdFlag flag, const gchar *protocol_id, SV *callback,
                        const gchar *helpstr, SV *data)
 {
 	PurplePerlCmdHandler *handler;
@@ -633,7 +633,7 @@ purple_perl_cmd_register(PurplePlugin *plugin, const gchar *command,
 	handler          = g_new0(PurplePerlCmdHandler, 1);
 	handler->plugin  = plugin;
 	handler->cmd     = g_strdup(command);
-	handler->prpl_id = g_strdup(prpl_id);
+	handler->protocol_id = g_strdup(protocol_id);
 
 	if (callback != NULL && callback != &PL_sv_undef)
 		handler->callback = newSVsv(callback);
@@ -647,7 +647,7 @@ purple_perl_cmd_register(PurplePlugin *plugin, const gchar *command,
 
 	cmd_handlers = g_slist_append(cmd_handlers, handler);
 
-	handler->id = purple_cmd_register(command, args, priority, flag, prpl_id,
+	handler->id = purple_cmd_register(command, args, priority, flag, protocol_id,
 	                                PURPLE_CMD_FUNC(perl_cmd_cb), helpstr,
 	                                handler);
 
@@ -667,7 +667,7 @@ destroy_cmd_handler(PurplePerlCmdHandler *handler)
 		SvREFCNT_dec(handler->data);
 
 	g_free(handler->cmd);
-	g_free(handler->prpl_id);
+	g_free(handler->protocol_id);
 	g_free(handler);
 }
 

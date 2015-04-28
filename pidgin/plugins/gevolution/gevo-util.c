@@ -29,11 +29,11 @@ void
 gevo_add_buddy(PurpleAccount *account, const char *group_name,
 			   const char *buddy_name, const char *alias)
 {
-	PurpleIMConversation *conv = NULL;
+	PurpleIMConversation *im = NULL;
 	PurpleBuddy *buddy;
 	PurpleGroup *group;
 
-	conv = purple_conversations_find_im_with_account(buddy_name, account);
+	im = purple_conversations_find_im_with_account(buddy_name, account);
 
 	group = purple_blist_find_group(group_name);
 	if (group == NULL)
@@ -51,10 +51,10 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 
 	purple_account_add_buddy(account, buddy, NULL);
 
-	if (conv != NULL)
+	if (im != NULL)
 	{
-		purple_buddy_icon_update(purple_im_conversation_get_icon(conv));
-		purple_conversation_update(PURPLE_CONVERSATION(conv),
+		purple_buddy_icon_update(purple_im_conversation_get_icon(im));
+		purple_conversation_update(PURPLE_CONVERSATION(im),
 			PURPLE_CONVERSATION_UPDATE_ADD);
 	}
 }
@@ -90,7 +90,7 @@ gevo_get_groups(void)
 }
 
 EContactField
-gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy)
+gevo_protocol_get_field(PurpleAccount *account, PurpleBuddy *buddy)
 {
 	EContactField protocol_field = 0;
 	const char *protocol_id;
@@ -118,9 +118,9 @@ gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy)
 }
 
 gboolean
-gevo_prpl_is_supported(PurpleAccount *account, PurpleBuddy *buddy)
+gevo_protocol_is_supported(PurpleAccount *account, PurpleBuddy *buddy)
 {
-	return (gevo_prpl_get_field(account, buddy) != 0);
+	return (gevo_protocol_get_field(account, buddy) != 0);
 }
 
 gboolean
@@ -191,14 +191,14 @@ gevo_get_email_for_buddy(PurpleBuddy *buddy)
 	if (mail == NULL)
 	{
 		PurpleAccount *account = purple_buddy_get_account(buddy);
-		const char *prpl_id = purple_account_get_protocol_id(account);
+		const char *protocol_id = purple_account_get_protocol_id(account);
 
-		if (!strcmp(prpl_id, "prpl-msn"))
+		if (!strcmp(protocol_id, "prpl-msn"))
 		{
 			mail = g_strdup(purple_normalize(account,
 										   purple_buddy_get_name(buddy)));
 		}
-		else if (!strcmp(prpl_id, "prpl-yahoo"))
+		else if (!strcmp(protocol_id, "prpl-yahoo"))
 		{
 			mail = g_strdup_printf("%s@yahoo.com",
 								   purple_normalize(account,

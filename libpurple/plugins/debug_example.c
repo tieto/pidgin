@@ -35,14 +35,32 @@
 /* Common practice in third-party plugins is to define convenience macros for
  * many of the fields of the plugin info struct, so we'll do that for the
  * purposes of demonstration. */
-#define PLUGIN_AUTHOR "John Bailey <rekkanoryo@cpw.pidgin.im>"
+#define PLUGIN_AUTHORS { "John Bailey <rekkanoryo@cpw.pidgin.im>", NULL }
 
-/* As we've covered before, libpurple calls this function, if present, when it
- * loads the plugin.  Here we're using it to show off the capabilities of the
- * debug API and just blindly returning TRUE to tell libpurple it's safe to
- * continue loading. */
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = PLUGIN_AUTHORS;
+
+	return purple_plugin_info_new(
+		"id",           PLUGIN_ID,
+		"name",         "Debug API Example",
+		"version",      DISPLAY_VERSION,
+		"category",     "Example",
+		"summary",      "Debug API Example",
+		"description",  "Debug API Example",
+		"authors",      authors,
+		"website",      "https://pidgin.im",
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
+/* As we've covered before, this function is called when the plugin is loaded.
+ * Here we're using it to show off the capabilities of the debug API and just
+ * blindly returning TRUE to tell libpurple it's safe to continue loading. */
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	/* Define these for convenience--we're just using them to show the
 	 * similarities of the debug functions to the standard printf(). */
@@ -74,42 +92,10 @@ plugin_load(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,        /* magic number */
-	PURPLE_MAJOR_VERSION,       /* purple major */
-	PURPLE_MINOR_VERSION,       /* purple minor */
-	PURPLE_PLUGIN_STANDARD,     /* plugin type */
-	NULL,                       /* UI requirement */
-	0,                          /* flags */
-	NULL,                       /* dependencies */
-	PURPLE_PRIORITY_DEFAULT,    /* priority */
-
-	PLUGIN_ID,                  /* id */
-	"Debug API Example",        /* name */
-	DISPLAY_VERSION,            /* version */
-	"Debug API Example",        /* summary */
-	"Debug API Example",        /* description */
-	PLUGIN_AUTHOR,              /* author */
-	"https://pidgin.im",         /* homepage */
-
-	plugin_load,                /* load */
-	NULL,                       /* unload */
-	NULL,                       /* destroy */
-
-	NULL,                       /* ui info */
-	NULL,                       /* extra info */
-	NULL,                       /* prefs info */
-	NULL,                       /* actions */
-	NULL,                       /* reserved */
-	NULL,                       /* reserved */
-	NULL,                       /* reserved */
-	NULL                        /* reserved */
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(debugexample, init_plugin, info)
-
+PURPLE_PLUGIN_INIT(debugexample, plugin_query, plugin_load, plugin_unload);

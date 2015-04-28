@@ -271,7 +271,7 @@ jabber_adhoc_got_server_list(JabberStream *js, const char *from, PurpleXmlNode *
 	}
 
 	if (js->state == JABBER_STREAM_CONNECTED)
-		purple_prpl_got_account_actions(purple_connection_get_account(js->gc));
+		purple_protocol_got_account_actions(purple_connection_get_account(js->gc));
 }
 
 static void
@@ -320,10 +320,10 @@ void jabber_adhoc_execute(JabberStream *js, JabberAdHocCommands *cmd) {
 	jabber_iq_send(iq);
 }
 
-static void jabber_adhoc_server_execute(PurplePluginAction *action) {
+static void jabber_adhoc_server_execute(PurpleProtocolAction *action) {
 	JabberAdHocCommands *cmd = action->user_data;
 	if(cmd) {
-		PurpleConnection *gc = (PurpleConnection *) action->context;
+		PurpleConnection *gc = (PurpleConnection *) action->connection;
 		JabberStream *js = purple_connection_get_protocol_data(gc);
 
 		jabber_adhoc_execute(js, cmd);
@@ -344,7 +344,7 @@ void jabber_adhoc_init_server_commands(JabberStream *js, GList **m) {
 			for(riter = jbr->commands; riter; riter = g_list_next(riter)) {
 				JabberAdHocCommands *cmd = riter->data;
 				char *cmdname = g_strdup_printf("%s (%s)",cmd->name,jbr->name);
-				PurplePluginAction *act = purple_plugin_action_new(cmdname, jabber_adhoc_server_execute);
+				PurpleProtocolAction *act = purple_protocol_action_new(cmdname, jabber_adhoc_server_execute);
 				act->user_data = cmd;
 				*m = g_list_append(*m, act);
 				g_free(cmdname);
@@ -356,7 +356,7 @@ void jabber_adhoc_init_server_commands(JabberStream *js, GList **m) {
 	/* now add server commands */
 	for(cmdlst = js->commands; cmdlst; cmdlst = g_list_next(cmdlst)) {
 		JabberAdHocCommands *cmd = cmdlst->data;
-		PurplePluginAction *act = purple_plugin_action_new(cmd->name, jabber_adhoc_server_execute);
+		PurpleProtocolAction *act = purple_protocol_action_new(cmd->name, jabber_adhoc_server_execute);
 		act->user_data = cmd;
 		*m = g_list_append(*m, act);
 	}

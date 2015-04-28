@@ -24,7 +24,7 @@
 #include "debug.h"
 #include "glibcompat.h"
 #include "notify.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "prefs.h"
 #include "util.h"
 
@@ -3372,15 +3372,11 @@ purple_normalize(const PurpleAccount *account, const char *str)
 
 	if (account != NULL)
 	{
-		PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+		PurpleProtocol *protocol =
+				purple_protocols_find(purple_account_get_protocol_id(account));
 
-		if (prpl != NULL)
-		{
-			PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-			if (prpl_info->normalize)
-				ret = prpl_info->normalize(account, str);
-		}
+		if (protocol != NULL)
+			ret = purple_protocol_client_iface_normalize(protocol, account, str);
 	}
 
 	if (ret == NULL)
@@ -3399,7 +3395,7 @@ purple_normalize(const PurpleAccount *account, const char *str)
 
 /*
  * You probably don't want to call this directly, it is
- * mainly for use as a PRPL callback function.  See the
+ * mainly for use as a protocol callback function.  See the
  * comments in util.h.
  */
 const char *
@@ -3420,23 +3416,21 @@ purple_normalize_nocase(const PurpleAccount *account, const char *str)
 }
 
 gboolean
-purple_validate(const PurplePlugin *prpl, const char *str)
+purple_validate(const PurpleProtocol *protocol, const char *str)
 {
-	PurplePluginProtocolInfo *prpl_info;
 	const char *normalized;
 
-	g_return_val_if_fail(prpl != NULL, FALSE);
+	g_return_val_if_fail(protocol != NULL, FALSE);
 	g_return_val_if_fail(str != NULL, FALSE);
 
 	if (str[0] == '\0')
 		return FALSE;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (!prpl_info->normalize)
+	if (!PURPLE_PROTOCOL_IMPLEMENTS(protocol, CLIENT_IFACE, normalize))
 		return TRUE;
 
-	normalized = prpl_info->normalize(NULL, str);
+	normalized = purple_protocol_client_iface_normalize(PURPLE_PROTOCOL(protocol),
+			NULL, str);
 
 	return (NULL != normalized);
 }

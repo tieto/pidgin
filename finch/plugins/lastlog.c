@@ -23,7 +23,7 @@
 
 #include "internal.h"
 
-#include <plugin.h>
+#include <plugins.h>
 #include <version.h>
 
 #include <cmds.h>
@@ -91,8 +91,30 @@ lastlog_cb(PurpleConversation *conv, const char *cmd, char **args, char **error,
 	return PURPLE_CMD_RET_OK;
 }
 
+static FinchPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>",
+		NULL
+	};
+
+	return finch_plugin_info_new(
+		"id",           "gntlastlog",
+		"name",         N_("GntLastlog"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Utility"),
+		"summary",      N_("Lastlog plugin."),
+		"description",  N_("Lastlog plugin."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	cmd = purple_cmd_register("lastlog", "s", PURPLE_CMD_P_DEFAULT,
 			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
@@ -102,48 +124,10 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	purple_cmd_unregister(cmd);
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	FINCH_PLUGIN_TYPE,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	"gntlastlog",
-	N_("GntLastlog"),
-	DISPLAY_VERSION,
-	N_("Lastlog plugin."),
-	N_("Lastlog plugin."),
-	"Sadrul H Chowdhury <sadrul@users.sourceforge.net>",
-	PURPLE_WEBSITE,
-	plugin_load,
-	plugin_unload,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
-
+PURPLE_PLUGIN_INIT(PLUGIN_STATIC_NAME, plugin_query, plugin_load, plugin_unload);

@@ -76,28 +76,7 @@ enum {
 static JingleContentClass *parent_class = NULL;
 static GParamSpec *properties[PROP_LAST];
 
-GType
-jingle_rtp_get_type()
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		static const GTypeInfo info = {
-			sizeof(JingleRtpClass),
-			NULL,
-			NULL,
-			(GClassInitFunc) jingle_rtp_class_init,
-			NULL,
-			NULL,
-			sizeof(JingleRtp),
-			0,
-			(GInstanceInitFunc) jingle_rtp_init,
-			NULL
-		};
-		type = g_type_register_static(JINGLE_TYPE_CONTENT, "JingleRtp", &info, 0);
-	}
-	return type;
-}
+PURPLE_DEFINE_TYPE(JingleRtp, jingle_rtp, JINGLE_TYPE_CONTENT);
 
 static void
 jingle_rtp_class_init (JingleRtpClass *klass)
@@ -220,7 +199,7 @@ jingle_rtp_get_media(JingleSession *session)
 
 	for (; iter; iter = g_list_delete_link(iter, iter)) {
 		JingleSession *media_session =
-				purple_media_get_prpl_data(iter->data);
+				purple_media_get_protocol_data(iter->data);
 		if (media_session == session) {
 			media = iter->data;
 			break;
@@ -430,7 +409,7 @@ jingle_rtp_create_media(JingleContent *content)
 		return NULL;
 	}
 
-	purple_media_set_prpl_data(media, session);
+	purple_media_set_protocol_data(media, session);
 
 	/* connect callbacks */
 	g_signal_connect(G_OBJECT(media), "candidates-prepared",

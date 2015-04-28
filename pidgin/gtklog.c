@@ -684,7 +684,7 @@ void pidgin_log_show(PurpleLogType type, const char *buddyname, PurpleAccount *a
 	PidginLogViewer *lv = NULL;
 	const char *name = buddyname;
 	char *title;
-	GdkPixbuf *prpl_icon;
+	GdkPixbuf *protocol_icon;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(buddyname != NULL);
@@ -722,14 +722,14 @@ void pidgin_log_show(PurpleLogType type, const char *buddyname, PurpleAccount *a
 		title = g_strdup_printf(_("Conversations with %s"), name);
 	}
 
-	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
+	protocol_icon = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_MEDIUM);
 
 	display_log_viewer(ht, purple_log_get_logs(type, buddyname, account),
-			title, gtk_image_new_from_pixbuf(prpl_icon),
+			title, gtk_image_new_from_pixbuf(protocol_icon),
 			purple_log_get_total_size(type, buddyname, account));
 
-	if (prpl_icon)
-		g_object_unref(prpl_icon);
+	if (protocol_icon)
+		g_object_unref(protocol_icon);
 	g_free(title);
 }
 
@@ -817,7 +817,7 @@ void pidgin_syslog_show()
 	for(accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 
 		PurpleAccount *account = (PurpleAccount *)accounts->data;
-		if(purple_find_prpl(purple_account_get_protocol_id(account)) == NULL)
+		if(purple_protocols_find(purple_account_get_protocol_id(account)) == NULL)
 			continue;
 
 		logs = g_list_concat(purple_log_get_system_logs(account), logs);

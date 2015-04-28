@@ -53,7 +53,7 @@ typedef void (*PurpleGetPublicAliasFailureCallback)(PurpleAccount *account, cons
 #include "connection.h"
 #include "log.h"
 #include "proxy.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "status.h"
 #include "keyring.h"
 #include "xmlnode.h"

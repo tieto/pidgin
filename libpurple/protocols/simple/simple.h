@@ -32,7 +32,7 @@
 #include "dnssrv.h"
 #include "network.h"
 #include "proxy.h"
-#include "prpl.h"
+#include "protocol.h"
 
 #include "sipmsg.h"
 
@@ -45,6 +45,23 @@
 
 #define PUBLISH_EXPIRATION 600
 #define SUBSCRIBE_EXPIRATION 1200
+
+#define SIMPLE_TYPE_PROTOCOL             (simple_protocol_get_type())
+#define SIMPLE_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), SIMPLE_TYPE_PROTOCOL, SIMPLEProtocol))
+#define SIMPLE_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), SIMPLE_TYPE_PROTOCOL, SIMPLEProtocolClass))
+#define SIMPLE_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), SIMPLE_TYPE_PROTOCOL))
+#define SIMPLE_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), SIMPLE_TYPE_PROTOCOL))
+#define SIMPLE_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), SIMPLE_TYPE_PROTOCOL, SIMPLEProtocolClass))
+
+typedef struct _SIMPLEProtocol
+{
+	PurpleProtocol parent;
+} SIMPLEProtocol;
+
+typedef struct _SIMPLEProtocolClass
+{
+	PurpleProtocolClass parent_class;
+} SIMPLEProtocolClass;
 
 struct sip_dialog {
 	gchar *ourtag;
@@ -136,5 +153,7 @@ struct transaction {
 	struct sipmsg *msg;
 	TransCallback callback;
 };
+
+G_MODULE_EXPORT GType simple_protocol_get_type(void);
 
 #endif /* _PURPLE_SIMPLE_H */

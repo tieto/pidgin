@@ -163,55 +163,39 @@ get_config_frame(PurplePlugin *plugin)
 	return ret;
 }
 
-static PidginPluginUiInfo ui_info =
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	get_config_frame,
-	/* Padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+	const gchar * const authors[] = {
+		"Etan Reisner <deryni@eden.rutgers.edu>",
+		NULL
+	};
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                         /**< type           */
-	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
-	0,                                              /**< flags          */
-	NULL,                                           /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                        /**< priority       */
-
-	CONTACT_PRIORITY_PLUGIN_ID,                     /**< id             */
-	N_("Contact Priority"),                         /**< name           */
-	DISPLAY_VERSION,                                /**< version        */
-                                                    /**< summary        */
-	N_("Allows for controlling the values associated with different buddy states."),
-                                                    /**< description    */
-	N_("Allows for changing the point values of idle/away/offline states for buddies in contact priority computations."),
-	"Etan Reisner <deryni@eden.rutgers.edu>",       /**< author         */
-	PURPLE_WEBSITE,                                 /**< homepage       */
-
-	NULL,                                           /**< load           */
-	NULL,                                           /**< unload         */
-	NULL,                                           /**< destroy        */
-	&ui_info,                                       /**< ui_info        */
-	NULL,                                           /**< extra_info     */
-	NULL,                                           /**< prefs_info     */
-	NULL,                                           /**< actions        */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
+	return pidgin_plugin_info_new(
+		"id",                   CONTACT_PRIORITY_PLUGIN_ID,
+		"name",                 N_("Contact Priority"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("Utility"),
+		"summary",              N_("Allows for controlling the values associated with different buddy states."),
+		"description",          N_("Allows for changing the point values of idle/away/offline states for buddies in contact priority computations."),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"gtk-config-frame-cb",  get_config_frame,
+		NULL
+	);
 }
 
-PURPLE_INIT_PLUGIN(contactpriority, init_plugin, info)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(contactpriority, plugin_query, plugin_load, plugin_unload);

@@ -68,28 +68,7 @@ enum {
 static GObjectClass *parent_class = NULL;
 static GParamSpec *properties[PROP_LAST];
 
-GType
-jingle_session_get_type()
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		static const GTypeInfo info = {
-			sizeof(JingleSessionClass),
-			NULL,
-			NULL,
-			(GClassInitFunc) jingle_session_class_init,
-			NULL,
-			NULL,
-			sizeof(JingleSession),
-			0,
-			(GInstanceInitFunc) jingle_session_init,
-			NULL
-		};
-		type = g_type_register_static(G_TYPE_OBJECT, "JingleSession", &info, 0);
-	}
-	return type;
-}
+PURPLE_DEFINE_TYPE(JingleSession, jingle_session, G_TYPE_OBJECT);
 
 static void
 jingle_session_class_init (JingleSessionClass *klass)

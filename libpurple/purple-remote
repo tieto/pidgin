@@ -70,8 +70,8 @@ Examples of commands:
     getstatusmessage
     quit
 
-    PurpleAccountsFindConnected?name=&protocol=prpl-jabber
-    PurpleAccountsFindConnected(,prpl-jabber)
+    PurpleAccountsFindConnected?name=&protocol=jabber
+    PurpleAccountsFindConnected(,jabber)
 """ % sys.argv[0]
     if (requested):
         sys.exit(0)

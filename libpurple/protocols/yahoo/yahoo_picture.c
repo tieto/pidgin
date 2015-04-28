@@ -28,11 +28,11 @@
 #include "buddylist.h"
 #include "debug.h"
 #include "http.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "proxy.h"
 #include "util.h"
 
-#include "libymsg.h"
+#include "ymsg.h"
 #include "yahoo_packet.h"
 #include "yahoo_friend.h"
 #include "yahoo_picture.h"

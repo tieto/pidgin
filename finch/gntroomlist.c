@@ -108,15 +108,15 @@ static void fl_add_chat(GntWidget *button, gpointer null)
 	char *name;
 	PurpleRoomlistRoom *room = gnt_tree_get_selection_data(GNT_TREE(froomlist.tree));
 	PurpleConnection *gc = purple_account_get_connection(froomlist.account);
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 
 	if (gc == NULL || room == NULL)
 		return;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+	protocol = purple_connection_get_protocol(gc);
 
-	if(prpl_info != NULL && prpl_info->roomlist_room_serialize)
-		name = prpl_info->roomlist_room_serialize(room);
+	if(protocol != NULL && PURPLE_PROTOCOL_IMPLEMENTS(protocol, ROOMLIST_IFACE, room_serialize))
+		name = purple_protocol_roomlist_iface_room_serialize(protocol, room);
 	else
 		name = g_strdup(purple_roomlist_room_get_name(room));
 
@@ -232,12 +232,12 @@ reset_account_list(PurpleAccount *account)
 	GntComboBox *accounts = GNT_COMBO_BOX(froomlist.accounts);
 	gnt_combo_box_remove_all(accounts);
 	for (list = purple_connections_get_all(); list; list = list->next) {
-		PurplePluginProtocolInfo *prpl_info = NULL;
+		PurpleProtocol *protocol = NULL;
 		PurpleConnection *gc = list->data;
 
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+		protocol = purple_connection_get_protocol(gc);
 		if (PURPLE_CONNECTION_IS_CONNECTED(gc) &&
-		        prpl_info->roomlist_get_list != NULL) {
+		        PURPLE_PROTOCOL_IMPLEMENTS(protocol, ROOMLIST_IFACE, get_list)) {
 			PurpleAccount *account = purple_connection_get_account(gc);
 			char *text = g_strdup_printf("%s (%s)",
 					purple_account_get_username(account),

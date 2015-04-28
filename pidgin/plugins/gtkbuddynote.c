@@ -42,59 +42,7 @@ append_to_tooltip(PurpleBlistNode *node, GString *text, gboolean full)
 	}
 }
 
-static gboolean
-plugin_load(PurplePlugin *plugin)
-{
-	purple_signal_connect(pidgin_blist_get_handle(), "drawing-tooltip",
-	                      plugin, PURPLE_CALLBACK(append_to_tooltip), NULL);
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin)
-{
-	PurplePlugin *buddynote = NULL;
-
-	buddynote = purple_plugins_find_with_id("core-plugin_pack-buddynote");
-
-	purple_plugin_unload(buddynote);
-
-	return TRUE;
-}
-
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,                           /**< major version */
-	PURPLE_MINOR_VERSION,                           /**< minor version */
-	PURPLE_PLUGIN_STANDARD,                         /**< type */
-	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
-	0,                                              /**< flags */
-	NULL,                                           /**< dependencies */
-	PURPLE_PRIORITY_DEFAULT,                        /**< priority */
-	"gtkbuddynote",                                 /**< id */
-	N_("Buddy Notes"),                              /**< name */
-	DISPLAY_VERSION,                                /**< version */
-	N_("Store notes on particular buddies."),       /**< summary */
-	N_("Adds the option to store notes for buddies "
-	   "on your buddy list."),                      /**< description */
-	"Etan Reisner <deryni@pidgin.im>",              /**< author */
-	PURPLE_WEBSITE,                                 /**< homepage */
-	plugin_load,                                    /**< load */
-	plugin_unload,                                  /**< unload */
-	NULL,                                           /**< destroy */
-	NULL,                                           /**< ui_info */
-	NULL,                                           /**< extra_info */
-	NULL,                                           /**< prefs_info */
-	NULL,                                           /**< actions */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
+#if 0
 static gboolean
 check_for_buddynote(gpointer data)
 {
@@ -130,16 +78,55 @@ check_for_buddynote(gpointer data)
 
 	return FALSE;
 }
+#endif
 
-static void
-init_plugin(PurplePlugin *plugin)
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
-	/* Use g_idle_add so that the rest of the plugins can get loaded
-	 * before we do our check. */
-	g_idle_add(check_for_buddynote, plugin);
+	const gchar * const authors[] = {
+		"Etan Reisner <deryni@pidgin.im>",
+		NULL
+	};
 
-	info.dependencies = g_list_append(info.dependencies,
-	                                  "core-plugin_pack-buddynote");
+	const gchar * const dependencies[] = {
+		"core-plugin_pack-buddynote",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",            "gtkbuddynote",
+		"name",          N_("Buddy Note Tooltips"),
+		"version",       DISPLAY_VERSION,
+		"category",      N_("User interface"),
+		"summary",       N_("Shows stored buddy notes on the buddy's tooltip."),
+		"description",   N_("Shows stored buddy notes on the buddy's tooltip."),
+		"authors",       authors,
+		"website",       PURPLE_WEBSITE,
+		"abi-version",   PURPLE_ABI_VERSION,
+		"dependencies",  dependencies,
+		NULL
+	);
 }
 
-PURPLE_INIT_PLUGIN(gtkbuddynote, init_plugin, info)
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	purple_signal_connect(pidgin_blist_get_handle(), "drawing-tooltip",
+	                      plugin, PURPLE_CALLBACK(append_to_tooltip), NULL);
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+#if 0
+	PurplePlugin *buddynote = NULL;
+
+	buddynote = purple_plugins_find_with_id("core-plugin_pack-buddynote");
+	purple_plugin_unload(buddynote);
+#endif
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(gtkbuddynote, plugin_query, plugin_load, plugin_unload);

@@ -20,7 +20,7 @@
  */
 #include "internal.h"
 #include "debug.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 
 #ifdef _WIN32
@@ -414,9 +414,46 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 	return frame;
 }
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Daniel Atallah <datallah@pidgin.im>",
+		NULL
+	};
+
+	const gchar * const dependencies[] = {
+		"ssl-nss",
+		NULL
+	};
+
+	return purple_plugin_info_new(
+		"id",             PLUGIN_ID,
+		"name",           N_("NSS Preferences"),
+		"version",        DISPLAY_VERSION,
+		"category",       N_("SSL"),
+		"summary",        N_("Configure Ciphers and other Settings for "
+	                         "the NSS SSL/TLS Plugin"),
+		"description",    N_("Configure Ciphers and other Settings for "
+	                         "the NSS SSL/TLS Plugin"),
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
+		"dependencies",   dependencies,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin) {
+plugin_load(PurplePlugin *plugin, GError **error)
+{
 	const PRUint16 *cipher;
+
+	purple_prefs_add_none(PREF_BASE);
+	purple_prefs_add_string_list(CIPHERS_PREF, NULL);
+	purple_prefs_add_int(MIN_TLS, 0);
+	purple_prefs_add_int(MAX_TLS, 0);
 
 	handle = plugin;
 
@@ -443,8 +480,8 @@ plugin_load(PurplePlugin *plugin) {
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin) {
-
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
 	/* Remove the temporary prefs */
 	if (tmp_prefs) {
 		purple_prefs_remove(CIPHER_TMP_ROOT);
@@ -471,63 +508,4 @@ plugin_unload(PurplePlugin *plugin) {
 	return TRUE;
 }
 
-
-static PurplePluginUiInfo prefs_info = {
-	get_plugin_pref_frame,
-	NULL,
-
-	/* Padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,				/**< type           */
-	NULL,						/**< ui_requirement */
-	0,						/**< flags          */
-	NULL,						/**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,			/**< priority       */
-
-	PLUGIN_ID,					/**< id             */
-	N_("NSS Preferences"),				/**< name           */
-	DISPLAY_VERSION,				/**< version        */
-							/**  summary        */
-	N_("Configure Ciphers and other Settings for "
-	   "the NSS SSL/TLS Plugin"),
-							/**  description    */
-	N_("Configure Ciphers and other Settings for "
-	   "the NSS SSL/TLS Plugin"),
-	"Daniel Atallah <datallah@pidgin.im>",		/**< author         */
-	PURPLE_WEBSITE,					/**< homepage       */
-
-	plugin_load,					/**< load           */
-	plugin_unload,					/**< unload         */
-	NULL,						/**< destroy        */
-
-	NULL,						/**< ui_info        */
-	NULL,						/**< extra_info     */
-	&prefs_info,					/**< prefs_info     */
-	NULL,
-	/* Padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin) {
-	info.dependencies = g_list_prepend(info.dependencies, "ssl-nss");
-
-	purple_prefs_add_none(PREF_BASE);
-	purple_prefs_add_string_list(CIPHERS_PREF, NULL);
-	purple_prefs_add_int(MIN_TLS, 0);
-	purple_prefs_add_int(MAX_TLS, 0);
-}
-
-PURPLE_INIT_PLUGIN(nss_prefs, init_plugin, info)
+PURPLE_PLUGIN_INIT(nss_prefs, plugin_query, plugin_load, plugin_unload);

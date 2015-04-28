@@ -308,11 +308,11 @@ static void
 purple_account_connect_got_password_cb(PurpleAccount *account,
 	const gchar *password, GError *error, gpointer data)
 {
-	PurplePluginProtocolInfo *prpl_info = data;
+	PurpleProtocol *protocol = data;
 
 	if ((password == NULL || *password == '\0') &&
-		!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
-		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
+		!(purple_protocol_get_options(protocol) & OPT_PROTO_NO_PASSWORD) &&
+		!(purple_protocol_get_options(protocol) & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_account_request_password(account,
 			G_CALLBACK(request_password_ok_cb),
 			G_CALLBACK(request_password_cancel_cb), account);
@@ -323,9 +323,8 @@ purple_account_connect_got_password_cb(PurpleAccount *account,
 void
 purple_account_connect(PurpleAccount *account)
 {
-	PurplePlugin *prpl;
 	const char *username;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleProtocol *protocol;
 	PurpleAccountPrivate *priv;
 
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
@@ -339,11 +338,11 @@ purple_account_connect(PurpleAccount *account)
 		return;
 	}
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
-	if (prpl == NULL) {
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
+	if (protocol == NULL) {
 		gchar *message;
 
-		message = g_strdup_printf(_("Missing protocol plugin for %s"), username);
+		message = g_strdup_printf(_("Missing protocol for %s"), username);
 		purple_notify_error(account, _("Connection Error"), message,
 			NULL, purple_request_cpar_from_account(account));
 		g_free(message);
@@ -354,13 +353,12 @@ purple_account_connect(PurpleAccount *account)
 
 	purple_debug_info("account", "Connecting to account %s.\n", username);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	if (priv->password != NULL) {
 		purple_account_connect_got_password_cb(account,
-			priv->password, NULL, prpl_info);
+			priv->password, NULL, protocol);
 	} else {
 		purple_keyring_get_password(account,
-			purple_account_connect_got_password_cb, prpl_info);
+			purple_account_connect_got_password_cb, protocol);
 	}
 }
 
@@ -635,8 +633,7 @@ purple_account_request_change_password(PurpleAccount *account)
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
 	PurpleConnection *gc;
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	char primary[256];
 
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
@@ -644,9 +641,7 @@ purple_account_request_change_password(PurpleAccount *account)
 
 	gc = purple_account_get_connection(account);
 	if (gc != NULL)
-		prpl = purple_connection_get_prpl(gc);
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+		protocol = purple_connection_get_protocol(gc);
 
 	fields = purple_request_fields_new();
 
@@ -656,7 +651,7 @@ purple_account_request_change_password(PurpleAccount *account)
 	field = purple_request_field_string_new("password", _("Original password"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	if (!prpl_info || !(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
+	if (!protocol || !(purple_protocol_get_options(protocol) & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
@@ -664,7 +659,7 @@ purple_account_request_change_password(PurpleAccount *account)
 										  _("New password"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	if (!prpl_info || !(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
+	if (!protocol || !(purple_protocol_get_options(protocol) & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
@@ -672,7 +667,7 @@ purple_account_request_change_password(PurpleAccount *account)
 										  _("New password (again)"),
 										  NULL, FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
-	if (!prpl_info || !(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
+	if (!protocol || !(purple_protocol_get_options(protocol) & OPT_PROTO_PASSWORD_OPTIONAL))
 		purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
@@ -1056,18 +1051,16 @@ purple_account_set_public_alias(PurpleAccount *account,
 		PurpleSetPublicAliasFailureCallback failure_cb)
 {
 	PurpleConnection *gc;
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 	g_return_if_fail(purple_account_is_connected(account));
 
 	gc = purple_account_get_connection(account);
-	prpl = purple_connection_get_prpl(gc);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	protocol = purple_connection_get_protocol(gc);
 
-	if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, set_public_alias))
-		prpl_info->set_public_alias(gc, alias, success_cb, failure_cb);
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, set_public_alias))
+		purple_protocol_server_iface_set_public_alias(protocol, gc, alias, success_cb, failure_cb);
 	else if (failure_cb) {
 		struct public_alias_closure *closure =
 				g_new0(struct public_alias_closure, 1);
@@ -1098,18 +1091,16 @@ purple_account_get_public_alias(PurpleAccount *account,
 		PurpleGetPublicAliasFailureCallback failure_cb)
 {
 	PurpleConnection *gc;
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 	g_return_if_fail(purple_account_is_connected(account));
 
 	gc = purple_account_get_connection(account);
-	prpl = purple_connection_get_prpl(gc);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	protocol = purple_connection_get_protocol(gc);
 
-	if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_public_alias))
-		prpl_info->get_public_alias(gc, success_cb, failure_cb);
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, get_public_alias))
+		purple_protocol_server_iface_get_public_alias(protocol, gc, success_cb, failure_cb);
 	else if (failure_cb) {
 		struct public_alias_closure *closure =
 				g_new0(struct public_alias_closure, 1);
@@ -1467,13 +1458,14 @@ purple_account_get_protocol_id(const PurpleAccount *account)
 const char *
 purple_account_get_protocol_name(const PurpleAccount *account)
 {
-	PurplePlugin *p;
+	PurpleProtocol *p;
 
 	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 
-	p = purple_find_prpl(purple_account_get_protocol_id(account));
+	p = purple_protocols_find(purple_account_get_protocol_id(account));
 
-	return ((p && p->info->name) ? _(p->info->name) : _("Unknown"));
+	return (p && purple_protocol_get_name(p) ?
+	        _(purple_protocol_get_name(p)) : _("Unknown"));
 }
 
 PurpleConnection *
@@ -2256,40 +2248,31 @@ purple_account_destroy_log(PurpleAccount *account)
 void
 purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy, const char *message)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc;
-	PurplePlugin *prpl = NULL;
 
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 	g_return_if_fail(PURPLE_IS_BUDDY(buddy));
 
 	gc = purple_account_get_connection(account);
 	if (gc != NULL)
-		prpl = purple_connection_get_prpl(gc);
+		protocol = purple_connection_get_protocol(gc);
 
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (prpl_info != NULL) {
-		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy))
-			prpl_info->add_buddy(gc, buddy, purple_buddy_get_group(buddy), message);
-	}
+	if (protocol != NULL)
+		purple_protocol_server_iface_add_buddy(protocol, gc, buddy,
+				purple_buddy_get_group(buddy), message);
 }
 
 void
 purple_account_add_buddies(PurpleAccount *account, GList *buddies, const char *message)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurplePlugin *prpl = NULL;
 
 	if (gc != NULL)
-		prpl = purple_connection_get_prpl(gc);
+		protocol = purple_connection_get_protocol(gc);
 
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (prpl_info) {
+	if (protocol) {
 		GList *cur, *groups = NULL;
 
 		/* Make a list of what group each buddy is in */
@@ -2298,13 +2281,13 @@ purple_account_add_buddies(PurpleAccount *account, GList *buddies, const char *m
 			groups = g_list_append(groups, purple_buddy_get_group(buddy));
 		}
 
-		if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddies))
-			prpl_info->add_buddies(gc, buddies, groups, message);
-		else if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, add_buddy)) {
+		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, add_buddies))
+			purple_protocol_server_iface_add_buddies(protocol, gc, buddies, groups, message);
+		else if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, add_buddy)) {
 			GList *curb = buddies, *curg = groups;
 
 			while ((curb != NULL) && (curg != NULL)) {
-				prpl_info->add_buddy(gc, curb->data, curg->data, message);
+				purple_protocol_server_iface_add_buddy(protocol, gc, curb->data, curg->data, message);
 				curb = curb->next;
 				curg = curg->next;
 			}
@@ -2318,36 +2301,28 @@ void
 purple_account_remove_buddy(PurpleAccount *account, PurpleBuddy *buddy,
 		PurpleGroup *group)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurplePlugin *prpl = NULL;
 
 	if (gc != NULL)
-		prpl = purple_connection_get_prpl(gc);
+		protocol = purple_connection_get_protocol(gc);
 
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (prpl_info && prpl_info->remove_buddy)
-		prpl_info->remove_buddy(gc, buddy, group);
+	if (protocol)
+		purple_protocol_server_iface_remove_buddy(protocol, gc, buddy, group);
 }
 
 void
 purple_account_remove_buddies(PurpleAccount *account, GList *buddies, GList *groups)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurplePlugin *prpl = NULL;
 
 	if (gc != NULL)
-		prpl = purple_connection_get_prpl(gc);
+		protocol = purple_connection_get_protocol(gc);
 
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (prpl_info) {
-		if (prpl_info->remove_buddies)
-			prpl_info->remove_buddies(gc, buddies, groups);
+	if (protocol) {
+		if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, remove_buddies))
+			purple_protocol_server_iface_remove_buddies(protocol, gc, buddies, groups);
 		else {
 			GList *curb = buddies;
 			GList *curg = groups;
@@ -2363,45 +2338,36 @@ purple_account_remove_buddies(PurpleAccount *account, GList *buddies, GList *gro
 void
 purple_account_remove_group(PurpleAccount *account, PurpleGroup *group)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurplePlugin *prpl = NULL;
 
 	if (gc != NULL)
-		prpl = purple_connection_get_prpl(gc);
+		protocol = purple_connection_get_protocol(gc);
 
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (prpl_info && prpl_info->remove_group)
-		prpl_info->remove_group(gc, group);
+	if (protocol)
+		purple_protocol_server_iface_remove_group(protocol, gc, group);
 }
 
 void
 purple_account_change_password(PurpleAccount *account, const char *orig_pw,
 		const char *new_pw)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurplePlugin *prpl = NULL;
 
 	purple_account_set_password(account, new_pw, NULL, NULL);
 
 	if (gc != NULL)
-		prpl = purple_connection_get_prpl(gc);
+		protocol = purple_connection_get_protocol(gc);
 
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (prpl_info && prpl_info->change_passwd)
-		prpl_info->change_passwd(gc, orig_pw, new_pw);
+	if (protocol)
+		purple_protocol_server_iface_change_passwd(protocol, gc, orig_pw, new_pw);
 }
 
 gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleBuddy *buddy)
 {
 	PurpleConnection *gc;
-	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurplePlugin *prpl = NULL;
+	PurpleProtocol *protocol = NULL;
 
 	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), FALSE);
 	g_return_val_if_fail(PURPLE_IS_BUDDY(buddy), FALSE);
@@ -2410,14 +2376,11 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
 	if (gc == NULL)
 		return FALSE;
 
-	prpl = purple_connection_get_prpl(gc);
+	protocol = purple_connection_get_protocol(gc);
 
-	if (prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (!prpl_info || !prpl_info->offline_message)
+	if (!protocol)
 		return FALSE;
-	return prpl_info->offline_message(buddy);
+	return purple_protocol_client_iface_offline_message(protocol, buddy);
 }
 
 void
@@ -2933,8 +2896,7 @@ purple_account_constructed(GObject *object)
 	PurpleAccount *account = PURPLE_ACCOUNT(object);
 	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 	gchar *username, *protocol_id;
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleStatusType *status_type;
 
 	parent_class->constructed(object);
@@ -2947,17 +2909,15 @@ purple_account_constructed(GObject *object)
 	purple_signal_emit(purple_accounts_get_handle(), "account-created",
 			account);
 
-	prpl = purple_find_prpl(protocol_id);
-	if (prpl == NULL) {
+	protocol = purple_protocols_find(protocol_id);
+	if (protocol == NULL) {
 		g_free(username);
 		g_free(protocol_id);
 		return;
 	}
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	if (prpl_info != NULL && prpl_info->status_types != NULL)
-		purple_account_set_status_types(account,
-				prpl_info->status_types(account));
+	purple_account_set_status_types(account,
+			purple_protocol_class_status_types(protocol, account));
 
 	priv->presence = PURPLE_PRESENCE(purple_account_presence_new(account));
 

@@ -24,6 +24,7 @@ syntax: regexp
 .*\.dll$
 .*\.exe$
 .*\.g?mo$
+.*\.gir$
 .*\.la$
 \.libs
 .*\.lo$
@@ -34,6 +35,7 @@ syntax: regexp
 .*\.pyo$
 .*\.rej$
 .*\.so$
+.*\.typelib$
 .*\.moc$
 VERSION$
 aclocal.m4

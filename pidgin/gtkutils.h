@@ -30,7 +30,7 @@
 
 #include "gtkconv.h"
 #include "pidgin.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "util.h"
 
 typedef enum
@@ -51,10 +51,10 @@ typedef enum
 
 typedef enum
 {
-	PIDGIN_PRPL_ICON_SMALL,
-	PIDGIN_PRPL_ICON_MEDIUM,
-	PIDGIN_PRPL_ICON_LARGE
-} PidginPrplIconSize;
+	PIDGIN_PROTOCOL_ICON_SMALL,
+	PIDGIN_PROTOCOL_ICON_MEDIUM,
+	PIDGIN_PROTOCOL_ICON_LARGE
+} PidginProtocolIconSize;
 
 #ifndef _WIN32
 typedef enum
@@ -533,7 +533,7 @@ void pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const 
 /**
  * pidgin_buddy_icon_get_scale_size:
  *
- * Convenience wrapper for purple_buddy_icon_get_scale_size
+ * Convenience wrapper for purple_buddy_icon_spec_get_scaled_size
  */
 void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, PurpleBuddyIconSpec *spec, PurpleIconScaleRules rules, int *width, int *height);
 
@@ -552,7 +552,7 @@ void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, PurpleBuddyIconSpec *spec,
  *         to allocate the image buffer, or the image file
  *         contained invalid data.
  */
-GdkPixbuf *pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize size);
+GdkPixbuf *pidgin_create_protocol_icon(PurpleAccount *account, PidginProtocolIconSize size);
 
 /**
  * pidgin_create_status_icon:
@@ -640,7 +640,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 
 /**
  * pidgin_convert_buddy_icon:
- * @plugin:     The prpl to convert the icon
+ * @protocol:   The protocol to convert the icon
  * @path:       The path of a file to convert
  * @len:        If not %NULL, the length of the returned data will be set here.
  *
@@ -648,7 +648,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
  *
  * Returns:           The converted image data, or %NULL if an error occurred.
  */
-gpointer pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len);
+gpointer pidgin_convert_buddy_icon(PurpleProtocol *protocol, const char *path, size_t *len);
 
 /**
  * pidgin_make_pretty_arrows:

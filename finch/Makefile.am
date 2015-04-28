@@ -78,10 +78,12 @@ libfinch_la_LIBADD = \
 	$(DBUS_LIBS) \
 	$(INTLLIBS) \
 	$(GLIB_LIBS) \
+	$(GPLUGIN_LIBS) \
 	$(LIBXML_LIBS) \
 	$(GNT_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(GSTVIDEO_LIBS) \
+	$(INTROSPECTION_LIBS) \
 	./libgnt/libgnt.la \
 	$(top_builddir)/libpurple/libpurple.la
 
@@ -113,7 +115,68 @@ AM_CPPFLAGS = \
 	-I$(srcdir)/libgnt/ \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
+	$(INTROSPECTION_CFLAGS) \
 	$(GNT_CFLAGS)
+
+if ENABLE_GNT
+-include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = \
+	--warn-all \
+	--add-include-path=$(prefix)/share/gir-1.0 \
+	--add-include-path=$(builddir)/libgnt \
+	--add-include-path=$(top_builddir)/libpurple
+
+INTROSPECTION_COMPILER_ARGS = \
+	--includedir=$(prefix)/share/gir-1.0 \
+	--includedir=$(builddir)/libgnt \
+	--includedir=$(top_builddir)/libpurple
+
+if HAVE_INTROSPECTION
+introspection_sources = $(libfinchinclude_HEADERS)
+
+Finch-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libfinch.la
+Finch_3_0_gir_INCLUDES = \
+	Gnt-$(GNT_MAJOR_VERSION).$(GNT_MINOR_VERSION) \
+	Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)
+
+Finch_3_0_gir_CFLAGS = \
+	$(INCLUDES) \
+	-DSTANDALONE \
+	-DDATADIR=\"$(datadir)\" \
+	-DLIBDIR=\"$(libdir)/finch/\" \
+	-DLOCALEDIR=\"$(datadir)/locale\" \
+	-DSYSCONFDIR=\"$(sysconfdir)\" \
+	-I$(top_srcdir)/libpurple/ \
+	-I$(top_srcdir) \
+	-I$(srcdir)/libgnt/ \
+	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
+	$(DBUS_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(INTROSPECTION_CFLAGS) \
+	$(GNT_CFLAGS)
+
+Finch_3_0_gir_LIBS = $(builddir)/libfinch.la
+Finch_3_0_gir_FILES = $(introspection_sources)
+INTROSPECTION_GIRS += Finch-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
+
+girdir = \
+	 $(prefix)/share/gir-1.0 \
+	 $(INTROSPECTION_GIRDIR)
+gir_DATA = $(INTROSPECTION_GIRS)
+
+typelibdir = \
+	$(prefix)/share/gir-1.0 \
+	$(INTROSPECTION_TYPELIBDIR)
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+
+CLEANFILES = $(gir_DATA) $(typelib_DATA)
+endif
+
+endif # ENABLE_GNT

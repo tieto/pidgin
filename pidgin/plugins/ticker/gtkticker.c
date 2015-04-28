@@ -58,39 +58,7 @@ static GType gtk_ticker_child_type   (GtkContainer     *container);
 static GtkContainerClass *parent_class = NULL;
 
 
-GType gtk_ticker_get_type (void)
-{
-	static GType ticker_type = 0;
-
-	ticker_type = g_type_from_name("GtkTicker");
-
-	if (!ticker_type)
-	{
-		static const GTypeInfo ticker_info =
-		{
-			sizeof(GtkTickerClass),
-			NULL,
-			NULL,
-			(GClassInitFunc) gtk_ticker_class_init,
-			NULL,
-			NULL,
-			sizeof(GtkTicker),
-			0,
-			(GInstanceInitFunc) gtk_ticker_init,
-			NULL
-		};
-
-		ticker_type = g_type_register_static (GTK_TYPE_CONTAINER, "GtkTicker",
-				&ticker_info, 0);
-	}
-
-	/* kludge to re-initialise the class if it's already registered */
-	else if (parent_class == NULL) {
-		gtk_ticker_class_init((GtkTickerClass *)g_type_class_peek(ticker_type));
-	}
-
-	return ticker_type;
-}
+PURPLE_DEFINE_TYPE(GtkTicker, gtk_ticker, GTK_TYPE_CONTAINER);
 
 static void gtk_ticker_finalize(GObject *object) {
 	gtk_ticker_stop_scroll(GTK_TICKER(object));

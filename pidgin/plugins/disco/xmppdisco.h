@@ -26,13 +26,16 @@ typedef struct _XmppDiscoService XmppDiscoService;
 
 #include "gtkdisco.h"
 
-#define XMPP_PLUGIN_ID      "prpl-jabber"
+#define XMPP_PROTOCOL_ID    "prpl-jabber"
 #define NS_DISCO_INFO       "http://jabber.org/protocol/disco#info"
 #define NS_DISCO_ITEMS      "http://jabber.org/protocol/disco#items"
 #define NS_MUC              "http://jabber.org/protocol/muc"
 #define NS_REGISTER         "jabber:iq:register"
 
-#include "plugin.h"
+#define PLUGIN_ID      "gtk-xmppdisco"
+#define PLUGIN_DOMAIN  (g_quark_from_static_string(PLUGIN_ID))
+
+#include "plugins.h"
 extern PurplePlugin *my_plugin;
 
 /**

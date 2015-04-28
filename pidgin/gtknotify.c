@@ -512,7 +512,7 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 	if (!account)
 		return;
 
-	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
 	image = gtk_image_new_from_pixbuf(pixbuf);
 	g_object_unref(G_OBJECT(pixbuf));
 
@@ -705,7 +705,7 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 	if (clear)
 		return NULL;
 
-	icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
+	icon = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_MEDIUM);
 
 	if (new_n) {
 		data = g_new0(PidginNotifyMailData, 1);
@@ -963,7 +963,7 @@ pidgin_notify_searchresults_new_rows(PurpleConnection *gc, PurpleNotifySearchRes
 
 	gtk_list_store_clear(data->model);
 
-	pixbuf = pidgin_create_prpl_icon(purple_connection_get_account(gc), PIDGIN_PRPL_ICON_SMALL);
+	pixbuf = pidgin_create_protocol_icon(purple_connection_get_account(gc), PIDGIN_PROTOCOL_ICON_SMALL);
 
 	for (row = results->rows; row != NULL; row = row->next) {
 
@@ -1536,7 +1536,7 @@ pidgin_notify_pounce_add(PurpleAccount *account, PurplePounce *pounce,
 	if (pounce_dialog == NULL)
 		pounce_dialog = pidgin_create_notification_dialog(PIDGIN_NOTIFY_POUNCE);
 
-	icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	icon = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
 
 	pounce_data = g_new(PidginNotifyPounceData, 1);
 

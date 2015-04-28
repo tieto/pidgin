@@ -25,7 +25,7 @@
 #include "internal.h"
 #include "dnsquery.h"
 
-#include "prpl.h"
+#include "protocol.h"
 #include "util.h"
 #include "debug.h"
 #include "http.h"
@@ -33,7 +33,7 @@
 #include "notify.h"
 #include "proxy.h"
 #include "xfer.h"
-#include "libymsg.h"
+#include "ymsg.h"
 #include "yahoo_packet.h"
 #include "yahoo_filexfer.h"
 #include "yahoo_doodle.h"

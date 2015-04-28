@@ -422,7 +422,7 @@ void jabber_iq_parse(JabberStream *js, PurpleXmlNode *packet)
 		return;
 	}
 
-	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_connection_get_prpl(js->gc),
+	signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_connection_get_protocol(js->gc),
 			"jabber-receiving-iq", js->gc, iq_type, id, from, packet));
 	if (signal_return) {
 		jabber_id_free(from_id);
@@ -465,7 +465,7 @@ void jabber_iq_parse(JabberStream *js, PurpleXmlNode *packet)
 		g_free(key);
 
 		if (signal_ref > 0) {
-			signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_connection_get_prpl(js->gc), "jabber-watched-iq",
+			signal_return = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_connection_get_protocol(js->gc), "jabber-watched-iq",
 					js->gc, iq_type, id, from, child));
 			if (signal_return) {
 				jabber_id_free(from_id);

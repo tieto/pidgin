@@ -23,8 +23,32 @@
 
 #include "gtkplugin.h"
 
+static PidginPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Elliott Sales de Andrade <qulogic@pidgin.im>",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",           "gtkwebkit-inspect",
+		"name",         N_("WebKit Development"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Testing"),
+		"summary",      N_("Enables WebKit Inspector."),
+		"description",  N_("Enables WebKit's built-in inspector. This may be "
+		                   "viewed by right-clicking a WebKit widget and "
+		                   "selecting 'Inspect Element'."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/webview");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/webview/inspector_enabled", FALSE);
@@ -35,51 +59,11 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/webview/inspector_enabled", FALSE);
 
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,                           /**< major version */
-	PURPLE_MINOR_VERSION,                           /**< minor version */
-	PURPLE_PLUGIN_STANDARD,                         /**< type */
-	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
-	0,                                              /**< flags */
-	NULL,                                           /**< dependencies */
-	PURPLE_PRIORITY_DEFAULT,                        /**< priority */
-
-	"gtkwebkit-inspect",                            /**< id */
-	N_("WebKit Development"),                       /**< name */
-	DISPLAY_VERSION,                                /**< version */
-	N_("Enables WebKit Inspector."),                /**< summary */
-	N_("Enables WebKit's built-in inspector. This "
-	   "may be viewed by right-clicking a WebKit "
-	   "widget and selecting 'Inspect Element'."),  /**< description */
-	"Elliott Sales de Andrade <qulogic@pidgin.im>", /**< author */
-	PURPLE_WEBSITE,                                 /**< homepage */
-	plugin_load,                                    /**< load */
-	plugin_unload,                                  /**< unload */
-	NULL,                                           /**< destroy */
-	NULL,                                           /**< ui_info */
-	NULL,                                           /**< extra_info */
-	NULL,                                           /**< prefs_info */
-	NULL,                                           /**< actions */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(webkit-devel, init_plugin, info)
+PURPLE_PLUGIN_INIT(webkit-devel, plugin_query, plugin_load, plugin_unload);

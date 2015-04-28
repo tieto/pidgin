@@ -173,7 +173,7 @@ entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 						_("That command only works in IMs, not chats."),
 						PURPLE_MESSAGE_NO_LOG);
 				break;
-			case PURPLE_CMD_STATUS_WRONG_PRPL:
+			case PURPLE_CMD_STATUS_WRONG_PROTOCOL:
 				purple_conversation_write_system_message(conv,
 					_("That command doesn't work on this protocol."),
 					PURPLE_MESSAGE_NO_LOG);
@@ -349,9 +349,9 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 
 			chat = find_chat_for_conversation(conv);
 			if (chat == NULL) {
-				PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
-				if (info->chat_info_defaults != NULL)
-					comps = info->chat_info_defaults(gc, purple_conversation_get_name(conv));
+				PurpleProtocol *protocol = purple_connection_get_protocol(gc);
+				comps = purple_protocol_chat_iface_info_defaults(protocol, gc,
+						purple_conversation_get_name(conv));
 			} else {
 				comps = purple_chat_get_components(chat);
 			}
@@ -706,10 +706,10 @@ gg_create_menu(FinchConv *ggc)
 	if (PURPLE_IS_IM_CONVERSATION(ggc->active_conv)) {
 		PurpleAccount *account = purple_conversation_get_account(ggc->active_conv);
 		PurpleConnection *gc = purple_account_get_connection(account);
-		PurplePluginProtocolInfo *pinfo =
-			gc ? PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc)) : NULL;
+		PurpleProtocol *protocol =
+			gc ? purple_connection_get_protocol(gc) : NULL;
 
-		if (pinfo && pinfo->get_info) {
+		if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, get_info)) {
 			item = gnt_menuitem_new(_("Get Info"));
 			gnt_menu_add_item(GNT_MENU(sub), item);
 			gnt_menuitem_set_callback(item, get_info_cb, ggc);
@@ -719,9 +719,10 @@ gg_create_menu(FinchConv *ggc)
 		gnt_menu_add_item(GNT_MENU(sub), item);
 		gnt_menuitem_set_callback(item, add_pounce_cb, ggc);
 
-		if (pinfo && pinfo->send_file &&
-				(!pinfo->can_receive_file ||
-					pinfo->can_receive_file(gc, purple_conversation_get_name(ggc->active_conv)))) {
+		if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, send) &&
+				(!PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, can_receive) ||
+					purple_protocol_xfer_iface_can_receive(protocol, gc,
+					purple_conversation_get_name(ggc->active_conv)))) {
 			item = gnt_menuitem_new(_("Send File"));
 			gnt_menu_add_item(GNT_MENU(sub), item);
 			gnt_menuitem_set_callback(item, send_file_cb, ggc);
@@ -764,8 +765,8 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 {
 	PurpleAccount *account = purple_conversation_get_account(fc->active_conv);
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurplePluginProtocolInfo *prpl_info = NULL;
-	char *name, *realname;
+	PurpleProtocol *protocol = NULL;
+	char *name, *realname = NULL;
 
 	if (!gc) {
 		purple_conversation_write_system_message(fc->active_conv,
@@ -775,12 +776,12 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 
 	name = gnt_tree_get_selection_data(GNT_TREE(widget));
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
-	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, get_cb_real_name))
-		realname = prpl_info->get_cb_real_name(gc, purple_chat_conversation_get_id(
+	protocol = purple_connection_get_protocol(gc);
+	if (protocol)
+		realname = purple_protocol_chat_iface_get_user_real_name(protocol, gc,
+				purple_chat_conversation_get_id(
 				PURPLE_CHAT_CONVERSATION(fc->active_conv)), name);
-	else
-		realname = NULL;
+
 	purple_im_conversation_new(account, realname ? realname : name);
 	g_free(realname);
 }
@@ -1269,15 +1270,17 @@ debug_command_cb(PurpleConversation *conv,
 		tmp = g_strdup_printf("Using Finch v%s with libpurple v%s.",
 				DISPLAY_VERSION, purple_core_get_version());
 	} else if (!g_ascii_strcasecmp(args[0], "plugins")) {
-		/* Show all the loaded plugins, including the protocol plugins and plugin loaders.
-		 * This is intentional, since third party prpls are often sources of bugs, and some
-		 * plugin loaders (e.g. mono) can also be buggy.
+		/* Show all the loaded plugins, including plugins marked internal.
+		 * This is intentional, since third party protocols are often sources of bugs, and some
+		 * loaders can also be buggy.
 		 */
 		GString *str = g_string_new("Loaded Plugins: ");
 		const GList *plugins = purple_plugins_get_loaded();
 		if (plugins) {
 			for (; plugins; plugins = plugins->next) {
-				str = g_string_append(str, purple_plugin_get_name(plugins->data));
+				PurplePluginInfo *plugin_info = purple_plugin_get_info(plugins->data);
+				str = g_string_append(str, purple_plugin_info_get_name(plugin_info));
+
 				if (plugins->next)
 					str = g_string_append(str, ", ");
 			}

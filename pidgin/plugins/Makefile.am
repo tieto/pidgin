@@ -1,4 +1,4 @@
-DIST_SUBDIRS = cap disco gestures gevolution musicmessaging perl ticker win32/winprefs win32/transparency
+DIST_SUBDIRS = cap disco gestures gevolution musicmessaging ticker win32/winprefs win32/transparency
 
 if BUILD_GEVOLUTION
 GEVOLUTION_DIR = gevolution
@@ -12,10 +12,6 @@ if ENABLE_CAP
 CAP_DIR = cap
 endif
 
-if USE_PERL
-PERL_DIR = perl
-endif
-
 if ENABLE_GESTURES
 GESTURE_DIR = gestures
 endif
@@ -25,7 +21,6 @@ SUBDIRS = \
 	$(GESTURE_DIR) \
 	$(GEVOLUTION_DIR) \
 	$(MUSICMESSAGING_DIR) \
-	$(PERL_DIR) \
 	disco \
 	ticker
 
@@ -139,6 +134,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/pidgin \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(UNITY_CFLAGS) \
 	$(WEBKIT_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \

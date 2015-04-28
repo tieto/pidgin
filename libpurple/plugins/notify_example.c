@@ -29,7 +29,7 @@
 #include <purple.h>
 
 #define PLUGIN_ID "core-notifyexample"
-#define PLUGIN_AUTHOR "John Bailey <rekkanoryo@cpw.pidgin.im>"
+#define PLUGIN_AUTHORS { "John Bailey <rekkanoryo@cpw.pidgin.im>", NULL }
 
 /* The next four functions and the calls within them should cause dialog boxes to appear
  * when you select the plugin action from the Tools->Notify Example menu */
@@ -70,7 +70,7 @@ notify_uri_cb(PurplePluginAction *action)
 }
 
 static GList *
-plugin_actions(PurplePlugin *plugin, gpointer context)
+plugin_actions(PurplePlugin *plugin)
 {
 	GList *actions = NULL;
 
@@ -93,48 +93,37 @@ plugin_actions(PurplePlugin *plugin, gpointer context)
 	return g_list_reverse(actions);
 }
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = PLUGIN_AUTHORS;
+
+	return purple_plugin_info_new(
+		"id",           PLUGIN_ID,
+		"name",         "Notify API Example",
+		"version",      DISPLAY_VERSION,
+		"category",     "Example",
+		"summary",      "Notify API Example",
+		"description",  "Notify API Example",
+		"authors",      authors,
+		"website",      "https://pidgin.im",
+		"abi-version",  PURPLE_ABI_VERSION,
+		"actions-cb",   plugin_actions,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	return TRUE;
 }
 
-static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,        /* magic number */
-	PURPLE_MAJOR_VERSION,       /* purple major */
-	PURPLE_MINOR_VERSION,       /* purple minor */
-	PURPLE_PLUGIN_STANDARD,     /* plugin type */
-	NULL,                       /* UI requirement */
-	0,                          /* flags */
-	NULL,                       /* dependencies */
-	PURPLE_PRIORITY_DEFAULT,    /* priority */
-
-	PLUGIN_ID,                  /* id */
-	"Notify API Example",       /* name */
-	DISPLAY_VERSION,            /* version */
-	"Notify API Example",       /* summary */
-	"Notify API Example",       /* description */
-	PLUGIN_AUTHOR,              /* author */
-	"https://pidgin.im",        /* homepage */
-
-	plugin_load,                /* load */
-	NULL,                       /* unload */
-	NULL,                       /* destroy */
-
-	NULL,                       /* ui info */
-	NULL,                       /* extra info */
-	NULL,                       /* prefs info */
-	plugin_actions,             /* actions */
-	NULL,                       /* reserved */
-	NULL,                       /* reserved */
-	NULL,                       /* reserved */
-	NULL                        /* reserved */
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(notifyexample, init_plugin, info)
+PURPLE_PLUGIN_INIT(notifyexample, plugin_query, plugin_load, plugin_unload);
 

@@ -44,7 +44,7 @@ plugin_action_test_cb (PurplePluginAction * action)
  * get a list of plugin actions to use for the plugin.  This function gives
  * libpurple that list of actions. */
 static GList *
-plugin_actions (PurplePlugin * plugin, gpointer context)
+plugin_actions (PurplePlugin * plugin)
 {
 	/* some C89 (a.k.a. ANSI C) compilers will warn if any variable declaration
 	 * includes an initilization that calls a function.  To avoid that, we
@@ -65,8 +65,35 @@ plugin_actions (PurplePlugin * plugin, gpointer context)
 	return list;
 }
 
+static PurplePluginInfo *
+plugin_query (GError ** error)
+{
+	const gchar * const authors[] = {
+		"John Bailey <rekkanoryo@cpw.pidgin.im>", /* correct author */
+		NULL
+	};
+
+	/* For specific notes on the meanings of each of these members, consult the
+	   C Plugin Howto on the website. */
+	return purple_plugin_info_new (
+		"id",           "core-hello_world",
+		"name",         "Hello World!",
+		"version",      DISPLAY_VERSION, /* This constant is defined in config.h, but you shouldn't use it for your
+		                                    own plugins.  We use it here because it's our plugin. And we're lazy. */
+		"category",     "Example",
+		"summary",      "Hello World Plugin",
+		"description",  "Hello World Plugin",
+		"authors",      authors,
+		"website",      "http://helloworld.tld",
+		"abi-version",  PURPLE_ABI_VERSION,
+		"actions-cb",   plugin_actions, /* this tells libpurple the address of the function to call to get the list
+		                                   of plugin actions. */
+		NULL
+	);
+}
+
 static gboolean
-plugin_load (PurplePlugin * plugin)
+plugin_load (PurplePlugin * plugin, GError ** error)
 {
 	purple_notify_message (plugin, PURPLE_NOTIFY_MSG_INFO, "Hello World!",
 		"This is the Hello World! plugin :)", NULL, NULL,
@@ -75,47 +102,10 @@ plugin_load (PurplePlugin * plugin)
 	return TRUE;
 }
 
-/* For specific notes on the meanings of each of these members, consult the C Plugin Howto
- * on the website. */
-static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	NULL,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-
-	"core-hello_world",
-	"Hello World!",
-	DISPLAY_VERSION, /* This constant is defined in config.h, but you shouldn't use it for
-		    your own plugins.  We use it here because it's our plugin. And we're lazy. */
-
-	"Hello World Plugin",
-	"Hello World Plugin",
-	"John Bailey <rekkanoryo@cpw.pidgin.im>", /* correct author */
-	"http://helloworld.tld",
-
-
-	plugin_load,
-	NULL,
-	NULL,
-
-	NULL,
-	NULL,
-	NULL,
-	plugin_actions,		/* this tells libpurple the address of the function to call
-				   to get the list of plugin actions. */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin (PurplePlugin * plugin)
+static gboolean
+plugin_unload (PurplePlugin * plugin, GError ** error)
 {
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN (hello_world, init_plugin, info)
+PURPLE_PLUGIN_INIT (hello_world, plugin_query, plugin_load, plugin_unload);

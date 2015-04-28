@@ -17,9 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
  */
-
-#define PURPLE_PLUGIN
-
 #include "internal.h"
 #include "purple.h"
 
@@ -45,32 +42,19 @@ static FinchBlistManager *default_manager;
 /**
  * GObject code
  */
-static GType
-finch_grouping_node_get_type(void)
+static void
+finch_grouping_node_init(FinchGroupingNode *node)
 {
-	static GType type = 0;
-
-	if(type == 0) {
-		static const GTypeInfo info = {
-			sizeof(FinchGroupingNodeClass),
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			sizeof(FinchGroupingNode),
-			0,
-			NULL,
-			NULL,
-		};
-
-		type = g_type_register_static(PURPLE_TYPE_BLIST_NODE,
-				"FinchGroupingNode",
-				&info, 0);
-	}
-
-	return type;
 }
+
+static void
+finch_grouping_node_class_init(FinchGroupingNodeClass *klass)
+{
+}
+
+GType finch_grouping_node_get_type(void);
+PURPLE_DEFINE_TYPE(FinchGroupingNode, finch_grouping_node,
+                   PURPLE_TYPE_BLIST_NODE);
 
 /**
  * Online/Offline
@@ -351,10 +335,37 @@ static FinchBlistManager nested_group =
 	.can_add_node = nested_group_can_add_node,
 };
 
-static gboolean
-plugin_load(PurplePlugin *plugin)
+static FinchPluginInfo *
+plugin_query(GError **error)
 {
+	const gchar * const authors[] = {
+		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>",
+		NULL
+	};
+
+	return finch_plugin_info_new(
+		"id",           "grouping",
+		"name",         N_("Grouping"),
+		"version",      VERSION,
+		"category",     N_("User interface"),
+		"summary",      N_("Provides alternate buddylist grouping options."),
+		"description",  N_("Provides alternate buddylist grouping options."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	finch_grouping_node_register_type(plugin);
+
 	default_manager = finch_blist_manager_find("default");
+
+	online  = g_object_new(FINCH_TYPE_GROUPING_NODE, NULL);
+	offline = g_object_new(FINCH_TYPE_GROUPING_NODE, NULL);
 
 	finch_blist_install_manager(&on_offline);
 	finch_blist_install_manager(&meebo_group);
@@ -364,49 +375,17 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	finch_blist_uninstall_manager(&on_offline);
 	finch_blist_uninstall_manager(&meebo_group);
 	finch_blist_uninstall_manager(&no_group);
 	finch_blist_uninstall_manager(&nested_group);
+
+	g_object_unref(online);
+	g_object_unref(offline);
+
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	FINCH_PLUGIN_TYPE,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	"grouping",
-	N_("Grouping"),
-	VERSION,
-	N_("Provides alternate buddylist grouping options."),
-	N_("Provides alternate buddylist grouping options."),
-	"Sadrul H Chowdhury <sadrul@users.sourceforge.net>",
-	PURPLE_WEBSITE,
-	plugin_load,
-	plugin_unload,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,NULL,NULL,NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-	online  = g_object_new(FINCH_TYPE_GROUPING_NODE, NULL);
-	offline = g_object_new(FINCH_TYPE_GROUPING_NODE, NULL);
-}
-
-PURPLE_INIT_PLUGIN(grouping, init_plugin, info)
-
-
+PURPLE_PLUGIN_INIT(grouping, plugin_query, plugin_load, plugin_unload);

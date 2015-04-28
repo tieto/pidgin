@@ -29,7 +29,7 @@
 #include "http.h"
 #include "image-store.h"
 
-#include "protocol.h"
+#include "client.h"
 #include "mxit.h"
 #include "markup.h"
 #include "formcmds.h"

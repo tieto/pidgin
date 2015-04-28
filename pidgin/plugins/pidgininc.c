@@ -48,18 +48,45 @@ reverse(PurpleAccount *account, char **who, char **message,
 static void
 bud(PurpleBuddy *who)
 {
-	PurpleAccount *acct = who->account;
-	PurpleConversation *conv = purple_im_conversation_new(acct, who->name);
+	PurpleAccount *acct = purple_buddy_get_account(who);
+	PurpleIMConversation *im = purple_im_conversation_new(acct,
+			purple_buddy_get_name(who));
 
-	purple_im_conversation_send(PURPLE_CONV_IM(conv), "Hello!");
+	purple_conversation_send(PURPLE_CONVERSATION(im), "Hello!");
 }
 
 /*
  *  EXPORTED FUNCTIONS
  */
 
+static PidginPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Eric Warmenhoven <eric@warmenhoven.org>",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",           PURPLEINC_PLUGIN_ID,
+		"name",         N_("Pidgin Demonstration Plugin"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Example"),
+		"summary",      N_("An example plugin that does stuff - see the description."),
+		"description",  N_("This is a really cool plugin that does a lot of stuff:\n"
+		                   "- It tells you who wrote the program when you log in\n"
+		                   "- It reverses all incoming text\n"
+		                   "- It sends a message to people on your list immediately"
+		                   " when they sign on"),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	/* this is for doing something fun when we sign on */
 	purple_signal_connect(purple_connections_get_handle(), "signed-on",
@@ -76,49 +103,10 @@ plugin_load(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info =
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
-
-	PURPLEINC_PLUGIN_ID,                                /**< id             */
-	N_("Pidgin Demonstration Plugin"),                  /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("An example plugin that does stuff - see the description."),
-	                                                  /**  description    */
-	N_("This is a really cool plugin that does a lot of stuff:\n"
-	   "- It tells you who wrote the program when you log in\n"
-	   "- It reverses all incoming text\n"
-	   "- It sends a message to people on your list immediately"
-	   " when they sign on"),
-	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	NULL,                                             /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	NULL,                                             /**< extra_info     */
-	NULL,                                             /**< prefs_info     */
-	NULL,                                             /**< actions        */
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(purpleinc, init_plugin, info)
+PURPLE_PLUGIN_INIT(purpleinc, plugin_query, plugin_load, plugin_unload);

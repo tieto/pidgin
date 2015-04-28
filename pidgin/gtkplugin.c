@@ -32,7 +32,22 @@
 
 #include "gtk3compat.h"
 
+#define PIDGIN_PLUGIN_INFO_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PIDGIN_TYPE_PLUGIN_INFO, PidginPluginInfoPrivate))
+
 #define PIDGIN_RESPONSE_CONFIGURE 98121
+
+typedef struct
+{
+	PidginPluginConfigFrameCb config_frame_cb;
+} PidginPluginInfoPrivate;
+
+enum
+{
+	PROP_0,
+	PROP_GTK_CONFIG_FRAME_CB,
+	PROP_LAST
+};
 
 typedef struct
 {
@@ -55,7 +70,7 @@ typedef struct
 } PidginPluginUiData;
 
 static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model,
-                                  GtkTreeIter *iter, gboolean unload);
+                                  GtkTreeIter *iter, GError *error, gboolean unload);
 
 static GtkWidget *expander = NULL;
 static GtkWidget *plugin_dialog = NULL;
@@ -63,38 +78,125 @@ static GtkWidget *plugin_dialog = NULL;
 static GtkLabel *plugin_name = NULL;
 static GtkTextBuffer *plugin_desc = NULL;
 static GtkLabel *plugin_error = NULL;
-static GtkLabel *plugin_author = NULL;
+static GtkLabel *plugin_authors = NULL;
 static GtkLabel *plugin_website = NULL;
 static gchar *plugin_website_uri = NULL;
 static GtkLabel *plugin_filename = NULL;
 
 static GtkWidget *pref_button = NULL;
 
+/* Set method for GObject properties */
+static void
+pidgin_plugin_info_set_property(GObject *obj, guint param_id, const GValue *value,
+		GParamSpec *pspec)
+{
+	PidginPluginInfoPrivate *priv = PIDGIN_PLUGIN_INFO_GET_PRIVATE(obj);
+
+	switch (param_id) {
+		case PROP_GTK_CONFIG_FRAME_CB:
+			priv->config_frame_cb = g_value_get_pointer(value);
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* Get method for GObject properties */
+static void
+pidgin_plugin_info_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	PidginPluginInfoPrivate *priv = PIDGIN_PLUGIN_INFO_GET_PRIVATE(obj);
+
+	switch (param_id) {
+		case PROP_GTK_CONFIG_FRAME_CB:
+			g_value_set_pointer(value, priv->config_frame_cb);
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+/* Class initializer function */
+static void pidgin_plugin_info_class_init(PidginPluginInfoClass *klass)
+{
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
+	g_type_class_add_private(klass, sizeof(PidginPluginInfoPrivate));
+
+	/* Setup properties */
+	obj_class->get_property = pidgin_plugin_info_get_property;
+	obj_class->set_property = pidgin_plugin_info_set_property;
+
+	g_object_class_install_property(obj_class, PROP_GTK_CONFIG_FRAME_CB,
+		g_param_spec_pointer("gtk-config-frame-cb",
+		                     "GTK configuration frame callback",
+		                     "Callback that returns a GTK configuration frame",
+		                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
+		                     G_PARAM_STATIC_STRINGS));
+}
+
+GType
+pidgin_plugin_info_get_type(void)
+{
+	static GType type = 0;
+
+	if (G_UNLIKELY(type == 0)) {
+		static const GTypeInfo info = {
+			.class_size = sizeof(PidginPluginInfoClass),
+			.class_init = (GClassInitFunc)pidgin_plugin_info_class_init,
+			.instance_size = sizeof(PidginPluginInfo),
+		};
+
+		type = g_type_register_static(PURPLE_TYPE_PLUGIN_INFO,
+		                              "PidginPluginInfo", &info, 0);
+	}
+
+	return type;
+}
+
+PidginPluginInfo *
+pidgin_plugin_info_new(const char *first_property, ...)
+{
+	GObject *info;
+	va_list var_args;
+
+	/* at least ID is required */
+	if (!first_property)
+		return NULL;
+
+	va_start(var_args, first_property);
+	info = g_object_new_valist(PIDGIN_TYPE_PLUGIN_INFO, first_property,
+	                           var_args);
+	va_end(var_args);
+
+	g_object_set(info, "ui-requirement", PIDGIN_UI, NULL);
+
+	return PIDGIN_PLUGIN_INFO(info);
+}
+
 static gboolean
 pidgin_plugin_has_prefs(PurplePlugin *plugin)
 {
-	PurplePluginUiInfo *pinfo;
+	PurplePluginInfo *info = purple_plugin_get_info(plugin);
+	PidginPluginInfoPrivate *priv = NULL;
+	gboolean ret;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	if (!purple_plugin_is_loaded(plugin))
 		return FALSE;
 
-	if (PIDGIN_IS_PIDGIN_PLUGIN(plugin) && plugin->info->ui_info &&
-		PIDGIN_PLUGIN_UI_INFO(plugin)->get_config_frame)
-	{
-		return TRUE;
-	}
+	if (PIDGIN_IS_PLUGIN_INFO(info))
+		priv = PIDGIN_PLUGIN_INFO_GET_PRIVATE(info);
 
-	if (!plugin->info)
-		return FALSE;
+	ret = ((priv && priv->config_frame_cb) ||
+			purple_plugin_info_get_pref_frame_cb(info) ||
+			purple_plugin_info_get_pref_request_cb(info));
 
-	pinfo = plugin->info->prefs_info;
-
-	if (!pinfo)
-		return FALSE;
-
-	return (pinfo->get_plugin_pref_frame || pinfo->get_plugin_pref_request);
+	return ret;
 }
 
 static GtkWidget *
@@ -102,25 +204,25 @@ pidgin_plugin_get_config_frame(PurplePlugin *plugin,
 	PurplePluginPrefFrame **purple_pref_frame)
 {
 	GtkWidget *config = NULL;
+	PurplePluginInfo *info;
+	PidginPluginInfoPrivate *priv = NULL;
 
 	g_return_val_if_fail(plugin != NULL, NULL);
 
-	if (PIDGIN_IS_PIDGIN_PLUGIN(plugin) && plugin->info->ui_info
-		&& PIDGIN_PLUGIN_UI_INFO(plugin)->get_config_frame)
-	{
-		PidginPluginUiInfo *ui_info;
+	info = purple_plugin_get_info(plugin);
+	if (PIDGIN_IS_PLUGIN_INFO(info))
+		priv = PIDGIN_PLUGIN_INFO_GET_PRIVATE(info);
 
-		ui_info = PIDGIN_PLUGIN_UI_INFO(plugin);
+	if (priv)
+		config = priv->config_frame_cb(plugin);
 
-		config = ui_info->get_config_frame(plugin);
-	}
-
-	if (config == NULL && plugin->info->prefs_info
-		&& plugin->info->prefs_info->get_plugin_pref_frame)
+	if (!config && purple_plugin_info_get_pref_frame_cb(info))
 	{
 		PurplePluginPrefFrame *frame;
+		PurplePluginPrefFrameCb pref_frame_cb =
+				purple_plugin_info_get_pref_frame_cb(info);
 
-		frame = plugin->info->prefs_info->get_plugin_pref_frame(plugin);
+		frame = pref_frame_cb(plugin);
 
 		config = pidgin_plugin_pref_create_frame(frame);
 
@@ -133,11 +235,14 @@ pidgin_plugin_get_config_frame(PurplePlugin *plugin,
 static void
 pref_dialog_close(PurplePlugin *plugin)
 {
+	PurplePluginInfo *info;
 	PidginPluginUiData *ui_data;
 
 	g_return_if_fail(plugin != NULL);
 
-	ui_data = plugin->ui_data;
+	info = purple_plugin_get_info(plugin);
+
+	ui_data = purple_plugin_info_get_ui_data(info);
 	if (ui_data == NULL)
 		return;
 
@@ -155,7 +260,7 @@ pref_dialog_close(PurplePlugin *plugin)
 		purple_plugin_pref_frame_destroy(ui_data->u.frame.pref_frame);
 
 	g_free(ui_data);
-	plugin->ui_data = NULL;
+	purple_plugin_info_set_ui_data(info, NULL);
 }
 
 
@@ -172,58 +277,61 @@ pref_dialog_response_cb(GtkWidget *dialog, int response, PurplePlugin *plugin)
 static void
 pidgin_plugin_open_config(PurplePlugin *plugin, GtkWindow *parent)
 {
-	PurplePluginUiInfo *pinfo;
+	PurplePluginInfo *info;
+	PidginPluginInfoPrivate *priv = NULL;
 	PidginPluginUiData *ui_data;
-	gboolean has_purple_frame, has_purple_request, has_pidgin_frame;
+	PurplePluginPrefFrameCb pref_frame_cb;
+	PurplePluginPrefRequestCb pref_request_cb;
+	PidginPluginConfigFrameCb get_pidgin_frame = NULL;
 	gint prefs_count;
 
 	g_return_if_fail(plugin != NULL);
+
+	info = purple_plugin_get_info(plugin);
 
 	if (!pidgin_plugin_has_prefs(plugin)) {
 		purple_debug_warning("gtkplugin", "Plugin has no prefs");
 		return;
 	}
 
-	if (plugin->ui_data != NULL)
+	if (purple_plugin_info_get_ui_data(info))
 		return;
 
-	pinfo = plugin->info->prefs_info;
-	if (pinfo == NULL)
-		has_purple_frame = has_purple_request = FALSE;
-	else {
-		has_purple_frame = (pinfo->get_plugin_pref_frame != NULL);
-		has_purple_request = (pinfo->get_plugin_pref_request != NULL);
-	}
-	has_pidgin_frame = (PIDGIN_IS_PIDGIN_PLUGIN(plugin) &&
-		plugin->info->ui_info &&
-		PIDGIN_PLUGIN_UI_INFO(plugin)->get_config_frame);
+	if (PIDGIN_IS_PLUGIN_INFO(info))
+		priv = PIDGIN_PLUGIN_INFO_GET_PRIVATE(info);
+
+	pref_frame_cb = purple_plugin_info_get_pref_frame_cb(info);
+	pref_request_cb = purple_plugin_info_get_pref_request_cb(info);
+
+	if (priv)
+		get_pidgin_frame = priv->config_frame_cb;
 
 	prefs_count = 0;
-	if (has_purple_frame)
+	if (pref_frame_cb)
 		prefs_count++;
-	if (has_purple_request)
+	if (pref_request_cb)
 		prefs_count++;
-	if (has_pidgin_frame)
+	if (get_pidgin_frame)
 		prefs_count++;
 
 	if (prefs_count > 1) {
 		purple_debug_warning("gtkplugin", "Plugin %s contains more than"
 			" one prefs callback, some will be ignored.",
-			plugin->info->name);
+			purple_plugin_info_get_name(info));
 	}
 	g_return_if_fail(prefs_count > 0);
 
-	plugin->ui_data = ui_data = g_new0(PidginPluginUiData, 1);
+	ui_data = g_new0(PidginPluginUiData, 1);
+	purple_plugin_info_set_ui_data(info, ui_data);
 
 	/* Priority: pidgin frame > purple request > purple frame
 	 * Purple frame could be replaced with purple request some day.
 	 */
-	if (has_purple_request && !has_pidgin_frame) {
+	if (pref_request_cb && !get_pidgin_frame) {
 		ui_data->type = PIDGIN_PLUGIN_UI_DATA_TYPE_REQUEST;
-		ui_data->u.request_handle =
-			pinfo->get_plugin_pref_request(plugin);
+		ui_data->u.request_handle = pref_request_cb(plugin);
 		purple_request_add_close_notify(ui_data->u.request_handle,
-			purple_callback_set_zero, &plugin->ui_data);
+			purple_callback_set_zero, &info->ui_data);
 		purple_request_add_close_notify(ui_data->u.request_handle,
 			g_free, ui_data);
 	} else {
@@ -237,7 +345,7 @@ pidgin_plugin_open_config(PurplePlugin *plugin, GtkWindow *parent)
 			purple_debug_error("gtkplugin",
 				"Failed to display prefs frame");
 			g_free(ui_data);
-			plugin->ui_data = NULL;
+			purple_plugin_info_set_ui_data(info, NULL);
 			return;
 		}
 
@@ -256,7 +364,7 @@ pidgin_plugin_open_config(PurplePlugin *plugin, GtkWindow *parent)
 
 		gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
 		gtk_window_set_title(GTK_WINDOW(dialog),
-			_(purple_plugin_get_name(plugin)));
+			_(purple_plugin_info_get_name(info)));
 		gtk_widget_show_all(dialog);
 	}
 }
@@ -272,44 +380,38 @@ update_plugin_list(void *data)
 {
 	GtkListStore *ls = GTK_LIST_STORE(data);
 	GtkTreeIter iter;
-	GList *probes;
+	GList *plugins, *l;
 	PurplePlugin *plug;
+	PurplePluginInfo *info;
 
 	gtk_list_store_clear(ls);
-	purple_plugins_probe(G_MODULE_SUFFIX);
+	purple_plugins_refresh();
 
-	for (probes = purple_plugins_get_all();
-		 probes != NULL;
-		 probes = probes->next)
+	plugins = purple_plugins_find_all();
+
+	for (l = plugins; l != NULL; l = l->next)
 	{
 		char *name;
 		char *version;
 		char *summary;
 		char *desc;
-		plug = probes->data;
+		plug = PURPLE_PLUGIN(l->data);
+		info = purple_plugin_get_info(plug);
 
-		if (plug->info->type == PURPLE_PLUGIN_LOADER) {
-			GList *cur;
-			for (cur = PURPLE_PLUGIN_LOADER_INFO(plug)->exts; cur != NULL;
-					 cur = cur->next)
-				purple_plugins_probe(cur->data);
+		if (purple_plugin_is_internal(plug))
 			continue;
-		} else if (plug->info->type != PURPLE_PLUGIN_STANDARD ||
-			(plug->info->flags & PURPLE_PLUGIN_FLAG_INVISIBLE)) {
-			continue;
-		}
 
 		gtk_list_store_append (ls, &iter);
 
-		if (plug->info->name) {
-			name = g_markup_escape_text(_(plug->info->name), -1);
+		if (purple_plugin_info_get_name(info)) {
+			name = g_markup_escape_text(_(purple_plugin_info_get_name(info)), -1);
 		} else {
-			char *tmp = g_path_get_basename(plug->path);
+			char *tmp = g_path_get_basename(purple_plugin_get_filename(plug));
 			name = g_markup_escape_text(tmp, -1);
 			g_free(tmp);
 		}
-		version = g_markup_escape_text(purple_plugin_get_version(plug), -1);
-		summary = g_markup_escape_text(purple_plugin_get_summary(plug), -1);
+		version = g_markup_escape_text(purple_plugin_info_get_version(info), -1);
+		summary = g_markup_escape_text(purple_plugin_info_get_summary(info), -1);
 
 		desc = g_strdup_printf("<b>%s</b> %s\n%s", name,
 				       version,
@@ -322,10 +424,29 @@ update_plugin_list(void *data)
 				   0, purple_plugin_is_loaded(plug),
 				   1, desc,
 				   2, plug,
-				   3, purple_plugin_is_unloadable(plug),
+				   3, purple_plugin_info_get_error(info),
 				   -1);
 		g_free(desc);
 	}
+
+	g_list_free(plugins);
+}
+
+static gboolean
+check_if_loaded(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+{
+	PurplePlugin *plugin;
+	gtk_tree_model_get(model, iter, 2, &plugin, -1);
+	gtk_list_store_set(GTK_LIST_STORE(model), iter,
+					           0, purple_plugin_is_loaded(plugin),
+					           -1);
+	return FALSE;
+}
+
+static void
+update_loaded_plugins(GtkTreeModel *model)
+{
+	gtk_tree_model_foreach(model, check_if_loaded, NULL);
 }
 
 static void plugin_loading_common(PurplePlugin *plugin, GtkTreeView *view, gboolean loaded)
@@ -381,7 +502,7 @@ static void plugin_unload_confirm_cb(gpointer *data)
 	GtkTreeModel *model = (GtkTreeModel *)data[1];
 	GtkTreeIter *iter = (GtkTreeIter *)data[2];
 
-	plugin_toggled_stage_two(plugin, model, iter, TRUE);
+	plugin_toggled_stage_two(plugin, model, iter, NULL, TRUE);
 
 	g_free(data);
 }
@@ -392,24 +513,18 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 	GtkTreeIter *iter = g_new(GtkTreeIter, 1);
 	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
 	PurplePlugin *plug;
+	GError *error = NULL;
 
 	gtk_tree_model_get_iter(model, iter, path);
 	gtk_tree_path_free(path);
 	gtk_tree_model_get(model, iter, 2, &plug, -1);
 
-	/* Apparently, GTK+ won't honor the sensitive flag on cell renderers for booleans. */
-	if (purple_plugin_is_unloadable(plug))
-	{
-		g_free(iter);
-		return;
-	}
-
 	if (!purple_plugin_is_loaded(plug))
 	{
 		pidgin_set_cursor(plugin_dialog, GDK_WATCH);
 
-		purple_plugin_load(plug);
-		plugin_toggled_stage_two(plug, model, iter, FALSE);
+		purple_plugin_load(plug, &error);
+		plugin_toggled_stage_two(plug, model, iter, error, FALSE);
 
 		pidgin_clear_cursor(plugin_dialog);
 	}
@@ -417,19 +532,22 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 	{
 		pref_dialog_close(plug);
 
-		if (plug->dependent_plugins != NULL)
+		if (purple_plugin_get_dependent_plugins(plug) != NULL)
 		{
 			GString *tmp = g_string_new(_("The following plugins will be unloaded."));
-			GList *l;
+			GSList *l;
 			gpointer *cb_data;
 
-			for (l = plug->dependent_plugins ; l != NULL ; l = l->next)
+			for (l = purple_plugin_get_dependent_plugins(plug); l != NULL ; l = l->next)
 			{
 				const char *dep_name = (const char *)l->data;
-				PurplePlugin *dep_plugin = purple_plugins_find_with_id(dep_name);
+				PurplePlugin *dep_plugin = purple_plugins_find_plugin(dep_name);
+				PurplePluginInfo *dep_info;
+
 				g_return_if_fail(dep_plugin != NULL);
 
-				g_string_append_printf(tmp, "\n\t%s\n", purple_plugin_get_name(dep_plugin));
+				dep_info = purple_plugin_get_info(dep_plugin);
+				g_string_append_printf(tmp, "\n\t%s\n", purple_plugin_info_get_name(dep_info));
 			}
 
 			cb_data = g_new(gpointer, 3);
@@ -446,50 +564,50 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 			g_string_free(tmp, TRUE);
 		}
 		else
-			plugin_toggled_stage_two(plug, model, iter, TRUE);
+			plugin_toggled_stage_two(plug, model, iter, NULL, TRUE);
 	}
 }
 
-static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, GtkTreeIter *iter, gboolean unload)
+static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, GtkTreeIter *iter, GError *error, gboolean unload)
 {
+	PurplePluginInfo *info = purple_plugin_get_info(plug);
+
 	if (unload)
 	{
 		pidgin_set_cursor(plugin_dialog, GDK_WATCH);
 
-		if (!purple_plugin_unload(plug))
+		if (!purple_plugin_unload(plug, &error))
 		{
 			const char *primary = _("Could not unload plugin");
 			const char *reload = _("The plugin could not be unloaded now, but will be disabled at the next startup.");
 
-			if (!plug->error)
-			{
-				purple_notify_warning(NULL, NULL, primary, reload, NULL);
-			}
-			else
-			{
-				char *tmp = g_strdup_printf("%s\n\n%s", reload, plug->error);
-				purple_notify_warning(NULL, NULL, primary, tmp, NULL);
-				g_free(tmp);
-			}
+			char *tmp = g_strdup_printf("%s\n\n%s", reload, error->message);
+			purple_notify_warning(NULL, NULL, primary, tmp, NULL);
+			g_free(tmp);
 
 			purple_plugin_disable(plug);
 		}
 
 		pidgin_clear_cursor(plugin_dialog);
 	}
+	else if (!unload && error)
+	{
+		purple_notify_warning(NULL, NULL, _("Could not load plugin"), error->message, NULL);
+	}
 
 	gtk_widget_set_sensitive(pref_button, pidgin_plugin_has_prefs(plug));
 
-	if (plug->error != NULL)
+	if (error != NULL)
 	{
-		gchar *name = g_markup_escape_text(purple_plugin_get_name(plug), -1);
+		gchar *name = g_markup_escape_text(purple_plugin_info_get_name(info), -1);
 
-		gchar *error = g_markup_escape_text(plug->error, -1);
+		gchar *disp_error = g_markup_escape_text(error->message, -1);
 		gchar *text;
 
 		text = g_strdup_printf(
 			"<b>%s</b> %s\n<span weight=\"bold\" color=\"red\"%s</span>",
-			purple_plugin_get_name(plug), purple_plugin_get_version(plug), error);
+			purple_plugin_info_get_name(info),
+			purple_plugin_info_get_version(info), disp_error);
 		gtk_list_store_set(GTK_LIST_STORE (model), iter,
 				   1, text,
 				   -1);
@@ -497,17 +615,23 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 
 		text = g_strdup_printf(
 			"<span weight=\"bold\" color=\"red\">%s</span>",
-			error);
+			disp_error);
 		gtk_label_set_markup(plugin_error, text);
 		g_free(text);
 
-		g_free(error);
+		g_free(disp_error);
 		g_free(name);
+
+		g_error_free(error);
 	}
 
-	gtk_list_store_set(GTK_LIST_STORE (model), iter,
-	                   0, purple_plugin_is_loaded(plug),
-	                   -1);
+	if ((unload && purple_plugin_get_dependent_plugins(plug)) ||
+	   (!unload && purple_plugin_info_get_dependencies(info)))
+		update_loaded_plugins(model);
+	else
+		gtk_list_store_set(GTK_LIST_STORE (model), iter,
+			               0, purple_plugin_is_loaded(plug),
+			               -1);
 	g_free(iter);
 
 	pidgin_plugins_save();
@@ -531,9 +655,12 @@ static gboolean ensure_plugin_visible(void *data)
 static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 {
 	gchar *buf, *tmp, *name, *version;
+	gchar *authors = NULL;
+	const gchar * const *authorlist;
 	GtkTreeIter  iter;
 	GValue val;
 	PurplePlugin *plug;
+	PurplePluginInfo *info;
 
 	if (!gtk_tree_selection_get_selected (sel, &model, &iter))
 	{
@@ -551,9 +678,10 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	val.g_type = 0;
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	plug = g_value_get_pointer(&val);
+	info = purple_plugin_get_info(plug);
 
-	name = g_markup_escape_text(purple_plugin_get_name(plug), -1);
-	version = g_markup_escape_text(purple_plugin_get_version(plug), -1);
+	name = g_markup_escape_text(purple_plugin_info_get_name(info), -1);
+	version = g_markup_escape_text(purple_plugin_info_get_version(info), -1);
 	buf = g_strdup_printf(
 		"<span size=\"larger\" weight=\"bold\">%s</span> "
 		"<span size=\"smaller\">%s</span>",
@@ -563,12 +691,19 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	g_free(version);
 	g_free(buf);
 
-	gtk_text_buffer_set_text(plugin_desc, purple_plugin_get_description(plug), -1);
-	gtk_label_set_text(plugin_author, purple_plugin_get_author(plug));
-	gtk_label_set_text(plugin_filename, plug->path);
+	gtk_text_buffer_set_text(plugin_desc, purple_plugin_info_get_description(info), -1);
+
+	authorlist = purple_plugin_info_get_authors(info);
+	if (authorlist)
+		authors = g_strjoinv(",\n", (gchar **)authorlist);
+	gtk_label_set_text(plugin_authors, authors);
+	g_free(authors);
+
+	gtk_label_set_text(plugin_filename, purple_plugin_get_filename(plug));
 
 	g_free(plugin_website_uri);
-	plugin_website_uri = g_strdup(purple_plugin_get_homepage(plug));
+	plugin_website_uri = g_strdup(purple_plugin_info_get_website(info));
+
 	if (plugin_website_uri)
 	{
 		tmp = g_markup_escape_text(plugin_website_uri, -1);
@@ -583,13 +718,13 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		gtk_label_set_text(plugin_website, NULL);
 	}
 
-	if (plug->error == NULL)
+	if (purple_plugin_info_get_error(info) == NULL)
 	{
 		gtk_label_set_text(plugin_error, NULL);
 	}
 	else
 	{
-		tmp = g_markup_escape_text(plug->error, -1);
+		tmp = g_markup_escape_text(purple_plugin_info_get_error(info), -1);
 		buf = g_strdup_printf(
 			_("<span foreground=\"red\" weight=\"bold\">"
 			  "Error: %s\n"
@@ -615,15 +750,17 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 	GtkTreeModel *model;
 	GValue val;
 	GtkTreeIter iter;
-	GList *it;
+	GList *list, *it;
 
 	switch (response) {
 	case GTK_RESPONSE_CLOSE:
 	case GTK_RESPONSE_DELETE_EVENT:
 		purple_request_close_with_handle(plugin_dialog);
 		purple_signals_disconnect_by_handle(plugin_dialog);
-		for (it = purple_plugins_get_all(); it; it = g_list_next(it))
+		list = purple_plugins_find_all();
+		for (it = list; it; it = g_list_next(it))
 			pref_dialog_close(it->data);
+		g_list_free(list);
 		gtk_widget_destroy(d);
 		plugin_dialog = NULL;
 		break;
@@ -688,20 +825,30 @@ pidgin_plugins_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 	GtkTreeIter iter;
 	GtkTreeView *treeview = GTK_TREE_VIEW(data);
 	PurplePlugin *plugin = NULL;
+	PurplePluginInfo *info;
 	GtkTreeModel *model = gtk_tree_view_get_model(treeview);
 	PangoLayout *layout;
 	int width, height;
-	char *markup, *name, *desc, *author;
+	const char * const *authorlist;
+	char *markup, *name, *desc;
+	char *authors = NULL, *pauthors = NULL;
 
 	if (!gtk_tree_model_get_iter(model, &iter, path))
 		return FALSE;
 
 	gtk_tree_model_get(model, &iter, 2, &plugin, -1);
+	info = purple_plugin_get_info(plugin);
+	authorlist = purple_plugin_info_get_authors(info);
+
+	if (authorlist)
+		authors = g_strjoinv(", ", (gchar **)authorlist);
+	if (authors)
+		pauthors = g_markup_escape_text(authors, -1);
 
 	markup = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>\n<b>%s:</b> %s\n<b>%s:</b> %s",
-			name = g_markup_escape_text(purple_plugin_get_name(plugin), -1),
-			_("Description"), desc = g_markup_escape_text(purple_plugin_get_description(plugin), -1),
-			_("Author"), author = g_markup_escape_text(purple_plugin_get_author(plugin), -1));
+			name = g_markup_escape_text(purple_plugin_info_get_name(info), -1),
+			_("Description"), desc = g_markup_escape_text(purple_plugin_info_get_description(info), -1),
+			(g_strv_length((gchar **)authorlist) > 1 ? _("Authors") : _("Author")), pauthors);
 
 	layout = gtk_widget_create_pango_layout(tipwindow, NULL);
 	pango_layout_set_markup(layout, markup, -1);
@@ -718,7 +865,8 @@ pidgin_plugins_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 	g_free(markup);
 	g_free(name);
 	g_free(desc);
-	g_free(author);
+	g_free(pauthors);
+	g_free(authors);
 
 	return TRUE;
 }
@@ -773,12 +921,12 @@ create_details()
 	gtk_label_set_selectable(plugin_error, TRUE);
 	gtk_box_pack_start(vbox, GTK_WIDGET(plugin_error), FALSE, FALSE, 0);
 
-	plugin_author = GTK_LABEL(gtk_label_new(NULL));
-	gtk_label_set_line_wrap(plugin_author, FALSE);
-	gtk_misc_set_alignment(GTK_MISC(plugin_author), 0, 0);
-	gtk_label_set_selectable(plugin_author, TRUE);
+	plugin_authors = GTK_LABEL(gtk_label_new(NULL));
+	gtk_label_set_line_wrap(plugin_authors, FALSE);
+	gtk_misc_set_alignment(GTK_MISC(plugin_authors), 0, 0);
+	gtk_label_set_selectable(plugin_authors, TRUE);
 	pidgin_add_widget_to_vbox(vbox, "", sg,
-		GTK_WIDGET(plugin_author), TRUE, &label);
+		GTK_WIDGET(plugin_authors), TRUE, &label);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Written by:</b>"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 

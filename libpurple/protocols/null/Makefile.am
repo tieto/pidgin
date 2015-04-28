@@ -4,13 +4,15 @@ EXTRA_DIST = \
 
 pkgdir = @PURPLE_PLUGINDIR@
 
-NULLSOURCES = nullprpl.c
+NULLSOURCES = \
+	nullprpl.h \
+	nullprpl.c
 
 AM_CFLAGS = $(st)
 
 libnull_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
-# nullprpl isn't built by default. when it is built, it's dynamically linked.
+# nullprpl isn't built by default; when it is built, it's dynamically linked
 st =
 pkg_LTLIBRARIES    = libnull.la
 libnull_la_SOURCES = $(NULLSOURCES)
@@ -20,4 +22,5 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(DEBUG_CFLAGS)

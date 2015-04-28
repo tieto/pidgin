@@ -107,28 +107,7 @@ jingle_rawudp_candidate_new(const gchar *id, guint generation, guint component, 
 	return candidate;
 }
 
-GType
-jingle_rawudp_get_type()
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		static const GTypeInfo info = {
-			sizeof(JingleRawUdpClass),
-			NULL,
-			NULL,
-			(GClassInitFunc) jingle_rawudp_class_init,
-			NULL,
-			NULL,
-			sizeof(JingleRawUdp),
-			0,
-			(GInstanceInitFunc) jingle_rawudp_init,
-			NULL
-		};
-		type = g_type_register_static(JINGLE_TYPE_TRANSPORT, "JingleRawUdp", &info, 0);
-	}
-	return type;
-}
+PURPLE_DEFINE_TYPE(JingleRawUdp, jingle_rawudp, JINGLE_TYPE_TRANSPORT);
 
 static void
 jingle_rawudp_class_init (JingleRawUdpClass *klass)

@@ -33,7 +33,7 @@
 #include <string.h>
 
 #include "debug.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 #include "util.h"
 
@@ -575,8 +575,29 @@ cipher_test_aes(void)
 /**************************************************************************
  * Plugin stuff
  **************************************************************************/
+static PurplePluginInfo *
+plugin_query(GError **error) {
+	const gchar * const authors[] = {
+		"Gary Kramlich <amc_grim@users.sf.net>",
+		NULL
+	};
+
+	return purple_plugin_info_new(
+		"id",           "core-cipher-test",
+		"name",         N_("Cipher Test"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Testing"),
+		"summary",      N_("Tests the ciphers that ship with libpurple."),
+		"description",  N_("Tests the ciphers that ship with libpurple."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin) {
+plugin_load(PurplePlugin *plugin, GError **error) {
 	cipher_test_md5();
 	cipher_test_sha1();
 	cipher_test_digest();
@@ -587,48 +608,8 @@ plugin_load(PurplePlugin *plugin) {
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin) {
+plugin_unload(PurplePlugin *plugin, GError **error) {
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,								/**< type           */
-	NULL,												/**< ui_requirement */
-	0,													/**< flags          */
-	NULL,												/**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,								/**< priority       */
-
-	"core-cipher-test",									/**< id             */
-	N_("Cipher Test"),									/**< name           */
-	DISPLAY_VERSION,										/**< version        */
-														/**  summary        */
-	N_("Tests the ciphers that ship with libpurple."),
-														/**  description    */
-	N_("Tests the ciphers that ship with libpurple."),
-	"Gary Kramlich <amc_grim@users.sf.net>",			/**< author         */
-	PURPLE_WEBSITE,										/**< homepage       */
-
-	plugin_load,										/**< load           */
-	plugin_unload,										/**< unload         */
-	NULL,												/**< destroy        */
-
-	NULL,												/**< ui_info        */
-	NULL,												/**< extra_info     */
-	NULL,
-	NULL,
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin) {
-}
-
-PURPLE_INIT_PLUGIN(cipher_test, init_plugin, info)
+PURPLE_PLUGIN_INIT(cipher_test, plugin_query, plugin_load, plugin_unload);

@@ -35,6 +35,7 @@
 #include "core.h"
 #include "debug.h"
 #include "gtkblist.h"
+#include "gtkplugin.h"
 #include "gtkutils.h"
 #include "http.h"
 #include "notify.h"
@@ -140,9 +141,35 @@ signed_on_cb(PurpleConnection *gc, void *data) {
 /**************************************************************************
  * Plugin stuff
  **************************************************************************/
-static gboolean
-plugin_load(PurplePlugin *plugin)
+static PidginPluginInfo *
+plugin_query(GError **error)
 {
+	const gchar * const authors[] = {
+		"Nathan Walp <faceprint@faceprint.com>",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",           "gtk-relnot",
+		"name",         N_("Release Notification"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Notification"),
+		"summary",      N_("Checks periodically for new releases."),
+		"description",  N_("Checks periodically for new releases and notifies "
+		                   "the user with the ChangeLog."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	purple_prefs_add_none("/plugins/gtk/relnot");
+	purple_prefs_add_int("/plugins/gtk/relnot/last_check", 0);
+
 	purple_signal_connect(purple_connections_get_handle(), "signed-on",
 						plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
 
@@ -153,49 +180,10 @@ plugin_load(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info =
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
-
-	"gtk-relnot",                                     /**< id             */
-	N_("Release Notification"),                       /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Checks periodically for new releases."),
-	                                                  /**  description    */
-	N_("Checks periodically for new releases and notifies the user "
-			"with the ChangeLog."),
-	"Nathan Walp <faceprint@faceprint.com>",          /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	NULL,                                             /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	NULL,                                             /**< extra_info     */
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-	purple_prefs_add_none("/plugins/gtk/relnot");
-	purple_prefs_add_int("/plugins/gtk/relnot/last_check", 0);
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(relnot, init_plugin, info)
+PURPLE_PLUGIN_INIT(relnot, plugin_query, plugin_load, plugin_unload);

@@ -2,7 +2,7 @@
 #include <assert.h>
 
 #include "internal.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "gtkplugin.h"
 #include "gtkblist.h"
 #include "gtkutils.h"

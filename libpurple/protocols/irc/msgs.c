@@ -106,8 +106,8 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	/* If we're away then set our away message */
 	status = purple_account_get_active_status(irc->account);
 	if (purple_status_type_get_primitive(purple_status_get_status_type(status)) != PURPLE_STATUS_AVAILABLE) {
-		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
-		prpl_info->set_status(irc->account, status);
+		PurpleProtocol *protocol = purple_connection_get_protocol(gc);
+		purple_protocol_server_iface_set_status(protocol, irc->account, status);
 	}
 
 	/* this used to be in the core, but it's not now */
@@ -917,10 +917,10 @@ static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *
 		return;
 
 	if (ib->online && !ib->new_online_status) {
-		purple_prpl_got_user_status(irc->account, name, "offline", NULL);
+		purple_protocol_got_user_status(irc->account, name, "offline", NULL);
 		ib->online = FALSE;
 	} else if (!ib->online && ib->new_online_status) {
-		purple_prpl_got_user_status(irc->account, name, "available", NULL);
+		purple_protocol_got_user_status(irc->account, name, "available", NULL);
 		ib->online = TRUE;
 	}
 }

@@ -36,7 +36,7 @@
 #include "notify.h"
 #include "pluginpref.h"
 #include "proxy.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "request.h"
 #include "server.h"
 #include "status.h"
@@ -51,6 +51,7 @@
 #include "data.h"
 #include "disco.h"
 #include "google/google.h"
+#include "google/google_p2p.h"
 #include "google/google_roster.h"
 #include "google/google_session.h"
 #include "ibb.h"
@@ -67,9 +68,16 @@
 #include "xdata.h"
 #include "pep.h"
 #include "adhoccommands.h"
+#include "xmpp.h"
+#include "gtalk.h"
+#include "facebook.h"
 
 #include "jingle/jingle.h"
+#include "jingle/content.h"
+#include "jingle/iceudp.h"
+#include "jingle/rawudp.h"
 #include "jingle/rtp.h"
+#include "jingle/session.h"
 
 #define PING_TIMEOUT 60
 /* Send a whitespace keepalive to the server if we haven't sent
@@ -80,7 +88,11 @@
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
 
-static GHashTable *jabber_cmds = NULL; /* PurplePlugin * => GSList of ids */
+static PurpleProtocol *xmpp_protocol = NULL;
+static PurpleProtocol *gtalk_protocol = NULL;
+static PurpleProtocol *facebook_protocol = NULL;
+
+static GHashTable *jabber_cmds = NULL; /* PurpleProtocol * => GSList of ids */
 
 static gint plugin_ref = 0;
 
@@ -331,7 +343,7 @@ void jabber_process_packet(JabberStream *js, PurpleXmlNode **packet)
 	const char *name;
 	const char *xmlns;
 
-	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-receiving-xmlnode", js->gc, packet);
+	purple_signal_emit(purple_connection_get_protocol(js->gc), "jabber-receiving-xmlnode", js->gc, packet);
 
 	/* if the signal leaves us with a null packet, we're done */
 	if(NULL == *packet)
@@ -515,7 +527,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		g_free(text);
 	}
 
-	purple_signal_emit(purple_connection_get_prpl(gc), "jabber-sending-text", gc, &data);
+	purple_signal_emit(purple_connection_get_protocol(gc), "jabber-sending-text", gc, &data);
 	if (data == NULL)
 		return;
 
@@ -572,7 +584,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		do_jabber_send_raw(js, data, len);
 }
 
-int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
+int jabber_protocol_send_raw(PurpleConnection *gc, const char *buf, int len)
 {
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 
@@ -615,7 +627,7 @@ void jabber_send_signal_cb(PurpleConnection *pc, PurpleXmlNode **packet,
 
 void jabber_send(JabberStream *js, PurpleXmlNode *packet)
 {
-	purple_signal_emit(purple_connection_get_prpl(js->gc), "jabber-sending-xmlnode", js->gc, &packet);
+	purple_signal_emit(purple_connection_get_protocol(js->gc), "jabber-sending-xmlnode", js->gc, &packet);
 }
 
 static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
@@ -1581,7 +1593,7 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
 /* TODO: As Will pointed out in IRC, after being notified by the core to
  * shutdown, we should async. wait for the server to send us the stream
  * termination before destorying everything. That seems like it would require
- * changing the semantics of prpl->close(), so it's a good idea for 3.0.0.
+ * changing the semantics of protocol's close(), so it's a good idea for 3.0.0.
  */
 void jabber_close(PurpleConnection *gc)
 {
@@ -2522,10 +2534,10 @@ static void jabber_password_change_cb(JabberStream *js,
 	jabber_iq_send(iq);
 }
 
-static void jabber_password_change(PurplePluginAction *action)
+static void jabber_password_change(PurpleProtocolAction *action)
 {
 
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+	PurpleConnection *gc = (PurpleConnection *) action->connection;
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
@@ -2554,28 +2566,27 @@ static void jabber_password_change(PurplePluginAction *action)
 			purple_request_cpar_from_connection(gc), js);
 }
 
-GList *jabber_actions(PurplePlugin *plugin, gpointer context)
+GList *jabber_get_actions(PurpleConnection *gc)
 {
-	PurpleConnection *gc = (PurpleConnection *) context;
 	JabberStream *js = purple_connection_get_protocol_data(gc);
 	GList *m = NULL;
-	PurplePluginAction *act;
+	PurpleProtocolAction *act;
 
-	act = purple_plugin_action_new(_("Set User Info..."),
+	act = purple_protocol_action_new(_("Set User Info..."),
 	                             jabber_setup_set_info);
 	m = g_list_append(m, act);
 
-	/* if (js->protocol_options & CHANGE_PASSWORD) { */
-		act = purple_plugin_action_new(_("Change Password..."),
+	/* if (js->account_options & CHANGE_PASSWORD) { */
+		act = purple_protocol_action_new(_("Change Password..."),
 		                             jabber_password_change);
 		m = g_list_append(m, act);
 	/* } */
 
-	act = purple_plugin_action_new(_("Search for Users..."),
+	act = purple_protocol_action_new(_("Search for Users..."),
 	                             jabber_user_search_begin);
 	m = g_list_append(m, act);
 
-	purple_debug_info("jabber", "jabber_actions: have pep: %s\n", js->pep?"YES":"NO");
+	purple_debug_info("jabber", "jabber_get_actions: have pep: %s\n", js->pep?"YES":"NO");
 
 	if(js->pep)
 		jabber_pep_init_actions(&m);
@@ -3608,120 +3619,120 @@ jabber_cmd_mood(PurpleConversation *conv,
 }
 
 static void
-jabber_register_commands(PurplePlugin *plugin)
+jabber_register_commands(PurpleProtocol *protocol)
 {
 	GSList *commands = NULL;
 	PurpleCmdId id;
-	const gchar *plid = purple_plugin_get_id(plugin);
+	const gchar *proto_id = purple_protocol_get_id(protocol);
 
-	id = purple_cmd_register("config", "", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY, plid,
+	id = purple_cmd_register("config", "", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY, proto_id,
 		jabber_cmd_chat_config, _("config:  Configure a chat room."),
 		NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("configure", "", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY, plid,
+	id = purple_cmd_register("configure", "", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY, proto_id,
 		jabber_cmd_chat_config, _("configure:  Configure a chat room."),
 		NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("nick", "s", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY, plid,
+	id = purple_cmd_register("nick", "s", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY, proto_id,
 		jabber_cmd_chat_nick, _("nick &lt;new nickname&gt;:  "
 		"Change your nickname."), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("part", "s", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, plid, jabber_cmd_chat_part,
+	id = purple_cmd_register("part", "s", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
+		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, proto_id, jabber_cmd_chat_part,
 		_("part [message]:  Leave the room."), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("register", "", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY, plid,
+	id = purple_cmd_register("register", "", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY, proto_id,
 		jabber_cmd_chat_register,
 		_("register:  Register with a chat room."), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
 	/* XXX: there needs to be a core /topic cmd, methinks */
-	id = purple_cmd_register("topic", "s", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, plid, jabber_cmd_chat_topic,
+	id = purple_cmd_register("topic", "s", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
+		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, proto_id, jabber_cmd_chat_topic,
 		_("topic [new topic]:  View or change the topic."), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("ban", "ws", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, plid, jabber_cmd_chat_ban,
+	id = purple_cmd_register("ban", "ws", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
+		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, proto_id, jabber_cmd_chat_ban,
 		_("ban &lt;user&gt; [reason]:  Ban a user from the room."),
 		NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("affiliate", "ws", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, plid,
+	id = purple_cmd_register("affiliate", "ws", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
+		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, proto_id,
 		jabber_cmd_chat_affiliate, _("affiliate "
 		"&lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: "
 		"Get the users with an affiliation or set users' affiliation "
 		"with the room."), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("role", "ws", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, plid, jabber_cmd_chat_role,
+	id = purple_cmd_register("role", "ws", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
+		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, proto_id, jabber_cmd_chat_role,
 		_("role &lt;moderator|participant|visitor|none&gt; [nick1] "
 		"[nick2] ...: Get the users with a role or set users' role "
 		"with the room."), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("invite", "ws", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, plid, jabber_cmd_chat_invite,
+	id = purple_cmd_register("invite", "ws", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
+		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, proto_id, jabber_cmd_chat_invite,
 		_("invite &lt;user&gt; [message]:  Invite a user to the room."),
 		NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("join", "ws", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, plid, jabber_cmd_chat_join,
+	id = purple_cmd_register("join", "ws", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
+		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, proto_id, jabber_cmd_chat_join,
 		_("join: &lt;room[@server]&gt; [password]:  Join a chat."),
 		NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("kick", "ws", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, plid, jabber_cmd_chat_kick,
+	id = purple_cmd_register("kick", "ws", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
+		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, proto_id, jabber_cmd_chat_kick,
 		_("kick &lt;user&gt; [reason]:  Kick a user from the room."),
 		NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("msg", "ws", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY, plid,
+	id = purple_cmd_register("msg", "ws", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PROTOCOL_ONLY, proto_id,
 		jabber_cmd_chat_msg, _("msg &lt;user&gt; &lt;message&gt;:  "
 		"Send a private message to another user."), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("ping", "w", PURPLE_CMD_P_PRPL,
+	id = purple_cmd_register("ping", "w", PURPLE_CMD_P_PROTOCOL,
 		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
-		PURPLE_CMD_FLAG_PRPL_ONLY, plid, jabber_cmd_ping,
+		PURPLE_CMD_FLAG_PROTOCOL_ONLY, proto_id, jabber_cmd_ping,
 		_("ping &lt;jid&gt;:  Ping a user/component/server."), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("buzz", "w", PURPLE_CMD_P_PRPL,
-		PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY |
-		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, plid, jabber_cmd_buzz,
+	id = purple_cmd_register("buzz", "w", PURPLE_CMD_P_PROTOCOL,
+		PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PROTOCOL_ONLY |
+		PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, proto_id, jabber_cmd_buzz,
 		_("buzz: Buzz a user to get their attention"), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	id = purple_cmd_register("mood", "ws", PURPLE_CMD_P_PRPL,
+	id = purple_cmd_register("mood", "ws", PURPLE_CMD_P_PROTOCOL,
 		PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
-		PURPLE_CMD_FLAG_PRPL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
-		plid, jabber_cmd_mood,
+		PURPLE_CMD_FLAG_PROTOCOL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
+		proto_id, jabber_cmd_mood,
 		_("mood &lt;mood&gt; [text]: Set current user mood"), NULL);
 	commands = g_slist_prepend(commands, GUINT_TO_POINTER(id));
 
-	g_hash_table_insert(jabber_cmds, plugin, commands);
+	g_hash_table_insert(jabber_cmds, protocol, commands);
 }
 
 static void cmds_free_func(gpointer value)
@@ -3733,11 +3744,12 @@ static void cmds_free_func(gpointer value)
 	}
 }
 
-static void jabber_unregister_commands(PurplePlugin *plugin)
+static void jabber_unregister_commands(PurpleProtocol *protocol)
 {
-	g_hash_table_remove(jabber_cmds, plugin);
+	g_hash_table_remove(jabber_cmds, protocol);
 }
 
+#if 0
 /* IPC functions */
 
 /**
@@ -3784,6 +3796,71 @@ jabber_ipc_add_feature(const gchar *feature)
 
 	/* send presence with new caps info for all connected accounts */
 	jabber_caps_broadcast_change();
+}
+#endif
+
+static PurpleAccount *find_acct(const char *protocol, const char *acct_id)
+{
+	PurpleAccount *acct = NULL;
+
+	/* If we have a specific acct, use it */
+	if (acct_id) {
+		acct = purple_accounts_find(acct_id, protocol);
+		if (acct && !purple_account_is_connected(acct))
+			acct = NULL;
+	} else { /* Otherwise find an active account for the protocol */
+		GList *l = purple_accounts_get_all();
+		while (l) {
+			if (!strcmp(protocol, purple_account_get_protocol_id(l->data))
+					&& purple_account_is_connected(l->data)) {
+				acct = l->data;
+				break;
+			}
+			l = l->next;
+		}
+	}
+
+	return acct;
+}
+
+static gboolean xmpp_uri_handler(const char *proto, const char *user, GHashTable *params)
+{
+	char *acct_id = params ? g_hash_table_lookup(params, "account") : NULL;
+	PurpleAccount *acct;
+
+	if (g_ascii_strcasecmp(proto, "xmpp"))
+		return FALSE;
+
+	acct = find_acct(proto, acct_id);
+
+	if (!acct)
+		return FALSE;
+
+	/* xmpp:romeo@montague.net?message;subject=Test%20Message;body=Here%27s%20a%20test%20message */
+	/* params is NULL if the URI has no '?' (or anything after it) */
+	if (!params || g_hash_table_lookup_extended(params, "message", NULL, NULL)) {
+		char *body = g_hash_table_lookup(params, "body");
+		if (user && *user) {
+			PurpleIMConversation *im =
+					purple_im_conversation_new(acct, user);
+			purple_conversation_present(PURPLE_CONVERSATION(im));
+			if (body && *body)
+				purple_conversation_send_confirm(PURPLE_CONVERSATION(im), body);
+		}
+	} else if (g_hash_table_lookup_extended(params, "roster", NULL, NULL)) {
+		char *name = g_hash_table_lookup(params, "name");
+		if (user && *user)
+			purple_blist_request_add_buddy(acct, user, NULL, name);
+	} else if (g_hash_table_lookup_extended(params, "join", NULL, NULL)) {
+		PurpleConnection *gc = purple_account_get_connection(acct);
+		if (user && *user) {
+			GHashTable *params = jabber_chat_info_defaults(gc, user);
+			jabber_chat_join(gc, params);
+		}
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 static void
@@ -3933,15 +4010,16 @@ jabber_do_uninit(void)
 	jabber_cmds = NULL;
 }
 
-void jabber_plugin_init(PurplePlugin *plugin)
+static void jabber_init_protocol(PurpleProtocol *protocol)
 {
 	++plugin_ref;
 
 	if (plugin_ref == 1)
 		jabber_do_init();
 
-	jabber_register_commands(plugin);
+	jabber_register_commands(protocol);
 
+#if 0
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
 							 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
@@ -3965,31 +4043,32 @@ void jabber_plugin_init(PurplePlugin *plugin)
 	                           G_TYPE_NONE, 2,
 	                           G_TYPE_STRING,  /* node */
 	                           G_TYPE_STRING); /* namespace */
+#endif
 
-	purple_signal_register(plugin, "jabber-register-namespace-watcher",
+	purple_signal_register(protocol, "jabber-register-namespace-watcher",
 			purple_marshal_VOID__POINTER_POINTER,
 			G_TYPE_NONE, 2,
 			G_TYPE_STRING,  /* node */
 			G_TYPE_STRING); /* namespace */
 
-	purple_signal_register(plugin, "jabber-unregister-namespace-watcher",
+	purple_signal_register(protocol, "jabber-unregister-namespace-watcher",
 			purple_marshal_VOID__POINTER_POINTER,
 			G_TYPE_NONE, 2,
 			G_TYPE_STRING,  /* node */
 			G_TYPE_STRING); /* namespace */
 
-	purple_signal_connect(plugin, "jabber-register-namespace-watcher",
-			plugin, PURPLE_CALLBACK(jabber_iq_signal_register), NULL);
-	purple_signal_connect(plugin, "jabber-unregister-namespace-watcher",
-			plugin, PURPLE_CALLBACK(jabber_iq_signal_unregister), NULL);
+	purple_signal_connect(protocol, "jabber-register-namespace-watcher",
+			protocol, PURPLE_CALLBACK(jabber_iq_signal_register), NULL);
+	purple_signal_connect(protocol, "jabber-unregister-namespace-watcher",
+			protocol, PURPLE_CALLBACK(jabber_iq_signal_unregister), NULL);
 
 
-	purple_signal_register(plugin, "jabber-receiving-xmlnode",
+	purple_signal_register(protocol, "jabber-receiving-xmlnode",
 			purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
 			PURPLE_TYPE_CONNECTION,
 			G_TYPE_POINTER); /* pointer to a PurpleXmlNode* */
 
-	purple_signal_register(plugin, "jabber-sending-xmlnode",
+	purple_signal_register(protocol, "jabber-sending-xmlnode",
 			purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
 			PURPLE_TYPE_CONNECTION,
 			G_TYPE_POINTER); /* pointer to a PurpleXmlNode* */
@@ -3998,16 +4077,16 @@ void jabber_plugin_init(PurplePlugin *plugin)
 	 * Do not remove this or the plugin will fail. Completely. You have been
 	 * warned!
 	 */
-	purple_signal_connect_priority(plugin, "jabber-sending-xmlnode",
-			plugin, PURPLE_CALLBACK(jabber_send_signal_cb),
+	purple_signal_connect_priority(protocol, "jabber-sending-xmlnode",
+			protocol, PURPLE_CALLBACK(jabber_send_signal_cb),
 			NULL, PURPLE_SIGNAL_PRIORITY_HIGHEST);
 
-	purple_signal_register(plugin, "jabber-sending-text",
+	purple_signal_register(protocol, "jabber-sending-text",
 			     purple_marshal_VOID__POINTER_POINTER, G_TYPE_NONE, 2,
 			     PURPLE_TYPE_CONNECTION,
 			     G_TYPE_POINTER); /* pointer to a string */
 
-	purple_signal_register(plugin, "jabber-receiving-message",
+	purple_signal_register(protocol, "jabber-receiving-message",
 			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER_POINTER,
 			G_TYPE_BOOLEAN, 6,
 			PURPLE_TYPE_CONNECTION,
@@ -4017,7 +4096,7 @@ void jabber_plugin_init(PurplePlugin *plugin)
 			G_TYPE_STRING, /* to */
 			PURPLE_TYPE_XMLNODE);
 
-	purple_signal_register(plugin, "jabber-receiving-iq",
+	purple_signal_register(protocol, "jabber-receiving-iq",
 			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
 			G_TYPE_BOOLEAN, 5,
 			PURPLE_TYPE_CONNECTION,
@@ -4026,7 +4105,7 @@ void jabber_plugin_init(PurplePlugin *plugin)
 			G_TYPE_STRING, /* from */
 			PURPLE_TYPE_XMLNODE);
 
-	purple_signal_register(plugin, "jabber-watched-iq",
+	purple_signal_register(protocol, "jabber-watched-iq",
 			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
 			G_TYPE_BOOLEAN, 5,
 			PURPLE_TYPE_CONNECTION,
@@ -4035,7 +4114,7 @@ void jabber_plugin_init(PurplePlugin *plugin)
 			G_TYPE_STRING, /* from */
 			PURPLE_TYPE_XMLNODE); /* child */
 
-	purple_signal_register(plugin, "jabber-receiving-presence",
+	purple_signal_register(protocol, "jabber-receiving-presence",
 			purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER,
 			G_TYPE_BOOLEAN, 4,
 			PURPLE_TYPE_CONNECTION,
@@ -4044,16 +4123,251 @@ void jabber_plugin_init(PurplePlugin *plugin)
 			PURPLE_TYPE_XMLNODE);
 }
 
-void jabber_plugin_uninit(PurplePlugin *plugin)
+static void jabber_uninit_protocol(PurpleProtocol *protocol)
 {
 	g_return_if_fail(plugin_ref > 0);
 
-	purple_signals_unregister_by_instance(plugin);
+	purple_signals_unregister_by_instance(protocol);
+#if 0
 	purple_plugin_ipc_unregister_all(plugin);
-
-	jabber_unregister_commands(plugin);
+#endif
+	jabber_unregister_commands(protocol);
 
 	--plugin_ref;
 	if (plugin_ref == 0)
 		jabber_do_uninit();
 }
+
+static void
+jabber_protocol_init(PurpleProtocol *protocol)
+{
+	protocol->id        = "prpl-jabber";
+	protocol->name      = "XMPP";
+	protocol->options   = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
+	                      OPT_PROTO_MAIL_CHECK |
+#ifdef HAVE_CYRUS_SASL
+	                      OPT_PROTO_PASSWORD_OPTIONAL |
+#endif
+	                      OPT_PROTO_SLASH_COMMANDS_NATIVE;
+
+	protocol->icon_spec = purple_buddy_icon_spec_new("png",
+	                                                 32, 32, 96, 96, 0,
+	                                                 PURPLE_ICON_SCALE_SEND |
+	                                                 PURPLE_ICON_SCALE_DISPLAY);
+}
+
+static void
+jabber_protocol_class_init(PurpleProtocolClass *klass)
+{
+	klass->login        = jabber_login;
+	klass->close        = jabber_close;
+	klass->status_types = jabber_status_types;
+	klass->list_icon    = jabber_list_icon;
+}
+
+static void
+jabber_protocol_client_iface_init(PurpleProtocolClientIface *client_iface)
+{
+	client_iface->get_actions     = jabber_get_actions;
+	client_iface->list_emblem     = jabber_list_emblem;
+	client_iface->status_text     = jabber_status_text;
+	client_iface->tooltip_text    = jabber_tooltip_text;
+	client_iface->blist_node_menu = jabber_blist_node_menu;
+	client_iface->convo_closed    = jabber_convo_closed;
+	client_iface->normalize       = jabber_normalize;
+	client_iface->find_blist_chat = jabber_find_blist_chat;
+	client_iface->offline_message = jabber_offline_message;
+	client_iface->get_moods       = jabber_get_moods;
+}
+
+static void
+jabber_protocol_server_iface_init(PurpleProtocolServerIface *server_iface)
+{
+	server_iface->register_user   = jabber_register_account;
+	server_iface->unregister_user = jabber_unregister_account;
+	server_iface->set_info        = jabber_set_info;
+	server_iface->get_info        = jabber_buddy_get_info;
+	server_iface->set_status      = jabber_set_status;
+	server_iface->set_idle        = jabber_idle_set;
+	server_iface->add_buddy       = jabber_roster_add_buddy;
+	server_iface->remove_buddy    = jabber_roster_remove_buddy;
+	server_iface->keepalive       = jabber_keepalive;
+	server_iface->alias_buddy     = jabber_roster_alias_change;
+	server_iface->group_buddy     = jabber_roster_group_change;
+	server_iface->rename_group    = jabber_roster_group_rename;
+	server_iface->set_buddy_icon  = jabber_set_buddy_icon;
+	server_iface->send_raw        = jabber_protocol_send_raw;
+}
+
+static void
+jabber_protocol_im_iface_init(PurpleProtocolIMIface *im_iface)
+{
+	im_iface->send        = jabber_message_send_im;
+	im_iface->send_typing = jabber_send_typing;
+}
+
+static void
+jabber_protocol_chat_iface_init(PurpleProtocolChatIface *chat_iface)
+{
+	chat_iface->info               = jabber_chat_info;
+	chat_iface->info_defaults      = jabber_chat_info_defaults;
+	chat_iface->join               = jabber_chat_join;
+	chat_iface->get_name           = jabber_get_chat_name;
+	chat_iface->invite             = jabber_chat_invite;
+	chat_iface->leave              = jabber_chat_leave;
+	chat_iface->send               = jabber_message_send_chat;
+	chat_iface->get_user_real_name = jabber_chat_user_real_name;
+	chat_iface->set_topic          = jabber_chat_set_topic;
+}
+
+static void
+jabber_protocol_privacy_iface_init(PurpleProtocolPrivacyIface *privacy_iface)
+{
+	privacy_iface->add_deny = jabber_add_deny;
+	privacy_iface->rem_deny = jabber_rem_deny;
+}
+
+static void
+jabber_protocol_roomlist_iface_init(PurpleProtocolRoomlistIface *roomlist_iface)
+{
+	roomlist_iface->get_list       = jabber_roomlist_get_list;
+	roomlist_iface->cancel         = jabber_roomlist_cancel;
+	roomlist_iface->room_serialize = jabber_roomlist_room_serialize;
+}
+
+static void
+jabber_protocol_attention_iface_init(PurpleProtocolAttentionIface *attention_iface)
+{
+	attention_iface->send      = jabber_send_attention;
+	attention_iface->get_types = jabber_attention_types;
+}
+
+static void
+jabber_protocol_media_iface_init(PurpleProtocolMediaIface *media_iface)
+{
+	media_iface->initiate_session = jabber_initiate_media;
+	media_iface->get_caps         = jabber_get_media_caps;
+}
+
+static void
+jabber_protocol_xfer_iface_init(PurpleProtocolXferIface *xfer_iface)
+{
+	xfer_iface->can_receive = jabber_can_receive_file;
+	xfer_iface->send        = jabber_si_xfer_send;
+	xfer_iface->new_xfer    = jabber_si_new_xfer;
+}
+
+PURPLE_DEFINE_TYPE_EXTENDED(
+	JabberProtocol, jabber_protocol, PURPLE_TYPE_PROTOCOL, G_TYPE_FLAG_ABSTRACT,
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CLIENT_IFACE,
+	                                  jabber_protocol_client_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_SERVER_IFACE,
+	                                  jabber_protocol_server_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_IM_IFACE,
+	                                  jabber_protocol_im_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_CHAT_IFACE,
+	                                  jabber_protocol_chat_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_PRIVACY_IFACE,
+	                                  jabber_protocol_privacy_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_ROOMLIST_IFACE,
+	                                  jabber_protocol_roomlist_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_ATTENTION_IFACE,
+	                                  jabber_protocol_attention_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_MEDIA_IFACE,
+	                                  jabber_protocol_media_iface_init)
+
+	PURPLE_IMPLEMENT_INTERFACE_STATIC(PURPLE_TYPE_PROTOCOL_XFER_IFACE,
+	                                  jabber_protocol_xfer_iface_init)
+);
+
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	return purple_plugin_info_new(
+		"id",           "prpl-xmpp",
+		"name",         "XMPP Protocols",
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Protocol"),
+		"summary",      N_("XMPP, GTalk, and Facebook Protocols Plugin"),
+		"description",  N_("XMPP, GTalk, and Facebook Protocols Plugin"),
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
+		                PURPLE_PLUGIN_INFO_FLAGS_AUTO_LOAD,
+		NULL
+	);
+}
+
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
+	jingle_session_register_type(plugin);
+
+	jingle_transport_register_type(plugin);
+	jingle_iceudp_register_type(plugin);
+	jingle_rawudp_register_type(plugin);
+	jingle_google_p2p_register_type(plugin);
+
+	jingle_content_register_type(plugin);
+#ifdef USE_VV
+	jingle_rtp_register_type(plugin);
+#endif
+
+	jabber_protocol_register_type(plugin);
+
+	facebook_protocol_register_type(plugin);
+	gtalk_protocol_register_type(plugin);
+	xmpp_protocol_register_type(plugin);
+
+	xmpp_protocol = purple_protocols_add(XMPP_TYPE_PROTOCOL, error);
+	if (!xmpp_protocol)
+		return FALSE;
+
+	gtalk_protocol = purple_protocols_add(GTALK_TYPE_PROTOCOL, error);
+	if (!gtalk_protocol)
+		return FALSE;
+
+	facebook_protocol = purple_protocols_add(FACEBOOK_TYPE_PROTOCOL, error);
+	if (!facebook_protocol)
+		return FALSE;
+
+	purple_signal_connect(purple_get_core(), "uri-handler", xmpp_protocol,
+		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
+	purple_signal_connect(purple_get_core(), "uri-handler", gtalk_protocol,
+		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
+
+	jabber_init_protocol(xmpp_protocol);
+	jabber_init_protocol(gtalk_protocol);
+	jabber_init_protocol(facebook_protocol);
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	jabber_uninit_protocol(facebook_protocol);
+	jabber_uninit_protocol(gtalk_protocol);
+	jabber_uninit_protocol(xmpp_protocol);
+
+	if (!purple_protocols_remove(facebook_protocol, error))
+		return FALSE;
+
+	if (!purple_protocols_remove(gtalk_protocol, error))
+		return FALSE;
+
+	if (!purple_protocols_remove(xmpp_protocol, error))
+		return FALSE;
+
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(jabber, plugin_query, plugin_load, plugin_unload);

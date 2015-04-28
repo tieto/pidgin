@@ -40,10 +40,43 @@
  */
 typedef struct _PurpleBuddyIcon PurpleBuddyIcon;
 
+#define PURPLE_TYPE_BUDDY_ICON_SPEC  (purple_buddy_icon_spec_get_type())
+
+typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
+
 #include "account.h"
 #include "buddylist.h"
-#include "prpl.h"
+#include "image.h"
+#include "protocols.h"
 #include "util.h"
+
+/**
+ * PurpleBuddyIconSpec:
+ * @format: This is a comma-delimited list of image formats or %NULL if icons
+ *          are not supported.  Neither the core nor the protocol will actually
+ *          check to see if the data it's given matches this; it's entirely up
+ *          to the UI to do what it wants
+ * @min_width:    Minimum width of this icon
+ * @min_height:   Minimum height of this icon
+ * @max_width:    Maximum width of this icon
+ * @max_height:   Maximum height of this icon
+ * @max_filesize: Maximum size in bytes
+ * @scale_rules:  How to stretch this icon
+ *
+ * A description of a Buddy Icon specification.  This tells Purple what kind of
+ * image file it should give a protocol, and what kind of image file it should
+ * expect back. Dimensions less than 1 should be ignored and the image not
+ * scaled.
+ */
+struct _PurpleBuddyIconSpec {
+	char *format;
+	int min_width;
+	int min_height;
+	int max_width;
+	int max_height;
+	size_t max_filesize;
+	PurpleIconScaleRules scale_rules;
+};
 
 G_BEGIN_DECLS
 
@@ -422,15 +455,42 @@ void purple_buddy_icons_init(void);
 void purple_buddy_icons_uninit(void);
 
 /**************************************************************************/
-/* Buddy Icon Helper API                                                  */
+/* Buddy Icon Spec API                                                    */
 /**************************************************************************/
 
 /**
- * purple_buddy_icon_get_scale_size:
+ * purple_buddy_icon_spec_get_type:
+ *
+ * Returns: The #GType for the #PurpleBuddyIconSpec boxed structure.
+ */
+GType purple_buddy_icon_spec_get_type(void);
+
+/**
+ * purple_buddy_icon_spec_new:
+ * @format:        A comma-delimited list of image formats or %NULL if
+ *                 icons are not supported
+ * @min_width:     Minimum width of an icon
+ * @min_height:    Minimum height of an icon
+ * @max_width:     Maximum width of an icon
+ * @max_height:    Maximum height of an icon
+ * @max_filesize:  Maximum file size in bytes
+ * @scale_rules:   How to stretch this icon
+ *
+ * Creates a new #PurpleBuddyIconSpec instance.
+ *
+ * Returns:  A new buddy icon spec.
+ */
+PurpleBuddyIconSpec *purple_buddy_icon_spec_new(char *format, int min_width,
+		int min_height, int max_width, int max_height, size_t max_filesize,
+		PurpleIconScaleRules scale_rules);
+
+/**
+ * purple_buddy_icon_spec_get_scaled_size:
  *
  * Gets display size for a buddy icon
  */
-void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec *spec, int *width, int *height);
+void purple_buddy_icon_spec_get_scaled_size(PurpleBuddyIconSpec *spec,
+		int *width, int *height);
 
 G_END_DECLS
 

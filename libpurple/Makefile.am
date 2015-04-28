@@ -86,13 +86,14 @@ purple_coresources = \
 	network.c \
 	ntlm.c \
 	notify.c \
-	plugin.c \
+	plugins.c \
 	pluginpref.c \
 	pounce.c \
 	prefs.c \
 	presence.c \
 	proxy.c \
-	prpl.c \
+	protocol.c \
+	protocols.c \
 	purple-socket.c \
 	request.c \
 	request-datasheet.c \
@@ -167,13 +168,14 @@ purple_coreheaders = \
 	network.h \
 	notify.h \
 	ntlm.h \
-	plugin.h \
+	plugins.h \
 	pluginpref.h \
 	pounce.h \
 	prefs.h \
 	presence.h \
 	proxy.h \
-	prpl.h \
+	protocol.h \
+	protocols.h \
 	purple-socket.h \
 	request.h \
 	request-datasheet.h \
@@ -250,6 +252,9 @@ purple_enumheaders = \
 	$(srcdir)/connection.h \
 	$(srcdir)/conversation.h \
 	$(srcdir)/conversationtypes.h \
+	$(srcdir)/plugins.h \
+	$(srcdir)/protocol.h \
+	$(srcdir)/protocols.h \
 	$(srcdir)/roomlist.h \
 	$(srcdir)/status.h \
 	$(srcdir)/xfer.h
@@ -289,13 +294,13 @@ CLEANFILES += \
 # purple dbus server
 
 dbus_sources  = dbus-server.c dbus-useful.c
-dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h dbus-types.h
+dbus_headers  = dbus-server.h dbus-bindings.h dbus-purple.h dbus-useful.h dbus-define-api.h dbus-types.h
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnode.h \
                 blistnodetypes.h buddylist.h buddyicon.h connection.h conversation.h \
                 conversationtypes.h conversations.h core.h xfer.h log.h notify.h \
                 prefs.h presence.h roomlist.h savedstatuses.h smiley.h smiley-list.h \
-                status.h server.h util.h xmlnode.h prpl.h
+				status.h server.h util.h xmlnode.h protocol.h protocols.h
 
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
 		$(addprefix $(srcdir)/ciphers/, $(purple_cipherheaders)) \
@@ -305,7 +310,7 @@ dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))
 # We should probably make this better
 dbus_signals = $(addprefix $(srcdir)/, $(purple_coresources)) \
 	$(srcdir)/protocols/irc/irc.c \
-	$(srcdir)/protocols/jabber/libxmpp.c
+	$(srcdir)/protocols/jabber/jabber.c
 
 dbus-types.c: dbus-analyze-types.py $(purple_build_coreheaders)
 	$(AM_V_GEN)cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DEFINE_TYPE\(%s\) > $@
@@ -413,6 +418,7 @@ libpurple_la_LIBADD = \
 	$(DBUS_LIBS) \
 	$(DNSAPI_LIBS) \
 	$(GLIB_LIBS) \
+	$(GPLUGIN_LIBS) \
 	$(LIBXML_LIBS) \
 	$(NETWORKMANAGER_LIBS) \
 	$(INTLLIBS) \
@@ -426,10 +432,12 @@ libpurple_la_LIBADD = \
 	$(GNUTLS_LIBS) \
 	$(NSS_LIBS) \
 	$(ZLIB_LIBS) \
+	$(INTROSPECTION_LIBS) \
 	-lm
 
 AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
@@ -443,4 +451,60 @@ AM_CPPFLAGS = \
 	$(JSON_CFLAGS) \
 	$(GNUTLS_CFLAGS) \
 	$(NSS_CFLAGS) \
-	$(ZLIB_CFLAGS)
+	$(ZLIB_CFLAGS) \
+	$(INTROSPECTION_CFLAGS)
+
+-include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(prefix)/share/gir-1.0 --warn-all
+INTROSPECTION_COMPILER_ARGS = --includedir=$(prefix)/share/gir-1.0
+
+if HAVE_INTROSPECTION
+introspection_sources = \
+	$(libpurpleinclude_HEADERS) \
+	$(addprefix ciphers/, $(purple_cipherheaders)) \
+	$(addprefix media/, $(purple_mediaheaders))
+
+Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpurple.la
+Purple_3_0_gir_INCLUDES = GObject-2.0
+if PLUGINS
+Purple_3_0_gir_INCLUDES += GPlugin-0.0
+endif
+if ENABLE_DBUS
+Purple_3_0_gir_INCLUDES += DBus-1.0 DBusGLib-1.0
+endif
+
+Purple_3_0_gir_CFLAGS = \
+	$(INCLUDES) \
+	-DDATADIR=\"$(datadir)\" \
+	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)/\" \
+	-DLOCALEDIR=\"$(datadir)/locale\" \
+	-DSYSCONFDIR=\"$(sysconfdir)\" \
+	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
+	$(DBUS_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(FARSTREAM_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(GSTVIDEO_CFLAGS) \
+	$(GSTINTERFACES_CFLAGS) \
+	$(IDN_CFLAGS) \
+	$(NETWORKMANAGER_CFLAGS) \
+	$(JSON_CFLAGS) \
+	$(GNUTLS_CFLAGS) \
+	$(NSS_CFLAGS) \
+	$(ZLIB_CFLAGS) \
+	$(INTROSPECTION_CFLAGS)
+
+Purple_3_0_gir_LIBS = $(builddir)/libpurple.la
+Purple_3_0_gir_FILES = $(introspection_sources)
+INTROSPECTION_GIRS += Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
+
+girdir = $(prefix)/share/gir-1.0 $(INTROSPECTION_GIRDIR)
+gir_DATA = $(INTROSPECTION_GIRS)
+
+typelibdir = $(prefix)/share/gir-1.0 $(INTROSPECTION_TYPELIBDIR)
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+
+CLEANFILES += $(gir_DATA) $(typelib_DATA)
+endif

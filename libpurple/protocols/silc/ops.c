@@ -904,7 +904,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				     client_entry->mode & SILC_UMODE_PAGE ||
 				     client_entry->mode & SILC_UMODE_DETACHED)) {
 					client_entry->mode = mode;
-					purple_prpl_got_user_status(purple_buddy_get_account(b), purple_buddy_get_name(b), SILCPURPLE_STATUS_ID_AVAILABLE, NULL);
+					purple_protocol_got_user_status(purple_buddy_get_account(b), purple_buddy_get_name(b), SILCPURPLE_STATUS_ID_AVAILABLE, NULL);
 				}
 				else if ((mode & SILC_UMODE_GONE) ||
 					 (mode & SILC_UMODE_INDISPOSED) ||
@@ -912,16 +912,16 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 					 (mode & SILC_UMODE_PAGE) ||
 					 (mode & SILC_UMODE_DETACHED)) {
 					client_entry->mode = mode;
-					purple_prpl_got_user_status(purple_buddy_get_account(b), purple_buddy_get_name(b), SILCPURPLE_STATUS_ID_OFFLINE, NULL);
+					purple_protocol_got_user_status(purple_buddy_get_account(b), purple_buddy_get_name(b), SILCPURPLE_STATUS_ID_OFFLINE, NULL);
 				}
 			} else if (notify == SILC_NOTIFY_TYPE_SIGNOFF ||
 				   notify == SILC_NOTIFY_TYPE_SERVER_SIGNOFF ||
 				   notify == SILC_NOTIFY_TYPE_KILLED) {
 				client_entry->mode = mode;
-				purple_prpl_got_user_status(purple_buddy_get_account(b), purple_buddy_get_name(b), SILCPURPLE_STATUS_ID_OFFLINE, NULL);
+				purple_protocol_got_user_status(purple_buddy_get_account(b), purple_buddy_get_name(b), SILCPURPLE_STATUS_ID_OFFLINE, NULL);
 			} else if (notify == SILC_NOTIFY_TYPE_NONE) {
 				client_entry->mode = mode;
-				purple_prpl_got_user_status(purple_buddy_get_account(b), purple_buddy_get_name(b), SILCPURPLE_STATUS_ID_AVAILABLE, NULL);
+				purple_protocol_got_user_status(purple_buddy_get_account(b), purple_buddy_get_name(b), SILCPURPLE_STATUS_ID_AVAILABLE, NULL);
 			}
 		}
 		break;

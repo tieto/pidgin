@@ -694,7 +694,7 @@ void ggp_edisc_xfer_send_file(PurpleConnection *gc, const char *who,
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
 
-	/* Nothing interesting here, this code is common among prpls.
+	/* Nothing interesting here, this code is common among protocols.
 	 * See ggp_edisc_xfer_send_new. */
 
 	xfer = ggp_edisc_xfer_send_new(gc, who);

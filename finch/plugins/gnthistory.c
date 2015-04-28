@@ -188,8 +188,34 @@ static void history_prefs_cb(const char *name, PurplePrefType type,
 	history_prefs_check((PurplePlugin *)data);
 }
 
+static FinchPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Sean Egan <seanegan@gmail.com>",
+		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>",
+		NULL
+	};
+
+	return finch_plugin_info_new(
+		"id",           HISTORY_PLUGIN_ID,
+		"name",         N_("GntHistory"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("User interface"),
+		"summary",      N_("Shows recently logged conversations in new "
+		                   "conversations."),
+		"description",  N_("When a new conversation is opened this plugin will "
+		                   "insert the last conversation into the current "
+		                   "conversation."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	purple_signal_connect(purple_conversations_get_handle(),
 						"conversation-created",
@@ -205,44 +231,10 @@ plugin_load(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info =
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	NULL,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	HISTORY_PLUGIN_ID,
-	N_("GntHistory"),
-	DISPLAY_VERSION,
-	N_("Shows recently logged conversations in new conversations."),
-	N_("When a new conversation is opened this plugin will insert "
-	   "the last conversation into the current conversation."),
-	"Sean Egan <seanegan@gmail.com>\n"
-	"Sadrul H Chowdhury <sadrul@users.sourceforge.net>",
-	PURPLE_WEBSITE,
-	plugin_load,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(gnthistory, init_plugin, info)
-
+PURPLE_PLUGIN_INIT(gnthistory, plugin_query, plugin_load, plugin_unload);

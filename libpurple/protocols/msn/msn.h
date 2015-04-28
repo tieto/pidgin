@@ -24,6 +24,13 @@
 #ifndef MSN_H
 #define MSN_H
 
+#define MSN_TYPE_PROTOCOL             (msn_protocol_get_type())
+#define MSN_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), MSN_TYPE_PROTOCOL, MsnProtocol))
+#define MSN_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), MSN_TYPE_PROTOCOL, MsnProtocolClass))
+#define MSN_IS_PROTOCOL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), MSN_TYPE_PROTOCOL))
+#define MSN_IS_PROTOCOL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), MSN_TYPE_PROTOCOL))
+#define MSN_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), MSN_TYPE_PROTOCOL, MsnProtocolClass))
+
 typedef enum
 {
 	MSN_CAP_VIA_MOBILE    = 0x0000001,
@@ -111,6 +118,8 @@ typedef enum
 
 #define MSN_BUF_LEN 8192
 
+#define MSN_DOMAIN (g_quark_from_static_string("msn"))
+
 /* Windows Live Messenger Server*/
 #define MSN_SERVER "messenger.hotmail.com"
 #define MSN_HTTPCONN_SERVER "gateway.messenger.hotmail.com"
@@ -147,6 +156,18 @@ typedef enum
 #define MSN_CLIENT_ID \
 	((MSN_CLIENT_ID_VERSION    << 24) | \
 	 (MSN_CLIENT_ID_CAPABILITIES))
+
+typedef struct _MsnProtocol
+{
+	PurpleProtocol parent;
+} MsnProtocol;
+
+typedef struct _MsnProtocolClass
+{
+	PurpleProtocolClass parent_class;
+} MsnProtocolClass;
+
+G_MODULE_EXPORT GType msn_protocol_get_type(void);
 
 void
 msn_set_public_alias(PurpleConnection *gc, const char *alias,

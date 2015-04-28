@@ -27,7 +27,7 @@
 #include "connection.h"
 #include "debug.h"
 #include "notify.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "presence.h"
 #include "request.h"
 #include "server.h"
@@ -51,12 +51,12 @@ unidle_filter(PurpleAccount *acct)
 static gboolean
 idleable_filter(PurpleAccount *account)
 {
-	PurplePlugin *prpl;
+	PurpleProtocol *protocol;
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
-	g_return_val_if_fail(prpl != NULL, FALSE);
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
+	g_return_val_if_fail(protocol != NULL, FALSE);
 
-	return (PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->set_idle != NULL);
+	return PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, set_idle);
 }
 
 static void
@@ -244,7 +244,7 @@ unidle_all_action(PurplePluginAction *action)
 }
 
 static GList *
-actions(PurplePlugin *plugin, gpointer context)
+actions(PurplePlugin *plugin)
 {
 	GList *l = NULL;
 	PurplePluginAction *act = NULL;
@@ -277,8 +277,33 @@ signing_off_cb(PurpleConnection *gc, void *data)
 	idled_accts = g_list_remove(idled_accts, account);
 }
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Eric Warmenhoven <eric@warmenhoven.org>",
+		NULL
+	};
+
+	return purple_plugin_info_new(
+		"id",           IDLE_PLUGIN_ID,
+		/* This is a cultural reference.  Dy'er Mak'er is a song by Led Zeppelin.
+		   If that doesn't translate well into your language, drop the 's before translating. */
+		"name",         N_("I'dle Mak'er"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Utility"),
+		"summary",      N_("Allows you to hand-configure how long you've been idle"),
+		"description",  N_("Allows you to hand-configure how long you've been idle"),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"actions-cb",   actions,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	purple_signal_connect(purple_connections_get_handle(), "signing-off",
 						plugin,
@@ -288,53 +313,12 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	unidle_all_action(NULL);
 
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,
-	NULL,
-	0,
-	NULL,
-	PURPLE_PRIORITY_DEFAULT,
-	IDLE_PLUGIN_ID,
-
-	/* This is a cultural reference.  Dy'er Mak'er is a song by Led Zeppelin.
-	   If that doesn't translate well into your language, drop the 's before translating. */
-	N_("I'dle Mak'er"),
-	DISPLAY_VERSION,
-	N_("Allows you to hand-configure how long you've been idle"),
-	N_("Allows you to hand-configure how long you've been idle"),
-	"Eric Warmenhoven <eric@warmenhoven.org>",
-	PURPLE_WEBSITE,
-	plugin_load,
-	plugin_unload,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	actions,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-
-PURPLE_INIT_PLUGIN(idle, init_plugin, info)
+PURPLE_PLUGIN_INIT(idle, plugin_query, plugin_load, plugin_unload);
 

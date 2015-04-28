@@ -26,7 +26,7 @@
 #include	"internal.h"
 #include	"debug.h"
 
-#include	"protocol.h"
+#include	"client.h"
 #include	"mxit.h"
 #include	"roster.h"
 
@@ -325,17 +325,17 @@ static PurpleBuddy* mxit_update_buddy_group( struct MXitSession* session, Purple
 		/* now re-instate his presence again */
 		if ( contact ) {
 
-			/* update the buddy's status (reference: "libpurple/prpl.h") */
+			/* update the buddy's status (reference: "libpurple/protocol.h") */
 			if ( contact->statusMsg )
-				purple_prpl_got_user_status( session->acc, newbuddy->name, mxit_statuses[contact->presence].id, "message", contact->statusMsg, NULL );
+				purple_protocol_got_user_status( session->acc, newbuddy->name, mxit_statuses[contact->presence].id, "message", contact->statusMsg, NULL );
 			else
-				purple_prpl_got_user_status( session->acc, newbuddy->name, mxit_statuses[contact->presence].id, NULL );
+				purple_protocol_got_user_status( session->acc, newbuddy->name, mxit_statuses[contact->presence].id, NULL );
 
 			/* update the buddy's mood */
 			if ( contact->mood == MXIT_MOOD_NONE )
-				purple_prpl_got_user_status_deactive( session->acc, newbuddy->name, "mood" );
+				purple_protocol_got_user_status_deactive( session->acc, newbuddy->name, "mood" );
 			else
-				purple_prpl_got_user_status( session->acc, newbuddy->name, "mood", PURPLE_MOOD_NAME, mxit_moods[contact->mood-1].mood, NULL );
+				purple_protocol_got_user_status( session->acc, newbuddy->name, "mood", PURPLE_MOOD_NAME, mxit_moods[contact->mood-1].mood, NULL );
 
 			/* update avatar */
 			if ( contact->avatarId ) {
@@ -422,14 +422,14 @@ void mxit_update_contact( struct MXitSession* session, struct contact* contact )
 	else
 		contact->avatarId = NULL;
 
-	/* update the buddy's status (reference: "libpurple/prpl.h") */
-	purple_prpl_got_user_status( session->acc, contact->username, mxit_statuses[contact->presence].id, NULL );
+	/* update the buddy's status (reference: "libpurple/protocol.h") */
+	purple_protocol_got_user_status( session->acc, contact->username, mxit_statuses[contact->presence].id, NULL );
 
 	/* update the buddy's mood */
 	if ( contact->mood == MXIT_MOOD_NONE )
-		purple_prpl_got_user_status_deactive( session->acc, contact->username, "mood" );
+		purple_protocol_got_user_status_deactive( session->acc, contact->username, "mood" );
 	else
-		purple_prpl_got_user_status( session->acc, contact->username, "mood", PURPLE_MOOD_NAME, mxit_moods[contact->mood-1].mood, NULL );
+		purple_protocol_got_user_status( session->acc, contact->username, "mood", PURPLE_MOOD_NAME, mxit_moods[contact->mood-1].mood, NULL );
 }
 
 
@@ -488,17 +488,17 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 	if ( ( statusMsg ) && ( statusMsg[0] != '\0' ) )
 		contact->statusMsg = g_markup_escape_text( statusMsg, -1 );
 
-	/* update the buddy's status (reference: "libpurple/prpl.h") */
+	/* update the buddy's status (reference: "libpurple/protocol.h") */
 	if ( contact->statusMsg )
-		purple_prpl_got_user_status( session->acc, username, mxit_statuses[contact->presence].id, "message", contact->statusMsg, NULL );
+		purple_protocol_got_user_status( session->acc, username, mxit_statuses[contact->presence].id, "message", contact->statusMsg, NULL );
 	else
-		purple_prpl_got_user_status( session->acc, username, mxit_statuses[contact->presence].id, NULL );
+		purple_protocol_got_user_status( session->acc, username, mxit_statuses[contact->presence].id, NULL );
 
 	/* update the buddy's mood */
 	if ( contact->mood == MXIT_MOOD_NONE )
-		purple_prpl_got_user_status_deactive( session->acc, username, "mood" );
+		purple_protocol_got_user_status_deactive( session->acc, username, "mood" );
 	else
-		purple_prpl_got_user_status( session->acc, username, "mood", PURPLE_MOOD_NAME, mxit_moods[contact->mood-1].mood, NULL );
+		purple_protocol_got_user_status( session->acc, username, "mood", PURPLE_MOOD_NAME, mxit_moods[contact->mood-1].mood, NULL );
 }
 
 

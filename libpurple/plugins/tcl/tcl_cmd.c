@@ -71,7 +71,7 @@ PurpleCmdId tcl_cmd_register(struct tcl_cmd_handler *handler)
 
 	if ((id = purple_cmd_register(Tcl_GetString(handler->cmd),
 				    handler->args, handler->priority,
-				    handler->flags, handler->prpl_id,
+				    handler->flags, handler->protocol_id,
 				    PURPLE_CMD_FUNC(tcl_cmd_callback),
 				    handler->helpstr, (void *)handler)) == 0)
 		return 0;

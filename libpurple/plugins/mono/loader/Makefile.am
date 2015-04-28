@@ -14,11 +14,12 @@ mono_la_SOURCES	= \
 
 mono_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
-mono_la_LIBADD = $(MONO_LIBS)
+mono_la_LIBADD = $(GPLUGIN_LIBS) $(MONO_LIBS)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libpurple \
 	$(DEBUG_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
 	$(MONO_CFLAGS)

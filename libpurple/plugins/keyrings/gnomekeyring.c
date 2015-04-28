@@ -29,7 +29,7 @@
 #include "debug.h"
 #include "glibcompat.h"
 #include "keyring.h"
-#include "plugin.h"
+#include "plugins.h"
 #include "version.h"
 
 #include <gnome-keyring.h>
@@ -38,8 +38,11 @@
 #define GNOMEKEYRING_NAME        N_("GNOME Keyring")
 #define GNOMEKEYRING_DESCRIPTION N_("This plugin will store passwords in " \
 	"GNOME Keyring.")
-#define GNOMEKEYRING_AUTHOR      "Tomek Wasilczyk <twasilczyk@pidgin.im>"
 #define GNOMEKEYRING_ID          "keyring-gnomekeyring"
+#define GNOMEKEYRING_AUTHORS \
+	{ "Tomek Wasilczyk <twasilczyk@pidgin.im>", NULL }
+
+#define GNOMEKEYRING_DOMAIN      (g_quark_from_static_string(GNOMEKEYRING_ID))
 
 static PurpleKeyring *keyring_handler = NULL;
 static GList *request_queue = NULL;
@@ -385,8 +388,28 @@ gnomekeyring_close(void)
 	gnomekeyring_cancel();
 }
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = GNOMEKEYRING_AUTHORS;
+
+	return purple_plugin_info_new(
+		"id",           GNOMEKEYRING_ID,
+		"name",         GNOMEKEYRING_NAME,
+		"version",      DISPLAY_VERSION,
+		"category",     N_("Keyring"),
+		"summary",      "GNOME Keyring Plugin",
+		"description",  GNOMEKEYRING_DESCRIPTION,
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL,
+		NULL
+	);
+}
+
 static gboolean
-gnomekeyring_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	GModule *gkr_module;
 
@@ -402,6 +425,8 @@ gnomekeyring_load(PurplePlugin *plugin)
 	g_module_make_resident(gkr_module);
 
 	if (!gnome_keyring_is_available()) {
+		g_set_error(error, GNOMEKEYRING_DOMAIN, 0, "GNOME Keyring service is "
+			"disabled.");
 		purple_debug_info("keyring-gnome", "GNOME Keyring service is "
 			"disabled\n");
 		return FALSE;
@@ -423,9 +448,11 @@ gnomekeyring_load(PurplePlugin *plugin)
 }
 
 static gboolean
-gnomekeyring_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	if (purple_keyring_get_inuse() == keyring_handler) {
+		g_set_error(error, GNOMEKEYRING_DOMAIN, 0, "The keyring is currently "
+			"in use.");
 		purple_debug_warning("keyring-gnome",
 			"keyring in use, cannot unload\n");
 		return FALSE;
@@ -440,36 +467,4 @@ gnomekeyring_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-PurplePluginInfo plugininfo =
-{
-	PURPLE_PLUGIN_MAGIC,		/* magic */
-	PURPLE_MAJOR_VERSION,		/* major_version */
-	PURPLE_MINOR_VERSION,		/* minor_version */
-	PURPLE_PLUGIN_STANDARD,		/* type */
-	NULL,				/* ui_requirement */
-	PURPLE_PLUGIN_FLAG_INVISIBLE,	/* flags */
-	NULL,				/* dependencies */
-	PURPLE_PRIORITY_DEFAULT,	/* priority */
-	GNOMEKEYRING_ID,		/* id */
-	GNOMEKEYRING_NAME,		/* name */
-	DISPLAY_VERSION,		/* version */
-	"GNOME Keyring Plugin",		/* summary */
-	GNOMEKEYRING_DESCRIPTION,	/* description */
-	GNOMEKEYRING_AUTHOR,		/* author */
-	PURPLE_WEBSITE,			/* homepage */
-	gnomekeyring_load,		/* load */
-	gnomekeyring_unload,		/* unload */
-	NULL,				/* destroy */
-	NULL,				/* ui_info */
-	NULL,				/* extra_info */
-	NULL,				/* prefs_info */
-	NULL,				/* actions */
-	NULL, NULL, NULL, NULL		/* padding */
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(gnome_keyring, init_plugin, plugininfo)
+PURPLE_PLUGIN_INIT(gnome_keyring, plugin_query, plugin_load, plugin_unload);

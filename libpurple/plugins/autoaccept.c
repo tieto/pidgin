@@ -21,17 +21,18 @@
 
 #define PLUGIN_ID			"core-plugin_pack-autoaccept"
 #define PLUGIN_NAME			N_("Autoaccept")
+#define PLUGIN_CATEGORY		N_("Utility")
 #define PLUGIN_STATIC_NAME	Autoaccept
 #define PLUGIN_SUMMARY		N_("Auto-accept file transfer requests from selected users.")
 #define PLUGIN_DESCRIPTION	N_("Auto-accept file transfer requests from selected users.")
-#define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"
+#define PLUGIN_AUTHORS		{"Sadrul H Chowdhury <sadrul@users.sourceforge.net>", NULL}
 
 /* System headers */
 #include <glib.h>
 #include <glib/gstdio.h>
 
 /* Purple headers */
-#include <plugin.h>
+#include <plugins.h>
 #include <version.h>
 
 #include <buddylist.h>
@@ -227,37 +228,6 @@ context_menu(PurpleBlistNode *node, GList **menu, gpointer plugin)
 	(*menu) = g_list_prepend(*menu, action);
 }
 
-static gboolean
-plugin_load(PurplePlugin *plugin)
-{
-	/* migrate the old pref (we should only care if the plugin is actually *used*) */
-	/*
-	 * TODO: We should eventually call purple_prefs_remove(PREFS_STRANGER_OLD)
-	 *       to clean up after ourselves, but we don't want to do it yet
-	 *       so that we don't break users who share a .purple directory
-	 *       between old libpurple clients and new libpurple clients.
-	 *                                             --Mark Doliner, 2011-01-03
-	 */
-	if (!purple_prefs_exists(PREF_STRANGER)) {
-		if (purple_prefs_exists(PREF_STRANGER_OLD) && purple_prefs_get_bool(PREF_STRANGER_OLD))
-			purple_prefs_add_int(PREF_STRANGER, FT_REJECT);
-		else
-			purple_prefs_set_int(PREF_STRANGER, FT_ASK);
-	}
-
-	purple_signal_connect(purple_xfers_get_handle(), "file-recv-request", plugin,
-						PURPLE_CALLBACK(file_recv_request_cb), plugin);
-	purple_signal_connect(purple_blist_get_handle(), "blist-node-extended-menu", plugin,
-						PURPLE_CALLBACK(context_menu), plugin);
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin)
-{
-	return TRUE;
-}
-
 static PurplePluginPrefFrame *
 get_plugin_pref_frame(PurplePlugin *plugin)
 {
@@ -296,53 +266,29 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 	return frame;
 }
 
-static PurplePluginUiInfo prefs_info = {
-	get_plugin_pref_frame,
-	NULL,
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = PLUGIN_AUTHORS;
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
+	return purple_plugin_info_new(
+		"id",             PLUGIN_ID,
+		"name",           PLUGIN_NAME,
+		"version",        DISPLAY_VERSION,
+		"category",       PLUGIN_CATEGORY,
+		"summary",        PLUGIN_SUMMARY,
+		"description",    PLUGIN_DESCRIPTION,
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
+		NULL
+	);
+}
 
-static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,			/* Magic				*/
-	PURPLE_MAJOR_VERSION,			/* Purple Major Version	*/
-	PURPLE_MINOR_VERSION,			/* Purple Minor Version	*/
-	PURPLE_PLUGIN_STANDARD,			/* plugin type			*/
-	NULL,					/* ui requirement		*/
-	0,					/* flags				*/
-	NULL,					/* dependencies			*/
-	PURPLE_PRIORITY_DEFAULT,			/* priority				*/
-
-	PLUGIN_ID,				/* plugin id			*/
-	PLUGIN_NAME,				/* name					*/
-	DISPLAY_VERSION,			/* version				*/
-	PLUGIN_SUMMARY,				/* summary				*/
-	PLUGIN_DESCRIPTION,			/* description			*/
-	PLUGIN_AUTHOR,				/* author				*/
-	PURPLE_WEBSITE,				/* website				*/
-
-	plugin_load,				/* load					*/
-	plugin_unload,				/* unload				*/
-	NULL,					/* destroy				*/
-
-	NULL,					/* ui_info				*/
-	NULL,					/* extra_info			*/
-	&prefs_info,				/* prefs_info			*/
-	NULL,					/* actions				*/
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin) {
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error)
+{
 	char *dirname;
 
 	dirname = g_build_filename(purple_user_dir(), "autoaccept", NULL);
@@ -352,6 +298,33 @@ init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_bool(PREF_NEWDIR, TRUE);
 	purple_prefs_add_bool(PREF_ESCAPE, TRUE);
 	g_free(dirname);
+
+	/* migrate the old pref (we should only care if the plugin is actually *used*) */
+	/*
+	 * TODO: We should eventually call purple_prefs_remove(PREFS_STRANGER_OLD)
+	 *       to clean up after ourselves, but we don't want to do it yet
+	 *       so that we don't break users who share a .purple directory
+	 *       between old libpurple clients and new libpurple clients.
+	 *                                             --Mark Doliner, 2011-01-03
+	 */
+	if (!purple_prefs_exists(PREF_STRANGER)) {
+		if (purple_prefs_exists(PREF_STRANGER_OLD) && purple_prefs_get_bool(PREF_STRANGER_OLD))
+			purple_prefs_add_int(PREF_STRANGER, FT_REJECT);
+		else
+			purple_prefs_set_int(PREF_STRANGER, FT_ASK);
+	}
+
+	purple_signal_connect(purple_xfers_get_handle(), "file-recv-request", plugin,
+						PURPLE_CALLBACK(file_recv_request_cb), plugin);
+	purple_signal_connect(purple_blist_get_handle(), "blist-node-extended-menu", plugin,
+						PURPLE_CALLBACK(context_menu), plugin);
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
+{
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(PLUGIN_STATIC_NAME, plugin_query, plugin_load, plugin_unload);

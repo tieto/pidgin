@@ -29,7 +29,7 @@
 #include "notify.h"
 #include "prefs.h"
 #include "proxy.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "request.h"
 #include "savedstatuses.h"
 #include "sound.h"

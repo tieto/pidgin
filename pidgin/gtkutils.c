@@ -36,7 +36,7 @@
 #include "desktopitem.h"
 #include "notify.h"
 #include "prefs.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "request.h"
 #include "signals.h"
 #include "sound.h"
@@ -604,19 +604,14 @@ aop_option_menu_replace_menu(GtkWidget *optmenu, AopMenu *new_aop_menu)
 }
 
 static GdkPixbuf *
-pidgin_create_prpl_icon_from_prpl(PurplePlugin *prpl, PidginPrplIconSize size, PurpleAccount *account)
+pidgin_create_icon_from_protocol(PurpleProtocol *protocol, PidginProtocolIconSize size, PurpleAccount *account)
 {
-	PurplePluginProtocolInfo *prpl_info;
 	const char *protoname = NULL;
 	char *tmp;
 	char *filename = NULL;
 	GdkPixbuf *pixbuf;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	if (prpl_info->list_icon == NULL)
-		return NULL;
-
-	protoname = prpl_info->list_icon(account, NULL);
+	protoname = purple_protocol_class_list_icon(protocol, account, NULL);
 	if (protoname == NULL)
 		return NULL;
 
@@ -628,8 +623,8 @@ pidgin_create_prpl_icon_from_prpl(PurplePlugin *prpl, PidginPrplIconSize size, P
 
 	filename = g_build_filename(PURPLE_DATADIR,
 		"pixmaps", "pidgin", "protocols",
-		(size == PIDGIN_PRPL_ICON_SMALL) ? "16" :
-			((size == PIDGIN_PRPL_ICON_MEDIUM) ? "22" : "48"),
+		(size == PIDGIN_PROTOCOL_ICON_SMALL) ? "16" :
+			((size == PIDGIN_PROTOCOL_ICON_MEDIUM) ? "22" : "48"),
 		tmp, NULL);
 	g_free(tmp);
 
@@ -682,11 +677,11 @@ static AopMenu *
 create_protocols_menu(const char *default_proto_id)
 {
 	AopMenu *aop_menu = NULL;
-	PurplePlugin *plugin;
+	PurpleProtocol *protocol;
 	GdkPixbuf *pixbuf = NULL;
 	GtkTreeIter iter;
 	GtkListStore *ls;
-	GList *p;
+	GList *list, *p;
 	int i;
 
 	ls = gtk_list_store_new(AOP_COLUMN_COUNT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
@@ -695,27 +690,30 @@ create_protocols_menu(const char *default_proto_id)
 	aop_menu->default_item = 0;
 	aop_menu->model = GTK_TREE_MODEL(ls);
 
-	for (p = purple_plugins_get_protocols(), i = 0;
+	list = purple_protocols_get_all();
+
+	for (p = list, i = 0;
 		 p != NULL;
 		 p = p->next, i++) {
 
-		plugin = (PurplePlugin *)p->data;
+		protocol = PURPLE_PROTOCOL(p->data);
 
-		pixbuf = pidgin_create_prpl_icon_from_prpl(plugin, PIDGIN_PRPL_ICON_SMALL, NULL);
+		pixbuf = pidgin_create_icon_from_protocol(protocol, PIDGIN_PROTOCOL_ICON_SMALL, NULL);
 
 		gtk_list_store_append(ls, &iter);
 		gtk_list_store_set(ls, &iter,
 		                   AOP_ICON_COLUMN, pixbuf,
-		                   AOP_NAME_COLUMN, plugin->info->name,
-		                   AOP_DATA_COLUMN, plugin->info->id,
+		                   AOP_NAME_COLUMN, purple_protocol_get_name(protocol),
+		                   AOP_DATA_COLUMN, purple_protocol_get_id(protocol),
 		                   -1);
 
 		if (pixbuf)
 			g_object_unref(pixbuf);
 
-		if (default_proto_id != NULL && !strcmp(plugin->info->id, default_proto_id))
+		if (default_proto_id != NULL && !strcmp(purple_protocol_get_id(protocol), default_proto_id))
 			aop_menu->default_item = i;
 	}
+	g_list_free(list);
 
 	return aop_menu;
 }
@@ -778,7 +776,7 @@ create_account_menu(PurpleAccount *default_account,
 			continue;
 		}
 
-		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+		pixbuf = pidgin_create_protocol_icon(account, PIDGIN_PROTOCOL_ICON_SMALL);
 
 		if (pixbuf) {
 			if (purple_account_is_disconnected(account) && show_all &&
@@ -948,24 +946,18 @@ void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name)
 void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name, int chat)
 {
 	char *who = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 
 	if (chat < 0) {
 		pidgin_retrieve_user_info(conn, name);
 		return;
 	}
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(conn));
-	if (prpl_info != NULL && prpl_info->get_cb_real_name)
-		who = prpl_info->get_cb_real_name(conn, chat, name);
-	if (prpl_info == NULL || prpl_info->get_cb_info == NULL) {
-		pidgin_retrieve_user_info(conn, who ? who : name);
-		g_free(who);
-		return;
-	}
+	protocol = purple_connection_get_protocol(conn);
+	if (protocol != NULL)
+		who = purple_protocol_chat_iface_get_user_real_name(protocol, conn, chat, name);
 
-	show_retrieveing_info(conn, who ? who : name);
-	prpl_info->get_cb_info(conn, chat, name);
+	pidgin_retrieve_user_info(conn, who ? who : name);
 	g_free(who);
 }
 
@@ -1057,34 +1049,31 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 			for (l = list; l != NULL; l = l->next)
 			{
 				PurpleConnection *gc;
-				PurplePluginProtocolInfo *prpl_info = NULL;
-				PurplePlugin *plugin;
+				PurpleProtocol *proto = NULL;
 
 				if (all_accounts)
 				{
 					account = (PurpleAccount *)l->data;
 
-					plugin = purple_plugins_find_with_id(
+					proto = purple_protocols_find(
 						purple_account_get_protocol_id(account));
 
-					if (plugin == NULL)
+					if (proto == NULL)
 					{
 						account = NULL;
 
 						continue;
 					}
-
-					prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 				}
 				else
 				{
 					gc = (PurpleConnection *)l->data;
 					account = purple_connection_get_account(gc);
 
-					prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+					proto = purple_connection_get_protocol(gc);
 				}
 
-				protoname = prpl_info->list_icon(account, NULL);
+				protoname = purple_protocol_class_list_icon(proto, account, NULL);
 
 				if (!strcmp(protoname, protocol))
 					break;
@@ -1099,34 +1088,31 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 				for (l = list; l != NULL; l = l->next)
 				{
 					PurpleConnection *gc;
-					PurplePluginProtocolInfo *prpl_info = NULL;
-					PurplePlugin *plugin;
+					PurpleProtocol *proto = NULL;
 
 					if (all_accounts)
 					{
 						account = (PurpleAccount *)l->data;
 
-						plugin = purple_plugins_find_with_id(
+						proto = purple_protocols_find(
 							purple_account_get_protocol_id(account));
 
-						if (plugin == NULL)
+						if (proto == NULL)
 						{
 							account = NULL;
 
 							continue;
 						}
-
-						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 					}
 					else
 					{
 						gc = (PurpleConnection *)l->data;
 						account = purple_connection_get_account(gc);
 
-						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+						proto = purple_connection_get_protocol(gc);
 					}
 
-					protoname = prpl_info->list_icon(account, NULL);
+					protoname = purple_protocol_class_list_icon(proto, account, NULL);
 
 					if (!strcmp(protoname, "aim") || !strcmp(protoname, "icq"))
 						break;
@@ -1471,7 +1457,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 	GdkPixbuf *pb;
 	GList *files = purple_uri_list_extract_filenames((const gchar *) gtk_selection_data_get_data(sd));
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 #ifndef _WIN32
 	PurpleDesktopItem *item;
 #endif
@@ -1520,14 +1506,14 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			data->account = account;
 
 			if (gc)
-				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+				protocol = purple_connection_get_protocol(gc);
 
 			if (!(purple_connection_get_flags(gc) & PURPLE_CONNECTION_FLAG_NO_IMAGES))
 				im = TRUE;
 
-			if (prpl_info && prpl_info->can_receive_file)
-				ft = prpl_info->can_receive_file(gc, who);
-			else if (prpl_info && prpl_info->send_file)
+			if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, can_receive))
+				ft = purple_protocol_xfer_iface_can_receive(protocol, gc, who);
+			else if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, send))
 				ft = TRUE;
 
 			if (im && ft) {
@@ -1644,7 +1630,7 @@ void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, PurpleBuddyIconSpec *spec,
 	if ((spec == NULL) || !(spec->scale_rules & rules))
 		return;
 
-	purple_buddy_icon_get_scale_size(spec, width, height);
+	purple_buddy_icon_spec_get_scaled_size(spec, width, height);
 
 	/* and now for some arbitrary sanity checks */
 	if(*width > 100)
@@ -1720,16 +1706,16 @@ pidgin_stock_id_from_presence(PurplePresence *presence)
 }
 
 GdkPixbuf *
-pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize size)
+pidgin_create_protocol_icon(PurpleAccount *account, PidginProtocolIconSize size)
 {
-	PurplePlugin *prpl;
+	PurpleProtocol *protocol;
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
-	if (prpl == NULL)
+	protocol = purple_protocols_find(purple_account_get_protocol_id(account));
+	if (protocol == NULL)
 		return NULL;
-	return pidgin_create_prpl_icon_from_prpl(prpl, size, account);
+	return pidgin_create_icon_from_protocol(protocol, size, account);
 }
 
 static void
@@ -2288,14 +2274,13 @@ str_array_match(char **a, char **b)
 }
 
 gpointer
-pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
+pidgin_convert_buddy_icon(PurpleProtocol *protocol, const char *path, size_t *len)
 {
-	PurplePluginProtocolInfo *prpl_info;
 	PurpleBuddyIconSpec *spec;
 	int orig_width, orig_height, new_width, new_height;
 	GdkPixbufFormat *format;
 	char **pixbuf_formats;
-	char **prpl_formats;
+	char **protocol_formats;
 	GError *error = NULL;
 	gchar *contents;
 	gsize length;
@@ -2304,8 +2289,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 	int i;
 	gchar *tmp;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
-	spec = &prpl_info->icon_spec;
+	spec = purple_protocol_get_icon_spec(protocol);
 	g_return_val_if_fail(spec->format != NULL, NULL);
 
 	format = gdk_pixbuf_get_file_info(path, &orig_width, &orig_height);
@@ -2315,10 +2299,10 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 	}
 
 	pixbuf_formats = gdk_pixbuf_format_get_extensions(format);
-	prpl_formats = g_strsplit(spec->format, ",", 0);
+	protocol_formats = g_strsplit(spec->format, ",", 0);
 
-	if (str_array_match(pixbuf_formats, prpl_formats) && /* This is an acceptable format AND */
-		 (!(spec->scale_rules & PURPLE_ICON_SCALE_SEND) || /* The prpl doesn't scale before it sends OR */
+	if (str_array_match(pixbuf_formats, protocol_formats) && /* This is an acceptable format AND */
+		 (!(spec->scale_rules & PURPLE_ICON_SCALE_SEND) || /* The protocol doesn't scale before it sends OR */
 		  (spec->min_width <= orig_width && spec->max_width >= orig_width &&
 		   spec->min_height <= orig_height && spec->max_height >= orig_height))) /* The icon is the correct size */
 	{
@@ -2327,7 +2311,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 		if (!g_file_get_contents(path, &contents, &length, &error)) {
 			purple_debug_warning("buddyicon", "Could not get file contents "
 					"of %s: %s\n", path, error->message);
-			g_strfreev(prpl_formats);
+			g_strfreev(protocol_formats);
 			return NULL;
 		}
 
@@ -2336,7 +2320,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 			   constraints.  Great!  Return it without making any changes. */
 			if (len)
 				*len = length;
-			g_strfreev(prpl_formats);
+			g_strfreev(protocol_formats);
 			return contents;
 		}
 
@@ -2352,7 +2336,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 		purple_debug_warning("buddyicon", "Could not open icon '%s' for "
 				"conversion: %s\n", path, error->message);
 		g_error_free(error);
-		g_strfreev(prpl_formats);
+		g_strfreev(protocol_formats);
 		return NULL;
 	}
 	original = g_object_ref(G_OBJECT(pixbuf));
@@ -2365,7 +2349,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 		(orig_width < spec->min_width || orig_width > spec->max_width ||
 		 orig_height < spec->min_height || orig_height > spec->max_height))
 	{
-		purple_buddy_icon_get_scale_size(spec, &new_width, &new_height);
+		purple_buddy_icon_spec_get_scaled_size(spec, &new_width, &new_height);
 
 		g_object_unref(G_OBJECT(pixbuf));
 		pixbuf = gdk_pixbuf_scale_simple(original, new_width, new_height, GDK_INTERP_HYPER);
@@ -2373,31 +2357,31 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 
 	scale_factor = 1;
 	do {
-		for (i = 0; prpl_formats[i]; i++) {
+		for (i = 0; protocol_formats[i]; i++) {
 			int quality = 100;
 			do {
 				const char *key = NULL;
 				const char *value = NULL;
 				gchar tmp_buf[4];
 
-				purple_debug_info("buddyicon", "Converting buddy icon to %s\n", prpl_formats[i]);
+				purple_debug_info("buddyicon", "Converting buddy icon to %s\n", protocol_formats[i]);
 
-				if (g_str_equal(prpl_formats[i], "png")) {
+				if (g_str_equal(protocol_formats[i], "png")) {
 					key = "compression";
 					value = "9";
-				} else if (g_str_equal(prpl_formats[i], "jpeg")) {
+				} else if (g_str_equal(protocol_formats[i], "jpeg")) {
 					sprintf(tmp_buf, "%u", quality);
 					key = "quality";
 					value = tmp_buf;
 				}
 
 				if (!gdk_pixbuf_save_to_buffer(pixbuf, &contents, &length,
-						prpl_formats[i], &error, key, value, NULL))
+						protocol_formats[i], &error, key, value, NULL))
 				{
 					/* The NULL checking of error is necessary due to this bug:
 					 * http://bugzilla.gnome.org/show_bug.cgi?id=405539 */
 					purple_debug_warning("buddyicon",
-							"Could not convert to %s: %s\n", prpl_formats[i],
+							"Could not convert to %s: %s\n", protocol_formats[i],
 							(error && error->message) ? error->message : "Unknown error");
 					g_error_free(error);
 					error = NULL;
@@ -2415,10 +2399,10 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 							"%dx%d to %dx%d, format=%s, quality=%u, "
 							"filesize=%" G_GSIZE_FORMAT "\n",
 							orig_width, orig_height, new_width, new_height,
-							prpl_formats[i], quality, length);
+							protocol_formats[i], quality, length);
 					if (len)
 						*len = length;
-					g_strfreev(prpl_formats);
+					g_strfreev(protocol_formats);
 					g_object_unref(G_OBJECT(pixbuf));
 					g_object_unref(G_OBJECT(original));
 					return contents;
@@ -2426,7 +2410,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 
 				g_free(contents);
 
-				if (!g_str_equal(prpl_formats[i], "jpeg")) {
+				if (!g_str_equal(protocol_formats[i], "jpeg")) {
 					/* File size was too big and we can't lower the quality,
 					   so skip to the next image type. */
 					break;
@@ -2446,12 +2430,12 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 		g_object_unref(G_OBJECT(pixbuf));
 		pixbuf = gdk_pixbuf_scale_simple(original, new_width, new_height, GDK_INTERP_HYPER);
 	} while ((new_width > 10 || new_height > 10) && new_width > spec->min_width && new_height > spec->min_height);
-	g_strfreev(prpl_formats);
+	g_strfreev(protocol_formats);
 	g_object_unref(G_OBJECT(pixbuf));
 	g_object_unref(G_OBJECT(original));
 
 	tmp = g_strdup_printf(_("The file '%s' is too large for %s.  Please try a smaller image.\n"),
-			path, plugin->info->name);
+			path, purple_protocol_get_name(protocol));
 	purple_notify_error(NULL, _("Icon Error"), _("Could not set icon"), tmp, NULL);
 	g_free(tmp);
 

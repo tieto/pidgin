@@ -277,58 +277,6 @@ mmconv_from_conv(PurpleConversation *conv)
 }
 
 static gboolean
-plugin_load(PurplePlugin *plugin) {
-	void *conv_list_handle;
-	GList *l;
-
-	PURPLE_DBUS_RETURN_FALSE_IF_DISABLED(plugin);
-
-    /* First, we have to register our four exported functions with the
-       main purple dbus loop.  Without this statement, the purple dbus
-       code wouldn't know about our functions. */
-    PURPLE_DBUS_REGISTER_BINDINGS(plugin);
-
-	/* Keep the plugin for reference (needed for notify's) */
-	plugin_pointer = plugin;
-
-	/* Add the button to all the current conversations */
-	for (l = purple_conversations_get_all(); l != NULL; l = l->next)
-		init_conversation((PurpleConversation *)l->data);
-
-	/* Listen for any new conversations */
-	conv_list_handle = purple_conversations_get_handle();
-
-	purple_signal_connect(conv_list_handle, "conversation-created",
-					plugin, PURPLE_CALLBACK(init_conversation), NULL);
-
-	/* Listen for conversations that are ending */
-	purple_signal_connect(conv_list_handle, "deleting-conversation",
-					plugin, PURPLE_CALLBACK(conv_destroyed), NULL);
-
-	/* Listen for sending/receiving messages to replace tags */
-	purple_signal_connect(conv_list_handle, "sending-im-msg",
-					plugin, PURPLE_CALLBACK(intercept_sent), NULL);
-	purple_signal_connect(conv_list_handle, "receiving-im-msg",
-					plugin, PURPLE_CALLBACK(intercept_received), NULL);
-
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(PurplePlugin *plugin) {
-	MMConversation *mmconv = NULL;
-
-	while (conversations != NULL)
-	{
-		mmconv = conversations->data;
-		conv_destroyed(mmconv->conv);
-	}
-	return TRUE;
-}
-
-
-
-static gboolean
 intercept_sent(PurpleAccount *account, PurpleMessage *msg, void* pData)
 {
 	const gchar *cont = purple_message_get_contents(msg);
@@ -690,56 +638,83 @@ get_config_frame(PurplePlugin *plugin)
 	return ret;
 }
 
-static PidginPluginUiInfo ui_info =
-{
-	get_config_frame,
+static PidginPluginInfo *
+plugin_query(GError **error) {
+	const gchar * const authors[] = {
+		"Christian Muise <christian.muise@gmail.com>",
+		NULL
+	};
 
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurplePluginInfo info = {
-    PURPLE_PLUGIN_MAGIC,
-    PURPLE_MAJOR_VERSION,
-    PURPLE_MINOR_VERSION,
-    PURPLE_PLUGIN_STANDARD,                                /**< type           */
-    PIDGIN_PLUGIN_TYPE,                                /**< ui_requirement */
-    0,                                                   /**< flags          */
-    NULL,                                                /**< dependencies   */
-    PURPLE_PRIORITY_DEFAULT,                               /**< priority       */
-
-    MUSICMESSAGING_PLUGIN_ID,                            /**< id             */
-    "Music Messaging",	                                 /**< name           */
-    DISPLAY_VERSION,                                     /**< version        */
-    N_("Music Messaging Plugin for collaborative composition."),
-                                                         /**  summary        */
-    N_("The Music Messaging Plugin allows a number of users to simultaneously "
-       "work on a piece of music by editing a common score in real-time."),
-	                                                 /**  description    */
-    "Christian Muise <christian.muise@gmail.com>",       /**< author         */
-    PURPLE_WEBSITE,                                        /**< homepage       */
-    plugin_load,                                         /**< load           */
-    plugin_unload,                                       /**< unload         */
-    NULL,                                                /**< destroy        */
-    &ui_info,                                            /**< ui_info        */
-    NULL,                                                /**< extra_info     */
-    NULL,
-    NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin) {
-	purple_prefs_add_none("/plugins/gtk/musicmessaging");
-	purple_prefs_add_string("/plugins/gtk/musicmessaging/editor_path", "/usr/bin/gscore");
+	return pidgin_plugin_info_new(
+		"id",                   MUSICMESSAGING_PLUGIN_ID,
+		"name",                 N_("Music Messaging"),
+		"version",              DISPLAY_VERSION,
+		"category",             N_("Music"),
+		"summary",              N_("Music Messaging Plugin for "
+		                           "collaborative composition."),
+		"description",          N_("The Music Messaging Plugin allows a "
+		                           "number of users to simultaneously work "
+		                           "on a piece of music by editing a common "
+		                           "score in real-time."),
+		"authors",              authors,
+		"website",              PURPLE_WEBSITE,
+		"abi-version",          PURPLE_ABI_VERSION,
+		"gtk-config-frame-cb",  get_config_frame,
+		NULL
+	);
 }
 
-PURPLE_INIT_PLUGIN(musicmessaging, init_plugin, info);
+static gboolean
+plugin_load(PurplePlugin *plugin, GError **error) {
+	void *conv_list_handle;
+	GList *l;
+
+	PURPLE_DBUS_RETURN_FALSE_IF_DISABLED(plugin);
+
+	purple_prefs_add_none("/plugins/gtk/musicmessaging");
+	purple_prefs_add_string("/plugins/gtk/musicmessaging/editor_path", "/usr/bin/gscore");
+
+    /* First, we have to register our four exported functions with the
+       main purple dbus loop.  Without this statement, the purple dbus
+       code wouldn't know about our functions. */
+    PURPLE_DBUS_REGISTER_BINDINGS(plugin);
+
+	/* Keep the plugin for reference (needed for notify's) */
+	plugin_pointer = plugin;
+
+	/* Add the button to all the current conversations */
+	for (l = purple_conversations_get_all(); l != NULL; l = l->next)
+		init_conversation((PurpleConversation *)l->data);
+
+	/* Listen for any new conversations */
+	conv_list_handle = purple_conversations_get_handle();
+
+	purple_signal_connect(conv_list_handle, "conversation-created",
+					plugin, PURPLE_CALLBACK(init_conversation), NULL);
+
+	/* Listen for conversations that are ending */
+	purple_signal_connect(conv_list_handle, "deleting-conversation",
+					plugin, PURPLE_CALLBACK(conv_destroyed), NULL);
+
+	/* Listen for sending/receiving messages to replace tags */
+	purple_signal_connect(conv_list_handle, "sending-im-msg",
+					plugin, PURPLE_CALLBACK(intercept_sent), NULL);
+	purple_signal_connect(conv_list_handle, "receiving-im-msg",
+					plugin, PURPLE_CALLBACK(intercept_received), NULL);
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error) {
+	MMConversation *mmconv = NULL;
+
+	while (conversations != NULL)
+	{
+		mmconv = conversations->data;
+		conv_destroyed(mmconv->conv);
+	}
+	return TRUE;
+}
+
+PURPLE_PLUGIN_INIT(musicmessaging, plugin_query, plugin_load, plugin_unload);

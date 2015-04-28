@@ -130,34 +130,34 @@ msn_user_update(MsnUser *user)
 	offline = (user->status == NULL);
 
 	if (!offline) {
-		purple_prpl_got_user_status(account, user->passport, user->status,
+		purple_protocol_got_user_status(account, user->passport, user->status,
 				"message", user->statusline, NULL);
 	} else {
 		if (user->mobile) {
-			purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
-			purple_prpl_got_user_status(account, user->passport, "available", NULL);
+			purple_protocol_got_user_status(account, user->passport, "mobile", NULL);
+			purple_protocol_got_user_status(account, user->passport, "available", NULL);
 		} else {
-			purple_prpl_got_user_status(account, user->passport, "offline", NULL);
+			purple_protocol_got_user_status(account, user->passport, "offline", NULL);
 		}
 	}
 
 	if (!offline || !user->mobile) {
-		purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
+		purple_protocol_got_user_status_deactive(account, user->passport, "mobile");
 	}
 
 	if (!offline && user->extinfo && user->extinfo->media_type != CURRENT_MEDIA_UNKNOWN) {
 		if (user->extinfo->media_type == CURRENT_MEDIA_MUSIC) {
-			purple_prpl_got_user_status(account, user->passport, "tune",
+			purple_protocol_got_user_status(account, user->passport, "tune",
 			                            PURPLE_TUNE_ARTIST, user->extinfo->media_artist,
 			                            PURPLE_TUNE_ALBUM, user->extinfo->media_album,
 			                            PURPLE_TUNE_TITLE, user->extinfo->media_title,
 			                            NULL);
 		} else if (user->extinfo->media_type == CURRENT_MEDIA_GAMES) {
-			purple_prpl_got_user_status(account, user->passport, "tune",
+			purple_protocol_got_user_status(account, user->passport, "tune",
 			                            "game", user->extinfo->media_title,
 			                            NULL);
 		} else if (user->extinfo->media_type == CURRENT_MEDIA_OFFICE) {
-			purple_prpl_got_user_status(account, user->passport, "tune",
+			purple_protocol_got_user_status(account, user->passport, "tune",
 			                            "office", user->extinfo->media_title,
 			                            NULL);
 		} else {
@@ -165,13 +165,13 @@ msn_user_update(MsnUser *user)
 			                     user->extinfo->media_type);
 		}
 	} else {
-		purple_prpl_got_user_status_deactive(account, user->passport, "tune");
+		purple_protocol_got_user_status_deactive(account, user->passport, "tune");
 	}
 
 	if (user->idle)
-		purple_prpl_got_user_idle(account, user->passport, TRUE, -1);
+		purple_protocol_got_user_idle(account, user->passport, TRUE, -1);
 	else
-		purple_prpl_got_user_idle(account, user->passport, FALSE, 0);
+		purple_protocol_got_user_idle(account, user->passport, FALSE, 0);
 }
 
 void

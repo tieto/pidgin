@@ -6,7 +6,7 @@
 #include "signals.h"
 #include "version.h"
 
-#include "plugin.h"
+#include "plugins.h"
 #include "pluginpref.h"
 #include "prefs.h"
 
@@ -115,10 +115,40 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 	return frame;
 }
 
+static PurplePluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Christian Hammond <chipx86@gnupdate.org>",
+		NULL
+	};
+
+	return purple_plugin_info_new(
+		"id",             STATENOTIFY_PLUGIN_ID,
+		"name",           N_("Buddy State Notification"),
+		"version",        DISPLAY_VERSION,
+		"category",       N_("Notification"),
+		"summary",        N_("Notifies in a conversation window when a "
+		                     "buddy goes or returns from away or idle."),
+		"description",    N_("Notifies in a conversation window when a "
+		                     "buddy goes or returns from away or idle."),
+		"authors",        authors,
+		"website",        PURPLE_WEBSITE,
+		"abi-version",    PURPLE_ABI_VERSION,
+		"pref-frame-cb",  get_plugin_pref_frame,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	void *blist_handle = purple_blist_get_handle();
+
+	purple_prefs_add_none("/plugins/core/statenotify");
+	purple_prefs_add_bool("/plugins/core/statenotify/notify_away", TRUE);
+	purple_prefs_add_bool("/plugins/core/statenotify/notify_idle", TRUE);
+	purple_prefs_add_bool("/plugins/core/statenotify/notify_signon", TRUE);
 
 	purple_signal_connect(blist_handle, "buddy-status-changed", plugin,
 	                    PURPLE_CALLBACK(buddy_status_changed_cb), NULL);
@@ -132,64 +162,10 @@ plugin_load(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginUiInfo prefs_info =
+static gboolean
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	get_plugin_pref_frame,
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,
-	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
-
-	STATENOTIFY_PLUGIN_ID,                            /**< id             */
-	N_("Buddy State Notification"),                   /**< name           */
-	DISPLAY_VERSION,                                  /**< version        */
-	                                                  /**  summary        */
-	N_("Notifies in a conversation window when a buddy goes or returns from "
-	   "away or idle."),
-	                                                  /**  description    */
-	N_("Notifies in a conversation window when a buddy goes or returns from "
-	   "away or idle."),
-	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	NULL,                                             /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	NULL,                                             /**< extra_info     */
-	&prefs_info,                                      /**< prefs_info     */
-	NULL,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-	purple_prefs_add_none("/plugins/core/statenotify");
-	purple_prefs_add_bool("/plugins/core/statenotify/notify_away", TRUE);
-	purple_prefs_add_bool("/plugins/core/statenotify/notify_idle", TRUE);
-	purple_prefs_add_bool("/plugins/core/statenotify/notify_signon", TRUE);
+	return TRUE;
 }
 
-PURPLE_INIT_PLUGIN(statenotify, init_plugin, info)
+PURPLE_PLUGIN_INIT(statenotify, plugin_query, plugin_load, plugin_unload);

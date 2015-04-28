@@ -350,7 +350,7 @@ static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, PidginWh
 
 /*
  * Whiteboard start button on conversation window (move this code to gtkconv?
- * and use new prpl_info member?)
+ * and use new protocol member?)
  */
 #if 0
 static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data)
@@ -624,7 +624,7 @@ static gboolean pidgin_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *ev
 			MotionCount = 0;
 		*/
 
-		/* Send draw list to prpl draw_list handler */
+		/* Send draw list to protocol draw_list handler */
 		purple_whiteboard_send_draw_list(gtkwb->wb, draw_list);
 
 		pidgin_whiteboard_set_canvas_as_icon(gtkwb);

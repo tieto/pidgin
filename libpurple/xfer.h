@@ -699,7 +699,7 @@ purple_xfer_read_file(PurpleXfer *xfer, guchar *buffer, gsize size);
  * @ip and @port are ignored.
  *
  * Passing @fd as '-1' is a special-case and indicates to the
- * protocol plugin to facilitate the file transfer itself.
+ * protocol to facilitate the file transfer itself.
  */
 void purple_xfer_start(PurpleXfer *xfer, int fd, const char *ip, guint16 port);
 
@@ -789,7 +789,7 @@ void purple_xfer_ui_ready(PurpleXfer *xfer);
  * the direction of the file transfer. Used when the protocol provides read/write
  * ops and cannot/does not provide a raw fd to the core.
  */
-void purple_xfer_prpl_ready(PurpleXfer *xfer);
+void purple_xfer_protocol_ready(PurpleXfer *xfer);
 
 /**
  * purple_xfer_get_thumbnail:

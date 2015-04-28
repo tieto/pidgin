@@ -94,7 +94,12 @@ GType jingle_iceudp_candidate_get_type(void);
  *
  * @return The iceudp class's GType.
  */
-GType jingle_iceudp_get_type(void);
+G_MODULE_EXPORT GType jingle_iceudp_get_type(void);
+
+/**
+ * Registers the JingleIceUdp type in the type system.
+ */
+void jingle_iceudp_register_type(PurplePlugin *plugin);
 
 JingleIceUdpCandidate *jingle_iceudp_candidate_new(const gchar *id,
 		guint component, const gchar *foundation, guint generation,

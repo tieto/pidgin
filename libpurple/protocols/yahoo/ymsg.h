@@ -1,5 +1,5 @@
 /**
- * @file libymsg.h The Yahoo! and Yahoo! JAPAN Protocol Plugins
+ * @file ymsg.h The Yahoo! and Yahoo! JAPAN Protocols
  *
  * purple
  *
@@ -22,13 +22,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _LIBYMSG_H_
-#define _LIBYMSG_H_
+#ifndef _YMSG_H_
+#define _YMSG_H_
 
 #include "circularbuffer.h"
 #include "cmds.h"
 #include "http.h"
-#include "prpl.h"
+#include "protocol.h"
 #include "network.h"
 
 #define YAHOO_PAGER_HOST_REQ_URL "http://vcs2.msg.yahoo.com/capacity"
@@ -354,8 +354,8 @@ YahooFederation yahoo_get_federation_from_name(const char *who);
 /* yahoo_profile.c */
 void yahoo_get_info(PurpleConnection *gc, const char *name);
 
-/* libymsg.h  - these functions were formerly static but need not to be for the
- * new two-prpl model. */
+/* ymsg.h  - these functions were formerly static but need not to be for the
+ * new two-protocol model. */
 const char *yahoo_list_icon(PurpleAccount *a, PurpleBuddy *b);
 const char *yahoo_list_emblem(PurpleBuddy *b);
 char *yahoo_status_text(PurpleBuddy *b);
@@ -380,7 +380,7 @@ gboolean yahoo_offline_message(const PurpleBuddy *buddy);
 gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint type);
 GList *yahoo_attention_types(PurpleAccount *account);
 
-GList *yahoo_actions(PurplePlugin *plugin, gpointer context);
+GList *yahoo_get_actions(PurpleConnection *gc);
 void yahoopurple_register_commands(void);
 gssize yahoo_get_max_message_size(PurpleConversation *conv);
 
@@ -396,4 +396,4 @@ gchar* yahoo_get_cookies(PurpleConnection *gc);
 /* send p2p pkt containing our encoded ip, asking peer to connect to us */
 void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13);
 
-#endif /* _LIBYMSG_H_ */
+#endif /* _YMSG_H_ */

@@ -26,9 +26,9 @@
 
 #include "debug.h"
 #include "internal.h"
-#include "prpl.h"
+#include "protocol.h"
 
-#include "libymsg.h"
+#include "ymsg.h"
 
 #include <string.h>
 

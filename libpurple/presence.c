@@ -558,8 +558,7 @@ purple_account_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc = NULL;
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	gboolean idle = purple_presence_is_idle(presence);
 	time_t idle_time = purple_presence_get_idle_time(presence);
 	time_t current_time = time(NULL);
@@ -590,14 +589,11 @@ purple_account_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 
 	gc = purple_account_get_connection(account);
 
-	if(gc)
-		prpl = purple_connection_get_prpl(gc);
+	if(PURPLE_CONNECTION_IS_CONNECTED(gc))
+		protocol = purple_connection_get_protocol(gc);
 
-	if(PURPLE_CONNECTION_IS_CONNECTED(gc) && prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if (prpl_info && prpl_info->set_idle)
-		prpl_info->set_idle(gc, (idle ? (current_time - idle_time) : 0));
+	if (protocol)
+		purple_protocol_server_iface_set_idle(protocol, gc, (idle ? (current_time - idle_time) : 0));
 }
 
 PurpleAccount *
@@ -736,7 +732,7 @@ purple_account_presence_constructed(GObject *object)
 	G_OBJECT_CLASS(presence_class)->constructed(object);
 
 	PURPLE_PRESENCE_GET_PRIVATE(presence)->statuses =
-			purple_prpl_get_statuses(priv->account, presence);
+			purple_protocol_get_statuses(priv->account, presence);
 }
 
 /* Class initializer function */
@@ -933,7 +929,7 @@ purple_buddy_presence_constructed(GObject *object)
 
 	account = purple_buddy_get_account(priv->buddy);
 	PURPLE_PRESENCE_GET_PRIVATE(presence)->statuses =
-			purple_prpl_get_statuses(account, presence);
+			purple_protocol_get_statuses(account, presence);
 }
 
 /* Class initializer function */

@@ -114,8 +114,32 @@ conversation_displayed_cb(PidginConversation *gtkconv)
 	}
 }
 
+static PidginPluginInfo *
+plugin_query(GError **error)
+{
+	const gchar * const authors[] = {
+		"Etan Reisner <deryni@pidgin.im>",
+		NULL
+	};
+
+	return pidgin_plugin_info_new(
+		"id",           "gtksendbutton",
+		"name",         N_("Send Button"),
+		"version",      DISPLAY_VERSION,
+		"category",     N_("User interface"),
+		"summary",      N_("Conversation Window Send Button."),
+		"description",  N_("Adds a Send button to the entry area of the "
+		                   "conversation window. Intended for use when no "
+		                   "physical keyboard is present."),
+		"authors",      authors,
+		"website",      PURPLE_WEBSITE,
+		"abi-version",  PURPLE_ABI_VERSION,
+		NULL
+	);
+}
+
 static gboolean
-plugin_load(PurplePlugin *plugin)
+plugin_load(PurplePlugin *plugin, GError **error)
 {
 	GList *convs = purple_conversations_get_all();
 	void *gtk_conv_handle = pidgin_conversations_get_handle();
@@ -143,7 +167,7 @@ plugin_load(PurplePlugin *plugin)
 }
 
 static gboolean
-plugin_unload(PurplePlugin *plugin)
+plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	GList *convs = purple_conversations_get_all();
 
@@ -161,44 +185,4 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static PurplePluginInfo info =
-{
-	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,                           /**< major version */
-	PURPLE_MINOR_VERSION,                           /**< minor version */
-	PURPLE_PLUGIN_STANDARD,                         /**< type */
-	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
-	0,                                              /**< flags */
-	NULL,                                           /**< dependencies */
-	PURPLE_PRIORITY_DEFAULT,                        /**< priority */
-
-	"gtksendbutton",                                /**< id */
-	N_("Send Button"),                              /**< name */
-	DISPLAY_VERSION,                                /**< version */
-	N_("Conversation Window Send Button."),         /**< summary */
-	N_("Adds a Send button to the entry area of "
-	   "the conversation window. Intended for use "
-	   "when no physical keyboard is present."),    /**< description */
-	"Etan Reisner <deryni@pidgin.im>",              /**< author */
-	PURPLE_WEBSITE,                                 /**< homepage */
-	plugin_load,                                    /**< load */
-	plugin_unload,                                  /**< unload */
-	NULL,                                           /**< destroy */
-	NULL,                                           /**< ui_info */
-	NULL,                                           /**< extra_info */
-	NULL,                                           /**< prefs_info */
-	NULL,                                           /**< actions */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static void
-init_plugin(PurplePlugin *plugin)
-{
-}
-
-PURPLE_INIT_PLUGIN(sendbutton, init_plugin, info)
+PURPLE_PLUGIN_INIT(sendbutton, plugin_query, plugin_load, plugin_unload);

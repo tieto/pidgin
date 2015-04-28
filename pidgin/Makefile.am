@@ -192,6 +192,7 @@ libpidgin_la_LIBADD = \
 	@LIBOBJS@ \
 	$(ENCHANT_LIBS) \
 	$(GLIB_LIBS) \
+	$(GPLUGIN_LIBS) \
 	$(GCR_LIBS) \
 	$(DBUS_LIBS) \
 	$(GSTREAMER_LIBS) \
@@ -204,6 +205,7 @@ libpidgin_la_LIBADD = \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
 	$(X11_LIBS) \
+	$(INTROSPECTION_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
 pidgin_DEPENDENCIES = $(builddir)/libpidgin.la
@@ -222,6 +224,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	$(ENCHANT_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(GCR_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(GSTVIDEO_CFLAGS) \
@@ -231,7 +234,8 @@ AM_CPPFLAGS = \
 	$(X11_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
-	$(WEBKIT_CFLAGS)
+	$(WEBKIT_CFLAGS) \
+	$(INTROSPECTION_CFLAGS)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = data/pidgin-3.pc
@@ -258,5 +262,51 @@ endif # INSTALL_I18N
 CLEANFILES += $(appdata_DATA)
 DISTCLEANFILES = $(DESKTOP_FILE)
 
-endif  # ENABLE_GTK
+-include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --warn-all --add-include-path=$(top_builddir)/libpurple --add-include-path=$(prefix)/share/gir-1.0
+INTROSPECTION_COMPILER_ARGS = --includedir=$(top_builddir)/libpurple --includedir=$(prefix)/share/gir-1.0
 
+if HAVE_INTROSPECTION
+introspection_sources = $(libpidgininclude_HEADERS)
+
+Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpidgin.la
+Pidgin_3_0_gir_INCLUDES = GObject-2.0 Gtk-$(GTK_VERSION).0 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)
+Pidgin_3_0_gir_CFLAGS = \
+	$(INCLUDES) \
+	-DDATADIR=\"$(datadir)\" \
+	-DLIBDIR=\"$(libdir)/pidgin/\" \
+	-DLOCALEDIR=\"$(datadir)/locale\" \
+	-DSYSCONFDIR=\"$(sysconfdir)\" \
+	-I$(top_builddir)/libpurple \
+	-I$(top_srcdir)/libpurple/ \
+	-I$(top_builddir) \
+	-I$(top_srcdir) \
+	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
+	$(GCR_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(GSTVIDEO_CFLAGS) \
+	$(GSTINTERFACES_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(X11_CFLAGS) \
+	$(DBUS_CFLAGS) \
+	$(GTKSPELL_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(WEBKIT_CFLAGS) \
+	$(INTROSPECTION_CFLAGS)
+
+Pidgin_3_0_gir_LIBS = $(builddir)/libpidgin.la
+Pidgin_3_0_gir_FILES = $(introspection_sources)
+INTROSPECTION_GIRS += Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
+
+girdir = $(prefix)/share/gir-1.0 $(INTROSPECTION_GIRDIR)
+gir_DATA = $(INTROSPECTION_GIRS)
+
+typelibdir = $(prefix)/share/gir-1.0 $(INTROSPECTION_TYPELIBDIR)
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+
+CLEANFILES += $(gir_DATA) $(typelib_DATA)
+endif
+
+endif  # ENABLE_GTK

@@ -2122,10 +2122,10 @@ create_stream(PurpleMediaBackendFs2 *self,
 	PurpleMediaBackendFs2Session *session;
 	PurpleMediaBackendFs2Stream *stream;
 	FsParticipant *participant;
-	/* check if the prpl has already specified a relay-info
+	/* check if the protocol has already specified a relay-info
 	  we need to do this to allow them to override when using non-standard
 	  TURN modes, like Google f.ex. */
-	gboolean got_turn_from_prpl = FALSE;
+	gboolean got_turn_from_protocol = FALSE;
 	guint i;
 
 	session = get_session(self, sess_id);
@@ -2165,7 +2165,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 
 	for (i = 0 ; i < num_params ; i++) {
 		if (purple_strequal(params[i].name, "relay-info")) {
-			got_turn_from_prpl = TRUE;
+			got_turn_from_protocol = TRUE;
 			break;
 		}
 	}
@@ -2189,7 +2189,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 		++_num_params;
 	}
 
-	if (turn_ip && !strcmp("nice", transmitter) && !got_turn_from_prpl) {
+	if (turn_ip && !strcmp("nice", transmitter) && !got_turn_from_protocol) {
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		GValueArray *relay_info = g_value_array_new(0);
 G_GNUC_END_IGNORE_DEPRECATIONS

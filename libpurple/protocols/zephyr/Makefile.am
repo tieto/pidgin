@@ -62,9 +62,10 @@ ZEPHYRSOURCES = \
 	zephyr_err.c \
 	zephyr_err.h \
 	zephyr_internal.h \
-	zephyr.c
+	zephyr.c \
+	zephyr.h
 
-ZEPHYRSOURCESEXT = zephyr.c
+ZEPHYRSOURCESEXT = zephyr.c zephyr.h
 
 AM_CFLAGS = $(st)
 
@@ -104,5 +105,6 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple/protocols \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(KRB4_CFLAGS) \
 	$(DEBUG_CFLAGS)

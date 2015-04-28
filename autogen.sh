@@ -154,7 +154,7 @@ fi
 check "$libtoolize";		LIBTOOLIZE=${BIN};
 check "glib-gettextize";	GLIB_GETTEXTIZE=${BIN};
 check "intltoolize";		INTLTOOLIZE=${BIN};
-check "sed";				SED=${BIN};
+check "sed";			SED=${BIN};
 check "aclocal";		ACLOCAL=${BIN};
 check "autoheader";		AUTOHEADER=${BIN};
 check "automake";		AUTOMAKE=${BIN};

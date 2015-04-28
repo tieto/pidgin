@@ -26,6 +26,7 @@
 
 #include "xmlnode.h"
 #include "debug.h"
+#include "prefs.h"
 
 /*****************************************************************************
  * Conversation Theme Builder

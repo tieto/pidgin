@@ -115,23 +115,23 @@ GList *purple_media_get_session_ids(PurpleMedia *media);
 PurpleAccount *purple_media_get_account(PurpleMedia *media);
 
 /**
- * purple_media_get_prpl_data:
+ * purple_media_get_protocol_data:
  * @media: The media session to retrieve the protocol data from.
  *
  * Gets the protocol data from the media session.
  *
  * Returns: The protocol data retrieved.
  */
-gpointer purple_media_get_prpl_data(PurpleMedia *media);
+gpointer purple_media_get_protocol_data(PurpleMedia *media);
 
 /**
- * purple_media_set_prpl_data:
+ * purple_media_set_protocol_data:
  * @media: The media session to set the protocol data on.
  * @protocol_data: The data to set on the media session.
  *
  * Sets the protocol data on the media session.
  */
-void purple_media_set_prpl_data(PurpleMedia *media, gpointer protocol_data);
+void purple_media_set_protocol_data(PurpleMedia *media, gpointer protocol_data);
 
 /**
  * purple_media_error:

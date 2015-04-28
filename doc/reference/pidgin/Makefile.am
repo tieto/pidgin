@@ -96,6 +96,7 @@ GTKDOC_CFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_srcdir)/pidgin \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(GCR_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(GSTVIDEO_CFLAGS) \
@@ -105,11 +106,13 @@ GTKDOC_CFLAGS = \
 	$(X11_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
-	$(WEBKIT_CFLAGS)
+	$(WEBKIT_CFLAGS) \
+	$(INTROSPECTION_CFLAGS)
 
 GTKDOC_LIBS = \
 	$(top_builddir)/pidgin/libpidgin.la \
 	$(GLIB_LIBS) \
+	$(GPLUGIN_LIBS) \
 	$(GCR_LIBS) \
 	$(DBUS_LIBS) \
 	$(GSTREAMER_LIBS) \
@@ -121,7 +124,8 @@ GTKDOC_LIBS = \
 	$(LIBXML_LIBS) \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
-	$(X11_LIBS)
+	$(X11_LIBS) \
+	$(INTROSPECTION_LIBS)
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
 include $(top_srcdir)/gtk-doc.make

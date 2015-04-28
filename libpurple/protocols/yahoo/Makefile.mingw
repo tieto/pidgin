@@ -7,9 +7,7 @@
 PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
-TARGET = libymsg
-YAHOO_TARGET = libyahoo
-YAHOOJP_TARGET = libyahoojp
+TARGET = libyahoo
 TYPE = PLUGIN
 
 # Static or Plugin...
@@ -41,7 +39,8 @@ LIB_PATHS +=		-L. \
 ##  SOURCES, OBJECTS
 ##
 C_SRC =			util.c \
-			libymsg.c \
+			yahoo.c \
+			yahoojp.c \
 			yahoochat.c \
 			yahoo_aliases.c \
 			yahoo_doodle.c \
@@ -50,15 +49,10 @@ C_SRC =			util.c \
 			yahoo_packet.c \
 			yahoo_picture.c \
 			yahoo_profile.c \
-			ycht.c
+			ycht.c \
+			ymsg.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
-
-YAHOO_C_SRC = libyahoo.c
-YAHOO_OBJECTS = $(YAHOO_C_SRC:%.c=%.o)
-
-YAHOOJP_C_SRC = libyahoojp.c
-YAHOOJP_OBJECTS = $(YAHOOJP_C_SRC:%.c=%.o)
 
 ##
 ## LIBRARIES
@@ -78,29 +72,20 @@ include $(PIDGIN_COMMON_RULES)
 
 .PHONY: all install clean
 
-all: $(TARGET).dll $(YAHOO_TARGET).dll $(YAHOOJP_TARGET).dll
+all: $(TARGET).dll
 
 install: all $(DLL_INSTALL_DIR)
-	cp $(YAHOO_TARGET).dll $(YAHOOJP_TARGET).dll $(DLL_INSTALL_DIR)
-	cp $(TARGET).dll $(PURPLE_INSTALL_DIR)
+	cp $(TARGET).dll $(DLL_INSTALL_DIR)
 
 $(OBJECTS): $(PURPLE_CONFIG_H)
 
-$(TARGET).dll.a $(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(TARGET).def,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
-
-$(YAHOO_TARGET).dll: $(TARGET).dll.a $(YAHOO_OBJECTS)
-	$(CC) -shared $(YAHOO_OBJECTS) $(LIB_PATHS) $(LIBS) -lymsg $(DLL_LD_FLAGS) -o $(YAHOO_TARGET).dll
-
-$(YAHOOJP_TARGET).dll: $(TARGET).dll.a $(YAHOOJP_OBJECTS)
-	$(CC) -shared $(YAHOOJP_OBJECTS) $(LIB_PATHS) $(LIBS) -lymsg $(DLL_LD_FLAGS) -o $(YAHOOJP_TARGET).dll
+$(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
 ##
 clean:
-	rm -f $(OBJECTS) $(TARGET).dll $(TARGET).dll.a
-	rm -f $(YAHOO_OBJECTS) $(YAHOO_TARGET).dll
-	rm -f $(YAHOOJP_OBJECTS) $(YAHOOJP_TARGET).dll
+	rm -f $(OBJECTS) $(TARGET).dll
 
 include $(PIDGIN_COMMON_TARGETS)

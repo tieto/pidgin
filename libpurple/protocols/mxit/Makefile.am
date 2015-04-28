@@ -10,6 +10,8 @@ MXITSOURCES = \
 	chunk.h \
 	cipher-mxit.c \
 	cipher-mxit.h \
+	client.c \
+	client.h \
 	filexfer.c \
 	filexfer.h \
 	formcmds.c \
@@ -24,8 +26,6 @@ MXITSOURCES = \
 	mxit.h \
 	profile.c \
 	profile.h \
-	protocol.c \
-	protocol.h \
 	roster.c \
 	roster.h \
 	splashscreen.c \
@@ -58,4 +58,5 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	$(GLIB_CFLAGS) \
+	$(GPLUGIN_CFLAGS) \
 	$(DEBUG_CFLAGS)

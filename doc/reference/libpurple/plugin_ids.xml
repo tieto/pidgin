@@ -56,13 +56,6 @@ connect to another IM or chat network.
 </entry>
       </row>
       <row>
-<entry><literal>lopl</literal></entry>
-<entry>
-A loader plugin, which loads scripts as plugins. Perl and
-Tcl plugins are made possible by loader plugins.
-</entry>
-      </row>
-      <row>
 <entry><literal>gtk</literal></entry>
 <entry>
 A GTK+ (a.k.a. Pidgin) plugin. These plugins may use GTK+ code, but may not use
@@ -105,9 +98,9 @@ Do <emphasis>not</emphasis> leave this field blank!
   <para>
 The <emphasis>pluginname</emphasis> is the name of your plugin. It is usually all
 lowercase letters and matches the static plugin ID (the first argument to
-the PURPLE_INIT_PLUGIN() macro call), although it can be anything you
+the PURPLE_PLUGIN_INIT() macro call), although it can be anything you
 like. Do <emphasis>not</emphasis> include version information in the plugin ID--the
-<literal>PurplePluginInfo</literal> structure already has a field for this.
+<literal>PurplePluginInfo</literal> object already has a property for this.
   </para>
   </sect2>
 

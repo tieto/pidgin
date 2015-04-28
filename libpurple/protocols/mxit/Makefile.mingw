@@ -40,6 +40,7 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 C_SRC =			actions.c \
 			chunk.c \
 			cipher-mxit.c \
+			client.c \
 			filexfer.c \
 			formcmds.c \
 			login.c \
@@ -47,7 +48,6 @@ C_SRC =			actions.c \
 			multimx.c \
 			mxit.c \
 			profile.c \
-			protocol.c \
 			roster.c \
 			splashscreen.c \
 			voicevideo.c

@@ -8,9 +8,6 @@ PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libjabber
-FACEBOOK_TARGET = libfacebook
-GTALK_TARGET = libgtalk
-XMPP_TARGET = libxmpp
 TYPE = PLUGIN
 
 # Static or Plugin...
@@ -65,6 +62,7 @@ C_SRC =	\
 			chat.c \
 			data.c \
 			disco.c \
+			facebook.c \
 			facebook_roster.c \
 			google/gmail.c \
 			google/google.c \
@@ -73,6 +71,7 @@ C_SRC =	\
 			google/google_session.c \
 			google/jingleinfo.c \
 			google/relay.c \
+			gtalk.c \
 			ibb.c \
 			iq.c \
 			jabber.c \
@@ -97,19 +96,11 @@ C_SRC =	\
 			usernick.c \
 			usertune.c \
 			xdata.c \
+			xmpp.c \
 			win32/posix.uname.c \
 			$(VV_SRC)
 
 OBJECTS = $(C_SRC:%.c=%.o)
-
-FACEBOOK_C_SRC = libfacebook.c
-FACEBOOK_OBJECTS = $(FACEBOOK_C_SRC:%.c=%.o)
-
-GTALK_C_SRC = libgtalk.c
-GTALK_OBJECTS = $(GTALK_C_SRC:%.c=%.o)
-
-XMPP_C_SRC = libxmpp.c
-XMPP_OBJECTS = $(XMPP_C_SRC:%.c=%.o)
 
 ##
 ## LIBRARIES
@@ -136,35 +127,20 @@ include $(PIDGIN_COMMON_RULES)
 ##
 .PHONY: all install clean
 
-all: $(TARGET).dll $(FACEBOOK_TARGET).dll $(GTALK_TARGET).dll $(XMPP_TARGET).dll
+all: $(TARGET).dll
 
 install: all $(DLL_INSTALL_DIR)
-	cp $(FACEBOOK_TARGET).dll $(DLL_INSTALL_DIR)
-	cp $(GTALK_TARGET).dll $(DLL_INSTALL_DIR)
-	cp $(XMPP_TARGET).dll $(DLL_INSTALL_DIR)
-	cp $(TARGET).dll $(PURPLE_INSTALL_DIR)
+	cp $(TARGET).dll $(DLL_INSTALL_DIR)
 
 $(OBJECTS): $(PURPLE_CONFIG_H)
 
-$(TARGET).dll $(TARGET).dll.a: $(PURPLE_DLL).a $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
-
-$(FACEBOOK_TARGET).dll: $(TARGET).dll.a $(FACEBOOK_OBJECTS)
-	$(CC) -shared $(FACEBOOK_OBJECTS) $(LIB_PATHS) $(LIBS) -ljabber $(DLL_LD_FLAGS) -o $(FACEBOOK_TARGET).dll
-
-$(GTALK_TARGET).dll: $(TARGET).dll.a $(GTALK_OBJECTS)
-	$(CC) -shared $(GTALK_OBJECTS) $(LIB_PATHS) $(LIBS) -ljabber $(DLL_LD_FLAGS) -o $(GTALK_TARGET).dll
-
-$(XMPP_TARGET).dll: $(TARGET).dll.a $(XMPP_OBJECTS)
-	$(CC) -shared $(XMPP_OBJECTS) $(LIB_PATHS) $(LIBS) -ljabber $(DLL_LD_FLAGS) -o $(XMPP_TARGET).dll
+$(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
 ##
 clean:
-	rm -f $(OBJECTS) $(TARGET).dll $(TARGET).dll.a
-	rm -f $(FACEBOOK_OBJECTS) $(FACEBOOK_TARGET).dll
-	rm -f $(GTALK_OBJECTS) $(GTALK_TARGET).dll
-	rm -f $(XMPP_OBJECTS) $(XMPP_TARGET).dll
+	rm -f $(OBJECTS) $(TARGET).dll
 
 include $(PIDGIN_COMMON_TARGETS)
