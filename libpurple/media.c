@@ -1477,8 +1477,7 @@ purple_media_send_dtmf(PurpleMedia *media, const gchar *session_id,
 #ifdef USE_VV
 	PurpleAccount *account = NULL;
 	PurpleConnection *gc = NULL;
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleProtocol *protocol = NULL;
 	PurpleMediaBackendIface *backend_iface = NULL;
 
 	if (media)
@@ -1489,9 +1488,7 @@ purple_media_send_dtmf(PurpleMedia *media, const gchar *session_id,
 	if (account)
 		gc = purple_account_get_connection(account);
 	if (gc)
-		prpl = purple_connection_get_prpl(gc);
-	if (prpl)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+		protocol = purple_connection_get_protocol(gc);
 
 	if (dtmf == 'a')
 		dtmf = 'A';
@@ -1504,8 +1501,8 @@ purple_media_send_dtmf(PurpleMedia *media, const gchar *session_id,
 
 	g_return_val_if_fail(strchr("0123456789ABCD#*", dtmf), FALSE);
 
-	if (prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, media_send_dtmf)
-		&& prpl_info->media_send_dtmf(media, dtmf, volume, duration))
+	if (PURPLE_PROTOCOL_IMPLEMENTS(protocol, MEDIA_IFACE, send_dtmf)
+		&& purple_protocol_media_iface_send_dtmf(protocol, media, dtmf, volume, duration))
 	{
 		return TRUE;
 	} else if (backend_iface && backend_iface->send_dtmf
