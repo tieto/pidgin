@@ -485,7 +485,7 @@ static gboolean
 _set_default_name_cb(gpointer data) {
 	gchar *fullname = data;
 	const char *splitpoint;
-	GList *tmp = protocol.account_options;
+	GList *tmp = my_protocol->account_options;
 	PurpleAccountOption *option;
 
 	if (!fullname) {
