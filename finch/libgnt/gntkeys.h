@@ -154,19 +154,6 @@ extern char *gnt_key_cright;
 #define GNT_KEY_CTRL_X     CONST("\030")
 #define GNT_KEY_CTRL_Y     CONST("\031")
 
-#define GNT_KEY_F1         SAFE(key_f1)
-#define GNT_KEY_F2         SAFE(key_f2)
-#define GNT_KEY_F3         SAFE(key_f3)
-#define GNT_KEY_F4         SAFE(key_f4)
-#define GNT_KEY_F5         SAFE(key_f5)
-#define GNT_KEY_F6         SAFE(key_f6)
-#define GNT_KEY_F7         SAFE(key_f7)
-#define GNT_KEY_F8         SAFE(key_f8)
-#define GNT_KEY_F9         SAFE(key_f9)
-#define GNT_KEY_F10        SAFE(key_f10)
-#define GNT_KEY_F11        SAFE(key_f11)
-#define GNT_KEY_F12        SAFE(key_f12)
-
 /**
  * gnt_init_keys:
  *
