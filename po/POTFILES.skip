@@ -65,3 +65,6 @@ pidgin/plugins/perl/common/GtkStatusBox.c
 pidgin/plugins/perl/common/GtkThemes.c
 pidgin/plugins/perl/common/GtkUtils.c
 pidgin/plugins/perl/common/Pidgin.c
+libpurple/plugins/mono/loader/mono.c
+libpurple/plugins/perl/perl.c
+libpurple/plugins/tcl/tcl.c
