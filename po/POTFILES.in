@@ -56,8 +56,11 @@ libpurple/keyring.c
 libpurple/log.c
 libpurple/media/backend-fs2.c
 libpurple/message.c
+libpurple/plugins.c
 libpurple/plugins/autoaccept.c
 libpurple/plugins/buddynote.c
+libpurple/plugins/caesarcipher.c
+libpurple/plugins/caesarcipher_consumer.c
 libpurple/plugins/ciphertest.c
 libpurple/plugins/dbus-example.c
 libpurple/plugins/filectl.c
@@ -69,10 +72,8 @@ libpurple/plugins/keyrings/kwallet.cpp
 libpurple/plugins/keyrings/secretservice.c
 libpurple/plugins/keyrings/wincred.c
 libpurple/plugins/log_reader.c
-libpurple/plugins/mono/loader/mono.c
 libpurple/plugins/offlinemsg.c
 libpurple/plugins/one_time_password.c
-libpurple/plugins/perl/perl.c
 libpurple/plugins/psychic.c
 libpurple/plugins/signals-test.c
 libpurple/plugins/simple.c
@@ -81,8 +82,8 @@ libpurple/plugins/ssl/ssl-gnutls.c
 libpurple/plugins/ssl/ssl-nss.c
 libpurple/plugins/ssl/ssl.c
 libpurple/plugins/statenotify.c
-libpurple/plugins/tcl/tcl.c
 libpurple/presence.c
+libpurple/protocols.c
 libpurple/protocols/bonjour/bonjour.c
 libpurple/protocols/bonjour/bonjour.h
 libpurple/protocols/bonjour/jabber.c
@@ -112,7 +113,9 @@ libpurple/protocols/jabber/auth_scram.c
 libpurple/protocols/jabber/bosh.c
 libpurple/protocols/jabber/buddy.c
 libpurple/protocols/jabber/chat.c
+libpurple/protocols/jabber/facebook.c
 libpurple/protocols/jabber/facebook_roster.c
+libpurple/protocols/jabber/gtalk.c
 libpurple/protocols/jabber/jabber.c
 libpurple/protocols/jabber/jutil.c
 libpurple/protocols/jabber/message.c
@@ -123,6 +126,7 @@ libpurple/protocols/jabber/si.c
 libpurple/protocols/jabber/usermood.c
 libpurple/protocols/jabber/usernick.c
 libpurple/protocols/jabber/xdata.c
+libpurple/protocols/jabber/xmpp.c
 libpurple/protocols/msn/contact.c
 libpurple/protocols/msn/error.c
 libpurple/protocols/msn/group.h
@@ -139,6 +143,7 @@ libpurple/protocols/msn/state.c
 libpurple/protocols/msn/switchboard.c
 libpurple/protocols/msn/userlist.c
 libpurple/protocols/mxit/actions.c
+libpurple/protocols/mxit/client.c
 libpurple/protocols/mxit/filexfer.c
 libpurple/protocols/mxit/login.c
 libpurple/protocols/mxit/multimx.c
@@ -148,6 +153,7 @@ libpurple/protocols/mxit/roster.c
 libpurple/protocols/mxit/splashscreen.c
 libpurple/protocols/novell/nmuser.c
 libpurple/protocols/novell/novell.c
+libpurple/protocols/oscar/aim.c
 libpurple/protocols/oscar/authorization.c
 libpurple/protocols/oscar/clientlogin.c
 libpurple/protocols/oscar/encoding.c
@@ -157,6 +163,7 @@ libpurple/protocols/oscar/family_feedbag.c
 libpurple/protocols/oscar/family_icbm.c
 libpurple/protocols/oscar/family_locate.c
 libpurple/protocols/oscar/flap_connection.c
+libpurple/protocols/oscar/icq.c
 libpurple/protocols/oscar/odc.c
 libpurple/protocols/oscar/oft.c
 libpurple/protocols/oscar/oscar.c
@@ -174,13 +181,16 @@ libpurple/protocols/silc/silc.c
 libpurple/protocols/silc/util.c
 libpurple/protocols/silc/wb.c
 libpurple/protocols/simple/simple.c
+libpurple/protocols/yahoo/yahoo.c
 libpurple/protocols/yahoo/yahoo_aliases.c
 libpurple/protocols/yahoo/yahoo_doodle.c
 libpurple/protocols/yahoo/yahoo_filexfer.c
 libpurple/protocols/yahoo/yahoo_packet.c
 libpurple/protocols/yahoo/yahoo_profile.c
 libpurple/protocols/yahoo/yahoochat.c
+libpurple/protocols/yahoo/yahoojp.c
 libpurple/protocols/yahoo/ycht.c
+libpurple/protocols/yahoo/ymsg.c
 libpurple/protocols/zephyr/zephyr.c
 libpurple/proxy.c
 libpurple/purple-socket.c
