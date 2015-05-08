@@ -475,6 +475,7 @@ Purple_3_0_gir_INCLUDES += DBus-1.0 DBusGLib-1.0
 endif
 
 Purple_3_0_gir_CFLAGS = \
+	-I$(srcdir) \
 	$(INCLUDES) \
 	-DDATADIR=\"$(datadir)\" \
 	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)/\" \
