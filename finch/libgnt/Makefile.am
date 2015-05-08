@@ -101,6 +101,8 @@ LIBGNT_WIN32RES = libgnt_winres.o
 libgnt_la_DEPENDENCIES += $(LIBGNT_WIN32RES)
 libgnt_la_LDFLAGS += -Wl,$(LIBGNT_WIN32RES)
 
+libgnt_la_LIBADD += -lgmodule-2.0
+
 endif
 
 AM_CPPFLAGS = \
