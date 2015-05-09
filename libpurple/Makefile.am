@@ -159,7 +159,6 @@ purple_coreheaders = \
 	keyring.h \
 	log.h \
 	media.h \
-	media-gst.h \
 	mediamanager.h \
 	memorypool.h \
 	message.h \
@@ -206,6 +205,12 @@ purple_coreheaders = \
 	whiteboard.h \
 	xfer.h \
 	xmlnode.h
+
+if USE_VV
+purple_coreheaders += media-gst.h
+else
+EXTRA_DIST += media-gst.h
+endif
 
 if IS_WIN32
 purple_coresources += \
