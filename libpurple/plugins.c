@@ -992,6 +992,9 @@ purple_plugins_find_plugin(const gchar *id)
 
 	plugin = gplugin_manager_find_plugin(id);
 
+	if (!plugin)
+		return NULL;
+
 	/* GPlugin refs the plugin object before returning it. This workaround is
 	 * to avoid managing the reference counts everywhere in our codebase where
 	 * we use plugin instances. A plugin object will exist till the plugins
