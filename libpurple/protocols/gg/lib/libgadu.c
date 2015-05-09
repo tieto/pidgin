@@ -2123,7 +2123,6 @@ int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filenam
 	struct gg_send_msg s;
 	const char *tmp;
 	char buf[1910];
-	int res = -1;
 	gg_imgout_queue_t *queue = NULL, *queue_end = NULL;
 
 	gg_debug_session(sess, GG_DEBUG_FUNCTION, "** gg_image_reply(%p, %d, "
@@ -2212,7 +2211,7 @@ int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filenam
 	}
 	gg_image_sendout(sess);
 
-	return res;
+	return 0;
 }
 
 void gg_image_sendout(struct gg_session *sess)

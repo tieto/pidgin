@@ -27,7 +27,7 @@
 
 #include "config.h"
 #ifdef GG_CONFIG_HAVE_PROTOBUF_C
-#include <google/protobuf-c/protobuf-c.h>
+#include <protobuf-c/protobuf-c.h>
 #else
 #include "protobuf-c.h"
 #endif

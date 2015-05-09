@@ -48,6 +48,10 @@
 #include <string.h>
 #include <time.h>
 
+/* Ograniczenie długości listy kontaktów
+ * z pakietów GG_USERLIST_REPLY do 10MB. */
+#define GG_USERLIST_REPLY_MAX_LENGTH 10485760
+
 /**
  * \internal Struktura opisująca funkcję obsługi pakietu.
  */
@@ -630,6 +634,13 @@ static int gg_session_handle_userlist_reply(struct gg_session *gs,
 
 		gg_debug_session(gs, GG_DEBUG_MISC, "userlist_reply=%p, len=%"
 			GG_SIZE_FMT "\n", gs->userlist_reply, len);
+
+		if (reply_len + len > GG_USERLIST_REPLY_MAX_LENGTH) {
+			gg_debug_session(gs, GG_DEBUG_MISC,
+				"// gg_session_handle_userlist_reply() "
+				"too many userlist replies\n");
+			return -1;
+		}
 
 		tmp = realloc(gs->userlist_reply, reply_len + len);
 
@@ -1737,7 +1748,7 @@ static int gg_session_handle_notify_reply_80(struct gg_session *gs,
 	while (length >= sizeof(struct gg_notify_reply80)) {
 		uin_t uin = gg_fix32(n->uin);
 		int descr_len;
-		char *tmp;
+		void *tmp;
 
 		ge->event.notify60[i].uin = uin;
 		ge->event.notify60[i].status = gg_fix32(n->status);
@@ -1782,7 +1793,7 @@ static int gg_session_handle_notify_reply_80(struct gg_session *gs,
 			return -1;
 		}
 
-		ge->event.notify60 = (void*) tmp;
+		ge->event.notify60 = tmp;
 		ge->event.notify60[++i].uin = 0;
 	}
 
@@ -1814,7 +1825,7 @@ static int gg_session_handle_notify_reply_77_80beta(struct gg_session *gs,
 
 	while (length >= sizeof(struct gg_notify_reply77)) {
 		uin_t uin = gg_fix32(n->uin);
-		char *tmp;
+		void *tmp;
 
 		ge->event.notify60[i].uin = uin & 0x00ffffff;
 		ge->event.notify60[i].status = n->status;
@@ -1867,7 +1878,7 @@ static int gg_session_handle_notify_reply_77_80beta(struct gg_session *gs,
 			return -1;
 		}
 
-		ge->event.notify60 = (void*) tmp;
+		ge->event.notify60 = tmp;
 		ge->event.notify60[++i].uin = 0;
 	}
 
@@ -1899,7 +1910,7 @@ static int gg_session_handle_notify_reply_60(struct gg_session *gs,
 
 	while (length >= sizeof(struct gg_notify_reply60)) {
 		uin_t uin = gg_fix32(n->uin);
-		char *tmp;
+		void *tmp;
 
 		ge->event.notify60[i].uin = uin & 0x00ffffff;
 		ge->event.notify60[i].status = n->status;
@@ -1954,7 +1965,7 @@ static int gg_session_handle_notify_reply_60(struct gg_session *gs,
 			return -1;
 		}
 
-		ge->event.notify60 = (void*) tmp;
+		ge->event.notify60 = tmp;
 		ge->event.notify60[++i].uin = 0;
 	}
 
@@ -2360,18 +2371,20 @@ static int gg_session_handle_imtoken(struct gg_session *gs, uint32_t type,
 static int gg_session_handle_pong_110(struct gg_session *gs, uint32_t type,
 	const char *ptr, size_t len, struct gg_event *ge)
 {
-	const struct gg_pong110 *pong = (const struct gg_pong110*)ptr;
-	uint32_t server_time;
+	GG110Pong *msg = gg110_pong__unpack(NULL, len, (uint8_t*)ptr);
+
+	if (!GG_PROTOBUF_VALID(gs, "GG110Pong", msg))
+		return -1;
 
 	gg_debug_session(gs, GG_DEBUG_MISC, "// gg_watch_fd_connected() "
 		"received pong110\n");
 
-	server_time = gg_fix32(pong->time);
-
 	ge->type = GG_EVENT_PONG110;
-	ge->event.pong110.time = server_time;
+	ge->event.pong110.time = msg->server_time;
 
-	gg_sync_time(gs, server_time);
+	gg_sync_time(gs, msg->server_time);
+
+	gg110_pong__free_unpacked(msg, NULL);
 
 	return 0;
 }
@@ -2653,7 +2666,12 @@ static int gg_session_handle_transfer_info(struct gg_session *gs, uint32_t type,
 	if (!GG_PROTOBUF_VALID(gs, "GG112TransferInfo", msg))
 		return -1;
 
-	gg_protobuf_expected(gs, "GG112TransferInfo.dummy1", msg->dummy1, 6);
+	/* see packets.proto */
+	if (msg->dummy1 != 5 && msg->dummy1 != 6) {
+		gg_debug_session(gs, GG_DEBUG_MISC | GG_DEBUG_WARNING,
+			"// gg_session_handle_transfer_info: "
+			"unknown dummy1 value: %d\n", msg->dummy1);
+	}
 
 	if (GG_PROTOBUF_VALID(gs, "GG112TransferInfoUin", msg->peer)) {
 		gg_protobuf_expected(gs, "GG112TransferInfoUin.dummy1",
@@ -2682,7 +2700,7 @@ static int gg_session_handle_transfer_info(struct gg_session *gs, uint32_t type,
 			kvp->key, kvp->value);
 	}
 
-	if (GG_PROTOBUF_VALID(gs, "GG112TransferInfoFile", msg->file)) {
+	if (msg->file && GG_PROTOBUF_VALID(gs, "GG112TransferInfoFile", msg->file)) {
 		GG112TransferInfoFile *file = msg->file;
 		gg_debug_session(gs, GG_DEBUG_MISC,
 			"// gg_session_handle_transfer_info file: "
@@ -2696,6 +2714,29 @@ static int gg_session_handle_transfer_info(struct gg_session *gs, uint32_t type,
 		msg->seq, ge) == 0);
 
 	gg112_transfer_info__free_unpacked(msg, NULL);
+
+	return succ ? 0 : -1;
+}
+
+static int gg_session_handle_magic_notification(struct gg_session *gs, uint32_t type,
+	const char *ptr, size_t len, struct gg_event *ge)
+{
+	GG110MagicNotification *msg = gg110_magic_notification__unpack(NULL, len, (uint8_t*)ptr);
+	int succ = 1;
+
+	if (!GG_PROTOBUF_VALID(gs, "GG110MagicNotification", msg))
+		return -1;
+
+	gg_debug_session(gs, GG_DEBUG_MISC,
+		"// gg_session_handle_magic_notification \n");
+
+	gg_protobuf_expected(gs, "GG110MagicNotification.dummy1", msg->dummy1, 2);
+	gg_protobuf_expected(gs, "GG110MagicNotification.dummy2", msg->dummy2, 1);
+	gg_protobuf_expected(gs, "GG110MagicNotification.dummy3", msg->dummy3, 1);
+
+	succ = (gg_ack_110(gs, GG110_ACK__TYPE__MAGIC_NOTIFICATION, msg->seq, ge) == 0);
+
+	gg110_magic_notification__free_unpacked(msg, NULL);
 
 	return succ ? 0 : -1;
 }
@@ -2749,7 +2790,7 @@ static const gg_packet_handler_t handlers[] =
 	{ GG_USERLIST100_VERSION, GG_STATE_CONNECTED, sizeof(struct gg_userlist100_version), gg_session_handle_userlist_100_version },
 	{ GG_USERLIST100_REPLY, GG_STATE_CONNECTED, sizeof(struct gg_userlist100_reply), gg_session_handle_userlist_100_reply },
 	{ GG_IMTOKEN, GG_STATE_CONNECTED, 0, gg_session_handle_imtoken },
-	{ GG_PONG110, GG_STATE_CONNECTED, sizeof(struct gg_pong110), gg_session_handle_pong_110 },
+	{ GG_PONG110, GG_STATE_CONNECTED, 0, gg_session_handle_pong_110 },
 	{ GG_CHAT_INFO, GG_STATE_CONNECTED, 0, gg_session_handle_chat_info },
 	{ GG_CHAT_INFO_UPDATE, GG_STATE_CONNECTED, 0, gg_session_handle_chat_info_update },
 	{ GG_CHAT_CREATED, GG_STATE_CONNECTED, sizeof(struct gg_chat_created), gg_session_handle_chat_created },
@@ -2760,7 +2801,8 @@ static const gg_packet_handler_t handlers[] =
 	{ GG_OPTIONS, GG_STATE_CONNECTED, 0, gg_session_handle_options },
 	{ GG_ACCESS_INFO, GG_STATE_CONNECTED, 0, gg_session_handle_access_info },
 	{ GG_UIN_INFO, GG_STATE_CONNECTED, 0, gg_session_handle_uin_info },
-	{ GG_TRANSFER_INFO, GG_STATE_CONNECTED, 0, gg_session_handle_transfer_info }
+	{ GG_TRANSFER_INFO, GG_STATE_CONNECTED, 0, gg_session_handle_transfer_info },
+	{ GG_MAGIC_NOTIFICATION, GG_STATE_CONNECTED, 0, gg_session_handle_magic_notification }
 	/* style:maxlinelength:end-ignore */
 };
 

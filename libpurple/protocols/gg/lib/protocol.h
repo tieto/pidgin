@@ -334,11 +334,6 @@ struct gg_userlist100_reply {
 	/* char reply[]; */
 } GG_PACKED;
 
-struct gg_pong110 {
-	uint8_t dummy;
-	uint32_t time;
-} GG_PACKED;
-
 struct gg_chat_create {
 	uint32_t seq;
 	uint32_t dummy;
@@ -407,6 +402,7 @@ struct gg_chat_left {
 
 #define GG_UIN_INFO 0x007a
 #define GG_TRANSFER_INFO 0x00a0
+#define GG_MAGIC_NOTIFICATION 0x009f
 
 #ifdef _WIN32
 #pragma pack(pop)
