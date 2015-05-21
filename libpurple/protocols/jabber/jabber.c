@@ -3924,43 +3924,43 @@ jabber_do_init(void)
 	jabber_add_identity("client", type, NULL, ui_name);
 
 	/* initialize jabber_features list */
-	jabber_add_feature(NS_LAST_ACTIVITY, 0);
-	jabber_add_feature(NS_OOB_IQ_DATA, 0);
-	jabber_add_feature(NS_ENTITY_TIME, 0);
-	jabber_add_feature("jabber:iq:version", 0);
-	jabber_add_feature("jabber:x:conference", 0);
-	jabber_add_feature(NS_BYTESTREAMS, 0);
-	jabber_add_feature("http://jabber.org/protocol/caps", 0);
-	jabber_add_feature("http://jabber.org/protocol/chatstates", 0);
-	jabber_add_feature(NS_DISCO_INFO, 0);
-	jabber_add_feature(NS_DISCO_ITEMS, 0);
-	jabber_add_feature(NS_IBB, 0);
-	jabber_add_feature("http://jabber.org/protocol/muc", 0);
-	jabber_add_feature("http://jabber.org/protocol/muc#user", 0);
-	jabber_add_feature("http://jabber.org/protocol/si", 0);
-	jabber_add_feature(NS_SI_FILE_TRANSFER, 0);
-	jabber_add_feature(NS_XHTML_IM, 0);
-	jabber_add_feature(NS_PING, 0);
+	jabber_add_feature(NS_LAST_ACTIVITY, NULL);
+	jabber_add_feature(NS_OOB_IQ_DATA, NULL);
+	jabber_add_feature(NS_ENTITY_TIME, NULL);
+	jabber_add_feature("jabber:iq:version", NULL);
+	jabber_add_feature("jabber:x:conference", NULL);
+	jabber_add_feature(NS_BYTESTREAMS, NULL);
+	jabber_add_feature("http://jabber.org/protocol/caps", NULL);
+	jabber_add_feature("http://jabber.org/protocol/chatstates", NULL);
+	jabber_add_feature(NS_DISCO_INFO, NULL);
+	jabber_add_feature(NS_DISCO_ITEMS, NULL);
+	jabber_add_feature(NS_IBB, NULL);
+	jabber_add_feature("http://jabber.org/protocol/muc", NULL);
+	jabber_add_feature("http://jabber.org/protocol/muc#user", NULL);
+	jabber_add_feature("http://jabber.org/protocol/si", NULL);
+	jabber_add_feature(NS_SI_FILE_TRANSFER, NULL);
+	jabber_add_feature(NS_XHTML_IM, NULL);
+	jabber_add_feature(NS_PING, NULL);
 
 	/* Buzz/Attention */
 	jabber_add_feature(NS_ATTENTION, jabber_buzz_isenabled);
 
 	/* Bits Of Binary */
-	jabber_add_feature(NS_BOB, 0);
+	jabber_add_feature(NS_BOB, NULL);
 
 	/* Jingle features! */
-	jabber_add_feature(JINGLE, 0);
+	jabber_add_feature(JINGLE, NULL);
 
 #ifdef USE_VV
 	jabber_add_feature(NS_GOOGLE_PROTOCOL_SESSION, jabber_audio_enabled);
 	jabber_add_feature(NS_GOOGLE_VOICE, jabber_audio_enabled);
 	jabber_add_feature(NS_GOOGLE_VIDEO, jabber_video_enabled);
 	jabber_add_feature(NS_GOOGLE_CAMERA, jabber_video_enabled);
-	jabber_add_feature(JINGLE_APP_RTP, 0);
+	jabber_add_feature(JINGLE_APP_RTP, NULL);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_AUDIO, jabber_audio_enabled);
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, jabber_video_enabled);
-	jabber_add_feature(JINGLE_TRANSPORT_RAWUDP, 0);
-	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);
+	jabber_add_feature(JINGLE_TRANSPORT_RAWUDP, NULL);
+	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, NULL);
 
 	g_signal_connect(G_OBJECT(purple_media_manager_get()), "ui-caps-changed",
 			G_CALLBACK(jabber_caps_broadcast_change), NULL);
