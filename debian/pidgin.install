@@ -1,6 +1,7 @@
 debian/tmp/etc/gconf
 debian/tmp/usr/bin/pidgin
 debian/tmp/usr/lib/pidgin
+debian/tmp/usr/share/appdata
 debian/tmp/usr/share/applications
 debian/tmp/usr/share/man/*/pidgin.*
 debian/tmp/usr/share/man/*/Pidgin.*
