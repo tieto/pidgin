@@ -1422,7 +1422,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="bonjour gg irc jabber msn mxit novell oscar sametime silc simple yahoo zephyr"
+	STATIC_PRPLS="bonjour facebook gg irc jabber msn mxit novell oscar sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
@@ -1456,6 +1456,7 @@ for i in $STATIC_PRPLS ; do
 
 	case $i in
 		bonjour)	static_bonjour=yes ;;
+		facebook)	static_facebook=yes ;;
 		gg)			static_gg=yes ;;
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
@@ -1474,6 +1475,7 @@ for i in $STATIC_PRPLS ; do
 	esac
 done
 AM_CONDITIONAL(STATIC_BONJOUR, test "x$static_bonjour" = "xyes")
+AM_CONDITIONAL(STATIC_FACEBOOK, test "x$static_facebook" = "xyes")
 AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
 AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
@@ -1494,7 +1496,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_UNLOAD, $extern_unload static void static_proto_
 
 AC_ARG_WITH(dynamic_prpls, [AS_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="bonjour gg irc jabber msn mxit novell oscar sametime silc simple yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour facebook gg irc jabber msn mxit novell oscar sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
@@ -1512,6 +1514,7 @@ AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
 	case $i in
 		bonjour)	dynamic_bonjour=yes ;;
+		facebook)	dynamic_facebook=yes ;;
 		gg)			dynamic_gg=yes ;;
 		irc)		dynamic_irc=yes ;;
 		jabber)		dynamic_jabber=yes ;;
@@ -2760,6 +2763,7 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/Makefile
 		   libpurple/protocols/Makefile
 		   libpurple/protocols/bonjour/Makefile
+		   libpurple/protocols/facebook/Makefile
 		   libpurple/protocols/gg/Makefile
 		   libpurple/protocols/irc/Makefile
 		   libpurple/protocols/jabber/Makefile
