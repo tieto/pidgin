@@ -13020,9 +13020,6 @@ msgstr "状态选择器"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "载入 %s 时发生了下列错误： %s。"

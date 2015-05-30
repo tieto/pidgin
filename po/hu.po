@@ -13514,9 +13514,6 @@ msgstr "Állapotválasztó"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "A következő hiba történt %s betöltése közben: %s"

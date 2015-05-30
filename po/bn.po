@@ -14689,9 +14689,6 @@ msgstr "অবস্থা নির্বাচক"
 msgid "Google Talk"
 msgstr "গুগল টক"
 
-msgid "Facebook (XMPP)"
-msgstr "ফেসবুক (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%1$s লোড করার সময় নিম্নোক্ত ত্রুটি সংঘটিত হয়েছে: %2$s"

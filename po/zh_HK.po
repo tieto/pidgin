@@ -13960,9 +13960,6 @@ msgstr "狀態清單"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "載入 %s 時發生以下錯誤：%s"

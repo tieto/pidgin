@@ -13529,9 +13529,6 @@ msgstr "Вибирач стану"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Трапилась помилка при завантаженні %s: %s"

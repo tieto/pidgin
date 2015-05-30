@@ -13609,9 +13609,6 @@ msgstr "ステータスの選択"
 msgid "Google Talk"
 msgstr "Google トーク"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%s を読み込む際に次のエラーが発生しました: %s"

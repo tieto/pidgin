@@ -27,10 +27,6 @@ JABBERSOURCES = \
 			  data.h \
 			  disco.c \
 			  disco.h \
-			  facebook.c \
-			  facebook.h \
-			  facebook_roster.c \
-			  facebook_roster.h \
 			  google/gmail.c \
 			  google/gmail.h \
 			  google/google.c \

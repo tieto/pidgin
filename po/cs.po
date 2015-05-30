@@ -13408,9 +13408,6 @@ msgstr "Výběr stavu"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Při načítání %s došlo k následující chybě: %s"

@@ -51,7 +51,7 @@ XmppConsole *console = NULL;
 static void *xmpp_console_handle = NULL;
 
 static const gchar *xmpp_prpls[] = {
-	"prpl-jabber", "prpl-gtalk", "prpl-facebook-xmpp", NULL
+	"prpl-jabber", "prpl-gtalk", NULL
 };
 
 #define EMPTY_HTML \

@@ -14160,9 +14160,6 @@ msgstr "གནས་ཚད་ ཚིག་ཡིག"
 msgid "Google Talk"
 msgstr ""
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "འོག་ལུ་ཡོད་པའི་འཛོལ་བ་གིས་  %s: %s མངོན་གསལ་འབད་ནི་བྱུང་ཡོདཔ་ཨིན།"

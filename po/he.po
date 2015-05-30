@@ -13154,9 +13154,6 @@ msgstr "קלט בחירת מצב"
 msgid "Google Talk"
 msgstr "גוגל טאק"
 
-msgid "Facebook (XMPP)"
-msgstr "פייסבוק (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "ארעה השגיאה להלן בעת ניסיון טעינת %s: %s"

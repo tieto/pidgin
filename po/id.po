@@ -13983,9 +13983,6 @@ msgstr "Status Teks"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Kesalahan tersebut terjadi saat memuat %s: %s"

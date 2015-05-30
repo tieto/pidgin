@@ -17927,9 +17927,6 @@ msgid "Google Talk"
 msgstr ""
 
 #: ../pidgin/gtkutils.c:691
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #: ../pidgin/gtkutils.c:1475 ../pidgin/gtkutils.c:1504
 #, c-format
 msgid "The following error has occurred loading %s: %s"

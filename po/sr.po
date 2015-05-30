@@ -13820,9 +13820,6 @@ msgstr "Изборник стања"
 msgid "Google Talk"
 msgstr "Гугл прича"
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "При учитавању %s се десила следећа грешка: %s"

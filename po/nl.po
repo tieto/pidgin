@@ -13520,9 +13520,6 @@ msgstr "Statusselector"
 msgid "Google Talk"
 msgstr "Google talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "De volgende fout is opgetreden bij laden van %s: %s"

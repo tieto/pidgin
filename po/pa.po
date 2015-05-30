@@ -13154,9 +13154,6 @@ msgstr "ਹਾਲਤ ਚੋਣਕਾਰ"
 msgid "Google Talk"
 msgstr "ਗੂਗਲ ਟਾਕ"
 
-msgid "Facebook (XMPP)"
-msgstr "ਫੇਸਬੁੱਕ (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%s ਲੋਡ ਕਰਨ ਦੌਰਾਨ ਅੱਗੇ ਦਿੱਤੀ ਗਲਤੀ ਆਈ: %s"

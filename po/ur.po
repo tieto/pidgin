@@ -14062,9 +14062,6 @@ msgstr "اسٹیٹس متن"
 msgid "Google Talk"
 msgstr "ٹیگ ٹوگل كیجیے"
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "مندرجہ ذیل خامی آگئی لوڈ کرنے کے دوران%s: %s"

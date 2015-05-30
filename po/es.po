@@ -124,9 +124,6 @@ msgstr ""
 "X-POFile-SpellExtra: operserv Win sgtkrc accountSettings download zu\n"
 "X-POFile-SpellExtra: chromium desinstalador Redimensionar GtkTreeView Core\n"
 "X-POFile-SpellExtra: rEs rSi manualwin chrome rPuede Maithili Chrome\n"
-"X-POFile-SpellExtra: Facebook persist ymsgr addbudy CLICK GPL\n"
-"X-POFile-SpellExtra: authserv TOC RC Installing Punjabí Indentar apilable\n"
-"X-POFile-SpellExtra: Evolution Maratí MultiMX Gtkrc kannada win debugwin\n"
 "X-POFile-SpellExtra: profileedit blocklist STUN Comprobador\n"
 "X-POFile-SpellExtra: windows dlls IdUsuario gtkrc Name listicon Chromium\n"
 "X-POFile-SpellExtra: Pidgwin browser ZWJ Service Esc unicode WebKit ZWJ ZWS\n"
@@ -13710,9 +13707,6 @@ msgstr "Selector de estado"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Se ha producido el siguiente error al cargar %s: %s"
@@ -15691,9 +15685,6 @@ msgstr "No tiene permisos para desinstalar esta aplicación."
 
 #~ msgid "Failed to specify mood"
 #~ msgstr "No se pudo fijar el estado de ánimo"
-
-#~ msgid "Facebook XMPP Protocol Plugin"
-#~ msgstr "Complemento de protocolo XMPP de Facebook"
 
 #~ msgid "Google Talk Protocol Plugin"
 #~ msgstr "Complemento de protocolo de Google Talk"

@@ -13374,9 +13374,6 @@ msgstr "ସ୍ଥିତି ଚୟକ"
 msgid "Google Talk"
 msgstr "Google ବାର୍ତ୍ତାଳାପ"
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "ଲୋଡ କରିବା ସମଯରେ ନିମ୍ନଲିଖିତ ତ୍ରୁଟି ଘଟିଛି %s: %s"

@@ -2420,7 +2420,6 @@ msgstr ""
 
 #: ../libpurple/blist.c:282 ../libpurple/blist.c:586 ../libpurple/blist.c:1600
 #: ../libpurple/blist.c:1848 ../libpurple/blist.c:1850
-#: ../libpurple/protocols/jabber/facebook_roster.c:124
 #: ../libpurple/protocols/jabber/roster.c:143
 #: ../libpurple/protocols/jabber/roster.c:271
 #: ../libpurple/protocols/jabber/roster.c:541
@@ -17942,9 +17941,6 @@ msgid "Google Talk"
 msgstr ""
 
 #: ../pidgin/gtkutils.c:691
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #: ../pidgin/gtkutils.c:1483 ../pidgin/gtkutils.c:1512
 #, c-format
 msgid "The following error has occurred loading %s: %s"

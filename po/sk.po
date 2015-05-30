@@ -13480,9 +13480,6 @@ msgstr "Prepínač statusu"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Počas načítavania %s sa vyskytla nasledujúca chyba: %s"

@@ -13363,9 +13363,6 @@ msgstr "موقعیت لیک"
 msgid "Google Talk"
 msgstr ""
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr ""
