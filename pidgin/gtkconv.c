@@ -422,7 +422,7 @@ debug_command_cb(PurpleConversation *conv,
 		return PURPLE_CMD_RET_OK;
 	} else {
 		purple_conversation_write_system_message(conv,
-			_("Supported debug options are: plugins version unsafe verbose"),
+			_("Supported debug options are: plugins, version, unsafe, verbose"),
 			PURPLE_MESSAGE_NO_LOG);
 		return PURPLE_CMD_RET_OK;
 	}
