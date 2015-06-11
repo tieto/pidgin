@@ -260,13 +260,38 @@ static gboolean
 message_displayed_cb(PurpleAccount *account, const char *who, char *message,
                      PurpleConversation *conv, PurpleMessageFlags flags)
 {
-	if ((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
-	     purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_nick") &&
-	     !(flags & PURPLE_MESSAGE_NICK)))
-	    return FALSE;
+	PurpleConversationType ct = purple_conversation_get_type(conv);
 
-	if ((flags & PURPLE_MESSAGE_RECV) && !(flags & PURPLE_MESSAGE_DELAYED))
-		notify(conv, TRUE);
+	/* Ignore anything that's not a received message or a system message */
+	if (!(flags & (PURPLE_MESSAGE_RECV|PURPLE_MESSAGE_SYSTEM)))
+		return FALSE;
+	/* Don't highlight for delayed messages */
+	if ((flags & PURPLE_MESSAGE_RECV) && (flags & PURPLE_MESSAGE_DELAYED))
+		return FALSE;
+	/* Check whether to highlight for system message for either chat or IM */
+	if (flags & PURPLE_MESSAGE_SYSTEM) {
+		switch (ct) {
+			case PURPLE_CONV_TYPE_CHAT:
+				if (!purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_sys"))
+					return FALSE;
+				break;
+			case PURPLE_CONV_TYPE_IM:
+				if (!purple_prefs_get_bool("/plugins/gtk/X11/notify/type_im_sys"))
+					return FALSE;
+				break;
+			default:
+				/* System message not from chat or IM, ignore */
+				return FALSE;
+		}
+	}
+	/* If it's a chat, check if we should only highlight when nick is mentioned */
+	if (ct == PURPLE_CONV_TYPE_CHAT &&
+	    purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_nick") &&
+	    !(flags & PURPLE_MESSAGE_NICK))
+		return FALSE;
+
+	/* Nothing speaks against notifying, do so */
+	notify(conv, TRUE);
 
 	return FALSE;
 }
@@ -692,6 +717,17 @@ get_config_frame(PurplePlugin *plugin)
 	g_signal_connect(G_OBJECT(toggle), "toggled",
 	                 G_CALLBACK(type_toggle_cb), "type_im");
 
+	ref = toggle;
+	toggle = gtk_check_button_new_with_mnemonic(_("\t_Notify for System messages"));
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
+	                            purple_prefs_get_bool("/plugins/gtk/X11/notify/type_im_sys"));
+	g_signal_connect(G_OBJECT(toggle), "toggled",
+	                 G_CALLBACK(type_toggle_cb), "type_im_sys");
+	gtk_widget_set_sensitive(toggle, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ref)));
+	g_signal_connect(G_OBJECT(ref), "toggled",
+	                 G_CALLBACK(pidgin_toggle_sensitive), toggle);
+
 	toggle = gtk_check_button_new_with_mnemonic(_("C_hat windows"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
@@ -706,6 +742,16 @@ get_config_frame(PurplePlugin *plugin)
 	                            purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_nick"));
 	g_signal_connect(G_OBJECT(toggle), "toggled",
 	                 G_CALLBACK(type_toggle_cb), "type_chat_nick");
+	gtk_widget_set_sensitive(toggle, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ref)));
+	g_signal_connect(G_OBJECT(ref), "toggled",
+	                 G_CALLBACK(pidgin_toggle_sensitive), toggle);
+
+	toggle = gtk_check_button_new_with_mnemonic(_("\tNotify for _System messages"));
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
+	                            purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_sys"));
+	g_signal_connect(G_OBJECT(toggle), "toggled",
+	                 G_CALLBACK(type_toggle_cb), "type_chat_sys");
 	gtk_widget_set_sensitive(toggle, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ref)));
 	g_signal_connect(G_OBJECT(ref), "toggled",
 	                 G_CALLBACK(pidgin_toggle_sensitive), toggle);
@@ -952,8 +998,10 @@ init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_none("/plugins/gtk/X11/notify");
 
 	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_im", TRUE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_im_sys", FALSE);
 	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_chat", FALSE);
 	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_chat_nick", FALSE);
+	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_chat_sys", FALSE);
 	purple_prefs_add_bool("/plugins/gtk/X11/notify/type_focused", FALSE);
 	purple_prefs_add_bool("/plugins/gtk/X11/notify/method_string", FALSE);
 	purple_prefs_add_string("/plugins/gtk/X11/notify/title_string", "(*)");
