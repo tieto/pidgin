@@ -1123,7 +1123,7 @@ purple_xfer_write_file(PurpleXfer *xfer, const guchar *buffer, gsize size)
 
 	if (fs_known && size > purple_xfer_get_bytes_remaining(xfer)) {
 		purple_debug_warning("xfer",
-			"Got too much data (truncating at %" G_GOFFSET_FORMAT
+			"Got too much data (truncating at %" G_GSIZE_FORMAT
 			").\n", purple_xfer_get_size(xfer));
 		size = purple_xfer_get_bytes_remaining(xfer);
 	}
