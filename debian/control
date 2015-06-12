@@ -15,7 +15,7 @@ Build-Depends: cdbs, debhelper (>= 7), hardening-wrapper, intltool, gconf2, vim-
  libgstreamer-plugins-base1.0-dev,
  network-manager-dev (>= 0.9.0) [linux-any],
  libsqlite3-dev (>= 3.3), libidn11-dev, ca-certificates,
- libunity-dev, libmessaging-menu-dev,
+ libunity-dev, libmessaging-menu-dev, libgplugin-dev,
  dh-autoreconf
 Standards-Version: 3.9.6
 Vcs-Git: git://git.debian.org/git/collab-maint/pidgin.git
@@ -114,7 +114,7 @@ Description: text-based multi-protocol instant messaging client - development
 Package: libpurple-dev
 Section: libdevel
 Architecture: all
-Depends: libpurple0 (>= ${source:Upstream-Version}), libpurple0 (<< ${source:Upstream-Version}+1~), pkg-config, libglib2.0-dev, libdbus-glib-1-dev, ${misc:Depends}
+Depends: libpurple0 (>= ${source:Upstream-Version}), libpurple0 (<< ${source:Upstream-Version}+1~), pkg-config, libglib2.0-dev, libdbus-glib-1-dev, libgplugin-dev, ${misc:Depends}
 Description: multi-protocol instant messaging library - development files
  This package contains the headers and other development files not included in
  the main libpurple0 package. Install this if you wish to compile your own
