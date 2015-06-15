@@ -854,12 +854,12 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 		name, account);
 	if (!conv) {
 		purple_debug_info(NULL, "Opening %s chat on account %s",
-			name, account);
+			name, purple_account_get_username(account));
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
 	}
 	else {
 		purple_debug_info(NULL, "Chat %s on account %s already exists",
-			name, account);
+			name, purple_account_get_username(account));
 	}
 
 	g_return_val_if_fail(conv != NULL, NULL);
