@@ -262,11 +262,6 @@ message_displayed_cb(PurpleConversation *conv, PurpleMessage *msg, gpointer _unu
 {
 	PurpleMessageFlags flags = purple_message_get_flags(msg);
 
-	if ((PURPLE_IS_CHAT_CONVERSATION(conv) &&
-	     purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_nick") &&
-	     !(flags & PURPLE_MESSAGE_NICK)))
-	    return FALSE;
-
 	/* Ignore anything that's not a received message or a system message */
 	if (!(flags & (PURPLE_MESSAGE_RECV|PURPLE_MESSAGE_SYSTEM)))
 		return FALSE;
@@ -281,12 +276,17 @@ message_displayed_cb(PurpleConversation *conv, PurpleMessage *msg, gpointer _unu
 		} else if (PURPLE_IS_IM_CONVERSATION(conv)) {
 			if (!purple_prefs_get_bool("/plugins/gtk/X11/notify/type_im_sys"))
 				return FALSE;
-			}
 		} else {
 			/* System message not from chat or IM, ignore */
 			return FALSE;
 		}
 	}
+	
+	/* If it's a chat, check if we should only highlight when nick is mentioned */
+	if ((PURPLE_IS_CHAT_CONVERSATION(conv) &&
+	     purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_nick") &&
+	     !(flags & PURPLE_MESSAGE_NICK)))
+	    return FALSE;
 
 	/* Nothing speaks against notifying, do so */
 	notify(conv, TRUE);
