@@ -76,11 +76,6 @@ yahoo_login_page_cb(PurpleHttpConnection *http_conn,
 	PurpleHttpResponse *response, gpointer _unused);
 #endif /* TRY_WEBMESSENGER_LOGIN */
 
-static gboolean yahoo_is_japan(PurpleAccount *account)
-{
-	return purple_strequal(purple_account_get_protocol_id(account), "prpl-yahoojp");
-}
-
 static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFriend *f)
 {
 	char *status = NULL;
@@ -1725,6 +1720,7 @@ static char *yahoo_decode(const char *text)
 
 	*n = '\0';
 
+	/* XXX: Is this related to Yahoo! Japan? If so, it should be removed. -mmcco */
 	if (strstr(text, "\033$B"))
 		converted = g_convert(new, n - new, OUT_CHARSET, "iso-2022-jp", NULL, NULL, NULL);
 	if (!converted)
@@ -1737,11 +1733,10 @@ static char *yahoo_decode(const char *text)
 static void yahoo_process_mail(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	YahooData *yd = purple_connection_get_protocol_data(gc);
 	const char *who = NULL;
 	const char *email = NULL;
 	const char *subj = NULL;
-	const char *yahoo_mail_url = (yd->jp? YAHOOJP_MAIL_URL: YAHOO_MAIL_URL);
+	const char *yahoo_mail_url = YAHOO_MAIL_URL;
 	int count = 0;
 	GSList *l = pkt->hash;
 
@@ -1865,12 +1860,12 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 					277, yd->cookie_y,
 					278, yd->cookie_t,
 					307, base64_string,
-					244, yd->jp ? YAHOOJP_CLIENT_VERSION_ID : YAHOO_CLIENT_VERSION_ID,
+					244, YAHOO_CLIENT_VERSION_ID,
 					2, name,
 					2, "1",
 					59, yd->cookie_b,
-					98, purple_account_get_string(account, "room_list_locale", yd->jp ? "jp" : "us"),
-					135, yd->jp ? YAHOOJP_CLIENT_VERSION : YAHOO_CLIENT_VERSION);
+					98, purple_account_get_string(account, "room_list_locale", "us"),
+					135, YAHOO_CLIENT_VERSION);
 	} else { /* don't try to send an empty B cookie - the server will be mad */
 		yahoo_packet_hash(pkt, "sssssssss",
 					1, name,
@@ -1878,11 +1873,11 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 					277, yd->cookie_y,
 					278, yd->cookie_t,
 					307, base64_string,
-					244, yd->jp ? YAHOOJP_CLIENT_VERSION_ID : YAHOO_CLIENT_VERSION_ID,
+					244, YAHOO_CLIENT_VERSION_ID,
 					2, name,
 					2, "1",
-					98, purple_account_get_string(account, "room_list_locale", yd->jp ? "jp" : "us"),
-					135, yd->jp ? YAHOOJP_CLIENT_VERSION : YAHOO_CLIENT_VERSION);
+					98, purple_account_get_string(account, "room_list_locale", "us"),
+					135, YAHOO_CLIENT_VERSION);
 	}
 
 	if (yd->picture_checksum)
@@ -2096,14 +2091,10 @@ static void yahoo_auth16_stage1_cb(PurpleHttpConnection *http_conn,
 			g_free(token);
 		}
 		else {
-			/* OK to login, correct information provided */
-			gboolean yahoojp = yahoo_is_japan(account);
 			PurpleHttpRequest *req;
 
 			req = purple_http_request_new(NULL);
-			purple_http_request_set_url_printf(req,
-				yahoojp ? YAHOOJP_LOGIN_URL : YAHOO_LOGIN_URL,
-				token);
+			purple_http_request_set_url_printf(req, YAHOO_LOGIN_URL, token);
 			purple_http_request_header_set(req, "User-Agent",
 				YAHOO_CLIENT_USERAGENT);
 			purple_http_connection_set_add(yd->http_reqs,
@@ -2119,12 +2110,10 @@ static void yahoo_auth16_stage1_cb(PurpleHttpConnection *http_conn,
 static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 {
 	YahooData *yd = purple_connection_get_protocol_data(gc);
-	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleHttpRequest *req;
 	struct yahoo_auth_data *auth_data = NULL;
 	char *encoded_username;
 	char *encoded_password;
-	gboolean yahoojp = yahoo_is_japan(account);
 
 	purple_debug_info("yahoo", "Authentication: In yahoo_auth16_stage1\n");
 
@@ -2141,8 +2130,7 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 	encoded_password = g_strdup(purple_url_encode(purple_connection_get_password(gc)));
 
 	req = purple_http_request_new(NULL);
-	purple_http_request_set_url_printf(req,
-		yahoojp ? YAHOOJP_TOKEN_URL : YAHOO_TOKEN_URL,
+	purple_http_request_set_url_printf(req, YAHOO_TOKEN_URL,
 		encoded_username, encoded_password, purple_url_encode(seed));
 	purple_http_request_header_set(req, "User-Agent", YAHOO_CLIENT_USERAGENT);
 	purple_http_connection_set_add(yd->http_reqs, purple_http_request(gc,
@@ -2508,7 +2496,7 @@ static void yahoo_p2p_write_pkt(gint source, struct yahoo_packet *pkt)
 	guchar *raw_packet;
 
 	/*build the raw packet and send it to the host*/
-	pkt_len = yahoo_packet_build(pkt, 0, 0, 0, &raw_packet);
+	pkt_len = yahoo_packet_build(pkt, 0, 0, &raw_packet);
 	written = write(source, raw_packet, pkt_len);
 	if (written < 0 || (gsize)written != pkt_len)
 		purple_debug_warning("yahoo","p2p: couldn't write to the source\n");
@@ -3706,15 +3694,10 @@ static void yahoo_got_pager_server(PurpleHttpConnection *http_conn,
 		purple_debug_error("yahoo", "Unable to retrieve server info: %s\n",
 			purple_http_response_get_error(response));
 
-		if(yahoo_is_japan(a)) { /* We don't know fallback hosts for Yahoo Japan :( */
+		if(purple_proxy_connect(gc, a, YAHOO_PAGER_HOST_FALLBACK, port,
+				yahoo_got_connected, gc) == NULL) {
 			purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-					_("Unable to connect: The server returned an empty response."));
-		} else {
-				if(purple_proxy_connect(gc, a, YAHOO_PAGER_HOST_FALLBACK, port,
-							yahoo_got_connected, gc) == NULL) {
-					purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-							_("Unable to connect"));
-				}
+					_("Unable to connect"));
 		}
 	} else {
 		got_data = purple_http_response_get_data(response, NULL);
@@ -3741,16 +3724,11 @@ static void yahoo_got_pager_server(PurpleHttpConnection *http_conn,
 			purple_debug_error("yahoo", "No CS address retrieved!  Server "
 					"response:\n%s\n", got_data);
 
-			if(yahoo_is_japan(a)) { /* We don't know fallback hosts for Yahoo Japan :( */
+			if(purple_proxy_connect(gc, a, YAHOO_PAGER_HOST_FALLBACK, port,
+					yahoo_got_connected, gc) == NULL) {
 				purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-						_("Unable to connect: The server's response did not contain "
-							"the necessary information"));
-			} else
-				if(purple_proxy_connect(gc, a, YAHOO_PAGER_HOST_FALLBACK, port,
-							yahoo_got_connected, gc) == NULL) {
-					purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-							_("Unable to connect"));
-				}
+						_("Unable to connect"));
+			}
 		}
 	}
 
@@ -3775,7 +3753,6 @@ void yahoo_login(PurpleAccount *account) {
 	purple_connection_set_display_name(gc, purple_account_get_username(account));
 
 	yd->gc = gc;
-	yd->jp = yahoo_is_japan(account);
 	yd->yahoo_local_p2p_server_fd = -1;
 	yd->fd = -1;
 	yd->txhandler = 0;
@@ -3800,8 +3777,7 @@ void yahoo_login(PurpleAccount *account) {
 
 	/* Get the pager server.  Actually start connecting in the callback since we
 	 * must have the contents of the HTTP response to proceed. */
-	req = purple_http_request_new(yd->jp ? YAHOOJP_PAGER_HOST_REQ_URL :
-		YAHOO_PAGER_HOST_REQ_URL);
+	req = purple_http_request_new(YAHOO_PAGER_HOST_REQ_URL);
 	purple_http_request_header_set(req, "User-Agent", YAHOO_CLIENT_USERAGENT);
 	purple_http_connection_set_add(yd->http_reqs, purple_http_request(gc,
 		req, yahoo_got_pager_server, yd));
@@ -4329,7 +4305,6 @@ yahoo_get_inbox_token_cb(PurpleHttpConnection *http_conn,
 	PurpleConnection *gc =
 		purple_http_conn_get_purple_connection(http_conn);
 	gchar *url;
-	YahooData *yd = purple_connection_get_protocol_data(gc);
 
 	PURPLE_ASSERT_CONNECTION_IS_VALID(gc);
 
@@ -4337,7 +4312,7 @@ yahoo_get_inbox_token_cb(PurpleHttpConnection *http_conn,
 		purple_debug_error("yahoo",
 			"Requesting mail login token failed: %s\n",
 			purple_http_response_get_error(response));
-		url = g_strdup(yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
+		url = g_strdup(YAHOO_MAIL_URL);
 	} else {
 		/* Should we not be hardcoding the rd url? */
 		gchar *token;
@@ -4361,7 +4336,6 @@ yahoo_get_inbox_token_cb(PurpleHttpConnection *http_conn,
 static void yahoo_show_inbox(PurpleProtocolAction *action)
 {
 	/* Setup a cookie that can be used by the browser */
-	/* XXX I have no idea how this will work with Yahoo! Japan. */
 
 	PurpleConnection *gc = action->connection;
 	YahooData *yd = purple_connection_get_protocol_data(gc);

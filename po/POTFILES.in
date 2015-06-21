@@ -188,7 +188,6 @@ libpurple/protocols/yahoo/yahoo_filexfer.c
 libpurple/protocols/yahoo/yahoo_packet.c
 libpurple/protocols/yahoo/yahoo_profile.c
 libpurple/protocols/yahoo/yahoochat.c
-libpurple/protocols/yahoo/yahoojp.c
 libpurple/protocols/yahoo/ycht.c
 libpurple/protocols/yahoo/ymsg.c
 libpurple/protocols/zephyr/zephyr.c

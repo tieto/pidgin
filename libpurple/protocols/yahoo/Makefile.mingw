@@ -40,7 +40,6 @@ LIB_PATHS +=		-L. \
 ##
 C_SRC =			util.c \
 			yahoo.c \
-			yahoojp.c \
 			yahoochat.c \
 			yahoo_aliases.c \
 			yahoo_doodle.c \

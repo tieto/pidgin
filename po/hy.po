@@ -6621,7 +6621,6 @@ msgstr ""
 
 #: ../libpurple/protocols/jabber/jabber.c:3717
 #: ../libpurple/protocols/yahoo/libyahoo.c:53
-#: ../libpurple/protocols/yahoo/libyahoojp.c:50
 msgid "buzz: Buzz a user to get their attention"
 msgstr ""
 
@@ -10058,7 +10057,6 @@ msgstr ""
 
 #: ../libpurple/protocols/oscar/libicq.c:162
 #: ../libpurple/protocols/yahoo/libyahoo.c:326
-#: ../libpurple/protocols/yahoo/libyahoojp.c:222
 #: ../libpurple/protocols/zephyr/zephyr.c:2997
 msgid "Encoding"
 msgstr ""
@@ -13275,17 +13273,14 @@ msgid "Auth Domain"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:44
-#: ../libpurple/protocols/yahoo/libyahoojp.c:41
 msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:49
-#: ../libpurple/protocols/yahoo/libyahoojp.c:46
 msgid "list: List rooms on the Yahoo network"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:57
-#: ../libpurple/protocols/yahoo/libyahoojp.c:54
 msgid "doodle: Request user to start a Doodle session"
 msgstr ""
 
@@ -13309,57 +13304,31 @@ msgid "Yahoo! Protocol Plugin"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:314
-#: ../libpurple/protocols/yahoo/libyahoojp.c:210
 msgid "Pager port"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:317
-#: ../libpurple/protocols/yahoo/libyahoojp.c:213
 msgid "File transfer server"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:320
-#: ../libpurple/protocols/yahoo/libyahoojp.c:216
 msgid "File transfer port"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:323
-#: ../libpurple/protocols/yahoo/libyahoojp.c:219
 msgid "Chat room locale"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:329
-#: ../libpurple/protocols/yahoo/libyahoojp.c:225
 msgid "Ignore conference and chatroom invitations"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:332
-#: ../libpurple/protocols/yahoo/libyahoojp.c:228
 msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:336
-#: ../libpurple/protocols/yahoo/libyahoojp.c:232
 msgid "Chat room list URL"
-msgstr ""
-
-#: ../libpurple/protocols/yahoo/libyahoojp.c:62
-msgid "Yahoo JAPAN ID..."
-msgstr ""
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-#: ../libpurple/protocols/yahoo/libyahoojp.c:185
-#: ../libpurple/protocols/yahoo/libyahoojp.c:187
-msgid "Yahoo! JAPAN Protocol Plugin"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/libymsg.c:926
@@ -13642,10 +13611,6 @@ msgstr ""
 
 #: ../libpurple/protocols/yahoo/yahoo_packet.c:306
 msgid "Write Error"
-msgstr ""
-
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:797
-msgid "Yahoo! Japan Profile"
 msgstr ""
 
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:798

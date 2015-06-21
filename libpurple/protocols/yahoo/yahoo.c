@@ -29,7 +29,6 @@
 
 #include "ymsg.h"
 #include "yahoo.h"
-#include "yahoojp.h"
 #include "yahoochat.h"
 #include "yahoo_aliases.h"
 #include "yahoo_doodle.h"
@@ -37,7 +36,6 @@
 #include "yahoo_picture.h"
 
 static PurpleProtocol *yahoo_protocol = NULL;
-static PurpleProtocol *yahoojp_protocol = NULL;
 
 static GSList *cmds = NULL;
 
@@ -386,20 +384,14 @@ static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
 	yahoo_protocol_register_type(plugin);
-	yahoojp_protocol_register_type(plugin);
 
 	yahoo_protocol = purple_protocols_add(YAHOO_TYPE_PROTOCOL, error);
 	if (!yahoo_protocol)
 		return FALSE;
 
-	yahoojp_protocol = purple_protocols_add(YAHOOJP_TYPE_PROTOCOL, error);
-	if (!yahoojp_protocol)
-		return FALSE;
-
 	yahoo_init_colorht();
 
 	yahoo_register_commands();
-	yahoojp_register_commands();
 
 	purple_signal_connect(purple_get_core(), "uri-handler", yahoo_protocol,
 		PURPLE_CALLBACK(yahoo_uri_handler), NULL);
@@ -410,13 +402,9 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	yahoojp_unregister_commands();
 	yahoo_unregister_commands();
 
 	yahoo_dest_colorht();
-
-	if (!purple_protocols_remove(yahoojp_protocol, error))
-		return FALSE;
 
 	if (!purple_protocols_remove(yahoo_protocol, error))
 		return FALSE;

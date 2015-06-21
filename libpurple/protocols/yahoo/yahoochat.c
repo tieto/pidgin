@@ -67,12 +67,11 @@ static void yahoo_chat_online(PurpleConnection *gc)
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATONLINE, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash(pkt, "sssss",
-					  109, purple_connection_get_display_name(gc),
-					  1, purple_connection_get_display_name(gc),
-					  6, "abcde",
-					/* I'm not sure this is the correct way to set this. */
-					  98, rll,
-					  135, yd->jp ? YAHOO_CLIENT_VERSION : YAHOOJP_CLIENT_VERSION);
+			109, purple_connection_get_display_name(gc),
+			1, purple_connection_get_display_name(gc),
+			6, "abcde",
+			98, rll,
+			135, YAHOO_CLIENT_VERSION);
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
@@ -1516,15 +1515,8 @@ PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 
 	account = purple_connection_get_account(gc);
 
-	/* for Yahoo Japan, it appears there is only one valid URL and locale */
-	if(purple_account_get_bool(account, "yahoojp", FALSE)) {
-		rll = YAHOOJP_ROOMLIST_LOCALE;
-		rlurl = YAHOOJP_ROOMLIST_URL;
-	}
-	else { /* but for the rest of the world that isn't the case */
-		rll = purple_account_get_string(account, "room_list_locale", YAHOO_ROOMLIST_LOCALE);
-		rlurl = purple_account_get_string(account, "room_list", YAHOO_ROOMLIST_URL);
-	}
+	rll = purple_account_get_string(account, "room_list_locale", YAHOO_ROOMLIST_LOCALE);
+	rlurl = purple_account_get_string(account, "room_list", YAHOO_ROOMLIST_URL);
 
 	url = g_strdup_printf("%s?chatcat=0&intl=%s", rlurl, rll);
 

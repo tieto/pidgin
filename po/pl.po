@@ -6985,7 +6985,6 @@ msgstr "ping &lt;identyfikator_Jabbera&gt;:  Wysyła ping do użytkownika/skład
 
 #: ../libpurple/protocols/jabber/jabber.c:3714
 #: ../libpurple/protocols/yahoo/libyahoo.c:53
-#: ../libpurple/protocols/yahoo/libyahoojp.c:50
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: szepcze do użytkownika, aby uzyskać jego uwagę"
 
@@ -9939,7 +9938,6 @@ msgstr "Wtyczka protokołu ICQ"
 
 #: ../libpurple/protocols/oscar/libicq.c:165
 #: ../libpurple/protocols/yahoo/libyahoo.c:318
-#: ../libpurple/protocols/yahoo/libyahoojp.c:216
 #: ../libpurple/protocols/zephyr/zephyr.c:3030
 msgid "Encoding"
 msgstr "Kodowanie"
@@ -12745,17 +12743,14 @@ msgid "Auth Domain"
 msgstr "Domena uwierzytelnienia"
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:44
-#: ../libpurple/protocols/yahoo/libyahoojp.c:41
 msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
 msgstr "join &lt;pokój&gt;: dołącza do pokoju konferencji w sieci Yahoo!"
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:49
-#: ../libpurple/protocols/yahoo/libyahoojp.c:46
 msgid "list: List rooms on the Yahoo network"
 msgstr "list: wyświetla listę pokoi w sieci Yahoo!"
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:57
-#: ../libpurple/protocols/yahoo/libyahoojp.c:54
 msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle: prosi użytkownika o rozpoczęcia sesji Doodle"
 
@@ -12779,53 +12774,28 @@ msgid "Yahoo! Protocol Plugin"
 msgstr "Wtyczka protokołu Yahoo!"
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:309
-#: ../libpurple/protocols/yahoo/libyahoojp.c:207
 msgid "Pager port"
 msgstr "Port pagera"
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:312
-#: ../libpurple/protocols/yahoo/libyahoojp.c:210
 msgid "File transfer server"
 msgstr "Serwer przesyłania plików"
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:315
-#: ../libpurple/protocols/yahoo/libyahoojp.c:213
 msgid "Chat room locale"
 msgstr "Lokalizacja pokoju konferencji"
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:321
-#: ../libpurple/protocols/yahoo/libyahoojp.c:219
 msgid "Ignore conference and chatroom invitations"
 msgstr "Ignorowanie zaproszeń do konferencji"
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:325
-#: ../libpurple/protocols/yahoo/libyahoojp.c:223
 msgid "Use account proxy for HTTP and HTTPS connections"
 msgstr "Użycie pośrednika konta dla połączeń HTTP i HTTPS"
 
 #: ../libpurple/protocols/yahoo/libyahoo.c:328
-#: ../libpurple/protocols/yahoo/libyahoojp.c:226
 msgid "Chat room list URL"
 msgstr "Adres URL listy pokoi konferencji"
-
-#: ../libpurple/protocols/yahoo/libyahoojp.c:62
-msgid "Yahoo JAPAN ID..."
-msgstr "Identyfikator Yahoo! Japan..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-#: ../libpurple/protocols/yahoo/libyahoojp.c:182
-#: ../libpurple/protocols/yahoo/libyahoojp.c:184
-msgid "Yahoo! JAPAN Protocol Plugin"
-msgstr "Wtyczka protokołu Yahoo! Japan"
 
 #: ../libpurple/protocols/yahoo/libymsg.c:929
 #, c-format
@@ -13083,10 +13053,6 @@ msgstr "Nieobsługiwana metoda"
 #: ../libpurple/protocols/yahoo/yahoo_packet.c:309
 msgid "Write Error"
 msgstr "Błąd zapisu"
-
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:799
-msgid "Yahoo! Japan Profile"
-msgstr "Profil Yahoo! Japan"
 
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:800
 msgid "Yahoo! Profile"

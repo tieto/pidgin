@@ -9,8 +9,6 @@ YAHOOSOURCES = \
 	yahoochat.c \
 	yahoo.c \
 	yahoo.h \
-	yahoojp.c \
-	yahoojp.h \
 	yahoo_aliases.c \
 	yahoo_aliases.h \
 	yahoo_doodle.h \

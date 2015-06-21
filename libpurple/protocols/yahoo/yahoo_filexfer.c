@@ -727,18 +727,9 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 		xd->is_relay = TRUE;
 
 		account = purple_connection_get_account(gc);
-		if (yd->jp)
-		{
-			purple_dnsquery_a(account, YAHOOJP_XFER_RELAY_HOST,
-							YAHOOJP_XFER_RELAY_PORT,
-							yahoo_xfer_dns_connected_15, xfer);
-		}
-		else
-		{
-			purple_dnsquery_a(account, YAHOO_XFER_RELAY_HOST,
-							YAHOO_XFER_RELAY_PORT,
-							yahoo_xfer_dns_connected_15, xfer);
-		}
+		purple_dnsquery_a(account, YAHOO_XFER_RELAY_HOST,
+			YAHOO_XFER_RELAY_PORT,
+			yahoo_xfer_dns_connected_15, xfer);
 		return;
 	}
 

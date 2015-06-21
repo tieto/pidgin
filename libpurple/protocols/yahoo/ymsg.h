@@ -1,5 +1,5 @@
 /**
- * @file ymsg.h The Yahoo! and Yahoo! JAPAN Protocols
+ * @file ymsg.h The Yahoo! Protocol
  *
  * purple
  *
@@ -47,20 +47,6 @@
 #define YAHOO_ROOMLIST_URL "http://insider.msg.yahoo.com/ycontent/"
 #define YAHOO_ROOMLIST_LOCALE "us"
 
-/* Yahoo! JAPAN stuff */
-#define YAHOOJP_PAGER_HOST_REQ_URL "http://cs1.yahoo.co.jp/capacity"
-#define YAHOOJP_TOKEN_URL "https://login.yahoo.co.jp/config/pwtoken_get?src=ymsgr&ts=&login=%s&passwd=%s&chal=%s"
-#define YAHOOJP_LOGIN_URL "https://login.yahoo.co.jp/config/pwtoken_login?src=ymsgr&ts=&token=%s"
-#define YAHOOJP_PROFILE_URL "http://profiles.yahoo.co.jp/"
-#define YAHOOJP_MAIL_URL "http://mail.yahoo.co.jp/"
-#define YAHOOJP_XFER_HOST "filetransfer.msg.yahoo.co.jp"
-#define YAHOOJP_WEBCAM_HOST "wc.yahoo.co.jp"
-/* not sure, must test: */
-#define YAHOOJP_XFER_RELAY_HOST "relay.msg.yahoo.co.jp"
-#define YAHOOJP_XFER_RELAY_PORT 80
-#define YAHOOJP_ROOMLIST_URL "http://insider.msg.yahoo.co.jp/ycontent/"
-#define YAHOOJP_ROOMLIST_LOCALE "ja"
-
 #define YAHOO_AUDIBLE_URL "http://l.yimg.com/pu/dl/aud"
 
 #define WEBMESSENGER_URL "http://login.yahoo.com/config/login?.src=pg"
@@ -68,7 +54,6 @@
 #define YAHOO_SMS_CARRIER_URL "http://validate.msg.yahoo.com"
 
 #define YAHOO_USERINFO_URL "http://address.yahoo.com/yab/us?v=XM&sync=1&tags=short&useutf8=1&noclear=1&legenc=codepage-1252"
-#define YAHOOJP_USERINFO_URL "http://address.yahoo.co.jp/yab/jp?v=XM&sync=1&tags=short&useutf8=1&noclear=1&legenc=codepage-1252"
 
 #define YAHOO_PICURL_SETTING "picture_url"
 #define YAHOO_PICCKSUM_SETTING "picture_checksum"
@@ -91,9 +76,6 @@
 
 #define YAHOO_CLIENT_VERSION_ID "4194239"
 #define YAHOO_CLIENT_VERSION "9.0.0.2162"
-
-#define YAHOOJP_CLIENT_VERSION_ID "4186047"
-#define YAHOOJP_CLIENT_VERSION "9.0.0.1727"
 
 #define YAHOO_CLIENT_USERAGENT "Mozilla/5.0"
 #define YAHOO_CLIENT_USERAGENT_ALIAS "Mozilla/4.0 (compatible; MSIE 5.5)"
@@ -222,7 +204,6 @@ typedef struct {
 	char *cookie_t;
 	char *cookie_b;
 	int session_id;
-	gboolean jp;
 	gboolean wm; /* connected w/ web messenger method */
 	/* picture aka buddy icon stuff */
 	char *picture_url;
@@ -331,8 +312,8 @@ yahoo_account_use_http_proxy(PurpleConnection *conn);
  * @param gc The connection handle.
  * @param str The null terminated utf8 string to encode.
  * @param utf8 Whether to return a UTF-8 string.
- * @return A g_malloc'ed string in the appropriate encoding. If jd->jp or
- *         utf8 is true then the string is copied verbatim. Otherwise the
+ * @return A g_malloc'ed string in the appropriate encoding. If utf8
+ *         is true then the string is copied verbatim. Otherwise the
  *         encoding from account settings is used.
  */
 gchar *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean utf8);
