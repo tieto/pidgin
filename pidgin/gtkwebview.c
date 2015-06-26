@@ -2259,6 +2259,45 @@ pidgin_webview_insert_image(PidginWebView *webview, PurpleImage *image)
 	g_free(img);
 }
 
+static WebKitDOMCSSStyleDeclaration*
+pidgin_webview_get_DOM_CSS_style(PidginWebView *webview)
+{
+	//WebKitDOMCSSStyleDeclaration *style;
+	WebKitDOMDocument *document;
+	WebKitDOMElement *dom_element;
+	WebKitDOMDOMWindow *dom_window;
+
+	document = webkit_web_view_get_dom_document(webview);
+	dom_window = webkit_dom_document_get_default_view(document);
+
+	dom_element = webkit_dom_document_get_document_element(document);
+	return webkit_dom_dom_window_get_computed_style(dom_window, dom_element, 0);
+}
+
+gint
+pidgin_webview_get_DOM_height(PidginWebView *webview)
+{
+	gchar *value;
+	WebKitDOMCSSStyleDeclaration *style;
+
+	style = pidgin_webview_get_DOM_CSS_style(webview);
+	value = webkit_dom_css_style_declaration_get_property_value(style, "height");
+
+	return g_ascii_strtoll(value, NULL, 0);
+}
+
+gint
+pidgin_webview_get_font_size(PidginWebView *webview)
+{
+	gchar *value;
+	WebKitDOMCSSStyleDeclaration *style;
+
+	style = pidgin_webview_get_DOM_CSS_style(webview);
+	value = webkit_dom_css_style_declaration_get_property_value(style, "font-size");
+
+	return g_ascii_strtoll(value, NULL, 0);
+}
+
 void
 pidgin_webview_set_toolbar(PidginWebView *webview, GtkWidget *toolbar)
 {

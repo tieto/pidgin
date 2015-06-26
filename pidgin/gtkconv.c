@@ -4932,73 +4932,53 @@ entry_popup_menu_cb(PidginWebView *webview, GtkMenu *menu, gpointer data)
 static gboolean
 resize_webview_cb(PidginConversation *gtkconv)
 {
-#if 0
-	/* TODO WebKit: entry sizing */
-	GtkTextBuffer *buffer;
-	GtkTextIter iter;
-	int lines;
-	GdkRectangle oneline;
-	int height, diff;
-	int pad_top, pad_inside, pad_bottom;
-	int total_height;
-	int max_height;
-	int min_lines = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines");
-	int min_height;
-	gboolean interior_focus;
-	int focus_width;
+	WebKitWebView *webview;
+	gint min_lines;
+	gint max_height;
+	gint min_height;
+	gint font_size;
+	gint total_height;
+	gint height;
+	gint toolbar_size;
 	GtkAllocation webview_allocation;
 	GtkAllocation entry_allocation;
-	GtkAllocation lower_hbox_allocation;
 
+	webview = PIDGIN_WEBVIEW(gtkconv->entry);
+
+	/* Get text height from the DOM */
+	height = pidgin_webview_get_DOM_height(webview);
+
+	/* Find the height of the conversation window to calculate the maximum possible entry
+	 * size (1/2 of the window)
+	 */
 	gtk_widget_get_allocation(gtkconv->webview, &webview_allocation);
 	gtk_widget_get_allocation(gtkconv->entry, &entry_allocation);
-	gtk_widget_get_allocation(gtkconv->lower_hbox, &lower_hbox_allocation);
 	total_height = webview_allocation.height + entry_allocation.height;
 	max_height = total_height / 2;
 
-	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
-	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
-	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(gtkconv->entry));
+	/* Get size of the characters to calculate initial minimum space for the entry */
+	font_size = pidgin_webview_get_font_size(webview);
 
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
-	gtk_text_buffer_get_start_iter(buffer, &iter);
-	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(gtkconv->entry), &iter, &oneline);
+	/* Allow to have a minimum of "min_lines" height as defined in the preference */
+	min_lines = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines");
+	min_height = (font_size + WEBVIEW_DOM_FONT_PADDING) * min_lines + WEBVIEW_DOM_TEXT_PADDING;
 
-	lines = gtk_text_buffer_get_line_count(buffer);
 
-	height = 0;
-	do {
-		int lineheight = 0;
-		gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(gtkconv->entry), &iter, NULL, &lineheight);
-		height += lineheight;
-		lines--;
-	} while (gtk_text_iter_forward_line(&iter));
-	height += lines * (oneline.height + pad_top + pad_bottom);
+	/* Take into account the size of the formatting toolbar */
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar")) {
+		toolbar_size = gtk_widget_get_allocated_height(pidgin_webview_get_toolbar(webview));
+	} else {
+		toolbar_size = 0;
+	}
 
-	/* Make sure there's enough room for at least min_lines. Allocate enough space to
-	 * prevent scrolling when the second line is a continuation of the first line, or
-	 * is the beginning of a new paragraph. */
-	min_height = min_lines * (oneline.height + MAX(pad_inside, pad_top + pad_bottom));
+	/* Calculate conv entry height */
 	height = CLAMP(height, MIN(min_height, max_height), max_height);
+	/* Add the size used by the toolbar so we always take it into consideration. */
+	height += toolbar_size;
 
-	gtk_widget_style_get(gtkconv->entry,
-	                     "interior-focus", &interior_focus,
-	                     "focus-line-width", &focus_width,
-	                     NULL);
-	if (!interior_focus)
-		height += 2 * focus_width;
-
-	diff = height - entry_allocation.height;
-	if (ABS(diff) < oneline.height / 2)
-		return FALSE;
-
-	purple_debug_info("pidgin", "resizing to %d, %d lines, diff %d\n",
-	                  diff + lower_hbox_allocation.height, min_lines, diff);
-
-	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
-		diff + lower_hbox_allocation.height);
-#endif
-	gtk_widget_set_size_request(gtkconv->lower_hbox, -1, -1);
+	/* Actually set the size of the gtkconv entry widget. */
+	gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height);
+	purple_debug_info("pidgin", "resizing to %d, %d lines\n", height, min_lines);
 
 	return FALSE;
 }
@@ -5718,6 +5698,10 @@ setup_common_pane(PidginConversation *gtkconv)
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "size-allocate",
 				 G_CALLBACK(resize_webview_cb), gtkconv);
 #endif
+	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "changed",
+				 G_CALLBACK(resize_webview_cb), gtkconv);
+	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "size-allocate",
+				 G_CALLBACK(resize_webview_cb), gtkconv);
 
 	default_formatize(gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "format-cleared",
@@ -8135,7 +8119,7 @@ show_formatting_toolbar_pref_cb(const char *name, PurplePrefType type,
 		else
 			pidgin_webview_hide_toolbar(PIDGIN_WEBVIEW(gtkconv->entry));
 
-		g_idle_add((GSourceFunc)resize_webview_cb, gtkconv);
+		resize_webview_cb(gtkconv);
 	}
 }
 

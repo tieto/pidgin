@@ -42,6 +42,11 @@
 #define PIDGIN_IS_WEBVIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PIDGIN_TYPE_WEBVIEW))
 #define PIDGIN_WEBVIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PIDGIN_TYPE_WEBVIEW, PidginWebViewClass))
 
+
+/*salinasv: this are partially magic numbers, we need to find how to get them from the DOM */
+#define WEBVIEW_DOM_FONT_PADDING 3
+#define WEBVIEW_DOM_TEXT_PADDING 16
+
 typedef enum {
 	PIDGIN_WEBVIEW_BOLD          = 1 << 0,
 	PIDGIN_WEBVIEW_ITALIC        = 1 << 1,
@@ -584,6 +589,28 @@ void pidgin_webview_insert_link(PidginWebView *webview, const char *url, const c
  */
 void
 pidgin_webview_insert_image(PidginWebView *webview, PurpleImage *image);
+
+/**
+ * pidgin_webview_get_DOM_height:
+ * @webview: the PidginWebView.
+ *
+ * Look for the calculated height for the DOM on the webview.
+ *
+ * Returns the total height of the DOM in the webview.
+ */
+gint
+pidgin_webview_get_DOM_height(PidginWebView *webview);
+
+/**
+ * pidgin_webview_get_DOM_height:
+ * @webview: the PidginWebView.
+ *
+ * Look for the font size used on the current webview
+ *
+ * Returns the font size for the webview.
+ */
+gint
+pidgin_webview_get_font_size(PidginWebView *webview);
 
 /**
  * pidgin_webview_get_protocol_name:
