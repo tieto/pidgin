@@ -1,10 +1,13 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import dbus
 import re
 import sys
 import time
-import urllib.parse
+try:
+    from urllib.parse import unquote_plus
+except ImportError:
+    from urllib import unquote_plus
 
 bus = dbus.SessionBus()
 obj = None
@@ -125,13 +128,13 @@ def aim(uri):
         print("Invalid aim URI: %s" % uri)
         return
 
-    command = urllib.parse.unquote(match.group(1))
+    command = unquote_plus(match.group(1))
     paramstring = match.group(3)
     params = {}
     if paramstring:
         for param in paramstring.split("&"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.parse.unquote(value)
+            params[key] = unquote_plus(value)
     accountname = params.get("account", "")
     screenname = params.get("screenname", "")
 
@@ -151,7 +154,7 @@ def gg(uri):
         print("Invalid gg URI: %s" % uri)
         return
 
-    screenname = urllib.parse.unquote(match.group(1))
+    screenname = unquote_plus(match.group(1))
     account = findaccount(protocol)
     goim(account, screenname)
 
@@ -162,13 +165,13 @@ def icq(uri):
         print("Invalid icq URI: %s" % uri)
         return
 
-    command = urllib.parse.unquote(match.group(1))
+    command = unquote_plus(match.group(1))
     paramstring = match.group(3)
     params = {}
     if paramstring:
         for param in paramstring.split("&"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.parse.unquote(value)
+            params[key] = unquote_plus(value)
     accountname = params.get("account", "")
     screenname = params.get("screenname", "")
 
@@ -188,7 +191,7 @@ def irc(uri):
         print("Invalid irc URI: %s" % uri)
         return
 
-    server = urllib.parse.unquote(match.group(2) or "")
+    server = unquote_plus(match.group(2) or "")
     target = match.group(3) or ""
     query = match.group(5) or ""
 
@@ -204,7 +207,7 @@ def irc(uri):
     if paramstring:
         for param in paramstring.split("&"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.parse.unquote(value)
+            params[key] = unquote_plus(value)
 
     def correct_server(account):
         username = cpurple.PurpleAccountGetUsername(account)
@@ -214,9 +217,9 @@ def irc(uri):
 
     if (target != ""):
         if (isnick):
-            goim(account, urllib.parse.unquote(target.split(",")[0]), params.get("msg"))
+            goim(account, unquote_plus(target.split(",")[0]), params.get("msg"))
         else:
-            channel = urllib.parse.unquote(target.split(",")[0])
+            channel = unquote_plus(target.split(",")[0])
             if channel[0] != "#":
                 channel = "#" + channel
             gochat(account, {"server": server, "channel": channel, "password": params.get("key", "")}, params.get("msg"))
@@ -228,13 +231,13 @@ def msnim(uri):
         print("Invalid msnim URI: %s" % uri)
         return
 
-    command = urllib.parse.unquote(match.group(1))
+    command = unquote_plus(match.group(1))
     paramstring = match.group(3)
     params = {}
     if paramstring:
         for param in paramstring.split("&"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.parse.unquote(value)
+            params[key] = unquote_plus(value)
     screenname = params.get("contact", "")
 
     account = findaccount(protocol)
@@ -256,7 +259,7 @@ def sip(uri):
         print("Invalid sip URI: %s" % uri)
         return
 
-    screenname = urllib.parse.unquote(match.group(1))
+    screenname = unquote_plus(match.group(1))
     account = findaccount(protocol)
     goim(account, screenname)
 
@@ -269,15 +272,15 @@ def xmpp(uri):
 
     tmp = match.group(2)
     if (tmp):
-        accountname = urllib.parse.unquote(tmp)
+        accountname = unquote_plus(tmp)
     else:
         accountname = ""
 
-    screenname = urllib.parse.unquote(match.group(3))
+    screenname = unquote_plus(match.group(3))
 
     tmp = match.group(5)
     if (tmp):
-        command = urllib.parse.unquote(tmp)
+        command = unquote_plus(tmp)
     else:
         command = ""
 
@@ -286,7 +289,7 @@ def xmpp(uri):
     if paramstring:
         for param in paramstring.split(";"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.parse.unquote(value)
+            params[key] = unquote_plus(value)
 
     account = findaccount(protocol, accountname)
 
@@ -307,13 +310,13 @@ def gtalk(uri):
         print("Invalid gtalk URI: %s" % uri)
         return
 
-    command = urllib.parse.unquote(match.group(1))
+    command = unquote_plus(match.group(1))
     paramstring = match.group(3)
     params = {}
     if paramstring:
         for param in paramstring.split("&"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.parse.unquote(value)
+            params[key] = unquote_plus(value)
     accountname = params.get("from_jid", "")
     jid = params.get("jid", "")
 
@@ -332,14 +335,14 @@ def ymsgr(uri):
         print("Invalid ymsgr URI: %s" % uri)
         return
 
-    command = urllib.parse.unquote(match.group(1))
-    screenname = urllib.parse.unquote(match.group(3))
+    command = unquote_plus(match.group(1))
+    screenname = unquote_plus(match.group(3))
     paramstring = match.group(5)
     params = {}
     if paramstring:
         for param in paramstring.split("&"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.parse.unquote(value)
+            params[key] = unquote_plus(value)
 
     account = findaccount(protocol)
 
