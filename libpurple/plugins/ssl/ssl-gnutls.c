@@ -171,20 +171,6 @@ ssl_gnutls_init_gnutls(void)
 	const char *debug_level;
 	const char *host_priorities_str;
 
-	/* Configure GnuTLS to use glib memory management */
-	/* I expect that this isn't really necessary, but it may prevent
-	   some bugs */
-	/* TODO: It may be necessary to wrap this allocators for GnuTLS.
-	   If there are strange bugs, perhaps look here (yes, I am a
-	   hypocrite) */
-	gnutls_global_set_mem_functions(
-		(gnutls_alloc_function)   g_malloc, /* malloc */
-		(gnutls_alloc_function)   g_malloc, /* secure malloc */
-		NULL,      /* mem_is_secure */
-		(gnutls_realloc_function) g_realloc, /* realloc */
-		(gnutls_free_function)    g_free     /* free */
-		);
-
 	debug_level = g_getenv("PURPLE_GNUTLS_DEBUG");
 	if (debug_level) {
 		int level = atoi(debug_level);
