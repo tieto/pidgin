@@ -1096,9 +1096,11 @@ jabber_login(PurpleAccount *account)
 	if (js == NULL)
 		return;
 
-	/* TODO: Remove this at some point.  Added 2010-02-14 (v2.6.6) */
-	if (g_str_equal("proxy.jabber.org", purple_account_get_string(account, "ft_proxies", "")))
-		purple_account_set_string(account, "ft_proxies", JABBER_DEFAULT_FT_PROXIES);
+	/* replace old default proxies with the new default: NULL
+	 * TODO: these can eventually be removed */
+	if (g_str_equal("proxy.jabber.org", purple_account_get_string(account, "ft_proxies", ""))
+			|| g_str_equal("proxy.eu.jabber.org", purple_account_get_string(account, "ft_proxies", "")))
+		purple_account_set_string(account, "ft_proxies", NULL);
 
 	/*
 	 * Calculate the avatar hash for our current image so we know (when we

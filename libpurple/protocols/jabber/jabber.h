@@ -92,7 +92,6 @@ typedef struct _JabberStream JabberStream;
 #define JABBER_PROTOCOL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), JABBER_TYPE_PROTOCOL, JabberProtocolClass))
 
 #define JABBER_DEFAULT_REQUIRE_TLS    "require_starttls"
-#define JABBER_DEFAULT_FT_PROXIES     "proxy.eu.jabber.org"
 
 /* Index into attention_types list */
 #define JABBER_BUZZ 0
