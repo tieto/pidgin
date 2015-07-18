@@ -765,10 +765,7 @@ PurpleChatConversation *purple_serv_got_joined_chat(PurpleConnection *gc,
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
-	chat = purple_conversations_find_chat_with_account(name, account);
-	if (!chat) {
-		chat = purple_chat_conversation_new(account, name);
-	}
+	chat = purple_chat_conversation_new(account, name);
 	g_return_val_if_fail(chat != NULL, NULL);
 
 	if (!g_slist_find(purple_connection_get_active_chats(gc), chat))
