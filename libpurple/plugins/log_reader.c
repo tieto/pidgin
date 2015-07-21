@@ -317,110 +317,6 @@ static void adium_logger_finalize(PurpleLog *log)
 
 
 /*****************************************************************************
- * Fire Logger                                                               *
- *****************************************************************************/
-
-#if 0
-/* The fire logger doesn't write logs, only reads them.  This is to include
- * Fire logs in the log viewer transparently.
- */
-
-static PurpleLogLogger *fire_logger;
-
-struct fire_logger_data {
-};
-
-static GList *fire_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
-{
-	/* TODO: Do something here. */
-	return NULL;
-}
-
-static char * fire_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
-{
-	struct fire_logger_data *data;
-
-	g_return_val_if_fail(log != NULL, g_strdup(""));
-
-	data = log->logger_data;
-
-	/* TODO: Do something here. */
-	return g_strdup("");
-}
-
-static int fire_logger_size (PurpleLog *log)
-{
-	g_return_val_if_fail(log != NULL, 0);
-
-	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
-		return 0;
-
-	/* TODO: Do something here. */
-	return 0;
-}
-
-static void fire_logger_finalize(PurpleLog *log)
-{
-	g_return_if_fail(log != NULL);
-
-	/* TODO: Do something here. */
-}
-#endif
-
-
-/*****************************************************************************
- * Messenger Plus! Logger                                                    *
- *****************************************************************************/
-
-#if 0
-/* The messenger_plus logger doesn't write logs, only reads them.  This is to include
- * Messenger Plus! logs in the log viewer transparently.
- */
-
-static PurpleLogLogger *messenger_plus_logger;
-
-struct messenger_plus_logger_data {
-};
-
-static GList *messenger_plus_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
-{
-	/* TODO: Do something here. */
-	return NULL;
-}
-
-static char * messenger_plus_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
-{
-	struct messenger_plus_logger_data *data = log->logger_data;
-
-	g_return_val_if_fail(log != NULL, g_strdup(""));
-
-	data = log->logger_data;
-
-	/* TODO: Do something here. */
-	return g_strdup("");
-}
-
-static int messenger_plus_logger_size (PurpleLog *log)
-{
-	g_return_val_if_fail(log != NULL, 0);
-
-	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
-		return 0;
-
-	/* TODO: Do something here. */
-	return 0;
-}
-
-static void messenger_plus_logger_finalize(PurpleLog *log)
-{
-	g_return_if_fail(log != NULL);
-
-	/* TODO: Do something here. */
-}
-#endif
-
-
-/*****************************************************************************
  * MSN Messenger Logger                                                      *
  *****************************************************************************/
 
@@ -2758,16 +2654,6 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 		"/plugins/core/log_reader/adium/log_directory", _("Adium"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
-#if 0
-	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/fire/log_directory", _("Fire"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/messenger_plus/log_directory", _("Messenger Plus!"));
-	purple_plugin_pref_frame_add(frame, ppref);
-#endif
-
 	ppref = purple_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/qip/log_directory", _("QIP"));
 	purple_plugin_pref_frame_add(frame, ppref);
@@ -2836,33 +2722,6 @@ plugin_load(PurplePlugin *plugin, GError **error)
 									   adium_logger_size);
 	purple_log_logger_add(adium_logger);
 
-#if 0
-	/* The names of IM clients are marked for translation at the request of
-	   translators who wanted to transliterate them.  Many translators
-	   choose to leave them alone.  Choose what's best for your language. */
-	fire_logger = purple_log_logger_new("fire", _("Fire"), 6,
-									  NULL,
-									  NULL,
-									  fire_logger_finalize,
-									  fire_logger_list,
-									  fire_logger_read,
-									  fire_logger_size);
-	purple_log_logger_add(fire_logger);
-
-	/* The names of IM clients are marked for translation at the request of
-	   translators who wanted to transliterate them.  Many translators
-	   choose to leave them alone.  Choose what's best for your language. */
-	messenger_plus_logger = purple_log_logger_new("messenger_plus", _("Messenger Plus!"), 6,
-												NULL,
-												NULL,
-												messenger_plus_logger_finalize,
-												messenger_plus_logger_list,
-												messenger_plus_logger_read,
-												messenger_plus_logger_size);
-	purple_log_logger_add(messenger_plus_logger);
-
-#endif
-
 	/* The names of IM clients are marked for translation at the request of
 	   translators who wanted to transliterate them.  Many translators
 	   choose to leave them alone.  Choose what's best for your language. */
@@ -2922,16 +2781,6 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	purple_log_logger_remove(adium_logger);
 	purple_log_logger_free(adium_logger);
 	adium_logger = NULL;
-
-#if 0
-	purple_log_logger_remove(fire_logger);
-	purple_log_logger_free(fire_logger);
-	fire_logger = NULL;
-
-	purple_log_logger_remove(messenger_plus_logger);
-	purple_log_logger_free(messenger_plus_logger);
-	messenger_plus_logger = NULL;
-#endif
 
 	purple_log_logger_remove(msn_logger);
 	purple_log_logger_free(msn_logger);
