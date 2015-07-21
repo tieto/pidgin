@@ -42,44 +42,6 @@ append_to_tooltip(PurpleBlistNode *node, GString *text, gboolean full)
 	}
 }
 
-#if 0
-static gboolean
-check_for_buddynote(gpointer data)
-{
-	PurplePlugin *buddynote = NULL;
-	PurplePlugin *plugin = (PurplePlugin *)data;
-
-	buddynote = purple_plugins_find_with_id("core-plugin_pack-buddynote");
-
-	if (buddynote == NULL) {
-		buddynote = purple_plugins_find_with_basename("buddynote");
-	}
-
-	if (buddynote != NULL) {
-		PurplePluginInfo *bninfo = buddynote->info;
-
-		bninfo->flags = PURPLE_PLUGIN_FLAG_INVISIBLE;
-
-
-		/* If non-gtk buddy note plugin is loaded, but we are not, then load
-		 * ourselves, otherwise people upgrading from pre-gtkbuddynote days
-		 * will not have 'Buddy Notes' showing as loaded in the plugins list.
-		 * We also trigger a save on the list of plugins because it's not been
-		 * loaded through the UI. */
-		if (purple_plugin_is_loaded(buddynote) &&
-		    !purple_plugin_is_loaded(plugin)) {
-			purple_plugin_load(plugin);
-			pidgin_plugins_save();
-		}
-
-	} else {
-		info.flags = PURPLE_PLUGIN_FLAG_INVISIBLE;
-	}
-
-	return FALSE;
-}
-#endif
-
 static PidginPluginInfo *
 plugin_query(GError **error)
 {
@@ -119,13 +81,6 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-#if 0
-	PurplePlugin *buddynote = NULL;
-
-	buddynote = purple_plugins_find_with_id("core-plugin_pack-buddynote");
-	purple_plugin_unload(buddynote);
-#endif
-
 	return TRUE;
 }
 
