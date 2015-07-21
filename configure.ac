@@ -2209,274 +2209,45 @@ looked_for_nss="no"
 if test "x$enable_nss" != "xno"; then
 	looked_for_nss="yes"
 
-	AC_ARG_WITH(nspr-includes,
-		[AS_HELP_STRING([--with-nspr-includes=PREFIX], [specify location of Mozilla nspr4 includes.])],
-		[with_nspr_includes="$withval"])
-
-	AC_ARG_WITH(nspr-libs,
-		[AS_HELP_STRING([--with-nspr-libs=PREFIX], [specify location of Mozilla nspr4 libs.])],
-		[with_nspr_libs="$withval"])
-
-	AC_ARG_WITH(nss-includes,
-		[AS_HELP_STRING([--with-nss-includes=PREFIX], [specify location of Mozilla nss3 includes.])],
-		[with_nss_includes="$withval"])
-
-	AC_ARG_WITH(nss-libs,
-		[AS_HELP_STRING([--with-nss-libs=PREFIX], [specify location of Mozilla nss3 libs.])],
-		[with_nss_libs="$withval"])
-
-
-	if test -n "$with_nspr_includes" || test -n "$with_nspr_libs" || \
-	   test -n "$with_nss_includes"  || test -n "$with_nss_libs"  ||
-	   test "x$enable_nss" = "xstatic"; then
-
-		nss_manual_check="yes"
-	else
-		nss_manual_check="no"
-	fi
-
 	enable_nss="no"
 
-	if test "x$nss_manual_check" = "xno"; then
-		if `$PKG_CONFIG --exists mozilla-nss`; then
-			PKG_CHECK_MODULES(NSS, mozilla-nss, [
-				have_nss="yes"
-			], [
-				AC_MSG_RESULT(no)
-				have_nss="no"
-			])
-			mozilla_nspr="mozilla-nspr"
-			mozilla_nss="mozilla-nss"
-		elif `$PKG_CONFIG --exists nss`; then
-			PKG_CHECK_MODULES(NSS, nss, [
-				have_nss="yes"
-			], [
-				AC_MSG_RESULT(no)
-				have_nss="no"
-			])
-			mozilla_nspr="nspr"
-			mozilla_nss="nss"
-		elif `$PKG_CONFIG --exists microb-engine-nss`; then
-			PKG_CHECK_MODULES(NSS, microb-engine-nss, [
-				have_nss="yes"
-			], [
-				AC_MSG_RESULT(no)
-				have_nss="no"
-			])
-			mozilla_nspr="mozilla-nspr"
-			mozilla_nss="microb-engine-nss"
-		fi
-
-		if test "x$have_nss" = "xyes"; then
-
-			AC_DEFINE(HAVE_NSS, 1, [Define if you have Mozilla NSS])
-			AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
-
-			msg_nss="Mozilla NSS"
-			enable_nss="yes"
-		else
-			nss_manual_check="yes"
-		fi
+	if `$PKG_CONFIG --exists mozilla-nss`; then
+		PKG_CHECK_MODULES(NSS, mozilla-nss, [
+			have_nss="yes"
+		], [
+			AC_MSG_RESULT(no)
+			have_nss="no"
+		])
+		mozilla_nspr="mozilla-nspr"
+		mozilla_nss="mozilla-nss"
+	elif `$PKG_CONFIG --exists nss`; then
+		PKG_CHECK_MODULES(NSS, nss, [
+			have_nss="yes"
+		], [
+			AC_MSG_RESULT(no)
+			have_nss="no"
+		])
+		mozilla_nspr="nspr"
+		mozilla_nss="nss"
+	elif `$PKG_CONFIG --exists microb-engine-nss`; then
+		PKG_CHECK_MODULES(NSS, microb-engine-nss, [
+			have_nss="yes"
+		], [
+			AC_MSG_RESULT(no)
+			have_nss="no"
+		])
+		mozilla_nspr="mozilla-nspr"
+		mozilla_nss="microb-engine-nss"
 	fi
 
-	if test "x$nss_manual_check" = "xyes"; then
-		mozilla_nss=""
-		have_nspr_includes="no"
+	if test "x$have_nss" = "xyes"; then
 
-		if test "x$with_nspr_includes" != "xno"; then
-			CPPFLAGS_save=$CPPFLAGS
+		AC_DEFINE(HAVE_NSS, 1, [Define if you have Mozilla NSS])
+		AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
 
-			AC_MSG_CHECKING(for Mozilla nspr4 includes in $with_nspr_includes)
-			AC_MSG_RESULT("")
-
-			CPPFLAGS="$CPPFLAGS -I$with_nspr_includes"
-			AC_CHECK_HEADERS(nspr.h prio.h, [ moz_nspr_includes="yes" ])
-			CPPFLAGS=$CPPFLAGS_save
-
-			if test "x$moz_nspr_includes" != "xno" -a \
-			        "x$moz_nspr_includes" != "x"; then
-
-				have_nspr_includes="yes"
-				NSPR_CFLAGS="-I$with_nspr_includes"
-			fi
-		else
-			AC_MSG_CHECKING(for Mozilla nspr4 includes)
-			AC_MSG_RESULT(no)
-
-			enable_nss="no"
-		fi
-
-		have_nspr_libs="no"
-
-		if test "x$with_nspr_libs"     != "xno" -a \
-		        "x$have_nspr_includes" != "xno"; then
-
-			CFLAGS_save=$CFLAGS
-			LDFLAGS_save=$LDFLAGS
-
-			if test "$enable_nss" = "static"; then
-				if test -z "$with_nspr_libs"; then
-					AC_MSG_ERROR(
-						[Static linkage requested, but path to nspr libraries not set.]
-						[Please specify the path to libnspr4.a]
-						[Example: --with-nspr-libs=/usr/lib])
-
-					enable_nss="no"
-				else
-					nsprlibs="$LIBDL $with_nspr_libs/libplc4.a $with_nspr_libs/libplds4.a $with_nspr_libs/libnspr4.a $PTHREAD_LIB"
-				fi
-			else
-				nsprlibs="$LIBDL -lplc4 -lplds4 -lnspr4 $PTHREAD_LIB"
-			fi
-
-			AC_CACHE_CHECK([for Mozilla nspr libraries], ac_cv_moz_nspr_libs,
-			[
-				LIBS_save=$LIBS
-				CFLAGS="$CFLAGS $NSPR_CFLAGS"
-
-				LIBS="$nsprlibs"
-
-				if test "x$with_nspr_libs" != "x"; then
-					LDFLAGS="$LDFLAGS -L$with_nspr_libs"
-				else
-					LDFLAGS="$LDFLAGS"
-				fi
-
-				AC_LINK_IFELSE([AC_LANG_CALL([], [PR_Init])],
-					[ac_cv_moz_nspr_libs="yes"],
-					[ac_cv_moz_nspr_libs="no"])
-
-				CFLAGS=$CFLAGS_save
-				LDFLAGS=$LDFLAGS_save
-				LIBS=$LIBS_save
-			])
-
-			if test "x$ac_cv_moz_nspr_libs" != "xno"; then
-				have_nspr_libs="yes"
-				NSPR_LIBS="-L$with_nspr_libs $nsprlibs"
-			else
-				NSPR_CFLAGS=""
-				enable_nss="no"
-			fi
-		else
-			AC_MSG_CHECKING(for Mozilla nspr4 libraries)
-			AC_MSG_RESULT(no)
-		fi
-
-		have_nss_includes="no"
-
-		if test "x$with_nss_includes" != "xno" -a \
-				"x$have_nspr_libs"    != "xno"; then
-
-			CPPFLAGS_save=$CPPFLAGS
-
-			AC_MSG_CHECKING(for Mozilla nss3 includes in $with_nss_includes)
-			AC_MSG_RESULT("")
-
-			if test "x$with_nspr_includes" != "x"; then
-				CPPFLAGS="$CPPFLAGS -I$with_nspr_includes -I$with_nss_includes"
-			else
-				CPPFLAGS="$CPPFLAGS -I$with_nss_includes"
-			fi
-
-			AC_CHECK_HEADERS(nss.h ssl.h smime.h,
-				[moz_nss_includes="yes"],
-				[moz_nss_includes="no"])
-
-			CPPFLAGS=$CPPFLAGS_save
-
-			if test "x$moz_nss_includes" = "xyes"; then
-				have_nss_includes="yes"
-				NSS_CFLAGS="-I$with_nss_includes"
-			else
-				NSPR_CFLAGS=""
-				NSPR_LIBS=""
-				enable_nss="no"
-			fi
-		else
-			AC_MSG_CHECKING(for Mozilla nss3 includes)
-			AC_MSG_RESULT(no)
-			enable_nss="no"
-		fi
-
-		if test "x$with_nss_libs"     != "xno" -a \
-				"x$have_nss_includes" != "xno"; then
-
-			LDFLAGS_save=$LDFLAGS
-
-			if test "$enable_nss" = "static"; then
-				if test -z "$with_nss_libs"; then
-					AC_MSG_ERROR(
-						[Static linkage requested, but path to nss libraries not set.]
-						[Please specify the path to libnss3.a]
-						[Example: --with-nspr-libs=/usr/lib/mozilla])
-					enable_nss="no"
-				else
-					nsslibs="-ldb1 $with_nss_libs/libnssckfw.a $with_nss_libs/libasn1.a $with_nss_libs/libcrmf.a $with_nss_libs/libswfci.a $with_nss_libs/libjar.a $with_nss_libs/libpkcs12.a $with_nss_libs/libpkcs7.a $with_nss_libs/libpki1.a $with_nss_libs/libsmime.a $with_nss_libs/libssl.a $with_nss_libs/libnss.a $with_nss_libs/libpk11wrap.a $with_nss_libs/libsoftokn.a $with_nss_libs/libfreebl.a $with_nss_libs/libnsspki.a $with_nss_libs/libnssdev.a $with_nss_libs/libcryptohi.a $with_nss_libs/libcerthi.a $with_nss_libs/libcertdb.a $with_nss_libs/libsecutil.a $with_nss_libs/libnssb.a"
-
-					case "$host" in
-						*solaris*)
-							nsslibs="$nsslibs $with_nss_libs/libfreeb1.a"
-							;;
-					esac
-				fi
-			else
-				nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
-			fi
-
-			AC_CACHE_CHECK([for Mozilla nss libraries], ac_cv_moz_nss_libs,
-			[
-				LIBS_save=$LIBS
-				LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
-				LIBS="$nsslibs $nsprlibs"
-
-				AC_LINK_IFELSE([AC_LANG_CALL([], [NSS_Init])],
-					[ac_cv_moz_nss_libs="yes"],
-					[ac_cv_moz_nss_libs="no"])
-
-				if test "x$ac_cv_moz_nss_libs" = "xno"; then
-					nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
-					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
-					LIBS="$LIBS $nsslibs"
-					AC_LINK_IFELSE([AC_LANG_CALL([], [NSS_Init])],
-						[ac_cv_moz_nss_libs="yes"],
-						[ac_cv_moz_nss_libs="no"])
-				fi
-
-				LDFLAGS=$LDFLAGS_save
-				LIBS=$LIBS_save
-			])
-
-			if test "x$ac_cv_moz_nss_libs" != "xno"; then
-				AC_DEFINE(HAVE_NSS)
-				AC_DEFINE(HAVE_SSL)
-
-				NSS_LIBS="-L$with_nss_libs $nsslibs"
-
-				if test "$enable_nss" = "static"; then
-					msg_nss="Mozilla NSS (static)"
-				else
-					msg_nss="Mozilla NSS"
-				fi
-
-				enable_nss="yes"
-			else
-				NSS_CFLAGS=""
-				NSPR_CFLAGS=""
-				NSPR_LIBS=""
-				enable_nss="no"
-			fi
-		else
-			AC_MSG_CHECKING(for Mozilla nss libraries)
-			AC_MSG_RESULT(no)
-		fi
-
-		NSS_CFLAGS="$NSPR_CFLAGS $NSS_CFLAGS"
-		NSS_LIBS="$NSPR_LIBS $NSS_LIBS"
+		msg_nss="Mozilla NSS"
+		enable_nss="yes"
 	fi
-
-	AC_SUBST(NSS_CFLAGS)
-	AC_SUBST(NSS_LIBS)
 fi
 
 AM_CONDITIONAL(USE_NSS, test "x$enable_nss" = "xyes")
