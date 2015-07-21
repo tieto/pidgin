@@ -10,6 +10,8 @@ version 3.0.0 (??/??/????):
 	  plugins support.
 	* Added dependency gobject-introspection, which is now required to enable
 	  non-native plugin support.
+	* Removed flags for manually configuring NSS. NSS will only be recognized
+	  through pkg-config. (Michael McConville)
 
 	libpurple:
 	* Specify a different set of encryption ciphers for TLS connections when
