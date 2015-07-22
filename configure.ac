@@ -2182,22 +2182,6 @@ if test "x$enable_gnutls" = "xyes"; then
         LIBS="$LIBS_save"
 fi
 
-if test "x$enable_gnutls" = "xyes"; then
-	AC_MSG_CHECKING(for GNUTLS_CERT_INSECURE_ALGORITHM)
-	LIBS_save="$LIBS"
-	LIBS="$LIBS $GNUTLS_LIBS"
-	CPPFLAGS_save="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnutls/gnutls.h>]],
-                                        [[unsigned int verify = GNUTLS_CERT_INSECURE_ALGORITHM;]])],
-	               [AC_DEFINE([HAVE_GNUTLS_CERT_INSECURE_ALGORITHM], 1,
-                                  [Define if your gnutls has the GNUTLS_CERT_INSECURE_ALGORITHM flag])
-	                AC_MSG_RESULT(yes)],
-	               [AC_MSG_RESULT(no)])
-	CPPFLAGS="$CPPFLAGS_save"
-        LIBS="$LIBS_save"
-fi
-
 
 AM_CONDITIONAL(USE_GNUTLS, test "x$enable_gnutls" = "xyes")
 
