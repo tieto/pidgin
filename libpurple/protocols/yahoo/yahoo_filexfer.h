@@ -39,8 +39,6 @@ PurpleXfer *yahoo_new_xfer(PurpleConnection *gc, const char *who);
 
 /**
  * Returns TRUE if the buddy can receive file, FALSE otherwise.
- * Federated users cannot receive files. So this will return FALSE only
- * for them.
  *
  * @param gc The connection
  * @param who The name of the remote user

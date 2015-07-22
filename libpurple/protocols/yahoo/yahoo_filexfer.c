@@ -578,7 +578,7 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 
 gboolean yahoo_can_receive_file(PurpleConnection *gc, const char *who)
 {
-	if (!who || yahoo_get_federation_from_name(who) != YAHOO_FEDERATION_NONE)
+	if (!who)
 		return FALSE;
 	return TRUE;
 }

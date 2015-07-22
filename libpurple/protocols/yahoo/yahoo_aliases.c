@@ -632,7 +632,6 @@ parse_contact_details(YahooData *yd, const char *who, const char *xml)
 	return TRUE;
 }
 
-/* I don't think this happens for MSN buddies. -- sad */
 void yahoo_process_contact_details(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;

@@ -114,21 +114,6 @@ enum yahoo_status {
 	YAHOO_STATUS_DISCONNECTED = -1 /* 0xffffffff; in ymsg 15. doesnt mean the normal sense of 'disconnected' */
 };
 
-/*
- * Yahoo federated networks.  Key 241 in ymsg.
- * If it doesn't exist, it is on Yahoo's netowrk.
- * It if does exist, send to another IM network.
- */
-
-typedef enum {
-	YAHOO_FEDERATION_NONE = 0, /* No federation - Yahoo! network */
-	YAHOO_FEDERATION_OCS = 1,  /* LCS or OCS private networks */
-	YAHOO_FEDERATION_MSN = 2,  /* MSN or Windows Live network */
-	YAHOO_FEDERATION_IBM = 9,  /* IBM/Sametime network */
-	YAHOO_FEDERATION_PBX = 100 /* Yahoo! Pingbox service */
-} YahooFederation;
-
-
 struct yahoo_buddy_icon_upload_data {
 	PurpleConnection *gc;
 	char *filename;
@@ -329,8 +314,6 @@ gchar *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean utf8)
 char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8);
 
 char *yahoo_convert_to_numeric(const char *str);
-
-YahooFederation yahoo_get_federation_from_name(const char *who);
 
 /* yahoo_profile.c */
 void yahoo_get_info(PurpleConnection *gc, const char *name);
