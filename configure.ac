@@ -1404,6 +1404,7 @@ else
 		AC_DEFINE_UNQUOTED(GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE, ["$gg_gnutls_sts"], [use the given file as GnuTLS default trust store])
 	fi
 
+	dnl # redundant - only here to stay compatible with libgadu upstream
 	PKG_CHECK_MODULES([GNUTLS_2_10], [gnutls >= 2.10.0], [
 		AC_DEFINE([HAVE_GNUTLS_2_10], [], [Defined if GnuTLS >= 2.10.0 is available.])
 	],:)
@@ -2083,134 +2084,60 @@ AC_ARG_ENABLE(nss,
 msg_ssl="None. MSN, Yahoo!, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
 looked_for_gnutls="no"
 dnl #
-dnl # Check for GnuTLS if it's specified.
+dnl # Check for GnuTLS if it isn't disabled
 dnl #
 if test "x$enable_gnutls" != "xno"; then
-	enable_gnutls="no"
-	prefix=`eval echo $prefix`
 	looked_for_gnutls="yes"
 
-	AC_ARG_WITH(gnutls-includes,
-		[  --with-gnutls-includes=PREFIX   location of GnuTLS includes.],
-		[ with_gnutls_includes="$withval" ],
-		[ with_gnutls_includes="$prefix/include" ])
-
-	have_gnutls_includes="no"
-
-	if test "x$with_gnutls_includes" != "xno"; then
-		CPPFLAGS_save="$CPPFLAGS"
-
-		AC_MSG_CHECKING(for GnuTLS includes)
-		AC_MSG_RESULT("")
-
-		CPPFLAGS="$CPPFLAGS -I$with_gnutls_includes"
-		AC_CHECK_HEADERS(gnutls/gnutls.h, [ gnutls_includes="yes" ])
-		CPPFLAGS="$CPPFLAGS_save"
-
-		if test "x$gnutls_includes" != "xno" -a \
-		        "x$gnutls_includes" != "x"; then
-			have_gnutls_includes="yes"
-
-			if test "x$with_gnutls_includes" != "xNONE/include"; then
-				GNUTLS_CFLAGS="-I$with_gnutls_includes"
-			fi
-		else
-			GNUTLS_CFLAGS=""
-		fi
-	else
-		AC_MSG_CHECKING(for GnuTLS includes)
-		AC_MSG_RESULT(no)
-	fi
-
-	AC_ARG_WITH(gnutls-libs,
-		[AS_HELP_STRING([--with-gnutls-libs=PREFIX], [location of GnuTLS libraries.])],
-		[ with_gnutls_libs="$withval" ])
-
-	if test "x$with_gnutls_libs"     != "xno" -a \
-	        "x$have_gnutls_includes" != "xno"; then
-
-		LIBS_save="$LIBS"
-
-		case $with_gnutls_libs in
-			""|-L*) ;;
-			*) with_gnutls_libs="-L$with_gnutls_libs" ;;
-		esac
-
-		AC_CACHE_CHECK([for GnuTLS libraries], ac_cv_gnutls_libs,
-		[
-			LIBS="$LIBS $with_gnutls_libs -lgnutls"
-			AC_LINK_IFELSE([AC_LANG_CALL([], [gnutls_init])], ac_cv_gnutls_libs="yes", ac_cv_gnutls_libs="no")
-			LIBS="$LIBS_save"
+	if `$PKG_CONFIG --exists gnutls`; then
+		dnl # minimum required version should almost certainly be higher
+		PKG_CHECK_MODULES(GNUTLS, [gnutls >= 2.10], [
+			have_gnutls="yes"
+		], [
+			AC_MSG_RESULT(no)
+			have_gnutls="no"
 		])
-
-		if test "x$ac_cv_gnutls_libs" != "xno"; then
-			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GnuTLS])
-			AC_DEFINE(HAVE_SSL)
-			msg_gnutls="GnuTLS"
-			GNUTLS_LIBS="$with_gnutls_libs -lgnutls"
-
-			enable_gnutls="yes"
-		else
-			GNUTLS_CFLAGS=""
-			GNUTLS_LIBS=""
-		fi
-	else
-		AC_MSG_CHECKING(for GnuTLS libraries)
-		AC_MSG_RESULT(no)
 	fi
-else
-	GNUTLS_CFLAGS=""
-	GNUTLS_LIBS=""
+
+	if test "x$have_gnutls" = "xyes"; then
+
+		AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GnuTLS])
+		AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
+
+		msg_gnutls="GnuTLS"
+	fi
 fi
 
-AC_SUBST(GNUTLS_CFLAGS)
-AC_SUBST(GNUTLS_LIBS)
-
-if test "x$enable_gnutls" = "xyes"; then
-	AC_MSG_CHECKING(for gnutls_priority_set_direct and gnutls_priority_set)
-	LIBS_save="$LIBS"
-	LIBS="$LIBS $GNUTLS_LIBS"
-	CPPFLAGS_save="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnutls/gnutls.h>]],
-                                        [[gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL); gnutls_priority_set(s, NULL);]])],
-	               [AC_DEFINE([HAVE_GNUTLS_PRIORITY_FUNCS], 1,
-                                  [Define if your gnutls has gnutls_priority_set_direct and friends])
-	                AC_MSG_RESULT(yes)],
-	               [AC_MSG_RESULT(no)])
-	CPPFLAGS="$CPPFLAGS_save"
-        LIBS="$LIBS_save"
-fi
-
-
-AM_CONDITIONAL(USE_GNUTLS, test "x$enable_gnutls" = "xyes")
+AM_CONDITIONAL(USE_GNUTLS, test "x$have_gnutls" = "xyes")
 
 
 dnl #
-dnl # Check for NSS if it's specified, or if GnuTLS checks failed.
+dnl # Check for NSS if it isn't disabled
 dnl #
 looked_for_nss="no"
 if test "x$enable_nss" != "xno"; then
 	looked_for_nss="yes"
 
-	enable_nss="no"
-
 	if `$PKG_CONFIG --exists mozilla-nss`; then
+		dnl # TODO: set required minimum version
 		PKG_CHECK_MODULES(NSS, mozilla-nss, [
 			have_nss="yes"
 		], [
 			AC_MSG_RESULT(no)
 			have_nss="no"
 		])
+		dnl # TODO: do we still need these?
 		mozilla_nspr="mozilla-nspr"
 		mozilla_nss="mozilla-nss"
 	elif `$PKG_CONFIG --exists nss`; then
+		dnl # TODO: set required minimum version
 		PKG_CHECK_MODULES(NSS, nss, [
 			have_nss="yes"
 		], [
 			AC_MSG_RESULT(no)
 			have_nss="no"
 		])
+		dnl # TODO: do we still need these?
 		mozilla_nspr="nspr"
 		mozilla_nss="nss"
 	fi
@@ -2221,11 +2148,11 @@ if test "x$enable_nss" != "xno"; then
 		AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
 
 		msg_nss="Mozilla NSS"
-		enable_nss="yes"
 	fi
 fi
 
-AM_CONDITIONAL(USE_NSS, test "x$enable_nss" = "xyes")
+AM_CONDITIONAL(USE_NSS, test "x$have_nss" = "xyes")
+
 
 if test "x$msg_nss" != "x" -a "x$msg_gnutls" != "x"; then
 	msg_ssl="$msg_nss and $msg_gnutls"
