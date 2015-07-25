@@ -4733,7 +4733,7 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g, c
 					  1, purple_connection_get_display_name(gc),
 					  302, "319",
 					  300, "319",
-					  7,
+					  7, bname,
 					  334, "0",
 					  301, "319",
 					  303, "319");
