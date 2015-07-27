@@ -980,7 +980,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 					purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im->from);
 					/* remove from p2p connection lists, also calls yahoo_p2p_disconnect_destroy_data */
 					g_hash_table_remove(yd->peers, im->from);
-					g_free(im->from);
 					g_free(im);
 					return; /* Not sure whether we should process remaining IMs in this packet */
 				}
@@ -999,7 +998,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 						if (!purple_account_privacy_check(account, im->from)) {
 							purple_debug_info("yahoo", "Doodle request from %s dropped.\n",
 												im->from);
-							g_free(im->from);
 							g_free(im);
 							return;
 						}
@@ -1036,8 +1034,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		char *m, *m2;
 		im = l->data;
 
-		if (!im->from || !im->msg) {
-			g_free(im->from);
+		if (!im->msg) {
 			g_free(im);
 			continue;
 		}
@@ -1085,7 +1082,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			purple_protocol_got_attention(gc, username, YAHOO_BUZZ);
 			g_free(username);
 			g_free(m);
-			g_free(im->from);
 			g_free(im);
 			continue;
 		}
@@ -1095,8 +1091,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 
 		purple_serv_got_im(gc, im->from, m2, 0, im->time);
 		g_free(m2);
-
-		g_free(im->from);
 		g_free(im);
 	}
 
