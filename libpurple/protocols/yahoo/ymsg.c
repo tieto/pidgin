@@ -4379,7 +4379,7 @@ int yahoo_send_im(PurpleConnection *gc, PurpleMessage *pmsg)
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, yd->session_id);
-	yahoo_packet_hash(pkt, "ss", 1, purple_connection_get_display_name(gc), 5);
+	yahoo_packet_hash(pkt, "ss", 1, purple_connection_get_display_name(gc), 5, rcpt);
 
 	yahoo_packet_hash_str(pkt, 97, "1"); /* UTF-8 */
 	yahoo_packet_hash_str(pkt, 14, msg2);
