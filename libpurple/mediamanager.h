@@ -127,7 +127,7 @@ PurpleMediaManager *purple_media_manager_get(void);
  * purple_media_manager_create_media:
  * @manager: The media manager to create the session under.
  * @account: The account to create the session on.
- * @conference_type: The conference type to feed into Farsight2.
+ * @conference_type: The conference type to feed into Farstream.
  * @remote_user: The remote user to initiate the session with.
  * @initiator: TRUE if the local user is the initiator of this media call, FALSE otherwise.
  *
@@ -178,7 +178,7 @@ purple_media_manager_remove_media(PurpleMediaManager *manager,
  * purple_media_manager_create_private_media:
  * @manager: The media manager to create the session under.
  * @account: The account to create the session on.
- * @conference_type: The conference type to feed into Farsight2.
+ * @conference_type: The conference type to feed into Farstream.
  * @remote_user: The remote user to initiate the session with.
  * @initiator: TRUE if the local user is the initiator of this media call, FALSE otherwise.
  *

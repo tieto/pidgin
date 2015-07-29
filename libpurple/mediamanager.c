@@ -34,11 +34,7 @@
 #ifdef USE_VV
 #include <media/backend-fs2.h>
 
-#ifdef HAVE_FARSIGHT
-#include <gst/farsight/fs-element-added-notifier.h>
-#else
 #include <farstream/fs-element-added-notifier.h>
-#endif
 #if GST_CHECK_VERSION(1,0,0)
 #include <gst/video/videooverlay.h>
 #else

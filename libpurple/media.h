@@ -219,8 +219,8 @@ gboolean purple_media_param_is_supported(PurpleMedia *media, const gchar *param)
  * @type: The type of stream to create.
  * @initiator: Whether or not the local user initiated the stream.
  * @transmitter: The transmitter to use for the stream.
- * @num_params: The number of parameters to pass to Farsight.
- * @params: The parameters to pass to Farsight.
+ * @num_params: The number of parameters to pass to Farstream.
+ * @params: The parameters to pass to Farstream.
  *
  * Adds a stream to a session.
  *
