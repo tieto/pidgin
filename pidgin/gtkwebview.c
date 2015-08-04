@@ -2262,7 +2262,6 @@ pidgin_webview_insert_image(PidginWebView *webview, PurpleImage *image)
 static WebKitDOMCSSStyleDeclaration*
 pidgin_webview_get_DOM_CSS_style(PidginWebView *webview)
 {
-	//WebKitDOMCSSStyleDeclaration *style;
 	WebKitDOMDocument *document;
 	WebKitDOMElement *dom_element;
 	WebKitDOMDOMWindow *dom_window;
