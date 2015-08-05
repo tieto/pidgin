@@ -826,6 +826,8 @@ get_config_frame(PurplePlugin *plugin)
 	                 G_CALLBACK(method_toggle_cb), "method_raise");
 
 	/* Present conversation method button */
+	/* Translators: "Present" as used here is a verb. The plugin presents
+	 * the window to the user. */
 	toggle = gtk_check_button_new_with_mnemonic(_("_Present conversation window"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
