@@ -1888,13 +1888,21 @@ dnl #######################################################################
 dnl # Check for GPlugin 0.0.17
 dnl #######################################################################
 if test "x$enable_plugins" = "xyes" ; then
-	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.17 gmodule-2.0], , [
+	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.17 gmodule-2.0], [
+		dnl # GPLUGIN_REQ sets pkg-config requirements in the .pc file
+		if test "x$with_gtk" != "xno" ; then
+			GPLUGIN_REQ=[", gplugin, gplugin-gtk"]
+		else
+			GPLUGIN_REQ=[", gplugin"]
+		fi
+	], [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 	GPlugin 0.0.17 development headers not found, which are required if you wish to
 	enable plugins.
 	Use --disable-plugins if you want to disable plugins.
 	])])
+	AC_SUBST(GPLUGIN_REQ)
 	AC_SUBST(GPLUGIN_CFLAGS)
 	AC_SUBST(GPLUGIN_LIBS)
 else
