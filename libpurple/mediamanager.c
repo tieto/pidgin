@@ -1010,6 +1010,7 @@ create_recv_appsink(PurpleMedia *media,
 }
 #endif
 
+#ifdef USE_VV
 static PurpleMediaElementInfo *
 get_send_application_element_info ()
 {
@@ -1030,7 +1031,6 @@ get_send_application_element_info ()
 	return info;
 }
 
-
 static PurpleMediaElementInfo *
 get_recv_application_element_info ()
 {
@@ -1050,6 +1050,7 @@ get_recv_application_element_info ()
 
 	return info;
 }
+#endif	/* USE_VV */
 
 GstElement *
 purple_media_manager_get_element(PurpleMediaManager *manager,
