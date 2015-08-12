@@ -2125,9 +2125,6 @@ if test "x$enable_nss" != "xno"; then
 			AC_MSG_RESULT(no)
 			have_nss="no"
 		])
-		dnl # TODO: do we still need these?
-		mozilla_nspr="mozilla-nspr"
-		mozilla_nss="mozilla-nss"
 	elif `$PKG_CONFIG --exists nss`; then
 		dnl # TODO: set required minimum version
 		PKG_CHECK_MODULES(NSS, nss, [
@@ -2136,9 +2133,6 @@ if test "x$enable_nss" != "xno"; then
 			AC_MSG_RESULT(no)
 			have_nss="no"
 		])
-		dnl # TODO: do we still need these?
-		mozilla_nspr="nspr"
-		mozilla_nss="nss"
 	fi
 
 	if test "x$have_nss" = "xyes"; then
