@@ -658,11 +658,11 @@ rtf_flush_data(NMRtfContext *ctx)
 			status = NMRTF_CONVERT_ERROR;
 			purple_debug_info("novell", "failed to convert data! error code = %d msg = %s\n",
 							gerror->code, gerror->message);
-			g_free(gerror);
 		}
 	}
+	g_error_free(gerror);
 
-    return status;
+	return status;
 }
 
 /*
