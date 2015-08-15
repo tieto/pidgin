@@ -2730,6 +2730,9 @@ AC_CONFIG_FILES([Makefile
 		   doc/reference/finch/version.xml
 		   doc/reference/libpurple/Makefile
 		   doc/reference/libpurple/version.xml
+		   doc/reference/protocols/Makefile
+		   doc/reference/protocols/facebook/Makefile
+		   doc/reference/protocols/version.xml
 		   doc/reference/pidgin/Makefile
 		   doc/reference/pidgin/version.xml
 		   m4macros/Makefile

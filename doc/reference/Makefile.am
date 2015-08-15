@@ -6,4 +6,4 @@ if ENABLE_GNT
 GNT_DIR=finch
 endif
 
-SUBDIRS = libpurple $(GNT_DIR) $(GTK_DIR)
+SUBDIRS = libpurple protocols $(GNT_DIR) $(GTK_DIR)
