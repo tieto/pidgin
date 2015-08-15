@@ -4940,6 +4940,8 @@ resize_webview_cb(PidginConversation *gtkconv)
 	gint total_height;
 	gint height;
 	gint toolbar_size;
+	gint old_w;
+	gint old_h;
 	GtkAllocation webview_allocation;
 	GtkAllocation entry_allocation;
 
@@ -4977,8 +4979,11 @@ resize_webview_cb(PidginConversation *gtkconv)
 	height += toolbar_size;
 
 	/* Actually set the size of the gtkconv entry widget. */
-	gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height);
-	purple_debug_info("pidgin", "resizing to %d, %d lines\n", height, min_lines);
+	gtk_widget_get_size_request(gtkconv->lower_hbox, &old_w, &old_h);
+	if (old_w != -1 || old_h != height) {
+		gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height);
+		purple_debug_info("pidgin", "resizing to %d, %d lines\n", height, min_lines);
+	}
 
 	return FALSE;
 }
