@@ -80,6 +80,7 @@ struct _PurpleMediaManagerPrivate
 	/* Application data streams */
 	GList *appdata_info; /* holds PurpleMediaAppDataInfo */
 	GMutex appdata_mutex;
+	guint appdata_cb_token; /* last used read/write callback token */
 #endif
 };
 
@@ -99,6 +100,8 @@ typedef struct {
 	guint sample_offset;
 	gboolean writable;
 	gboolean connected;
+	guint writable_cb_token;
+	guint readable_cb_token;
 	guint writable_timer_id;
 	guint readable_timer_id;
 	GCond readable_cond;
@@ -537,6 +540,11 @@ free_appdata_info_locked (PurpleMediaAppDataInfo *info)
 	g_free (info->session_id);
 	g_free (info->participant);
 
+	/* This lets the potential read or write callbacks waiting for appdata_mutex
+	 * know the info structure has been destroyed. */
+	info->readable_cb_token = 0;
+	info->writable_cb_token = 0;
+
 	if (info->readable_timer_id) {
 		purple_timeout_remove (info->readable_timer_id);
 		info->readable_timer_id = 0;
@@ -725,19 +733,19 @@ appsrc_writable (gpointer user_data)
 	gchar *participant;
 	gboolean writable;
 	gpointer cb_data;
-	guint *timer_id_ptr = &info->writable_timer_id;
-	guint timer_id = *timer_id_ptr;
+	guint *cb_token_ptr = &info->writable_cb_token;
+	guint cb_token = *cb_token_ptr;
 
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
-	if (timer_id == 0 || timer_id != *timer_id_ptr) {
+	if (cb_token == 0 || cb_token != *cb_token_ptr) {
 		/* In case info was freed while we were waiting for the mutex to unlock
-		 * we still have a pointer to the timer_id which should still be
+		 * we still have a pointer to the cb_token which should still be
 		 * accessible since it's in the Glib slice allocator. It gets set to 0
 		 * just after the timeout is canceled which happens also before the
 		 * AppDataInfo is freed, so even if that memory slice gets reused, the
-		 * timer_id would be different from its previous value (unless
-		 * extremely unlucky). So checking if the value for the timer_id changed
+		 * cb_token would be different from its previous value (unless
+		 * extremely unlucky). So checking if the value for the cb_token changed
 		 * should be enough to prevent any kind of race condition in which the
 		 * media/AppDataInfo gets destroyed in one thread while the timeout was
 		 * triggered and is waiting on the mutex to get unlocked in this thread
@@ -752,7 +760,7 @@ appsrc_writable (gpointer user_data)
 	writable = info->writable && info->connected;
 	cb_data = info->user_data;
 
-    info->writable_timer_id = 0;
+	info->writable_cb_token = 0;
 	g_mutex_unlock (&manager->priv->appdata_mutex);
 
 
@@ -780,10 +788,18 @@ appsrc_writable (gpointer user_data)
 static void
 call_appsrc_writable_locked (PurpleMediaAppDataInfo *info)
 {
+	PurpleMediaManager *manager = purple_media_manager_get ();
+
 	/* We already have a writable callback scheduled, don't create another one */
-	if (info->writable_timer_id || info->callbacks.writable == NULL)
+	if (info->writable_cb_token || info->callbacks.writable == NULL)
 		return;
 
+	/* We can't use writable_timer_id as a token, because the timeout is added
+	 * into libpurple's main event loop, which runs in a different thread than
+	 * from where call_appsrc_writable_locked() was called. Consequently, the
+	 * callback may run even before purple_timeout_add() returns the timer ID
+	 * to us. */
+	info->writable_cb_token = ++manager->priv->appdata_cb_token;
 	info->writable_timer_id = purple_timeout_add (0, appsrc_writable, info);
 }
 
@@ -905,11 +921,11 @@ appsink_readable (gpointer user_data)
 	gchar *session_id;
 	gchar *participant;
 	gpointer cb_data;
-	guint *timer_id_ptr = &info->readable_timer_id;
-	guint timer_id = *timer_id_ptr;
+	guint *cb_token_ptr = &info->readable_cb_token;
+	guint cb_token = *cb_token_ptr;
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
-	if (timer_id == 0 || timer_id != *timer_id_ptr) {
+	if (cb_token == 0 || cb_token != *cb_token_ptr) {
 		/* Avoided a race condition (see writable callback) */
 		g_mutex_unlock (&manager->priv->appdata_mutex);
 		return FALSE;
@@ -931,13 +947,13 @@ appsink_readable (gpointer user_data)
 		g_object_unref (media);
 		g_free (session_id);
 		g_free (participant);
-		if (timer_id == 0 || timer_id != *timer_id_ptr) {
+		if (cb_token == 0 || cb_token != *cb_token_ptr) {
 			/* We got cancelled */
 			g_mutex_unlock (&manager->priv->appdata_mutex);
 			return FALSE;
 		}
 	}
-    info->readable_timer_id = 0;
+	info->readable_cb_token = 0;
 	g_mutex_unlock (&manager->priv->appdata_mutex);
 	return FALSE;
 }
@@ -945,13 +961,16 @@ appsink_readable (gpointer user_data)
 static void
 call_appsink_readable_locked (PurpleMediaAppDataInfo *info)
 {
+	PurpleMediaManager *manager = purple_media_manager_get ();
+
 	/* We must signal that a new sample has arrived to release blocking reads */
 	g_cond_broadcast (&info->readable_cond);
 
 	/* We already have a writable callback scheduled, don't create another one */
-	if (info->readable_timer_id || info->callbacks.readable == NULL)
+	if (info->readable_cb_token || info->callbacks.readable == NULL)
 		return;
 
+	info->readable_cb_token = ++manager->priv->appdata_cb_token;
 	info->readable_timer_id = purple_timeout_add (0, appsink_readable, info);
 }
 
@@ -1639,14 +1658,14 @@ purple_media_manager_set_application_data_callbacks(PurpleMediaManager *manager,
 	if (info->notify)
 		info->notify (info->user_data);
 
-	if (info->readable_timer_id) {
+	if (info->readable_cb_token) {
 		purple_timeout_remove (info->readable_timer_id);
-		info->readable_timer_id = 0;
+		info->readable_cb_token = 0;
 	}
 
-	if (info->writable_timer_id) {
+	if (info->writable_cb_token) {
 		purple_timeout_remove (info->writable_timer_id);
-		info->writable_timer_id = 0;
+		info->writable_cb_token = 0;
 	}
 
 	if (callbacks) {
