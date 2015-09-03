@@ -91,15 +91,12 @@ static int jabber_sasl_cb_simple(void *ctx, int id, const char **res, unsigned *
 static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secret_t **secret)
 {
 	JabberStream *js = ctx;
-	const char *pw;
 	size_t len;
-
-	pw = purple_connection_get_password(js->gc);
 
 	if (!conn || !secret || id != SASL_CB_PASS)
 		return SASL_BADPARAM;
 
-	len = strlen(pw);
+	len = strlen(js->sasl_password);
 	/* Not an off-by-one because sasl_secret_t defines char data[1] */
 	/* TODO: This can probably be moved to glib's allocator */
 	js->sasl_secret = malloc(sizeof(sasl_secret_t) + len);
@@ -107,7 +104,7 @@ static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secr
 		return SASL_NOMEM;
 
 	js->sasl_secret->len = len;
-	strcpy((char*)js->sasl_secret->data, pw);
+	strcpy((char*)js->sasl_secret->data, js->sasl_password);
 
 	*secret = js->sasl_secret;
 	return SASL_OK;
@@ -154,6 +151,8 @@ static void auth_pass_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 		purple_account_set_remember_password(account, TRUE);
 
 	purple_account_set_password(account, entry, NULL, NULL);
+
+	js->sasl_password = g_strdup(entry);
 
 	/* Rebuild our callbacks as we now have a password to offer */
 	jabber_sasl_build_callbacks(js);
@@ -247,7 +246,7 @@ jabber_auth_start_cyrus(JabberStream *js, PurpleXmlNode **reply, char **error)
 				 * to get one
 				 */
 
-				if (!purple_connection_get_password(js->gc)) {
+				if (!js->sasl_password) {
 					purple_account_request_password(account, G_CALLBACK(auth_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
 					return JABBER_SASL_STATE_CONTINUE;
 
@@ -384,7 +383,7 @@ jabber_sasl_build_callbacks(JabberStream *js)
 	js->sasl_cb[id].context = (void *)js;
 	id++;
 
-	if (purple_connection_get_password(js->gc) != NULL) {
+	if (js->sasl_password != NULL) {
 		js->sasl_cb[id].id = SASL_CB_PASS;
 		js->sasl_cb[id].proc = (void *)jabber_sasl_cb_secret;
 		js->sasl_cb[id].context = (void *)js;
@@ -407,6 +406,7 @@ jabber_cyrus_start(JabberStream *js, PurpleXmlNode *mechanisms,
 	JabberSaslState ret;
 
 	js->sasl_mechs = g_string_new("");
+	js->sasl_password = g_strdup(purple_connection_get_password(js->gc));
 
 	for(mechnode = purple_xmlnode_get_child(mechanisms, "mechanism"); mechnode;
 			mechnode = purple_xmlnode_get_next_twin(mechnode))
