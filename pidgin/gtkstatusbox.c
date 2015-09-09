@@ -1992,6 +1992,9 @@ pidgin_status_box_draw(GtkWidget *widget, cairo_t *cr)
 	PidginStatusBox *status_box = PIDGIN_STATUS_BOX(widget);
 	gtk_widget_draw(status_box->toggle_button, cr);
 
+	gtk_container_propagate_draw(GTK_CONTAINER(widget), status_box->icon_box, cr);
+	gtk_container_propagate_draw(GTK_CONTAINER(widget), status_box->vbox, cr);
+
 	if (status_box->icon_box && status_box->icon_opaque) {
 		GtkAllocation allocation;
 		GtkStyleContext *context;
