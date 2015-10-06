@@ -170,6 +170,7 @@ webview_resource_loading(WebKitWebView *webview,
 		if (!found) {
 			purple_debug_warning("webview", "Invalid purple stock "
 				"image uri: %s", uri);
+			g_free(p_uri);
 			return;
 		}
 
@@ -179,11 +180,15 @@ webview_resource_loading(WebKitWebView *webview,
 
 		if (g_strcmp0(domain, "e2ee") == 0) {
 			img = _pidgin_e2ee_stock_icon_get(stock_name);
-			if (!img)
+			if (!img) {
+				g_free(p_uri);
 				return;
+			}
 		} else {
 			purple_debug_warning("webview", "Invalid purple stock "
 				"image domain: %s", domain);
+
+			g_free(p_uri);
 			return;
 		}
 	} else
