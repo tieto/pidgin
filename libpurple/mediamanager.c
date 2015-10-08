@@ -948,6 +948,7 @@ appsink_readable (gpointer user_data)
 	gpointer cb_data;
 	guint *cb_token_ptr = &info->readable_cb_token;
 	guint cb_token = *cb_token_ptr;
+	gboolean run_again = FALSE;
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
 	if (cb_token == 0 || cb_token != *cb_token_ptr) {
@@ -955,8 +956,8 @@ appsink_readable (gpointer user_data)
 		g_mutex_unlock (&manager->priv->appdata_mutex);
 		return FALSE;
 	}
-	/* We need to signal readable until there are no more samples */
-	while (info->callbacks.readable &&
+
+	if (info->callbacks.readable &&
 		(info->num_samples > 0 || info->current_sample != NULL)) {
 		readable_cb = info->callbacks.readable;
 		media = g_weak_ref_get (&info->media_ref);
@@ -978,9 +979,17 @@ appsink_readable (gpointer user_data)
 			return FALSE;
 		}
 	}
-	info->readable_cb_token = 0;
+
+	/* Do we still have samples? Schedule appsink_readable again. We break here
+	 * so that other events get a chance to be processed too. */
+	if (info->num_samples > 0 || info->current_sample != NULL) {
+		run_again = TRUE;
+	} else {
+		info->readable_cb_token = 0;
+	}
+
 	g_mutex_unlock (&manager->priv->appdata_mutex);
-	return FALSE;
+	return run_again;
 }
 
 static void
