@@ -4704,7 +4704,6 @@ msgid "GG server"
 msgstr "Serwer Gadu-Gadu"
 
 #: ../libpurple/protocols/gg/gg.c:1127
-#: ../libpurple/protocols/jabber/libfacebook.c:232
 #: ../libpurple/protocols/jabber/libgtalk.c:279
 #: ../libpurple/protocols/jabber/libxmpp.c:273
 #: ../libpurple/protocols/oscar/oscar.c:5567
@@ -4712,7 +4711,6 @@ msgid "Use encryption if available"
 msgstr "Użycie szyfrowania, jeśli jest dostępne"
 
 #: ../libpurple/protocols/gg/gg.c:1129
-#: ../libpurple/protocols/jabber/libfacebook.c:233
 #: ../libpurple/protocols/jabber/libgtalk.c:278
 #: ../libpurple/protocols/jabber/libxmpp.c:272
 #: ../libpurple/protocols/oscar/oscar.c:5568
@@ -4725,7 +4723,6 @@ msgid "Don't use encryption"
 msgstr "Bez użycia szyfrowania"
 
 #: ../libpurple/protocols/gg/gg.c:1132
-#: ../libpurple/protocols/jabber/libfacebook.c:242
 #: ../libpurple/protocols/jabber/libgtalk.c:288
 #: ../libpurple/protocols/jabber/libxmpp.c:282
 #: ../libpurple/protocols/oscar/oscar.c:5593
@@ -5967,7 +5964,6 @@ msgstr "Priorytet"
 #. or if we should be using prepend_pair_plaintext
 #: ../libpurple/protocols/jabber/buddy.c:838
 #: ../libpurple/protocols/jabber/jabber.c:3353
-#: ../libpurple/protocols/jabber/libfacebook.c:220
 #: ../libpurple/protocols/jabber/libgtalk.c:267
 #: ../libpurple/protocols/jabber/libxmpp.c:261
 #: ../libpurple/protocols/jabber/si.c:1558
@@ -7020,26 +7016,18 @@ msgstr "Wrócę później"
 #. *< version
 #. *  summary
 #. *  description
-#: ../libpurple/protocols/jabber/libfacebook.c:185
-#: ../libpurple/protocols/jabber/libfacebook.c:187
-msgid "Facebook XMPP Protocol Plugin"
-msgstr "Wtyczka protokołu XMPP serwisu Facebook"
-
 #. Translators: 'domain' is used here in the context of Internet domains, e.g.
 #. pidgin.im
-#: ../libpurple/protocols/jabber/libfacebook.c:215
 #: ../libpurple/protocols/jabber/libgtalk.c:263
 #: ../libpurple/protocols/jabber/libxmpp.c:257
 msgid "Domain"
 msgstr "Domena"
 
-#: ../libpurple/protocols/jabber/libfacebook.c:234
 #: ../libpurple/protocols/jabber/libgtalk.c:280
 #: ../libpurple/protocols/jabber/libxmpp.c:274
 msgid "Use old-style SSL"
 msgstr "Użycie starego stylu SSL"
 
-#: ../libpurple/protocols/jabber/libfacebook.c:246
 #: ../libpurple/protocols/jabber/libgtalk.c:315
 #: ../libpurple/protocols/jabber/libxmpp.c:309
 msgid "BOSH URL"

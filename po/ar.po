@@ -13886,9 +13886,6 @@ msgstr "نص الحالة"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "العطل التالي حدث أثناء تحميل %s: %s"

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+
+<!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+<!ENTITY version SYSTEM "../version.xml">
+]>
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <bookinfo>
+    <title>Facebook Protocol Reference Manual</title>
+    <abstract>
+      <title>Facebook Plugin &version;</title>
+      <para>
+        The Facebook Messenger protocol plugin for libpurple.
+      </para>
+    </abstract>
+  </bookinfo>
+
+  <reference label="II">
+    <title>API Reference</title>
+
+    <xi:include href="xml/api.xml" />
+    <xi:include href="xml/data.xml" />
+    <xi:include href="xml/facebook.xml" />
+    <xi:include href="xml/http.xml" />
+    <xi:include href="xml/id.xml" />
+    <xi:include href="xml/json.xml" />
+    <xi:include href="xml/mqtt.xml" />
+    <xi:include href="xml/thrift.xml" />
+    <xi:include href="xml/util.xml" />
+  </reference>
+</book>

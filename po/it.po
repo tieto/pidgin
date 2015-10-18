@@ -13612,9 +13612,6 @@ msgstr "Selettore di stato"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Si è verificato il seguente errore nel caricamento di %s: %s"

@@ -14357,9 +14357,6 @@ msgstr "Status tekst"
 msgid "Google Talk"
 msgstr ""
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, fuzzy, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Nepoznata greška se pojavila prilikom prijave: %s."

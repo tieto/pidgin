@@ -13484,9 +13484,6 @@ msgstr "Statuskieser"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Die volgende fout het voorgekom toe %s gelaai is: %s"

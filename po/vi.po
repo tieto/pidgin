@@ -13435,9 +13435,6 @@ msgstr "Bộ chọn trạng thái"
 msgid "Google Talk"
 msgstr "Google Thoại"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Gặp lỗi theo đây khi nạp %s: %s"

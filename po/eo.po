@@ -13122,9 +13122,6 @@ msgstr "Stato Elektilo"
 msgid "Google Talk"
 msgstr "Gogla Babilado"
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "La jena eraro okazis ŝargante %s: %s"

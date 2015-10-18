@@ -13660,9 +13660,6 @@ msgstr "Επιλογέας κατάστασης"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Το ακόλουθο σφάλμα συνέβη κατά το φόρτωμα του %s: %s"

@@ -13488,9 +13488,6 @@ msgstr "Përzgjedhës Gjendjesh"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Ndodhi gabimi vijues gjatë ngarkimit të %s: %s-."

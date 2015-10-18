@@ -13162,9 +13162,6 @@ msgstr "အနေအထား ရွေးကိရိယာ"
 msgid "Google Talk"
 msgstr "ဂူးဂဲ တော့ခ်"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%s ကို ဖွင့်နေစဉ် အောက်ပါ ချို့ယွင်းချက် ဖြစ်ပေါ်နေသည် - %s"

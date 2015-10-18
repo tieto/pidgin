@@ -13632,9 +13632,6 @@ msgstr "অবস্থা নির্বাচন ব্যবস্থা"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%s লোড করার সময় নিম্নলিখিত ত্রুটি দেখা দিয়েছে: %s"

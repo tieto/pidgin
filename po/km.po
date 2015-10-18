@@ -13100,9 +13100,6 @@ msgstr "កម្មវិធី​ជ្រើស​ស្ថានភាព"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "កំហុស​ដូច​ខាងក្រោម​បានកើតឡើង​​កំឡុង​ពេល​ផ្ទុក %s ៖ %s"

@@ -14327,9 +14327,6 @@ msgstr "वस्तुस्थिति पाठ"
 msgid "Google Talk"
 msgstr ""
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, fuzzy, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "एउटा अज्ञात साइनअन त्रुटि देखा पर्यो: %s ।"

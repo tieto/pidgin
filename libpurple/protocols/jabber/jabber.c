@@ -70,7 +70,6 @@
 #include "adhoccommands.h"
 #include "xmpp.h"
 #include "gtalk.h"
-#include "facebook.h"
 
 #include "jingle/jingle.h"
 #include "jingle/content.h"
@@ -90,7 +89,6 @@ GList *jabber_identities = NULL;
 
 static PurpleProtocol *xmpp_protocol = NULL;
 static PurpleProtocol *gtalk_protocol = NULL;
-static PurpleProtocol *facebook_protocol = NULL;
 
 static GHashTable *jabber_cmds = NULL; /* PurpleProtocol * => GSList of ids */
 
@@ -4298,8 +4296,8 @@ plugin_query(GError **error)
 		"name",         "XMPP Protocols",
 		"version",      DISPLAY_VERSION,
 		"category",     N_("Protocol"),
-		"summary",      N_("XMPP, GTalk, and Facebook Protocols Plugin"),
-		"description",  N_("XMPP, GTalk, and Facebook Protocols Plugin"),
+		"summary",      N_("XMPP and GTalk Protocols Plugin"),
+		"description",  N_("XMPP and GTalk Protocols Plugin"),
 		"website",      PURPLE_WEBSITE,
 		"abi-version",  PURPLE_ABI_VERSION,
 		"flags",        PURPLE_PLUGIN_INFO_FLAGS_INTERNAL |
@@ -4325,7 +4323,6 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 	jabber_protocol_register_type(plugin);
 
-	facebook_protocol_register_type(plugin);
 	gtalk_protocol_register_type(plugin);
 	xmpp_protocol_register_type(plugin);
 
@@ -4337,10 +4334,6 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	if (!gtalk_protocol)
 		return FALSE;
 
-	facebook_protocol = purple_protocols_add(FACEBOOK_TYPE_PROTOCOL, error);
-	if (!facebook_protocol)
-		return FALSE;
-
 	purple_signal_connect(purple_get_core(), "uri-handler", xmpp_protocol,
 		PURPLE_CALLBACK(xmpp_uri_handler), NULL);
 	purple_signal_connect(purple_get_core(), "uri-handler", gtalk_protocol,
@@ -4348,7 +4341,6 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 	jabber_init_protocol(xmpp_protocol);
 	jabber_init_protocol(gtalk_protocol);
-	jabber_init_protocol(facebook_protocol);
 
 	return TRUE;
 }
@@ -4356,12 +4348,8 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	jabber_uninit_protocol(facebook_protocol);
 	jabber_uninit_protocol(gtalk_protocol);
 	jabber_uninit_protocol(xmpp_protocol);
-
-	if (!purple_protocols_remove(facebook_protocol, error))
-		return FALSE;
 
 	if (!purple_protocols_remove(gtalk_protocol, error))
 		return FALSE;

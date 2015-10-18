@@ -13400,9 +13400,6 @@ msgstr "Tilstandsveljar"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Følgjande feil oppstod ved lastinga av %s: %s"

@@ -14472,9 +14472,6 @@ msgstr "Imo yomBhalo"
 msgid "Google Talk"
 msgstr ""
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, fuzzy, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Kwenzeke impazamo engaziwayo yokungena: %s."

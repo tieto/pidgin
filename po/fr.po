@@ -13587,9 +13587,6 @@ msgstr "Choix de l'état"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "L'erreur suivante est survenue au chargement de %s : %s"

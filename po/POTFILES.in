@@ -113,8 +113,6 @@ libpurple/protocols/jabber/auth_scram.c
 libpurple/protocols/jabber/bosh.c
 libpurple/protocols/jabber/buddy.c
 libpurple/protocols/jabber/chat.c
-libpurple/protocols/jabber/facebook.c
-libpurple/protocols/jabber/facebook_roster.c
 libpurple/protocols/jabber/gtalk.c
 libpurple/protocols/jabber/jabber.c
 libpurple/protocols/jabber/jutil.c

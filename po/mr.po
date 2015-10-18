@@ -13338,9 +13338,6 @@ msgstr "स्थिती नीवडकर्ता"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-msgid "Facebook (XMPP)"
-msgstr ""
-
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%sला लोड करताना खालील दोष आढळला: %s"
