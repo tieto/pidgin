@@ -3502,76 +3502,6 @@ dummy(PidginWebView *webview, WebKitDOMHTMLAnchorElement *link, GtkWidget *menu)
 	return TRUE;
 }
 
-static gboolean
-register_gnome_url_handlers(void)
-{
-	char *tmp;
-	char *err;
-	char *c;
-	char *start;
-
-	tmp = g_find_program_in_path("gconftool-2");
-	if (tmp == NULL)
-		return FALSE;
-
-	g_free(tmp);
-	tmp = NULL;
-
-	if (!g_spawn_command_line_sync("gconftool-2 --all-dirs /desktop/gnome/url-handlers",
-	                               &tmp, &err, NULL, NULL))
-	{
-		g_free(tmp);
-		g_free(err);
-		g_return_val_if_reached(FALSE);
-	}
-	g_free(err);
-	err = NULL;
-
-	for (c = start = tmp ; *c ; c++)
-	{
-		/* Skip leading spaces. */
-		if (c == start && *c == ' ')
-			start = c + 1;
-		else if (*c == '\n')
-		{
-			*c = '\0';
-			if (g_str_has_prefix(start, "/desktop/gnome/url-handlers/"))
-			{
-				char *cmd;
-				char *tmp2 = NULL;
-				char *protocol;
-
-				/* If there is an enabled boolean, honor it. */
-				cmd = g_strdup_printf("gconftool-2 -g %s/enabled", start);
-				if (g_spawn_command_line_sync(cmd, &tmp2, &err, NULL, NULL))
-				{
-					g_free(err);
-					err = NULL;
-					if (!strcmp(tmp2, "false\n"))
-					{
-						g_free(tmp2);
-						g_free(cmd);
-						start = c + 1;
-						continue;
-					}
-				}
-				g_free(cmd);
-				g_free(tmp2);
-
-				start += sizeof("/desktop/gnome/url-handlers/") - 1;
-
-				protocol = g_strdup_printf("%s:", start);
-				registered_url_handlers = g_slist_prepend(registered_url_handlers, protocol);
-				pidgin_webview_class_register_protocol(protocol, url_clicked_cb, link_context_menu);
-			}
-			start = c + 1;
-		}
-	}
-	g_free(tmp);
-
-	return (registered_url_handlers != NULL);
-}
-
 #ifdef _WIN32
 static void
 winpidgin_register_win32_url_handlers(void)
@@ -3653,10 +3583,6 @@ void pidgin_utils_init(void)
 
 	/* Example custom URL handler. */
 	pidgin_webview_class_register_protocol("open://", open_dialog, dummy);
-
-	/* If we're under GNOME, try registering the system URL handlers. */
-	if (purple_running_gnome())
-		register_gnome_url_handlers();
 
 	/* Used to make small buttons */
 #if !GTK_CHECK_VERSION(3,0,0)

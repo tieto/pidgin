@@ -1153,14 +1153,7 @@ if test "x$enable_farstream" != "xno"; then
 			AC_SUBST(FARSTREAM_CFLAGS)
 			AC_SUBST(FARSTREAM_LIBS)
 		], [
-			# Try farsight.
-			PKG_CHECK_MODULES(FARSTREAM, [farsight2-0.10 >= 0.0.9], [
-			        AC_DEFINE(HAVE_FARSIGHT, 1, [Use Farsight instead of Farstream])
-				AC_SUBST(FARSTREAM_CFLAGS)
-				AC_SUBST(FARSTREAM_LIBS)
-			], [
-			        enable_farstream="no"
-			])
+				enable_farstream="no"
 		])
 	fi
 fi
@@ -1193,14 +1186,12 @@ dnl #######################################################################
 dnl # Check for Raw data streams support in Farstream 
 dnl #######################################################################
 if test "x$enable_vv" != "xno" -a "x$with_gstreamer" == "x1.0"; then
-	AC_MSG_CHECKING(for raw data support in Farstream)
 	PKG_CHECK_MODULES(GSTAPP, [gstreamer-app-1.0], [
 		AC_DEFINE(USE_GSTAPP, 1, [Use GStreamer Video Overlay support])
 		AC_SUBST(GSTAPP_CFLAGS)
 		AC_SUBST(GSTAPP_LIBS)
 		AC_DEFINE(HAVE_MEDIA_APPLICATION, 1, [Define if we have support for application media type.])
-		AC_MSG_RESULT(yes)
-		], [AC_MSG_RESULT(no)])
+		] , )
 fi
 
 dnl #######################################################################
@@ -1404,6 +1395,7 @@ else
 		AC_DEFINE_UNQUOTED(GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE, ["$gg_gnutls_sts"], [use the given file as GnuTLS default trust store])
 	fi
 
+	dnl # redundant - only here to stay compatible with libgadu upstream
 	PKG_CHECK_MODULES([GNUTLS_2_10], [gnutls >= 2.10.0], [
 		AC_DEFINE([HAVE_GNUTLS_2_10], [], [Defined if GnuTLS >= 2.10.0 is available.])
 	],:)
@@ -1897,13 +1889,21 @@ dnl #######################################################################
 dnl # Check for GPlugin 0.0.17
 dnl #######################################################################
 if test "x$enable_plugins" = "xyes" ; then
-	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.17 gmodule-2.0], , [
+	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.17 gmodule-2.0], [
+		dnl # GPLUGIN_REQ sets pkg-config requirements in the .pc file
+		if test "x$with_gtk" != "xno" ; then
+			GPLUGIN_REQ=[", gplugin, gplugin-gtk"]
+		else
+			GPLUGIN_REQ=[", gplugin"]
+		fi
+	], [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 	GPlugin 0.0.17 development headers not found, which are required if you wish to
 	enable plugins.
 	Use --disable-plugins if you want to disable plugins.
 	])])
+	AC_SUBST(GPLUGIN_REQ)
 	AC_SUBST(GPLUGIN_CFLAGS)
 	AC_SUBST(GPLUGIN_LIBS)
 else
@@ -2086,403 +2086,69 @@ AC_ARG_ENABLE(nss,
 msg_ssl="None. MSN, Yahoo!, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
 looked_for_gnutls="no"
 dnl #
-dnl # Check for GnuTLS if it's specified.
+dnl # Check for GnuTLS if it isn't disabled
 dnl #
 if test "x$enable_gnutls" != "xno"; then
-	enable_gnutls="no"
-	prefix=`eval echo $prefix`
 	looked_for_gnutls="yes"
 
-	AC_ARG_WITH(gnutls-includes,
-		[  --with-gnutls-includes=PREFIX   location of GnuTLS includes.],
-		[ with_gnutls_includes="$withval" ],
-		[ with_gnutls_includes="$prefix/include" ])
-
-	have_gnutls_includes="no"
-
-	if test "x$with_gnutls_includes" != "xno"; then
-		CPPFLAGS_save="$CPPFLAGS"
-
-		AC_MSG_CHECKING(for GnuTLS includes)
-		AC_MSG_RESULT("")
-
-		CPPFLAGS="$CPPFLAGS -I$with_gnutls_includes"
-		AC_CHECK_HEADERS(gnutls/gnutls.h, [ gnutls_includes="yes" ])
-		CPPFLAGS="$CPPFLAGS_save"
-
-		if test "x$gnutls_includes" != "xno" -a \
-		        "x$gnutls_includes" != "x"; then
-			have_gnutls_includes="yes"
-
-			if test "x$with_gnutls_includes" != "xNONE/include"; then
-				GNUTLS_CFLAGS="-I$with_gnutls_includes"
-			fi
-		else
-			GNUTLS_CFLAGS=""
-		fi
-	else
-		AC_MSG_CHECKING(for GnuTLS includes)
-		AC_MSG_RESULT(no)
-	fi
-
-	AC_ARG_WITH(gnutls-libs,
-		[AS_HELP_STRING([--with-gnutls-libs=PREFIX], [location of GnuTLS libraries.])],
-		[ with_gnutls_libs="$withval" ])
-
-	if test "x$with_gnutls_libs"     != "xno" -a \
-	        "x$have_gnutls_includes" != "xno"; then
-
-		LIBS_save="$LIBS"
-
-		case $with_gnutls_libs in
-			""|-L*) ;;
-			*) with_gnutls_libs="-L$with_gnutls_libs" ;;
-		esac
-
-		AC_CACHE_CHECK([for GnuTLS libraries], ac_cv_gnutls_libs,
-		[
-			LIBS="$LIBS $with_gnutls_libs -lgnutls"
-			AC_LINK_IFELSE([AC_LANG_CALL([], [gnutls_init])], ac_cv_gnutls_libs="yes", ac_cv_gnutls_libs="no")
-			LIBS="$LIBS_save"
+	if `$PKG_CONFIG --exists gnutls`; then
+		dnl # minimum required version should almost certainly be higher
+		PKG_CHECK_MODULES(GNUTLS, [gnutls >= 2.10], [
+			have_gnutls="yes"
+		], [
+			AC_MSG_RESULT(no)
+			have_gnutls="no"
 		])
-
-		if test "x$ac_cv_gnutls_libs" != "xno"; then
-			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GnuTLS])
-			AC_DEFINE(HAVE_SSL)
-			msg_gnutls="GnuTLS"
-			GNUTLS_LIBS="$with_gnutls_libs -lgnutls"
-
-			enable_gnutls="yes"
-		else
-			GNUTLS_CFLAGS=""
-			GNUTLS_LIBS=""
-		fi
-	else
-		AC_MSG_CHECKING(for GnuTLS libraries)
-		AC_MSG_RESULT(no)
 	fi
-else
-	GNUTLS_CFLAGS=""
-	GNUTLS_LIBS=""
+
+	if test "x$have_gnutls" = "xyes"; then
+
+		AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GnuTLS])
+		AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
+
+		msg_gnutls="GnuTLS"
+	fi
 fi
 
-AC_SUBST(GNUTLS_CFLAGS)
-AC_SUBST(GNUTLS_LIBS)
-
-if test "x$enable_gnutls" = "xyes"; then
-	AC_MSG_CHECKING(for gnutls_priority_set_direct and gnutls_priority_set)
-	LIBS_save="$LIBS"
-	LIBS="$LIBS $GNUTLS_LIBS"
-	CPPFLAGS_save="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnutls/gnutls.h>]],
-                                        [[gnutls_session s; gnutls_priority_set_direct(s, NULL, NULL); gnutls_priority_set(s, NULL);]])],
-	               [AC_DEFINE([HAVE_GNUTLS_PRIORITY_FUNCS], 1,
-                                  [Define if your gnutls has gnutls_priority_set_direct and friends])
-	                AC_MSG_RESULT(yes)],
-	               [AC_MSG_RESULT(no)])
-	CPPFLAGS="$CPPFLAGS_save"
-        LIBS="$LIBS_save"
-fi
-
-if test "x$enable_gnutls" = "xyes"; then
-	AC_MSG_CHECKING(for GNUTLS_CERT_INSECURE_ALGORITHM)
-	LIBS_save="$LIBS"
-	LIBS="$LIBS $GNUTLS_LIBS"
-	CPPFLAGS_save="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $GNUTLS_CFLAGS"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <gnutls/gnutls.h>]],
-                                        [[unsigned int verify = GNUTLS_CERT_INSECURE_ALGORITHM;]])],
-	               [AC_DEFINE([HAVE_GNUTLS_CERT_INSECURE_ALGORITHM], 1,
-                                  [Define if your gnutls has the GNUTLS_CERT_INSECURE_ALGORITHM flag])
-	                AC_MSG_RESULT(yes)],
-	               [AC_MSG_RESULT(no)])
-	CPPFLAGS="$CPPFLAGS_save"
-        LIBS="$LIBS_save"
-fi
-
-
-AM_CONDITIONAL(USE_GNUTLS, test "x$enable_gnutls" = "xyes")
+AM_CONDITIONAL(USE_GNUTLS, test "x$have_gnutls" = "xyes")
 
 
 dnl #
-dnl # Check for NSS if it's specified, or if GnuTLS checks failed.
+dnl # Check for NSS if it isn't disabled
 dnl #
 looked_for_nss="no"
 if test "x$enable_nss" != "xno"; then
 	looked_for_nss="yes"
 
-	AC_ARG_WITH(nspr-includes,
-		[AS_HELP_STRING([--with-nspr-includes=PREFIX], [specify location of Mozilla nspr4 includes.])],
-		[with_nspr_includes="$withval"])
-
-	AC_ARG_WITH(nspr-libs,
-		[AS_HELP_STRING([--with-nspr-libs=PREFIX], [specify location of Mozilla nspr4 libs.])],
-		[with_nspr_libs="$withval"])
-
-	AC_ARG_WITH(nss-includes,
-		[AS_HELP_STRING([--with-nss-includes=PREFIX], [specify location of Mozilla nss3 includes.])],
-		[with_nss_includes="$withval"])
-
-	AC_ARG_WITH(nss-libs,
-		[AS_HELP_STRING([--with-nss-libs=PREFIX], [specify location of Mozilla nss3 libs.])],
-		[with_nss_libs="$withval"])
-
-
-	if test -n "$with_nspr_includes" || test -n "$with_nspr_libs" || \
-	   test -n "$with_nss_includes"  || test -n "$with_nss_libs"  ||
-	   test "x$enable_nss" = "xstatic"; then
-
-		nss_manual_check="yes"
-	else
-		nss_manual_check="no"
+	if `$PKG_CONFIG --exists mozilla-nss`; then
+		dnl # TODO: set required minimum version
+		PKG_CHECK_MODULES(NSS, mozilla-nss, [
+			have_nss="yes"
+		], [
+			AC_MSG_RESULT(no)
+			have_nss="no"
+		])
+	elif `$PKG_CONFIG --exists nss`; then
+		dnl # TODO: set required minimum version
+		PKG_CHECK_MODULES(NSS, nss, [
+			have_nss="yes"
+		], [
+			AC_MSG_RESULT(no)
+			have_nss="no"
+		])
 	fi
 
-	enable_nss="no"
+	if test "x$have_nss" = "xyes"; then
 
-	if test "x$nss_manual_check" = "xno"; then
-		if `$PKG_CONFIG --exists mozilla-nss`; then
-			PKG_CHECK_MODULES(NSS, mozilla-nss, [
-				have_nss="yes"
-			], [
-				AC_MSG_RESULT(no)
-				have_nss="no"
-			])
-			mozilla_nspr="mozilla-nspr"
-			mozilla_nss="mozilla-nss"
-		elif `$PKG_CONFIG --exists nss`; then
-			PKG_CHECK_MODULES(NSS, nss, [
-				have_nss="yes"
-			], [
-				AC_MSG_RESULT(no)
-				have_nss="no"
-			])
-			mozilla_nspr="nspr"
-			mozilla_nss="nss"
-		elif `$PKG_CONFIG --exists microb-engine-nss`; then
-			PKG_CHECK_MODULES(NSS, microb-engine-nss, [
-				have_nss="yes"
-			], [
-				AC_MSG_RESULT(no)
-				have_nss="no"
-			])
-			mozilla_nspr="mozilla-nspr"
-			mozilla_nss="microb-engine-nss"
-		fi
+		AC_DEFINE(HAVE_NSS, 1, [Define if you have Mozilla NSS])
+		AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
 
-		if test "x$have_nss" = "xyes"; then
-
-			AC_DEFINE(HAVE_NSS, 1, [Define if you have Mozilla NSS])
-			AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
-
-			msg_nss="Mozilla NSS"
-			enable_nss="yes"
-		else
-			nss_manual_check="yes"
-		fi
+		msg_nss="Mozilla NSS"
 	fi
-
-	if test "x$nss_manual_check" = "xyes"; then
-		mozilla_nss=""
-		have_nspr_includes="no"
-
-		if test "x$with_nspr_includes" != "xno"; then
-			CPPFLAGS_save=$CPPFLAGS
-
-			AC_MSG_CHECKING(for Mozilla nspr4 includes in $with_nspr_includes)
-			AC_MSG_RESULT("")
-
-			CPPFLAGS="$CPPFLAGS -I$with_nspr_includes"
-			AC_CHECK_HEADERS(nspr.h prio.h, [ moz_nspr_includes="yes" ])
-			CPPFLAGS=$CPPFLAGS_save
-
-			if test "x$moz_nspr_includes" != "xno" -a \
-			        "x$moz_nspr_includes" != "x"; then
-
-				have_nspr_includes="yes"
-				NSPR_CFLAGS="-I$with_nspr_includes"
-			fi
-		else
-			AC_MSG_CHECKING(for Mozilla nspr4 includes)
-			AC_MSG_RESULT(no)
-
-			enable_nss="no"
-		fi
-
-		have_nspr_libs="no"
-
-		if test "x$with_nspr_libs"     != "xno" -a \
-		        "x$have_nspr_includes" != "xno"; then
-
-			CFLAGS_save=$CFLAGS
-			LDFLAGS_save=$LDFLAGS
-
-			if test "$enable_nss" = "static"; then
-				if test -z "$with_nspr_libs"; then
-					AC_MSG_ERROR(
-						[Static linkage requested, but path to nspr libraries not set.]
-						[Please specify the path to libnspr4.a]
-						[Example: --with-nspr-libs=/usr/lib])
-
-					enable_nss="no"
-				else
-					nsprlibs="$LIBDL $with_nspr_libs/libplc4.a $with_nspr_libs/libplds4.a $with_nspr_libs/libnspr4.a $PTHREAD_LIB"
-				fi
-			else
-				nsprlibs="$LIBDL -lplc4 -lplds4 -lnspr4 $PTHREAD_LIB"
-			fi
-
-			AC_CACHE_CHECK([for Mozilla nspr libraries], ac_cv_moz_nspr_libs,
-			[
-				LIBS_save=$LIBS
-				CFLAGS="$CFLAGS $NSPR_CFLAGS"
-
-				LIBS="$nsprlibs"
-
-				if test "x$with_nspr_libs" != "x"; then
-					LDFLAGS="$LDFLAGS -L$with_nspr_libs"
-				else
-					LDFLAGS="$LDFLAGS"
-				fi
-
-				AC_LINK_IFELSE([AC_LANG_CALL([], [PR_Init])],
-					[ac_cv_moz_nspr_libs="yes"],
-					[ac_cv_moz_nspr_libs="no"])
-
-				CFLAGS=$CFLAGS_save
-				LDFLAGS=$LDFLAGS_save
-				LIBS=$LIBS_save
-			])
-
-			if test "x$ac_cv_moz_nspr_libs" != "xno"; then
-				have_nspr_libs="yes"
-				NSPR_LIBS="-L$with_nspr_libs $nsprlibs"
-			else
-				NSPR_CFLAGS=""
-				enable_nss="no"
-			fi
-		else
-			AC_MSG_CHECKING(for Mozilla nspr4 libraries)
-			AC_MSG_RESULT(no)
-		fi
-
-		have_nss_includes="no"
-
-		if test "x$with_nss_includes" != "xno" -a \
-				"x$have_nspr_libs"    != "xno"; then
-
-			CPPFLAGS_save=$CPPFLAGS
-
-			AC_MSG_CHECKING(for Mozilla nss3 includes in $with_nss_includes)
-			AC_MSG_RESULT("")
-
-			if test "x$with_nspr_includes" != "x"; then
-				CPPFLAGS="$CPPFLAGS -I$with_nspr_includes -I$with_nss_includes"
-			else
-				CPPFLAGS="$CPPFLAGS -I$with_nss_includes"
-			fi
-
-			AC_CHECK_HEADERS(nss.h ssl.h smime.h,
-				[moz_nss_includes="yes"],
-				[moz_nss_includes="no"])
-
-			CPPFLAGS=$CPPFLAGS_save
-
-			if test "x$moz_nss_includes" = "xyes"; then
-				have_nss_includes="yes"
-				NSS_CFLAGS="-I$with_nss_includes"
-			else
-				NSPR_CFLAGS=""
-				NSPR_LIBS=""
-				enable_nss="no"
-			fi
-		else
-			AC_MSG_CHECKING(for Mozilla nss3 includes)
-			AC_MSG_RESULT(no)
-			enable_nss="no"
-		fi
-
-		if test "x$with_nss_libs"     != "xno" -a \
-				"x$have_nss_includes" != "xno"; then
-
-			LDFLAGS_save=$LDFLAGS
-
-			if test "$enable_nss" = "static"; then
-				if test -z "$with_nss_libs"; then
-					AC_MSG_ERROR(
-						[Static linkage requested, but path to nss libraries not set.]
-						[Please specify the path to libnss3.a]
-						[Example: --with-nspr-libs=/usr/lib/mozilla])
-					enable_nss="no"
-				else
-					nsslibs="-ldb1 $with_nss_libs/libnssckfw.a $with_nss_libs/libasn1.a $with_nss_libs/libcrmf.a $with_nss_libs/libswfci.a $with_nss_libs/libjar.a $with_nss_libs/libpkcs12.a $with_nss_libs/libpkcs7.a $with_nss_libs/libpki1.a $with_nss_libs/libsmime.a $with_nss_libs/libssl.a $with_nss_libs/libnss.a $with_nss_libs/libpk11wrap.a $with_nss_libs/libsoftokn.a $with_nss_libs/libfreebl.a $with_nss_libs/libnsspki.a $with_nss_libs/libnssdev.a $with_nss_libs/libcryptohi.a $with_nss_libs/libcerthi.a $with_nss_libs/libcertdb.a $with_nss_libs/libsecutil.a $with_nss_libs/libnssb.a"
-
-					case "$host" in
-						*solaris*)
-							nsslibs="$nsslibs $with_nss_libs/libfreeb1.a"
-							;;
-					esac
-				fi
-			else
-				nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
-			fi
-
-			AC_CACHE_CHECK([for Mozilla nss libraries], ac_cv_moz_nss_libs,
-			[
-				LIBS_save=$LIBS
-				LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
-				LIBS="$nsslibs $nsprlibs"
-
-				AC_LINK_IFELSE([AC_LANG_CALL([], [NSS_Init])],
-					[ac_cv_moz_nss_libs="yes"],
-					[ac_cv_moz_nss_libs="no"])
-
-				if test "x$ac_cv_moz_nss_libs" = "xno"; then
-					nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
-					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
-					LIBS="$LIBS $nsslibs"
-					AC_LINK_IFELSE([AC_LANG_CALL([], [NSS_Init])],
-						[ac_cv_moz_nss_libs="yes"],
-						[ac_cv_moz_nss_libs="no"])
-				fi
-
-				LDFLAGS=$LDFLAGS_save
-				LIBS=$LIBS_save
-			])
-
-			if test "x$ac_cv_moz_nss_libs" != "xno"; then
-				AC_DEFINE(HAVE_NSS)
-				AC_DEFINE(HAVE_SSL)
-
-				NSS_LIBS="-L$with_nss_libs $nsslibs"
-
-				if test "$enable_nss" = "static"; then
-					msg_nss="Mozilla NSS (static)"
-				else
-					msg_nss="Mozilla NSS"
-				fi
-
-				enable_nss="yes"
-			else
-				NSS_CFLAGS=""
-				NSPR_CFLAGS=""
-				NSPR_LIBS=""
-				enable_nss="no"
-			fi
-		else
-			AC_MSG_CHECKING(for Mozilla nss libraries)
-			AC_MSG_RESULT(no)
-		fi
-
-		NSS_CFLAGS="$NSPR_CFLAGS $NSS_CFLAGS"
-		NSS_LIBS="$NSPR_LIBS $NSS_LIBS"
-	fi
-
-	AC_SUBST(NSS_CFLAGS)
-	AC_SUBST(NSS_LIBS)
 fi
 
-AM_CONDITIONAL(USE_NSS, test "x$enable_nss" = "xyes")
+AM_CONDITIONAL(USE_NSS, test "x$have_nss" = "xyes")
+
 
 if test "x$msg_nss" != "x" -a "x$msg_gnutls" != "x"; then
 	msg_ssl="$msg_nss and $msg_gnutls"

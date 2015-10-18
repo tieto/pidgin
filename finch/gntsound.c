@@ -439,6 +439,7 @@ bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 	case GST_MESSAGE_EOS:
 		gst_element_set_state(play, GST_STATE_NULL);
 		gst_object_unref(GST_OBJECT(play));
+		return FALSE;
 		break;
 	case GST_MESSAGE_WARNING:
 		gst_message_parse_warning(msg, &err, NULL);

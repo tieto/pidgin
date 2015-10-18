@@ -580,7 +580,6 @@ Section Uninstall
     Delete "$INSTDIR\plugins\ssl-nss.dll"
     Delete "$INSTDIR\plugins\ssl.dll"
     Delete "$INSTDIR\plugins\statenotify.dll"
-    Delete "$INSTDIR\plugins\themeedit.dll"
     Delete "$INSTDIR\plugins\ticker.dll"
     Delete "$INSTDIR\plugins\timestamp.dll"
     Delete "$INSTDIR\plugins\timestamp_format.dll"

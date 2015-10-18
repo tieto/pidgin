@@ -36,17 +36,6 @@ char *malloc(), *realloc(void);
 # endif
 char *getenv(), *strerror(), *ctime(), *strcpy(void);
 time_t time(void);
-ZEPHYR_INT32 random(void);
-#endif
-
-#ifndef HAVE_RANDOM
-#ifdef HAVE_LRAND48
-#define random lrand48
-#define srandom srand48
-#else
-#define random rand
-#define srandom srand
-#endif
 #endif
 
 #ifndef HAVE_STRERROR

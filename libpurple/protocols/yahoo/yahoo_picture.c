@@ -404,7 +404,7 @@ yahoo_buddy_icon_build_packet(struct yahoo_buddy_icon_upload_data *d)
 	yahoo_packet_hash_str(pkt, 27, d->filename);
 	yahoo_packet_hash_str(pkt, 14, "");
 	/* 4 padding for the 29 key name */
-	pkt_buf_len = yahoo_packet_build(pkt, 4, FALSE, yd->jp, &pkt_buf);
+	pkt_buf_len = yahoo_packet_build(pkt, 4, FALSE, &pkt_buf);
 	yahoo_packet_free(pkt);
 
 	/* There's no magic here, we just need to prepend in reverse order */
@@ -428,8 +428,7 @@ yahoo_buddy_icon_upload(PurpleConnection *gc,
 
 	req = purple_http_request_new(NULL);
 	purple_http_request_set_url_printf(req, "http://%s/notifyft",
-		purple_account_get_string(account, "xfer_host", yd->jp ?
-			YAHOOJP_XFER_HOST : YAHOO_XFER_HOST));
+		purple_account_get_string(account, "xfer_host", YAHOO_XFER_HOST));
 	purple_http_request_set_method(req, "POST");
 	cjar = purple_http_request_get_cookie_jar(req);
 	purple_http_cookie_jar_set(cjar, "T", yd->cookie_t);

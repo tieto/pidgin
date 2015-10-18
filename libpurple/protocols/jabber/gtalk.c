@@ -89,10 +89,7 @@ gtalk_protocol_init(PurpleProtocol *protocol)
 						  option);
 
 	option = purple_account_option_string_new(_("File transfer proxies"),
-						  "ft_proxies",
-						/* TODO: Is this an acceptable default?
-						 * Also, keep this in sync as they add more servers */
-						  JABBER_DEFAULT_FT_PROXIES);
+						  "ft_proxies", NULL);
 	protocol->account_options = g_list_append(protocol->account_options,
 						  option);
 

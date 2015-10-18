@@ -63,13 +63,13 @@ struct stun_attrib {
 	guint16 len;
 };
 
-#ifdef NOTYET
+#if 0
 struct stun_change {
 	struct stun_header hdr;
 	struct stun_attrib attrib;
 	char value[4];
 };
-#endif
+#endif	/* 0 */
 
 struct stun_conn {
 	int fd;
@@ -145,7 +145,7 @@ static gboolean timeoutfunc(gpointer data) {
 	return TRUE;
 }
 
-#ifdef NOTYET
+#if 0
 static void do_test2(struct stun_conn *sc) {
 	struct stun_change data;
 	data.hdr.type = htons(0x0001);
@@ -164,7 +164,7 @@ static void do_test2(struct stun_conn *sc) {
 	sendto(sc->fd, sc->packet, sc->packetsize, 0, (struct sockaddr *)&(sc->addr), sizeof(struct sockaddr_in));
 	sc->timeout = purple_timeout_add(500, (GSourceFunc) timeoutfunc, sc);
 }
-#endif
+#endif	/* 0 */
 
 static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 	struct stun_conn *sc = data;
@@ -266,7 +266,7 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 			}
 		}
 
-#ifndef NOTYET
+#if 1
 		close_stun_conn(sc);
 		do_callbacks();
 #else
@@ -278,7 +278,7 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 		close_stun_conn(sc);
 		nattype.type = PURPLE_STUN_NAT_TYPE_FULL_CONE;
 		do_callbacks();
-#endif
+#endif	/* 1 */
 	}
 }
 

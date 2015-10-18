@@ -44,14 +44,20 @@ static void
 purple_smiley_custom_load(void)
 {
 	PurpleXmlNode *root_node, *profile_node, *smileyset_node, *smiley_node;
+	gchar *basename;
+	gchar *dirname;
 	int got_smileys = 0;
 
 	if (!g_file_test(smileys_index, G_FILE_TEST_EXISTS))
 		return;
 
-	root_node = purple_xmlnode_from_file(g_path_get_dirname(smileys_index),
-		g_path_get_basename(smileys_index),
-		"custom smileys index", "smiley-custom");
+	basename = g_path_get_basename(smileys_index);
+	dirname = g_path_get_dirname(smileys_index);
+	root_node = purple_xmlnode_from_file(dirname, basename,
+			"custom smileys index", "smiley-custom");
+	g_free(dirname);
+	g_free(basename);
+
 	g_return_if_fail(root_node);
 
 	profile_node = purple_xmlnode_get_child(root_node, "profile");
@@ -104,6 +110,7 @@ smileys_to_xmlnode(void)
 {
 	PurpleXmlNode *root_node, *profile_node, *smileyset_node;
 	GList *smileys, *it;
+	gchar *basename;
 
 	root_node = purple_xmlnode_new("smileys");
 	purple_xmlnode_set_attrib(root_node, "version", "1.0");
@@ -125,9 +132,10 @@ smileys_to_xmlnode(void)
 		purple_xmlnode_insert_child(smileyset_node, smiley_node);
 		purple_xmlnode_set_attrib(smiley_node, "shortcut",
 			purple_smiley_get_shortcut(smiley));
-		purple_xmlnode_set_attrib(smiley_node, "filename",
-			g_path_get_basename(purple_image_get_path(
-				purple_smiley_get_image(smiley))));
+		basename = g_path_get_basename(purple_image_get_path(
+				purple_smiley_get_image(smiley)));
+		purple_xmlnode_set_attrib(smiley_node, "filename", basename);
+		g_free(basename);
 	}
 
 	return root_node;

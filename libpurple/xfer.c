@@ -69,7 +69,6 @@ struct _PurpleXferPrivate {
 	int watcher;                 /* Watcher.                            */
 
 	goffset bytes_sent;          /* The number of bytes sent.           */
-	goffset bytes_remaining;     /* The number of bytes remaining.      */
 	time_t start_time;           /* When the transfer of data began.    */
 	time_t end_time;             /* When the transfer of data ended.    */
 
@@ -825,7 +824,7 @@ purple_xfer_get_bytes_remaining(const PurpleXfer *xfer)
 
 	g_return_val_if_fail(priv != NULL, 0);
 
-	return priv->bytes_remaining;
+	return priv->size - priv->bytes_sent;
 }
 
 goffset
@@ -1028,7 +1027,6 @@ purple_xfer_set_size(PurpleXfer *xfer, goffset size)
 	g_return_if_fail(priv != NULL);
 
 	priv->size = size;
-	priv->bytes_remaining = priv->size - purple_xfer_get_bytes_sent(xfer);
 
 	g_object_notify_by_pspec(G_OBJECT(xfer), properties[PROP_FILE_SIZE]);
 }
@@ -1053,9 +1051,6 @@ purple_xfer_set_bytes_sent(PurpleXfer *xfer, goffset bytes_sent)
 	g_return_if_fail(priv != NULL);
 
 	priv->bytes_sent = bytes_sent;
-
-	if (purple_xfer_get_size(xfer) > 0)
-		priv->bytes_remaining = purple_xfer_get_size(xfer) - bytes_sent;
 
 	g_object_notify_by_pspec(G_OBJECT(xfer), properties[PROP_BYTES_SENT]);
 }
@@ -1229,10 +1224,6 @@ purple_xfer_write(PurpleXfer *xfer, const guchar *buffer, gsize size)
 		if (r < 0 && errno == EAGAIN)
 			r = 0;
 	}
-	if (r >= 0 && (purple_xfer_get_bytes_sent(xfer)+r) >= purple_xfer_get_size(xfer) &&
-		!purple_xfer_is_completed(xfer))
-		purple_xfer_set_completed(xfer, TRUE);
-	
 
 	return r;
 }
@@ -1355,9 +1346,6 @@ do_transfer(PurpleXfer *xfer)
 				return;
 			}
 
-			if ((purple_xfer_get_size(xfer) > 0) &&
-				((purple_xfer_get_bytes_sent(xfer)+r) >= purple_xfer_get_size(xfer)))
-				purple_xfer_set_completed(xfer, TRUE);
 		} else if(r < 0) {
 			purple_xfer_cancel_remote(xfer);
 			g_free(buffer);
@@ -1450,8 +1438,6 @@ do_transfer(PurpleXfer *xfer)
 	}
 
 	if (r > 0) {
-		purple_xfer_set_bytes_sent(xfer, priv->bytes_sent + r);
-
 		if (priv->ops.ack != NULL)
 			priv->ops.ack(xfer, buffer, r);
 
@@ -1462,8 +1448,17 @@ do_transfer(PurpleXfer *xfer)
 				purple_xfer_get_progress(xfer));
 	}
 
-	if (purple_xfer_is_completed(xfer))
+	if (purple_xfer_get_bytes_sent(xfer) >= purple_xfer_get_size(xfer) &&
+			!purple_xfer_is_completed(xfer)) {
+		purple_xfer_set_completed(xfer, TRUE);
+	}
+
+	/* TODO: Check if above is the only place xfers are marked completed.
+	 *       If so, merge these conditions.
+	 */
+	if (purple_xfer_is_completed(xfer)) {
 		purple_xfer_end(xfer);
+	}
 }
 
 static void
@@ -1673,11 +1668,18 @@ purple_xfer_end(PurpleXfer *xfer)
 		purple_xfer_set_watcher(xfer, 0);
 	}
 
-	if (priv->fd != -1)
-		close(priv->fd);
+	if (priv->fd != -1) {
+		if (close(priv->fd)) {
+			purple_debug_error("xfer", "closing file descr in purple_xfer_end() failed: %s",
+					g_strerror(errno));
+		}
+	}
 
 	if (priv->dest_fp != NULL) {
-		fclose(priv->dest_fp);
+		if (fclose(priv->dest_fp)) {
+			purple_debug_error("xfer", "closing dest file in purple_xfer_end() failed: %s",
+					g_strerror(errno));
+		}
 		priv->dest_fp = NULL;
 	}
 
@@ -1766,8 +1768,6 @@ purple_xfer_cancel_local(PurpleXfer *xfer)
 	if (ui_ops != NULL && ui_ops->cancel_local != NULL)
 		ui_ops->cancel_local(xfer);
 
-	priv->bytes_remaining = 0;
-
 	g_object_unref(xfer);
 }
 
@@ -1833,8 +1833,6 @@ purple_xfer_cancel_remote(PurpleXfer *xfer)
 
 	if (ui_ops != NULL && ui_ops->cancel_remote != NULL)
 		ui_ops->cancel_remote(xfer);
-
-	priv->bytes_remaining = 0;
 
 	g_object_unref(xfer);
 }

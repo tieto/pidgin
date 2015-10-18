@@ -752,6 +752,8 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 	GtkTreeIter iter;
 	GList *list, *it;
 
+	g_return_if_fail(d != NULL);
+
 	switch (response) {
 	case GTK_RESPONSE_CLOSE:
 	case GTK_RESPONSE_DELETE_EVENT:

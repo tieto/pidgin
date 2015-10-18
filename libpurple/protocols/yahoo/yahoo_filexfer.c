@@ -578,7 +578,7 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 
 gboolean yahoo_can_receive_file(PurpleConnection *gc, const char *who)
 {
-	if (!who || yahoo_get_federation_from_name(who) != YAHOO_FEDERATION_NONE)
+	if (!who)
 		return FALSE;
 	return TRUE;
 }
@@ -727,18 +727,9 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 		xd->is_relay = TRUE;
 
 		account = purple_connection_get_account(gc);
-		if (yd->jp)
-		{
-			purple_dnsquery_a(account, YAHOOJP_XFER_RELAY_HOST,
-							YAHOOJP_XFER_RELAY_PORT,
-							yahoo_xfer_dns_connected_15, xfer);
-		}
-		else
-		{
-			purple_dnsquery_a(account, YAHOO_XFER_RELAY_HOST,
-							YAHOO_XFER_RELAY_PORT,
-							yahoo_xfer_dns_connected_15, xfer);
-		}
+		purple_dnsquery_a(account, YAHOO_XFER_RELAY_HOST,
+			YAHOO_XFER_RELAY_PORT,
+			yahoo_xfer_dns_connected_15, xfer);
 		return;
 	}
 

@@ -40,8 +40,6 @@
 /* I hate hardcoding this stuff, but Yahoo never sends us anything to use.  Someone in the know may be able to tweak this URL */
 #define YAHOO_ALIAS_FETCH_URL "http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&diffs=1&t=0&tags=short&rt=0&prog-ver=" YAHOO_CLIENT_VERSION "&useutf8=1&legenc=codepage-1252"
 #define YAHOO_ALIAS_UPDATE_URL "http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&sync=1&tags=short&noclear=1&useutf8=1&legenc=codepage-1252"
-#define YAHOOJP_ALIAS_FETCH_URL "http://address.yahoo.co.jp/yab/jp?v=XM&prog=ymsgr&.intl=jp&diffs=1&t=0&tags=short&rt=0&prog-ver=" YAHOOJP_CLIENT_VERSION
-#define YAHOOJP_ALIAS_UPDATE_URL "http://address.yahoo.co.jp/yab/jp?v=XM&prog=ymsgr&.intl=jp&sync=1&tags=short&noclear=1"
 
 void yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias);
 
@@ -130,10 +128,7 @@ yahoo_fetch_aliases_cb(PurpleHttpConnection *http_conn,
 				alias = NULL;
 
 				/* Yahoo stores first and last names separately, lets put them together into a full name */
-				if (yd->jp)
-					full_name = g_strstrip(g_strdup_printf("%s %s", (ln != NULL ? ln : "") , (fn != NULL ? fn : "")));
-				else
-					full_name = g_strstrip(g_strdup_printf("%s %s", (fn != NULL ? fn : "") , (ln != NULL ? ln : "")));
+				full_name = g_strstrip(g_strdup_printf("%s %s", (fn != NULL ? fn : "") , (ln != NULL ? ln : "")));
 				nick_name = (nn != NULL ? g_strstrip(g_strdup(nn)) : NULL);
 
 				if (nick_name != NULL)
@@ -199,8 +194,7 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 	PurpleHttpRequest *req;
 	PurpleHttpCookieJar *cookiejar;
 
-	req = purple_http_request_new(yd->jp ? YAHOOJP_ALIAS_FETCH_URL :
-		YAHOO_ALIAS_FETCH_URL);
+	req = purple_http_request_new(YAHOO_ALIAS_FETCH_URL);
 	/* XXX: see the other note about user-agent */
 	purple_http_request_header_set(req, "User-Agent",
 		"Mozilla/4.0 (compatible; MSIE 5.5)");
@@ -282,7 +276,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	PurpleHttpRequest *req;
 	PurpleHttpCookieJar *cookiejar;
 	YahooData *yd;
-	gchar *content;
+	gchar *content, *escaped_alias;
 	struct callback_data *cb;
 	YahooFriend *f;
 
@@ -306,51 +300,28 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	cb->id = g_strdup(yahoo_friend_get_alias_id(f));
 	cb->gc = gc;
 
+	escaped_alias = g_markup_escape_text(alias, -1);
+
 	if (cb->id == NULL) {
 		/* No id for this buddy, so create an address book entry */
 		purple_debug_info("yahoo", "Creating '%s' as new alias for user '%s'\n", alias, who);
 
-		if (yd->jp) {
-			gchar *alias_jp = g_convert(alias, -1, "EUC-JP", "UTF-8", NULL, NULL, NULL);
-			gchar *converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
-			content = g_strdup_printf("<ab k=\"%s\" cc=\"9\">\n"
-						  "<ct a=\"1\" yi='%s' nn='%s' />\n</ab>\r\n",
-						  purple_account_get_username(purple_connection_get_account(gc)),
-						  who, converted_alias_jp);
-			g_free(converted_alias_jp);
-			g_free(alias_jp);
-		} else {
-			gchar *escaped_alias = g_markup_escape_text(alias, -1);
-			content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"9\">\n"
-						  "<ct a=\"1\" yi='%s' nn='%s' />\n</ab>\r\n",
-						  purple_account_get_username(purple_connection_get_account(gc)),
-						  who, escaped_alias);
-			g_free(escaped_alias);
-		}
+		content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"9\">\n"
+				"<ct a=\"1\" yi='%s' nn='%s' />\n</ab>\r\n",
+				purple_account_get_username(purple_connection_get_account(gc)),
+				who, escaped_alias);
+		g_free(escaped_alias);
 	} else {
 		purple_debug_info("yahoo", "Updating '%s' as new alias for user '%s'\n", alias, who);
 
-		if (yd->jp) {
-			gchar *alias_jp = g_convert(alias, -1, "EUC-JP", "UTF-8", NULL, NULL, NULL);
-			gchar *converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
-			content = g_strdup_printf("<ab k=\"%s\" cc=\"1\">\n"
-						  "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-						  purple_account_get_username(purple_connection_get_account(gc)),
-						  who, cb->id, converted_alias_jp);
-			g_free(converted_alias_jp);
-			g_free(alias_jp);
-		} else {
-			gchar *escaped_alias = g_markup_escape_text(alias, -1);
-			content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
-						  "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-						  purple_account_get_username(purple_connection_get_account(gc)),
-						  who, cb->id, escaped_alias);
-			g_free(escaped_alias);
-		}
+		content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
+				"<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
+				purple_account_get_username(purple_connection_get_account(gc)),
+				who, cb->id, escaped_alias);
+		g_free(escaped_alias);
 	}
 
-	req = purple_http_request_new(yd->jp ? YAHOOJP_ALIAS_UPDATE_URL:
-		YAHOO_ALIAS_UPDATE_URL);
+	req = purple_http_request_new(YAHOO_ALIAS_UPDATE_URL);
 	purple_http_request_set_method(req, "POST");
 	/* XXX: We get rs="ERROR:-100:No Login", when we set
 	 * YAHOO_CLIENT_USERAGENT (Mozilla/5.0) here.
@@ -478,8 +449,7 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	}
 #endif
 
-	req = purple_http_request_new(yd->jp ? YAHOOJP_USERINFO_URL :
-		YAHOO_USERINFO_URL);
+	req = purple_http_request_new(YAHOO_USERINFO_URL);
 	purple_http_request_set_method(req, "POST");
 	/* XXX: see the previous comment for user-agent */
 	purple_http_request_header_set(req, "User-Agent",
@@ -662,7 +632,6 @@ parse_contact_details(YahooData *yd, const char *who, const char *xml)
 	return TRUE;
 }
 
-/* I don't think this happens for MSN buddies. -- sad */
 void yahoo_process_contact_details(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;

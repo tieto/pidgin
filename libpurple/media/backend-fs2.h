@@ -25,7 +25,7 @@
  * SECTION:backend-fs2
  * @section_id: libpurple-backend-fs2
  * @short_description: <filename>media/backend-fs2.h</filename>
- * @title: Farsight 2 backend for media API
+ * @title: Farstream backend for media API
  *
  * This file should not yet be part of libpurple's API.
  * It should remain internal only for now.
@@ -45,16 +45,16 @@ G_BEGIN_DECLS
 /**
  * PurpleMediaBackendFs2:
  *
- * An opaque structure representing the Farsight 2 media backend.
+ * An opaque structure representing the Farstream media backend.
  */
 typedef struct _PurpleMediaBackendFs2 PurpleMediaBackendFs2;
 
 /**
  * purple_media_backend_fs2_get_type:
  *
- * Gets the type of the Farsight 2 media backend object.
+ * Gets the type of the Farstream media backend object.
  *
- * Returns: The Farsight 2 media backend's GType
+ * Returns: The Farstream media backend's GType
  */
 GType purple_media_backend_fs2_get_type(void);
 

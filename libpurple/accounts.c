@@ -89,38 +89,6 @@ purple_accounts_schedule_save(void)
 		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
 
-/*********************************************************************
- * Reading from disk                                                 *
- *********************************************************************/
-static void
-migrate_yahoo_japan(PurpleAccount *account)
-{
-	/* detect a Yahoo! JAPAN account that existed prior to 2.6.0 and convert it
-	 * to use the new yahoojp protocol.  Also remove the account-specific settings
-	 * we no longer need */
-
-	if(purple_strequal(purple_account_get_protocol_id(account), "prpl-yahoo")) {
-		if(purple_account_get_bool(account, "yahoojp", FALSE)) {
-			const char *serverjp = purple_account_get_string(account, "serverjp", NULL);
-			const char *xferjp_host = purple_account_get_string(account, "xferjp_host", NULL);
-
-			g_return_if_fail(serverjp != NULL);
-			g_return_if_fail(xferjp_host != NULL);
-
-			purple_account_set_string(account, "server", serverjp);
-			purple_account_set_string(account, "xfer_host", xferjp_host);
-
-			purple_account_set_protocol_id(account, "prpl-yahoojp");
-		}
-
-		/* these should always be nuked */
-		purple_account_remove_setting(account, "yahoojp");
-		purple_account_remove_setting(account, "serverjp");
-		purple_account_remove_setting(account, "xferjp_host");
-
-	}
-}
-
 static void
 migrate_icq_server(PurpleAccount *account)
 {
@@ -225,9 +193,6 @@ parse_settings(PurpleXmlNode *node, PurpleAccount *account)
 		g_free(data);
 	}
 
-	/* we do this here because we need access to account settings to determine
-	 * if we can/should migrate an old Yahoo! JAPAN account */
-	migrate_yahoo_japan(account);
 	/* we do this here because we need access to account settings to determine
 	 * if we can/should migrate an ICQ account's server setting */
 	migrate_icq_server(account);

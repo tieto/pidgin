@@ -170,6 +170,7 @@ webview_resource_loading(WebKitWebView *webview,
 		if (!found) {
 			purple_debug_warning("webview", "Invalid purple stock "
 				"image uri: %s", uri);
+			g_free(p_uri);
 			return;
 		}
 
@@ -179,11 +180,15 @@ webview_resource_loading(WebKitWebView *webview,
 
 		if (g_strcmp0(domain, "e2ee") == 0) {
 			img = _pidgin_e2ee_stock_icon_get(stock_name);
-			if (!img)
+			if (!img) {
+				g_free(p_uri);
 				return;
+			}
 		} else {
 			purple_debug_warning("webview", "Invalid purple stock "
 				"image domain: %s", domain);
+
+			g_free(p_uri);
 			return;
 		}
 	} else
@@ -2257,6 +2262,44 @@ pidgin_webview_insert_image(PidginWebView *webview, PurpleImage *image)
 	webkit_dom_document_exec_command(dom, "insertHTML", FALSE, img);
 	priv->edit.block_changed = FALSE;
 	g_free(img);
+}
+
+static WebKitDOMCSSStyleDeclaration*
+pidgin_webview_get_DOM_CSS_style(PidginWebView *webview)
+{
+	WebKitDOMDocument *document;
+	WebKitDOMElement *dom_element;
+	WebKitDOMDOMWindow *dom_window;
+
+	document = webkit_web_view_get_dom_document(webview);
+	dom_window = webkit_dom_document_get_default_view(document);
+
+	dom_element = webkit_dom_document_get_document_element(document);
+	return webkit_dom_dom_window_get_computed_style(dom_window, dom_element, 0);
+}
+
+gint
+pidgin_webview_get_DOM_height(PidginWebView *webview)
+{
+	gchar *value;
+	WebKitDOMCSSStyleDeclaration *style;
+
+	style = pidgin_webview_get_DOM_CSS_style(webview);
+	value = webkit_dom_css_style_declaration_get_property_value(style, "height");
+
+	return g_ascii_strtoll(value, NULL, 0);
+}
+
+gint
+pidgin_webview_get_font_size(PidginWebView *webview)
+{
+	gchar *value;
+	WebKitDOMCSSStyleDeclaration *style;
+
+	style = pidgin_webview_get_DOM_CSS_style(webview);
+	value = webkit_dom_css_style_declaration_get_property_value(style, "font-size");
+
+	return g_ascii_strtoll(value, NULL, 0);
 }
 
 void

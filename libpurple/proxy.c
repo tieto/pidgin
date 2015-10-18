@@ -575,6 +575,9 @@ purple_win32_proxy_get_info(void)
 static void
 purple_proxy_connect_data_destroy(PurpleProxyConnectData *connect_data)
 {
+	if (!PURPLE_PROXY_CONNECT_DATA_IS_VALID(connect_data))
+		return;
+
 	handles = g_slist_remove(handles, connect_data);
 
 	if (connect_data->query_data != NULL)

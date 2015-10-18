@@ -39,7 +39,7 @@ _PIDGINFINISHVISITWEBSITE=Visit the Pidgin Web Page
 
 _PIDGINPROMPTCONTINUEWITHOUTUNINSTALL=Unable to uninstall the currently installed version of Pidgin. The new version will be installed without removing the currently installed version.
 
-_PIDGINPROMPTFORCENOGTK=Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be already present).$\rAre you sure you want to skip installing the GTK+ Runtime?
+_PIDGINPROMPTFORCENOGTK=Pidgin requires a compatible GTK+ Runtime (which does not appear to be installed).$\rAre you sure you want to skip installing the GTK+ Runtime?
 
 #Installer Subsection Text
 _URIHANDLERSSECTIONTITLE=URI Handlers

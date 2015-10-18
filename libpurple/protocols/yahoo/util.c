@@ -121,13 +121,9 @@ gchar* yahoo_get_cookies(PurpleConnection *gc)
 
 char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean utf8)
 {
-	YahooData *yd = purple_connection_get_protocol_data(gc);
 	char *ret;
 	const char *to_codeset;
 	GError *error = NULL;
-
-	if (yd->jp)
-		return g_strdup(str);
 
 	if (utf8) /* FIXME: maybe don't use utf8 if it'll fit in latin1 */
 		return g_strdup(str);
@@ -161,7 +157,6 @@ char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean utf8)
  */
 char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 {
-	YahooData *yd = purple_connection_get_protocol_data(gc);
 	char *ret;
 	const char *from_codeset;
 	GError *error = NULL;
@@ -173,10 +168,7 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 				"to be UTF-8, but it was not. Will try another encoding.\n");
 	}
 
-	if (yd->jp)
-		from_codeset = "SHIFT_JIS";
-	else
-		from_codeset = purple_account_get_string(purple_connection_get_account(gc), "local_charset",  "ISO-8859-1");
+    from_codeset = purple_account_get_string(purple_connection_get_account(gc), "local_charset",  "ISO-8859-1");
 
 	ret = g_convert_with_fallback(str, -1, "UTF-8", from_codeset, NULL, NULL, NULL, &error);
 	if (!ret) {
@@ -959,20 +951,3 @@ char *yahoo_html_to_codes(const char *src)
 
 	return g_string_free(dest, FALSE);
 }
-
-YahooFederation yahoo_get_federation_from_name(const char *who)
-{
-	YahooFederation fed = YAHOO_FEDERATION_NONE;
-	if (who[3] == '/') {
-		if (!g_ascii_strncasecmp(who, "msn", 3))
-			fed = YAHOO_FEDERATION_MSN;
-		else if (!g_ascii_strncasecmp(who, "ocs", 3))
-			fed = YAHOO_FEDERATION_OCS;
-		else if (!g_ascii_strncasecmp(who, "ibm", 3))
-			fed = YAHOO_FEDERATION_IBM;
-		else if (!g_ascii_strncasecmp(who, "pbx", 3))
-			fed = YAHOO_FEDERATION_PBX;
-	}
-	return fed;
-}
-

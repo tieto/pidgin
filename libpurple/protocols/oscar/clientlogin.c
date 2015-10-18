@@ -378,12 +378,12 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 			"&distId=%d"
 			"&f=xml"
 			"&k=%s"
-			"&ts=%" PURPLE_TIME_T_MODIFIER
+			"&ts=%" G_GINT64_FORMAT
 			"&useTLS=%d",
 			purple_url_encode(token),
 			oscar_get_ui_info_int(od->icq ? "prpl-icq-distid" : "prpl-aim-distid", 0x00000611),
 			get_client_key(od),
-			hosttime,
+			(gint64)hosttime,
 			strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0 ? 1 : 0);
 	signature = generate_signature("GET", get_start_oscar_session_url(od),
 			query_string, session_key);

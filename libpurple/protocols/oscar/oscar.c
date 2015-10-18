@@ -546,6 +546,7 @@ flap_connection_established_bart(OscarData *od, FlapConnection *conn)
 static int
 flap_connection_established(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
+	conn->connected = TRUE;
 	purple_debug_info("oscar", "FLAP connection of type 0x%04hx is "
 			"now fully connected\n", conn->type);
 	if (conn->type == SNAC_FAMILY_LOCATE)

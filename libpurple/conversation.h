@@ -465,11 +465,8 @@ void purple_conversation_close_logs(PurpleConversation *conv);
 
 /**
  * purple_conversation_write_message:
- * @conv:    The conversation.
- * @who:     The user who sent the message.
- * @message: The message to write.
- * @flags:   The message flags.
- * @mtime:   The time the message was sent.
+ * @conv: The conversation.
+ * @msg:  The message to write.
  *
  * Writes to a chat or an IM.
  */

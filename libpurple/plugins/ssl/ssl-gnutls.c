@@ -171,20 +171,6 @@ ssl_gnutls_init_gnutls(void)
 	const char *debug_level;
 	const char *host_priorities_str;
 
-	/* Configure GnuTLS to use glib memory management */
-	/* I expect that this isn't really necessary, but it may prevent
-	   some bugs */
-	/* TODO: It may be necessary to wrap this allocators for GnuTLS.
-	   If there are strange bugs, perhaps look here (yes, I am a
-	   hypocrite) */
-	gnutls_global_set_mem_functions(
-		(gnutls_alloc_function)   g_malloc, /* malloc */
-		(gnutls_alloc_function)   g_malloc, /* secure malloc */
-		NULL,      /* mem_is_secure */
-		(gnutls_realloc_function) g_realloc, /* realloc */
-		(gnutls_free_function)    g_free     /* free */
-		);
-
 	debug_level = g_getenv("PURPLE_GNUTLS_DEBUG");
 	if (debug_level) {
 		int level = atoi(debug_level);
@@ -1107,7 +1093,6 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 		return FALSE;
 	}
 
-#ifdef HAVE_GNUTLS_CERT_INSECURE_ALGORITHM
 	if (verify & GNUTLS_CERT_INSECURE_ALGORITHM) {
 		/*
 		 * A certificate in the chain is signed with an insecure
@@ -1121,7 +1106,6 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 				"Insecure hash algorithm used by %s to sign %s\n",
 				issuer_id, crt_id);
 	}
-#endif
 
 	if (verify & GNUTLS_CERT_INVALID) {
 		/* Signature didn't check out, but at least

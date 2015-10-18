@@ -254,16 +254,22 @@ purple_buddy_icon_data_new(guchar *icon_data, size_t icon_len)
 	newimg = purple_image_new_from_data(icon_data, icon_len);
 	filename = purple_image_generate_filename(newimg);
 
-	oldimg = g_hash_table_lookup(icon_data_cache, filename);
-	if (oldimg) {
-		g_warn_if_fail(PURPLE_IS_IMAGE(oldimg));
-		g_object_unref(newimg);
-		g_object_ref(oldimg);
-		return oldimg;
+	/* TODO: Why is this function called for buddies without icons? If this is
+	 * intended, should the filename be null?
+	 */
+	if (filename != NULL) {
+		oldimg = g_hash_table_lookup(icon_data_cache, filename);
+		if (oldimg) {
+			g_warn_if_fail(PURPLE_IS_IMAGE(oldimg));
+			g_object_unref(newimg);
+			g_object_ref(oldimg);
+			return oldimg;
+		}
+
+		/* This will take ownership of file and free it as needed */
+		g_hash_table_insert(icon_data_cache, g_strdup(filename), newimg);
 	}
 
-	/* This will take ownership of file and free it as needed */
-	g_hash_table_insert(icon_data_cache, g_strdup(filename), newimg);
 	g_object_set_data_full(G_OBJECT(newimg), "purple-buddyicon-filename",
 		g_strdup(filename), image_deleting_cb);
 
