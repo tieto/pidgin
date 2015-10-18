@@ -7,7 +7,7 @@
 ]>
 <book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
   <bookinfo>
-    <title>Purple Reference Manual</title>
+    <title>Facebook Protocol Reference Manual</title>
     <abstract>
       <title>Facebook Plugin &version;</title>
       <para>
