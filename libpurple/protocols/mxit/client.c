@@ -2939,16 +2939,9 @@ void mxit_close_connection( struct MXitSession* session )
 	g_list_free( session->invites );
 	session->invites = NULL;
 
-	/* free profile information */
-	if ( session->profile )
-		free( session->profile );
-
-	/* free custom emoticons */
+	free( session->profile );
 	mxit_free_emoticon_cache( session );
-
-	/* free allocated memory */
-	if ( session->uid )
-		g_free( session->uid );
+	g_free( session->uid );
 	g_free( session->encpwd );
 	session->encpwd = NULL;
 

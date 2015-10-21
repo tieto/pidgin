@@ -232,13 +232,8 @@ nm_release_contact(NMContact * contact)
 		purple_debug(PURPLE_DEBUG_INFO, "novell",
 				   "Releasing contact, total=%d\n", --count);
 
-		if (contact->display_name) {
-			g_free(contact->display_name);
-		}
-
-		if (contact->dn) {
-			g_free(contact->dn);
-		}
+		g_free(contact->display_name);
+		g_free(contact->dn);
 
 		if (contact->user_record) {
 			nm_release_user_record(contact->user_record);
@@ -560,9 +555,7 @@ nm_release_folder(NMFolder * folder)
 		return;
 
 	if (--(folder->ref_count) == 0) {
-		if (folder->name) {
-			g_free(folder->name);
-		}
+		g_free(folder->name);
 
 		if (folder->folders) {
 			_release_folder_folders(folder);

@@ -162,7 +162,7 @@ void ZFreeALD(zald)
 {
    if (!zald) return;
 
-   if (zald->user) free(zald->user);
-   if (zald->version) free(zald->version);
+   free(zald->user);
+   free(zald->version);
    (void) memset(zald, 0, sizeof(*zald));
 }

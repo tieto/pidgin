@@ -819,12 +819,9 @@ void Z_RemQueue(qptr)
 
     __Q_Size -= qptr->msg_len;
 
-    if (qptr->header)
-	free(qptr->header);
-    if (qptr->msg)
-	free(qptr->msg);
-    if (qptr->packet)
-	free(qptr->packet);
+    free(qptr->header);
+    free(qptr->msg);
+    free(qptr->packet);
 
     hole = qptr->holelist;
     while (hole) {

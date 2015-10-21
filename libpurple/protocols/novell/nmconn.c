@@ -631,9 +631,7 @@ nm_read_fields(NMConn * conn, int count, NMField ** fields)
 	} while ((type != 0) && (count != 0));
 
 
-	if (str != NULL) {
-		g_free(str);
-	}
+	g_free(str);
 
 	if (sub_fields != NULL) {
 		nm_free_fields(&sub_fields);

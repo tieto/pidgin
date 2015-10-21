@@ -4279,9 +4279,7 @@ static void notify_add(PurpleConnection *gc, GList *row, void *user_data) {
 
 
 static void notify_close(gpointer data) {
-  if (data) {
-    g_free(data);
-  }
+  g_free(data);
 }
 
 

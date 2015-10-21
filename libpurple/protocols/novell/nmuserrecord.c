@@ -282,33 +282,13 @@ nm_release_user_record(NMUserRecord * user_record)
 		purple_debug(PURPLE_DEBUG_INFO, "novell",
 				   "Releasing user_record, total=%d\n", --count);
 
-		if (user_record->dn) {
-			g_free(user_record->dn);
-		}
-
-		if (user_record->cn) {
-			g_free(user_record->cn);
-		}
-
-		if (user_record->display_id) {
-			g_free(user_record->display_id);
-		}
-
-		if (user_record->fname) {
-			g_free(user_record->fname);
-		}
-
-		if (user_record->lname) {
-			g_free(user_record->lname);
-		}
-
-		if (user_record->full_name) {
-			g_free(user_record->full_name);
-		}
-
-		if (user_record->status_text) {
-			g_free(user_record->status_text);
-		}
+		g_free(user_record->dn);
+		g_free(user_record->cn);
+		g_free(user_record->display_id);
+		g_free(user_record->fname);
+		g_free(user_record->lname);
+		g_free(user_record->full_name);
+		g_free(user_record->status_text);
 
 		nm_free_fields(&user_record->fields);
 

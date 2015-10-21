@@ -192,9 +192,7 @@ nm_conference_set_guid(NMConference * conference, const char *guid)
 	if (conference) {
 
 		/* Release memory for old guid */
-		if (conference->guid) {
-			g_free(conference->guid);
-		}
+		g_free(conference->guid);
 
 		/* Set the new guid */
 		if (guid)

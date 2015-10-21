@@ -97,9 +97,7 @@ nm_deinitialize_user(NMUser * user)
 		g_hash_table_destroy(user->display_id_to_dn);
 	}
 
-	if (user->name) {
-		g_free(user->name);
-	}
+	g_free(user->name);
 
 	if (user->user_record) {
 		nm_release_user_record(user->user_record);
