@@ -102,7 +102,7 @@ Code_t ZParseLocations(notice,zald,nlocs,user)
       if (!__locate_list)
 	return (ENOMEM);
     } else {
-      __locate_list = 0;
+      __locate_list = NULL;
     }
 
     for (ptr=notice->z_message, i=0; i<__locate_num; i++) {

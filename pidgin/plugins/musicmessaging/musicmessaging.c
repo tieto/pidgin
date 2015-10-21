@@ -403,7 +403,7 @@ intercept_received(PurpleAccount *account, char **sender, char **message, Purple
 			}
 		}
 
-		message = 0;
+		message = NULL;
 	}
 	else if (strstr(*message, MUSICMESSAGING_START_MSG))
 	{

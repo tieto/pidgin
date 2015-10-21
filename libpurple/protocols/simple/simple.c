@@ -1478,7 +1478,7 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 					tmp = tmp2 + 1;
 					while(*tmp == ' ') tmp++;
 				} else
-					tmp = 0;
+					tmp = NULL;
 			}
 			if(!foundpidf && foundxpidf) needsxpidf = TRUE;
 		}

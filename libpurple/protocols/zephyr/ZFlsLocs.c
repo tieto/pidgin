@@ -25,7 +25,7 @@ Code_t ZFlushLocations()
 
 	free((char *)__locate_list);
 
-	__locate_list = 0;
+	__locate_list = NULL;
 	__locate_num = 0;
 
 	return (ZERR_NONE);

@@ -353,8 +353,8 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 					double_click = FALSE;
 				} else {
 					double_click = TRUE;
-					select_start = 0;
-					select_end = 0;
+					select_start = NULL;
+					select_end = NULL;
 					gnt_widget_draw(widget);
 					return TRUE;
 				}

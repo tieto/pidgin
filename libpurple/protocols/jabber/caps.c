@@ -922,8 +922,8 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleHash *hash)
 void jabber_caps_calculate_own_hash(JabberStream *js) {
 	JabberCapsClientInfo info;
 	PurpleHash *hasher;
-	GList *iter = 0;
-	GList *features = 0;
+	GList *iter = NULL;
+	GList *features = NULL;
 
 	if (!jabber_identities && !jabber_features) {
 		/* This really shouldn't ever happen */

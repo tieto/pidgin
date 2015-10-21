@@ -25,7 +25,7 @@ Code_t ZFlushSubscriptions()
 
 	free((char *)__subscriptions_list);
 
-	__subscriptions_list = 0;
+	__subscriptions_list = NULL;
 	__subscriptions_num = 0;
 
 	return (ZERR_NONE);
