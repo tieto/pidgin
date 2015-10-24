@@ -1,3 +1,23 @@
+pidgin (2.10.11-1.1) unstable; urgency=medium
+
+  [ Bernhard Schmidt ]
+  * GStreamer 1.0 and libfarstream 0.2 support (Closes: #785926, #731122)
+    - Import patch from Fedora and refresh for Debian
+      + almost the same patch has been in Ubuntu for a while
+    - run autoreconf through dh-autoreconf/cdbs
+    - Bump Build-Depends for src:pidgin
+    - Bump Recommends for pidgin
+      + replace gstreamer0.10-ffmpeg with gstreamer1.0-libav
+
+  [ Ari Pollak ]
+  * Add gstreamer0.10-pulseaudio as alternative to gstreamer0.10-alsa 
+    in Recommends (Closes: #772116)
+
+  [ Sebastian Dröge ]
+  * Non-Maintainer Upload with Bernhard's patch from #785926.
+
+ -- Sebastian Dröge <slomo@debian.org>  Sat, 17 Oct 2015 20:55:57 +0300
+
 pidgin (2.10.11-1) unstable; urgency=low
 
   * Recommend gstreamer0.10-alsa and gstreamer0.10-ffmpeg for voice/video calls
