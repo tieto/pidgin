@@ -1,3 +1,13 @@
+pidgin (2.10.11-2) UNRELEASED; urgency=low
+
+  [ Peter Spiess-Knafl ]
+  * Fix extra end tag in prefs.xml (Closes: #589631)
+
+  [ Ari Pollak ]
+  * Install upstream appdata (Closes: #785759)
+
+ -- Ari Pollak <ari@debian.org>  Fri, 23 Oct 2015 21:29:28 -0400
+
 pidgin (2.10.11-1.1) unstable; urgency=medium
 
   [ Bernhard Schmidt ]
