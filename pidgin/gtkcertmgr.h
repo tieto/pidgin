@@ -41,9 +41,9 @@ typedef struct _PidginCertificateManager PidginCertificateManager;
  * GTK+ Certificate Manager subwidget
  */
 struct _PidginCertificateManager {
-	/** Create, configure, show, and return the management interface */
+	/* Create, configure, show, and return the management interface */
 	GtkWidget * (* build)(void);
-	/** Notebook label to use in the CertMgr dialog */
+	/* Notebook label to use in the CertMgr dialog */
 	gchar *label;
 };
 

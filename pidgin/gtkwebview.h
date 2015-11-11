@@ -61,7 +61,7 @@ typedef enum {
 	PIDGIN_WEBVIEW_SMILEY        = 1 << 10,
 	PIDGIN_WEBVIEW_LINKDESC      = 1 << 11,
 	PIDGIN_WEBVIEW_STRIKE        = 1 << 12,
-	/** Show custom smileys when appropriate. */
+	/* Show custom smileys when appropriate. */
 	PIDGIN_WEBVIEW_CUSTOM_SMILEY = 1 << 13,
 	PIDGIN_WEBVIEW_ALL           = -1
 } PidginWebViewButtons;
