@@ -20,7 +20,7 @@
     </abstract>
   </bookinfo>
 
-  <reference label="I">
+  <part id="finch">
     <title>Finch API Reference</title>
 
       <xi:include href="xml/gntaccount.xml" />
@@ -44,9 +44,9 @@
       <xi:include href="xml/gntstatus.xml" />
       <xi:include href="xml/gntui.xml" />
       <xi:include href="xml/finch.xml" />
-  </reference>
+  </part>
 
-  <reference label="II">
+  <part id="gnt">
     <title>GNT API Reference</title>
 
       <xi:include href="xml/gnt.xml" />
@@ -61,7 +61,9 @@
       <xi:include href="xml/gntentry.xml" />
       <xi:include href="xml/gntfilesel.xml" />
       <xi:include href="xml/gntkeys.xml" />
-      <xi:include href="xml/gntlabel.xml" />
+	  <!-- TODO: document not found. Find it.
+	  <xi:include href="xml/gntid.xml" />
+	  -->
       <xi:include href="xml/gntline.xml" />
       <xi:include href="xml/gntmenu.xml" />
       <xi:include href="xml/gntmenuitem.xml" />
@@ -75,7 +77,7 @@
       <xi:include href="xml/gntwm.xml" />
       <xi:include href="xml/gntws.xml" />
       <xi:include href="xml/gntutils.xml" />
-  </reference>
+  </part>
 
   <index id="api-index-full">
     <title>Index</title>

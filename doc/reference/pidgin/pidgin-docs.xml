@@ -16,7 +16,7 @@
     </abstract>
   </bookinfo>
 
-  <reference label="I">
+  <part id="API">
     <title>API Reference</title>
 
       <xi:include href="xml/gtkaccount.xml" />
@@ -67,16 +67,16 @@
       <xi:include href="xml/gtkwhiteboard.xml" />
       <xi:include href="xml/gtksession.xml" />
       <xi:include href="xml/pidgin.xml" />
-  </reference>
+  </part>
 
-  <reference label="II">
+  <part id="signals">
     <title>Purple-signals Reference</title>
 
       <xi:include href="signals_gtkaccount.xml" />
       <xi:include href="signals_gtkblist.xml" />
       <xi:include href="signals_gtkconv.xml" />
       <xi:include href="signals_gtklog.xml" />
-  </reference>
+  </part>
 
   <index id="api-index-full">
     <title>Index</title>
