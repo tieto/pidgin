@@ -9,6 +9,6 @@ sysconfdir=@sysconfdir@
 Name: Finch
 Description: Finch is an instant messenger application that uses libpurple for protocol support and ncurses (libgnt) for the UI.
 Version: @VERSION@
-Requires: gnt purple
+Requires: gnt purple-3
 Cflags: -I${includedir}/finch
 Libs: -L${libdir} -lfinch
