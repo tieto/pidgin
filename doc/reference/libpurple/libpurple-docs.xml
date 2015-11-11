@@ -18,15 +18,15 @@
     </abstract>
   </bookinfo>
 
-  <part label="I">
+  <part id="tutorial">
     <title>Tutorials</title>
 
       <xi:include href="tut_c_plugins.xml" />
       <xi:include href="tut_signals.xml" />
   </part>
 
-  <reference label="II">
-    <title>API Reference</title>
+  <part id="API">
+	  <title>API Reference</title>
 
       <xi:include href="xml/account.xml" />
       <xi:include href="xml/accountopt.xml" />
@@ -92,18 +92,19 @@
       <xi:include href="xml/util.xml" />
       <xi:include href="xml/enums.xml" />
       <xi:include href="xml/purple.xml" />
-  </reference>
+  </part>
 
-  <reference label="">
-    <reference label="a">
+  <part id="Submodules">
+	  <title>Submodules</title>
+    <chapter id="messages">
       <title>Messaging</title>
 
         <xi:include href="xml/message.xml" />
         <xi:include href="xml/log.xml" />
         <xi:include href="xml/cmds.xml" />
-    </reference>
+    </chapter>
 
-    <reference label="b">
+    <chapter id="ciphers">
       <title>Ciphers and Hashes</title>
 
         <xi:include href="xml/aescipher.xml" />
@@ -116,9 +117,9 @@
         <xi:include href="xml/md5hash.xml" />
         <xi:include href="xml/sha1hash.xml" />
         <xi:include href="xml/sha256hash.xml" />
-    </reference>
+    </chapter>
 
-    <reference label="c">
+    <chapter id="smiley">
       <title>Smiley APIs</title>
 
         <xi:include href="xml/smiley.xml" />
@@ -126,17 +127,17 @@
         <xi:include href="xml/smiley-list.xml" />
         <xi:include href="xml/smiley-theme.xml" />
         <xi:include href="xml/smiley-parser.xml" />
-    </reference>
+    </chapter>
 
-    <reference label="d">
+    <chapter id="image">
       <title>Graphics</title>
 
         <xi:include href="xml/image.xml" />
         <xi:include href="xml/image-store.xml" />
         <xi:include href="xml/whiteboard.xml" />
-    </reference>
+    </chapter>
 
-    <reference label="e">
+    <chapter id="media">
       <title>Media APIs</title>
 
         <xi:include href="xml/media.xml" />
@@ -146,19 +147,19 @@
         <xi:include href="xml/codec.xml" />
         <xi:include href="xml/backend-iface.xml" />
         <xi:include href="xml/enum-types.xml" />
-    </reference>
+    </chapter>
 
-    <reference label="f">
+    <chapter id="dbus">
       <title>D-Bus Server APIs</title>
 
         <xi:include href="xml/dbus-bindings.xml" />
         <xi:include href="xml/dbus-purple.xml" />
         <xi:include href="xml/dbus-server.xml" />
         <xi:include href="xml/dbus-useful.xml" />
-    </reference>
-  </reference>
+    </chapter>
+	</part>
 
-  <reference label="III">
+  <part id="signals">
     <title>Purple-signals Reference</title>
 
       <xi:include href="signals_account.xml" />
@@ -177,7 +178,7 @@
       <xi:include href="signals_savedstatus.xml" />
       <xi:include href="signals_sound.xml" />
       <xi:include href="signals_jabber.xml" />
-  </reference>
+  </part>
 
   <xi:include href="plugin_ids.xml" />
   <xi:include href="plugin_i18n.xml" />
