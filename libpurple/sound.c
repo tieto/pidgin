@@ -29,10 +29,6 @@
 #include "theme-manager.h"
 
 static PurpleSoundUiOps *sound_ui_ops = NULL;
-
-#define STATUS_AVAILABLE 1
-#define STATUS_AWAY 2
-
 static time_t last_played[PURPLE_NUM_SOUNDS];
 
 static gboolean
@@ -40,7 +36,7 @@ purple_sound_play_required(const PurpleAccount *account)
 {
 	gint pref_status = purple_prefs_get_int("/purple/sound/while_status");
 
-	if (pref_status == 3)
+	if (pref_status == PURPLE_SOUND_STATUS_ALWAYS)
 	{
 		/* Play sounds: Always */
 		return TRUE;
@@ -53,8 +49,8 @@ purple_sound_play_required(const PurpleAccount *account)
 		if (purple_status_is_online(status))
 		{
 			gboolean available = purple_status_is_available(status);
-			return (( available && pref_status == STATUS_AVAILABLE) ||
-			        (!available && pref_status == STATUS_AWAY));
+			return (( available && pref_status == PURPLE_SOUND_STATUS_AVAILABLE) ||
+			        (!available && pref_status == PURPLE_SOUND_STATUS_AWAY));
 		}
 	}
 
@@ -160,7 +156,7 @@ purple_sound_init()
 	                     G_TYPE_BOOLEAN, 2, G_TYPE_INT, PURPLE_TYPE_ACCOUNT);
 
 	purple_prefs_add_none("/purple/sound");
-	purple_prefs_add_int("/purple/sound/while_status", STATUS_AVAILABLE);
+	purple_prefs_add_int("/purple/sound/while_status", PURPLE_SOUND_STATUS_AVAILABLE);
 	memset(last_played, 0, sizeof(last_played));
 
 	purple_theme_manager_register_type(g_object_new(PURPLE_TYPE_SOUND_THEME_LOADER, "type", "sound", NULL));

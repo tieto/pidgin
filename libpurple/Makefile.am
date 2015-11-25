@@ -262,6 +262,7 @@ purple_enumheaders = \
 	$(srcdir)/protocols.h \
 	$(srcdir)/roomlist.h \
 	$(srcdir)/status.h \
+	${srcdir}/sound.h \
 	$(srcdir)/xfer.h
 
 marshallers.h: marshallers.list

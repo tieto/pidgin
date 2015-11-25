@@ -24,7 +24,7 @@
 /**
  * SECTION:sound
  * @section_id: libpurple-sound
- * @short_description: <filename>sound.h</filename>
+ * @short_description: Sound subsystem definition.
  * @title: Sound API
  * @see_also: <link linkend="chapter-signals-sound">Sound signals</link>
  */
@@ -37,6 +37,14 @@
 /** Data Structures                                                       */
 /**************************************************************************/
 typedef struct _PurpleSoundUiOps PurpleSoundUiOps;
+
+/**
+ */
+typedef enum {
+	PURPLE_SOUND_STATUS_AVAILABLE = 1,
+	PURPLE_SOUND_STATUS_AWAY,
+	PURPLE_SOUND_STATUS_ALWAYS,
+} PurpleSoundStatus;
 
 /**
  * PurpleSoundEventID:

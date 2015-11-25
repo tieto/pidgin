@@ -3246,9 +3246,9 @@ sound_page(void)
 				   PIDGIN_PREFS_ROOT "/sound/conv_focus", vbox);
 	pidgin_prefs_dropdown(vbox, _("_Enable sounds:"),
 				 PURPLE_PREF_INT, "/purple/sound/while_status",
-				_("Only when available"), 1,
-				_("Only when not available"), 2,
-				_("Always"), 3,
+				_("Only when available"), PURPLE_SOUND_STATUS_AVAILABLE,
+				_("Only when not available"), PURPLE_SOUND_STATUS_AWAY,
+				_("Always"), PURPLE_SOUND_STATUS_ALWAYS,
 				NULL);
 
 #ifdef USE_GSTREAMER
