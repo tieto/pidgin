@@ -124,7 +124,7 @@ GType purple_sound_ui_ops_get_type(void);
 /**
  * purple_sound_play_file:
  * @filename: The file to play.
- * @account: The account that this sound is associated with, or
+ * @account: (nullable): The account that this sound is associated with, or
  *        NULL if the sound is not associated with any specific
  *        account.  This is needed for the "sounds while away?"
  *        preference to work correctly.
@@ -136,7 +136,7 @@ void purple_sound_play_file(const char *filename, const PurpleAccount *account);
 /**
  * purple_sound_play_event:
  * @event: The event.
- * @account: The account that this sound is associated with, or
+ * @account: (nullable): The account that this sound is associated with, or
  *        NULL if the sound is not associated with any specific
  *        account.  This is needed for the "sounds while away?"
  *        preference to work correctly.
