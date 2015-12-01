@@ -39,6 +39,12 @@
 typedef struct _PurpleSoundUiOps PurpleSoundUiOps;
 
 /**
+ * PurpleSoundStatus:
+ * @PURPLE_SOUND_STATUS_AVAILABLE:	Only play sound when Status is Available.
+ * @PURPLE_SOUND_STATUS_AWAY:		Only play sound when Status is Not Available.
+ * @PURPLE_SOUND_STATUS_ALWAYS:		Always play sound.
+ *
+ * A preference option on when to play sounds depending on the current status
  */
 typedef enum {
 	PURPLE_SOUND_STATUS_AVAILABLE = 1,
@@ -64,7 +70,6 @@ typedef enum {
  *
  * A type of sound.
  */
-
 typedef enum
 {
 	PURPLE_SOUND_BUDDY_ARRIVE = 0,
