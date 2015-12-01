@@ -229,7 +229,7 @@ purple_trie_get_size(PurpleTrie *trie);
  * purple_trie_replace:
  * @trie: the trie.
  * @src: the source string.
- * @replace_cb: the replacement function.
+ * @replace_cb: (scope call): the replacement function.
  * @user_data: custom data to be passed to @replace_cb.
  *
  * Processes @src string and replaces all occuriences of words added to @trie.
@@ -244,9 +244,9 @@ purple_trie_replace(PurpleTrie *trie, const gchar *src,
 
 /**
  * purple_trie_multi_replace:
- * @tries: the list of tries.
+ * @tries: (element-type PurpleTrie): the list of tries.
  * @src: the source string.
- * @replace_cb: the replacement function.
+ * @replace_cb: (scope call): the replacement function.
  * @user_data: custom data to be passed to @replace_cb.
  *
  * Processes @src and replaces all occuriences of words added to tries in list
@@ -266,7 +266,7 @@ purple_trie_multi_replace(const GSList *tries, const gchar *src,
  * purple_trie_find:
  * @trie: the trie.
  * @src: the source string.
- * @find_cb: the callback for the found entries (may be %NULL).
+ * @find_cb: (nullable) (scope call): the callback for the found entries (may be %NULL).
  * @user_data: custom data to be passed to @find_cb.
  *
  * Processes @src string and finds all occuriences of words added to @trie.
@@ -283,9 +283,9 @@ purple_trie_find(PurpleTrie *trie, const gchar *src,
 
 /**
  * purple_trie_multi_find:
- * @tries: the list of tries.
+ * @tries: (element-type PurpleTrie): the list of tries.
  * @src: the source string.
- * @find_cb: the callback for the found entries (may be %NULL).
+ * @find_cb: (nullable) (scope call): the callback for the found entries (may be %NULL).
  * @user_data: custom data to be passed to @find_cb.
  *
  * Processes @src and replaces all occuriences of words added to tries in
