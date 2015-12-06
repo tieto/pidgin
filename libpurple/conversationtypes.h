@@ -29,7 +29,7 @@
  */
 
 /**************************************************************************/
-/** Data Structures                                                       */
+/* Data Structures                                                        */
 /**************************************************************************/
 
 #define PURPLE_TYPE_IM_CONVERSATION              (purple_im_conversation_get_type())
@@ -105,7 +105,7 @@ typedef enum /*< flags >*/
 #include "conversation.h"
 
 /**************************************************************************/
-/** PurpleIMConversation                                                  */
+/* PurpleIMConversation                                                   */
 /**************************************************************************/
 /**
  * PurpleIMConversation:
@@ -133,7 +133,7 @@ struct _PurpleIMConversationClass {
 };
 
 /**************************************************************************/
-/** PurpleChatConversation                                                */
+/* PurpleChatConversation                                                 */
 /**************************************************************************/
 /**
  * PurpleChatConversation:
@@ -161,7 +161,7 @@ struct _PurpleChatConversationClass {
 };
 
 /**************************************************************************/
-/** PurpleChatUser                                                        */
+/* PurpleChatUser                                                         */
 /**************************************************************************/
 /**
  * PurpleChatUser:
@@ -380,7 +380,8 @@ PurpleChatConversation *purple_chat_conversation_new(PurpleAccount *account,
  * Returns a list of users in the chat room.  The members of the list
  * are PurpleChatUser objects.
  *
- * Returns: (transfer container): The list of users. Use g_list_free() when done
+ * Returns: (element-type PurpleChatUser) (transfer container):
+ *          The list of users. Use g_list_free() when done
  *          using the list.
  */
 GList *purple_chat_conversation_get_users(const PurpleChatConversation *chat);
@@ -417,11 +418,13 @@ void purple_chat_conversation_unignore(PurpleChatConversation *chat, const char 
 /**
  * purple_chat_conversation_set_ignored:
  * @chat:    The chat.
- * @ignored: The list of ignored users.
+ * @ignored: (element-type char*):
+ *           The list of ignored users.
  *
  * Sets the list of ignored users in the chat room.
  *
- * Returns: The list passed.
+ * Returns: (element-type char*) (transfer none):
+ *          The list passed.
  */
 GList *purple_chat_conversation_set_ignored(PurpleChatConversation *chat, GList *ignored);
 
@@ -431,7 +434,8 @@ GList *purple_chat_conversation_set_ignored(PurpleChatConversation *chat, GList 
  *
  * Returns the list of ignored users in the chat room.
  *
- * Returns: (transfer none): The list of ignored users.
+ * Returns: (element-type char*) (transfer none):
+ *          The list of ignored users.
  */
 GList *purple_chat_conversation_get_ignored(const PurpleChatConversation *chat);
 
@@ -532,14 +536,19 @@ void purple_chat_conversation_add_user(PurpleChatConversation *chat, const char 
 /**
  * purple_chat_conversation_add_users:
  * @chat:         The chat.
- * @users:        The list of users to add.
- * @extra_msgs:   An extra message to display with the join message for each
+ * @users: (element-type char*):
+ *                The list of users to add.
+ * @extra_msgs: (element-type char*) (nullable):
+ *                An extra message to display with the join message for each
  *                     user.  This list may be shorter than @users, in which
  *                     case, the users after the end of extra_msgs will not have
  *                     an extra message.  By extension, this means that extra_msgs
  *                     can simply be %NULL and none of the users will have an
  *                     extra message.
- * @flags:        The list of flags for each user.
+ * @flags: (element-type PurpleChatUserFlags):
+ *                The list of flags for each user.
+ *                This list data should be an int converted to pointer using
+ *                GINT_TO_POINTER(flag)
  * @new_arrivals: Decides whether or not to show join notices.
  *
  * Adds a list of users to a chat.
@@ -577,7 +586,8 @@ void purple_chat_conversation_remove_user(PurpleChatConversation *chat,
 /**
  * purple_chat_conversation_remove_users:
  * @chat:   The chat.
- * @users:  The users that are being removed.
+ * @users: (element-type char*)
+ *          The users that are being removed.
  * @reason: The optional reason given for the removal. Can be %NULL.
  *
  * Removes a list of users from a chat, optionally with a single reason.
@@ -640,6 +650,9 @@ void purple_chat_conversation_leave(PurpleChatConversation *chat);
  * @name: The name of the chat user to find.
  *
  * Find a chat user in a chat
+ *
+ * Returns: (transfer none):
+ *         The @PurpleChatUser with the name refered by @name.
  */
 PurpleChatUser *purple_chat_conversation_find_user(PurpleChatConversation *chat,
 		const char *name);
@@ -698,7 +711,8 @@ void purple_chat_user_set_chat(PurpleChatUser *cb,
  *
  * Get the chat conversation associated with this chat user.
  *
- * Returns:		The chat conversation that the buddy belongs to.
+ * Returns: (transfer none):
+ *          The chat conversation that the buddy belongs to.
  */
 PurpleChatConversation *purple_chat_user_get_chat(const PurpleChatUser *cb);
 
@@ -731,7 +745,8 @@ void purple_chat_user_set_ui_data(PurpleChatUser *cb, gpointer ui_data);
  *
  * Get the UI data associated with this chat user.
  *
- * Returns: The UI data associated with this chat user.  This is a
+ * Returns: (transfer none):
+ *         The UI data associated with this chat user.  This is a
  *         convenience field provided to the UIs--it is not
  *         used by the libpurple core.
  */
