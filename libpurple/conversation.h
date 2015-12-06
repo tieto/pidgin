@@ -24,8 +24,13 @@
 /**
  * SECTION:conversation
  * @section_id: libpurple-conversation
- * @short_description: <filename>conversation.h</filename>
+ * @short_description: Conversation base class <filename>conversation.h</filename>
  * @title: Conversation Base Class
+ *
+ * This is the base class for the conversation abstraction on Libpurple.
+ *
+ * The present API manages the common functionallity for both kinds of conversations
+ * @PurpleIMConversation and @PurpleChatConversation.
  */
 
 #define PURPLE_TYPE_CONVERSATION             (purple_conversation_get_type())
@@ -40,7 +45,7 @@
 #define PURPLE_TYPE_CONVERSATION_MESSAGE     (purple_conversation_message_get_type())
 
 /**************************************************************************/
-/** Data Structures                                                       */
+/* Data Structures                                                        */
 /**************************************************************************/
 
 typedef struct _PurpleConversation           PurpleConversation;
@@ -67,6 +72,9 @@ typedef struct _PurpleConversationUiOps      PurpleConversationUiOps;
  *                                       offline.
  * @PURPLE_CONVERSATION_UPDATE_AWAY:     The other user went away.
  * @PURPLE_CONVERSATION_UPDATE_ICON:     The other user's buddy icon changed.
+ * @PURPLE_CONVERSATION_UPDATE_NAME:     The name of the conversation was changed.
+ * @PURPLE_CONVERSATION_UPDATE_TITLE:    The title of the conversation was updated.
+ * @PURPLE_CONVERSATION_UPDATE_CHATLEFT: The user left a chat.
  * @PURPLE_CONVERSATION_UPDATE_FEATURES: The features for a chat have changed.
  *
  * Conversation update type.
@@ -143,7 +151,7 @@ typedef enum /*< flags >*/
 #include "message.h"
 
 /**************************************************************************/
-/** PurpleConversation                                                    */
+/* PurpleConversation                                                     */
 /**************************************************************************/
 /**
  * PurpleConversation:
@@ -194,7 +202,7 @@ struct _PurpleConversationClass {
 #include "smiley-list.h"
 
 /**************************************************************************/
-/** PurpleConversationUiOps                                               */
+/* PurpleConversationUiOps                                                */
 /**************************************************************************/
 /**
  * PurpleConversationUiOps:
@@ -346,7 +354,7 @@ void purple_conversation_set_account(PurpleConversation *conv,
  * This purple_account represents the user using purple, not the person the user
  * is having a conversation/chat/flame with.
  *
- * Returns: The conversation's purple_account.
+ * Returns: (transfer none): The conversation's purple_account.
  */
 PurpleAccount *purple_conversation_get_account(const PurpleConversation *conv);
 
@@ -356,7 +364,7 @@ PurpleAccount *purple_conversation_get_account(const PurpleConversation *conv);
  *
  * Returns the specified conversation's purple_connection.
  *
- * Returns: The conversation's purple_connection.
+ * Returns: (transfer none): The conversation's purple_connection.
  */
 PurpleConnection *purple_conversation_get_connection(const PurpleConversation *conv);
 
@@ -551,7 +559,8 @@ void purple_conversation_update(PurpleConversation *conv, PurpleConversationUpda
  *
  * Retrieve the message history of a conversation.
  *
- * Returns: (transfer none): A GList of PurpleMessage's. You must not modify the
+ * Returns: (element-type PurpleMessage) (transfer none):
+ *          A GList of PurpleMessage's. You must not modify the
  *          list or the data within. The list contains the newest message at
  *          the beginning, and the oldest message at the end.
  */
@@ -580,8 +589,8 @@ void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data)
  *
  * Get the UI data associated with this conversation.
  *
- * Returns: The UI data associated with this conversation.  This is a
- *         convenience field provided to the UIs--it is not
+ * Returns: (transfer none): The UI data associated with this conversation.
+ *         This is a convenience field provided to the UIs--it is not
  *         used by the libpurple core.
  */
 gpointer purple_conversation_get_ui_data(const PurpleConversation *conv);
@@ -607,7 +616,8 @@ void purple_conversation_send_confirm(PurpleConversation *conv, const char *mess
  *
  * Retrieves the extended menu items for the conversation.
  *
- * Returns:  A list of PurpleMenuAction items, harvested by the
+ * Returns: (element-type PurpleMenuAction):
+ *          A list of PurpleMenuAction items, harvested by the
  *          chat-extended-menu signal. The list and the menuaction
  *          items should be freed by the caller.
  */
