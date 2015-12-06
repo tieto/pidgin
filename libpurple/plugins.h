@@ -98,11 +98,53 @@ typedef struct _PurplePluginAction PurplePluginAction;
 
 #include "pluginpref.h"
 
-typedef void (*PurplePluginActionCb)(PurplePluginAction *);
-typedef GList *(*PurplePluginActionsCb)(PurplePlugin *);
-typedef gchar *(*PurplePluginExtraCb)(PurplePlugin *);
-typedef PurplePluginPrefFrame *(*PurplePluginPrefFrameCb)(PurplePlugin *);
-typedef gpointer (*PurplePluginPrefRequestCb)(PurplePlugin *);
+/**
+ * PurplePluginActionCb:
+ * @action: the action information.
+ *
+ * A function called when the related Action Menu is activated.
+ */
+typedef void (*PurplePluginActionCb)(PurplePluginAction *action);
+
+/**
+ * PurplePluginActionsCb:
+ * @plugin: the plugin associated with this callback.
+ *
+ * Returns a list of actions the plugin can perform.
+ *
+ * Returns: (transfer none): A list of actions the plugin can perform.
+ */
+typedef GList *(*PurplePluginActionsCb)(PurplePlugin *plugin);
+
+/**
+ * PurplePluginExtraCb:
+ * @plugin: the plugin associated with this callback.
+ *
+ * Gives extra information about the plguin.
+ *
+ * Returns: a newly allocated string denoting extra information
+ * about a plugin.
+ */
+typedef gchar *(*PurplePluginExtraCb)(PurplePlugin *plugin);
+
+/**
+ * PurplePluginPrefFrameCb:
+ * @plugin: the plugin associated with this callback.
+ *
+ * Returns the preferences frame for the plugin.
+ *
+ * Returns: Preference frame.
+ */
+typedef PurplePluginPrefFrame *(*PurplePluginPrefFrameCb)(PurplePlugin *plugin);
+
+/**
+ * PurplePrefRequestCb:
+ *
+ * Returns the preferences request handle for a plugin.
+ *
+ * Returns: Preferences request handle.
+ */
+typedef gpointer (*PurplePluginPrefRequestCb)(PurplePlugin *plugin);
 
 /**
  * PurplePluginInfoFlags:
@@ -469,7 +511,11 @@ const gchar *purple_plugin_get_filename(const PurplePlugin *plugin);
  *
  * Returns a plugin's #PurplePluginInfo instance.
  *
- * Returns: The plugin's #PurplePluginInfo instance.
+ * Returns: (transfer none) The plugin's #PurplePluginInfo instance.
+ * GPlugin refs the plugin info object before returning it. This workaround
+ * is to avoid managing the reference counts everywhere in our codebase
+ * where we use the plugin info. The plugin info instance is guaranteed to
+ * exist as long as the plugin exists.
  */
 PurplePluginInfo *purple_plugin_get_info(const PurplePlugin *plugin);
 
@@ -535,7 +581,7 @@ gboolean purple_plugin_is_internal(const PurplePlugin *plugin);
  *
  * Returns a list of plugins that depend on a particular plugin.
  *
- * Returns: (transfer none): The list of a plugins that depend on the specified
+ * Returns: (element-type PurplePlugin) (transfer none): The list of a plugins that depend on the specified
  *                           plugin.
  */
 GSList *purple_plugin_get_dependent_plugins(const PurplePlugin *plugin);
@@ -919,7 +965,8 @@ void purple_plugin_action_free(PurplePluginAction *action);
  *
  * Returns a list of all plugins, whether loaded or not.
  *
- * Returns: A list of all plugins. The list is owned by the caller, and must be
+ * Returns: (element-type PurplePlugin) (transfer full): A list of all plugins.
+ * 	       The list is owned by the caller, and must be
  *         g_list_free()d to avoid leaking the nodes.
  */
 GList *purple_plugins_find_all(void);
@@ -929,7 +976,7 @@ GList *purple_plugins_find_all(void);
  *
  * Returns a list of all loaded plugins.
  *
- * Returns: (transfer none): A list of all loaded plugins.
+ * Returns: (element-type PurplePlugin) (transfer none): A list of all loaded plugins.
  */
 GList *purple_plugins_get_loaded(void);
 
@@ -957,7 +1004,7 @@ void purple_plugins_refresh(void);
  *
  * Finds a plugin with the specified plugin ID.
  *
- * Returns: The plugin if found, or %NULL if not found.
+ * Returns: (transfer none): The plugin if found, or %NULL if not found.
  */
 PurplePlugin *purple_plugins_find_plugin(const gchar *id);
 
@@ -967,7 +1014,7 @@ PurplePlugin *purple_plugins_find_plugin(const gchar *id);
  *
  * Finds a plugin with the specified filename (filename with a path).
  *
- * Returns: The plugin if found, or %NULL if not found.
+ * Returns: (transfer none): The plugin if found, or %NULL if not found.
  */
 PurplePlugin *purple_plugins_find_by_filename(const char *filename);
 
@@ -998,7 +1045,7 @@ void purple_plugins_load_saved(const char *key);
  *
  * Returns the plugin subsystem handle.
  *
- * Returns: The plugin sybsystem handle.
+ * Returns: (transfer none): The plugin sybsystem handle.
  */
 void *purple_plugins_get_handle(void);
 
