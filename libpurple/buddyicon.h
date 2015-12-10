@@ -51,6 +51,18 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 #include "util.h"
 
 /**
+ * PurpleBuddyIconScaleFlags:
+ * @PURPLE_ICON_SCALE_DISPLAY: We scale the icon when we display it
+ * @PURPLE_ICON_SCALE_SEND:    We scale the icon before we send it to the server
+ */
+typedef enum  /*< flags >*/
+{
+	PURPLE_ICON_SCALE_DISPLAY = 0x01,
+	PURPLE_ICON_SCALE_SEND    = 0x02
+
+} PurpleBuddyIconScaleFlags;
+
+/**
  * PurpleBuddyIconSpec:
  * @format: This is a comma-delimited list of image formats or %NULL if icons
  *          are not supported.  Neither the core nor the protocol will actually
@@ -75,7 +87,7 @@ struct _PurpleBuddyIconSpec {
 	int max_width;
 	int max_height;
 	size_t max_filesize;
-	PurpleIconScaleRules scale_rules;
+	PurpleBuddyIconScaleFlags scale_rules;
 };
 
 G_BEGIN_DECLS
@@ -482,7 +494,7 @@ GType purple_buddy_icon_spec_get_type(void);
  */
 PurpleBuddyIconSpec *purple_buddy_icon_spec_new(char *format, int min_width,
 		int min_height, int max_width, int max_height, size_t max_filesize,
-		PurpleIconScaleRules scale_rules);
+		PurpleBuddyIconScaleFlags scale_rules);
 
 /**
  * purple_buddy_icon_spec_get_scaled_size:

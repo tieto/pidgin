@@ -535,7 +535,7 @@ void pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const 
  *
  * Convenience wrapper for purple_buddy_icon_spec_get_scaled_size
  */
-void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, PurpleBuddyIconSpec *spec, PurpleIconScaleRules rules, int *width, int *height);
+void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, PurpleBuddyIconSpec *spec, PurpleBuddyIconScaleFlags rules, int *width, int *height);
 
 /**
  * pidgin_create_protocol_icon:

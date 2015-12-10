@@ -253,6 +253,7 @@ purple_builtheaders = purple.h version.h enums.h marshallers.h
 
 purple_enumheaders = \
 	$(srcdir)/account.h \
+	$(srcdir)/buddyicon.h \
 	$(srcdir)/cipher.h \
 	$(srcdir)/connection.h \
 	$(srcdir)/conversation.h \

@@ -50,18 +50,6 @@ typedef struct _PurpleAttentionType PurpleAttentionType;
 /* Basic Protocol Information                                             */
 /**************************************************************************/
 
-/**
- * PurpleIconScaleRules:
- * @PURPLE_ICON_SCALE_DISPLAY: We scale the icon when we display it
- * @PURPLE_ICON_SCALE_SEND:    We scale the icon before we send it to the server
- */
-typedef enum  /*< flags >*/
-{
-	PURPLE_ICON_SCALE_DISPLAY = 0x01,
-	PURPLE_ICON_SCALE_SEND    = 0x02
-	
-} PurpleIconScaleRules;
-
 typedef struct _PurpleProtocolChatEntry PurpleProtocolChatEntry;
 
 /**

@@ -1129,7 +1129,7 @@ purple_buddy_icon_get_type(void)
 PurpleBuddyIconSpec *
 purple_buddy_icon_spec_new(char *format, int min_width, int min_height,
 		int max_width, int max_height, size_t max_filesize,
-		PurpleIconScaleRules scale_rules)
+		PurpleBuddyIconScaleFlags scale_rules)
 {
 	PurpleBuddyIconSpec *icon_spec;
 
