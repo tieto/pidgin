@@ -259,6 +259,7 @@ purple_enumheaders = \
 	$(srcdir)/conversation.h \
 	$(srcdir)/conversationtypes.h \
 	$(srcdir)/debug.h \
+	$(srcdir)/eventloop.h \
 	$(srcdir)/plugins.h \
 	$(srcdir)/protocol.h \
 	$(srcdir)/protocols.h \
