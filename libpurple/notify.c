@@ -62,7 +62,7 @@ struct _PurpleNotifySearchColumn
 };
 
 void *
-purple_notify_message(void *handle, PurpleNotifyMsgType type, const char *title,
+purple_notify_message(void *handle, PurpleNotifyMessageType type, const char *title,
 	const char *primary, const char *secondary,
 	PurpleRequestCommonParameters *cpar, PurpleNotifyCloseCallback cb,
 	gpointer user_data)

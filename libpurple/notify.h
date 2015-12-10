@@ -87,7 +87,7 @@ typedef enum
 
 
 /**
- * PurpleNotifyMsgType:
+ * PurpleNotifyMessageType:
  * @PURPLE_NOTIFY_MSG_ERROR:   Error notification.
  * @PURPLE_NOTIFY_MSG_WARNING: Warning notification.
  * @PURPLE_NOTIFY_MSG_INFO:    Information notification.
@@ -100,7 +100,7 @@ typedef enum
 	PURPLE_NOTIFY_MSG_WARNING,
 	PURPLE_NOTIFY_MSG_INFO
 
-} PurpleNotifyMsgType;
+} PurpleNotifyMessageType;
 
 
 /**
@@ -186,7 +186,7 @@ typedef struct
  */
 struct _PurpleNotifyUiOps
 {
-	void *(*notify_message)(PurpleNotifyMsgType type, const char *title,
+	void *(*notify_message)(PurpleNotifyMessageType type, const char *title,
 		const char *primary, const char *secondary,
 		PurpleRequestCommonParameters *cpar);
 
@@ -395,7 +395,7 @@ void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
  *
  * Returns: A UI-specific handle.
  */
-void *purple_notify_message(void *handle, PurpleNotifyMsgType type,
+void *purple_notify_message(void *handle, PurpleNotifyMessageType type,
 	const char *title, const char *primary, const char *secondary,
 	PurpleRequestCommonParameters *cpar, PurpleNotifyCloseCallback cb,
 	gpointer user_data);

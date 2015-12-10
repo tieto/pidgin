@@ -48,7 +48,7 @@ notify_msg_window_destroy_cb(GntWidget *window, PurpleNotifyType type)
 }
 
 static void *
-finch_notify_common(PurpleNotifyType ntype, PurpleNotifyMsgType msgtype,
+finch_notify_common(PurpleNotifyType ntype, PurpleNotifyMessageType msgtype,
 	const char *title, const char *primary, const char *secondary,
 	PurpleRequestCommonParameters *cpar)
 {
@@ -136,7 +136,7 @@ static void finch_close_notify(PurpleNotifyType type, void *handle)
 }
 
 static void *
-finch_notify_message(PurpleNotifyMsgType type, const char *title,
+finch_notify_message(PurpleNotifyMessageType type, const char *title,
 	const char *primary, const char *secondary,
 	PurpleRequestCommonParameters *cpar)
 {

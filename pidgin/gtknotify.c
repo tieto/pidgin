@@ -532,7 +532,7 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 }
 
 static void *
-pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
+pidgin_notify_message(PurpleNotifyMessageType type, const char *title,
 	const char *primary, const char *secondary,
 	PurpleRequestCommonParameters *cpar)
 {
