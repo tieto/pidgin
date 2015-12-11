@@ -38,6 +38,9 @@ typedef struct _PurpleNotifyUserInfoEntry	PurpleNotifyUserInfoEntry;
 #define  PURPLE_TYPE_NOTIFY_USER_INFO  (purple_notify_user_info_get_type())
 typedef struct _PurpleNotifyUserInfo		PurpleNotifyUserInfo;
 
+#define PURPLE_TYPE_NOTIFY_SEARCH_BUTTON  (purple_notify_search_button_get_type())
+typedef struct _PurpleNotifySearchButton	PurpleNotifySearchButton;
+
 /**
  * PurpleNotifySearchColumn:
  *
@@ -166,17 +169,18 @@ typedef void (*PurpleNotifySearchResultsCallback)(PurpleConnection *c, GList *ro
 
 /**
  * PurpleNotifySearchButton:
+ * @type:     The type of search button that will be used.
  * @callback: Function to be called when clicked.
  * @label:    only for PURPLE_NOTIFY_BUTTON_LABELED
  *
  * Definition of a button.
  */
-typedef struct
+struct _PurpleNotifySearchButton
 {
 	PurpleNotifySearchButtonType type;
 	PurpleNotifySearchResultsCallback callback;
 	char *label;
-} PurpleNotifySearchButton;
+};
 
 
 /**
@@ -487,6 +491,13 @@ void *purple_notify_formatted(void *handle, const char *title,
 void *purple_notify_userinfo(PurpleConnection *gc, const char *who,
 						   PurpleNotifyUserInfo *user_info, PurpleNotifyCloseCallback cb,
 						   gpointer user_data);
+
+/**
+ * purple_notify_search_button_get_type:
+ *
+ * Returns: The #GType for #PurpleNotifiySearchButton boxed structure.
+ */
+GType purple_notify_search_button_get_type(void);
 
 /**
  * purple_notify_user_info_get_type:

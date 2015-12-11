@@ -860,6 +860,33 @@ purple_notify_ui_ops_get_type(void)
 	return type;
 }
 
+static PurpleNotifySearchButton *
+purple_notify_search_button_copy(PurpleNotifySearchButton *button)
+{
+	PurpleNotifySearchButton *button_new;
+
+	g_return_val_if_fail(button != NULL, NULL);
+
+	button_new = g_new(PurpleNotifySearchButton, 1);
+	*button_new = *button;
+
+	return button_new;
+}
+
+GType
+purple_notify_search_button_get_type(void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		type = g_boxed_type_register_static("PurpleNotifySearchButton",
+				(GBoxedCopyFunc)purple_notify_search_button_copy,
+				(GBoxedFreeFunc)g_free);
+	}
+
+	return type;
+}
+
 void
 purple_notify_set_ui_ops(PurpleNotifyUiOps *ops)
 {
