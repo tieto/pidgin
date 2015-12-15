@@ -267,7 +267,9 @@ purple_enumheaders = \
 	$(srcdir)/roomlist.h \
 	$(srcdir)/status.h \
 	${srcdir}/sound.h \
-	$(srcdir)/xfer.h
+	$(srcdir)/xfer.h \
+	$(srcdir)/xmlnode.h
+
 
 marshallers.h: marshallers.list
 	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
