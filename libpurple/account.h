@@ -764,7 +764,7 @@ const char *purple_account_get_protocol_name(const PurpleAccount *account);
  *
  * Returns the account's connection.
  *
- * Returns: The connection.
+ * Returns: (transfer none): The connection.
  */
 PurpleConnection *purple_account_get_connection(const PurpleAccount *account);
 
