@@ -61,6 +61,11 @@ typedef union {
 } queryans;
 #endif
 
+enum PurpleDnsType {
+	PurpleDnsTypeTxt = 16,
+	PurpleDnsTypeSrv = 33
+};
+
 struct _PurpleSrvTxtQueryData {
 	union {
 		PurpleSrvCallback srv;

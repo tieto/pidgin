@@ -36,11 +36,6 @@ typedef struct _PurpleSrvTxtQueryUiOps PurpleSrvTxtQueryUiOps;
 #include <glib.h>
 #include <glib-object.h>
 
-enum PurpleDnsType {
-	PurpleDnsTypeTxt = 16,
-	PurpleDnsTypeSrv = 33
-};
-
 struct _PurpleSrvResponse {
 	char hostname[256];
 	int port;
