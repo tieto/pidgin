@@ -979,13 +979,11 @@ nm_dbus_name_owner_changed_cb(DBusGProxy *proxy, char *service, char *old_owner,
 
 static GInetAddress *
 purple_network_ip_lookup(const gchar *hostname) {
-	GResolver *resolver = NULL;
 	GError *error = NULL;
 	GList *addresses =NULL, *l = NULL;
 	GInetAddress *address = NULL;
 
-	resolver = g_resolver_get_default();
-	addresses = g_resolver_lookup_by_name(resolver, hostname, NULL, &error);
+	addresses = g_resolver_lookup_by_name(g_resolver_get_default(), hostname, NULL, &error);
 
 	if(addresses == NULL) {
 		purple_debug_info("network", "lookup of IP address failed: %s\n", error->message);
