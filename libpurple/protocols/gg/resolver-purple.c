@@ -29,22 +29,22 @@
 
 #include <internal.h>
 #include <debug.h>
-#include <dnsquery.h>
 
 #include <libgadu.h>
 #include "resolver-purple.h"
+
+#include <gio/gio.h>
 
 static int ggp_resolver_purple_start(int *fd, void **private_data,
 	const char *hostname);
 
 static void ggp_resolver_purple_cleanup(void **private_data, int force);
 
-static void ggp_resolver_purple_cb(GSList *hosts, gpointer cbdata,
-	const char *error_message);
+static void ggp_resolver_purple_cb(GObject *sender, GAsyncResult *res, gpointer data);
 
 typedef struct
 {
-	PurpleDnsQueryData *purpleQuery;
+	GCancellable *cancellable;
 
 	/**
 	 * File descriptors:
@@ -64,67 +64,72 @@ extern void ggp_resolver_purple_setup(void)
 	}
 }
 
-void ggp_resolver_purple_cb(GSList *hosts, gpointer cbdata,
-	const char *error_message)
-{
+void ggp_resolver_purple_cb(GObject *sender, GAsyncResult *res, gpointer cbdata) {
+	GList *addresses = NULL, *in_addrs = NULL, *l = NULL;
+	GError *error = NULL;
+	gsize native_size = 0; /* this is kind of dirty, but it'll be initialized before we use it */
+
 	ggp_resolver_purple_data *data = (ggp_resolver_purple_data*)cbdata;
 	const int fd = data->pipes[1];
-	int ipv4_count, all_count, write_size;
-	struct in_addr *addresses;
 
-	purple_debug_misc("gg", "ggp_resolver_purple_cb(%p, %p, \"%s\")\n",
-		hosts, cbdata, error_message);
-
-	data->purpleQuery = NULL;
-
-	if (error_message) {
+	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), res, &error);
+	if(addresses == NULL) {
 		purple_debug_error("gg", "ggp_resolver_purple_cb failed: %s\n",
-			error_message);
+			error->message);
+
+		g_error_free(error);
+	} else {
+		purple_debug_misc("gg", "ggp_resolver_purple_cb succeeded: (%p, %p)\n",
+			addresses, cbdata);
 	}
 
-	all_count = g_slist_length(hosts);
-	g_assert(all_count % 2 == 0);
-	all_count /= 2;
-	addresses = malloc((all_count + 1) * sizeof(struct in_addr));
+	g_object_unref(G_OBJECT(data->cancellable));
+	data->cancellable = NULL;
 
-	ipv4_count = 0;
-	while (hosts && (hosts = g_slist_delete_link(hosts, hosts))) {
-		common_sockaddr_t addr;
-		char dst[INET6_ADDRSTRLEN];
+	for(l = addresses; l; l = l->next) {
+		GInetAddress *inet_address = G_INET_ADDRESS(l->data);
+		GSocketFamily family = G_SOCKET_FAMILY_INVALID;
+		gchar *ip_address = g_inet_address_to_string(inet_address);
 
-		memcpy(&addr, hosts->data, sizeof(addr));
+		family = g_inet_address_get_family(inet_address);
 
-		if (addr.sa.sa_family == AF_INET6) {
-			inet_ntop(addr.sa.sa_family, &addr.in6.sin6_addr,
-				dst, sizeof(dst));
-			purple_debug_misc("gg", "ggp_resolver_purple_cb "
-				"ipv6 (ignore): %s\n", dst);
-		} else if (addr.sa.sa_family == AF_INET) {
-			inet_ntop(addr.sa.sa_family, &addr.in.sin_addr,
-				dst, sizeof(dst));
-			purple_debug_misc("gg", "ggp_resolver_purple_cb "
-				"ipv4: %s\n", dst);
+		switch(family) {
+			case G_SOCKET_FAMILY_IPV4:
+				purple_debug_misc("gg", "ggp_resolver_purple_cb "
+					"ipv4: %s\n", ip_address);
 
-			g_assert(ipv4_count < all_count);
-			addresses[ipv4_count++] = addr.in.sin_addr;
-		} else {
-			purple_debug_warning("gg", "ggp_resolver_purple_cb "
-				"unexpected sa_family: %d\n",
-				addr.sa.sa_family);
+				native_size = g_inet_address_get_native_size(inet_address);
+				in_addrs = g_list_append(in_addrs, g_memdup(g_inet_address_to_bytes(inet_address), native_size));
+
+				break;
+			case G_SOCKET_FAMILY_IPV6:
+				purple_debug_misc("gg", "ggp_resolver_purple_cb "
+					"ipv6 (ignore): %s\n", ip_address);
+
+				break;
+			default:
+				purple_debug_warning("gg", "ggp_resolver_purple_cb "
+					"unexpected sa_family: %d\n",
+					family);
+
+				break;
 		}
 
-		g_free(hosts->data);
-		hosts = g_slist_delete_link(hosts, hosts);
+		g_free(ip_address);
 	}
 
-	addresses[ipv4_count].s_addr = INADDR_NONE;
+	for(l = in_addrs; l; l = l->next) {
+		gint write_size = native_size;
+		if(write(fd, l->data, write_size) != write_size) {
+			purple_debug_error("gg",
+				"ggp_resolver_purple_cb write error on %p\n", l->data);
+		}
 
-	write_size = (ipv4_count + 1) * sizeof(struct in_addr);
-	if (write(fd, addresses, write_size) != write_size) {
-		purple_debug_error("gg",
-			"ggp_resolver_purple_cb write error\n");
+		g_free(l->data);
 	}
-	free(addresses);
+
+	g_list_free(in_addrs);
+	g_resolver_free_addresses(addresses);
 }
 
 int ggp_resolver_purple_start(int *fd, void **private_data,
@@ -136,7 +141,7 @@ int ggp_resolver_purple_start(int *fd, void **private_data,
 
 	data = malloc(sizeof(ggp_resolver_purple_data));
 	*private_data = (void*)data;
-	data->purpleQuery = NULL;
+	data->cancellable = NULL;
 	data->pipes[0] = 0;
 	data->pipes[1] = 0;
 
@@ -150,10 +155,15 @@ int ggp_resolver_purple_start(int *fd, void **private_data,
 	*fd = data->pipes[0];
 
 	/* account and port is unknown in this context */
-	data->purpleQuery = purple_dnsquery_a(NULL, hostname, 80,
-		ggp_resolver_purple_cb, (gpointer)data);
+	data->cancellable = g_cancellable_new();
 
-	if (!data->purpleQuery) {
+	g_resolver_lookup_by_name_async(g_resolver_get_default(),
+	                                hostname,
+	                                data->cancellable,
+	                                ggp_resolver_purple_cb,
+	                                (gpointer)data);
+
+	if (!data->cancellable) {
 		purple_debug_error("gg", "ggp_resolver_purple_start: "
 			"unable to call purple_dnsquery_a\n");
 		ggp_resolver_purple_cleanup(private_data, 0);
@@ -175,8 +185,12 @@ void ggp_resolver_purple_cleanup(void **private_data, int force)
 		return;
 	*private_data = NULL;
 
-	if (data->purpleQuery)
-		purple_dnsquery_destroy(data->purpleQuery);
+	if (G_IS_CANCELLABLE(data->cancellable)) {
+		g_cancellable_cancel(data->cancellable);
+
+		g_object_unref(G_OBJECT(data->cancellable));
+	}
+
 	if (data->pipes[0])
 		close(data->pipes[0]);
 	if (data->pipes[1])
