@@ -56,10 +56,10 @@ typedef struct _JabberStream JabberStream;
 
 #include <libxml/parser.h>
 #include <glib.h>
+#include <gio/gio.h>
+
 #include "circularbuffer.h"
 #include "connection.h"
-#include "dnsquery.h"
-#include "dnssrv.h"
 #include "http.h"
 #include "media.h"
 #include "mediamanager.h"
@@ -119,7 +119,7 @@ struct _JabberStream
 	int fd;
 	guint inpa;
 
-	PurpleSrvTxtQueryData *srv_query_data;
+	GCancellable *cancellable;
 
 	xmlParserCtxt *context;
 	PurpleXmlNode *current;
@@ -276,10 +276,6 @@ struct _JabberStream
 	guint inactivity_timer;
 	guint conn_close_timeout;
 
-	PurpleSrvResponse *srv_rec;
-	guint srv_rec_idx;
-	guint max_srv_rec_idx;
-
 	PurpleJabberBOSHConnection *bosh;
 
 	PurpleHttpConnectionSet *http_conns;
@@ -290,7 +286,6 @@ struct _JabberStream
 	/* maybe this should only be present when USE_VV? */
 	gchar *stun_ip;
 	int stun_port;
-	PurpleDnsQueryData *stun_query;
 
 	/* stuff for Google's relay handling */
 	gchar *google_relay_token;

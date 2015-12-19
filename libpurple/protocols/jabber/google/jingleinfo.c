@@ -22,55 +22,36 @@
 #include "debug.h"
 #include "jingleinfo.h"
 
+#include <gio/gio.h>
+
 static void
-jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
-	const char *error_message)
-{
+jabber_google_stun_lookup_cb(GObject *sender, GAsyncResult *result, gpointer data) {
+	GError *error = NULL;
+	GList *addresses = NULL;
 	JabberStream *js = (JabberStream *) data;
 
-	if (error_message) {
+	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), result, &error);
+
+	if(error) {
 		purple_debug_error("jabber", "Google STUN lookup failed: %s\n",
-			error_message);
-		g_slist_free(hosts);
-		js->stun_query = NULL;
+			error->message);
+
+		g_error_free(error);
+
 		return;
 	}
 
-	if (hosts && g_slist_next(hosts)) {
-		common_sockaddr_t addr;
-		char dst[INET6_ADDRSTRLEN];
-		int port;
+	if(g_list_length(addresses) > 0) {
+		GInetAddress *inet_address = G_INET_ADDRESS(addresses->data);
 
-		memcpy(&addr, g_slist_next(hosts)->data, sizeof(addr));
-
-		if (addr.sa.sa_family == AF_INET6) {
-			inet_ntop(addr.sa.sa_family, &addr.in6.sin6_addr,
-				dst, sizeof(dst));
-			port = ntohs(addr.in6.sin6_port);
-		} else {
-			inet_ntop(addr.sa.sa_family, &addr.in.sin_addr,
-				dst, sizeof(dst));
-			port = ntohs(addr.in.sin_port);
-		}
-
-		if (js->stun_ip)
-			g_free(js->stun_ip);
-		js->stun_ip = g_strdup(dst);
-		js->stun_port = port;
+		g_free(js->stun_ip);
+		js->stun_ip = g_inet_address_to_string(inet_address);
 
 		purple_debug_info("jabber", "set Google STUN IP/port address: "
-		                  "%s:%d\n", dst, port);
-
-		/* unmark ongoing query */
-		js->stun_query = NULL;
+		                  "%s:%d\n", js->stun_ip, js->stun_port);
 	}
 
-	while (hosts != NULL) {
-		hosts = g_slist_delete_link(hosts, hosts);
-		/* Free the address */
-		g_free(hosts->data);
-		hosts = g_slist_delete_link(hosts, hosts);
-	}
+	g_resolver_free_addresses(addresses);
 }
 
 static void
@@ -111,16 +92,13 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 			const gchar *udp = purple_xmlnode_get_attrib(server, "udp");
 
 			if (host && udp) {
-				PurpleAccount *account;
-				int port = atoi(udp);
-				/* if there, would already be an ongoing query,
-				 cancel it */
-				if (js->stun_query)
-					purple_dnsquery_destroy(js->stun_query);
+				js->stun_port = atoi(udp);
 
-				account = purple_connection_get_account(js->gc);
-				js->stun_query = purple_dnsquery_a(account, host, port,
-					jabber_google_stun_lookup_cb, js);
+				g_resolver_lookup_by_name_async(g_resolver_get_default(),
+				                                host,
+				                                NULL,
+				                                jabber_google_stun_lookup_cb,
+				                                js);
 			}
 		}
 	}
