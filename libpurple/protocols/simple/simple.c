@@ -29,7 +29,6 @@
 #include "accountopt.h"
 #include "buddylist.h"
 #include "conversation.h"
-#include "dnsquery.h"
 #include "debug.h"
 #include "notify.h"
 #include "protocol.h"
@@ -41,7 +40,6 @@
 
 #include "simple.h"
 #include "sipmsg.h"
-#include "dnssrv.h"
 #include "ntlm.h"
 
 static PurpleProtocol *my_protocol = NULL;
@@ -1801,29 +1799,41 @@ static void simple_udp_host_resolved_listen_cb(int listenfd, gpointer data) {
 	do_register(sip);
 }
 
-static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *error_message) {
+static void
+simple_udp_host_resolved(GObject *sender, GAsyncResult *result, gpointer data) {
+	GError *error = NULL;
+	GList *addresses = NULL;
+	GInetAddress *inet_address = NULL;
+	GSocketAddress *socket_address = NULL;
 	struct simple_account_data *sip = (struct simple_account_data*) data;
-	int addr_size;
 
-	sip->query_data = NULL;
+	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), result, &error);
+	if(error) {
+		gchar *msg = g_strdup_printf(_("Unable to resolve hostname : %s"),
+			error->message);
 
-	if (!hosts || !hosts->data) {
 		purple_connection_error(sip->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Unable to resolve hostname"));
+			msg
+			);
+
+		g_error_free(error);
+
 		return;
 	}
 
-	addr_size = GPOINTER_TO_INT(hosts->data);
-	hosts = g_slist_remove(hosts, hosts->data);
-	memcpy(&(sip->serveraddr), hosts->data, addr_size);
-	g_free(hosts->data);
-	hosts = g_slist_remove(hosts, hosts->data);
-	while(hosts) {
-		hosts = g_slist_remove(hosts, hosts->data);
-		g_free(hosts->data);
-		hosts = g_slist_remove(hosts, hosts->data);
-	}
+	inet_address = G_INET_ADDRESS(addresses->data);
+	socket_address = g_inet_socket_address_new(inet_address, sip->realport);
+	g_object_unref(G_OBJECT(inet_address));
+
+	g_socket_address_to_native(socket_address,
+	                           &(sip->serveraddr),
+	                           g_socket_address_get_native_size(socket_address),
+	                           NULL);
+
+	g_object_unref(G_OBJECT(socket_address));
+
+	g_resolver_free_addresses(addresses);
 
 	/* create socket for incoming connections */
 	sip->listen_data = purple_network_listen_range(5060, 5160, AF_UNSPEC, SOCK_DGRAM, TRUE,
@@ -1865,33 +1875,44 @@ simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 	}
 }
 
-static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
+static void
+srvresolved(GObject *sender, GAsyncResult *result, gpointer data) {
+	GError *error = NULL;
+	GList *targets = NULL;
 	struct simple_account_data *sip;
 	gchar *hostname;
 	int port;
 
 	sip = data;
-	sip->srv_query_data = NULL;
 
-	port = purple_account_get_int(sip->account, "port", 0);
+	targets = g_resolver_lookup_service_finish(g_resolver_get_default(), result, &error);
+	if(error) {
+		purple_debug_info("simple",
+		                  "srv lookup failed, continuing with configured settings : %s",
+		                  error->message);
 
-	/* find the host to connect to */
-	if(results) {
-		hostname = g_strdup(resp->hostname);
-		if(!port)
-			port = resp->port;
-		g_free(resp);
-	} else {
+		g_error_free(error);
+
 		if(!purple_account_get_bool(sip->account, "useproxy", FALSE)) {
 			hostname = g_strdup(sip->servername);
 		} else {
 			hostname = g_strdup(purple_account_get_string(sip->account, "proxy", sip->servername));
-		}
+		}		
+		port = purple_account_get_int(sip->account, "port", 0);
+	} else {
+		GSrvTarget *target = (GSrvTarget *)targets->data;
+
+		hostname = g_strdup(g_srv_target_get_hostname(target));
+		port = g_srv_target_get_port(target);
+
+		g_resolver_free_targets(targets);
 	}
 
 	sip->realhostname = hostname;
 	sip->realport = port;
-	if(!sip->realport) sip->realport = 5060;
+
+	if(!sip->realport)
+		sip->realport = 5060;
 
 	/* TCP case */
 	if(!sip->udp) {
@@ -1907,13 +1928,11 @@ static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
 	} else { /* UDP */
 		purple_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
 
-		sip->query_data = purple_dnsquery_a(sip->account, hostname,
-			port, simple_udp_host_resolved, sip);
-		if (sip->query_data == NULL) {
-			purple_connection_error(sip->gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Unable to resolve hostname"));
-		}
+		g_resolver_lookup_by_name_async(g_resolver_get_default(),
+		                                sip->realhostname,
+		                                sip->cancellable,
+		                                simple_udp_host_resolved,
+		                                sip);
 	}
 }
 
@@ -1975,8 +1994,13 @@ static void simple_login(PurpleAccount *account)
 		hosttoconnect = purple_account_get_string(account, "proxy", sip->servername);
 	}
 
-	sip->srv_query_data = purple_srv_resolve(account, "sip",
-			sip->udp ? "udp" : "tcp", hosttoconnect, srvresolved, sip);
+	g_resolver_lookup_service_async(g_resolver_get_default(),
+	                                "sip",
+	                                sip->udp ? "udp" : "tcp",
+	                                hosttoconnect,
+	                                sip->cancellable,
+	                                srvresolved,
+	                                sip);
 }
 
 static void simple_close(PurpleConnection *gc)
@@ -2008,11 +2032,9 @@ static void simple_close(PurpleConnection *gc)
 		purple_timeout_remove(sip->resendtimeout);
 	if (sip->registertimeout)
 		purple_timeout_remove(sip->registertimeout);
-	if (sip->query_data != NULL)
-		purple_dnsquery_destroy(sip->query_data);
 
-	if (sip->srv_query_data != NULL)
-		purple_srv_txt_query_destroy(sip->srv_query_data);
+	g_cancellable_cancel(sip->cancellable);
+	g_object_unref(G_OBJECT(sip->cancellable));
 
 	if (sip->listen_data != NULL)
 		purple_network_listen_cancel(sip->listen_data);
