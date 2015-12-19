@@ -23,7 +23,6 @@
 /* TODO: it needs further refactoring */
 
 #include "internal.h"
-#include "dnsquery.h"
 
 #include "protocol.h"
 #include "util.h"
@@ -38,6 +37,8 @@
 #include "yahoo_filexfer.h"
 #include "yahoo_doodle.h"
 #include "yahoo_friend.h"
+
+#include <gio/gio.h>
 
 struct yahoo_xfer_data {
 	gchar *url;
@@ -498,14 +499,15 @@ static gchar* yahoo_xfer_new_xfer_id(void)
 	return ans;
 }
 
-static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char *error_message)
+static void
+yahoo_xfer_dns_connected_15(GObject *sender, GAsyncResult *result, gpointer data) 
 {
+	GError *error = NULL;
+	GList *addresses = NULL;
+	GInetAddress *inet_address = NULL;
 	PurpleXfer *xfer;
 	struct yahoo_xfer_data *xd;
-	struct sockaddr_in *addr;
 	struct yahoo_packet *pkt;
-	unsigned long actaddr;
-	unsigned char a,b,c,d;
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	YahooData *yd;
@@ -519,47 +521,22 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 	account = purple_connection_get_account(gc);
 	yd = purple_connection_get_protocol_data(gc);
 
-	if(!hosts)
-	{
-		purple_debug_error("yahoo", "Unable to find an IP address for relay.msg.yahoo.com\n");
+	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), result, &error);
+	if(error) {
+		purple_debug_error("yahoo",
+		                   "Unable to find an IP address for relay.msg.yahoo.com : %s\n",
+		                   error->message);
+
 		purple_xfer_cancel_remote(xfer);
+		g_error_free(error);
+
 		return;
 	}
 
-	/* Discard the length... */
-	hosts = g_slist_remove(hosts, hosts->data);
-	if(!hosts)
-	{
-		purple_debug_error("yahoo", "Unable to find an IP address for relay.msg.yahoo.com\n");
-		purple_xfer_cancel_remote(xfer);
-		return;
-	}
+	inet_address = G_INET_ADDRESS(addresses->data);
+	xd->host = g_inet_address_to_string(inet_address);
 
-	/* TODO:actually, u must try with addr no.1 , if its not working addr no.2 ..... */
-	addr = hosts->data;
-	actaddr = addr->sin_addr.s_addr;
-	d = actaddr & 0xff;
-	actaddr >>= 8;
-	c = actaddr & 0xff;
-	actaddr >>= 8;
-	b = actaddr & 0xff;
-	actaddr >>= 8;
-	a = actaddr & 0xff;
-
-	xd->host = g_strdup_printf("%u.%u.%u.%u", d, c, b, a);
-
-	/* Free the address... */
-	g_free(hosts->data);
-	hosts = g_slist_remove(hosts, hosts->data);
-	addr = NULL;
-	while (hosts != NULL)
-	{
-		/* Discard the length... */
-		hosts = g_slist_remove(hosts, hosts->data);
-		/* Free the address... */
-		g_free(hosts->data);
-		hosts = g_slist_remove(hosts, hosts->data);
-	}
+	g_resolver_free_addresses(addresses);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANS_INFO_15, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	filename = g_path_get_basename(purple_xfer_get_local_filename(xfer));
@@ -700,7 +677,6 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 	if(val_222 == 3)
 	{
-		PurpleAccount *account;
 		struct yahoo_xfer_data *xd;
 
 		xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map,
@@ -726,10 +702,12 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 		}
 		xd->is_relay = TRUE;
 
-		account = purple_connection_get_account(gc);
-		purple_dnsquery_a(account, YAHOO_XFER_RELAY_HOST,
-			YAHOO_XFER_RELAY_PORT,
-			yahoo_xfer_dns_connected_15, xfer);
+		g_resolver_lookup_by_name_async(g_resolver_get_default(),
+		                                YAHOO_XFER_RELAY_HOST,
+		                                NULL,
+		                                yahoo_xfer_dns_connected_15,
+		                                xfer);
+
 		return;
 	}
 
