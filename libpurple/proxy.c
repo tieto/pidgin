@@ -1,4 +1,4 @@
-/* purple
+ /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -2170,7 +2170,7 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 	GError *error = NULL;
 	char *ipaddr;
 
-	common_sockaddr_t *addr;
+	common_sockaddr_t addr;
 	socklen_t addrlen = 0;
 
 	address = G_INET_ADDRESS(connect_data->hosts->data);
@@ -2182,7 +2182,7 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 	socket_address = g_inet_socket_address_new(address, connect_data->port);
 	addrlen = g_socket_address_get_native_size(socket_address);
 
-	g_socket_address_to_native(socket_address, addr, addrlen, &error);
+	g_socket_address_to_native(socket_address, &addr, addrlen, &error);
 	if(error != NULL) {
 		purple_debug_info("proxy", "failed connnection : %s\n", error->message);
 
@@ -2192,31 +2192,31 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 	}
 
 	if (connect_data->socket_type == SOCK_DGRAM) {
-		proxy_connect_udp_none(connect_data, addr, addrlen);
+		proxy_connect_udp_none(connect_data, &addr, addrlen);
 
 		return;
 	}
 
 	switch (purple_proxy_info_get_proxy_type(connect_data->gpi)) {
 		case PURPLE_PROXY_NONE:
-			proxy_connect_none(connect_data, addr, addrlen);
+			proxy_connect_none(connect_data, &addr, addrlen);
 			break;
 
 		case PURPLE_PROXY_HTTP:
-			proxy_connect_http(connect_data, addr, addrlen);
+			proxy_connect_http(connect_data, &addr, addrlen);
 			break;
 
 		case PURPLE_PROXY_SOCKS4:
-			proxy_connect_socks4(connect_data, addr, addrlen);
+			proxy_connect_socks4(connect_data, &addr, addrlen);
 			break;
 
 		case PURPLE_PROXY_SOCKS5:
 		case PURPLE_PROXY_TOR:
-			proxy_connect_socks5(connect_data, addr, addrlen);
+			proxy_connect_socks5(connect_data, &addr, addrlen);
 			break;
 
 		case PURPLE_PROXY_USE_ENVVAR:
-			proxy_connect_http(connect_data, addr, addrlen);
+			proxy_connect_http(connect_data, &addr, addrlen);
 			break;
 
 		default:
@@ -2224,7 +2224,6 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 	}
 
 	g_object_unref(G_OBJECT(socket_address));
-	g_free(addr);
 }
 
 static void
