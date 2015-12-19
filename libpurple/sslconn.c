@@ -56,17 +56,6 @@ ssl_init(void)
 	return (_ssl_initialized = ops->init());
 }
 
-gboolean
-purple_ssl_is_supported(void)
-{
-#ifdef HAVE_SSL
-	ssl_init();
-	return (purple_ssl_get_ops() != NULL);
-#else
-	return FALSE;
-#endif
-}
-
 static void
 purple_ssl_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
@@ -110,7 +99,6 @@ purple_ssl_connect_with_ssl_cn(PurpleAccount *account, const char *host, int por
 	g_return_val_if_fail(host != NULL,            NULL);
 	g_return_val_if_fail(port != 0 && port != -1, NULL);
 	g_return_val_if_fail(func != NULL,            NULL);
-	g_return_val_if_fail(purple_ssl_is_supported(), NULL);
 
 	if (!_ssl_initialized)
 	{
@@ -156,7 +144,6 @@ purple_ssl_input_add(PurpleSslConnection *gsc, PurpleSslInputFunction func,
 				   void *data)
 {
 	g_return_if_fail(func != NULL);
-	g_return_if_fail(purple_ssl_is_supported());
 
 	purple_ssl_input_remove(gsc);
 
@@ -203,7 +190,6 @@ purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
 
 	g_return_val_if_fail(fd != -1,                NULL);
 	g_return_val_if_fail(func != NULL,            NULL);
-	g_return_val_if_fail(purple_ssl_is_supported(), NULL);
 
 	if (!_ssl_initialized)
 	{

@@ -370,16 +370,9 @@ static void irc_login(PurpleAccount *account)
 	purple_connection_update_progress(gc, _("Connecting"), 1, 2);
 
 	if (purple_account_get_bool(account, "ssl", FALSE)) {
-		if (purple_ssl_is_supported()) {
-			irc->gsc = purple_ssl_connect(account, irc->server,
-					purple_account_get_int(account, "port", IRC_DEFAULT_SSL_PORT),
-					irc_login_cb_ssl, irc_ssl_connect_failure, gc);
-		} else {
-			purple_connection_error (gc,
-				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("SSL support unavailable"));
-			return;
-		}
+		irc->gsc = purple_ssl_connect(account, irc->server,
+				purple_account_get_int(account, "port", IRC_DEFAULT_SSL_PORT),
+				irc_login_cb_ssl, irc_ssl_connect_failure, gc);
 	}
 
 	if (!irc->gsc) {

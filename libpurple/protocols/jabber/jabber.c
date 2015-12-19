@@ -237,21 +237,16 @@ jabber_process_starttls(JabberStream *js, PurpleXmlNode *packet)
 	 */
 	{
 		const gchar *connection_security = purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS);
-		if (!g_str_equal(connection_security, "none") &&
-				purple_ssl_is_supported()) {
+		if (!g_str_equal(connection_security, "none")) {
 			jabber_send_raw(js,
 					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
 			return TRUE;
 		}
 	}
 #else
-	if(purple_ssl_is_supported()) {
-		jabber_send_raw(js,
-				"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
-		return TRUE;
-	} else {
-		purple_debug_warning("jabber", "No libpurple TLS/SSL support found.");
-	}
+	jabber_send_raw(js,
+			"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
+	return TRUE;
 #endif
 
 	starttls = purple_xmlnode_get_child(packet, "starttls");
@@ -1051,19 +1046,13 @@ jabber_stream_connect(JabberStream *js)
 
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
 	if (g_str_equal("old_ssl", purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
-		if(purple_ssl_is_supported()) {
-			js->gsc = purple_ssl_connect(account, js->certificate_CN,
-					purple_account_get_int(account, "port", 5223),
-					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
-			if (!js->gsc) {
-				purple_connection_error(gc,
-					PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-					_("Unable to establish SSL connection"));
-			}
-		} else {
+		js->gsc = purple_ssl_connect(account, js->certificate_CN,
+				purple_account_get_int(account, "port", 5223),
+				jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
+		if (!js->gsc) {
 			purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-				_("SSL support unavailable"));
+				_("Unable to establish SSL connection"));
 		}
 
 		return;

@@ -28,9 +28,6 @@ purple_ssl_close(gsc)
 Purple::Ssl::Ops
 purple_ssl_get_ops()
 
-gboolean
-purple_ssl_is_supported()
-
 size_t
 purple_ssl_read(gsc, buffer, len)
 	Purple::Ssl::Connection gsc

@@ -259,12 +259,6 @@ purple_socket_connect(PurpleSocket *ps, PurpleSocketConnectCb cb,
 	ps->cb_data = user_data;
 
 	if (ps->is_tls) {
-		if (!purple_ssl_is_supported()) {
-			purple_debug_error("socket", "TLS is not supported");
-			ps->state = PURPLE_SOCKET_STATE_ERROR;
-			return FALSE;
-		}
-
 		ps->tls_connection = purple_ssl_connect(account, ps->host,
 			ps->port, _purple_socket_connected_tls,
 			_purple_socket_connected_tls_error, ps);

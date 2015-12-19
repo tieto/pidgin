@@ -1341,15 +1341,6 @@ msn_login(PurpleAccount *account)
 
 	gc = purple_account_get_connection(account);
 
-	if (!purple_ssl_is_supported())
-	{
-		purple_connection_error(gc,
-			PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
-			_("SSL support is needed for MSN. Please install a supported "
-			  "SSL library."));
-		return;
-	}
-
 	http_method = purple_account_get_bool(account, "http_method", FALSE);
 
 	if (http_method)

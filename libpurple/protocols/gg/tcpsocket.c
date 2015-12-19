@@ -113,8 +113,7 @@ ggp_tcpsocket_write(void *_gc, void *_ps, const unsigned char *data, size_t len)
 void
 ggp_tcpsocket_setup(PurpleConnection *gc, struct gg_login_params *glp)
 {
-	glp->socket_manager_type = purple_ssl_is_supported() ?
-		GG_SOCKET_MANAGER_TYPE_TLS : GG_SOCKET_MANAGER_TYPE_TCP;
+	glp->socket_manager_type = GG_SOCKET_MANAGER_TYPE_TLS;
 	glp->socket_manager.cb_data = gc;
 	glp->socket_manager.connect_cb = ggp_tcpsocket_connect;
 	glp->socket_manager.close_cb = ggp_tcpsocket_close;

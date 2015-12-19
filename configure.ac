@@ -2102,10 +2102,7 @@ if test "x$enable_gnutls" != "xno"; then
 	fi
 
 	if test "x$have_gnutls" = "xyes"; then
-
 		AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GnuTLS])
-		AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
-
 		msg_gnutls="GnuTLS"
 	fi
 fi
@@ -2139,11 +2136,10 @@ if test "x$enable_nss" != "xno"; then
 	fi
 
 	if test "x$have_nss" = "xyes"; then
-
 		AC_DEFINE(HAVE_NSS, 1, [Define if you have Mozilla NSS])
-		AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
-
 		msg_nss="Mozilla NSS"
+	else
+		AC_MSG_ERROR([No SSL/TLS library available])
 	fi
 fi
 

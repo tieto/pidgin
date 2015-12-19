@@ -624,11 +624,7 @@ void pidgin_dialogs_buildinfo(void)
 	g_string_append(str, "<dt>Plugins:</dt><dd>Disabled</dd>");
 #endif
 
-#ifdef HAVE_SSL
 	g_string_append(str, "<dt>SSL:</dt><dd>SSL support is present.</dd>");
-#else
-	g_string_append(str, "<dt>SSL:</dt><dd>SSL support was <strong><em>NOT</em></strong> compiled!</dd>");
-#endif
 
 	g_string_append_printf(str, "<dt>GTK+ Runtime:</dt><dd>%u.%u.%u</dd>"
 		"<dt>GLib Runtime:</dt><dd>%u.%u.%u</dd>",
