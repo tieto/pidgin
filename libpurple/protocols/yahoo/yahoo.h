@@ -22,6 +22,8 @@
 #ifndef _YAHOO_H_
 #define _YAHOO_H_
 
+#include <gmodule.h>
+
 #include "protocol.h"
 
 #define YAHOO_TYPE_PROTOCOL             (yahoo_protocol_get_type())

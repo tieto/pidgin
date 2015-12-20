@@ -1,6 +1,8 @@
 #ifndef _SAMETIME_H_
 #define _SAMETIME_H_
 
+#include <gmodule.h>
+
 #define MW_TYPE_PROTOCOL             (mw_protocol_get_type())
 #define MW_PROTOCOL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), MW_TYPE_PROTOCOL, mwProtocol))
 #define MW_PROTOCOL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), MW_TYPE_PROTOCOL, mwProtocolClass))

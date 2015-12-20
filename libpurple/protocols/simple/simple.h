@@ -24,6 +24,7 @@
 #define _PURPLE_SIMPLE_H
 
 #include <glib.h>
+#include <gmodule.h>
 #include <time.h>
 
 #include "cipher.h"

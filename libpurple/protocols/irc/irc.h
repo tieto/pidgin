@@ -24,6 +24,7 @@
 #define _PURPLE_IRC_H
 
 #include <glib.h>
+#include <gmodule.h>
 
 #ifdef HAVE_CYRUS_SASL
 #include <sasl/sasl.h>

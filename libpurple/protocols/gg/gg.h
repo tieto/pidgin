@@ -26,6 +26,7 @@
 
 #define GGP_UIN_LEN_MAX 10
 
+#include <gmodule.h>
 #include <libgadu.h>
 
 #include "internal.h"

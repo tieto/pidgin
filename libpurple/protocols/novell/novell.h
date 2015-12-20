@@ -22,6 +22,8 @@
 #ifndef _NOVELL_H_
 #define _NOVELL_H_
 
+#include <gmodule.h>
+
 #include "protocol.h"
 
 #define NOVELL_TYPE_PROTOCOL             (novell_protocol_get_type())

@@ -26,6 +26,8 @@
 #ifndef _BONJOUR_H_
 #define _BONJOUR_H_
 
+#include <gmodule.h>
+
 #include "internal.h"
 #include "protocol.h"
 

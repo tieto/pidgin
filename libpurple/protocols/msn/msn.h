@@ -110,6 +110,8 @@ typedef enum
 	MSN_CLIENT_VER_15_0 = 0xB0	/* MSNC11 */
 } MsnClientVerId;
 
+#include <gmodule.h>
+
 #include "internal.h"
 
 #include "session.h"
