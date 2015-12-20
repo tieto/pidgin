@@ -977,38 +977,27 @@ nm_dbus_name_owner_changed_cb(DBusGProxy *proxy, char *service, char *old_owner,
 
 #endif
 
-static GInetAddress *
-purple_network_ip_lookup(const gchar *hostname) {
+static void
+purple_network_ip_lookup_cb(GObject *sender, GAsyncResult *result, gpointer data) {
 	GError *error = NULL;
-	GList *addresses =NULL, *l = NULL;
+	GList *addresses = NULL;
 	GInetAddress *address = NULL;
+	const gchar **ip_address = (const gchar **)data;
 
-	addresses = g_resolver_lookup_by_name(g_resolver_get_default(), hostname, NULL, &error);
-
-	if(addresses == NULL) {
+	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), result, &error);
+	if(error) {
 		purple_debug_info("network", "lookup of IP address failed: %s\n", error->message);
 
 		g_error_free(error);
 
-		return NULL;
+		return;
 	}
 
-	for(l = addresses; l; l = l->next) {
-		address = G_INET_ADDRESS(l->data);
+	address = G_INET_ADDRESS(addresses->data);
 
-		if(!g_inet_address_get_is_loopback(address) && !g_inet_address_get_is_link_local(address)) {
-			break;
-		}
-
-		address = NULL;
-	}
-
-	if(address != NULL)
-		g_object_ref(G_OBJECT(address));
+	*ip_address = g_inet_address_to_string(address);
 
 	g_resolver_free_addresses(addresses);
-
-	return address;
 }
 
 void
@@ -1016,17 +1005,11 @@ purple_network_set_stun_server(const gchar *stun_server)
 {
 	if (stun_server && stun_server[0] != '\0') {
 		if (purple_network_is_available()) {
-			GInetAddress *address = NULL;
-
-			purple_debug_info("network", "running DNS query for STUN server\n");
-
-			address = purple_network_ip_lookup(stun_server);
-
-			if(address != NULL) {
-				stun_ip = g_inet_address_to_string(address);
-
-				g_object_unref(G_OBJECT(address));
-			}
+			g_resolver_lookup_by_name_async(g_resolver_get_default(),
+			                                stun_server,
+			                                NULL,
+			                                purple_network_ip_lookup_cb,
+			                                &stun_ip);
 		} else {
 			purple_debug_info("network",
 				"network is unavailable, don't try to update STUN IP");
@@ -1042,17 +1025,11 @@ purple_network_set_turn_server(const gchar *turn_server)
 {
 	if (turn_server && turn_server[0] != '\0') {
 		if (purple_network_is_available()) {
-			GInetAddress *address = NULL;
-
-			purple_debug_info("network", "running DNS query for TURN server\n");
-
-			address = purple_network_ip_lookup(turn_server);
-
-			if(address != NULL) {
-				turn_ip = g_inet_address_to_string(address);
-
-				g_object_unref(G_OBJECT(address));
-			}
+			g_resolver_lookup_by_name_async(g_resolver_get_default(),
+			                                turn_server,
+			                                NULL,
+			                                purple_network_ip_lookup_cb,
+			                                &turn_server);
 		} else {
 			purple_debug_info("network",
 				"network is unavailable, don't try to update TURN IP");
