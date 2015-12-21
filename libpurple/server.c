@@ -103,7 +103,7 @@ get_last_auto_response(PurpleConnection *gc, const char *name)
 		tmp = tmp->next;
 	}
 
-	lar = (struct last_auto_response *)g_new0(struct last_auto_response, 1);
+	lar = g_new0(struct last_auto_response, 1);
 	g_snprintf(lar->name, sizeof(lar->name), "%s", name);
 	lar->gc = gc;
 	lar->sent = 0;

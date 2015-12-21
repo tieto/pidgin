@@ -254,7 +254,7 @@ int aim_icq_getallinfo(OscarData *od, const char *uin)
 	byte_stream_destroy(&bs);
 
 	/* Keep track of this request and the ICQ number and request ID */
-	info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
+	info = g_new0(struct aim_icq_info, 1);
 	info->reqid = snacid;
 	info->uin = atoi(uin);
 	od->icq_info = g_slist_prepend(od->icq_info, info);
@@ -301,7 +301,7 @@ int aim_icq_getalias(OscarData *od, const char *uin, gboolean for_auth_request, 
 	byte_stream_destroy(&bs);
 
 	/* Keep track of this request and the ICQ number and request ID */
-	info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
+	info = g_new0(struct aim_icq_info, 1);
 	info->reqid = snacid;
 	info->uin = atoi(uin);
 	info->for_auth_request = for_auth_request;
@@ -472,7 +472,7 @@ icqresponse(OscarData *od, aim_modsnac_t *snac, ByteStream *bs)
 		/* find other data from the same request */
 		info_ptr = g_slist_find_custom(od->icq_info, &reqid, compare_icq_infos);
 		if (!info_ptr) {
-			struct aim_icq_info *new_info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
+			struct aim_icq_info *new_info = g_new0(struct aim_icq_info, 1);
 			new_info->reqid = reqid;
 			info_ptr = od->icq_info = g_slist_prepend(od->icq_info, new_info);
 		}
@@ -541,7 +541,7 @@ icqresponse(OscarData *od, aim_modsnac_t *snac, ByteStream *bs)
 		case 0x00eb: { /* email address(es) */
 			int i;
 			info->numaddresses = byte_stream_getle16(&qbs);
-			info->email2 = (char **)g_new0(char *, info->numaddresses);
+			info->email2 = g_new0(char *, info->numaddresses);
 			for (i = 0; i < info->numaddresses; i++) {
 				info->email2[i] = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
 				if (i+1 != info->numaddresses)
