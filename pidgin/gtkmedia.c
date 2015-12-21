@@ -1125,8 +1125,7 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			break;
 		}
 		case PROP_SCREENNAME:
-			if (media->priv->screenname)
-				g_free(media->priv->screenname);
+			g_free(media->priv->screenname);
 			media->priv->screenname = g_value_dup_string(value);
 			break;
 		default:

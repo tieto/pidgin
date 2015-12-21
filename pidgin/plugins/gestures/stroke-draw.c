@@ -321,8 +321,7 @@ gstroke_cleanup (GtkWidget *widget)
 
   metrics = (struct gstroke_metrics*)g_object_get_data(G_OBJECT(widget),
 													   GSTROKE_METRICS);
-  if (metrics)
-    g_free (metrics);
+  g_free(metrics);
   g_object_steal_data(G_OBJECT(widget), GSTROKE_METRICS);
 }
 

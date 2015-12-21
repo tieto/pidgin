@@ -2314,11 +2314,8 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 	{
 		gtk_widget_hide(status_box->vbox);
 		status_box->webview_visible = FALSE;
-		if (message != NULL)
-		{
-			g_free(message);
-			message = NULL;
-		}
+		g_free(message);
+		message = NULL;
 	}
 
 	if (status_box->account == NULL) {

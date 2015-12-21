@@ -776,14 +776,10 @@ int pidgin_start(int argc, char *argv[])
 #ifdef USE_SM
 	pidgin_session_init(argv[0], opt_session_arg, opt_config_dir_arg);
 #endif
-	if (opt_session_arg != NULL) {
-		g_free(opt_session_arg);
-		opt_session_arg = NULL;
-	}
-	if (opt_config_dir_arg != NULL) {
-		g_free(opt_config_dir_arg);
-		opt_config_dir_arg = NULL;
-	}
+	g_free(opt_session_arg);
+	opt_session_arg = NULL;
+	g_free(opt_config_dir_arg);
+	opt_config_dir_arg = NULL;
 
 	/* This needs to be before purple_blist_show() so the
 	 * statusbox gets the forced online status. */
@@ -810,10 +806,8 @@ int pidgin_start(int argc, char *argv[])
 			purple_savedstatus_activate(purple_savedstatus_get_startup());
 		/* now enable the requested ones */
 		dologin_named(opt_login_arg);
-		if (opt_login_arg != NULL) {
-			g_free(opt_login_arg);
-			opt_login_arg = NULL;
-		}
+		g_free(opt_login_arg);
+		opt_login_arg = NULL;
 	} else if (opt_nologin)	{
 		/* Set all accounts to "offline" */
 		PurpleSavedStatus *saved_status;
