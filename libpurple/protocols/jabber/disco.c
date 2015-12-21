@@ -452,8 +452,7 @@ jabber_disco_stun_lookup_cb(GSList *hosts, gpointer data,
 			port = ntohs(addr.in.sin_port);
 		}
 
-		if (js->stun_ip)
-			g_free(js->stun_ip);
+		g_free(js->stun_ip);
 		js->stun_ip = g_strdup(dst);
 		js->stun_port = port;
 

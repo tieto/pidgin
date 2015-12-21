@@ -147,8 +147,7 @@ static void handle_chat(JabberMessage *jm)
 					jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
 			}
 
-			if(jbr->thread_id)
-				g_free(jbr->thread_id);
+			g_free(jbr->thread_id);
 			jbr->thread_id = g_strdup(jbr->thread_id);
 		}
 

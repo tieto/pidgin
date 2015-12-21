@@ -101,10 +101,8 @@ static void jabber_stream_init(JabberStream *js)
 {
 	char *open_stream;
 
-	if (js->stream_id) {
-		g_free(js->stream_id);
-		js->stream_id = NULL;
-	}
+	g_free(js->stream_id);
+	js->stream_id = NULL;
 
 	open_stream = g_strdup_printf("<stream:stream to='%s' "
 				          "xmlns='" NS_XMPP_CLIENT "' "
@@ -2638,10 +2636,8 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 
 	if((jb = jabber_buddy_find(js, who, TRUE)) &&
 			(jbr = jabber_buddy_find_resource(jb, jid->resource))) {
-		if(jbr->thread_id) {
-			g_free(jbr->thread_id);
-			jbr->thread_id = NULL;
-		}
+		g_free(jbr->thread_id);
+		jbr->thread_id = NULL;
 	}
 
 	jabber_id_free(jid);
