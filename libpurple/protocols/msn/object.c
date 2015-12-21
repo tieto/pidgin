@@ -37,8 +37,7 @@
 		c = strchr(tag, '"'); \
 		if (c != NULL) \
 		{ \
-			if (obj->field != NULL) \
-				g_free(obj->field); \
+			g_free(obj->field); \
 			obj->field = g_strndup(tag, c - tag); \
 		} \
 	}

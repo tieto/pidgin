@@ -549,14 +549,10 @@ aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
 		 * We don't have an away message specified in this user_info
 		 * block, so clear any cached away message now.
 		 */
-		if (cur->away) {
-			g_free(cur->away);
-			cur->away = NULL;
-		}
-		if (cur->away_encoding) {
-			g_free(cur->away_encoding);
-			cur->away_encoding = NULL;
-		}
+		g_free(cur->away);
+		cur->away = NULL;
+		g_free(cur->away_encoding);
+		cur->away_encoding = NULL;
 		cur->away_len = 0;
 	}
 }

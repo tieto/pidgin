@@ -312,10 +312,8 @@ int gg_http_watch_fd(struct gg_http *h)
 
 		if (res == -1 && errno != EINTR && errno != EAGAIN) {
 			gg_debug(GG_DEBUG_MISC, "=> http, reading header failed (errno=%d)\n", errno);
-			if (h->header) {
-				free(h->header);
-				h->header = NULL;
-			}
+			free(h->header);
+			h->header = NULL;
 			gg_http_error(GG_ERROR_READING);
 		}
 
@@ -328,10 +326,8 @@ int gg_http_watch_fd(struct gg_http *h)
 
 		if (res == 0) {
 			gg_debug(GG_DEBUG_MISC, "=> http, connection reset by peer\n");
-			if (h->header) {
-				free(h->header);
-				h->header = NULL;
-			}
+			free(h->header);
+			h->header = NULL;
 			gg_http_error(GG_ERROR_READING);
 		}
 
@@ -447,10 +443,8 @@ int gg_http_watch_fd(struct gg_http *h)
 
 		if (res == -1 && errno != EINTR && errno != EAGAIN) {
 			gg_debug(GG_DEBUG_MISC, "=> http, reading body failed (errno=%d)\n", errno);
-			if (h->body) {
-				free(h->body);
-				h->body = NULL;
-			}
+			free(h->body);
+			h->body = NULL;
 			gg_http_error(GG_ERROR_READING);
 		}
 
@@ -472,10 +466,8 @@ int gg_http_watch_fd(struct gg_http *h)
 					"connection closed while reading "
 					"(have %d, need %d)\n",
 					h->body_done, h->body_size);
-				if (h->body) {
-					free(h->body);
-					h->body = NULL;
-				}
+				free(h->body);
+				h->body = NULL;
 				gg_http_error(GG_ERROR_READING);
 			}
 

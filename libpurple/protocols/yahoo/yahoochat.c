@@ -727,8 +727,7 @@ void yahoo_process_chat_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 	c = purple_conversations_find_chat(gc, YAHOO_CHAT_ID);
 	if (!who || !c) {
-		if (room)
-			g_free(room);
+		g_free(room);
 		/* we still get messages after we part, funny that */
 		return;
 	}
@@ -955,10 +954,8 @@ static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char 
 	yahoo_packet_send_and_free(pkt, yd);
 
 	yd->in_chat = 0;
-	if (yd->chat_name) {
-		g_free(yd->chat_name);
-		yd->chat_name = NULL;
-	}
+	g_free(yd->chat_name);
+	yd->chat_name = NULL;
 
 	if (purple_conversations_find_chat(gc, YAHOO_CHAT_ID) != NULL)
 		purple_serv_got_chat_left(gc, YAHOO_CHAT_ID);

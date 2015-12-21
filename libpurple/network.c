@@ -1025,7 +1025,7 @@ purple_network_set_stun_server(const gchar *stun_server)
 			purple_debug_info("network",
 				"network is unavailable, don't try to update STUN IP");
 		}
-	} else if (stun_ip) {
+	} else {
 		g_free(stun_ip);
 		stun_ip = NULL;
 	}
@@ -1044,7 +1044,7 @@ purple_network_set_turn_server(const gchar *turn_server)
 			purple_debug_info("network",
 				"network is unavailable, don't try to update TURN IP");
 		}
-	} else if (turn_ip) {
+	} else {
 		g_free(turn_ip);
 		turn_ip = NULL;
 	}
@@ -1314,8 +1314,7 @@ purple_network_uninit(void)
 	purple_signal_unregister(purple_network_get_handle(),
 							 "network-configuration-changed");
 
-	if (stun_ip)
-		g_free(stun_ip);
+	g_free(stun_ip);
 
 	g_hash_table_destroy(upnp_port_mappings);
 	g_hash_table_destroy(nat_pmp_port_mappings);

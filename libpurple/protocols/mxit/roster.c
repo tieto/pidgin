@@ -481,10 +481,8 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 	// TODO: Download custom mood frame.
 
 	/* update status message */
-	if ( contact->statusMsg ) {
-		g_free( contact->statusMsg );
-		contact->statusMsg = NULL;
-	}
+	g_free(contact->statusMsg);
+	contact->statusMsg = NULL;
 	if ( ( statusMsg ) && ( statusMsg[0] != '\0' ) )
 		contact->statusMsg = g_markup_escape_text( statusMsg, -1 );
 
@@ -532,8 +530,7 @@ void mxit_update_buddy_avatar( struct MXitSession* session, const char* username
 		/*  avatar has not changed - do nothing */
 	}
 	else if ( avatarId[0] != '\0' ) {		/* avatar has changed */
-		if ( contact->avatarId )
-			g_free( contact->avatarId );
+		g_free(contact->avatarId);
 		contact->avatarId = g_strdup( avatarId );
 
 		/* Send request to download new avatar image */
@@ -596,12 +593,9 @@ static void mxit_cb_buddy_auth( const char *message, gpointer user_data )
 	invite->session->invites = g_list_remove( invite->session->invites, invite->contact );
 
 	/* freeup invite object */
-	if ( invite->contact->msg )
-		g_free( invite->contact->msg );
-	if ( invite->contact->statusMsg )
-		g_free( invite->contact->statusMsg );
-	if ( invite->contact->profile )
-		g_free( invite->contact->profile );
+	g_free(invite->contact->msg);
+	g_free(invite->contact->statusMsg);
+	g_free(invite->contact->profile);
 	if (invite->contact->image)
 		g_object_unref(invite->contact->image);
 	g_free( invite->contact );
@@ -627,12 +621,9 @@ static void mxit_cb_buddy_deny( const char *message, gpointer user_data )
 	invite->session->invites = g_list_remove( invite->session->invites, invite->contact );
 
 	/* freeup invite object */
-	if ( invite->contact->msg )
-		g_free( invite->contact->msg );
-	if ( invite->contact->statusMsg )
-		g_free( invite->contact->statusMsg );
-	if ( invite->contact->profile )
-		g_free( invite->contact->profile );
+	g_free(invite->contact->msg);
+	g_free(invite->contact->statusMsg);
+	g_free(invite->contact->profile);
 	if (invite->contact->image)
 		g_object_unref(invite->contact->image);
 	g_free( invite->contact );
