@@ -191,64 +191,50 @@ nm_user_record_copy(NMUserRecord * dest, NMUserRecord * src)
 	dest->status = src->status;
 
 	/* Copy status text */
-	if (dest->status_text) {
-		g_free(dest->status_text);
-		dest->status_text = NULL;
-	}
+	g_free(dest->status_text);
+	dest->status_text = NULL;
 
 	if (src->status_text)
 		dest->status_text = g_strdup(src->status_text);
 
 	/* Copy DN */
-	if (dest->dn) {
-		g_free(dest->dn);
-		dest->dn = NULL;
-	}
+	g_free(dest->dn);
+	dest->dn = NULL;
 
 	if (src->dn)
 		dest->dn = g_strdup(src->dn);
 
 	/* Copy CN */
-	if (dest->cn) {
-		g_free(dest->cn);
-		dest->cn = NULL;
-	}
+	g_free(dest->cn);
+	dest->cn = NULL;
 
 	if (src->cn)
 		dest->cn = g_strdup(src->cn);
 
 	/* Copy display id */
-	if (dest->display_id) {
-		g_free(dest->display_id);
-		dest->display_id = NULL;
-	}
+	g_free(dest->display_id);
+	dest->display_id = NULL;
 
 	if (src->display_id)
 		dest->display_id = g_strdup(src->display_id);
 
 	/* Copy first name */
-	if (dest->fname) {
-		g_free(dest->fname);
-		dest->fname = NULL;
-	}
+	g_free(dest->fname);
+	dest->fname = NULL;
 
 	if (src->fname)
 		dest->fname = g_strdup(src->fname);
 
 	/* Copy last name */
-	if (dest->lname) {
-		g_free(dest->lname);
-		dest->lname = NULL;
-	}
+	g_free(dest->lname);
+	dest->lname = NULL;
 
 	if (src->lname)
 		dest->lname = g_strdup(src->lname);
 
 	/* Copy full name */
-	if (dest->full_name) {
-		g_free(dest->full_name);
-		dest->full_name = NULL;
-	}
+	g_free(dest->full_name);
+	dest->full_name = NULL;
 
 	if (src->full_name)
 		dest->full_name = g_strdup(src->full_name);
@@ -321,8 +307,7 @@ void
 nm_user_record_set_dn(NMUserRecord * user_record, const char *dn)
 {
 	if (user_record != NULL && dn != NULL) {
-		if (user_record->dn)
-			g_free(user_record->dn);
+		g_free(user_record->dn);
 
 		user_record->dn = g_strdup(dn);
 	}
@@ -341,8 +326,7 @@ void
 nm_user_record_set_userid(NMUserRecord * user_record, const char *userid)
 {
 	if (user_record != NULL && userid != NULL) {
-		if (user_record->cn)
-			g_free(user_record->cn);
+		g_free(user_record->cn);
 
 		user_record->cn = g_strdup(userid);
 	}
@@ -361,8 +345,7 @@ void
 nm_user_record_set_display_id(NMUserRecord * user_record, const char *display_id)
 {
 	if (user_record != NULL && display_id != NULL) {
-		if (user_record->display_id)
-			g_free(user_record->display_id);
+		g_free(user_record->display_id);
 
 		user_record->display_id = g_strdup(display_id);
 	}
@@ -445,10 +428,8 @@ nm_user_record_set_status(NMUserRecord * user_record,
 
 	user_record->status = status;
 
-	if (user_record->status_text) {
-		g_free(user_record->status_text);
-		user_record->status_text = NULL;
-	}
+	g_free(user_record->status_text);
+	user_record->status_text = NULL;
 
 	if (text)
 		user_record->status_text = g_strdup(text);
@@ -512,11 +493,9 @@ void
 nm_release_property(NMProperty * property)
 {
 	if (property) {
-		if (property->tag)
-			g_free(property->tag);
+		g_free(property->tag);
 
-		if (property->value)
-			g_free(property->value);
+		g_free(property->value);
 
 		g_free(property);
 	}

@@ -572,8 +572,7 @@ _create_folder_resp_move_contact(NMUser * user, NMERR_T ret_code,
 
 	if (user == NULL || folder_name == NULL || contact == NULL) {
 
-		if (folder_name)
-			g_free(folder_name);
+		g_free(folder_name);
 
 		return;
 	}
@@ -606,8 +605,7 @@ _create_folder_resp_move_contact(NMUser * user, NMERR_T ret_code,
 		g_free(err);
 	}
 
-	if (folder_name)
-		g_free(folder_name);
+	g_free(folder_name);
 }
 
 /* Add contact to newly create folder */
@@ -625,8 +623,7 @@ _create_folder_resp_add_contact(NMUser * user, NMERR_T ret_code,
 		if (contact)
 			nm_release_contact(contact);
 
-		if (folder_name)
-			g_free(folder_name);
+		g_free(folder_name);
 
 		return;
 	}
@@ -724,8 +721,7 @@ _get_details_resp_show_info(NMUser * user, NMERR_T ret_code,
 		g_free(err);
 	}
 
-	if (name)
-		g_free(name);
+	g_free(name);
 }
 
 /* Handle get details response add to privacy list */
@@ -824,8 +820,7 @@ _create_privacy_item_deny_resp_cb(NMUser *user, NMERR_T ret_code,
 
 	}
 
-	if (who)
-		g_free(who);
+	g_free(who);
 
 }
 
@@ -880,8 +875,7 @@ _create_privacy_item_permit_resp_cb(NMUser *user, NMERR_T ret_code,
 
 	}
 
-	if (who)
-		g_free(who);
+	g_free(who);
 }
 
 static void
@@ -949,8 +943,7 @@ _remove_privacy_item_resp_cb(NMUser *user, NMERR_T ret_code,
 		g_free(err);
 	}
 
-	if (who)
-		g_free(who);
+	g_free(who);
 }
 
 static void
@@ -1678,8 +1671,7 @@ _get_conference_name(int id)
 {
 	static char *name = NULL;
 
-	if (name)
-		g_free(name);
+	g_free(name);
 
 	name = g_strdup_printf(_("GroupWise Conference %d"), id);
 
@@ -3095,8 +3087,7 @@ novell_set_status(PurpleAccount *account, PurpleStatus *status)
 	rc = nm_send_set_status(user, novellstatus, text, msg, NULL, NULL);
 	_check_for_disconnect(user, rc);
 
-	if (text)
-		g_free(text);
+	g_free(text);
 }
 
 static void

@@ -164,8 +164,7 @@ nm_contact_update_list_properties(NMContact * contact, NMField * fields)
 		 nm_locate_field(NM_A_SZ_DISPLAY_NAME, (NMField *) fields->ptr_value))) {
 
 		if (field->ptr_value) {
-			if (contact->display_name)
-				g_free(contact->display_name);
+			g_free(contact->display_name);
 
 			contact->display_name = g_strdup((char *) field->ptr_value);
 		}
@@ -175,8 +174,7 @@ nm_contact_update_list_properties(NMContact * contact, NMField * fields)
 	if ((field = nm_locate_field(NM_A_SZ_DN, (NMField *) fields->ptr_value))) {
 
 		if (field->ptr_value) {
-			if (contact->dn)
-				g_free(contact->dn);
+			g_free(contact->dn);
 
 			contact->dn = g_strdup((char *) field->ptr_value);
 		}
@@ -303,10 +301,8 @@ nm_contact_set_display_name(NMContact * contact, const char *display_name)
 	if (contact == NULL)
 		return;
 
-	if (contact->display_name) {
-		g_free(contact->display_name);
-		contact->display_name = NULL;
-	}
+	g_free(contact->display_name);
+	contact->display_name = NULL;
 
 	if (display_name)
 		contact->display_name = g_strdup(display_name);
@@ -318,10 +314,8 @@ nm_contact_set_dn(NMContact * contact, const char *dn)
 	if (contact == NULL)
 		return;
 
-	if (contact->dn) {
-		g_free(contact->dn);
-		contact->dn = NULL;
-	}
+	g_free(contact->dn);
+	contact->dn = NULL;
 
 	if (dn)
 		contact->dn = g_strdup(dn);
@@ -538,8 +532,7 @@ nm_folder_update_list_properties(NMFolder * folder, NMField * fields)
 		 nm_locate_field(NM_A_SZ_DISPLAY_NAME, (NMField *) fields->ptr_value))) {
 
 		if (field->ptr_value) {
-			if (folder->name)
-				g_free(folder->name);
+			g_free(folder->name);
 
 			folder->name = g_strdup((char *) field->ptr_value);
 		}
@@ -640,8 +633,7 @@ nm_folder_set_name(NMFolder * folder, const char *name)
 	if (folder == NULL || name == NULL)
 		return;
 
-	if (folder->name)
-		g_free(folder->name);
+	g_free(folder->name);
 
 	folder->name = g_strdup(name);
 }
