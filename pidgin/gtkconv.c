@@ -5198,12 +5198,8 @@ pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int 
 static gboolean
 pidgin_conv_end_quickfind(PidginConversation *gtkconv)
 {
-#if GTK_CHECK_VERSION(3,0,0)
 	GtkStyleContext *context = gtk_widget_get_style_context(gtkconv->quickfind_entry);
 	gtk_style_context_remove_class(context, "not-found");
-#else
-	gtk_widget_modify_base(gtkconv->quickfind_entry, GTK_STATE_NORMAL, NULL);
-#endif
 
 	webkit_web_view_unmark_text_matches(WEBKIT_WEB_VIEW(gtkconv->webview));
 	gtk_widget_hide(gtkconv->quickfind_container);
@@ -5219,23 +5215,11 @@ quickfind_process_input(GtkWidget *entry, GdkEventKey *event, PidginConversation
 		case GDK_KEY_Return:
 		case GDK_KEY_KP_Enter:
 			if (webkit_web_view_search_text(WEBKIT_WEB_VIEW(gtkconv->webview), gtk_entry_get_text(GTK_ENTRY(entry)), FALSE, TRUE, TRUE)) {
-#if GTK_CHECK_VERSION(3,0,0)
 				GtkStyleContext *context = gtk_widget_get_style_context(gtkconv->quickfind_entry);
 				gtk_style_context_remove_class(context, "not-found");
-#else
-				gtk_widget_modify_base(gtkconv->quickfind_entry, GTK_STATE_NORMAL, NULL);
-#endif
 			} else {
-#if GTK_CHECK_VERSION(3,0,0)
 				GtkStyleContext *context = gtk_widget_get_style_context(gtkconv->quickfind_entry);
 				gtk_style_context_add_class(context, "not-found");
-#else
-				GdkColor col;
-				col.red = 0xffff;
-				col.green = 0xafff;
-				col.blue = 0xafff;
-				gtk_widget_modify_base(gtkconv->quickfind_entry, GTK_STATE_NORMAL, &col);
-#endif
 			}
 			break;
 		case GDK_KEY_Escape:
@@ -5252,7 +5236,6 @@ pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 {
 	GtkWidget *widget = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	GtkWidget *label, *entry, *close;
-#if GTK_CHECK_VERSION(3,0,0)
 	GtkStyleContext *context;
 	GtkCssProvider *filter_css;
 	const gchar filter_style[] =
@@ -5262,7 +5245,6 @@ pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 			"background-image: none;"
 			"background-color: @error_bg_color;"
 		"}";
-#endif
 
 	gtk_box_pack_start(GTK_BOX(container), widget, FALSE, FALSE, 0);
 
@@ -5275,14 +5257,12 @@ pidgin_conv_setup_quickfind(PidginConversation *gtkconv, GtkWidget *container)
 
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(widget), entry, TRUE, TRUE, 0);
-#if GTK_CHECK_VERSION(3,0,0)
 	filter_css = gtk_css_provider_new();
 	gtk_css_provider_load_from_data(filter_css, filter_style, -1, NULL);
 	context = gtk_widget_get_style_context(entry);
 	gtk_style_context_add_provider(context,
 	                               GTK_STYLE_PROVIDER(filter_css),
 	                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-#endif
 
 	gtkconv->quickfind_entry = entry;
 	gtkconv->quickfind_container = widget;
@@ -8918,43 +8898,6 @@ pidgin_conversations_init(void)
 	default_conv_theme = purple_theme_manager_load_theme(theme_dir, "conversation");
 	g_free(theme_dir);
 
-#if !GTK_CHECK_VERSION(3,0,0)
-	{
-		/* Set default tab colors */
-		GString *str = g_string_new(NULL);
-		GtkSettings *settings = gtk_settings_get_default();
-		GtkStyle *parent = gtk_rc_get_style_by_paths(settings, "tab-container.tab-label*", NULL, G_TYPE_NONE), *now;
-		struct {
-			const char *stylename;
-			const char *labelname;
-			const char *color;
-		} styles[] = {
-			{"pidgin_tab_label_typing_default", "tab-label-typing", "#4e9a06"},
-			{"pidgin_tab_label_typed_default", "tab-label-typed", "#c4a000"},
-			{"pidgin_tab_label_attention_default", "tab-label-attention", "#006aff"},
-			{"pidgin_tab_label_unreadchat_default", "tab-label-unreadchat", "#cc0000"},
-			{"pidgin_tab_label_event_default", "tab-label-event", "#888a85"},
-			{NULL, NULL, NULL}
-		};
-		int iter;
-		for (iter = 0; styles[iter].stylename; iter++) {
-			now = gtk_rc_get_style_by_paths(settings, styles[iter].labelname, NULL, G_TYPE_NONE);
-			if (parent == now ||
-					(parent && now && parent->rc_style == now->rc_style)) {
-				g_string_append_printf(str, "style \"%s\" {\n"
-						"fg[ACTIVE] = \"%s\"\n"
-						"}\n"
-						"widget \"*%s\" style \"%s\"\n",
-						styles[iter].stylename,
-						styles[iter].color,
-						styles[iter].labelname, styles[iter].stylename);
-			}
-		}
-		gtk_rc_parse_string(str->str);
-		g_string_free(str, TRUE);
-		gtk_rc_reset_styles(settings);
-	}
-#endif
 }
 
 static void
@@ -9242,9 +9185,7 @@ static void
 notebook_init_grab(PidginConvWindow *gtkwin, GtkWidget *widget, GdkEvent *event)
 {
 	static GdkCursor *cursor = NULL;
-#if GTK_CHECK_VERSION(3,0,0)
 	GdkDevice *device;
-#endif
 
 	gtkwin->in_drag = TRUE;
 
@@ -9259,23 +9200,12 @@ notebook_init_grab(PidginConvWindow *gtkwin, GtkWidget *widget, GdkEvent *event)
 
 	/* Grab the pointer */
 	gtk_grab_add(gtkwin->notebook);
-#if GTK_CHECK_VERSION(3,0,0)
 	device = gdk_event_get_device(event);
 	if (!gdk_display_device_is_grabbed(gdk_device_get_display(device), device))
 		gdk_device_grab(device, gtk_widget_get_window(gtkwin->notebook),
 		                GDK_OWNERSHIP_WINDOW, FALSE,
 		                GDK_BUTTON1_MOTION_MASK | GDK_BUTTON_RELEASE_MASK,
 		                cursor, gdk_event_get_time(event));
-#else
-#ifndef _WIN32
-	/* Currently for win32 GTK+ (as of 2.2.1), gdk_pointer_is_grabbed will
-	   always be true after a button press. */
-	if (!gdk_pointer_is_grabbed())
-#endif
-		gdk_pointer_grab(gtk_widget_get_window(gtkwin->notebook), FALSE,
-		                 GDK_BUTTON1_MOTION_MASK | GDK_BUTTON_RELEASE_MASK,
-		                 NULL, cursor, gdk_event_get_time(event));
-#endif
 }
 
 static gboolean
@@ -9541,9 +9471,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginConvWindow *win)
 	gint dest_page_num = 0;
 	gboolean new_window = FALSE;
 	gboolean to_right = FALSE;
-#if GTK_CHECK_VERSION(3,0,0)
 	GdkDevice *device;
-#endif
 
 	/*
 	* Don't check to make sure that the event's window matches the
@@ -9553,18 +9481,11 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginConvWindow *win)
 	if (e->button != 1 && e->type != GDK_BUTTON_RELEASE)
 		return FALSE;
 
-#if GTK_CHECK_VERSION(3,0,0)
 	device = gdk_event_get_device((GdkEvent *)e);
 	if (gdk_display_device_is_grabbed(gdk_device_get_display(device), device)) {
 		gdk_device_ungrab(device, gdk_event_get_time((GdkEvent *)e));
 		gtk_grab_remove(widget);
 	}
-#else
-	if (gdk_pointer_is_grabbed()) {
-		gdk_pointer_ungrab(gdk_event_get_time((GdkEvent *)e));
-		gtk_grab_remove(widget);
-	}
-#endif
 
 	if (!win->in_predrag && !win->in_drag)
 		return FALSE;
@@ -10367,7 +10288,6 @@ gtkconv_tab_set_tip(GtkWidget *widget, GdkEventCrossing *event, PidginConversati
 	return FALSE;
 }
 
-#if GTK_CHECK_VERSION(3,0,0)
 static void
 set_default_tab_colors(GtkWidget *widget)
 {
@@ -10411,7 +10331,6 @@ set_default_tab_colors(GtkWidget *widget)
 		g_error_free(error);
 	g_string_free(str, TRUE);
 }
-#endif
 
 void
 pidgin_conv_window_add_gtkconv(PidginConvWindow *win, PidginConversation *gtkconv)
@@ -10448,9 +10367,7 @@ pidgin_conv_window_add_gtkconv(PidginConvWindow *win, PidginConversation *gtkcon
 
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(tmp_lab = purple_conversation_get_title(conv));
-#if GTK_CHECK_VERSION(3,0,0)
 	set_default_tab_colors(gtkconv->tab_label);
-#endif
 	gtk_widget_set_name(gtkconv->tab_label, "tab-label");
 
 	gtkconv->menu_tabby = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
@@ -10671,12 +10588,8 @@ pidgin_conv_window_get_at_event(GdkEvent *event)
 	GList *l;
 	int x, y;
 
-#if GTK_CHECK_VERSION(3,0,0)
 	gdkwin = gdk_device_get_window_at_position(gdk_event_get_device(event),
 	                                           &x, &y);
-#else
-	gdkwin = gdk_window_at_pointer(&x, &y);
-#endif
 
 	if (gdkwin)
 		gdkwin = gdk_window_get_toplevel(gdkwin);

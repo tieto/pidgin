@@ -37,9 +37,6 @@
 #ifdef ENABLE_GCR
 #define GCR_API_SUBJECT_TO_CHANGE
 #include <gcr/gcr.h>
-#if !GTK_CHECK_VERSION(3,0,0)
-#include <gcr/gcr-simple-certificate.h>
-#endif
 #endif
 
 #include "gtk3compat.h"

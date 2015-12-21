@@ -339,47 +339,26 @@ edit_dialog_show(SmileyManager *manager, PurpleSmiley *smiley)
 		g_object_ref(smiley);
 	}
 
-#if !GTK_CHECK_VERSION(3,0,0)
-	gtk_container_set_border_width(
-		GTK_CONTAINER(edit_dialog->window), PIDGIN_HIG_BORDER);
-#endif
 
 	/* The vbox */
-#if GTK_CHECK_VERSION(3,0,0)
 	vbox = gtk_grid_new();
 	gtk_grid_set_row_spacing(GTK_GRID(vbox), PIDGIN_HIG_BORDER);
-#else
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-#endif
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(
 		edit_dialog->window)), vbox);
 	gtk_widget_show(vbox);
 
 	/* The hbox */
-#if GTK_CHECK_VERSION(3,0,0)
 	hbox = gtk_grid_new();
 	gtk_grid_set_column_spacing(GTK_GRID(hbox), PIDGIN_HIG_BORDER);
 	gtk_grid_attach(GTK_GRID(vbox), hbox, 0, 0, 1, 1);
-#else
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_VBOX(vbox)), hbox);
-#endif
 
 	label = GTK_LABEL(gtk_label_new_with_mnemonic(_("_Image:")));
-#if GTK_CHECK_VERSION(3,0,0)
 	gtk_grid_attach(GTK_GRID(hbox), GTK_WIDGET(label), 0, 0, 1, 1);
-#else
-	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
-#endif
 	gtk_widget_show(GTK_WIDGET(label));
 
 	filech = GTK_BUTTON(gtk_button_new());
-#if GTK_CHECK_VERSION(3,0,0)
 	gtk_grid_attach_next_to(GTK_GRID(hbox), GTK_WIDGET(filech), NULL,
 		GTK_POS_RIGHT, 1, 1);
-#else
-	gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(filech), FALSE, FALSE, 0);
-#endif
 	pidgin_set_accessible_label(GTK_WIDGET(filech), label);
 
 	edit_dialog->thumbnail = GTK_IMAGE(gtk_image_new());
@@ -389,37 +368,23 @@ edit_dialog_show(SmileyManager *manager, PurpleSmiley *smiley)
 	gtk_widget_show_all(hbox);
 
 	/* info */
-#if GTK_CHECK_VERSION(3,0,0)
 	hbox = gtk_grid_new();
 	gtk_grid_set_column_spacing(GTK_GRID(hbox), PIDGIN_HIG_BORDER);
 
 	gtk_grid_attach_next_to(GTK_GRID(vbox), hbox, NULL,
 		GTK_POS_BOTTOM, 1, 1);
-#else
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_VBOX(vbox)), hbox);
-#endif
 
 	/* Shortcut text */
 	label = GTK_LABEL(gtk_label_new_with_mnemonic(_("S_hortcut text:")));
-#if GTK_CHECK_VERSION(3,0,0)
 	gtk_grid_attach(GTK_GRID(hbox), GTK_WIDGET(label), 0, 0, 1, 1);
-#else
-	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
-#endif
 	gtk_widget_show(GTK_WIDGET(label));
 
 	edit_dialog->shortcut = GTK_ENTRY(gtk_entry_new());
 	gtk_entry_set_activates_default(edit_dialog->shortcut, TRUE);
 	pidgin_set_accessible_label(GTK_WIDGET(edit_dialog->shortcut), label);
 
-#if GTK_CHECK_VERSION(3,0,0)
 	gtk_grid_attach_next_to(GTK_GRID(hbox),
 		GTK_WIDGET(edit_dialog->shortcut), NULL, GTK_POS_RIGHT, 1, 1);
-#else
-	gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(edit_dialog->shortcut),
-		FALSE, FALSE, 0);
-#endif
 
 	gtk_widget_show(GTK_WIDGET(edit_dialog->shortcut));
 	gtk_widget_show(hbox);
@@ -810,9 +775,6 @@ pidgin_smiley_manager_show(void)
 
 	gtk_window_set_default_size(GTK_WINDOW(win), 50, 400);
 	gtk_window_set_role(GTK_WINDOW(win), "custom_smiley_manager");
-#if !GTK_CHECK_VERSION(3,0,0)
-	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
-#endif
 	gtk_dialog_set_response_sensitive(win, GTK_RESPONSE_NO, FALSE);
 	gtk_dialog_set_response_sensitive(win, PIDGIN_RESPONSE_MODIFY, FALSE);
 

@@ -148,18 +148,13 @@ pause_cb(GtkWidget *w, DebugWindow *win)
  *****************************************************************************/
 static void
 regex_clear_color(GtkWidget *w) {
-#if GTK_CHECK_VERSION(3,0,0)
 	GtkStyleContext *context = gtk_widget_get_style_context(w);
 	gtk_style_context_remove_class(context, "good-filter");
 	gtk_style_context_remove_class(context, "bad-filter");
-#else
-	gtk_widget_modify_base(w, GTK_STATE_NORMAL, NULL);
-#endif
 }
 
 static void
 regex_change_color(GtkWidget *w, gboolean success) {
-#if GTK_CHECK_VERSION(3,0,0)
 	GtkStyleContext *context = gtk_widget_get_style_context(w);
 
 	if (success) {
@@ -169,21 +164,6 @@ regex_change_color(GtkWidget *w, gboolean success) {
 		gtk_style_context_add_class(context, "bad-filter");
 		gtk_style_context_remove_class(context, "good-filter");
 	}
-#else
-	GdkColor color;
-
-	if (success) {
-		color.red = 0xAFFF;
-		color.green = 0xFFFF;
-		color.blue = 0xAFFF;
-	} else {
-		color.red = 0xFFFF;
-		color.green = 0xAFFF;
-		color.blue = 0xAFFF;
-	}
-
-	gtk_widget_modify_base(w, GTK_STATE_NORMAL, &color);
-#endif
 }
 
 static void
@@ -438,7 +418,6 @@ debug_window_new(void)
 	gint width, height;
 	void *handle;
 	GtkToolItem *item;
-#if GTK_CHECK_VERSION(3,0,0)
 	GtkStyleContext *context;
 	GtkCssProvider *filter_css;
 	const gchar filter_style[] =
@@ -454,7 +433,6 @@ debug_window_new(void)
 			"background-image: none;"
 			"background-color: @success_color;"
 		"}";
-#endif
 
 	win = g_new0(DebugWindow, 1);
 
@@ -548,14 +526,12 @@ debug_window_new(void)
 		gtk_container_add(GTK_CONTAINER(item), GTK_WIDGET(win->expression));
 		gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(item));
 
-#if GTK_CHECK_VERSION(3,0,0)
 		filter_css = gtk_css_provider_new();
 		gtk_css_provider_load_from_data(filter_css, filter_style, -1, NULL);
 		context = gtk_widget_get_style_context(win->expression);
 		gtk_style_context_add_provider(context,
 		                               GTK_STYLE_PROVIDER(filter_css),
 		                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-#endif
 
 		/* this needs to be before the text is set from the pref if we want it
 		 * to colorize a stored expression.

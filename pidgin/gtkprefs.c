@@ -1983,7 +1983,6 @@ conv_page(void)
 static void
 network_ip_changed(GtkEntry *entry, gpointer data)
 {
-#if GTK_CHECK_VERSION(3,0,0)
 	const gchar *text = gtk_entry_get_text(entry);
 	GtkStyleContext *context = gtk_widget_get_style_context(GTK_WIDGET(entry));
 
@@ -2002,30 +2001,6 @@ network_ip_changed(GtkEntry *entry, gpointer data)
 		gtk_style_context_remove_class(context, "bad-ip");
 		gtk_style_context_remove_class(context, "good-ip");
 	}
-#else
-	const gchar *text = gtk_entry_get_text(entry);
-	GdkColor color;
-
-	if (text && *text) {
-		if (purple_ip_address_is_valid(text)) {
-			color.red = 0xAFFF;
-			color.green = 0xFFFF;
-			color.blue = 0xAFFF;
-
-			purple_network_set_public_ip(text);
-		} else {
-			color.red = 0xFFFF;
-			color.green = 0xAFFF;
-			color.blue = 0xAFFF;
-		}
-
-		gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, &color);
-
-	} else {
-		purple_network_set_public_ip("");
-		gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, NULL);
-	}
-#endif
 }
 
 static gboolean
@@ -2148,7 +2123,6 @@ network_page(void)
 	GtkWidget *vbox, *hbox, *entry;
 	GtkWidget *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
 	GtkSizeGroup *sg;
-#if GTK_CHECK_VERSION(3,0,0)
 	GtkStyleContext *context;
 	GtkCssProvider *ip_css;
 	const gchar ip_style[] =
@@ -2164,7 +2138,6 @@ network_page(void)
 			"background-image: none;"
 			"background-color: @success_color;"
 		"}";
-#endif
 
 	ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
@@ -2206,14 +2179,12 @@ network_page(void)
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(network_ip_changed), NULL);
 
-#if GTK_CHECK_VERSION(3,0,0)
 	ip_css = gtk_css_provider_new();
 	gtk_css_provider_load_from_data(ip_css, ip_style, -1, NULL);
 	context = gtk_widget_get_style_context(entry);
 	gtk_style_context_add_provider(context,
 	                               GTK_STYLE_PROVIDER(ip_css),
 	                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-#endif
 
 	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Public _IP:"),
 			sg, entry, TRUE, NULL);
@@ -3904,19 +3875,11 @@ make_video_test(GtkWidget *vbox)
 {
 	GtkWidget *test;
 	GtkWidget *video;
-#if GTK_CHECK_VERSION(3,0,0)
 	GdkRGBA color = {0.0, 0.0, 0.0, 1.0};
-#else
-	GdkColor color = {0, 0, 0, 0};
-#endif
 
 	video_drawing_area = video = gtk_drawing_area_new();
 	gtk_box_pack_start(GTK_BOX(vbox), video, TRUE, TRUE, 0);
-#if GTK_CHECK_VERSION(3,0,0)
 	gtk_widget_override_background_color(video, GTK_STATE_FLAG_NORMAL, &color);
-#else
-	gtk_widget_modify_bg(video, GTK_STATE_NORMAL, &color);
-#endif
 	gtk_widget_set_size_request(GTK_WIDGET(video), 240, 180);
 
 	test = gtk_toggle_button_new_with_label(_("Test Video"));
@@ -4101,11 +4064,7 @@ pidgin_prefs_show(void)
 	/* Back to instant-apply! I win!  BU-HAHAHA! */
 
 	/* Create the window */
-#if GTK_CHECK_VERSION(3,0,0)
 	prefs = pidgin_create_dialog(_("Preferences"), 0, "preferences", FALSE);
-#else
-	prefs = pidgin_create_dialog(_("Preferences"), PIDGIN_HIG_BORDER, "preferences", FALSE);
-#endif
 	g_signal_connect(G_OBJECT(prefs), "destroy",
 					 G_CALLBACK(delete_prefs), NULL);
 

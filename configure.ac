@@ -517,9 +517,6 @@ AC_ARG_WITH(x, [],
 AC_ARG_ENABLE(gtkui, [AS_HELP_STRING([--disable-gtkui],
 		[compile without GTK+ user interface])],
 	enable_gtkui="$enableval", enable_gtkui="yes")
-AC_ARG_WITH(gtk, [AS_HELP_STRING([--with-gtk=<version>],
-		[compile with GTK+ 2 or 3 user interface (default: auto)])],
-	with_gtk="$withval", with_gtk="auto")
 AC_ARG_ENABLE(consoleui, [AS_HELP_STRING([--disable-consoleui],
 		[compile without console user interface])],
 	[enable_consoleui=$enableval force_finch=$enableval], [enable_consoleui=yes force_finch=no])
@@ -575,44 +572,22 @@ else
     x_incpath_add="-I$x_includes"
 fi
 
+dnl #######################################################################
+dnl Check Pidgin dependencies
+dnl #######################################################################
 if test "x$enable_gtkui" = "xyes" ; then
-	if test "x$with_gtk" = "x3"; then
-		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], , [
-			AC_MSG_RESULT(no)
-			AC_MSG_ERROR([
+	PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], , [
+		AC_MSG_RESULT(no)
+		AC_MSG_ERROR([
 You must have GTK+ 3.0.0 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
-	elif test "x$with_gtk" = "x2"; then
-		PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0], , [
-			AC_MSG_RESULT(no)
-			AC_MSG_ERROR([
-You must have GTK+ 2.18.0 or newer development headers installed to compile
-Pidgin.  If you want to build only Finch then specify --disable-gtkui when
-running configure.
-])])
-	elif test "x$with_gtk" = "xauto"; then
-		dnl Leaved this here to simplify changeset. Remove when removing gtk2 support
-		gst10_pkg="gstreamer-1.0"
-		gst010_pkg="gstreamer-0.10"
-		PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0 $gst10_pkg], [with_gtk=3], [
-			AC_MSG_RESULT(no)
-			PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0 $gst10_pkg], [with_gtk=2], [
-				AC_MSG_RESULT(no)
-				AC_MSG_ERROR([
-You must have GTK+ 2.18.0 or newer and GStreamer development headers installed to compile
-Pidgin.  If you want to build only Finch then specify --disable-gtkui when
-running configure.  Use --disable-gstreamer if you do not need GStreamer (sound) support.
-])])])
-	else
-		AC_MSG_ERROR([--with-gtk must specify one of 2, 3 or auto.])
-	fi
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
 
-	GTK_PC_MODULE="gtk+-${with_gtk}.0"
-	GTK_VERSION=${with_gtk}
+	GTK_PC_MODULE="gtk+-3.0"
+	GTK_VERSION="3"
 	AC_SUBST(GTK_PC_MODULE)
 	AC_SUBST(GTK_VERSION)
 
@@ -621,25 +596,14 @@ running configure.  Use --disable-gstreamer if you do not need GStreamer (sound)
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
 	WEBKIT_VERSION=1.3.7
-	if test "x$with_gtk" = "x3"; then
-		WEBKIT_PC_MODULE="webkitgtk-3.0"
-		PKG_CHECK_MODULES(WEBKIT, [$WEBKIT_PC_MODULE >= $WEBKIT_VERSION], , [
-			AC_MSG_RESULT(no)
-			AC_MSG_ERROR([
+	WEBKIT_PC_MODULE="webkitgtk-3.0"
+	PKG_CHECK_MODULES(WEBKIT, [$WEBKIT_PC_MODULE >= $WEBKIT_VERSION], , [
+		AC_MSG_RESULT(no)
+		AC_MSG_ERROR([
 You must have WebKit for GTK+3 $WEBKIT_VERSION or newer development headers
 installed to compile Pidgin.  If you want to build only Finch then specify
 --disable-gtkui when running configure.
 ])])
-	else
-		WEBKIT_PC_MODULE="webkit-1.0"
-		PKG_CHECK_MODULES(WEBKIT, [$WEBKIT_PC_MODULE >= $WEBKIT_VERSION], , [
-			AC_MSG_RESULT(no)
-			AC_MSG_ERROR([
-You must have WebKit for GTK+2 $WEBKIT_VERSION or newer development headers
-installed to compile Pidgin.  If you want to build only Finch then specify
---disable-gtkui when running configure.
-])])
-	fi
 	AC_SUBST(WEBKIT_CFLAGS)
 	AC_SUBST(WEBKIT_LIBS)
 	AC_SUBST(WEBKIT_PC_MODULE)
@@ -818,29 +782,16 @@ Use --disable-cap if you do not need the Contact Availability Prediction plugin.
 	dnl # Check for GCR for its certificate widgets
 	dnl #######################################################################
 	if test "x$enable_gcr" = "xyes"; then
-		if test "x$with_gtk" = "x3"; then
-			PKG_CHECK_MODULES(GCR, gcr-3, [
-				AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
-				AC_MSG_RESULT(no)
-				enable_gcr="no"
-				if test "x$force_deps" = "xyes" ; then
-					AC_MSG_ERROR([
+		PKG_CHECK_MODULES(GCR, gcr-3, [
+			AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
+			AC_MSG_RESULT(no)
+			enable_gcr="no"
+			if test "x$force_deps" = "xyes" ; then
+				AC_MSG_ERROR([
 GCR for GTK+3 development headers not found.
 Use --disable-gcr if you do not need GCR certificate widgets.
 ])
-				fi])
-		else
-			PKG_CHECK_MODULES(GCR, gcr-0, [
-				AC_DEFINE(ENABLE_GCR, 1, [Define to 1 if GCR is found.])], [
-				AC_MSG_RESULT(no)
-				enable_gcr="no"
-				if test "x$force_deps" = "xyes" ; then
-					AC_MSG_ERROR([
-GCR for GTK+2 development headers not found.
-Use --disable-gcr if you do not need GCR certificate widgets.
-])
-				fi])
-		fi
+			fi])
 	fi
 
 
@@ -1795,7 +1746,7 @@ dnl #######################################################################
 if test "x$enable_plugins" = "xyes" ; then
 	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.17 gmodule-2.0], [
 		dnl # GPLUGIN_REQ sets pkg-config requirements in the .pc file
-		if test "x$with_gtk" != "xno" ; then
+		if test "x$enable_gtkui" != "xno" ; then
 			GPLUGIN_REQ=[", gplugin, gplugin-gtk"]
 		else
 			GPLUGIN_REQ=[", gplugin"]
@@ -2370,9 +2321,6 @@ echo $PACKAGE $VERSION
 
 echo
 echo Build GTK+ UI................. : $enable_gtkui
-if test "x$enable_gtkui" = "xyes"; then
-	echo Build for GTK+ version........ : $with_gtk
-fi
 echo Build console UI.............. : $enable_consoleui
 echo Build for X11................. : $with_x
 echo
