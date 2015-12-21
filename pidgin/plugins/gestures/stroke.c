@@ -197,7 +197,7 @@ _gstroke_record (gint x, gint y, struct gstroke_metrics *metrics)
 #endif
 
   if (metrics->point_count < GSTROKE_MAX_POINTS) {
-    new_point_p = (p_point) g_malloc (sizeof (struct s_point));
+    new_point_p = g_malloc(sizeof (struct s_point));
 
     if (metrics->pointList == NULL) {
 
@@ -239,7 +239,7 @@ _gstroke_record (gint x, gint y, struct gstroke_metrics *metrics)
 	  if (((gint) iy) > metrics->max_y) metrics->max_y = (gint) iy;
 	  metrics->point_count++;
 
-	  new_point_p = (p_point) malloc (sizeof(struct s_point));
+	  new_point_p = malloc(sizeof(struct s_point));
 	}
       } else {  /* same thing, but for dely larger than delx case... */
 	ix = LAST_POINT->x;
@@ -263,7 +263,7 @@ _gstroke_record (gint x, gint y, struct gstroke_metrics *metrics)
 	  if (((gint) iy) > metrics->max_y) metrics->max_y = (gint) iy;
 	  metrics->point_count++;
 
-	  new_point_p = (p_point) malloc (sizeof(struct s_point));
+	  new_point_p = malloc(sizeof(struct s_point));
 	}
       }
 
