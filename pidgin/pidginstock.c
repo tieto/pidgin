@@ -388,13 +388,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, PidginIconTheme *theme,
 static void
 reload_settings(void)
 {
-#if GTK_CHECK_VERSION(3,0,0)
 	gtk_style_context_reset_widgets(gdk_screen_get_default());
-#else
-	GtkSettings *setting = NULL;
-	setting = gtk_settings_get_default();
-	gtk_rc_reset_styles(setting);
-#endif
 }
 
 /*****************************************************************************
@@ -522,13 +516,8 @@ pidgin_stock_load_stock_icon_theme(PidginStockIconTheme *theme)
 
 		if (stock_icons[i].dir == NULL) {
 			/* GTK+ Stock icon */
-#if GTK_CHECK_VERSION(3,0,0)
 			iconset = gtk_style_context_lookup_icon_set(gtk_widget_get_style_context(win),
 			                                            stock_icons[i].filename);
-#else
-			iconset = gtk_style_lookup_icon_set(gtk_widget_get_style(win),
-			                                    stock_icons[i].filename);
-#endif
 		} else {
 			filename = find_file(stock_icons[i].dir, stock_icons[i].filename);
 

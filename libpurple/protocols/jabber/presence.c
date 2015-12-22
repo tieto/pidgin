@@ -245,10 +245,8 @@ void jabber_presence_send(JabberStream *js, gboolean force)
 
 		/* update old values */
 
-		if(js->old_msg)
-			g_free(js->old_msg);
-		if(js->old_avatarhash)
-			g_free(js->old_avatarhash);
+		g_free(js->old_msg);
+		g_free(js->old_avatarhash);
 		js->old_msg = g_strdup(stripped);
 		js->old_avatarhash = g_strdup(js->avatar_hash);
 		js->old_state = state;
@@ -440,7 +438,7 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 			if (tmp && strstr(bare_jid, tmp) == NULL) {
 				g_free(nickname);
 				nickname = tmp;
-			} else if (tmp)
+			} else
 				g_free(tmp);
 
 			g_free(bare_jid);
@@ -945,10 +943,8 @@ void jabber_presence_parse(JabberStream *js, PurpleXmlNode *packet)
 	if (presence.jid_from->node)
 		presence.chat = jabber_chat_find(js, presence.jid_from->node,
 		                                 presence.jid_from->domain);
-	if(presence.jb->error_msg) {
-		g_free(presence.jb->error_msg);
-		presence.jb->error_msg = NULL;
-	}
+	g_free(presence.jb->error_msg);
+	presence.jb->error_msg = NULL;
 
 	if (presence.type == JABBER_PRESENCE_AVAILABLE) {
 		presence.state = JABBER_BUDDY_STATE_ONLINE;

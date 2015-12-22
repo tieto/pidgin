@@ -56,12 +56,7 @@
 #include "pidginstock.h"
 #ifdef USE_VV
 #include "media-gst.h"
-#if GST_CHECK_VERSION(1,0,0)
 #include <gst/video/videooverlay.h>
-#else
-#include <gst/interfaces/xoverlay.h>
-#include <gst/interfaces/propertyprobe.h>
-#endif
 #ifdef GDK_WINDOWING_WIN32
 #include <gdk/gdkwin32.h>
 #endif
@@ -1988,7 +1983,6 @@ conv_page(void)
 static void
 network_ip_changed(GtkEntry *entry, gpointer data)
 {
-#if GTK_CHECK_VERSION(3,0,0)
 	const gchar *text = gtk_entry_get_text(entry);
 	GtkStyleContext *context = gtk_widget_get_style_context(GTK_WIDGET(entry));
 
@@ -2007,30 +2001,6 @@ network_ip_changed(GtkEntry *entry, gpointer data)
 		gtk_style_context_remove_class(context, "bad-ip");
 		gtk_style_context_remove_class(context, "good-ip");
 	}
-#else
-	const gchar *text = gtk_entry_get_text(entry);
-	GdkColor color;
-
-	if (text && *text) {
-		if (purple_ip_address_is_valid(text)) {
-			color.red = 0xAFFF;
-			color.green = 0xFFFF;
-			color.blue = 0xAFFF;
-
-			purple_network_set_public_ip(text);
-		} else {
-			color.red = 0xFFFF;
-			color.green = 0xAFFF;
-			color.blue = 0xAFFF;
-		}
-
-		gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, &color);
-
-	} else {
-		purple_network_set_public_ip("");
-		gtk_widget_modify_base(GTK_WIDGET(entry), GTK_STATE_NORMAL, NULL);
-	}
-#endif
 }
 
 static gboolean
@@ -2153,7 +2123,6 @@ network_page(void)
 	GtkWidget *vbox, *hbox, *entry;
 	GtkWidget *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
 	GtkSizeGroup *sg;
-#if GTK_CHECK_VERSION(3,0,0)
 	GtkStyleContext *context;
 	GtkCssProvider *ip_css;
 	const gchar ip_style[] =
@@ -2169,7 +2138,6 @@ network_page(void)
 			"background-image: none;"
 			"background-color: @success_color;"
 		"}";
-#endif
 
 	ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
@@ -2211,14 +2179,12 @@ network_page(void)
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(network_ip_changed), NULL);
 
-#if GTK_CHECK_VERSION(3,0,0)
 	ip_css = gtk_css_provider_new();
 	gtk_css_provider_load_from_data(ip_css, ip_style, -1, NULL);
 	context = gtk_widget_get_style_context(entry);
 	gtk_style_context_add_provider(context,
 	                               GTK_STYLE_PROVIDER(ip_css),
 	                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-#endif
 
 	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Public _IP:"),
 			sg, entry, TRUE, NULL);
@@ -3482,17 +3448,6 @@ get_vv_element_devices(const gchar *element_name)
 	GList *ret = NULL;
 	GstElement *element;
 	GObjectClass *klass;
-#if !GST_CHECK_VERSION(1,0,0)
-	GstPropertyProbe *probe;
-	const GParamSpec *pspec;
-	guint i;
-	GValueArray *array;
-	enum {
-		PROBE_NONE,
-		PROBE_DEVICE,
-		PROBE_NAME
-	} probe_attr;
-#endif
 
 	ret = g_list_prepend(ret, g_strdup(_("Default")));
 	ret = g_list_prepend(ret, g_strdup(""));
@@ -3524,99 +3479,8 @@ get_vv_element_devices(const gchar *element_name)
 		return g_list_reverse(ret);
 	}
 
-#if GST_CHECK_VERSION(1,0,0)
 	purple_debug_info("vvconfig", "'%s' - gstreamer-1.0 doesn't suport "
 		"property probing\n", element_name);
-#else
-	if (g_object_class_find_property(klass, "device"))
-		probe_attr = PROBE_DEVICE;
-	else if (g_object_class_find_property(klass, "device-index") &&
-		g_object_class_find_property(klass, "device-name"))
-		probe_attr = PROBE_NAME;
-	else
-		probe_attr = PROBE_NONE;
-	
-	if (!GST_IS_PROPERTY_PROBE(element))
-		probe_attr = PROBE_NONE;
-	
-	if (probe_attr == PROBE_NONE)
-	{
-		purple_debug_info("vvconfig", "'%s' - no possibility to probe "
-			"for devices\n", element_name);
-		gst_object_unref(element);
-		return g_list_reverse(ret);
-	}
-
-	probe = GST_PROPERTY_PROBE(element);
-
-	if (probe_attr == PROBE_DEVICE)
-		pspec = gst_property_probe_get_property(probe, "device");
-	else /* probe_attr == PROBE_NAME */
-		pspec = gst_property_probe_get_property(probe, "device-name");
-
-	if (!pspec) {
-		purple_debug_info("vvconfig", "'%s' - creating probe failed\n",
-			element_name);
-		gst_object_unref(element);
-		return g_list_reverse(ret);
-	}
-
-	/* Set autoprobe[-fps] to FALSE to avoid delays when probing. */
-	if (g_object_class_find_property(klass, "autoprobe"))
-		g_object_set(G_OBJECT(element), "autoprobe", FALSE, NULL);
-	if (g_object_class_find_property(klass, "autoprobe-fps"))
-		g_object_set(G_OBJECT(element), "autoprobe-fps", FALSE, NULL);
-
-	array = gst_property_probe_probe_and_get_values(probe, pspec);
-	if (array == NULL) {
-		purple_debug_info("vvconfig", "'%s' has no devices\n",
-			element_name);
-		gst_object_unref(element);
-		return g_list_reverse(ret);
-	}
-
-	for (i = 0; i < array->n_values; i++) {
-		GValue *device;
-		const gchar *name;
-		const gchar *device_name;
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-		/* GValueArray is in gstreamer-0.10 API */
-		device = g_value_array_get_nth(array, i);
-G_GNUC_END_IGNORE_DEPRECATIONS
-
-		if (probe_attr == PROBE_DEVICE) {
-			g_object_set_property(G_OBJECT(element), "device",
-				device);
-			if (gst_element_set_state(element, GST_STATE_READY)
-				!= GST_STATE_CHANGE_SUCCESS)
-			{
-				purple_debug_warning("vvconfig", "Error "
-					"changing state of %s\n", element_name);
-				continue;
-			}
-
-			g_object_get(G_OBJECT(element), "device-name", &name,
-				NULL);
-			device_name = g_strdup(g_value_get_string(device));
-		} else /* probe_attr == PROBE_NAME */ {
-			name = g_strdup(g_value_get_string(device));
-			device_name = g_strdup_printf("%d", i);
-		}
-
-		if (name == NULL)
-			name = _("Unknown");
-		purple_debug_info("vvconfig", "Found device %s: %s for %s\n",
-			device_name, name, element_name);
-		ret = g_list_prepend(ret, (gpointer)name);
-		ret = g_list_prepend(ret, (gpointer)device_name);
-		gst_element_set_state(element, GST_STATE_NULL);
-	}
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-	/* GValueArray is in gstreamer-0.10 API */
-	g_value_array_free(array);
-G_GNUC_END_IGNORE_DEPRECATIONS
-#endif
 
 	gst_object_unref(element);
 	return g_list_reverse(ret);
@@ -4011,19 +3875,11 @@ make_video_test(GtkWidget *vbox)
 {
 	GtkWidget *test;
 	GtkWidget *video;
-#if GTK_CHECK_VERSION(3,0,0)
 	GdkRGBA color = {0.0, 0.0, 0.0, 1.0};
-#else
-	GdkColor color = {0, 0, 0, 0};
-#endif
 
 	video_drawing_area = video = gtk_drawing_area_new();
 	gtk_box_pack_start(GTK_BOX(vbox), video, TRUE, TRUE, 0);
-#if GTK_CHECK_VERSION(3,0,0)
 	gtk_widget_override_background_color(video, GTK_STATE_FLAG_NORMAL, &color);
-#else
-	gtk_widget_modify_bg(video, GTK_STATE_NORMAL, &color);
-#endif
 	gtk_widget_set_size_request(GTK_WIDGET(video), 240, 180);
 
 	test = gtk_toggle_button_new_with_label(_("Test Video"));
@@ -4208,11 +4064,7 @@ pidgin_prefs_show(void)
 	/* Back to instant-apply! I win!  BU-HAHAHA! */
 
 	/* Create the window */
-#if GTK_CHECK_VERSION(3,0,0)
 	prefs = pidgin_create_dialog(_("Preferences"), 0, "preferences", FALSE);
-#else
-	prefs = pidgin_create_dialog(_("Preferences"), PIDGIN_HIG_BORDER, "preferences", FALSE);
-#endif
 	g_signal_connect(G_OBJECT(prefs), "destroy",
 					 G_CALLBACK(delete_prefs), NULL);
 

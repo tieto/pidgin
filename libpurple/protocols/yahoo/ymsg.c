@@ -1906,11 +1906,6 @@ static void yahoo_auth16_stage1(PurpleConnection *gc, const char *seed)
 
 	purple_debug_info("yahoo", "Authentication: In yahoo_auth16_stage1\n");
 
-	if(!purple_ssl_is_supported()) {
-		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT, _("SSL support unavailable"));
-		return;
-	}
-
 	auth_data = g_new0(struct yahoo_auth_data, 1);
 	auth_data->gc = gc;
 	auth_data->seed = g_strdup(seed);

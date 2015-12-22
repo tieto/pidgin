@@ -888,9 +888,6 @@ pidgin_notify_formatted(const char *title, const char *primary,
 
 	window = gtk_dialog_new();
 	gtk_window_set_title(GTK_WINDOW(window), title);
-#if !GTK_CHECK_VERSION(3,0,0)
-	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
-#endif
 	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",

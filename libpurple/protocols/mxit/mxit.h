@@ -26,6 +26,7 @@
 #ifndef		_MXIT_H_
 #define		_MXIT_H_
 
+#include <gmodule.h>
 
 #include "internal.h"
 #include "http.h"

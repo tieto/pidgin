@@ -540,8 +540,7 @@ static void jabber_chat_room_configure_cb(JabberStream *js, const char *from,
 			_("Configuration error"), msg,
 			purple_request_cpar_from_connection(js->gc));
 
-		if(msg)
-			g_free(msg);
+		g_free(msg);
 		return;
 	}
 
@@ -621,8 +620,7 @@ jabber_chat_register_x_data_result_cb(JabberStream *js, const char *from,
 			_("Registration error"), msg,
 			purple_request_cpar_from_connection(js->gc));
 
-		if(msg)
-			g_free(msg);
+		g_free(msg);
 		return;
 	}
 }
@@ -692,8 +690,7 @@ static void jabber_chat_register_cb(JabberStream *js, const char *from,
 			_("Registration error"), msg,
 			purple_request_cpar_from_connection(js->gc));
 
-		if(msg)
-			g_free(msg);
+		g_free(msg);
 		return;
 	}
 

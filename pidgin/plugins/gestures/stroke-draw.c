@@ -57,21 +57,15 @@ record_stroke_segment(GtkWidget *widget)
 {
 	gint x, y;
 	struct gstroke_metrics *metrics;
-#if GTK_CHECK_VERSION(3,0,0)
 	GdkDeviceManager *devmgr;
 	GdkDevice *dev;
-#endif
 
 	g_return_if_fail(widget != NULL);
 
-#if GTK_CHECK_VERSION(3,0,0)
 	devmgr = gdk_display_get_device_manager(gtk_widget_get_display(widget));
 	dev = gdk_device_manager_get_client_pointer(devmgr);
 	gdk_window_get_device_position(gtk_widget_get_window(widget),
 		dev, &x, &y, NULL);
-#else
-	gtk_widget_get_pointer(widget, &x, &y);
-#endif
 
 	if (last_mouse_position.invalid)
 		last_mouse_position.invalid = FALSE;
@@ -125,11 +119,7 @@ static void gstroke_cancel(GdkEvent *event)
 	timer_id = 0;
 
 	if( event != NULL )
-#if GTK_CHECK_VERSION(3,0,0)
 		gdk_device_ungrab(gdk_event_get_device(event), event->button.time);
-#else
-		gdk_pointer_ungrab (event->button.time);
-#endif
 
 	if (gstroke_draw_strokes() && gstroke_disp != NULL) {
 	    /* get rid of the invisible stroke window */
@@ -167,16 +157,10 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 	  if (cursor == NULL)
 		  cursor = gdk_cursor_new(GDK_PENCIL);
 
-#if GTK_CHECK_VERSION(3,0,0)
       gdk_device_grab(gdk_event_get_device(event),
                       gtk_widget_get_window(widget), GDK_OWNERSHIP_WINDOW,
                       FALSE, GDK_BUTTON_RELEASE_MASK, cursor,
                       event->button.time);
-#else
-      gdk_pointer_grab (gtk_widget_get_window(widget), FALSE,
-			GDK_BUTTON_RELEASE_MASK, NULL, cursor,
-			event->button.time);
-#endif
       timer_id = g_timeout_add (GSTROKE_TIMEOUT_DURATION,
 				  gstroke_timeout, widget);
       return TRUE;
@@ -195,11 +179,7 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
       last_mouse_position.invalid = TRUE;
       original_widget = NULL;
       g_source_remove (timer_id);
-#if GTK_CHECK_VERSION(3,0,0)
       gdk_device_ungrab(gdk_event_get_device(event), event->button.time);
-#else
-      gdk_pointer_ungrab (event->button.time);
-#endif
       timer_id = 0;
 
       {
@@ -341,8 +321,7 @@ gstroke_cleanup (GtkWidget *widget)
 
   metrics = (struct gstroke_metrics*)g_object_get_data(G_OBJECT(widget),
 													   GSTROKE_METRICS);
-  if (metrics)
-    g_free (metrics);
+  g_free(metrics);
   g_object_steal_data(G_OBJECT(widget), GSTROKE_METRICS);
 }
 

@@ -22,6 +22,8 @@
 #ifndef _ZEPHYR_H_
 #define _ZEPHYR_H_
 
+#include <gmodule.h>
+
 #include "protocol.h"
 
 #define ZEPHYR_TYPE_PROTOCOL             (zephyr_protocol_get_type())

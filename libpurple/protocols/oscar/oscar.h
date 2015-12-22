@@ -45,6 +45,7 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <time.h>
+#include <gmodule.h>
 
 #ifndef _WIN32
 #include <sys/time.h>

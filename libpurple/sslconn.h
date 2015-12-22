@@ -152,15 +152,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 
 /**
- * purple_ssl_is_supported:
- *
- * Returns whether or not SSL is currently supported.
- *
- * Returns: %TRUE if SSL is supported, or %FALSE otherwise.
- */
-gboolean purple_ssl_is_supported(void);
-
-/**
  * purple_ssl_strerror:
  * @error:      Error code
  *

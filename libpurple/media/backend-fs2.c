@@ -76,7 +76,6 @@ static GList *purple_media_backend_fs2_get_codecs(PurpleMediaBackend *self,
 static GList *purple_media_backend_fs2_get_local_candidates(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant);
-#if GST_CHECK_VERSION(1,0,0)
 static gboolean purple_media_backend_fs2_set_encryption_parameters (
 		PurpleMediaBackend *self, const gchar *sess_id, const gchar *cipher,
 		const gchar *auth, const gchar *key, gsize key_len);
@@ -84,7 +83,6 @@ static gboolean purple_media_backend_fs2_set_decryption_parameters(
 		PurpleMediaBackend *self, const gchar *sess_id,
 		const gchar *participant, const gchar *cipher,
 		const gchar *auth, const gchar *key, gsize key_len);
-#endif
 static gboolean purple_media_backend_fs2_set_remote_codecs(
 		PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant,
@@ -230,14 +228,12 @@ purple_media_network_protocol_to_fs(PurpleMediaNetworkProtocol protocol)
 	switch (protocol) {
 		case PURPLE_MEDIA_NETWORK_PROTOCOL_UDP:
 			return FS_NETWORK_PROTOCOL_UDP;
-#if GST_CHECK_VERSION(1,0,0)
 		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE:
 			return FS_NETWORK_PROTOCOL_TCP_PASSIVE;
 		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_ACTIVE:
 			return FS_NETWORK_PROTOCOL_TCP_ACTIVE;
 		case PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_SO:
 			return FS_NETWORK_PROTOCOL_TCP_SO;
-#endif
 		default:
 			g_return_val_if_reached(FS_NETWORK_PROTOCOL_TCP);
 	}
@@ -249,30 +245,21 @@ purple_media_network_protocol_from_fs(FsNetworkProtocol protocol)
 	switch (protocol) {
 		case FS_NETWORK_PROTOCOL_UDP:
 			return PURPLE_MEDIA_NETWORK_PROTOCOL_UDP;
-#if GST_CHECK_VERSION(1,0,0)
 		case FS_NETWORK_PROTOCOL_TCP_PASSIVE:
 			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE;
 		case FS_NETWORK_PROTOCOL_TCP_ACTIVE:
 			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_ACTIVE;
 		case FS_NETWORK_PROTOCOL_TCP_SO:
 			return PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_SO;
-#endif
 		default:
 			g_return_val_if_reached(PURPLE_MEDIA_NETWORK_PROTOCOL_TCP_PASSIVE);
 	}
 }
 
-#if GST_CHECK_VERSION(1,0,0)
 static GstPadProbeReturn
 event_probe_cb(GstPad *srcpad, GstPadProbeInfo *info, gpointer unused)
-#else
-static gboolean
-event_probe_cb(GstPad *srcpad, GstEvent *event, gboolean release_pad)
-#endif
 {
-#if GST_CHECK_VERSION(1,0,0)
 	GstEvent *event = GST_PAD_PROBE_INFO_EVENT(info);
-#endif
 	if (GST_EVENT_TYPE(event) == GST_EVENT_CUSTOM_DOWNSTREAM
 		&& gst_event_has_name(event, "purple-unlink-tee")) {
 
@@ -280,40 +267,23 @@ event_probe_cb(GstPad *srcpad, GstEvent *event, gboolean release_pad)
 
 		gst_pad_unlink(srcpad, gst_pad_get_peer(srcpad));
 
-#if GST_CHECK_VERSION(1,0,0)
 		gst_pad_remove_probe(srcpad,
 			g_value_get_ulong(gst_structure_get_value(s, "handler-id")));
-#else
-		gst_pad_remove_event_probe(srcpad,
-			g_value_get_uint(gst_structure_get_value(s, "handler-id")));
-#endif
 
 		if (g_value_get_boolean(gst_structure_get_value(s, "release-pad")))
 			gst_element_release_request_pad(GST_ELEMENT_PARENT(srcpad), srcpad);
 
-#if GST_CHECK_VERSION(1,0,0)
 		return GST_PAD_PROBE_DROP;
-#else
-		return FALSE;
-#endif
 	}
 
-#if GST_CHECK_VERSION(1,0,0)
 	return GST_PAD_PROBE_OK;
-#else
-	return TRUE;
-#endif
 }
 
 static void
 unlink_teepad_dynamic(GstPad *srcpad, gboolean release_pad)
 {
-#if GST_CHECK_VERSION(1,0,0)
 	gulong id = gst_pad_add_probe(srcpad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM,
 	                              event_probe_cb, NULL, NULL);
-#else
-	guint id = gst_pad_add_event_probe(srcpad, G_CALLBACK(event_probe_cb), NULL);
-#endif
 
 	if (GST_IS_GHOST_PAD(srcpad))
 		srcpad = gst_ghost_pad_get_target(GST_GHOST_PAD(srcpad));
@@ -322,11 +292,7 @@ unlink_teepad_dynamic(GstPad *srcpad, gboolean release_pad)
 		gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM,
 			gst_structure_new("purple-unlink-tee",
 				"release-pad", G_TYPE_BOOLEAN, release_pad,
-#if GST_CHECK_VERSION(1,0,0)
 				"handler-id", G_TYPE_ULONG, id,
-#else
-				"handler-id", G_TYPE_UINT, id,
-#endif
 				NULL)));
 }
 
@@ -548,12 +514,10 @@ purple_media_backend_iface_init(PurpleMediaBackendIface *iface)
 			purple_media_backend_fs2_get_local_candidates;
 	iface->set_remote_codecs = purple_media_backend_fs2_set_remote_codecs;
 	iface->set_send_codec = purple_media_backend_fs2_set_send_codec;
-#if GST_CHECK_VERSION(1,0,0)
 	iface->set_encryption_parameters =
 			purple_media_backend_fs2_set_encryption_parameters;
 	iface->set_decryption_parameters =
 			purple_media_backend_fs2_set_decryption_parameters;
-#endif
 	iface->set_params = purple_media_backend_fs2_set_params;
 	iface->get_available_params = purple_media_backend_fs2_get_available_params;
 	iface->send_dtmf = purple_media_backend_fs2_send_dtmf;
@@ -934,13 +898,9 @@ gst_msg_db_to_percent(GstMessage *msg, gchar *value_name)
 	gdouble percent;
 
 	list = gst_structure_get_value(gst_message_get_structure(msg), value_name);
-#if GST_CHECK_VERSION(1,0,0)
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 	value = g_value_array_get_nth(g_value_get_boxed(list), 0);
 G_GNUC_END_IGNORE_DEPRECATIONS
-#else
-	value = gst_value_list_get_value(list, 0);
-#endif
 	value_db = g_value_get_double(value);
 	percent = pow(10, value_db / 20);
 	return (percent > 1.0) ? 1.0 : percent;
@@ -1670,11 +1630,7 @@ create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 		srcpad = gst_element_get_static_pad(session->srcvalve, "src");
 		g_object_set(volume, "volume", input_volume, NULL);
 	} else {
-#if GST_CHECK_VERSION(1,0,0)
 		srcpad = gst_element_get_request_pad(session->tee, "src_%u");
-#else
-		srcpad = gst_element_get_request_pad(session->tee, "src%d");
-#endif
 	}
 
 	purple_debug_info("backend-fs2", "connecting pad: %s\n",
@@ -1926,11 +1882,7 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			gst_element_link(stream->queue, stream->volume);
 			sink = stream->queue;
 		} else if (codec->media_type == FS_MEDIA_TYPE_VIDEO) {
-#if GST_CHECK_VERSION(1,0,0)
 			stream->src = gst_element_factory_make("funnel", NULL);
-#else
-			stream->src = gst_element_factory_make("fsfunnel", NULL);
-#endif
 			sink = gst_element_factory_make("fakesink", NULL);
 			g_object_set(G_OBJECT(sink), "async", FALSE, NULL);
 			gst_bin_add(GST_BIN(priv->confbin), sink);
@@ -1938,11 +1890,7 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 			stream->fakesink = sink;
 #ifdef HAVE_MEDIA_APPLICATION
 		} else if (codec->media_type == FS_MEDIA_TYPE_APPLICATION) {
-#if GST_CHECK_VERSION(1,0,0)
 			stream->src = gst_element_factory_make("funnel", NULL);
-#else
-			stream->src = gst_element_factory_make("fsfunnel", NULL);
-#endif
 			sink = purple_media_manager_get_element(
 					purple_media_get_manager(priv->media),
 					PURPLE_MEDIA_RECV_APPLICATION, priv->media,
@@ -1960,11 +1908,7 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 		gst_element_link_many(stream->src, stream->tee, sink, NULL);
 	}
 
-#if GST_CHECK_VERSION(1,0,0)
 	sinkpad = gst_element_get_request_pad(stream->src, "sink_%u");
-#else
-	sinkpad = gst_element_get_request_pad(stream->src, "sink%d");
-#endif
 	gst_pad_link(srcpad, sinkpad);
 	gst_object_unref(sinkpad);
 
@@ -2405,7 +2349,6 @@ purple_media_backend_fs2_set_remote_codecs(PurpleMediaBackend *self,
 	return TRUE;
 }
 
-#if GST_CHECK_VERSION(1,0,0)
 static GstStructure *
 create_fs2_srtp_structure(const gchar *cipher, const gchar *auth,
 	const gchar *key, gsize key_len)
@@ -2494,7 +2437,6 @@ purple_media_backend_fs2_set_decryption_parameters (PurpleMediaBackend *self,
 	gst_structure_free(srtp);
 	return result;
 }
-#endif /* GST 1.0+ */
 
 static gboolean
 purple_media_backend_fs2_set_send_codec(PurpleMediaBackend *self,

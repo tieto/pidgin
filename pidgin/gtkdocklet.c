@@ -107,18 +107,6 @@ docklet_gtk_status_update_icon(PurpleStatusPrimitive status, PidginDockletFlag n
 	if (icon_name) {
 		gtk_status_icon_set_from_icon_name(docklet, icon_name);
 	}
-
-#if !GTK_CHECK_VERSION(3,0,0)
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink")) {
-		gboolean pending = FALSE;
-		pending |= (newflag & PIDGIN_DOCKLET_EMAIL_PENDING);
-		pending |= (newflag & PIDGIN_DOCKLET_CONV_PENDING);
-		gtk_status_icon_set_blinking(docklet, pending &&
-			!(newflag & PIDGIN_DOCKLET_CONNECTING));
-	} else if (gtk_status_icon_get_blinking(docklet)) {
-		gtk_status_icon_set_blinking(docklet, FALSE);
-	}
-#endif
 }
 
 static GList *
@@ -340,15 +328,6 @@ docklet_toggle_mute(GtkWidget *toggle, void *data)
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/sound/mute",
 	                      gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(toggle)));
 }
-
-#if !GTK_CHECK_VERSION(3,0,0)
-static void
-docklet_toggle_blink(GtkWidget *toggle, void *data)
-{
-	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/docklet/blink",
-	                      gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(toggle)));
-}
-#endif
 
 static void
 docklet_toggle_blist(GtkWidget *toggle, void *data)
@@ -760,13 +739,6 @@ docklet_menu(void)
 		gtk_widget_set_sensitive(GTK_WIDGET(menuitem), FALSE);
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-#if !GTK_CHECK_VERSION(3,0,0)
-	menuitem = gtk_check_menu_item_new_with_mnemonic(_("_Blink on New Message"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink"));
-	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blink), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-#endif
 
 	pidgin_separator(menu);
 

@@ -332,18 +332,12 @@ purple_gnome_proxy_get_info(void)
 	g_free(tmp);
 
 	/* Free the old fields */
-	if (info.host) {
-		g_free(info.host);
-		info.host = NULL;
-	}
-	if (info.username) {
-		g_free(info.username);
-		info.username = NULL;
-	}
-	if (info.password) {
-		g_free(info.password);
-		info.password = NULL;
-	}
+	g_free(info.host);
+	info.host = NULL;
+	g_free(info.username);
+	info.username = NULL;
+	g_free(info.password);
+	info.password = NULL;
 
 	tmp = purple_gnome_proxy_get_parameter(GNOME_PROXY_USE_SAME_PROXY, gnome_version);
 	if (!tmp)

@@ -77,14 +77,10 @@ purple_hmac_cipher_reset(PurpleCipher *cipher) {
 	if(PURPLE_IS_HASH(priv->hash))
 		purple_hash_reset(priv->hash);
 
-	if(priv->ipad) {
-		g_free(priv->ipad);
-		priv->ipad = NULL;
-	}
-	if(priv->opad) {
-		g_free(priv->opad);
-		priv->opad = NULL;
-	}
+	g_free(priv->ipad);
+	priv->ipad = NULL;
+	g_free(priv->opad);
+	priv->opad = NULL;
 }
 
 static void

@@ -241,14 +241,9 @@ handle_receive_message(NMUser * user, NMEvent * event, gboolean autoreply)
 		nm_release_conference(conference);
 	}
 
-	if (msg)
-		g_free(msg);
-
-	if (nortf)
-		g_free(nortf);
-
-	if (guid)
-		g_free(guid);
+	g_free(msg);
+	g_free(nortf);
+	g_free(guid);
 
 	return rc;
 }
@@ -323,11 +318,8 @@ handle_conference_invite(NMUser * user, NMEvent * event)
 		}
 	}
 
-	if (msg)
-		g_free(msg);
-
-	if (guid)
-		g_free(guid);
+	g_free(msg);
+	g_free(guid);
 
 	return rc;
 }
@@ -381,8 +373,7 @@ handle_conference_invite_notify(NMUser * user, NMEvent * event)
 	}
 
 
-	if (guid)
-		g_free(guid);
+	g_free(guid);
 
 	return rc;
 }
@@ -417,8 +408,7 @@ handle_conference_reject(NMUser * user, NMEvent * event)
 		}
 	}
 
-	if (guid)
-		g_free(guid);
+	g_free(guid);
 
 	return rc;
 }
@@ -468,8 +458,7 @@ handle_conference_left(NMUser * user, NMEvent * event)
 		}
 	}
 
-	if (guid)
-		g_free(guid);
+	g_free(guid);
 
 	return rc;
 }
@@ -507,8 +496,7 @@ handle_conference_closed(NMUser * user, NMEvent * event)
 		}
 	}
 
-	if (guid)
-		g_free(guid);
+	g_free(guid);
 
 	return rc;
 }
@@ -569,8 +557,7 @@ handle_conference_joined(NMUser * user, NMEvent * event)
 		}
 	}
 
-	if (guid)
-		g_free(guid);
+	g_free(guid);
 
 	return rc;
 }
@@ -605,8 +592,7 @@ handle_typing(NMUser * user, NMEvent * event)
 		}
 	}
 
-	if (guid)
-		g_free(guid);
+	g_free(guid);
 
 	return rc;
 }
@@ -651,8 +637,7 @@ handle_status_change(NMUser * user, NMEvent * event)
 		}
 	}
 
-	if (text)
-		g_free(text);
+	g_free(text);
 
 	return rc;
 }
@@ -677,8 +662,7 @@ handle_undeliverable_status(NMUser * user, NMEvent * event)
 		rc = nm_read_all(conn, guid, size);
 	}
 
-	if (guid)
-		g_free(guid);
+	g_free(guid);
 
 	return rc;
 }
@@ -712,8 +696,7 @@ nm_release_event(NMEvent * event)
 
 	if (--(event->ref_count) == 0) {
 
-		if (event->source)
-			g_free(event->source);
+		g_free(event->source);
 
 		if (event->conference)
 			nm_release_conference(event->conference);
@@ -721,8 +704,7 @@ nm_release_event(NMEvent * event)
 		if (event->user_record)
 			nm_release_user_record(event->user_record);
 
-		if (event->text)
-			g_free(event->text);
+		g_free(event->text);
 
 		g_free(event);
 	}
@@ -936,8 +918,7 @@ nm_process_event(NMUser * user, int type)
 	}
 
 	/* Cleanup */
-	if (source)
-		g_free(source);
+	g_free(source);
 
 	return rc;
 }

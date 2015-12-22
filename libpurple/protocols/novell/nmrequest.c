@@ -60,8 +60,7 @@ void
 nm_release_request(NMRequest * req)
 {
 	if (req && (--req->ref_count == 0)) {
-		if (req->cmd)
-			g_free(req->cmd);
+		g_free(req->cmd);
 		g_free(req);
 
 		purple_debug_info("novell",

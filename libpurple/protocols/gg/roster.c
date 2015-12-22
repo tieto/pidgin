@@ -159,8 +159,7 @@ static void ggp_roster_content_free(ggp_roster_content *content)
 		g_hash_table_destroy(content->group_ids);
 	if (content->group_names)
 		g_hash_table_destroy(content->group_names);
-	if (content->bots_group_id)
-		g_free(content->bots_group_id);
+	g_free(content->bots_group_id);
 	g_free(content);
 }
 

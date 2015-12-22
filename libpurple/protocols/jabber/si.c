@@ -351,8 +351,7 @@ void jabber_bytestreams_parse(JabberStream *js, const char *from,
 	if(!jsx->accepted)
 		return;
 
-	if(jsx->iq_id)
-		g_free(jsx->iq_id);
+	g_free(jsx->iq_id);
 	jsx->iq_id = g_strdup(id);
 
 	for(streamhost = purple_xmlnode_get_child(query, "streamhost"); streamhost;

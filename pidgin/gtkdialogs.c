@@ -467,13 +467,8 @@ pidgin_build_help_dialog(const char *title, const char *role, GString *string)
 	AtkObject *obj;
 	char *filename, *tmp;
 
-#if GTK_CHECK_VERSION(3,0,0)
 	win = pidgin_create_dialog(title, 0, role, TRUE);
 	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, 0);
-#else
-	win = pidgin_create_dialog(title, PIDGIN_HIG_BORDER, role, TRUE);
-	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, PIDGIN_HIG_BORDER);
-#endif
 	gtk_window_set_default_size(GTK_WINDOW(win), 475, 450);
 
 	/* Generate a logo with a version number */
@@ -624,11 +619,7 @@ void pidgin_dialogs_buildinfo(void)
 	g_string_append(str, "<dt>Plugins:</dt><dd>Disabled</dd>");
 #endif
 
-#ifdef HAVE_SSL
 	g_string_append(str, "<dt>SSL:</dt><dd>SSL support is present.</dd>");
-#else
-	g_string_append(str, "<dt>SSL:</dt><dd>SSL support was <strong><em>NOT</em></strong> compiled!</dd>");
-#endif
 
 	g_string_append_printf(str, "<dt>GTK+ Runtime:</dt><dd>%u.%u.%u</dd>"
 		"<dt>GLib Runtime:</dt><dd>%u.%u.%u</dd>",

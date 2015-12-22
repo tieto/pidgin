@@ -56,6 +56,7 @@ typedef struct _JabberStream JabberStream;
 
 #include <libxml/parser.h>
 #include <glib.h>
+#include <gmodule.h>
 #include <gio/gio.h>
 
 #include "circularbuffer.h"

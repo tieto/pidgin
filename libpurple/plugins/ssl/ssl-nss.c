@@ -682,8 +682,7 @@ x509_import_from_file(const gchar *filename)
 	if (len == 0) {
 		purple_debug_error("nss/x509",
 				"Certificate file has no contents!\n");
-		if (rawcert)
-			g_free(rawcert);
+		g_free(rawcert);
 		return NULL;
 	}
 
@@ -731,8 +730,7 @@ x509_importcerts_from_file(const gchar *filename)
 	if (len == 0) {
 		purple_debug_error("nss/x509",
 				"Certificate file has no contents!\n");
-		if (rawcert)
-			g_free(rawcert);
+		g_free(rawcert);
 		return NULL;
 	}
 

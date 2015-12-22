@@ -276,21 +276,6 @@ scrncap_draw_window_paint(GtkWidget *widget, cairo_t *cr, gpointer _surface)
 	return FALSE;
 }
 
-#if !GTK_CHECK_VERSION(3,0,0)
-static gboolean
-scrncap_draw_window_expose(GtkWidget *widget, GdkEventExpose *event,
-	gpointer _surface)
-{
-	cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(widget->window));
-
-	scrncap_draw_window_paint(widget, cr, _surface);
-
-	cairo_destroy(cr);
-
-	return FALSE;
-}
-#endif
-
 static void
 scrncap_draw_window_response(GtkDialog *draw_window, gint response_id,
 	gpointer _webview)
@@ -372,13 +357,8 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 		G_CALLBACK(scrncap_draw_window_close), NULL);
 
 	draw_cursor = gdk_cursor_new(GDK_PENCIL);
-#if GTK_CHECK_VERSION(3,0,0)
 	g_object_set_data_full(G_OBJECT(draw_window), "draw-cursor",
 		draw_cursor, g_object_unref);
-#else
-	g_object_set_data_full(G_OBJECT(draw_window), "draw-cursor",
-		draw_cursor, (GDestroyNotify)gdk_cursor_unref);
-#endif
 
 	width = gdk_pixbuf_get_width(screen);
 	height = gdk_pixbuf_get_height(screen);
@@ -397,13 +377,8 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 
 	drawing_area = gtk_drawing_area_new();
 	gtk_widget_set_size_request(drawing_area, width, height);
-#if GTK_CHECK_VERSION(3,0,0)
 	g_signal_connect(G_OBJECT(drawing_area), "draw",
 		G_CALLBACK(scrncap_draw_window_paint), surface);
-#else
-	g_signal_connect(G_OBJECT(drawing_area), "expose_event",
-		G_CALLBACK(scrncap_draw_window_expose), surface);
-#endif
 	gtk_widget_add_events(drawing_area, GDK_BUTTON_PRESS_MASK |
 		GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_MOTION_MASK |
 		GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
@@ -423,9 +398,7 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 	scroll_area = pidgin_make_scrollable(box,
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC,
 		GTK_SHADOW_NONE, -1, -1);
-#if GTK_CHECK_VERSION(3,0,0)
 	g_object_set(G_OBJECT(scroll_area), "expand", TRUE, NULL);
-#endif
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(
 		GTK_DIALOG(draw_window))), scroll_area);
 
@@ -585,11 +558,7 @@ scrncap_crop_window_realize(GtkWidget *crop_window, gpointer _unused)
 
 	cursor = gdk_cursor_new(GDK_CROSSHAIR);
 	gdk_window_set_cursor(gdkwindow, cursor);
-#if GTK_CHECK_VERSION(3,0,0)
 	g_object_unref(cursor);
-#else
-	gdk_cursor_unref(cursor);
-#endif
 }
 
 static gboolean

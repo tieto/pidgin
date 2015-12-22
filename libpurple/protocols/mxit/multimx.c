@@ -164,8 +164,7 @@ static void room_remove(struct MXitSession* session, struct multimx* multimx)
 	session->rooms = g_list_remove(session->rooms, multimx);
 
 	/* free nickname */
-	if (multimx->nickname)
-		g_free(multimx->nickname);
+	g_free(multimx->nickname);
 
 	/* Deallocate it */
 	g_free (multimx);

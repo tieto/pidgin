@@ -303,8 +303,7 @@ static void command_platformreq(GHashTable* hash, GString* msg)
 		g_string_append_printf(msg, "<a href=\"%s\">%s</a>", purple_url_decode(dest), (text) ? text : _( "Download" ));		/* add link to display message */
 	}
 
-	if (text)
-		g_free(text);
+	g_free(text);
 }
 
 

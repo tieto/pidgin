@@ -53,8 +53,7 @@ void
 nm_release_message(NMMessage * msg)
 {
 	if (msg && (--(msg->ref_count) == 0)) {
-		if (msg->text)
-			g_free(msg->text);
+		g_free(msg->text);
 
 		if (msg->conference)
 			nm_release_conference(msg->conference);

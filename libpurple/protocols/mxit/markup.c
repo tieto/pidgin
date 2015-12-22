@@ -258,8 +258,7 @@ static void free_markupdata( struct RXMsgData* mx )
 	if ( mx ) {
 		if ( mx->msg )
 			g_string_free( mx->msg, TRUE );
-		if ( mx->from )
-			g_free( mx->from );
+		g_free(mx->from);
 		g_free( mx );
 	}
 }

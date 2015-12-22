@@ -24,6 +24,7 @@
 #define _PURPLE_SIMPLE_H
 
 #include <glib.h>
+#include <gmodule.h>
 #include <gio/gio.h>
 #include <time.h>
 

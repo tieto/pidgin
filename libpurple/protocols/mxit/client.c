@@ -1906,20 +1906,17 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 			/* this is an invite, so update its profile info */
 			if ( ( statusMsg ) && ( *statusMsg ) ) {
 				/* update the status message */
-				if ( contact->statusMsg )
-					g_free( contact->statusMsg );
+				g_free(contact->statusMsg);
 				contact->statusMsg = strdup( statusMsg );
 			}
 			else
 				contact->statusMsg = NULL;
-			if ( contact->profile )
-				g_free( contact->profile );
+			g_free(contact->profile);
 			contact->profile = profile;
 			if ( ( avatarId ) && ( *avatarId ) ) {
 				/* avatar must be requested for this invite before we can display it */
 				mxit_get_avatar( session, mxitId, avatarId );
-				if ( contact->avatarId )
-					g_free( contact->avatarId );
+				g_free(contact->avatarId);
 				contact->avatarId = strdup( avatarId );
 			}
 			else {
@@ -1941,8 +1938,7 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 				if ( buddy ) {
 					contact = purple_buddy_get_protocol_data( buddy );
 					if ( contact ) {
-						if ( contact->statusMsg )
-							g_free( contact->statusMsg );
+						g_free(contact->statusMsg);
 						contact->statusMsg = strdup( statusMsg );
 					}
 				}
@@ -2926,12 +2922,9 @@ void mxit_close_connection( struct MXitSession* session )
 
 		session->invites = g_list_remove( session->invites, contact );
 
-		if ( contact->msg )
-			g_free( contact->msg );
-		if ( contact->statusMsg )
-			g_free( contact->statusMsg );
-		if ( contact->profile )
-			g_free( contact->profile );
+		g_free(contact->msg);
+		g_free(contact->statusMsg);
+		g_free(contact->profile);
 		if (contact->image)
 			g_object_unref(contact->image);
 		g_free( contact );

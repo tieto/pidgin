@@ -83,8 +83,7 @@ nm_release_conference(NMConference * conference)
 				   "Releasing conference %p, total=%d\n",
 				   conference, --conf_count);
 
-		if (conference->guid)
-			g_free(conference->guid);
+		g_free(conference->guid);
 
 		if (conference->participants) {
 			for (node = conference->participants; node; node = node->next) {

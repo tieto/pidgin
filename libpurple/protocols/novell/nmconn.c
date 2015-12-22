@@ -187,10 +187,8 @@ void nm_release_conn(NMConn *conn)
 		}
 		g_slist_free(conn->requests);
 		conn->requests = NULL;
-		if (conn->ssl_conn) {
-			g_free(conn->ssl_conn);
-			conn->ssl_conn = NULL;
-		}
+		g_free(conn->ssl_conn);
+		conn->ssl_conn = NULL;
 		g_free(conn->addr);
 		conn->addr = NULL;
 		g_free(conn);

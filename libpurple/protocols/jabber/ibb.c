@@ -294,10 +294,8 @@ jabber_ibb_session_send_acknowledge_cb(JabberStream *js, const char *from,
 
 	if (sess) {
 		/* reset callback */
-		if (sess->last_iq_id) {
-			g_free(sess->last_iq_id);
-			sess->last_iq_id = NULL;
-		}
+		g_free(sess->last_iq_id);
+		sess->last_iq_id = NULL;
 
 		if (type == JABBER_IQ_ERROR) {
 			jabber_ibb_session_close(sess);

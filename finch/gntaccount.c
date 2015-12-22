@@ -979,8 +979,7 @@ free_add_user_data(AddUserData *data)
 {
 	g_free(data->username);
 
-	if (data->alias != NULL)
-		g_free(data->alias);
+	g_free(data->alias);
 
 	g_free(data);
 }

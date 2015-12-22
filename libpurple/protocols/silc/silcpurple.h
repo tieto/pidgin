@@ -20,6 +20,8 @@
 #ifndef SILCPURPLE_H
 #define SILCPURPLE_H
 
+#include <gmodule.h>
+
 /* Purple includes */
 #include "internal.h"
 #include "account.h"
