@@ -82,6 +82,11 @@ struct stun_conn {
 	size_t packetsize;
 };
 
+typedef struct {
+	gint port;
+	GList *addresses;
+} StunHBNListenData;
+
 static PurpleStunNatDiscovery nattype = {
 	PURPLE_STUN_STATUS_UNDISCOVERED,
 	PURPLE_STUN_NAT_TYPE_PUBLIC_IP,
@@ -285,13 +290,11 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 
 static void
 hbn_listen_cb(int fd, gpointer data) {
-	GList *addresses = data;
+	StunHBNListenData *ld = (StunHBNListenData *)data;
 	GInetAddress *address = NULL;
 	GSocketAddress *socket_address = NULL;
 	struct stun_conn *sc;
 	static struct stun_header hdr_data;
-#warning wrong
-	gint port = 12345;
 
 	if(fd < 0) {
 		nattype.status = PURPLE_STUN_STATUS_UNKNOWN;
@@ -309,13 +312,15 @@ hbn_listen_cb(int fd, gpointer data) {
 
 	sc->incb = purple_input_add(fd, PURPLE_INPUT_READ, reply_cb, sc);
 
-	address = G_INET_ADDRESS(addresses->data);
-	socket_address = g_inet_socket_address_new(address, port);
+	address = G_INET_ADDRESS(ld->addresses->data);
+	socket_address = g_inet_socket_address_new(address, ld->port);
 
 	g_socket_address_to_native(socket_address, &(sc->addr), g_socket_address_get_native_size(socket_address), NULL);
+
 	g_object_unref(G_OBJECT(address));
 	g_object_unref(G_OBJECT(socket_address));
-	g_resolver_free_addresses(addresses);
+	g_resolver_free_addresses(ld->addresses);
+	g_free(ld);
 
 	hdr_data.type = htons(MSGTYPE_BINDINGREQUEST);
 	hdr_data.len = 0;
@@ -341,10 +346,12 @@ hbn_listen_cb(int fd, gpointer data) {
 
 static void
 hbn_cb(GObject *sender, GAsyncResult *res, gpointer data) {
-	GList *addresses = NULL;
+	StunHBNListenData *ld = NULL;
 	GError *error = NULL;
 
-	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), res, &error);
+	ld = g_new0(StunHBNListenData, 1);
+
+	ld->addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), res, &error);
 	if(error != NULL) {
 		nattype.status = PURPLE_STUN_STATUS_UNDISCOVERED;
 		nattype.lookup_time = time(NULL);
@@ -354,7 +361,7 @@ hbn_cb(GObject *sender, GAsyncResult *res, gpointer data) {
 		return;
 	}
 
-	if (!purple_network_listen_range(12108, 12208, AF_UNSPEC, SOCK_DGRAM, TRUE, hbn_listen_cb, addresses)) {
+	if (!purple_network_listen_range(12108, 12208, AF_UNSPEC, SOCK_DGRAM, TRUE, hbn_listen_cb, ld)) {
 		nattype.status = PURPLE_STUN_STATUS_UNKNOWN;
 		nattype.lookup_time = time(NULL);
 
