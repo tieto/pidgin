@@ -4,13 +4,13 @@ nullclient_SOURCES = defines.h nullclient.c
 nullclient_DEPENDENCIES =
 nullclient_LDFLAGS = -export-dynamic
 nullclient_LDADD = \
+	$(top_builddir)/libpurple/libpurple.la \
 	$(DBUS_LIBS) \
 	$(INTLLIBS) \
 	$(GLIB_LIBS) \
 	$(GPLUGIN_LIBS) \
 	$(LIBXML_LIBS) \
-	$(GSTVIDEO_LIBS) \
-	$(top_builddir)/libpurple/libpurple.la
+	$(GSTVIDEO_LIBS)
 
 AM_CPPFLAGS = \
 	-DSTANDALONE \
