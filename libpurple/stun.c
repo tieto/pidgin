@@ -29,6 +29,8 @@
 #include <sys/ioctl.h>
 #endif
 
+#include <gio/gio.h>
+
 /* Solaris */
 #if defined (__SVR4) && defined (__sun)
 #include <sys/sockio.h>
@@ -36,8 +38,6 @@
 
 #include "debug.h"
 #include "account.h"
-#include "dnsquery.h"
-#include "dnssrv.h"
 #include "network.h"
 #include "proxy.h"
 #include "stun.h"
@@ -81,6 +81,11 @@ struct stun_conn {
 	struct stun_header *packet;
 	size_t packetsize;
 };
+
+typedef struct {
+	gint port;
+	GList *addresses;
+} StunHBNListenData;
 
 static PurpleStunNatDiscovery nattype = {
 	PURPLE_STUN_STATUS_UNDISCOVERED,
@@ -283,8 +288,11 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 }
 
 
-static void hbn_listen_cb(int fd, gpointer data) {
-	GSList *hosts = data;
+static void
+hbn_listen_cb(int fd, gpointer data) {
+	StunHBNListenData *ld = (StunHBNListenData *)data;
+	GInetAddress *address = NULL;
+	GSocketAddress *socket_address = NULL;
 	struct stun_conn *sc;
 	static struct stun_header hdr_data;
 
@@ -304,15 +312,15 @@ static void hbn_listen_cb(int fd, gpointer data) {
 
 	sc->incb = purple_input_add(fd, PURPLE_INPUT_READ, reply_cb, sc);
 
-	hosts = g_slist_delete_link(hosts, hosts);
-	memcpy(&(sc->addr), hosts->data, sizeof(struct sockaddr_in));
-	g_free(hosts->data);
-	hosts = g_slist_delete_link(hosts, hosts);
-	while (hosts) {
-		hosts = g_slist_delete_link(hosts, hosts);
-		g_free(hosts->data);
-		hosts = g_slist_delete_link(hosts, hosts);
-	}
+	address = G_INET_ADDRESS(ld->addresses->data);
+	socket_address = g_inet_socket_address_new(address, ld->port);
+
+	g_socket_address_to_native(socket_address, &(sc->addr), g_socket_address_get_native_size(socket_address), NULL);
+
+	g_object_unref(G_OBJECT(address));
+	g_object_unref(G_OBJECT(socket_address));
+	g_resolver_free_addresses(ld->addresses);
+	g_free(ld);
 
 	hdr_data.type = htons(MSGTYPE_BINDINGREQUEST);
 	hdr_data.len = 0;
@@ -336,44 +344,59 @@ static void hbn_listen_cb(int fd, gpointer data) {
 	sc->timeout = purple_timeout_add(500, (GSourceFunc) timeoutfunc, sc);
 }
 
-static void hbn_cb(GSList *hosts, gpointer data, const char *error_message) {
+static void
+hbn_cb(GObject *sender, GAsyncResult *res, gpointer data) {
+	StunHBNListenData *ld = NULL;
+	GError *error = NULL;
 
-	if(!hosts || !hosts->data) {
+	ld = g_new0(StunHBNListenData, 1);
+
+	ld->addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), res, &error);
+	if(error != NULL) {
 		nattype.status = PURPLE_STUN_STATUS_UNDISCOVERED;
 		nattype.lookup_time = time(NULL);
+
 		do_callbacks();
+
 		return;
 	}
 
-	if (!purple_network_listen_range(12108, 12208, AF_UNSPEC, SOCK_DGRAM, TRUE, hbn_listen_cb, hosts)) {
-		while (hosts) {
-			hosts = g_slist_delete_link(hosts, hosts);
-			g_free(hosts->data);
-			hosts = g_slist_delete_link(hosts, hosts);
-		}
-
+	if (!purple_network_listen_range(12108, 12208, AF_UNSPEC, SOCK_DGRAM, TRUE, hbn_listen_cb, ld)) {
 		nattype.status = PURPLE_STUN_STATUS_UNKNOWN;
 		nattype.lookup_time = time(NULL);
+
 		do_callbacks();
+
 		return;
 	}
-
-
 }
 
-static void do_test1(PurpleSrvResponse *resp, int results, gpointer sdata) {
-	const char *servername = sdata;
+static void
+do_test1(GObject *sender, GAsyncResult *res, gpointer data) {
+	GList *services = NULL;
+	GError *error = NULL;
+	const char *servername = data;
 	int port = 3478;
 
-	if(results) {
-		servername = resp[0].hostname;
-		port = resp[0].port;
-	}
-	purple_debug_info("stun", "got %d SRV responses, server: %s, port: %d\n",
-		results, servername, port);
+	services = g_resolver_lookup_service_finish(g_resolver_get_default(), res, &error);
+	if(error != NULL) {
+		purple_debug_info("stun", "Failed to look up srv record : %s\n", error->message);
 
-	purple_dnsquery_a(NULL, servername, port, hbn_cb, NULL);
-	g_free(resp);
+		g_error_free(error);
+	} else {
+		servername = g_srv_target_get_hostname((GSrvTarget *)services->data);
+		port = g_srv_target_get_port((GSrvTarget *)services->data);
+	}
+
+	purple_debug_info("stun", "connecting to %s:%d\n", servername, port);
+
+	g_resolver_lookup_by_name_async(g_resolver_get_default(),
+	                                servername,
+	                                NULL,
+	                                hbn_cb,
+	                                GINT_TO_POINTER(port));
+
+	g_resolver_free_targets(services);
 }
 
 static gboolean call_callback(gpointer data) {
@@ -431,8 +454,14 @@ PurpleStunNatDiscovery *purple_stun_discover(PurpleStunCallback cb) {
 	nattype.servername = g_strdup(servername);
 
 	callbacks = g_slist_append(callbacks, cb);
-	purple_srv_resolve(NULL, "stun", "udp", servername, do_test1,
-		(gpointer) servername);
+
+	g_resolver_lookup_service_async(g_resolver_get_default(),
+	                                "stun",
+	                                "udp",
+	                                servername,
+	                                NULL,
+	                                do_test1,
+	                                (gpointer)servername);
 
 	return &nattype;
 }

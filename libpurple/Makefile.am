@@ -106,8 +106,6 @@ purple_coresources = \
 	smiley-parser.c \
 	smiley-theme.c \
 	smiley.c \
-	dnsquery.c \
-	dnssrv.c\
 	status.c \
 	stringref.c \
 	stun.c \
@@ -187,8 +185,6 @@ purple_coreheaders = \
 	smiley-parser.h \
 	smiley-theme.h \
 	smiley.h \
-	dnsquery.h \
-	dnssrv.h \
 	status.h \
 	stringref.h \
 	stun.h \

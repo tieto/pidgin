@@ -26,7 +26,6 @@
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
-#include "dnsquery.h"
 #include "xfer.h"
 #include "glibcompat.h"
 #include "http.h"
@@ -200,7 +199,6 @@ purple_core_init(const char *ui)
 	purple_pounces_init();
 	_purple_socket_init();
 	purple_proxy_init();
-	purple_dnsquery_init();
 	purple_sound_init();
 	purple_ssl_init();
 	purple_stun_init();
@@ -276,7 +274,6 @@ purple_core_quit(void)
 	purple_xfers_uninit();
 	purple_proxy_uninit();
 	_purple_socket_uninit();
-	purple_dnsquery_uninit();
 	_purple_image_store_uninit();
 	purple_network_uninit();
 

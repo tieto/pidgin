@@ -21,6 +21,8 @@
 
 #include "internal.h"
 
+#include <gio/gio.h>
+
 #ifndef _WIN32
 #include <arpa/nameser.h>
 #include <resolv.h>
@@ -46,7 +48,6 @@
 #include "prefs.h"
 #include "stun.h"
 #include "upnp.h"
-#include "dnsquery.h"
 
 #ifdef USE_IDN
 #include <idna.h>
@@ -977,40 +978,26 @@ nm_dbus_name_owner_changed_cb(DBusGProxy *proxy, char *service, char *old_owner,
 #endif
 
 static void
-purple_network_ip_lookup_cb(GSList *hosts, gpointer data,
-	const char *error_message)
-{
-	const gchar **ip = (const gchar **) data;
+purple_network_ip_lookup_cb(GObject *sender, GAsyncResult *result, gpointer data) {
+	GError *error = NULL;
+	GList *addresses = NULL;
+	GInetAddress *address = NULL;
+	const gchar **ip_address = (const gchar **)data;
 
-	if (error_message) {
-		purple_debug_error("network", "lookup of IP address failed: %s\n",
-			error_message);
-		g_slist_free(hosts);
+	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), result, &error);
+	if(error) {
+		purple_debug_info("network", "lookup of IP address failed: %s\n", error->message);
+
+		g_error_free(error);
+
 		return;
 	}
 
-	if (hosts && g_slist_next(hosts)) {
-		common_sockaddr_t *addr = g_slist_next(hosts)->data;
-		char dst[INET6_ADDRSTRLEN];
+	address = G_INET_ADDRESS(addresses->data);
 
-		if (addr->sa.sa_family == AF_INET6) {
-			inet_ntop(addr->sa.sa_family, &addr->in6.sin6_addr,
-				dst, sizeof(dst));
-		} else {
-			inet_ntop(addr->sa.sa_family, &addr->in.sin_addr,
-				dst, sizeof(dst));
-		}
+	*ip_address = g_inet_address_to_string(address);
 
-		*ip = g_strdup(dst);
-		purple_debug_info("network", "set IP address: %s\n", *ip);
-	}
-
-	while (hosts != NULL) {
-		hosts = g_slist_delete_link(hosts, hosts);
-		/* Free the address */
-		g_free(hosts->data);
-		hosts = g_slist_delete_link(hosts, hosts);
-	}
+	g_resolver_free_addresses(addresses);
 }
 
 void
@@ -1018,9 +1005,11 @@ purple_network_set_stun_server(const gchar *stun_server)
 {
 	if (stun_server && stun_server[0] != '\0') {
 		if (purple_network_is_available()) {
-			purple_debug_info("network", "running DNS query for STUN server\n");
-			purple_dnsquery_a(NULL, stun_server, 3478, purple_network_ip_lookup_cb,
-				&stun_ip);
+			g_resolver_lookup_by_name_async(g_resolver_get_default(),
+			                                stun_server,
+			                                NULL,
+			                                purple_network_ip_lookup_cb,
+			                                &stun_ip);
 		} else {
 			purple_debug_info("network",
 				"network is unavailable, don't try to update STUN IP");
@@ -1036,10 +1025,11 @@ purple_network_set_turn_server(const gchar *turn_server)
 {
 	if (turn_server && turn_server[0] != '\0') {
 		if (purple_network_is_available()) {
-			purple_debug_info("network", "running DNS query for TURN server\n");
-			purple_dnsquery_a(NULL, turn_server,
-				purple_prefs_get_int("/purple/network/turn_port"),
-				purple_network_ip_lookup_cb, &turn_ip);
+			g_resolver_lookup_by_name_async(g_resolver_get_default(),
+			                                turn_server,
+			                                NULL,
+			                                purple_network_ip_lookup_cb,
+			                                &turn_server);
 		} else {
 			purple_debug_info("network",
 				"network is unavailable, don't try to update TURN IP");
