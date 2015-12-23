@@ -200,7 +200,7 @@ def irc(uri):
         for modifier in target.split(",")[1:]:
             modifiers[modifier] = True
 
-    isnick = modifiers.has_key("isnick")
+    isnick = True if "isnick" in modifiers else False
 
     paramstring = match.group(5)
     params = {}
