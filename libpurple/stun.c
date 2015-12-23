@@ -361,6 +361,7 @@ hbn_cb(GObject *sender, GAsyncResult *res, gpointer data) {
 		return;
 	}
 
+	ld->port = GPOINTER_TO_INT(data);
 	if (!purple_network_listen_range(12108, 12208, AF_UNSPEC, SOCK_DGRAM, TRUE, hbn_listen_cb, ld)) {
 		nattype.status = PURPLE_STUN_STATUS_UNKNOWN;
 		nattype.lookup_time = time(NULL);
