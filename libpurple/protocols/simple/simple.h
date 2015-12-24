@@ -25,12 +25,11 @@
 
 #include <glib.h>
 #include <gmodule.h>
+#include <gio/gio.h>
 #include <time.h>
 
 #include "cipher.h"
 #include "circularbuffer.h"
-#include "dnsquery.h"
-#include "dnssrv.h"
 #include "network.h"
 #include "proxy.h"
 #include "protocol.h"
@@ -100,8 +99,7 @@ struct simple_account_data {
 	gchar *servername;
 	gchar *username;
 	gchar *password;
-	PurpleDnsQueryData *query_data;
-	PurpleSrvTxtQueryData *srv_query_data;
+	GCancellable *cancellable;
 	PurpleNetworkListenData *listen_data;
 	int fd;
 	int cseq;

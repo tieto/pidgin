@@ -1,4 +1,4 @@
-/* purple
+ /* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -29,13 +29,14 @@
 #include "internal.h"
 #include "ciphers/md5hash.h"
 #include "debug.h"
-#include "dnsquery.h"
 #include "http.h"
 #include "notify.h"
 #include "ntlm.h"
 #include "prefs.h"
 #include "proxy.h"
 #include "util.h"
+
+#include <gio/gio.h>
 
 struct _PurpleProxyInfo
 {
@@ -57,13 +58,14 @@ struct _PurpleProxyConnectData {
 	int socket_type;
 	guint inpa;
 	PurpleProxyInfo *gpi;
-	PurpleDnsQueryData *query_data;
+
+	GCancellable *cancellable;
 
 	/*
-	 * This contains alternating length/char* values.  The char*
-	 * values need to be freed when removed from the linked list.
+	 * This list contains GInetAddress and they should be freed with
+	 * g_resolver_free_addresses when done with.
 	 */
-	GSList *hosts;
+	GList *hosts;
 
 	PurpleProxyConnectData *child;
 
@@ -574,17 +576,15 @@ purple_proxy_connect_data_destroy(PurpleProxyConnectData *connect_data)
 
 	handles = g_slist_remove(handles, connect_data);
 
-	if (connect_data->query_data != NULL)
-		purple_dnsquery_destroy(connect_data->query_data);
+	if(G_IS_CANCELLABLE(connect_data->cancellable)) {
+		g_cancellable_cancel(connect_data->cancellable);
 
-	while (connect_data->hosts != NULL)
-	{
-		/* Discard the length... */
-		connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
-		/* Free the address... */
-		g_free(connect_data->hosts->data);
-		connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
+		g_object_unref(G_OBJECT(connect_data->cancellable));
+
+		connect_data->cancellable = NULL;
 	}
+
+	g_resolver_free_addresses(connect_data->hosts);
 
 	g_free(connect_data->host);
 	g_free(connect_data);
@@ -1307,16 +1307,31 @@ s4_canread(gpointer data, gint source, PurpleInputCondition cond)
 }
 
 static void
-s4_host_resolved(GSList *hosts, gpointer data, const char *error_message)
+s4_host_resolved(GObject *source_object, GAsyncResult *res, gpointer data)
 {
+	GResolver *resolver = NULL;
+	GInetAddress *address = NULL;
+	GError *error = NULL;
+	GList *hosts = NULL, *l = NULL;
 	PurpleProxyConnectData *connect_data = data;
 	unsigned char packet[9];
-	common_sockaddr_t *addr;
 
-	connect_data->query_data = NULL;
+	if(G_IS_CANCELLABLE(connect_data->cancellable)) {
+		g_object_unref(G_OBJECT(connect_data->cancellable));
 
-	if (error_message != NULL) {
-		purple_proxy_connect_data_disconnect(connect_data, error_message);
+		connect_data->cancellable = NULL;
+	}
+
+	resolver = g_resolver_get_default();
+
+	hosts = g_resolver_lookup_by_name_finish(resolver, res, &error);
+	g_object_unref(G_OBJECT(resolver));
+
+	if (error->message != NULL) {
+		purple_proxy_connect_data_disconnect(connect_data, error->message);
+
+		g_error_free(error);
+
 		return;
 	}
 
@@ -1326,37 +1341,37 @@ s4_host_resolved(GSList *hosts, gpointer data, const char *error_message)
 		return;
 	}
 
-	/* Discard the length... */
-	hosts = g_slist_delete_link(hosts, hosts);
-	addr = hosts->data;
-	hosts = g_slist_delete_link(hosts, hosts);
+	for(l = hosts; l; l = l->next) {
+		address = G_INET_ADDRESS(l->data);
 
-	packet[0] = 0x04;
-	packet[1] = 0x01;
-	packet[2] = connect_data->port >> 8;
-	packet[3] = connect_data->port & 0xff;
-	memcpy(packet + 4, &addr->in.sin_addr.s_addr, 4);
-	packet[8] = 0x00;
+		if(!g_inet_address_get_is_loopback(address) && !g_inet_address_get_is_link_local(address))
+			break;
 
-	g_free(addr);
-
-	/* We could try the other hosts, but hopefully that shouldn't be necessary */
-	while (hosts != NULL) {
-		/* Discard the length... */
-		hosts = g_slist_delete_link(hosts, hosts);
-		/* Free the address... */
-		g_free(hosts->data);
-		hosts = g_slist_delete_link(hosts, hosts);
+		address = NULL;
 	}
 
-	connect_data->write_buffer = g_memdup(packet, sizeof(packet));
-	connect_data->write_buf_len = sizeof(packet);
-	connect_data->written_len = 0;
-	connect_data->read_cb = s4_canread;
+	if(address != NULL) {
+		packet[0] = 0x04;
+		packet[1] = 0x01;
+		packet[2] = connect_data->port >> 8;
+		packet[3] = connect_data->port & 0xff;
+		memcpy(packet + 4, g_inet_address_to_bytes(address), 4);
+		packet[8] = 0x00;
 
-	connect_data->inpa = purple_input_add(connect_data->fd, PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
+		connect_data->write_buffer = g_memdup(packet, sizeof(packet));
+		connect_data->write_buf_len = sizeof(packet);
+		connect_data->written_len = 0;
+		connect_data->read_cb = s4_canread;
 
-	proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
+		connect_data->inpa = purple_input_add(connect_data->fd, PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
+
+		proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
+	} else {
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Error resolving %s"), connect_data->host);
+	}
+
+	g_resolver_free_addresses(hosts);
 }
 
 static void
@@ -1416,11 +1431,21 @@ s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 
 		proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
 	} else {
-		connect_data->query_data = purple_dnsquery_a(
-				connect_data->account, connect_data->host,
-				connect_data->port, s4_host_resolved, connect_data);
+		GResolver *resolver = NULL;
 
-		if (connect_data->query_data == NULL) {
+		connect_data->cancellable = g_cancellable_new();
+
+		resolver = g_resolver_get_default();
+
+		g_resolver_lookup_by_name_async(resolver,
+		                                connect_data->host,
+		                                connect_data->cancellable,
+		                                s4_host_resolved,
+		                                connect_data);
+
+		g_object_unref(G_OBJECT(resolver));
+
+		if (connect_data->cancellable == NULL) {
 			purple_debug_error("proxy", "dns query failed unexpectedly.\n");
 			purple_proxy_connect_data_destroy(connect_data);
 		}
@@ -2134,83 +2159,98 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, common_sockaddr_t *ad
 
 static void try_connect(PurpleProxyConnectData *connect_data)
 {
-	socklen_t addrlen;
-	common_sockaddr_t *addr;
-	char ipaddr[INET6_ADDRSTRLEN];
+	GInetAddress *address = NULL;
+	GSocketAddress *socket_address = NULL;
+	GError *error = NULL;
+	char *ipaddr;
 
-	addrlen = GPOINTER_TO_INT(connect_data->hosts->data);
-	connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
-	addr = connect_data->hosts->data;
-	connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
-#ifdef HAVE_INET_NTOP
-	if (addr->sa.sa_family == AF_INET)
-		inet_ntop(addr->sa.sa_family, &addr->in.sin_addr,
-				ipaddr, sizeof(ipaddr));
-	else if (addr->sa.sa_family == AF_INET6)
-		inet_ntop(addr->sa.sa_family, &addr->in6.sin6_addr,
-				ipaddr, sizeof(ipaddr));
-#else
-	memcpy(ipaddr, inet_ntoa(addr->in.sin_addr), sizeof(ipaddr));
-#endif
+	common_sockaddr_t addr;
+	socklen_t addrlen = 0;
+
+	address = G_INET_ADDRESS(connect_data->hosts->data);
+	ipaddr = g_inet_address_to_string(address);
+
 	purple_debug_info("proxy", "Attempting connection to %s\n", ipaddr);
+	g_free(ipaddr);
+
+	socket_address = g_inet_socket_address_new(address, connect_data->port);
+	addrlen = g_socket_address_get_native_size(socket_address);
+
+	g_socket_address_to_native(socket_address, &addr, addrlen, &error);
+	if(error != NULL) {
+		purple_debug_info("proxy", "failed connnection : %s\n", error->message);
+
+		g_error_free(error);
+
+		return;
+	}
 
 	if (connect_data->socket_type == SOCK_DGRAM) {
-		proxy_connect_udp_none(connect_data, addr, addrlen);
-		g_free(addr);
+		proxy_connect_udp_none(connect_data, &addr, addrlen);
+
 		return;
 	}
 
 	switch (purple_proxy_info_get_proxy_type(connect_data->gpi)) {
 		case PURPLE_PROXY_NONE:
-			proxy_connect_none(connect_data, addr, addrlen);
+			proxy_connect_none(connect_data, &addr, addrlen);
 			break;
 
 		case PURPLE_PROXY_HTTP:
-			proxy_connect_http(connect_data, addr, addrlen);
+			proxy_connect_http(connect_data, &addr, addrlen);
 			break;
 
 		case PURPLE_PROXY_SOCKS4:
-			proxy_connect_socks4(connect_data, addr, addrlen);
+			proxy_connect_socks4(connect_data, &addr, addrlen);
 			break;
 
 		case PURPLE_PROXY_SOCKS5:
 		case PURPLE_PROXY_TOR:
-			proxy_connect_socks5(connect_data, addr, addrlen);
+			proxy_connect_socks5(connect_data, &addr, addrlen);
 			break;
 
 		case PURPLE_PROXY_USE_ENVVAR:
-			proxy_connect_http(connect_data, addr, addrlen);
+			proxy_connect_http(connect_data, &addr, addrlen);
 			break;
 
 		default:
 			break;
 	}
 
-	g_free(addr);
+	g_object_unref(G_OBJECT(socket_address));
 }
 
 static void
-connection_host_resolved(GSList *hosts, gpointer data,
-						 const char *error_message)
-{
-	PurpleProxyConnectData *connect_data;
+connection_host_resolved(GObject *source, GAsyncResult *res, gpointer data) {
+	PurpleProxyConnectData *connect_data = (PurpleProxyConnectData *)data;
+	GError *error = NULL;
+	GList *addresses = NULL;
 
-	connect_data = data;
-	connect_data->query_data = NULL;
+	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), res, &error);
 
-	if (error_message != NULL)
-	{
-		purple_proxy_connect_data_disconnect(connect_data, error_message);
+	if(G_IS_CANCELLABLE(connect_data->cancellable)) {
+		g_object_unref(G_OBJECT(connect_data->cancellable));
+
+		connect_data->cancellable = NULL;
+	}
+
+	if (error != NULL) {
+		purple_proxy_connect_data_disconnect(connect_data, error->message);
+
+		g_error_free(error);
+
+		g_resolver_free_addresses(addresses);
+
 		return;
 	}
 
-	if (hosts == NULL)
-	{
+	if (addresses == NULL) {
 		purple_proxy_connect_data_disconnect(connect_data, _("Unable to resolve hostname"));
+
 		return;
 	}
 
-	connect_data->hosts = hosts;
+	connect_data->hosts = addresses;
 
 	try_connect(connect_data);
 }
@@ -2349,9 +2389,15 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 			return NULL;
 	}
 
-	connect_data->query_data = purple_dnsquery_a(account, connecthost,
-			connectport, connection_host_resolved, connect_data);
-	if (connect_data->query_data == NULL)
+	connect_data->cancellable = g_cancellable_new();
+
+	g_resolver_lookup_by_name_async(g_resolver_get_default(),
+	                                connecthost,
+	                                connect_data->cancellable,
+	                                connection_host_resolved,
+	                                connect_data);
+
+	if (connect_data->cancellable == NULL)
 	{
 		purple_debug_error("proxy", "dns query failed unexpectedly.\n");
 		purple_proxy_connect_data_destroy(connect_data);
@@ -2420,10 +2466,15 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 			return NULL;
 	}
 
-	connect_data->query_data = purple_dnsquery_a(account, connecthost,
-			connectport, connection_host_resolved, connect_data);
-	if (connect_data->query_data == NULL)
-	{
+	connect_data->cancellable = g_cancellable_new();
+
+	g_resolver_lookup_by_name_async(g_resolver_get_default(),
+	                                connecthost,
+	                                connect_data->cancellable,
+	                                connection_host_resolved,
+	                                connect_data);
+
+	if (connect_data->cancellable == NULL) {
 		purple_proxy_connect_data_destroy(connect_data);
 		return NULL;
 	}
