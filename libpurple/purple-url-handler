@@ -1,19 +1,22 @@
 #!/usr/bin/env python
-
+from __future__ import print_function
 import dbus
 import re
 import sys
 import time
-import urllib
+try:
+    from urllib.parse import unquote_plus
+except ImportError:
+    from urllib import unquote_plus
 
 bus = dbus.SessionBus()
 obj = None
 try:
     obj = bus.get_object("im.pidgin.purple.PurpleService",
                          "/im/pidgin/purple/PurpleObject")
-except dbus.DBusException, e:
+except dbus.DBusException as e:
     if e._dbus_error_name == "org.freedesktop.DBus.Error.ServiceUnknown":
-        print "Error: no libpurple-powered client is running. Try starting Pidgin or Finch."
+        print("Error: no libpurple-powered client is running. Try starting Pidgin or Finch.")
         sys.exit(1)
 purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
@@ -59,7 +62,7 @@ def convert(value):
         return value
 
 def account_not_found():
-    print "No matching account found."
+    print("No matching account found.")
     sys.exit(1)
 
 def bring_account_online(account):
@@ -122,16 +125,16 @@ def aim(uri):
     protocol = "prpl-aim"
     match = re.match(r"^aim:([^?]*)(\?(.*))", uri)
     if not match:
-        print "Invalid aim URI: %s" % uri
+        print("Invalid aim URI: %s" % uri)
         return
 
-    command = urllib.unquote_plus(match.group(1))
+    command = unquote_plus(match.group(1))
     paramstring = match.group(3)
     params = {}
     if paramstring:
         for param in paramstring.split("&"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.unquote_plus(value)
+            params[key] = unquote_plus(value)
     accountname = params.get("account", "")
     screenname = params.get("screenname", "")
 
@@ -148,10 +151,10 @@ def gg(uri):
     protocol = "prpl-gg"
     match = re.match(r"^gg:(.*)", uri)
     if not match:
-        print "Invalid gg URI: %s" % uri
+        print("Invalid gg URI: %s" % uri)
         return
 
-    screenname = urllib.unquote_plus(match.group(1))
+    screenname = unquote_plus(match.group(1))
     account = findaccount(protocol)
     goim(account, screenname)
 
@@ -159,16 +162,16 @@ def icq(uri):
     protocol = "prpl-icq"
     match = re.match(r"^icq:([^?]*)(\?(.*))", uri)
     if not match:
-        print "Invalid icq URI: %s" % uri
+        print("Invalid icq URI: %s" % uri)
         return
 
-    command = urllib.unquote_plus(match.group(1))
+    command = unquote_plus(match.group(1))
     paramstring = match.group(3)
     params = {}
     if paramstring:
         for param in paramstring.split("&"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.unquote_plus(value)
+            params[key] = unquote_plus(value)
     accountname = params.get("account", "")
     screenname = params.get("screenname", "")
 
@@ -185,10 +188,10 @@ def irc(uri):
     protocol = "prpl-irc"
     match = re.match(r"^irc:(//([^/]*))?/?([^?]*)(\?(.*))?", uri)
     if not match:
-        print "Invalid irc URI: %s" % uri
+        print("Invalid irc URI: %s" % uri)
         return
 
-    server = urllib.unquote_plus(match.group(2) or "")
+    server = unquote_plus(match.group(2) or "")
     target = match.group(3) or ""
     query = match.group(5) or ""
 
@@ -197,14 +200,14 @@ def irc(uri):
         for modifier in target.split(",")[1:]:
             modifiers[modifier] = True
 
-    isnick = modifiers.has_key("isnick")
+    isnick = True if "isnick" in modifiers else False
 
     paramstring = match.group(5)
     params = {}
     if paramstring:
         for param in paramstring.split("&"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.unquote_plus(value)
+            params[key] = unquote_plus(value)
 
     def correct_server(account):
         username = cpurple.PurpleAccountGetUsername(account)
@@ -214,9 +217,9 @@ def irc(uri):
 
     if (target != ""):
         if (isnick):
-            goim(account, urllib.unquote_plus(target.split(",")[0]), params.get("msg"))
+            goim(account, unquote_plus(target.split(",")[0]), params.get("msg"))
         else:
-            channel = urllib.unquote_plus(target.split(",")[0])
+            channel = unquote_plus(target.split(",")[0])
             if channel[0] != "#":
                 channel = "#" + channel
             gochat(account, {"server": server, "channel": channel, "password": params.get("key", "")}, params.get("msg"))
@@ -225,16 +228,16 @@ def msnim(uri):
     protocol = "prpl-msn"
     match = re.match(r"^msnim:([^?]*)(\?(.*))", uri)
     if not match:
-        print "Invalid msnim URI: %s" % uri
+        print("Invalid msnim URI: %s" % uri)
         return
 
-    command = urllib.unquote_plus(match.group(1))
+    command = unquote_plus(match.group(1))
     paramstring = match.group(3)
     params = {}
     if paramstring:
         for param in paramstring.split("&"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.unquote_plus(value)
+            params[key] = unquote_plus(value)
     screenname = params.get("contact", "")
 
     account = findaccount(protocol)
@@ -248,10 +251,10 @@ def sip(uri):
     protocol = "prpl-simple"
     match = re.match(r"^sip:(.*)", uri)
     if not match:
-        print "Invalid sip URI: %s" % uri
+        print("Invalid sip URI: %s" % uri)
         return
 
-    screenname = urllib.unquote_plus(match.group(1))
+    screenname = unquote_plus(match.group(1))
     account = findaccount(protocol)
     goim(account, screenname)
 
@@ -259,20 +262,20 @@ def xmpp(uri):
     protocol = "prpl-jabber"
     match = re.match(r"^xmpp:(//([^/?#]*)/?)?([^?#]*)(\?([^;#]*)(;([^#]*))?)?(#(.*))?", uri)
     if not match:
-        print "Invalid xmpp URI: %s" % uri
+        print("Invalid xmpp URI: %s" % uri)
         return
 
     tmp = match.group(2)
     if (tmp):
-        accountname = urllib.unquote_plus(tmp)
+        accountname = unquote_plus(tmp)
     else:
         accountname = ""
 
-    screenname = urllib.unquote_plus(match.group(3))
+    screenname = unquote_plus(match.group(3))
 
     tmp = match.group(5)
     if (tmp):
-        command = urllib.unquote_plus(tmp)
+        command = unquote_plus(tmp)
     else:
         command = ""
 
@@ -281,7 +284,7 @@ def xmpp(uri):
     if paramstring:
         for param in paramstring.split(";"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.unquote_plus(value)
+            params[key] = unquote_plus(value)
 
     account = findaccount(protocol, accountname)
 
@@ -299,16 +302,16 @@ def gtalk(uri):
     protocol = "prpl-jabber"
     match = re.match(r"^gtalk:([^?]*)(\?(.*))", uri)
     if not match:
-        print "Invalid gtalk URI: %s" % uri
+        print("Invalid gtalk URI: %s" % uri)
         return
 
-    command = urllib.unquote_plus(match.group(1))
+    command = unquote_plus(match.group(1))
     paramstring = match.group(3)
     params = {}
     if paramstring:
         for param in paramstring.split("&"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.unquote_plus(value)
+            params[key] = unquote_plus(value)
     accountname = params.get("from_jid", "")
     jid = params.get("jid", "")
 
@@ -324,17 +327,17 @@ def ymsgr(uri):
     protocol = "prpl-yahoo"
     match = re.match(r"^ymsgr:([^?]*)(\?([^&]*)(&(.*))?)", uri)
     if not match:
-        print "Invalid ymsgr URI: %s" % uri
+        print("Invalid ymsgr URI: %s" % uri)
         return
 
-    command = urllib.unquote_plus(match.group(1))
-    screenname = urllib.unquote_plus(match.group(3))
+    command = unquote_plus(match.group(1))
+    screenname = unquote_plus(match.group(3))
     paramstring = match.group(5)
     params = {}
     if paramstring:
         for param in paramstring.split("&"):
             key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = urllib.unquote_plus(value)
+            params[key] = unquote_plus(value)
 
     account = findaccount(protocol)
 
@@ -348,8 +351,8 @@ def ymsgr(uri):
 
 def main(argv=sys.argv):
     if len(argv) != 2 or argv[1] == "--help" or argv[1] == "-h":
-        print "Usage: %s URI" % argv[0]
-        print "Example: %s \"xmpp:romeo@montague.net?message\"" % argv[0]
+        print("Usage: %s URI" % argv[0])
+        print("Example: %s \"xmpp:romeo@montague.net?message\"" % argv[0])
 
         if len(argv) != 2:
             sys.exit(1)
@@ -379,9 +382,9 @@ def main(argv=sys.argv):
         elif type == "ymsgr":
             ymsgr(uri)
         else:
-            print "Unknown protocol: %s" % type
-    except dbus.DBusException, e:
-        print "Error: %s" % (e.message)
+            print("Unknown protocol: %s" % type)
+    except dbus.DBusException as e:
+        print("Error: %s" % e.message)
         sys.exit(1)
 
 if __name__ == "__main__":
