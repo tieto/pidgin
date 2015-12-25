@@ -50,7 +50,6 @@ libpurple/data/gconf/purple.schemas.in
 libpurple/dbus-server.c
 libpurple/dbus-server.h
 libpurple/desktopitem.c
-libpurple/dnsquery.c
 libpurple/http.c
 libpurple/keyring.c
 libpurple/log.c
