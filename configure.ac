@@ -1513,9 +1513,6 @@ dnl #######################################################################
 AC_ARG_ENABLE(dbus,
 	[AS_HELP_STRING([--disable-dbus], [disable D-Bus support])], ,
 	enable_dbus="$is_not_win32")
-AC_ARG_ENABLE(nm,
-	[AS_HELP_STRING([--disable-nm], [disable NetworkManager support (requires D-Bus)])],
-	enable_nm=$enableval, enable_nm="$is_not_win32")
 
 if test "x$enable_dbus" = "xyes" ; then
 	AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
@@ -1534,26 +1531,6 @@ D-Bus development headers not found.
 Use --disable-dbus if you do not need D-Bus support.
 ])
 	fi])
-fi
-
-dnl Check for NetworkManager.h; if we don't have it, oh well
-if test "x$enable_dbus" = "xyes" ; then
-	if test "x$enable_nm" = "xyes" ; then
-		PKG_CHECK_MODULES(NETWORKMANAGER, [NetworkManager >= 0.5.0], [
-			AC_SUBST(NETWORKMANAGER_CFLAGS)
-			AC_SUBST(NETWORKMANAGER_LIBS)
-			AC_DEFINE(HAVE_NETWORKMANAGER, 1, [Define if we have NetworkManager.])
-		], [
-			enable_nm=no
-			if test "x$force_deps" = "xyes" ; then
-				AC_MSG_ERROR([
-NetworkManager development headers not found.
-Use --disable-nm if you do not need NetworkManager support.
-])
-			fi])
-	fi
-else
-	enable_nm=no
 fi
 
 dnl #######################################################################
@@ -2336,7 +2313,6 @@ if test "x$enable_dbus" = "xyes" ; then
 	eval eval echo D-Bus services directory...... : $DBUS_SERVICES_DIR
 fi
 echo Build with GNU Libidn......... : $enable_idn
-echo Build with NetworkManager..... : $enable_nm
 echo SSL Library/Libraries......... : $msg_ssl
 if test "x$SSL_CERTIFICATES_DIR" != "x" ; then
 	eval eval echo SSL CA certificates directory. : $SSL_CERTIFICATES_DIR
