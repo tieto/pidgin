@@ -412,6 +412,7 @@ version 3.0.0 (??/??/????):
 		* _PurpleSoundEventID
 		* _XMLNodeType
 		* account-authorization-requested-with-message signal
+		* network-configuration-changed signal
 		* purple_account_add_buddies_with_invite
 		* purple_account_add_buddy_with_invite
 		* purple_account_set_current_error
