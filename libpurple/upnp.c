@@ -18,6 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include <gio/gio.h>
+
 #include "internal.h"
 
 #include "upnp.h"
@@ -1001,7 +1003,7 @@ purple_upnp_remove_port_mapping(unsigned short portmap, const char* protocol,
 }
 
 static void
-purple_upnp_network_config_changed_cb(void *data)
+purple_upnp_network_config_changed_cb(GNetworkMonitor *monitor, gboolean available, gpointer data)
 {
 	/* Reset the control_info to default values */
 	control_info.status = PURPLE_UPNP_STATUS_UNDISCOVERED;
@@ -1013,18 +1015,11 @@ purple_upnp_network_config_changed_cb(void *data)
 	control_info.lookup_time = 0;
 }
 
-static void*
-purple_upnp_get_handle(void)
-{
-	static int handle;
-
-	return &handle;
-}
-
 void
 purple_upnp_init()
 {
-	purple_signal_connect(purple_network_get_handle(), "network-configuration-changed",
-						  purple_upnp_get_handle(), PURPLE_CALLBACK(purple_upnp_network_config_changed_cb),
-						  NULL);
+	g_signal_connect(g_network_monitor_get_default(),
+	                 "network-changed",
+	                 G_CALLBACK(purple_upnp_network_config_changed_cb),
+	                 NULL);
 }
