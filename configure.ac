@@ -491,10 +491,10 @@ I can find them.
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
-GLIB_GENMARSHAL=`pkg-config --variable=glib_genmarshal glib-2.0`
+GLIB_GENMARSHAL=`$PKG_CONFIG --variable=glib_genmarshal glib-2.0`
 AC_SUBST(GLIB_GENMARSHAL)
 
-GLIB_MKENUMS=`pkg-config --variable=glib_mkenums glib-2.0`
+GLIB_MKENUMS=`$PKG_CONFIG --variable=glib_mkenums glib-2.0`
 AC_SUBST(GLIB_MKENUMS)
 
 AC_ARG_WITH([extraversion],
