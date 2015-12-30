@@ -188,16 +188,18 @@ static void
 remove_old_transient_statuses(void)
 {
 	GList *l, *next;
-	PurpleSavedStatus *saved_status, *current_status;
+	PurpleSavedStatus *saved_status, *startup_status, *current_status;
 	int count;
 	time_t creation_time;
 
+	startup_status = purple_savedstatus_get_startup();
 	current_status = purple_savedstatus_get_current();
 
 	/*
 	 * Iterate through the list of saved statuses.  Delete all
 	 * transient statuses except for the first MAX_TRANSIENTS
 	 * (remember, the saved statuses are already sorted by popularity).
+	 * We should also keep the startup status, if any is set.
 	 */
 	count = 0;
 	for (l = saved_statuses; l != NULL; l = next)
@@ -208,7 +210,7 @@ remove_old_transient_statuses(void)
 		{
 			if (count == MAX_TRANSIENTS)
 			{
-				if (saved_status != current_status)
+				if (saved_status != current_status && saved_status != startup_status)
 				{
 					saved_statuses = g_list_remove(saved_statuses, saved_status);
 					creation_time = purple_savedstatus_get_creation_time(saved_status);

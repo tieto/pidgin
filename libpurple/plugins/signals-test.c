@@ -282,11 +282,11 @@ connection_error_cb(PurpleConnection *gc,
  * Conversation subsystem signal callbacks
  **************************************************************************/
 static gboolean
-writing_im_msg_cb(PurpleAccount *account, const char *who, char **buffer,
-				PurpleConversation *conv, PurpleMessageFlags flags, void *data)
+writing_im_msg_cb(PurpleConversation *conv, PurpleMessage *pmsg)
 {
-	purple_debug_misc("signals test", "writing-im-msg (%s, %s, %s)\n",
-					purple_account_get_username(account), purple_conversation_get_name(conv), *buffer);
+	purple_debug_misc("signals test", "writing-im-msg (%s, %s)\n",
+		purple_conversation_get_name(conv),
+		purple_message_get_contents(pmsg));
 
 	return FALSE;
 

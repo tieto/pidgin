@@ -41,15 +41,11 @@ outgoing_msg_common(const char *message)
   return g_strjoinv("</font>", ms);
 }
 
-static gboolean outgoing_msg_cb1(PurpleAccount *account, const char *who, char **message,
-					PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
+static gboolean outgoing_msg_cb1(PurpleConversation *conv, PurpleMessage *msg,
+	gpointer null)
 {
-	char *m;
-
-	m = outgoing_msg_common(*message);
-	g_free(*message);
-	*message = m;
-
+	purple_message_set_contents(msg,
+		outgoing_msg_common(purple_message_get_contents(msg)));
 	return FALSE;
 }
 
