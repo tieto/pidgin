@@ -850,18 +850,7 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
-		name, account);
-	if (!conv) {
-		purple_debug_info(NULL, "Opening %s chat on account %s",
-			name, purple_account_get_username(account));
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
-	}
-	else {
-		purple_debug_info(NULL, "Chat %s on account %s already exists",
-			name, purple_account_get_username(account));
-	}
-
+	conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
 	g_return_val_if_fail(conv != NULL, NULL);
 
 	chat = PURPLE_CONV_CHAT(conv);
