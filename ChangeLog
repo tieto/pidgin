@@ -12,6 +12,8 @@ version 3.0.0 (??/??/????):
 	  non-native plugin support.
 	* Removed flags for manually configuring GnuTLS and NSS. They are now only
 	  recognized through pkg-config. (Michael McConville)
+	* Fixed an issue where transient startup statuses could be deleted
+	  (Jakub Adam) (#16762)
 
 	libpurple:
 	* Specify a different set of encryption ciphers for TLS connections when
