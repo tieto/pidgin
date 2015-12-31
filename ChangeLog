@@ -1,5 +1,7 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.10.13 (MM/DD/YY):
+
 version 2.10.12 (12/31/15):
 	General:
 	* purple-url-handler now works with Python 3.x (Daniël van Eeden)
