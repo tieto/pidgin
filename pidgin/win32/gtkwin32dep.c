@@ -187,27 +187,19 @@ void winpidgin_notify_uri(const char *uri) {
 #define PIDGIN_WM_PROTOCOL_HANDLE (WM_APP + 14)
 
 static void*
-winpidgin_netconfig_changed_cb(void *data)
+winpidgin_netconfig_changed_cb(GNetworkMonitor *monitor, gboolean available, gpointer data)
 {
 	pwm_handles_connections = FALSE;
 
 	return NULL;
 }
 
-static void*
-winpidgin_get_handle(void)
-{
-	static int handle;
-
-	return &handle;
-}
-
 static gboolean
 winpidgin_pwm_reconnect()
 {
-	purple_signal_disconnect(purple_network_get_handle(), "network-configuration-changed",
-		winpidgin_get_handle(), PURPLE_CALLBACK(winpidgin_netconfig_changed_cb));
-
+	g_signal_handlers_disconnect_by_func(g_network_monitor_get_default,
+	                                     G_CALLBACK(winpidgin_netconfig_changed_cb),
+	                                     NULL);
 	if (pwm_handles_connections == TRUE) {
 		PurpleConnectionUiOps *ui_ops = pidgin_connections_get_ui_ops();
 
@@ -246,8 +238,10 @@ static LRESULT CALLBACK message_window_handler(HWND hwnd, UINT msg, WPARAM wpara
 			if (ui_ops != NULL && ui_ops->network_disconnected != NULL)
 				ui_ops->network_disconnected();
 
-			purple_signal_connect(purple_network_get_handle(), "network-configuration-changed", winpidgin_get_handle(),
-				PURPLE_CALLBACK(winpidgin_netconfig_changed_cb), NULL);
+			g_signal_connect(g_network_monitor_get_default(),
+			                 "network-changed",
+			                 G_CALLBACK(winpidgin_netconfig_changed_cb),
+			                 NULL);
 
 			return TRUE;
 		} else if (wparam == PBT_APMRESUMESUSPEND) {

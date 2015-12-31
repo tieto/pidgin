@@ -24,6 +24,8 @@
  * OF SUCH DAMAGE.
  */
 
+#include <gio/gio.h>
+
 #include "internal.h"
 #include "nat-pmp.h"
 #include "debug.h"
@@ -514,7 +516,7 @@ purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport)
 }
 
 static void
-purple_pmp_network_config_changed_cb(void *data)
+purple_pmp_network_config_changed_cb(GNetworkMonitor *monitor, gboolean avialable, gpointer data)
 {
 	pmp_info.status = PURPLE_PMP_STATUS_UNDISCOVERED;
 	g_free(pmp_info.publicip);
@@ -532,9 +534,10 @@ purple_pmp_get_handle(void)
 void
 purple_pmp_init()
 {
-	purple_signal_connect(purple_network_get_handle(), "network-configuration-changed",
-		  purple_pmp_get_handle(), PURPLE_CALLBACK(purple_pmp_network_config_changed_cb),
-		  GINT_TO_POINTER(0));
+	g_signal_connect(g_network_monitor_get_default(),
+	                 "network-changed",
+	                 G_CALLBACK(purple_pmp_network_config_changed_cb),
+	                 NULL);
 }
 #else /* #ifdef NET_RT_DUMP */
 char *

@@ -676,14 +676,6 @@ void pidgin_dialogs_buildinfo(void)
 #endif
 #endif
 
-#ifndef _WIN32
-#ifdef HAVE_NETWORKMANAGER
-	g_string_append(str, "<dt>NetworkManager:</dt><dd>Enabled</dd>");
-#else
-	g_string_append(str, "<dt>NetworkManager:</dt><dd>Disabled</dd>");
-#endif
-#endif
-
 #ifdef HAVE_NSS
 	g_string_append(str, "<dt>Network Security Services (NSS):</dt><dd>Enabled</dd>");
 #else
