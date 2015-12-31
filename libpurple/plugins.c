@@ -1108,6 +1108,9 @@ void
 purple_plugins_init(void)
 {
 	void *handle = purple_plugins_get_handle();
+#ifdef PURPLE_PLUGINS
+	const gchar *search_path;
+#endif
 
 	purple_signal_register(handle, "plugin-load",
 	                       purple_marshal_VOID__POINTER,
@@ -1118,6 +1121,20 @@ purple_plugins_init(void)
 
 #ifdef PURPLE_PLUGINS
 	gplugin_init();
+
+	search_path = g_getenv("PURPLE_PLUGIN_PATH");
+	if (search_path) {
+		gchar **paths;
+		int i;
+
+		paths = g_strsplit(search_path, G_SEARCHPATH_SEPARATOR_S, 0);
+		for (i = 0; paths[i]; ++i) {
+			purple_plugins_add_search_path(paths[i]);
+		}
+
+		g_strfreev(paths);
+	}
+
 	gplugin_manager_add_default_paths();
 
 	purple_plugins_add_search_path(PURPLE_LIBDIR);
