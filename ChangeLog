@@ -15,7 +15,7 @@ version 2.10.12 (12/31/15):
 	* Updates to dependencies:
 		* Cyrus SASL 2.1.26
 		* libxml2 2.9.2
-		* NSS 3.17.3 and NSPR 4.10.7
+		* NSS 3.20.1 and NSPR 4.10.10
 		* Perl 5.20.1
 		* SILC 1.1.12
 	* Remove support for Tcl plugins
