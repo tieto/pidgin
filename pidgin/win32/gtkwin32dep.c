@@ -22,9 +22,6 @@
  *
  */
 #define _WIN32_IE 0x500
-#ifndef WINVER
-#define WINVER 0x0500 /* W2K */
-#endif
 #include <windows.h>
 #include <io.h>
 #include <stdlib.h>
