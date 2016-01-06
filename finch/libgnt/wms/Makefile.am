@@ -30,6 +30,7 @@ EXTRA_DIST =
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/finch \
 	-I$(top_srcdir)/finch/libgnt \
 	$(DEBUG_CFLAGS) \

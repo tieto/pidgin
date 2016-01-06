@@ -111,6 +111,7 @@ endif
 AM_CPPFLAGS = \
 	-DSTANDALONE \
 	-I$(top_srcdir)/libpurple/ \
+	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir) \
 	-I$(srcdir)/libgnt/ \
 	$(DEBUG_CFLAGS) \
@@ -152,6 +153,7 @@ Finch_3_0_gir_CFLAGS = \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_srcdir)/libpurple/ \
+	-I$(top_builddir)/libpurple/ \
 	-I$(top_srcdir) \
 	-I$(srcdir)/libgnt/ \
 	$(GLIB_CFLAGS) \

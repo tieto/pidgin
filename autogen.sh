@@ -149,6 +149,15 @@ else
 fi
 
 ###############################################################################
+# Work inside the source directory
+##############################################################################
+test -z "$SRCDIR" && SRCDIR=`dirname "$0"`
+test -z "$SRCDIR" && SRCDIR=.
+
+OLDDIR=`pwd`
+cd "$SRCDIR"
+
+###############################################################################
 # Check for our required helpers
 ###############################################################################
 check "$libtoolize";		LIBTOOLIZE=${BIN};
@@ -180,7 +189,8 @@ run_or_die ${AUTOCONF} ${AUTOCONF_FLAGS}
 ###############################################################################
 # Run configure
 ###############################################################################
+cd "$OLDDIR"
 if test -z "$NOCONFIGURE"; then
-	echo "running ./configure ${CONFIGURE_FLAGS} $@"
-	./configure ${CONFIGURE_FLAGS} $@
+	echo "running $SRCDIR/configure ${CONFIGURE_FLAGS} $@"
+	"$SRCDIR/configure" ${CONFIGURE_FLAGS} $@
 fi
