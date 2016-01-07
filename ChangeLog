@@ -4,6 +4,9 @@ version 2.10.13 (MM/DD/YY):
 	Pidgin:
 	* Fixed #14962
 
+	Windows-Specific Changes:
+	* Use getaddrinfo for DNS to enable IPv6 (#1075)
+
 version 2.10.12 (12/31/15):
 	General:
 	* purple-url-handler now works with Python 3.x (Daniël van Eeden)

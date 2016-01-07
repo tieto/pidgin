@@ -93,8 +93,7 @@
 #define HAVE_FILENO 1
 
 /* Define to 1 if you have the getaddrinfo function. */
-/* TODO: Use this on new enough versions of Windows */
-/* #define HAVE_GETADDRINFO 1 */
+#define HAVE_GETADDRINFO 1
 
 /* Define to 1 if you have the `gethostid' function. */
 /* #define HAVE_GETHOSTID 1 */
@@ -127,7 +126,7 @@
 /* #undef HAVE_GNUTLS_PRIORITY_FUNCS */
 
 /* Define to 1 if you have the `inet_ntop' function. */
-/* #define HAVE_INET_NTOP 1 */
+#define HAVE_INET_NTOP 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
