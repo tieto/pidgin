@@ -44,8 +44,6 @@
       <xi:include href="xml/conversations.xml" />
       <xi:include href="xml/dbus-maybe.xml" />
       <xi:include href="xml/debug.xml" />
-      <xi:include href="xml/dnsquery.xml" />
-      <xi:include href="xml/dnssrv.xml" />
       <xi:include href="xml/e2ee.xml" />
       <xi:include href="xml/eventloop.xml" />
       <xi:include href="xml/xfer.xml" />
