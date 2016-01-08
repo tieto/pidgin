@@ -1928,13 +1928,16 @@ srvresolved(GObject *sender, GAsyncResult *result, gpointer data) {
 			return;
 		}
 	} else { /* UDP */
+		GResolver *resolver = g_resolver_get_default();
+
 		purple_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
 
-		g_resolver_lookup_by_name_async(g_resolver_get_default(),
+		g_resolver_lookup_by_name_async(resolver,
 		                                sip->realhostname,
 		                                sip->cancellable,
 		                                simple_udp_host_resolved,
 		                                sip);
+		g_object_unref(resolver);
 	}
 }
 
@@ -1944,8 +1947,9 @@ static void simple_login(PurpleAccount *account)
 	struct simple_account_data *sip;
 	gchar **userserver;
 	const gchar *hosttoconnect;
-
 	const char *username = purple_account_get_username(account);
+	GResolver *resolver;
+
 	gc = purple_account_get_connection(account);
 
 	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_NO_IMAGES);
@@ -1996,13 +2000,15 @@ static void simple_login(PurpleAccount *account)
 		hosttoconnect = purple_account_get_string(account, "proxy", sip->servername);
 	}
 
-	g_resolver_lookup_service_async(g_resolver_get_default(),
+	resolver = g_resolver_get_default();
+	g_resolver_lookup_service_async(resolver,
 	                                "sip",
 	                                sip->udp ? "udp" : "tcp",
 	                                hosttoconnect,
 	                                sip->cancellable,
 	                                srvresolved,
 	                                sip);
+	g_object_unref(resolver);
 }
 
 static void simple_close(PurpleConnection *gc)

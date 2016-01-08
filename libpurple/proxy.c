@@ -2338,6 +2338,7 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 	const char *connecthost = host;
 	int connectport = port;
 	PurpleProxyConnectData *connect_data;
+	GResolver *resolver;
 
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >  0,    NULL);
@@ -2389,11 +2390,13 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 
 	connect_data->cancellable = g_cancellable_new();
 
-	g_resolver_lookup_by_name_async(g_resolver_get_default(),
+	resolver = g_resolver_get_default();
+	g_resolver_lookup_by_name_async(resolver,
 	                                connecthost,
 	                                connect_data->cancellable,
 	                                connection_host_resolved,
 	                                connect_data);
+	g_object_unref(resolver);
 
 	if (connect_data->cancellable == NULL)
 	{
@@ -2415,6 +2418,7 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 	const char *connecthost = host;
 	int connectport = port;
 	PurpleProxyConnectData *connect_data;
+	GResolver *resolver;
 
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >  0,    NULL);
@@ -2466,11 +2470,13 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 
 	connect_data->cancellable = g_cancellable_new();
 
-	g_resolver_lookup_by_name_async(g_resolver_get_default(),
+	resolver = g_resolver_get_default();
+	g_resolver_lookup_by_name_async(resolver,
 	                                connecthost,
 	                                connect_data->cancellable,
 	                                connection_host_resolved,
 	                                connect_data);
+	g_object_unref(resolver);
 
 	if (connect_data->cancellable == NULL) {
 		purple_proxy_connect_data_destroy(connect_data);

@@ -517,13 +517,15 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 		} else if (purple_network_get_stun_ip() == NULL ||
 		    purple_strequal(purple_network_get_stun_ip(), "")) {
 
-			g_resolver_lookup_service_async(g_resolver_get_default(),
+			GResolver *resolver = g_resolver_get_default();
+			g_resolver_lookup_service_async(resolver,
 			                                "stun",
 			                                "udp",
 			                                js->user->domain,
 			                                NULL,
 			                                jabber_disco_stun_srv_resolve_cb,
 			                                js);
+			g_object_unref(resolver);
 			/* TODO: add TURN support later... */
 		}
 	}

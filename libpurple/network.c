@@ -599,11 +599,13 @@ purple_network_set_stun_server(const gchar *stun_server)
 {
 	if (stun_server && stun_server[0] != '\0') {
 		if (purple_network_is_available()) {
-			g_resolver_lookup_by_name_async(g_resolver_get_default(),
+			GResolver *resolver = g_resolver_get_default();
+			g_resolver_lookup_by_name_async(resolver,
 			                                stun_server,
 			                                NULL,
 			                                purple_network_ip_lookup_cb,
 			                                &stun_ip);
+			g_object_unref(resolver);
 		} else {
 			purple_debug_info("network",
 				"network is unavailable, don't try to update STUN IP");
@@ -619,11 +621,13 @@ purple_network_set_turn_server(const gchar *turn_server)
 {
 	if (turn_server && turn_server[0] != '\0') {
 		if (purple_network_is_available()) {
-			g_resolver_lookup_by_name_async(g_resolver_get_default(),
+			GResolver *resolver = g_resolver_get_default();
+			g_resolver_lookup_by_name_async(resolver,
 			                                turn_server,
 			                                NULL,
 			                                purple_network_ip_lookup_cb,
 			                                &turn_server);
+			g_object_unref(resolver);
 		} else {
 			purple_debug_info("network",
 				"network is unavailable, don't try to update TURN IP");

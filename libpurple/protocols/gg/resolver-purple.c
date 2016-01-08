@@ -137,6 +137,8 @@ int ggp_resolver_purple_start(int *fd, void **private_data,
 	const char *hostname)
 {
 	ggp_resolver_purple_data *data;
+	GResolver *resolver;
+
 	purple_debug_misc("gg", "ggp_resolver_purple_start(%p, %p, \"%s\")\n",
 		fd, private_data, hostname);
 
@@ -158,11 +160,13 @@ int ggp_resolver_purple_start(int *fd, void **private_data,
 	/* account and port is unknown in this context */
 	data->cancellable = g_cancellable_new();
 
-	g_resolver_lookup_by_name_async(g_resolver_get_default(),
+	resolver = g_resolver_get_default();
+	g_resolver_lookup_by_name_async(resolver,
 	                                hostname,
 	                                data->cancellable,
 	                                ggp_resolver_purple_cb,
 	                                (gpointer)data);
+	g_object_unref(resolver);
 
 	if (!data->cancellable) {
 		purple_debug_error("gg", "ggp_resolver_purple_start: "

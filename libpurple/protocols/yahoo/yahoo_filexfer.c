@@ -679,6 +679,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	if(val_222 == 3)
 	{
 		struct yahoo_xfer_data *xd;
+		GResolver *resolver;
 
 		xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map,
 								   xfer_peer_idstring);
@@ -703,11 +704,13 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 		}
 		xd->is_relay = TRUE;
 
-		g_resolver_lookup_by_name_async(g_resolver_get_default(),
+		resolver = g_resolver_get_default();
+		g_resolver_lookup_by_name_async(resolver,
 		                                YAHOO_XFER_RELAY_HOST,
 		                                NULL,
 		                                yahoo_xfer_dns_connected_15,
 		                                xfer);
+		g_object_unref(resolver);
 
 		return;
 	}
