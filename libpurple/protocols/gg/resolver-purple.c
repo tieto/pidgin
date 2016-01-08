@@ -72,7 +72,8 @@ void ggp_resolver_purple_cb(GObject *sender, GAsyncResult *res, gpointer cbdata)
 	ggp_resolver_purple_data *data = (ggp_resolver_purple_data*)cbdata;
 	const int fd = data->pipes[1];
 
-	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), res, &error);
+	addresses = g_resolver_lookup_by_name_finish(G_RESOLVER(sender),
+			res, &error);
 	if(addresses == NULL) {
 		purple_debug_error("gg", "ggp_resolver_purple_cb failed: %s\n",
 			error->message);

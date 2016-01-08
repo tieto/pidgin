@@ -1309,7 +1309,6 @@ s4_canread(gpointer data, gint source, PurpleInputCondition cond)
 static void
 s4_host_resolved(GObject *source_object, GAsyncResult *res, gpointer data)
 {
-	GResolver *resolver = NULL;
 	GInetAddress *address = NULL;
 	GError *error = NULL;
 	GList *hosts = NULL, *l = NULL;
@@ -1322,10 +1321,8 @@ s4_host_resolved(GObject *source_object, GAsyncResult *res, gpointer data)
 		connect_data->cancellable = NULL;
 	}
 
-	resolver = g_resolver_get_default();
-
-	hosts = g_resolver_lookup_by_name_finish(resolver, res, &error);
-	g_object_unref(G_OBJECT(resolver));
+	hosts = g_resolver_lookup_by_name_finish(G_RESOLVER(source_object),
+			res, &error);
 
 	if (error->message != NULL) {
 		purple_proxy_connect_data_disconnect(connect_data, error->message);
@@ -2226,7 +2223,8 @@ connection_host_resolved(GObject *source, GAsyncResult *res, gpointer data) {
 	GError *error = NULL;
 	GList *addresses = NULL;
 
-	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), res, &error);
+	addresses = g_resolver_lookup_by_name_finish(G_RESOLVER(source),
+			res, &error);
 
 	if(G_IS_CANCELLABLE(connect_data->cancellable)) {
 		g_object_unref(G_OBJECT(connect_data->cancellable));

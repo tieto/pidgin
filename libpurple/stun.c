@@ -351,7 +351,8 @@ hbn_cb(GObject *sender, GAsyncResult *res, gpointer data) {
 
 	ld = g_new0(StunHBNListenData, 1);
 
-	ld->addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), res, &error);
+	ld->addresses = g_resolver_lookup_by_name_finish(G_RESOLVER(sender),
+			res, &error);
 	if(error != NULL) {
 		nattype.status = PURPLE_STUN_STATUS_UNDISCOVERED;
 		nattype.lookup_time = time(NULL);
@@ -379,7 +380,8 @@ do_test1(GObject *sender, GAsyncResult *res, gpointer data) {
 	const char *servername = data;
 	int port = 3478;
 
-	services = g_resolver_lookup_service_finish(g_resolver_get_default(), res, &error);
+	services = g_resolver_lookup_service_finish(G_RESOLVER(sender),
+			res, &error);
 	if(error != NULL) {
 		purple_debug_info("stun", "Failed to look up srv record : %s\n", error->message);
 

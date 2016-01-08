@@ -577,7 +577,8 @@ purple_network_ip_lookup_cb(GObject *sender, GAsyncResult *result, gpointer data
 	GInetAddress *address = NULL;
 	const gchar **ip_address = (const gchar **)data;
 
-	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), result, &error);
+	addresses = g_resolver_lookup_by_name_finish(G_RESOLVER(sender),
+			result, &error);
 	if(error) {
 		purple_debug_info("network", "lookup of IP address failed: %s\n", error->message);
 

@@ -763,7 +763,8 @@ txt_resolved_cb(GObject *sender, GAsyncResult *result, gpointer data)
 	JabberStream *js = data;
 	gboolean found = FALSE;
 
-	records = g_resolver_lookup_records_finish(g_resolver_get_default(), result, &error);
+	records = g_resolver_lookup_records_finish(G_RESOLVER(sender),
+			result, &error);
 	if(error) {
 		purple_debug_warning("jabber", "Unable to find alternative XMPP connection "
 				  "methods after failing to connect directly. : %s\n",
@@ -907,7 +908,8 @@ srv_resolved_cb(GObject *sender, GAsyncResult *result, gpointer data)
 	GList *targets = NULL, *l = NULL;
 	JabberStream *js = data;
 
-	targets = g_resolver_lookup_service_finish(g_resolver_get_default(), result, &error);
+	targets = g_resolver_lookup_service_finish(G_RESOLVER(sender),
+			result, &error);
 	if(error) {
 		purple_debug_warning("jabber",
 		                     "SRV lookup failed, proceeding with normal connection : %s",

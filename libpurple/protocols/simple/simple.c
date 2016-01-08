@@ -1807,7 +1807,8 @@ simple_udp_host_resolved(GObject *sender, GAsyncResult *result, gpointer data) {
 	GSocketAddress *socket_address = NULL;
 	struct simple_account_data *sip = (struct simple_account_data*) data;
 
-	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), result, &error);
+	addresses = g_resolver_lookup_by_name_finish(G_RESOLVER(sender),
+			result, &error);
 	if(error) {
 		gchar *msg = g_strdup_printf(_("Unable to resolve hostname : %s"),
 			error->message);
@@ -1885,7 +1886,8 @@ srvresolved(GObject *sender, GAsyncResult *result, gpointer data) {
 
 	sip = data;
 
-	targets = g_resolver_lookup_service_finish(g_resolver_get_default(), result, &error);
+	targets = g_resolver_lookup_service_finish(G_RESOLVER(sender),
+			result, &error);
 	if(error) {
 		purple_debug_info("simple",
 		                  "srv lookup failed, continuing with configured settings : %s",

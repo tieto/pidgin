@@ -521,7 +521,8 @@ yahoo_xfer_dns_connected_15(GObject *sender, GAsyncResult *result, gpointer data
 	account = purple_connection_get_account(gc);
 	yd = purple_connection_get_protocol_data(gc);
 
-	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), result, &error);
+	addresses = g_resolver_lookup_by_name_finish(G_RESOLVER(sender),
+			result, &error);
 	if(error) {
 		purple_debug_error("yahoo",
 		                   "Unable to find an IP address for relay.msg.yahoo.com : %s\n",

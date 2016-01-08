@@ -30,7 +30,8 @@ jabber_google_stun_lookup_cb(GObject *sender, GAsyncResult *result, gpointer dat
 	GList *addresses = NULL;
 	JabberStream *js = (JabberStream *) data;
 
-	addresses = g_resolver_lookup_by_name_finish(g_resolver_get_default(), result, &error);
+	addresses = g_resolver_lookup_by_name_finish(G_RESOLVER(sender),
+			result, &error);
 
 	if(error) {
 		purple_debug_error("jabber", "Google STUN lookup failed: %s\n",

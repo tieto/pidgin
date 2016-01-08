@@ -426,7 +426,8 @@ jabber_disco_stun_srv_resolve_cb(GObject *sender, GAsyncResult *result, gpointer
 	JabberStream *js = (JabberStream *) data;
 	gint results = 0;
 
-	services = g_resolver_lookup_service_finish(g_resolver_get_default(), result, &error);
+	services = g_resolver_lookup_service_finish(G_RESOLVER(sender),
+			result, &error);
 
 	if(error != NULL) {
 		purple_debug_info("jabber", "Failed to look up a STUN record : %s\n", error->message);
