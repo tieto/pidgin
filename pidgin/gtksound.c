@@ -311,7 +311,6 @@ pidgin_sound_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/mute", FALSE);
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/command", "");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/sound/method", "automatic");
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/sound/volume", 50);
 
 #ifdef USE_GSTREAMER
 	purple_debug_info("sound", "Initializing sound output drivers.\n");
@@ -439,7 +438,6 @@ pidgin_sound_play_file(const char *filename)
 {
 	const char *method;
 #ifdef USE_GSTREAMER
-	float volume;
 	char *uri;
 	GstElement *sink = NULL;
 	GstElement *play = NULL;
@@ -522,7 +520,6 @@ pidgin_sound_play_file(const char *filename)
 #ifdef USE_GSTREAMER
 	if (gst_init_failed)  /* Perhaps do gdk_beep instead? */
 		return;
-	volume = (float)(CLAMP(purple_prefs_get_int(PIDGIN_PREFS_ROOT "/sound/volume"),0,100)) / 50;
 #ifdef _WIN32
 	if (!strcmp(method, "automatic")) {
 		sink = gst_element_factory_make("directsoundsink", "sink");
@@ -568,7 +565,6 @@ pidgin_sound_play_file(const char *filename)
 #endif
 
 	g_object_set(G_OBJECT(play), "uri", uri,
-		                     "volume", volume,
 		                     "audio-sink", sink, NULL);
 
 	bus = gst_pipeline_get_bus(GST_PIPELINE(play));

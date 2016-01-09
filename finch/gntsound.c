@@ -48,7 +48,6 @@
 #include "gntentry.h"
 #include "gntcheckbox.h"
 #include "gntline.h"
-#include "gntslider.h"
 #include "gnttree.h"
 #include "gntfilesel.h"
 
@@ -65,7 +64,6 @@ typedef struct {
 	GntWidget *command;
 	GntWidget *conv_focus;
 	GntWidget *while_status;
-	GntWidget *volume;
 	GntWidget *events;
 	GntWidget *window;
 	GntWidget *selector;
@@ -319,7 +317,6 @@ initialize_profile(const char *name, PurplePrefType type, gconstpointer val, gpo
 	purple_prefs_add_bool(make_pref("/mute"), FALSE);
 	purple_prefs_add_path(make_pref("/command"), "");
 	purple_prefs_add_string(make_pref("/method"), "automatic");
-	purple_prefs_add_int(make_pref("/volume"), 50);
 }
 
 static void
@@ -458,7 +455,6 @@ finch_sound_play_file(const char *filename)
 {
 	const char *method;
 #if defined(USE_GSTREAMER) && !defined(_WIN32)
-	float volume;
 	char *uri;
 	GstElement *sink = NULL;
 	GstElement *play = NULL;
@@ -516,7 +512,6 @@ finch_sound_play_file(const char *filename)
 #ifdef USE_GSTREAMER
 	if (gst_init_failed)  /* Perhaps do beep instead? */
 		return;
-	volume = (float)(CLAMP(purple_prefs_get_int(make_pref("/volume")), 0, 100)) / 50;
 	if (!strcmp(method, "automatic")) {
 		if (purple_running_gnome()) {
 			sink = gst_element_factory_make("gconfaudiosink", "sink");
@@ -553,7 +548,6 @@ finch_sound_play_file(const char *filename)
 	uri = g_strdup_printf("file://%s", filename);
 
 	g_object_set(G_OBJECT(play), "uri", uri,
-		                     "volume", volume,
 		                     "audio-sink", sink, NULL);
 
 	bus = gst_pipeline_get_bus(GST_PIPELINE(play));
@@ -655,7 +649,6 @@ save_cb(GntWidget *button, gpointer win)
 	purple_prefs_set_path(make_pref("/command"), gnt_entry_get_text(GNT_ENTRY(pref_dialog->command)));
 	purple_prefs_set_bool(make_pref("/conv_focus"), gnt_check_box_get_checked(GNT_CHECK_BOX(pref_dialog->conv_focus)));
 	purple_prefs_set_int("/purple/sound/while_status", GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(pref_dialog->while_status))));
-	purple_prefs_set_int(make_pref("/volume"), gnt_slider_get_value(GNT_SLIDER(pref_dialog->volume)));
 
 	for (itr = gnt_tree_get_rows(GNT_TREE(pref_dialog->events)); itr; itr = itr->next) {
 		FinchSoundEvent * event = &sounds[GPOINTER_TO_INT(itr->data)];
@@ -688,34 +681,28 @@ test_cb(GntWidget *button, gpointer null)
 {
 	PurpleSoundEventID id = GPOINTER_TO_INT(gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events)));
 	FinchSoundEvent * event = &sounds[id];
-	char *enabled, *file, *tmpfile, *volpref;
+	char *enabled, *file, *tmpfile;
 	gboolean temp_value;
-	int volume;
 
 	enabled = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s/enabled/%s",
 			finch_sound_get_active_profile(), event->pref);
 	file = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s/file/%s",
 			finch_sound_get_active_profile(), event->pref);
-	volpref = g_strdup(make_pref("/volume"));
 
 	temp_value = purple_prefs_get_bool(enabled);
 	tmpfile = g_strdup(purple_prefs_get_path(file));
-	volume = purple_prefs_get_int(volpref);
 
 	purple_prefs_set_path(file, event->file);
 	if (!temp_value) purple_prefs_set_bool(enabled, TRUE);
-	purple_prefs_set_int(volpref, gnt_slider_get_value(GNT_SLIDER(pref_dialog->volume)));
 
 	purple_sound_play_event(id, NULL);
 
 	if (!temp_value) purple_prefs_set_bool(enabled, FALSE);
 	purple_prefs_set_path(file, tmpfile);
-	purple_prefs_set_int(volpref, volume);
 
 	g_free(enabled);
 	g_free(file);
 	g_free(tmpfile);
-	g_free(volpref);
 }
 
 static void
@@ -790,8 +777,6 @@ load_pref_window(const char * profile)
 	gnt_check_box_set_checked(GNT_CHECK_BOX(pref_dialog->conv_focus), purple_prefs_get_bool(make_pref("/conv_focus")));
 
 	gnt_combo_box_set_selected(GNT_COMBO_BOX(pref_dialog->while_status), GINT_TO_POINTER(purple_prefs_get_int("/purple" "/sound/while_status")));
-
-	gnt_slider_set_value(GNT_SLIDER(pref_dialog->volume), CLAMP(purple_prefs_get_int(make_pref("/volume")), 0, 100));
 
 	for (i = 0; i < PURPLE_NUM_SOUNDS; i++) {
 		FinchSoundEvent * event = &sounds[i];
@@ -892,7 +877,7 @@ cancel_cb(GntButton *button, gpointer win)
 void
 finch_sounds_show_all(void)
 {
-	GntWidget *box, *tmpbox, *splitbox, *cmbox, *slider;
+	GntWidget *box, *tmpbox, *splitbox, *cmbox;
 	GntWidget *entry;
 	GntWidget *chkbox;
 	GntWidget *button;
@@ -1007,21 +992,6 @@ finch_sounds_show_all(void)
 	gnt_box_add_widget(GNT_BOX(tmpbox), cmbox);
 	gnt_box_add_widget(GNT_BOX(box), tmpbox);
 
-	tmpbox = gnt_hbox_new(TRUE);
-	gnt_box_set_pad(GNT_BOX(tmpbox), 0);
-	gnt_box_set_fill(GNT_BOX(tmpbox), FALSE);
-	gnt_box_add_widget(GNT_BOX(tmpbox), gnt_label_new(_("Volume(0-100):")));
-
-	pref_dialog->volume = slider = gnt_slider_new(FALSE, 100, 0);
-	gnt_slider_set_step(GNT_SLIDER(slider), 5);
-	gnt_slider_set_small_step(GNT_SLIDER(slider), 1);
-	gnt_slider_set_large_step(GNT_SLIDER(slider), 20);
-	label = gnt_label_new("");
-	gnt_slider_reflect_label(GNT_SLIDER(slider), GNT_LABEL(label));
-	gnt_box_set_pad(GNT_BOX(tmpbox), 1);
-	gnt_box_add_widget(GNT_BOX(tmpbox), slider);
-	gnt_box_add_widget(GNT_BOX(tmpbox), label);
-	gnt_box_add_widget(GNT_BOX(box), tmpbox);
 	gnt_box_add_widget(GNT_BOX(splitbox), box);
 
 	gnt_box_add_widget(GNT_BOX(win), splitbox);
@@ -1089,8 +1059,6 @@ gboolean finch_sound_is_enabled(void)
 	if (!method)
 		return FALSE;
 	if (strcmp(method, "nosound") == 0)
-		return FALSE;
-	if (purple_prefs_get_int(make_pref("/volume")) <= 0)
 		return FALSE;
 
 	return TRUE;

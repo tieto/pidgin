@@ -2933,23 +2933,6 @@ sound_changed2_cb(const char *name, PurplePrefType type,
 	gtk_widget_set_sensitive(vbox, strcmp(method, "none"));
 }
 
-#ifdef USE_GSTREAMER
-static void
-sound_changed3_cb(const char *name, PurplePrefType type,
-				  gconstpointer value, gpointer data)
-{
-	GtkWidget *hbox = data;
-	const char *method = value;
-
-	gtk_widget_set_sensitive(hbox,
-			!strcmp(method, "automatic") ||
-			!strcmp(method, "alsa") ||
-			!strcmp(method, "esd") ||
-			!strcmp(method, "waveform") ||
-			!strcmp(method, "directsound"));
-}
-#endif /* USE_GSTREAMER */
-
 
 static void
 event_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer data)
@@ -3059,35 +3042,6 @@ select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 		GINT_TO_POINTER(sound_row_sel));
 }
 
-#ifdef USE_GSTREAMER
-static gchar *
-prefs_sound_volume_format(GtkScale *scale, gdouble val)
-{
-	if(val < 15) {
-		return g_strdup_printf(_("Quietest"));
-	} else if(val < 30) {
-		return g_strdup_printf(_("Quieter"));
-	} else if(val < 45) {
-		return g_strdup_printf(_("Quiet"));
-	} else if(val < 55) {
-		return g_strdup_printf(_("Normal"));
-	} else if(val < 70) {
-		return g_strdup_printf(_("Loud"));
-	} else if(val < 85) {
-		return g_strdup_printf(_("Louder"));
-	} else {
-		return g_strdup_printf(_("Loudest"));
-	}
-}
-
-static void
-prefs_sound_volume_changed(GtkRange *range)
-{
-	int val = (int)gtk_range_get_value(GTK_RANGE(range));
-	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/sound/volume", val);
-}
-#endif
-
 static void
 prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model)
 {
@@ -3138,9 +3092,6 @@ sound_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox, *vbox2, *button, *parent, *parent_parent, *parent_parent_parent;
-#ifdef USE_GSTREAMER
-	GtkWidget *sw;
-#endif
 	GtkSizeGroup *sg;
 	GtkTreeIter iter;
 	GtkWidget *event_view;
@@ -3216,25 +3167,6 @@ sound_page(void)
 				_("Only when not available"), PURPLE_SOUND_STATUS_AWAY,
 				_("Always"), PURPLE_SOUND_STATUS_ALWAYS,
 				NULL);
-
-#ifdef USE_GSTREAMER
-	sw = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL,
-		0.0, 100.0, 5.0);
-	gtk_range_set_increments(GTK_RANGE(sw), 5.0, 25.0);
-	gtk_range_set_value(GTK_RANGE(sw), purple_prefs_get_int(PIDGIN_PREFS_ROOT "/sound/volume"));
-	g_signal_connect (G_OBJECT (sw), "format-value",
-			  G_CALLBACK (prefs_sound_volume_format),
-			  NULL);
-	g_signal_connect (G_OBJECT (sw), "value-changed",
-			  G_CALLBACK (prefs_sound_volume_changed),
-			  NULL);
-	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("V_olume:"), NULL, sw, TRUE, NULL);
-
-	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/method",
-								sound_changed3_cb, hbox);
-	sound_changed3_cb(PIDGIN_PREFS_ROOT "/sound/method", PURPLE_PREF_STRING,
-			  purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), hbox);
-#endif
 
 	gtk_widget_set_sensitive(vbox,
 			strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"));
