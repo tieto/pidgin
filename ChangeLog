@@ -55,6 +55,10 @@ version 3.0.0 (??/??/????):
 	* Better handling of "invisible" and "chatty" statuses. (Tomasz
 	  Wasilczyk) (#13836)
 
+	Facebook:
+	* Added a new prpl for the Facebook Messenger protocol
+	* Removed the defunct Facebook XMPP support
+
 	MSN:
 	* Fix file transfer with older Mac MSN clients.
 	* Support file transfers up to ~9 EiB.
