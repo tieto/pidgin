@@ -277,36 +277,6 @@ PurpleProxyConnectData *purple_proxy_connect(void *handle,
 			PurpleProxyConnectFunction connect_cb, gpointer data);
 
 /**
- * purple_proxy_connect_udp:
- * @handle:     A handle that should be associated with this
- *              connection attempt.  The handle can be used
- *              to cancel the connection attempt using the
- *              purple_proxy_connect_cancel_with_handle()
- *              function.
- * @account:    The account making the connection.
- * @host:       The destination host.
- * @port:       The destination port.
- * @connect_cb: (scope call): The function to call when the connection is
- *              established.  If the connection failed then
- *              fd will be -1 and error message will be set
- *              to something descriptive (hopefully).
- * @data:       User-defined data.
- *
- * Makes a connection to the specified host and port.  Note that this
- * function name can be misleading--although it is called "proxy
- * connect," it is used for establishing any outgoing UDP connection,
- * whether through a proxy or not.
- *
- * Returns: NULL if there was an error, or a reference to an
- *         opaque data structure that can be used to cancel
- *         the pending connection, if needed.
- */
-PurpleProxyConnectData *purple_proxy_connect_udp(void *handle,
-			PurpleAccount *account,
-			const char *host, int port,
-			PurpleProxyConnectFunction connect_cb, gpointer data);
-
-/**
  * purple_proxy_connect_socks5_account:
  * @handle:     A handle that should be associated with this
  *              connection attempt.  The handle can be used
