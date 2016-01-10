@@ -29,6 +29,7 @@
  */
 
 #include <glib.h>
+#include <gio/gio.h>
 #include "eventloop.h"
 
 /**
@@ -356,6 +357,21 @@ void purple_proxy_connect_cancel(PurpleProxyConnectData *connect_data);
  * Closes all proxy connections registered with the specified handle.
  */
 void purple_proxy_connect_cancel_with_handle(void *handle);
+
+/**
+ * purple_proxy_get_proxy_resolver:
+ * @account: The account for which to get the proxy resolver.
+ *
+ * Returns a #GProxyResolver capable of resolving which proxy
+ * to use for this account, if any. This object can be given to a
+ * #GSocketClient for automatic proxy handling or can be used
+ * directly if desired.
+ *
+ * Returns: (transfer full): NULL if there was an error with the
+ *         account's (or system) proxy settings, or a reference to
+ *         a #GProxyResolver on success.
+ */
+GProxyResolver *purple_proxy_get_proxy_resolver(PurpleAccount *account);
 
 G_END_DECLS
 

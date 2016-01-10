@@ -2603,6 +2603,88 @@ purple_proxy_connect_cancel_with_handle(void *handle)
 	}
 }
 
+GProxyResolver *
+purple_proxy_get_proxy_resolver(PurpleAccount *account)
+{
+	PurpleProxyInfo *info = purple_proxy_get_setup(account);
+	const gchar *protocol;
+	const gchar *username;
+	const gchar *password;
+	gchar *auth;
+	gchar *proxy;
+	GProxyResolver *resolver;
+
+	if (purple_proxy_info_get_proxy_type(info) == PURPLE_PROXY_NONE) {
+		/* Return the default proxy which, if it doesn't support any
+		 * further system proxy settings than purple_proxy_get_setup()
+		 * detects, will end up as direct connections as intended.
+		 */
+		return g_object_ref(g_proxy_resolver_get_default());
+	}
+
+	switch (purple_proxy_info_get_proxy_type(info))
+	{
+		/* PURPLE_PROXY_NONE already handled above */
+
+		case PURPLE_PROXY_USE_ENVVAR:
+			/* Intentional passthrough */
+		case PURPLE_PROXY_HTTP:
+			protocol = "http";
+			break;
+		case PURPLE_PROXY_SOCKS4:
+			protocol = "socks4";
+			break;
+		case PURPLE_PROXY_SOCKS5:
+			/* Intentional passthrough */
+		case PURPLE_PROXY_TOR:
+			protocol = "socks5";
+			break;
+
+		default:
+			purple_debug_error("proxy",
+					"Invalid Proxy type (%d) specified.\n",
+					purple_proxy_info_get_proxy_type(info));
+			return NULL;
+	}
+
+
+	if (purple_proxy_info_get_host(info) == NULL ||
+			purple_proxy_info_get_port(info) <= 0) {
+		purple_notify_error(NULL, NULL,
+				_("Invalid proxy settings"),
+				_("Either the host name or port number "
+				"specified for your given proxy type is "
+				"invalid."),
+				purple_request_cpar_from_account( account));
+		return NULL;
+	}
+
+	/* Everything checks out. Create and return the GProxyResolver */
+
+	username = purple_proxy_info_get_username(info);
+	password = purple_proxy_info_get_password(info);
+
+	/* Username and password are optional */
+	if (username != NULL && password != NULL) {
+		auth = g_strdup_printf("%s:%s@", username, password);
+	} else if (username != NULL) {
+		auth = g_strdup_printf("%s@", username);
+	} else {
+		auth = NULL;
+	}
+
+	proxy = g_strdup_printf("%s://%s%s:%i", protocol,
+			auth != NULL ? auth : "",
+			purple_proxy_info_get_host(info),
+			purple_proxy_info_get_port(info));
+	g_free(auth);
+
+	resolver = g_simple_proxy_resolver_new(proxy, NULL);
+	g_free(proxy);
+
+	return resolver;
+}
+
 static void
 proxy_pref_cb(const char *name, PurplePrefType type,
 			  gconstpointer value, gpointer data)
