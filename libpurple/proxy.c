@@ -55,32 +55,9 @@ struct _PurpleProxyConnectData {
 	gchar *host;
 	int port;
 	int fd;
-	int socket_type;
-	guint inpa;
 	PurpleProxyInfo *gpi;
 
 	GCancellable *cancellable;
-
-	/*
-	 * This list contains GInetAddress and they should be freed with
-	 * g_resolver_free_addresses when done with.
-	 */
-	GList *hosts;
-
-	PurpleProxyConnectData *child;
-
-	/*
-	 * All of the following variables are used when establishing a
-	 * connection through a proxy.
-	 */
-	guchar *write_buffer;
-	gsize write_buf_len;
-	gsize written_len;
-	PurpleInputFunction read_cb;
-	guchar *read_buffer;
-	gsize read_buf_len;
-	gsize read_len;
-	PurpleAccount *account;
 };
 
 static const char * const socks5errors[] = {
@@ -582,8 +559,6 @@ purple_proxy_connect_data_destroy(PurpleProxyConnectData *connect_data)
 		connect_data->cancellable = NULL;
 	}
 
-	g_resolver_free_addresses(connect_data->hosts);
-
 	g_free(connect_data->host);
 	g_free(connect_data);
 }
@@ -600,38 +575,17 @@ purple_proxy_connect_data_destroy(PurpleProxyConnectData *connect_data)
  * to another IP address.
  *
  * If an error message is passed in, then we know the connection
- * attempt failed.  If the connection attempt failed and
- * connect_data->hosts is not empty then we try the next IP address.
- * If the connection attempt failed and we have no more hosts
- * try try then we call the callback with the given error message,
- * then destroy the connect_data.
+ * attempt failed. If so, we call the callback with the given
+ * error message, then destroy the connect_data.
  */
 static void
 purple_proxy_connect_data_disconnect(PurpleProxyConnectData *connect_data, const gchar *error_message)
 {
-	if (connect_data->child != NULL)
-	{
-		purple_proxy_connect_cancel(connect_data->child);
-		connect_data->child = NULL;
-	}
-
-	if (connect_data->inpa > 0)
-	{
-		purple_input_remove(connect_data->inpa);
-		connect_data->inpa = 0;
-	}
-
 	if (connect_data->fd >= 0)
 	{
 		close(connect_data->fd);
 		connect_data->fd = -1;
 	}
-
-	g_free(connect_data->write_buffer);
-	connect_data->write_buffer = NULL;
-
-	g_free(connect_data->read_buffer);
-	connect_data->read_buffer = NULL;
 
 	if (error_message != NULL)
 	{
@@ -818,14 +772,12 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 
 	connect_data = g_new0(PurpleProxyConnectData, 1);
 	connect_data->fd = -1;
-	connect_data->socket_type = SOCK_STREAM;
 	connect_data->handle = handle;
 	connect_data->connect_cb = connect_cb;
 	connect_data->data = data;
 	connect_data->host = g_strdup(host);
 	connect_data->port = port;
 	connect_data->gpi = purple_proxy_get_setup(account);
-	connect_data->account = account;
 
 	resolver = purple_proxy_get_proxy_resolver(account);
 
@@ -998,14 +950,12 @@ purple_proxy_connect_socks5_account(void *handle, PurpleAccount *account,
 
 	connect_data = g_new0(PurpleProxyConnectData, 1);
 	connect_data->fd = -1;
-	connect_data->socket_type = SOCK_STREAM;
 	connect_data->handle = handle;
 	connect_data->connect_cb = connect_cb;
 	connect_data->data = data;
 	connect_data->host = g_strdup(host);
 	connect_data->port = port;
 	connect_data->gpi = gpi;
-	connect_data->account = account;
 
 	/* If there is an account proxy, use it to connect to the desired SOCKS5
 	 * proxy.
