@@ -2330,6 +2330,33 @@ purple_proxy_get_setup(PurpleAccount *account)
 	return gpi;
 }
 
+/* Grabbed duplicate_fd() from GLib's testcases (gio/tests/socket.c).
+ * Can be dropped once this API has been converted to Gio.
+ */
+static int
+duplicate_fd (int fd)
+{
+#ifdef G_OS_WIN32
+  HANDLE newfd;
+
+  if (!DuplicateHandle (GetCurrentProcess (),
+                        (HANDLE)fd,
+                        GetCurrentProcess (),
+                        &newfd,
+                        0,
+                        FALSE,
+                        DUPLICATE_SAME_ACCESS))
+    {
+      return -1;
+    }
+
+  return (int)newfd;
+#else
+  return dup (fd);
+#endif
+}
+/* End function grabbed from GLib */
+
 PurpleProxyConnectData *
 purple_proxy_connect(void *handle, PurpleAccount *account,
 				   const char *host, int port,
