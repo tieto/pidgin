@@ -2357,15 +2357,50 @@ duplicate_fd (int fd)
 }
 /* End function grabbed from GLib */
 
+static void
+connect_to_host_cb(GObject *source, GAsyncResult *res, gpointer user_data)
+{
+	PurpleProxyConnectData *connect_data = user_data;
+	GSocketConnection *conn;
+	GError *error = NULL;
+	GSocket *socket;
+
+	conn = g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(source),
+			res, &error);
+	if (conn == NULL) {
+		purple_debug_error("proxy",
+				"Unable to connect to destination host: %s\n",
+				error->message);
+		purple_proxy_connect_data_disconnect(connect_data,
+				"Unable to connect to destination host.\n");
+		g_clear_error(&error);
+		return;
+	}
+
+	socket = g_socket_connection_get_socket(conn);
+	g_assert(socket != NULL);
+
+	/* Duplicate the file descriptor, and then free the connection.
+	 * libpurple's proxy code doesn't keep an object around for the
+	 * lifetime of the connection. Therefore, in order to not leak
+	 * memory, the GSocketConnection must be freed here. In order
+	 * to avoid the double close/free of the file descriptor, the 
+	 * file descriptor is duplicated.
+	 */
+	connect_data->fd = duplicate_fd(g_socket_get_fd(socket));
+	g_object_unref(conn);
+
+	purple_proxy_connect_data_connected(connect_data);
+}
+
 PurpleProxyConnectData *
 purple_proxy_connect(void *handle, PurpleAccount *account,
 				   const char *host, int port,
 				   PurpleProxyConnectFunction connect_cb, gpointer data)
 {
-	const char *connecthost = host;
-	int connectport = port;
 	PurpleProxyConnectData *connect_data;
-	GResolver *resolver;
+	GProxyResolver *resolver;
+	GSocketClient *client;
 
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >  0,    NULL);
@@ -2382,55 +2417,27 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 	connect_data->gpi = purple_proxy_get_setup(account);
 	connect_data->account = account;
 
-	if ((purple_proxy_info_get_proxy_type(connect_data->gpi) != PURPLE_PROXY_NONE) &&
-		(purple_proxy_info_get_host(connect_data->gpi) == NULL ||
-		 purple_proxy_info_get_port(connect_data->gpi) <= 0)) {
+	resolver = purple_proxy_get_proxy_resolver(account);
 
-		purple_notify_error(NULL, NULL, _("Invalid proxy settings"),
-			_("Either the host name or port number specified for "
-			"your given proxy type is invalid."),
-			purple_request_cpar_from_account(account));
+	if (resolver == NULL) {
+		/* purple_proxy_get_proxy_resolver already has debug output */
 		purple_proxy_connect_data_destroy(connect_data);
 		return NULL;
-	}
-
-	switch (purple_proxy_info_get_proxy_type(connect_data->gpi))
-	{
-		case PURPLE_PROXY_NONE:
-			break;
-
-		case PURPLE_PROXY_HTTP:
-		case PURPLE_PROXY_SOCKS4:
-		case PURPLE_PROXY_SOCKS5:
-		case PURPLE_PROXY_TOR:
-		case PURPLE_PROXY_USE_ENVVAR:
-			connecthost = purple_proxy_info_get_host(connect_data->gpi);
-			connectport = purple_proxy_info_get_port(connect_data->gpi);
-			break;
-
-		default:
-			purple_debug_error("proxy", "Invalid Proxy type (%d) specified.\n",
-							   purple_proxy_info_get_proxy_type(connect_data->gpi));
-			purple_proxy_connect_data_destroy(connect_data);
-			return NULL;
 	}
 
 	connect_data->cancellable = g_cancellable_new();
 
-	resolver = g_resolver_get_default();
-	g_resolver_lookup_by_name_async(resolver,
-	                                connecthost,
-	                                connect_data->cancellable,
-	                                connection_host_resolved,
-	                                connect_data);
+	client = g_socket_client_new();
+	g_socket_client_set_proxy_resolver(client, resolver);
 	g_object_unref(resolver);
 
-	if (connect_data->cancellable == NULL)
-	{
-		purple_debug_error("proxy", "dns query failed unexpectedly.\n");
-		purple_proxy_connect_data_destroy(connect_data);
-		return NULL;
-	}
+	purple_debug_info("proxy", "Attempting connection to %s:%u\n",
+			host, port);
+
+	g_socket_client_connect_to_host_async(client, host, port,
+			connect_data->cancellable, connect_to_host_cb,
+			connect_data);
+	g_object_unref(client);
 
 	handles = g_slist_prepend(handles, connect_data);
 
