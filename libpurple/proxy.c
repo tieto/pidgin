@@ -2515,33 +2515,112 @@ purple_proxy_connect_udp(void *handle, PurpleAccount *account,
 	return connect_data;
 }
 
+static void
+socks5_proxy_connect_cb(GObject *source, GAsyncResult *res, gpointer user_data)
+{
+	PurpleProxyConnectData *connect_data = user_data;
+	GIOStream *stream;
+	GError *error = NULL;
+	GSocket *socket;
+
+	stream = g_proxy_connect_finish(G_PROXY(source), res, &error);
+
+	if (stream == NULL) {
+		purple_debug_error("proxy",
+				"Unable to connect to destination host: %s\n",
+				error->message);
+		purple_proxy_connect_data_disconnect(connect_data,
+				"Unable to connecto to destination host.\n");
+		g_clear_error(&error);
+		return;
+	}
+
+	if (!G_IS_SOCKET_CONNECTION(stream)) {
+		purple_debug_error("proxy",
+				"GProxy didn't return a GSocketConnection.\n");
+		purple_proxy_connect_data_disconnect(connect_data,
+				"GProxy didn't return a GSocketConnection.\n");
+		g_object_unref(stream);
+		return;
+	}
+
+	socket = g_socket_connection_get_socket(G_SOCKET_CONNECTION(stream));
+
+	/* Duplicate the file descriptor, and then free the connection.
+	 * libpurple's proxy code doesn't keep an object around for the
+	 * lifetime of the connection. Therefore, in order to not leak
+	 * memory, the GSocketConnection (aka GIOStream here) must be
+	 * freed here. In order to avoid the double close/free of the
+	 * file descriptor, the file descriptor is duplicated.
+	 */
+	connect_data->fd = duplicate_fd(g_socket_get_fd(socket));
+	g_object_unref(stream);
+
+	purple_proxy_connect_data_connected(connect_data);
+}
+
 /* This is called when we connect to the SOCKS5 proxy server (through any
  * relevant account proxy)
  */
-static void socks5_connected_to_proxy(gpointer data, gint source,
-		const gchar *error_message) {
-	/* This is the PurpleProxyConnectData for the overall SOCKS5 connection */
-	PurpleProxyConnectData *connect_data = data;
+static void
+socks5_connect_to_host_cb(GObject *source, GAsyncResult *res,
+		gpointer user_data)
+{
+	PurpleProxyConnectData *connect_data = user_data;
+	GSocketConnection *conn;
+	GError *error = NULL;
+	GProxy *proxy;
+	PurpleProxyInfo *info;
+	GSocketAddress *addr;
+	GInetSocketAddress *inet_addr;
+	GSocketAddress *proxy_addr;
 
-	purple_debug_error("proxy", "Connect Data is %p\n", connect_data);
-
-	/* Check that the overall SOCKS5 connection wasn't cancelled while we were
-	 * connecting to it (we don't have a way of associating the process of
-	 * connecting to the SOCKS5 server to the overall PurpleProxyConnectData)
-	 */
-	if (!PURPLE_PROXY_CONNECT_DATA_IS_VALID(connect_data)) {
-		purple_debug_error("proxy", "Data had gone out of scope :(\n");
+	conn = g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(source),
+			res, &error);
+	if (conn == NULL) {
+		purple_debug_error("proxy",
+				"Unable to connect to SOCKS5 host: %s\n",
+				error->message);
+		purple_proxy_connect_data_disconnect(connect_data,
+				"Unable to connect to SOCKS5 host.\n");
+		g_clear_error(&error);
 		return;
 	}
 
-	/* Break the link between the two PurpleProxyConnectDatas  */
-	connect_data->child = NULL;
-
-	if (error_message != NULL) {
-		purple_debug_error("proxy", "Unable to connect to SOCKS5 host.\n");
-		connect_data->connect_cb(connect_data->data, source, error_message);
+	proxy = g_proxy_get_default_for_protocol("socks5");
+	if (proxy == NULL) {
+		purple_debug_error("proxy", "SOCKS5 proxy backend missing.\n");
+		purple_proxy_connect_data_disconnect(connect_data,
+				"SOCKS5 proxy backend missing.\n");
+		g_object_unref(conn);
 		return;
 	}
+
+	info = connect_data->gpi;
+
+	addr = g_socket_connection_get_remote_address(conn, &error);
+	if (addr == NULL) {
+		purple_debug_error("proxy", "Unable to retrieve SOCKS5 host "
+				"address from connection: %s\n",
+				error->message);
+		purple_proxy_connect_data_disconnect(connect_data,
+				"Unable to retrieve SOCKS5 host address from "
+				"connection");
+		g_object_unref(conn);
+		g_object_unref(proxy);
+		g_clear_error(&error);
+		return;
+	}
+
+	inet_addr = G_INET_SOCKET_ADDRESS(addr);
+
+	proxy_addr = g_proxy_address_new(
+			g_inet_socket_address_get_address(inet_addr),
+			g_inet_socket_address_get_port(inet_addr),
+			"socks5", connect_data->host, connect_data->port,
+			purple_proxy_info_get_username(info),
+			purple_proxy_info_get_password(info));
+	g_object_unref(inet_addr);
 
 	purple_debug_info("proxy", "Initiating SOCKS5 negotiation.\n");
 
@@ -2551,9 +2630,13 @@ static void socks5_connected_to_proxy(gpointer data, gint source,
 			   purple_proxy_info_get_host(connect_data->gpi),
 			   purple_proxy_info_get_port(connect_data->gpi));
 
-	connect_data->fd = source;
-
-	s5_canwrite(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
+	g_proxy_connect_async(proxy, G_IO_STREAM(conn),
+			G_PROXY_ADDRESS(proxy_addr),
+			connect_data->cancellable,
+			socks5_proxy_connect_cb, connect_data);
+	g_object_unref(proxy_addr);
+	g_object_unref(conn);
+	g_object_unref(proxy);
 }
 
 /*
@@ -2567,7 +2650,8 @@ purple_proxy_connect_socks5_account(void *handle, PurpleAccount *account,
 						  gpointer data)
 {
 	PurpleProxyConnectData *connect_data;
-	PurpleProxyConnectData *account_proxy_conn_data;
+	GProxyResolver *resolver;
+	GSocketClient *client;
 
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >= 0,    NULL);
@@ -2587,19 +2671,32 @@ purple_proxy_connect_socks5_account(void *handle, PurpleAccount *account,
 	/* If there is an account proxy, use it to connect to the desired SOCKS5
 	 * proxy.
 	 */
-	account_proxy_conn_data = purple_proxy_connect(connect_data->handle,
-				connect_data->account,
-				purple_proxy_info_get_host(connect_data->gpi),
-				purple_proxy_info_get_port(connect_data->gpi),
-				socks5_connected_to_proxy, connect_data);
+	resolver = purple_proxy_get_proxy_resolver(account);
 
-	if (account_proxy_conn_data == NULL) {
-		purple_debug_error("proxy", "Unable to initiate connection to account proxy.\n");
+	if (resolver == NULL) {
+		/* purple_proxy_get_proxy_resolver already has debug output */
 		purple_proxy_connect_data_destroy(connect_data);
 		return NULL;
 	}
 
-	connect_data->child = account_proxy_conn_data;
+	connect_data->cancellable = g_cancellable_new();
+
+	client = g_socket_client_new();
+	g_socket_client_set_proxy_resolver(client, resolver);
+	g_object_unref(resolver);
+
+	purple_debug_info("proxy",
+			   "Connecting to %s:%d via %s:%d using SOCKS5\n",
+			   connect_data->host, connect_data->port,
+			   purple_proxy_info_get_host(connect_data->gpi),
+			   purple_proxy_info_get_port(connect_data->gpi));
+
+	g_socket_client_connect_to_host_async(client,
+			purple_proxy_info_get_host(connect_data->gpi),
+			purple_proxy_info_get_port(connect_data->gpi),
+			connect_data->cancellable, socks5_connect_to_host_cb,
+			connect_data);
+	g_object_unref(client);
 
 	handles = g_slist_prepend(handles, connect_data);
 
