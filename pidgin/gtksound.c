@@ -626,7 +626,7 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 			}
 		}
 
-		if (!filename || !strlen(filename)) { /* Use Default sounds */
+		if (!filename || *filename == '\0') { /* Use Default sounds */
 			g_free(filename);
 
 			filename = g_build_filename(PURPLE_DATADIR,

@@ -100,7 +100,7 @@ aim_bart_request(OscarData *od, const char *bn, guint8 iconcsumtype, const guint
 	ByteStream bs;
 	aim_snacid_t snacid;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_BART)) || !bn || !strlen(bn) || !iconcsum || !iconcsumlen)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_BART)) || !bn || *bn == '\0' || !iconcsum || !iconcsumlen)
 		return -EINVAL;
 
 	byte_stream_new(&bs, 1+strlen(bn) + 4 + 1+iconcsumlen);

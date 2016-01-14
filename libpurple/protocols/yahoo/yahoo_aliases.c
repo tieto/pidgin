@@ -133,7 +133,7 @@ yahoo_fetch_aliases_cb(PurpleHttpConnection *http_conn,
 
 				if (nick_name != NULL)
 					alias = nick_name;   /* If we have a nickname from Yahoo, let's use it */
-				else if (strlen(full_name) != 0)
+				else if (*full_name != '\0')
 					alias = full_name;  /* If no Yahoo nickname, we can use the full_name created above */
 
 				/*  Find the local buddy that matches */

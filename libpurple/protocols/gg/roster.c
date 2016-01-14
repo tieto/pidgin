@@ -497,7 +497,7 @@ static gboolean ggp_roster_reply_list_read_buddy(PurpleConnection *gc,
 	g_hash_table_insert(content->contact_nodes, GINT_TO_POINTER(uin), node);
 
 	/* check, if alias is set */
-	if (strlen(alias) == 0 ||
+	if (*alias == '\0' ||
 		strcmp(alias, ggp_uin_to_str(uin)) == 0)
 	{
 		g_free(alias);

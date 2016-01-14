@@ -500,7 +500,7 @@ silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 		if (mood & SILC_ATTRIBUTE_MOOD_ANXIOUS)
 			g_string_append_printf(s, "[%s] ", _("Anxious"));
 	}
-	if (strlen(s->str)) {
+	if (*s->str != '\0') {
 		*moodstr = g_string_free(s, FALSE);
 		g_strchomp(*moodstr);
 	} else
@@ -529,7 +529,7 @@ silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 		if (contact & SILC_ATTRIBUTE_CONTACT_VIDEO)
 			g_string_append_printf(s, "[%s] ", _("Video Conferencing"));
 	}
-	if (strlen(s->str)) {
+	if (*s->str != '\0') {
 		*contactstr = g_string_free(s, FALSE);
 		g_strchomp(*contactstr);
 	} else
@@ -558,7 +558,7 @@ silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 				device.model ? device.model : "",
 				device.language ? device.language : "");
 	}
-	if (strlen(s->str))
+	if (*s->str != '\0')
 		*devicestr = g_string_free(s, FALSE);
 	else
 		g_string_free(s, TRUE);

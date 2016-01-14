@@ -435,7 +435,7 @@ static gboolean do_login(PurpleConnection *gc) {
 	}
 
 	buf = irc_format(irc, "vvvv:", "USER", tmp ? tmp : identname, "*", server,
-	                 strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
+	                 *realname == '\0' ? IRC_DEFAULT_ALIAS : realname);
 	g_free(tmp);
 	g_free(server);
 	if (irc_send(irc, buf) < 0) {

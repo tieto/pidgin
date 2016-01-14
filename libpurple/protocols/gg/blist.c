@@ -137,7 +137,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 		}
 
 		buddy = purple_buddy_new(purple_connection_get_account(gc),
-			name, strlen(show) ? show : NULL);
+			name, *show == '\0' ? NULL : show);
 
 		if (!(group = purple_blist_find_group(g))) {
 			group = purple_group_new(g);

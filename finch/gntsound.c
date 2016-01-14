@@ -597,7 +597,7 @@ finch_sound_play_event(PurpleSoundEventID event)
 	/* check NULL for sounds that don't have an option, ie buddy pounce */
 	if (purple_prefs_get_bool(enable_pref)) {
 		char *filename = g_strdup(purple_prefs_get_path(file_pref));
-		if (!filename || !strlen(filename)) {
+		if (!filename || *filename == '\0') {
 			g_free(filename);
 			filename = g_build_filename(PURPLE_DATADIR,
 				"sounds", "purple", sounds[event].def, NULL);

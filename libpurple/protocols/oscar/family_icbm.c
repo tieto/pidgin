@@ -1352,11 +1352,11 @@ static int incomingim_ch2(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	if (aim_tlv_gettlv(list2, 0x0010, 1))
 		args.use_proxy = TRUE;
 
-	if (strlen(proxyip))
+	if (*proxyip != '\0')
 		args.proxyip = (char *)proxyip;
-	if (strlen(clientip))
+	if (*clientip != '\0')
 		args.clientip = (char *)clientip;
-	if (strlen(verifiedip))
+	if (*verifiedip != '\0')
 		args.verifiedip = (char *)verifiedip;
 
 	/*

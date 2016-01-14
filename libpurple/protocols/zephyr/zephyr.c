@@ -2456,7 +2456,7 @@ static void zephyr_join_chat(PurpleConnection * gc, GHashTable * data)
 	if (!g_ascii_strcasecmp(classname,"%canon%"))
 		classname = g_strdup(zephyr->ourhostcanon);
 
-	if (!instname || !strlen(instname))
+	if (!instname || *instname == '\0')
 		instname = "*";
 
 	if (!g_ascii_strcasecmp(instname,"%host%"))
