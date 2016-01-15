@@ -29,6 +29,7 @@
  */
 
 #include <glib.h>
+#include <gio/gio.h>
 #include "eventloop.h"
 
 /**
@@ -276,36 +277,6 @@ PurpleProxyConnectData *purple_proxy_connect(void *handle,
 			PurpleProxyConnectFunction connect_cb, gpointer data);
 
 /**
- * purple_proxy_connect_udp:
- * @handle:     A handle that should be associated with this
- *              connection attempt.  The handle can be used
- *              to cancel the connection attempt using the
- *              purple_proxy_connect_cancel_with_handle()
- *              function.
- * @account:    The account making the connection.
- * @host:       The destination host.
- * @port:       The destination port.
- * @connect_cb: (scope call): The function to call when the connection is
- *              established.  If the connection failed then
- *              fd will be -1 and error message will be set
- *              to something descriptive (hopefully).
- * @data:       User-defined data.
- *
- * Makes a connection to the specified host and port.  Note that this
- * function name can be misleading--although it is called "proxy
- * connect," it is used for establishing any outgoing UDP connection,
- * whether through a proxy or not.
- *
- * Returns: NULL if there was an error, or a reference to an
- *         opaque data structure that can be used to cancel
- *         the pending connection, if needed.
- */
-PurpleProxyConnectData *purple_proxy_connect_udp(void *handle,
-			PurpleAccount *account,
-			const char *host, int port,
-			PurpleProxyConnectFunction connect_cb, gpointer data);
-
-/**
  * purple_proxy_connect_socks5_account:
  * @handle:     A handle that should be associated with this
  *              connection attempt.  The handle can be used
@@ -356,6 +327,21 @@ void purple_proxy_connect_cancel(PurpleProxyConnectData *connect_data);
  * Closes all proxy connections registered with the specified handle.
  */
 void purple_proxy_connect_cancel_with_handle(void *handle);
+
+/**
+ * purple_proxy_get_proxy_resolver:
+ * @account: The account for which to get the proxy resolver.
+ *
+ * Returns a #GProxyResolver capable of resolving which proxy
+ * to use for this account, if any. This object can be given to a
+ * #GSocketClient for automatic proxy handling or can be used
+ * directly if desired.
+ *
+ * Returns: (transfer full): NULL if there was an error with the
+ *         account's (or system) proxy settings, or a reference to
+ *         a #GProxyResolver on success.
+ */
+GProxyResolver *purple_proxy_get_proxy_resolver(PurpleAccount *account);
 
 G_END_DECLS
 
