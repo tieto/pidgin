@@ -732,11 +732,19 @@ connect_to_host_cb(GObject *source, GAsyncResult *res, gpointer user_data)
 	conn = g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(source),
 			res, &error);
 	if (conn == NULL) {
-		purple_debug_error("proxy",
-				"Unable to connect to destination host: %s\n",
-				error->message);
-		purple_proxy_connect_data_disconnect(connect_data,
-				"Unable to connect to destination host.\n");
+		/* Ignore cancelled error as that signifies connect_data has
+		 * been freed
+		 */
+		if (!g_error_matches(error, G_IO_ERROR,
+				G_IO_ERROR_CANCELLED)) {
+			purple_debug_error("proxy", "Unable to connect to "
+					"destination host: %s\n",
+					error->message);
+			purple_proxy_connect_data_disconnect(connect_data,
+					"Unable to connect to destination "
+					"host.\n");
+		}
+
 		g_clear_error(&error);
 		return;
 	}
@@ -817,11 +825,19 @@ socks5_proxy_connect_cb(GObject *source, GAsyncResult *res, gpointer user_data)
 	stream = g_proxy_connect_finish(G_PROXY(source), res, &error);
 
 	if (stream == NULL) {
-		purple_debug_error("proxy",
-				"Unable to connect to destination host: %s\n",
-				error->message);
-		purple_proxy_connect_data_disconnect(connect_data,
-				"Unable to connecto to destination host.\n");
+		/* Ignore cancelled error as that signifies connect_data has
+		 * been freed
+		 */
+		if (!g_error_matches(error, G_IO_ERROR,
+				G_IO_ERROR_CANCELLED)) {
+			purple_debug_error("proxy", "Unable to connect to "
+					"destination host: %s\n",
+					error->message);
+			purple_proxy_connect_data_disconnect(connect_data,
+					"Unable to connect to destination "
+					"host.\n");
+		}
+
 		g_clear_error(&error);
 		return;
 	}
@@ -869,11 +885,17 @@ socks5_connect_to_host_cb(GObject *source, GAsyncResult *res,
 	conn = g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(source),
 			res, &error);
 	if (conn == NULL) {
-		purple_debug_error("proxy",
-				"Unable to connect to SOCKS5 host: %s\n",
-				error->message);
-		purple_proxy_connect_data_disconnect(connect_data,
-				"Unable to connect to SOCKS5 host.\n");
+		/* Ignore cancelled error as that signifies connect_data has
+		 * been freed
+		 */
+		if (!g_error_matches(error, G_IO_ERROR,
+				G_IO_ERROR_CANCELLED)) {
+			purple_debug_error("proxy", "Unable to connect to "
+					"SOCKS5 host: %s\n", error->message);
+			purple_proxy_connect_data_disconnect(connect_data,
+					"Unable to connect to SOCKS5 host.\n");
+		}
+
 		g_clear_error(&error);
 		return;
 	}
