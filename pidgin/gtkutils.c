@@ -33,7 +33,6 @@
 
 #include "conversation.h"
 #include "debug.h"
-#include "desktopitem.h"
 #include "notify.h"
 #include "prefs.h"
 #include "protocol.h"
@@ -1510,50 +1509,90 @@ pidgin_dnd_file_send_image(PurpleAccount *account, const gchar *who,
 #ifndef _WIN32
 static void
 pidgin_dnd_file_send_desktop(PurpleAccount *account, const gchar *who,
-		PurpleDesktopItem *item)
+		const gchar *filename)
 {
-	PurpleDesktopItemType dtype;
-	char key[64];
-	const char *itemname = NULL;
+	gchar *name;
+	gchar *type;
+	gchar *url;
+	GKeyFile *desktop_file;
+	PurpleConversation *conv;
+	PidginConversation *gtkconv;
+	GError *error = NULL;
 
-	const char * const *langs;
-	langs = g_get_language_names();
-	if (langs[0]) {
-		g_snprintf(key, sizeof(key), "Name[%s]", langs[0]);
-		itemname = purple_desktop_item_get_string(item, key);
+	desktop_file = g_key_file_new();
+
+	if (!g_key_file_load_from_file(desktop_file, filename, G_KEY_FILE_NONE, &error)) {
+		if (error) {
+			purple_debug_warning("D&D", "Failed to load %s: %s\n",
+					filename, error->message);
+			g_error_free(error);
+		}
+		return;
 	}
 
-	if (!itemname)
-		itemname = purple_desktop_item_get_string(item, "Name");
+	name = g_key_file_get_string(desktop_file, G_KEY_FILE_DESKTOP_GROUP,
+			G_KEY_FILE_DESKTOP_KEY_NAME, &error);
+	if (error) {
+		purple_debug_warning("D&D", "Failed to read the Name from a desktop file: %s\n",
+				error->message);
+		g_error_free(error);
 
-	dtype = purple_desktop_item_get_entry_type(item);
-	switch (dtype) {
-		PurpleConversation *conv;
-		PidginConversation *gtkconv;
+	}
 
-		case PURPLE_DESKTOP_ITEM_TYPE_LINK:
-		conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, who));
-		gtkconv =  PIDGIN_CONVERSATION(conv);
-		pidgin_webview_insert_link(PIDGIN_WEBVIEW(gtkconv->entry),
-				purple_desktop_item_get_string(item, "URL"),
-				itemname);
-		break;
-		default:
-		/* I don't know if we really want to do anything here.  Most of
-		 * the desktop item types are crap like "MIME Type" (I have no
-		 * clue how that would be a desktop item) and "Comment"...
-		 * nothing we can really send.  The only logical one is
-		 * "Application," but do we really want to send a binary and
-		 * nothing else? Probably not.  I'll just give an error and
-		 * return. */
-		/* The original patch sent the icon used by the launcher.  That's probably wrong */
+	type = g_key_file_get_string(desktop_file, G_KEY_FILE_DESKTOP_GROUP,
+			G_KEY_FILE_DESKTOP_KEY_TYPE, &error);
+	if (error) {
+		purple_debug_warning("D&D", "Failed to read the Type from a desktop file: %s\n",
+				error->message);
+		g_error_free(error);
+
+	}
+
+	url = g_key_file_get_string(desktop_file, G_KEY_FILE_DESKTOP_GROUP,
+			G_KEY_FILE_DESKTOP_KEY_URL, &error);
+	if (error) {
+		purple_debug_warning("D&D", "Failed to read the Type from a desktop file: %s\n",
+				error->message);
+		g_error_free(error);
+
+	}
+
+
+	/* If any of this is null, do nothing. */
+	if (!name || !type || url) {
+		g_free(type);
+		g_free(name);
+		g_free(url);
+
+		return;
+	}
+
+	/* I don't know if we really want to do anything here.  Most of
+	 * the desktop item types are crap like "MIME Type" (I have no
+	 * clue how that would be a desktop item) and "Comment"...
+	 * nothing we can really send.  The only logical one is
+	 * "Application," but do we really want to send a binary and
+	 * nothing else? Probably not.  I'll just give an error and
+	 * return. */
+	/* The original patch sent the icon used by the launcher.  That's probably wrong */
+	if (!g_strcmp0(type, "Link")) {
 		purple_notify_error(NULL, NULL, _("Cannot send launcher"),
 				_("You dragged a desktop launcher. Most "
 					"likely you wanted to send the target "
 					"of this launcher instead of this "
 					"launcher itself."), NULL);
-		break;
+
+	} else {
+
+		conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, who));
+		gtkconv =  PIDGIN_CONVERSATION(conv);
+		pidgin_webview_insert_link(PIDGIN_WEBVIEW(gtkconv->entry),
+				url, name);
 	}
+
+	g_free(type);
+	g_free(name);
+	g_free(url);
 }
 #endif /* _WIN32 */
 
@@ -1563,9 +1602,6 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 	GdkPixbuf *pb;
 	GList *files = purple_uri_list_extract_filenames((const gchar *) gtk_selection_data_get_data(sd));
 	PurpleConnection *gc = purple_account_get_connection(account);
-#ifndef _WIN32
-	PurpleDesktopItem *item;
-#endif
 	gchar *filename = NULL;
 	gchar *basename = NULL;
 
@@ -1612,9 +1648,8 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 
 #ifndef _WIN32
 		/* Are we trying to send a .desktop file? */
-		else if (purple_str_has_suffix(basename, ".desktop") && (item = purple_desktop_item_new_from_file(filename))) {
-			pidgin_dnd_file_send_desktop(account, who, item);
-			purple_desktop_item_unref(item);
+		else if (purple_str_has_suffix(basename, ".desktop")) {
+			pidgin_dnd_file_send_desktop(account, who, filename);
 
 			continue;
 		}
