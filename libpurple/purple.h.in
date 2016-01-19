@@ -61,7 +61,6 @@
 #include <conversations.h>
 #include <core.h>
 #include <debug.h>
-#include <desktopitem.h>
 #include <enums.h>
 #include <eventloop.h>
 #include <idle.h>
