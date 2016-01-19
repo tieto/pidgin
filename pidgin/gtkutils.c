@@ -1446,13 +1446,123 @@ static void dnd_set_icon_cancel_cb(_DndData *data)
 	g_free(data);
 }
 
+static void
+pidgin_dnd_file_send_image(PurpleAccount *account, const gchar *who,
+		const gchar *filename)
+{
+	PurpleConnection *gc = purple_account_get_connection(account);
+	PurpleProtocol *protocol = NULL;
+	_DndData *data = g_malloc(sizeof(_DndData));
+	gboolean ft = FALSE, im = FALSE;
+
+	data->who = g_strdup(who);
+	data->filename = g_strdup(filename);
+	data->account = account;
+
+	if (gc)
+		protocol = purple_connection_get_protocol(gc);
+
+	if (!(purple_connection_get_flags(gc) & PURPLE_CONNECTION_FLAG_NO_IMAGES))
+		im = TRUE;
+
+	if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, can_receive))
+		ft = purple_protocol_xfer_iface_can_receive(protocol, gc, who);
+	else if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, send))
+		ft = TRUE;
+
+	if (im && ft) {
+		purple_request_choice(NULL, NULL,
+				_("You have dragged an image"),
+				_("You can send this image as a file "
+					"transfer, embed it into this message, "
+					"or use it as the buddy icon for this user."),
+				(gpointer)DND_FILE_TRANSFER, _("OK"),
+				(GCallback)dnd_image_ok_callback, _("Cancel"),
+				(GCallback)dnd_image_cancel_callback,
+				purple_request_cpar_from_account(account), data,
+				_("Set as buddy icon"), DND_BUDDY_ICON,
+				_("Send image file"), DND_FILE_TRANSFER,
+				_("Insert in message"), DND_IM_IMAGE,
+				NULL);
+	} else if (!(im || ft)) {
+		purple_request_yes_no(NULL, NULL, _("You have dragged an image"),
+				_("Would you like to set it as the buddy icon for this user?"),
+				PURPLE_DEFAULT_ACTION_NONE,
+				purple_request_cpar_from_account(account),
+				data, (GCallback)dnd_set_icon_ok_cb, (GCallback)dnd_set_icon_cancel_cb);
+	} else {
+		purple_request_choice(NULL, NULL,
+				_("You have dragged an image"),
+				(ft ? _("You can send this image as a file transfer, or use it as the buddy icon for this user.") :
+				 _("You can insert this image into this message, or use it as the buddy icon for this user")),
+				GINT_TO_POINTER(ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
+				_("OK"), (GCallback)dnd_image_ok_callback,
+				_("Cancel"), (GCallback)dnd_image_cancel_callback,
+				purple_request_cpar_from_account(account),
+				data,
+				_("Set as buddy icon"), DND_BUDDY_ICON,
+				(ft ? _("Send image file") : _("Insert in message")), (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
+				NULL);
+	}
+
+}
+
+#ifndef _WIN32
+static void
+pidgin_dnd_file_send_desktop(PurpleAccount *account, const gchar *who,
+		PurpleDesktopItem *item)
+{
+	PurpleDesktopItemType dtype;
+	char key[64];
+	const char *itemname = NULL;
+
+	const char * const *langs;
+	langs = g_get_language_names();
+	if (langs[0]) {
+		g_snprintf(key, sizeof(key), "Name[%s]", langs[0]);
+		itemname = purple_desktop_item_get_string(item, key);
+	}
+
+	if (!itemname)
+		itemname = purple_desktop_item_get_string(item, "Name");
+
+	dtype = purple_desktop_item_get_entry_type(item);
+	switch (dtype) {
+		PurpleConversation *conv;
+		PidginConversation *gtkconv;
+
+		case PURPLE_DESKTOP_ITEM_TYPE_LINK:
+		conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, who));
+		gtkconv =  PIDGIN_CONVERSATION(conv);
+		pidgin_webview_insert_link(PIDGIN_WEBVIEW(gtkconv->entry),
+				purple_desktop_item_get_string(item, "URL"),
+				itemname);
+		break;
+		default:
+		/* I don't know if we really want to do anything here.  Most of
+		 * the desktop item types are crap like "MIME Type" (I have no
+		 * clue how that would be a desktop item) and "Comment"...
+		 * nothing we can really send.  The only logical one is
+		 * "Application," but do we really want to send a binary and
+		 * nothing else? Probably not.  I'll just give an error and
+		 * return. */
+		/* The original patch sent the icon used by the launcher.  That's probably wrong */
+		purple_notify_error(NULL, NULL, _("Cannot send launcher"),
+				_("You dragged a desktop launcher. Most "
+					"likely you wanted to send the target "
+					"of this launcher instead of this "
+					"launcher itself."), NULL);
+		break;
+	}
+}
+#endif /* _WIN32 */
+
 void
 pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char *who)
 {
 	GdkPixbuf *pb;
 	GList *files = purple_uri_list_extract_filenames((const gchar *) gtk_selection_data_get_data(sd));
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurpleProtocol *protocol = NULL;
 #ifndef _WIN32
 	PurpleDesktopItem *item;
 #endif
@@ -1493,119 +1603,20 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 		/* Are we dealing with an image? */
 		pb = pidgin_pixbuf_new_from_file(filename);
 		if (pb) {
-			_DndData *data = g_malloc(sizeof(_DndData));
-			gboolean ft = FALSE, im = FALSE;
+			pidgin_dnd_file_send_image(account, who, filename);
 
-			data->who = g_strdup(who);
-			data->filename = g_strdup(filename);
-			data->account = account;
-
-			if (gc)
-				protocol = purple_connection_get_protocol(gc);
-
-			if (!(purple_connection_get_flags(gc) & PURPLE_CONNECTION_FLAG_NO_IMAGES))
-				im = TRUE;
-
-			if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, can_receive))
-				ft = purple_protocol_xfer_iface_can_receive(protocol, gc, who);
-			else if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, XFER_IFACE, send))
-				ft = TRUE;
-
-			if (im && ft) {
-				purple_request_choice(NULL, NULL,
-					_("You have dragged an image"),
-					_("You can send this image as a file "
-					"transfer, embed it into this message, "
-					"or use it as the buddy icon for this user."),
-					(gpointer)DND_FILE_TRANSFER, _("OK"),
-					(GCallback)dnd_image_ok_callback, _("Cancel"),
-					(GCallback)dnd_image_cancel_callback,
-					purple_request_cpar_from_account(account), data,
-					_("Set as buddy icon"), DND_BUDDY_ICON,
-					_("Send image file"), DND_FILE_TRANSFER,
-					_("Insert in message"), DND_IM_IMAGE,
-					NULL);
-			} else if (!(im || ft))
-				purple_request_yes_no(NULL, NULL, _("You have dragged an image"),
-							_("Would you like to set it as the buddy icon for this user?"),
-							PURPLE_DEFAULT_ACTION_NONE,
-							purple_request_cpar_from_account(account),
-							data, (GCallback)dnd_set_icon_ok_cb, (GCallback)dnd_set_icon_cancel_cb);
-			else
-				purple_request_choice(NULL, NULL,
-						    _("You have dragged an image"),
-						    (ft ? _("You can send this image as a file transfer, or use it as the buddy icon for this user.") :
-						    _("You can insert this image into this message, or use it as the buddy icon for this user")),
-						    GINT_TO_POINTER(ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
-							_("OK"), (GCallback)dnd_image_ok_callback,
-						    _("Cancel"), (GCallback)dnd_image_cancel_callback,
-							purple_request_cpar_from_account(account),
-							data,
-						    _("Set as buddy icon"), DND_BUDDY_ICON,
-						    (ft ? _("Send image file") : _("Insert in message")), (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
-							NULL);
 			g_object_unref(G_OBJECT(pb));
 
-			g_free(basename);
-			while (files) {
-				g_free(files->data);
-				files = g_list_delete_link(files, files);
-			}
-			return;
+			continue;
 		}
 
 #ifndef _WIN32
 		/* Are we trying to send a .desktop file? */
 		else if (purple_str_has_suffix(basename, ".desktop") && (item = purple_desktop_item_new_from_file(filename))) {
-			PurpleDesktopItemType dtype;
-			char key[64];
-			const char *itemname = NULL;
-
-			const char * const *langs;
-			langs = g_get_language_names();
-			if (langs[0]) {
-				g_snprintf(key, sizeof(key), "Name[%s]", langs[0]);
-				itemname = purple_desktop_item_get_string(item, key);
-			}
-
-			if (!itemname)
-				itemname = purple_desktop_item_get_string(item, "Name");
-
-			dtype = purple_desktop_item_get_entry_type(item);
-			switch (dtype) {
-				PurpleConversation *conv;
-				PidginConversation *gtkconv;
-
-			case PURPLE_DESKTOP_ITEM_TYPE_LINK:
-				conv = PURPLE_CONVERSATION(purple_im_conversation_new(account, who));
-				gtkconv =  PIDGIN_CONVERSATION(conv);
-				pidgin_webview_insert_link(PIDGIN_WEBVIEW(gtkconv->entry),
-				                        purple_desktop_item_get_string(item, "URL"),
-				                        itemname);
-				break;
-			default:
-				/* I don't know if we really want to do anything here.  Most of
-				 * the desktop item types are crap like "MIME Type" (I have no
-				 * clue how that would be a desktop item) and "Comment"...
-				 * nothing we can really send.  The only logical one is
-				 * "Application," but do we really want to send a binary and
-				 * nothing else? Probably not.  I'll just give an error and
-				 * return. */
-				/* The original patch sent the icon used by the launcher.  That's probably wrong */
-				purple_notify_error(NULL, NULL, _("Cannot send launcher"),
-				                    _("You dragged a desktop launcher. Most "
-				                      "likely you wanted to send the target "
-				                      "of this launcher instead of this "
-				                      "launcher itself."), NULL);
-				break;
-			}
+			pidgin_dnd_file_send_desktop(account, who, item);
 			purple_desktop_item_unref(item);
-			g_free(basename);
-			while (files) {
-				g_free(files->data);
-				files = g_list_delete_link(files, files);
-			}
-			return;
+
+			continue;
 		}
 #endif /* _WIN32 */
 
