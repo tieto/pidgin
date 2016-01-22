@@ -1707,6 +1707,11 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 					"fs-codec.conf: %s\n",
 					err->message);
 		g_error_free(err);
+
+		purple_debug_info("backend-fs2",
+				"Loading default codec conf instead\n");
+		codec_conf = fs_utils_get_default_codec_preferences(
+				GST_ELEMENT(priv->conference));
 	}
 
 	/*
