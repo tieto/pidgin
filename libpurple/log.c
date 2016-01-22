@@ -1334,7 +1334,8 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 	if(!data->file)
 		return 0;
 
-	escaped_from = g_markup_escape_text(from, -1);
+	escaped_from = g_markup_escape_text(from != NULL ? from : "<NULL>",
+			-1);
 
 	image_corrected_msg = convert_image_tags(log, message);
 	purple_markup_html_to_xhtml(image_corrected_msg, &msg_fixed, NULL);
