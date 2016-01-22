@@ -1698,7 +1698,7 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	g_free(filename);
 
 	if (err != NULL) {
-		if (err->code == 4)
+		if (err->code == G_KEY_FILE_ERROR_NOT_FOUND)
 			purple_debug_info("backend-fs2", "Couldn't read "
 					"fs-codec.conf: %s\n",
 					err->message);
