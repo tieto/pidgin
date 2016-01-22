@@ -126,7 +126,6 @@ setup_tooltip_window(void)
 static void
 setup_tooltip_window_position(gpointer data, int w, int h)
 {
-	int sig;
 	int scr_w, scr_h, x, y, dy;
 	int preserved_x, preserved_y;
 	int mon_num;
@@ -193,8 +192,9 @@ setup_tooltip_window_position(gpointer data, int w, int h)
 			G_CALLBACK(pidgin_tooltip_draw_cb), data);
 
 	/* Hide the tooltip when the widget is destroyed */
-	sig = g_signal_connect(G_OBJECT(pidgin_tooltip.widget), "destroy", G_CALLBACK(pidgin_tooltip_destroy), NULL);
-	g_signal_connect_swapped(G_OBJECT(tipwindow), "destroy", G_CALLBACK(g_source_remove), GINT_TO_POINTER(sig));
+	g_signal_connect_object(G_OBJECT(pidgin_tooltip.widget),
+			"destroy", G_CALLBACK(pidgin_tooltip_destroy),
+			G_OBJECT(tipwindow), 0);
 }
 
 void pidgin_tooltip_show(GtkWidget *widget, gpointer userdata,
