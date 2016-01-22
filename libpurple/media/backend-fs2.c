@@ -1714,25 +1714,6 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 				GST_ELEMENT(priv->conference));
 	}
 
-	/*
-	 * Add SPEEX if the configuration file doesn't exist or
-	 * there isn't a speex entry.
-	 */
-	for (iter = codec_conf; iter; iter = g_list_next(iter)) {
-		FsCodec *codec = iter->data;
-		if (!g_ascii_strcasecmp(codec->encoding_name, "speex"))
-			break;
-	}
-
-	if (iter == NULL) {
-		codec_conf = g_list_prepend(codec_conf,
-				fs_codec_new(FS_CODEC_ID_ANY,
-				"SPEEX", FS_MEDIA_TYPE_AUDIO, 8000));
-		codec_conf = g_list_prepend(codec_conf,
-				fs_codec_new(FS_CODEC_ID_ANY,
-				"SPEEX", FS_MEDIA_TYPE_AUDIO, 16000));
-	}
-
 	fs_session_set_codec_preferences(session->session, codec_conf, NULL);
 	fs_codec_list_destroy(codec_conf);
 
