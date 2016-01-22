@@ -1530,18 +1530,6 @@ init_conference(PurpleMediaBackendFs2 *self)
 	return TRUE;
 }
 
-static void
-gst_element_added_cb(FsElementAddedNotifier *self,
-		GstBin *bin, GstElement *element, gpointer user_data)
-{
-	/*
-	 * Hack to make H264 work with Gmail video.
-	 */
-	if (!strncmp(GST_ELEMENT_NAME(element), "x264", 4)) {
-		g_object_set(GST_OBJECT(element), "cabac", FALSE, NULL);
-	}
-}
-
 static gboolean
 create_src(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 		PurpleMediaSessionType type)
@@ -1660,9 +1648,8 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 			PURPLE_MEDIA_BACKEND_FS2_GET_PRIVATE(self);
 	PurpleMediaBackendFs2Session *session;
 	GError *err = NULL;
-	GList *codec_conf = NULL, *iter = NULL;
+	GList *codec_conf = NULL;
 	gchar *filename = NULL;
-	gboolean is_nice = !strcmp(transmitter, "nice");
 
 	session = g_new0(PurpleMediaBackendFs2Session, 1);
 
@@ -1725,18 +1712,6 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	if (!!strcmp(transmitter, "multicast"))
 		g_object_set(G_OBJECT(session->session),
 				"no-rtcp-timeout", 0, NULL);
-
-	/*
-	 * Hack to make x264 work with Gmail video.
-	 */
-	if (is_nice && !strcmp(sess_id, "google-video")) {
-		FsElementAddedNotifier *notifier =
-				fs_element_added_notifier_new();
-		g_signal_connect(G_OBJECT(notifier), "element-added",
-				G_CALLBACK(gst_element_added_cb), NULL);
-		fs_element_added_notifier_add(notifier,
-				GST_BIN(priv->conference));
-	}
 
 	session->id = g_strdup(sess_id);
 	session->backend = self;
