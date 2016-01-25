@@ -1723,11 +1723,7 @@ dnl #######################################################################
 if test "x$enable_plugins" = "xyes" ; then
 	PKG_CHECK_MODULES(GPLUGIN, [gplugin >= 0.0.17 gmodule-2.0], [
 		dnl # GPLUGIN_REQ sets pkg-config requirements in the .pc file
-		if test "x$enable_gtkui" != "xno" ; then
-			GPLUGIN_REQ=[", gplugin, gplugin-gtk"]
-		else
-			GPLUGIN_REQ=[", gplugin"]
-		fi
+		GPLUGIN_REQ=[", gplugin"]
 	], [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
