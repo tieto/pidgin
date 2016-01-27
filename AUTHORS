@@ -11,7 +11,6 @@ Daniel 'datallah' Atallah - Developer
 Paul 'darkrain42' Aurich - Developer
 Ethan 'Paco-Paco' Blanton - Developer
 Sadrul Habib Chowdhury - Developer
-Mark 'KingAnt' Doliner - Developer
 Gary 'grim' Kramlich - Developer
 Richard 'rlaager' Laager - Developer
 Marcus 'malu' Lundblad - Developer
@@ -20,7 +19,6 @@ Richard 'wabz' Nelson - Developer
 Etan 'deryni' Reisner - Developer
 Michael 'Maiku' Ruprecht - Developer, voice and video
 Elliott 'QuLogic' Sales de Andrade - Developer
-Luke 'LSchiere' Schierer - Support
 Evan Schoenberg - Developer
 Kevin 'SimGuy' Stange - Developer & Webmaster
 Will 'resiak' Thompson - Developer
@@ -42,6 +40,7 @@ John 'rekkanoryo' Bailey - Developer
 Herman Bloggs - Win32 Port
 Thomas Butter - Developer
 Ka-Hing Cheung - Developer
+Mark 'KingAnt' Doliner - Maintainer
 Jim Duchek <jim@linuxpimps.com> - maintainer
 Sean Egan - Developer
 Rob Flynn <gaim@robflynn.com> - maintainer
@@ -53,6 +52,7 @@ Syd Logan - hacker and designated driver [lazy bum]
 Christopher 'siege' O'Brien - Developer
 Bartosz Oler - Developer
 Tim 'marv' Ringenbach - Developer
+Luke 'LSchiere' Schierer - Support
 Megan 'Cae' Schneider - support/QA
 Jim Seymour - XMPP developer
 Mark Spencer <markster@marko.net> - original author
