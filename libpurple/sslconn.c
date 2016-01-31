@@ -29,7 +29,6 @@
 #include "tls-certificate.h"
 
 static gboolean _ssl_initialized = FALSE;
-static PurpleSslOps *_ssl_ops = NULL;
 
 static gboolean
 ssl_init(void)
@@ -373,18 +372,6 @@ purple_ssl_get_peer_certificates(PurpleSslConnection *gsc)
 	certificate = g_tls_connection_get_peer_certificate(gsc->conn);
 
 	return certificate != NULL ? g_list_append(NULL, certificate) : NULL;
-}
-
-void
-purple_ssl_set_ops(PurpleSslOps *ops)
-{
-	_ssl_ops = ops;
-}
-
-PurpleSslOps *
-purple_ssl_get_ops(void)
-{
-	return _ssl_ops;
 }
 
 void
