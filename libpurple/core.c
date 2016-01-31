@@ -20,7 +20,6 @@
  */
 #include "internal.h"
 #include "cipher.h"
-#include "certificate.h"
 #include "cmds.h"
 #include "connection.h"
 #include "conversation.h"
@@ -190,7 +189,6 @@ purple_core_init(const char *ui)
 	purple_accounts_init();
 	purple_savedstatuses_init();
 	purple_notify_init();
-	purple_certificate_init();
 	_purple_message_init();
 	purple_conversations_init();
 	purple_blist_init();
@@ -241,14 +239,6 @@ purple_core_quit(void)
 
 	/* Transmission ends */
 	purple_connections_disconnect_all();
-
-	/*
-	 * Certificates must be destroyed before the SSL plugins, because
-	 * PurpleCertificates contain pointers to PurpleCertificateSchemes,
-	 * and the PurpleCertificateSchemes will be unregistered when the
-	 * SSL plugin is uninit.
-	 */
-	purple_certificate_uninit();
 
 	/* The SSL plugins must be uninit before they're unloaded */
 	purple_ssl_uninit();
