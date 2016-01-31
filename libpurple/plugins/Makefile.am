@@ -5,7 +5,6 @@ DBUS_LTLIB = dbus-example.la
 endif
 
 SUBDIRS = \
-	ssl \
 	keyrings
 
 plugindir = @PURPLE_PLUGINDIR@
