@@ -125,7 +125,7 @@ struct _PurpleRequestField
 
 		struct
 		{
-			PurpleCertificate *cert;
+			GTlsCertificate *cert;
 		} certificate;
 
 		struct
@@ -1954,7 +1954,7 @@ purple_request_field_account_get_filter(const PurpleRequestField *field)
 }
 
 PurpleRequestField *
-purple_request_field_certificate_new(const char *id, const char *text, PurpleCertificate *cert)
+purple_request_field_certificate_new(const char *id, const char *text, GTlsCertificate *cert)
 {
 	PurpleRequestField *field;
 
@@ -1969,7 +1969,7 @@ purple_request_field_certificate_new(const char *id, const char *text, PurpleCer
 	return field;
 }
 
-PurpleCertificate *
+GTlsCertificate *
 purple_request_field_certificate_get_value(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
@@ -2475,7 +2475,7 @@ purple_request_folder(void *handle, const char *title, const char *dirname,
 void *
 purple_request_certificate(void *handle, const char *title,
                                   const char *primary, const char *secondary,
-                                  PurpleCertificate *cert,
+                                  GTlsCertificate *cert,
                                   const char *ok_text, GCallback ok_cb,
                                   const char *cancel_text, GCallback cancel_cb,
                                   void *user_data)
