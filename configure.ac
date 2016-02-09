@@ -387,7 +387,7 @@ AC_RUN_IFELSE([AC_LANG_SOURCE([[
 
 int main()
 {
-	char buf[6];
+	char buf[64];
 	time_t t = time(NULL);
 
 	if (strftime(buf, sizeof(buf), "%z", localtime(&t)) != 5)
