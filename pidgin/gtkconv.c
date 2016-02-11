@@ -142,12 +142,7 @@ enum {
 
 #define LUMINANCE(c) (float)((0.3*(c.red))+(0.59*(c.green))+(0.11*(c.blue)))
 
-/* From http://www.w3.org/TR/AERT#color-contrast
- * Range for color difference is 500
- * Range for brightness is 125
- */
-#define MIN_BRIGHTNESS_CONTRAST 85
-#define MIN_COLOR_CONTRAST 250
+#define MIN_LUMINANCE_CONTRAST_RATIO 4.5
 
 #define NICK_COLOR_GENERATE_COUNT 220
 static GArray *generated_nick_colors = NULL;
@@ -210,7 +205,8 @@ static void update_typing_icon(PidginConversation *gtkconv);
 static void update_typing_message(PidginConversation *gtkconv, const char *message);
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
 static GArray* generate_nick_colors(guint numcolors, GdkColor background);
-static gboolean color_is_visible(GdkColor foreground, GdkColor background, guint color_contrast, guint brightness_contrast);
+gfloat luminance(GdkColor color);
+static gboolean color_is_visible(GdkColor foreground, GdkColor background, gfloat min_contrast_ratio);
 static GtkTextTag *get_buddy_tag(PurpleChatConversation *chat, const char *who, PurpleMessageFlags flag, gboolean create);
 static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields);
 static void focus_out_from_menubar(GtkWidget *wid, PidginConvWindow *win);
@@ -11113,37 +11109,54 @@ pidgin_conv_is_hidden(PidginConversation *gtkconv)
 }
 
 
-/* Algorithm from http://www.w3.org/TR/AERT#color-contrast */
-static gboolean
-color_is_visible(GdkColor foreground, GdkColor background, guint color_contrast, guint brightness_contrast)
+gfloat luminance(GdkColor color)
 {
-	gulong fg_brightness;
-	gulong bg_brightness;
-	gulong br_diff;
-	gulong col_diff;
-	int fred, fgreen, fblue, bred, bgreen, bblue;
+    gfloat r, g, b;
+    gfloat rr, gg, bb;
+    gint ir, ig, ib;
+    gfloat cutoff = 0.03928, scale = 12.92,
+          a = 0.055, d = 1.055, p = 2.2;
+    gfloat sRGBScale =  255.0;
 
-	/* this algorithm expects colors between 0 and 255 for each of red green and blue.
-	 * GTK on the other hand has values between 0 and 65535
-	 * Err suggested I >> 8, which grabbed the high bits.
-	 */
+    ir = color.red >> 8;
+    ig = color.green >> 8;
+    ib = color.blue >> 8;
 
-	fred = foreground.red >> 8 ;
-	fgreen = foreground.green >> 8 ;
-	fblue = foreground.blue >> 8 ;
+    rr = (float)(ir)/sRGBScale;
+    gg = (float)(ig)/sRGBScale;
+    bb = (float)(ib)/sRGBScale;
 
+    r = (rr  > cutoff) ? pow((rr+a)/d, p) : rr/scale;
+    g = (gg  > cutoff) ? pow((gg+a)/d, p) : gg/scale;
+    b = (bb  > cutoff) ? pow((bb+a)/d, p) : bb/scale;
 
-	bred = background.red >> 8 ;
-	bgreen = background.green >> 8 ;
-	bblue = background.blue >> 8 ;
+    return (r*0.2126 + g*0.7152 + b*0.0722);
+}
 
-	fg_brightness = (fred * 299 + fgreen * 587 + fblue * 114) / 1000;
-	bg_brightness = (bred * 299 + bgreen * 587 + bblue * 114) / 1000;
-	br_diff = abs(fg_brightness - bg_brightness);
+/* Algorithm from https://www.w3.org/TR/2008/REC-WCAG20-20081211/relative-luminance.xml */
+static gboolean
+color_is_visible(GdkColor foreground, GdkColor background, gfloat min_contrast_ratio)
+{
+    gfloat lfg, lbg, lmin, lmax;
+    gfloat luminosity_ratio;
 
-	col_diff = abs(fred - bred) + abs(fgreen - bgreen) + abs(fblue - bblue);
+    lfg = luminance(foreground); 
+    lbg = luminance(background);
 
-	return ((col_diff > color_contrast) && (br_diff > brightness_contrast));
+    if (lfg > lbg)
+        lmax = lfg, lmin = lbg;
+    else
+        lmax = lbg, lmin = lfg;
+
+    gfloat nr, dr;
+    nr = lmax + 0.05, dr = lmin - 0.05;
+    if ( dr == 0 ) 
+        dr += 0.01;
+
+    luminosity_ratio = nr/dr;
+    if ( luminosity_ratio < 0) 
+        luminosity_ratio *= -1.0;
+    return (luminosity_ratio > min_contrast_ratio);
 }
 
 
@@ -11171,9 +11184,9 @@ generate_nick_colors(guint numcolors, GdkColor background)
 	{
 		GdkColor color = nick_seed_colors[j];
 
-		if (color_is_visible(color, background,     MIN_COLOR_CONTRAST,     MIN_BRIGHTNESS_CONTRAST) &&
-			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
-			color_is_visible(color, send_color,     MIN_COLOR_CONTRAST / 4, 0))
+		if (color_is_visible(color, background,     MIN_LUMINANCE_CONTRAST_RATIO) &&
+			color_is_visible(color, nick_highlight, MIN_LUMINANCE_CONTRAST_RATIO) &&
+			color_is_visible(color, send_color,     MIN_LUMINANCE_CONTRAST_RATIO))
 		{
 			g_array_append_val(colors, color);
 			i++;
@@ -11190,9 +11203,9 @@ generate_nick_colors(guint numcolors, GdkColor background)
 	{
 		GdkColor color = { 0, rand() % 65536, rand() % 65536, rand() % 65536 };
 
-		if (color_is_visible(color, background,     MIN_COLOR_CONTRAST,     MIN_BRIGHTNESS_CONTRAST) &&
-			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
-			color_is_visible(color, send_color,     MIN_COLOR_CONTRAST / 4, 0))
+		if (color_is_visible(color, background,     MIN_LUMINANCE_CONTRAST_RATIO) &&
+			color_is_visible(color, nick_highlight, MIN_LUMINANCE_CONTRAST_RATIO) &&
+			color_is_visible(color, send_color,     MIN_LUMINANCE_CONTRAST_RATIO))
 		{
 			g_array_append_val(colors, color);
 			i++;
@@ -11202,6 +11215,12 @@ generate_nick_colors(guint numcolors, GdkColor background)
 	if (i < numcolors) {
 		purple_debug_warning("gtkconv", "Unable to generate enough random colors before timeout. %u colors found.\n", i);
 	}
+
+    if( i == 0 ) {
+        /* To remove errors caused by an empty array. */
+        GdkColor color = {0, 32768, 32768, 32768};
+        g_array_append_val(colors, color);
+    }
 
 	return colors;
 }
