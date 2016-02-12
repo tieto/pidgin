@@ -11111,52 +11111,48 @@ pidgin_conv_is_hidden(PidginConversation *gtkconv)
 
 gfloat luminance(GdkColor color)
 {
-    gfloat r, g, b;
-    gfloat rr, gg, bb;
-    gint ir, ig, ib;
-    gfloat cutoff = 0.03928, scale = 12.92,
-          a = 0.055, d = 1.055, p = 2.2;
-    gfloat sRGBScale =  255.0;
+	gfloat r, g, b;
+	gfloat rr, gg, bb;
+	gfloat cutoff = 0.03928, scale = 12.92;
+	gfloat a = 0.055, d = 1.055, p = 2.2;
+	gfloat sRGBScale =  65535.0;
 
-    ir = color.red >> 8;
-    ig = color.green >> 8;
-    ib = color.blue >> 8;
+	/* Normalizing color values to [0,1] from the sRGB space.*/
+	rr = (float)(color.red)/sRGBScale;
+	gg = (float)(color.green)/sRGBScale;
+	bb = (float)(color.blue)/sRGBScale;
 
-    rr = (float)(ir)/sRGBScale;
-    gg = (float)(ig)/sRGBScale;
-    bb = (float)(ib)/sRGBScale;
+	r = (rr  > cutoff) ? pow((rr+a)/d, p) : rr/scale;
+	g = (gg  > cutoff) ? pow((gg+a)/d, p) : gg/scale;
+	b = (bb  > cutoff) ? pow((bb+a)/d, p) : bb/scale;
 
-    r = (rr  > cutoff) ? pow((rr+a)/d, p) : rr/scale;
-    g = (gg  > cutoff) ? pow((gg+a)/d, p) : gg/scale;
-    b = (bb  > cutoff) ? pow((bb+a)/d, p) : bb/scale;
-
-    return (r*0.2126 + g*0.7152 + b*0.0722);
+	return (r*0.2126 + g*0.7152 + b*0.0722);
 }
 
 /* Algorithm from https://www.w3.org/TR/2008/REC-WCAG20-20081211/relative-luminance.xml */
 static gboolean
 color_is_visible(GdkColor foreground, GdkColor background, gfloat min_contrast_ratio)
 {
-    gfloat lfg, lbg, lmin, lmax;
-    gfloat luminosity_ratio;
+	gfloat lfg, lbg, lmin, lmax;
+	gfloat luminosity_ratio;
 
-    lfg = luminance(foreground); 
-    lbg = luminance(background);
+	lfg = luminance(foreground); 
+	lbg = luminance(background);
 
-    if (lfg > lbg)
-        lmax = lfg, lmin = lbg;
-    else
-        lmax = lbg, lmin = lfg;
+	if (lfg > lbg)
+		lmax = lfg, lmin = lbg;
+	else
+		lmax = lbg, lmin = lfg;
 
-    gfloat nr, dr;
-    nr = lmax + 0.05, dr = lmin - 0.05;
-    if ( dr == 0 ) 
-        dr += 0.01;
+	gfloat nr, dr;
+	nr = lmax + 0.05, dr = lmin - 0.05;
+	if ( dr == 0 ) 
+		dr += 0.01;
 
-    luminosity_ratio = nr/dr;
-    if ( luminosity_ratio < 0) 
-        luminosity_ratio *= -1.0;
-    return (luminosity_ratio > min_contrast_ratio);
+	luminosity_ratio = nr/dr;
+	if ( luminosity_ratio < 0) 
+		luminosity_ratio *= -1.0;
+	return (luminosity_ratio > min_contrast_ratio);
 }
 
 
@@ -11216,11 +11212,11 @@ generate_nick_colors(guint numcolors, GdkColor background)
 		purple_debug_warning("gtkconv", "Unable to generate enough random colors before timeout. %u colors found.\n", i);
 	}
 
-    if( i == 0 ) {
-        /* To remove errors caused by an empty array. */
-        GdkColor color = {0, 32768, 32768, 32768};
-        g_array_append_val(colors, color);
-    }
+	if( i == 0 ) {
+		/* To remove errors caused by an empty array. */
+		GdkColor color = {0, 32768, 32768, 32768};
+		g_array_append_val(colors, color);
+	}
 
 	return colors;
 }
