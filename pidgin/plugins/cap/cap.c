@@ -345,7 +345,7 @@ static void sent_im_msg(PurpleAccount *account, PurpleMessage *msg, gpointer _un
 	guint interval, words;
 	CapStatistics *stats = NULL;
 
-	buddy = purple_blist_find_buddy(account, purple_message_get_who(msg));
+	buddy = purple_blist_find_buddy(account, purple_message_get_recipient(msg));
 
 	if (buddy == NULL)
 		return;
@@ -355,7 +355,7 @@ static void sent_im_msg(PurpleAccount *account, PurpleMessage *msg, gpointer _un
 
 	stats = get_stats_for(buddy);
 
-	insert_word_count(purple_account_get_username(account), purple_message_get_who(msg), words);
+	insert_word_count(purple_account_get_username(account), purple_message_get_recipient(msg), words);
 	stats->last_message = time(NULL);
 	stats->last_message_status_id = purple_status_get_id(get_status_for(buddy));
 	if(stats->timeout_source_id != 0)
