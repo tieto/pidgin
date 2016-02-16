@@ -443,7 +443,7 @@ purple_media_manager_remove_media(PurpleMediaManager *manager, PurpleMedia *medi
 {
 #ifdef USE_VV
 	GList *list;
-	GList **medias;
+	GList **medias = NULL;
 
 	g_return_if_fail(manager != NULL);
 
