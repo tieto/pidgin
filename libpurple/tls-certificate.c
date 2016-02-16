@@ -192,3 +192,88 @@ purple_tls_certificate_distrust(const gchar *id, GError **error)
 	return ret;
 }
 
+/* Called when a GTlsConnection (which this handler has been connected to)
+ *   has an error validating its certificate.
+ * Returns TRUE if the certificate is already trusted, so the connection
+ *   can continue.
+ * Returns FALSE if the certificate is not trusted, causing the
+ *   connection's handshake to fail.
+ */
+static gboolean
+accept_certificate_cb(GTlsConnection *conn, GTlsCertificate *peer_cert,
+		GTlsCertificateFlags errors, gpointer user_data)
+{
+	GTlsCertificate *trusted_cert;
+	GSocketConnectable *connectable;
+	const gchar *identity;
+
+	g_return_val_if_fail(G_IS_TLS_CLIENT_CONNECTION(conn), FALSE);
+	g_return_val_if_fail(G_IS_TLS_CERTIFICATE(peer_cert), FALSE);
+
+	/* Get the certificate identity from the GTlsClientConnection */
+
+	connectable = g_tls_client_connection_get_server_identity(
+			G_TLS_CLIENT_CONNECTION(conn));
+
+	g_return_val_if_fail(G_IS_SOCKET_CONNECTABLE(connectable), FALSE);
+
+	/* identity is owned by the connectable */
+	if (G_IS_NETWORK_ADDRESS(connectable)) {
+		identity = g_network_address_get_hostname(
+				G_NETWORK_ADDRESS(connectable));
+	} else if (G_IS_NETWORK_SERVICE(connectable)) {
+		identity = g_network_service_get_domain(
+				G_NETWORK_SERVICE(connectable));
+	} else {
+		g_return_val_if_reached(FALSE);
+	}
+
+	/* See if a trusted certificate matching the peer certificate exists */
+
+	trusted_cert = purple_tls_certificate_new_from_id(identity, NULL);
+
+	if (trusted_cert != NULL &&
+			g_tls_certificate_is_same(peer_cert, trusted_cert)) {
+		/* It's manually trusted. Accept certificate */
+		g_object_unref(trusted_cert);
+		return TRUE;
+	}
+
+	/* Certificate failed and isn't trusted. Fail certificate */
+
+	g_clear_object(&trusted_cert);
+	return FALSE;
+}
+
+gpointer
+purple_tls_certificate_attach_to_tls_connection(GTlsConnection *conn)
+{
+	return g_object_connect(conn, "signal::accept-certificate",
+			accept_certificate_cb, NULL, NULL);
+}
+
+/* Called when GSocketClient signals an event.
+ * Calls purple_tls_certificate_attach_to_tls_connection() on the client's
+ * connection when it's about to handshake.
+ */
+static void
+socket_client_event_cb(GSocketClient *client, GSocketClientEvent event,
+		GSocketConnectable *connectable, GIOStream *connection,
+		gpointer user_data)
+{
+	if (event == G_SOCKET_CLIENT_TLS_HANDSHAKING) {
+		/* Attach libpurple's certificate subsystem to the
+		 * GTlsConnection right before it starts the handshake
+		 */
+		purple_tls_certificate_attach_to_tls_connection(
+				G_TLS_CONNECTION(connection));
+	}
+}
+
+gpointer
+purple_tls_certificate_attach_to_socket_client(GSocketClient *client)
+{
+	return g_object_connect(client, "signal::event",
+			socket_client_event_cb, NULL, NULL);
+}
+

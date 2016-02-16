@@ -92,6 +92,32 @@ purple_tls_certificate_trust(const gchar *id, GTlsCertificate *certificate,
 gboolean
 purple_tls_certificate_distrust(const gchar *id, GError **error);
 
+
+/**
+ * purple_tls_certificate_attach_to_tls_connection:
+ * @conn: #GTlsConnection to connect to
+ *
+ * Connects the Purple TLS certificate subsystem to @conn so it will accept
+ * certificates trusted by purple_tls_certificate_trust() and friends.
+ *
+ * Returns: @conn, similar to g_object_connect()
+ */
+gpointer
+purple_tls_certificate_attach_to_tls_connection(GTlsConnection *conn);
+
+/**
+ * purple_tls_certificate_attach_to_socket_client:
+ * @client: #GSocketClient to connect to
+ *
+ * Connects the Purple TLS certificate subsystem to @client so any TLS
+ * connections it creates will accept certificates trusted by
+ * purple_tls_certificate_trust() and friends.
+ *
+ * Returns: @client, similar to g_object_connect()
+ */
+gpointer
+purple_tls_certificate_attach_to_socket_client(GSocketClient *client);
+
 G_END_DECLS
 
 #endif /* _PURPLE_TLS_CERTIFICATE_H */
