@@ -354,7 +354,7 @@ pidgin_plugin_open_config(PurplePlugin *plugin, GtkWindow *parent)
 
 		gtk_container_add(GTK_CONTAINER(
 			gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-			pidgin_make_scrollable(box, GTK_POLICY_AUTOMATIC,
+			pidgin_make_scrollable(box, GTK_POLICY_NEVER,
 				GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, 400, 400));
 
 		gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
