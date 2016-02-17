@@ -205,28 +205,23 @@ pidgin_plugin_get_config_frame(PurplePlugin *plugin,
 {
 	GtkWidget *config = NULL;
 	PurplePluginInfo *info;
-	PidginPluginInfoPrivate *priv = NULL;
+	PurplePluginPrefFrameCb pref_frame_cb = NULL;
 
-	g_return_val_if_fail(plugin != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_PLUGIN(plugin), NULL);
 
 	info = purple_plugin_get_info(plugin);
-	if (PIDGIN_IS_PLUGIN_INFO(info))
-		priv = PIDGIN_PLUGIN_INFO_GET_PRIVATE(info);
+	if(!PURPLE_IS_PLUGIN_INFO(info))
+		return NULL;
 
-	if (priv)
-		config = priv->config_frame_cb(plugin);
+	pref_frame_cb = purple_plugin_info_get_pref_frame_cb(info);
+	if(pref_frame_cb) {
+		PurplePluginPrefFrame *frame = pref_frame_cb(plugin);
 
-	if (!config && purple_plugin_info_get_pref_frame_cb(info))
-	{
-		PurplePluginPrefFrame *frame;
-		PurplePluginPrefFrameCb pref_frame_cb =
-				purple_plugin_info_get_pref_frame_cb(info);
+		if(frame) {
+			config = pidgin_plugin_pref_create_frame(frame);
 
-		frame = pref_frame_cb(plugin);
-
-		config = pidgin_plugin_pref_create_frame(frame);
-
-		*purple_pref_frame = frame;
+			*purple_pref_frame = frame;
+		}
 	}
 
 	return config;
