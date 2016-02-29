@@ -418,6 +418,12 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	 */
 	gkr_module = g_module_open("libgnome-keyring", 0);
 	if (gkr_module == NULL) {
+		gkr_module = g_module_open("libgnome-keyring.so.0", 0);
+		if (gkr_module == NULL) {
+			gkr_module = g_module_open("libgnome-keyring.so.1", 0);
+		}
+	}
+	if (gkr_module == NULL) {
 		purple_debug_info("keyring-gnome", "GNOME Keyring module not "
 			"found\n");
 		return FALSE;
