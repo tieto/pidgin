@@ -86,6 +86,12 @@ libpurple/protocols/bonjour/bonjour.c
 libpurple/protocols/bonjour/bonjour.h
 libpurple/protocols/bonjour/jabber.c
 libpurple/protocols/bonjour/mdns_win32.c
+libpurple/protocols/facebook/api.c
+libpurple/protocols/facebook/facebook.c
+libpurple/protocols/facebook/http.c
+libpurple/protocols/facebook/json.c
+libpurple/protocols/facebook/mqtt.c
+libpurple/protocols/facebook/util.c
 libpurple/protocols/gg/account.c
 libpurple/protocols/gg/chat.c
 libpurple/protocols/gg/edisc.c
@@ -184,6 +190,7 @@ libpurple/protocols/yahoo/yahoo_filexfer.c
 libpurple/protocols/yahoo/yahoo_packet.c
 libpurple/protocols/yahoo/yahoo_profile.c
 libpurple/protocols/yahoo/yahoochat.c
+libpurple/protocols/yahoo/yahoojp.c
 libpurple/protocols/yahoo/ycht.c
 libpurple/protocols/yahoo/ymsg.c
 libpurple/protocols/zephyr/zephyr.c
