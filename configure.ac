@@ -497,6 +497,9 @@ AC_SUBST(GLIB_GENMARSHAL)
 GLIB_MKENUMS=`$PKG_CONFIG --variable=glib_mkenums glib-2.0`
 AC_SUBST(GLIB_MKENUMS)
 
+AC_PATH_PROG(GTESTER, gtester)
+GLIB_TESTS
+
 AC_ARG_WITH([extraversion],
 			AS_HELP_STRING([--with-extraversion=STRING],
 						   [extra version number to be displayed in Help->About and --help (for packagers)]),
@@ -2165,14 +2168,6 @@ AC_CACHE_CHECK([whether va_lists can be copied by value], ac_cv_va_val_copy,[
 if test "x$ac_cv_va_val_copy" = "xno"; then
 	AC_DEFINE(VA_COPY_AS_ARRAY, 1, ['va_lists' cannot be copied as values])
 fi
-
-dnl #######################################################################
-dnl # Check for check
-dnl #######################################################################
-PKG_CHECK_MODULES(CHECK, [check >= 0.9.4], , [AC_MSG_RESULT([no, testing is disabled])])
-AM_CONDITIONAL(HAVE_CHECK, [test "x$CHECK_LIBS" != "x"])
-AC_SUBST(CHECK_CFLAGS)
-AC_SUBST(CHECK_LIBS)
 
 dnl #######################################################################
 dnl # Disable pixmap installation

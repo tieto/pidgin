@@ -3,6 +3,8 @@ syntax: glob
 clang_output_*
 pidgin-*
 .dirstamp
+*.log
+*.trs
 
 syntax: regexp
 (.*/)?TAGS$

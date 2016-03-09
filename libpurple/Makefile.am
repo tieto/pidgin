@@ -260,7 +260,7 @@ purple_enumheaders = \
 	$(srcdir)/protocols.h \
 	$(srcdir)/roomlist.h \
 	$(srcdir)/status.h \
-	${srcdir}/sound.h \
+	$(srcdir)/sound.h \
 	$(srcdir)/xfer.h \
 	$(srcdir)/xmlnode.h
 
