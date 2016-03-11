@@ -6,22 +6,35 @@ COMMON_LIBS=\
 	$(GPLUGIN_LIBS)
 
 test_programs=\
-	test_md4hash \
-	test_md5hash \
-	test_sha1hash \
-	test_sha256hash
+	test_des \
+	test_des3 \
+	test_hmac \
+	test_md4 \
+	test_md5 \
+	test_sha1 \
+	test_sha256
 
-test_md4hash_SOURCES=test_md4hash.c
-test_md4hash_LDADD=$(COMMON_LIBS)
 
-test_md5hash_SOURCES=test_md5hash.c
-test_md5hash_LDADD=$(COMMON_LIBS)
+test_des_SOURCES=test_des.c
+test_des_LDADD=$(COMMON_LIBS)
 
-test_sha1hash_SOURCES=test_sha1hash.c
-test_sha1hash_LDADD=$(COMMON_LIBS)
+test_des3_SOURCES=test_des3.c
+test_des3_LDADD=$(COMMON_LIBS)
 
-test_sha256hash_SOURCES=test_sha256hash.c
-test_sha256hash_LDADD=$(COMMON_LIBS)
+test_hmac_SOURCES=test_hmac.c
+test_hmac_LDADD=$(COMMON_LIBS)
+
+test_md4_SOURCES=test_md4.c
+test_md4_LDADD=$(COMMON_LIBS)
+
+test_md5_SOURCES=test_md5.c
+test_md5_LDADD=$(COMMON_LIBS)
+
+test_sha1_SOURCES=test_sha1.c
+test_sha1_LDADD=$(COMMON_LIBS)
+
+test_sha256_SOURCES=test_sha256.c
+test_sha256_LDADD=$(COMMON_LIBS)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
