@@ -12,7 +12,8 @@ test_programs=\
 	test_md4 \
 	test_md5 \
 	test_sha1 \
-	test_sha256
+	test_sha256 \
+	test_util
 
 
 test_des_SOURCES=test_des.c
@@ -35,6 +36,9 @@ test_sha1_LDADD=$(COMMON_LIBS)
 
 test_sha256_SOURCES=test_sha256.c
 test_sha256_LDADD=$(COMMON_LIBS)
+
+test_util_SOURCES=test_util.c
+test_util_LDADD=$(COMMON_LIBS)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
