@@ -2260,6 +2260,7 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/protocols/novell/Makefile
 		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile
+		   libpurple/protocols/oscar/tests/Makefile
 		   libpurple/protocols/sametime/Makefile
 		   libpurple/protocols/silc/Makefile
 		   libpurple/protocols/simple/Makefile
