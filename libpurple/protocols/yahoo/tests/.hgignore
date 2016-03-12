@@ -1,0 +1,7 @@
+syntax: regexp
+^test_yahoo_util$
+
+syntax: glob
+*.log
+*.trs
+
