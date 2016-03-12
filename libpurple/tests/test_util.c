@@ -393,54 +393,94 @@ test_util_markup_html_to_xhtml(void) {
 	}
 }
 
+/******************************************************************************
+ * UTF8 tests
+ *****************************************************************************/
+typedef struct {
+	gchar *input;
+	gchar *output;
+} UTF8TestData;
+
+static void
+test_util_utf8_strip_unprintables(void) {
+	gint i;
+	UTF8TestData data[] = {
+		{
+			/* \t, \n, \r, space */
+			"ab \tcd\nef\r   ",
+			"ab \tcd\nef\r   ",
+		}, {
+			/* ASCII control characters (stripped) */
+			"\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0E\x0F\x10 aaaa "
+			"\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F",
+			" aaaa ",
+		}, {
+			/* Basic ASCII */
+			"Foobar",
+			"Foobar",
+		}, {
+			/* 0xE000 - 0xFFFD (UTF-8 encoded) */
+			/* U+F1F7 */
+			"aaaa\xef\x87\xb7",
+			"aaaa\xef\x87\xb7",
+		}, {
+			/* U+FEFF (should not be stripped) */
+			"aaaa\xef\xbb\xbf",
+			"aaaa\xef\xbb\xbf",
+		}, {
+			NULL,
+			NULL,
+		}
+	};
+
+	for(i = 0; ; i++) {
+		gchar *result = purple_utf8_strip_unprintables(data[i].input);
+
+		g_assert_cmpstr(data[i].output, ==, result);
+
+		g_free(result);
+
+		if(data[i].input == NULL)
+			break;
+	}
+
 #if 0
-START_TEST(test_utf8_strip_unprintables)
-{
-	fail_unless(NULL == purple_utf8_strip_unprintables(NULL));
 	/* invalid UTF-8 */
-#if 0
 	/* disabled because make check fails on an assertion */
 	fail_unless(NULL == purple_utf8_strip_unprintables("abc\x80\x7f"));
-#endif
-	/* \t, \n, \r, space */
-	assert_string_equal_free("ab \tcd\nef\r   ", purple_utf8_strip_unprintables("ab \tcd\nef\r   "));
-	/* ASCII control characters (stripped) */
-	assert_string_equal_free(" aaaa ", purple_utf8_strip_unprintables(
-				"\x01\x02\x03\x04\x05\x06\x07\x08\x0B\x0C\x0E\x0F\x10 aaaa "
-				"\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"));
-	/* Basic ASCII */
-	assert_string_equal_free("Foobar", purple_utf8_strip_unprintables("Foobar"));
-	/* 0xE000 - 0xFFFD (UTF-8 encoded) */
-	/* U+F1F7 */
-	assert_string_equal_free("aaaa\xef\x87\xb7", purple_utf8_strip_unprintables("aaaa\xef\x87\xb7"));
-#if 0
 	/* disabled because make check fails on an assertion */
 	/* U+DB80 (Private Use High Surrogate, First) -- should be stripped */
 	assert_string_equal_free("aaaa", purple_utf8_strip_unprintables("aaaa\xed\xa0\x80"));
 	/* U+FFFE (should be stripped) */
 	assert_string_equal_free("aaaa", purple_utf8_strip_unprintables("aaaa\xef\xbf\xbe"));
 #endif
-	/* U+FEFF (should not be stripped) */
-	assert_string_equal_free("aaaa\xef\xbb\xbf", purple_utf8_strip_unprintables("aaaa\xef\xbb\xbf"));
 }
-END_TEST
 
-START_TEST(test_mime_decode_field)
-{
+/******************************************************************************
+ * MIME tests
+ *****************************************************************************/
+static void
+test_util_mime_decode_field(void) {
 	gchar *result = purple_mime_decode_field("=?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?=");
-	assert_string_equal_free("Keld Jørn Simonsen", result);
+	g_assert_cmpstr("Keld Jørn Simonsen", ==, result);
+	g_free(result);
 }
-END_TEST
 
-START_TEST(test_strdup_withhtml)
-{
+/******************************************************************************
+ * strdup_withhtml tests
+ *****************************************************************************/
+static void
+test_util_strdup_withhtml(void) {
 	gchar *result = purple_strdup_withhtml("hi\r\nthere\n");
-	assert_string_equal_free("hi<BR>there<BR>", result);
+
+	g_assert_cmpstr("hi<BR>there<BR>", ==, result);
+
+	g_free(result);
 }
-END_TEST
 
-#endif
-
+/******************************************************************************
+ * MANE
+ *****************************************************************************/
 gint
 main(gint argc, gchar **argv) {
 	g_test_init(&argc, &argv, NULL);
@@ -479,22 +519,14 @@ main(gint argc, gchar **argv) {
 	g_test_add_func("/util/markup/html to xhtml",
 	                test_util_markup_html_to_xhtml);
 
+	g_test_add_func("/util/utf8/strip unprintables",
+	                test_util_utf8_strip_unprintables);
+
+	g_test_add_func("/util/mime/decode field",
+	                test_util_mime_decode_field);
+
+	g_test_add_func("/util/test_strdup_withhtml",
+	                test_util_strdup_withhtml);
+
 	return g_test_run();
 }
-
-#if 0
-	tc = tcase_create("Stripping Unparseables");
-	tcase_add_test(tc, test_utf8_strip_unprintables);
-	suite_add_tcase(s, tc);
-
-	tc = tcase_create("MIME");
-	tcase_add_test(tc, test_mime_decode_field);
-	suite_add_tcase(s, tc);
-
-	tc = tcase_create("strdup_withhtml");
-	tcase_add_test(tc, test_strdup_withhtml);
-	suite_add_tcase(s, tc);
-
-	return s;
-}
-#endif
