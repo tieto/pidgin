@@ -50,7 +50,7 @@ new_node(const char *name, PurpleXmlNodeType type)
 	node->name = g_strdup(name);
 	node->type = type;
 
-	PURPLE_DBUS_REGISTER_POINTER(node, PurpleXmlNode);
+//	PURPLE_DBUS_REGISTER_POINTER(node, PurpleXmlNode);
 
 	return node;
 }
@@ -415,7 +415,7 @@ purple_xmlnode_free(PurpleXmlNode *node)
 	if(node->namespace_map)
 		g_hash_table_destroy(node->namespace_map);
 
-	PURPLE_DBUS_UNREGISTER_POINTER(node);
+//	PURPLE_DBUS_UNREGISTER_POINTER(node);
 	g_free(node);
 }
 

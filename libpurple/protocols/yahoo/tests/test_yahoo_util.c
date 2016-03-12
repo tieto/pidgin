@@ -224,6 +224,8 @@ test_html_to_codes(void) {
 	};
 	gint i;
 
+	yahoo_init_colorht();
+
 	for(i = 0; data[i].input; i++) {
 		gchar *result = yahoo_html_to_codes(data[i].input);
 
@@ -231,6 +233,8 @@ test_html_to_codes(void) {
 
 		g_free(result);
 	}
+
+	yahoo_dest_colorht();
 }
 
 gint
