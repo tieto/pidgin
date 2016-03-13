@@ -3,6 +3,7 @@ syntax: regexp
 ^test_sha(1|256)$
 ^test_des3?$
 ^test_hmac$
+^test_trie$
 ^test_util$
 
 syntax: glob
