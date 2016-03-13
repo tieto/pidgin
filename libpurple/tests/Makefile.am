@@ -14,7 +14,8 @@ test_programs=\
 	test_sha1 \
 	test_sha256 \
 	test_trie \
-	test_util
+	test_util \
+	test_xmlnode
 
 
 test_des_SOURCES=test_des.c
@@ -43,6 +44,9 @@ test_trie_LDADD=$(COMMON_LIBS)
 
 test_util_SOURCES=test_util.c
 test_util_LDADD=$(COMMON_LIBS)
+
+test_xmlnode_SOURCES=test_xmlnode.c
+test_xmlnode_LDADD=$(COMMON_LIBS)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \

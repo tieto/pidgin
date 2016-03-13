@@ -5,6 +5,7 @@ syntax: regexp
 ^test_hmac$
 ^test_trie$
 ^test_util$
+^test_xmlnode$
 
 syntax: glob
 *.log
