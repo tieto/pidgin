@@ -2255,6 +2255,7 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/protocols/gg/Makefile
 		   libpurple/protocols/irc/Makefile
 		   libpurple/protocols/jabber/Makefile
+		   libpurple/protocols/jabber/tests/Makefile
 		   libpurple/protocols/msn/Makefile
 		   libpurple/protocols/mxit/Makefile
 		   libpurple/protocols/novell/Makefile
