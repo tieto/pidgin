@@ -47,7 +47,7 @@ C_SRC =			bonjour.c \
 			dns_sd_proxy.c \
 			jabber.c \
 			mdns_common.c \
-			mdns_win32.c \
+			mdns_dns_sd.c \
 			parser.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
