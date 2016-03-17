@@ -236,6 +236,18 @@ pidgin_create_video_widget(void)
 	video = gtk_drawing_area_new();
 	gtk_widget_override_background_color(video, GTK_STATE_FLAG_NORMAL, &color);
 
+	/* In order to enable client shadow decorations, GtkDialog from GTK+ 3.0
+	 * uses ARGB visual which by default gets inherited by its child widgets.
+	 * XVideo adaptors on the other hand often support just depth 24 and
+	 * rendering video through xvimagesink onto a widget inside a GtkDialog
+	 * then results in no visible output.
+	 *
+	 * This ensures the default system visual of the drawing area doesn't get
+	 * overridden by the widget's parent.
+	 */
+	gtk_widget_set_visual(video,
+	                gdk_screen_get_system_visual(gtk_widget_get_screen(video)));
+
 	return video;
 }
 
