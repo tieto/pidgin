@@ -228,6 +228,18 @@ pidgin_create_dialog(const char *title, guint border_width, const char *role, gb
 }
 
 GtkWidget *
+pidgin_create_video_widget(void)
+{
+	GtkWidget *video = NULL;
+	GdkRGBA color = {0.0, 0.0, 0.0, 1.0};
+
+	video = gtk_drawing_area_new();
+	gtk_widget_override_background_color(video, GTK_STATE_FLAG_NORMAL, &color);
+
+	return video;
+}
+
+GtkWidget *
 pidgin_dialog_get_vbox_with_properties(GtkDialog *dialog, gboolean homogeneous, gint spacing)
 {
 	GtkBox *vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));

@@ -141,6 +141,13 @@ GtkWidget *pidgin_create_window(const char *title, guint border_width, const cha
 GtkWidget *pidgin_create_dialog(const char *title, guint border_width, const char *role, gboolean resizable);
 
 /**
+ * pidgin_create_video_widget:
+ *
+ * Creates a new drawing area suitable for displaying a video
+ */
+GtkWidget *pidgin_create_video_widget(void);
+
+/**
  * pidgin_dialog_get_vbox_with_properties:
  * @dialog:       The dialog window
  * @homogeneous:  TRUE if all children are to be given equal space allotments.
