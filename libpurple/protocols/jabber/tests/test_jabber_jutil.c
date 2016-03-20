@@ -5,38 +5,11 @@
 #include "xmlnode.h"
 #include "protocols/jabber/jutil.h"
 
-typedef struct {
-	const gchar *input;
-	const gchar *output;
-} TestStringData;
-
-typedef const gchar *(*test_string_func)(const gchar *);
-typedef gchar *(*test_string_free_func)(const gchar *);
-
-static void
-_test_string_compare_func(TestStringData data[], test_string_func func) {
-	gint i;
-
-	for(i = 0; data[i].input; i++)
-		g_assert_cmpstr(data[i].output, ==, func(data[i].input));
-}
-
-static void
-_test_string_compare_func_free(TestStringData data[], test_string_free_func func) {
-	gint i;
-
-	for(i = 0; data[i].input; i++) {
-		gchar *got = func(data[i].input);
-
-		g_assert_cmpstr(data[i].output, ==, got);
-
-		g_free(got);
-	}
-}
+#include "tests.h"
 
 static void
 test_jabber_util_get_resource_exists(void) {
-	TestStringData data[] = {
+	PurpleTestStringData data[] = {
 		{ "foo@bar/baz", "baz" },
 		{ "bar/baz", "baz" },
 		{ "foo@bar/baz/bat", "baz/bat" },
@@ -44,23 +17,23 @@ test_jabber_util_get_resource_exists(void) {
 		{ NULL, NULL },
 	};
 
-	_test_string_compare_func_free(data, jabber_get_resource);
+	purple_test_string_compare_free(jabber_get_resource, data);
 }
 
 static void
 test_jabber_util_get_resource_none(void) {
-	TestStringData data[] = {
+	PurpleTestStringData data[] = {
 		{ "foo@bar", NULL },
 		{ "bar", NULL },
 		{ NULL, NULL },
 	};
 
-	_test_string_compare_func_free(data, jabber_get_resource);
+	purple_test_string_compare_free(jabber_get_resource, data);
 }
 
 static void
 test_jabber_util_get_bare_jid(void) {
-	TestStringData data[] = {
+	PurpleTestStringData data[] = {
 		{ "foo@bar", "foo@bar" },
 		{ "foo@bar/baz", "foo@bar" },
 		{ "bar", "bar" },
@@ -68,7 +41,7 @@ test_jabber_util_get_bare_jid(void) {
 		{ NULL, NULL },
 	};
 
-	_test_string_compare_func_free(data, jabber_get_bare_jid);
+	purple_test_string_compare_free(jabber_get_bare_jid, data);
 }
 
 static void
@@ -243,7 +216,7 @@ partial_jabber_normalize(const gchar *str) {
 
 static void
 test_jabber_util_jabber_normalize(void) {
-	TestStringData data[] = {
+	PurpleTestStringData data[] = {
 		{
 			"PaUL@DaRkRain42.org",
 			"paul@darkrain42.org",
@@ -259,7 +232,7 @@ test_jabber_util_jabber_normalize(void) {
 		}
 	};
 
-	_test_string_compare_func(data, partial_jabber_normalize);
+	purple_test_string_compare(partial_jabber_normalize, data);
 }
 
 gint
