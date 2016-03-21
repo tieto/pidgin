@@ -2,10 +2,10 @@
 
 #include "account.h"
 #include "conversation.h"
+#include "glibcompat.h"
+#include "tests.h"
 #include "xmlnode.h"
 #include "protocols/jabber/jutil.h"
-
-#include "tests.h"
 
 static void
 test_jabber_util_get_resource_exists(void) {

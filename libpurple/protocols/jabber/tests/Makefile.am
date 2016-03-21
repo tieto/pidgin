@@ -10,7 +10,7 @@ COMMON_LIBS=\
 test_programs=\
 	test_jabber_caps \
 	test_jabber_digest_md5 \
-	test_jabber_jutil
+	test_jabber_jutil \
 	test_jabber_scram
 
 test_jabber_caps_SOURCES=test_jabber_caps.c
