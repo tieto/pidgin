@@ -175,10 +175,8 @@ static const gchar *VIDEO_SINK_PLUGINS[] = {
 	"directdrawsink", "DirectDraw",
 	/* "gconfvideosink", "GConf", */
 	"glimagesink",	"OpenGL",
-	/* Currently broken when embedding in a Gtk window
-	 * "ximagesink",	"X Window System",
-	 * "xvimagesink",	"X Window System (Xv)",
-	 */
+	"ximagesink",	"X Window System",
+	"xvimagesink",	"X Window System (Xv)",
 	NULL
 };
 
