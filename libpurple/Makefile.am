@@ -190,6 +190,7 @@ purple_coreheaders = \
 	sound-theme.h \
 	sound-theme-loader.h \
 	sslconn.h \
+	tests.h \
 	theme.h \
 	theme-loader.h \
 	theme-manager.h \
