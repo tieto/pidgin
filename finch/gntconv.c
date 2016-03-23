@@ -1035,7 +1035,7 @@ finch_write_conv(PurpleConversation *conv, PurpleMessage *msg)
 		gchar *msg_text = g_strdup(purple_message_get_contents(msg));
 
 		if (purple_message_meify(msg_text, -1)) {
-			name = g_strdup_printf("*** %s", purple_message_get_author(msg));
+			name = g_strdup_printf("*** %s", purple_message_get_author_alias(msg));
 			if (!(flags & PURPLE_MESSAGE_SEND) &&
 					(flags & PURPLE_MESSAGE_NICK))
 				msgflags = gnt_color_pair(color_message_highlight);
@@ -1043,7 +1043,7 @@ finch_write_conv(PurpleConversation *conv, PurpleMessage *msg)
 				msgflags = gnt_color_pair(color_message_action);
 			me = TRUE;
 		} else {
-			name =  g_strdup_printf("%s", purple_message_get_author(msg));
+			name =  g_strdup_printf("%s", purple_message_get_author_alias(msg));
 			if (flags & PURPLE_MESSAGE_SEND)
 				msgflags = gnt_color_pair(color_message_send);
 			else if (flags & PURPLE_MESSAGE_NICK)
