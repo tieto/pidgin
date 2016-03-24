@@ -106,24 +106,24 @@ test_jabber_util_jabber_id_new_valid(void) {
 		"gmail.com/Test@",
 		"gmail.com/@",
 		"gmail.com/Test@alkjaweflkj",
-		"mark.doliner@gmail.com",
-		"mark.doliner@gmail.com/Test12345",
-		"mark.doliner@gmail.com/Test@12345",
-		"mark.doliner@gmail.com/Te/st@12@//345",
+		"noone@example.com",
+		"noone@example.com/Test12345",
+		"noone@example.com/Test@12345",
+		"noone@example.com/Te/st@12@//345",
 		"わいど@conference.jabber.org",
 		"まりるーむ@conference.jabber.org",
-		"mark.doliner@gmail.com/まりるーむ",
-		"mark.doliner@gmail/stuff.org",
-		"stuart@nödåtXäYZ.se",
-		"stuart@nödåtXäYZ.se/まりるーむ",
-		"mark.doliner@わいど.org",
-		"nick@まつ.おおかみ.net",
-		"paul@10.0.42.230/s",
-		"paul@[::1]", /* IPv6 */
-		"paul@[2001:470:1f05:d58::2]",
-		"paul@[2001:470:1f05:d58::2]/foo",
-		"pa=ul@10.0.42.230",
-		"pa,ul@10.0.42.230",
+		"noone@example.com/まりるーむ",
+		"noone@example/stuff.org",
+		"noone@nödåtXäYZ.example",
+		"noone@nödåtXäYZ.example/まりるーむ",
+		"noone@わいど.org",
+		"noone@まつ.おおかみ.net",
+		"noone@310.0.42.230/s",
+		"noone@[::1]", /* IPv6 */
+		"noone@[3001:470:1f05:d58::2]",
+		"noone@[3001:470:1f05:d58::2]/foo",
+		"no=one@310.0.42.230",
+		"no,one@310.0.42.230",
 		NULL
 	};
 	gint i;
@@ -142,18 +142,18 @@ test_jabber_util_jabber_id_new_invalid(void) {
 	const gchar *jids[] = {
 		"@gmail.com",
 		"@@gmail.com",
-		"mark.doliner@@gmail.com/Test12345",
-		"mark@doliner@gmail.com/Test12345",
-		"@gmail.com/Test@12345",
+		"noone@@example.com/Test12345",
+		"no@one@example.com/Test12345",
+		"@example.com/Test@12345",
 		"/Test@12345",
-		"mark.doliner@",
-		"mark.doliner/",
-		"mark.doliner@gmail_stuff.org",
-		"mark.doliner@gmail[stuff.org",
-		"mark.doliner@gmail\\stuff.org",
-		"paul@[::1]124",
-		"paul@2[::1]124/as",
-		"paul@まつ.おおかみ/\x01",
+		"noone@",
+		"noone/",
+		"noone@gmail_stuff.org",
+		"noone@gmail[stuff.org",
+		"noone@gmail\\stuff.org",
+		"noone@[::1]124",
+		"noone@2[::1]124/as",
+		"noone@まつ.おおかみ/\x01",
 		/*
 		 * RFC 3454 Section 6 reads, in part,
 		 * "If a string contains any RandALCat character, the
@@ -184,13 +184,13 @@ test_jabber_util_jabber_id_new_invalid(void) {
 static void
 test_jabber_util_jid_parts(void) {
 	/* Ensure that jabber_id_new is properly lowercasing node and domains */
-	assert_jid_parts("paul", "darkrain42.org", "PaUL@darkrain42.org");
-	assert_jid_parts("paul", "darkrain42.org", "paul@DaRkRaIn42.org");
+	assert_jid_parts("noone", "example.com", "NoOne@example.com");
+	assert_jid_parts("noone", "example.com", "noone@ExaMPle.CoM");
 
 	/* These case-mapping tests culled from examining RFC3454 B.2 */
 
 	/* Cyrillic capital EF (U+0424) maps to lowercase EF (U+0444) */
-	assert_jid_parts("ф", "darkrain42.org", "Ф@darkrain42.org");
+	assert_jid_parts("ф", "example.com", "Ф@example.com");
 
 #ifdef USE_IDN
 	/*
@@ -201,12 +201,12 @@ test_jabber_util_jid_parts(void) {
 	 * This is known, but not (very?) likely to actually cause a problem, so
 	 * this test is commented out when using glib's functions.
 	 */
-	assert_jid_parts("Ꙥ", "darkrain42.org", "Ꙥ@darkrain42.org");
-	assert_jid_parts("ꙥ", "darkrain42.org", "ꙥ@darkrain42.org");
+	assert_jid_parts("Ꙥ", "example.com", "Ꙥ@example.com");
+	assert_jid_parts("ꙥ", "example.com", "ꙥ@example.com");
 #endif
 
 	/* U+04E9 to U+04E9 */
-	assert_jid_parts("paul", "өarkrain42.org", "paul@Өarkrain42.org");
+	assert_jid_parts("noone", "өexample.com", "noone@Өexample.com");
 }
 
 static const gchar *
@@ -218,14 +218,14 @@ static void
 test_jabber_util_jabber_normalize(void) {
 	PurpleTestStringData data[] = {
 		{
-			"PaUL@DaRkRain42.org",
-			"paul@darkrain42.org",
+			"NoOnE@ExAMplE.com",
+			"noone@example.com",
 		}, {
-			"PaUL@DaRkRain42.org/",
-			"paul@darkrain42.org",
+			"NoOnE@ExampLE.cOM/",
+			"noone@example.com",
 		}, {
-			"PaUL@DaRkRain42.org/resource",
-			"paul@darkrain42.org",
+			"NoONe@exAMPle.CoM/resource",
+			"noone@example.com",
 		}, {
 			NULL,
 			NULL,
