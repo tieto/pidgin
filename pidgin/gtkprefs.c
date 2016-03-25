@@ -175,10 +175,8 @@ static const gchar *VIDEO_SINK_PLUGINS[] = {
 	"directdrawsink", "DirectDraw",
 	/* "gconfvideosink", "GConf", */
 	"glimagesink",	"OpenGL",
-	/* Currently broken when embedding in a Gtk window
-	 * "ximagesink",	"X Window System",
-	 * "xvimagesink",	"X Window System (Xv)",
-	 */
+	"ximagesink",	"X Window System",
+	"xvimagesink",	"X Window System (Xv)",
 	NULL
 };
 
@@ -3688,15 +3686,17 @@ create_video_pipeline(void)
 {
 	GstElement *pipeline;
 	GstElement *src, *sink;
+	GstElement *videoconvert;
 
 	pipeline = gst_pipeline_new("videotest");
 	src = create_test_element(PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SRC);
 	sink = create_test_element(PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SINK);
+	videoconvert = gst_element_factory_make("videoconvert", NULL);
 
 	g_object_set_data(G_OBJECT(pipeline), "sink", sink);
 
-	gst_bin_add_many(GST_BIN(pipeline), src, sink, NULL);
-	gst_element_link_many(src, sink, NULL);
+	gst_bin_add_many(GST_BIN(pipeline), src, videoconvert, sink, NULL);
+	gst_element_link_many(src, videoconvert, sink, NULL);
 
 	return pipeline;
 }
