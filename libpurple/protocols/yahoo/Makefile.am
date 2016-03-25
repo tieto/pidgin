@@ -1,3 +1,5 @@
+SUBDIRS = tests
+
 EXTRA_DIST = \
 	Makefile.mingw
 

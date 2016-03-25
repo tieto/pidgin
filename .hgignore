@@ -149,3 +149,9 @@ po/stamp-it
 stamp-h1
 test-driver
 win32-install-dir(\.release)?
+
+subinclude:libpurple/protocols/jabber/tests/.hgignore
+subinclude:libpurple/protocols/oscar/tests/.hgignore
+subinclude:libpurple/protocols/yahoo/tests/.hgignore
+subinclude:libpurple/tests/.hgignore
+

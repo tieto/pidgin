@@ -497,6 +497,9 @@ AC_SUBST(GLIB_GENMARSHAL)
 GLIB_MKENUMS=`$PKG_CONFIG --variable=glib_mkenums glib-2.0`
 AC_SUBST(GLIB_MKENUMS)
 
+AC_PATH_PROG(GTESTER, gtester)
+GLIB_TESTS
+
 AC_ARG_WITH([extraversion],
 			AS_HELP_STRING([--with-extraversion=STRING],
 						   [extra version number to be displayed in Help->About and --help (for packagers)]),
@@ -2167,14 +2170,6 @@ if test "x$ac_cv_va_val_copy" = "xno"; then
 fi
 
 dnl #######################################################################
-dnl # Check for check
-dnl #######################################################################
-PKG_CHECK_MODULES(CHECK, [check >= 0.9.4], , [AC_MSG_RESULT([no, testing is disabled])])
-AM_CONDITIONAL(HAVE_CHECK, [test "x$CHECK_LIBS" != "x"])
-AC_SUBST(CHECK_CFLAGS)
-AC_SUBST(CHECK_LIBS)
-
-dnl #######################################################################
 dnl # Disable pixmap installation
 dnl #######################################################################
 AC_ARG_ENABLE(pixmaps-install, AS_HELP_STRING([--disable-pixmaps-install], [disable installation of pixmap files - Pidgin still needs them!]), enable_pixmaps="$enableval", enable_pixmaps=yes)
@@ -2259,15 +2254,18 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/protocols/gg/Makefile
 		   libpurple/protocols/irc/Makefile
 		   libpurple/protocols/jabber/Makefile
+		   libpurple/protocols/jabber/tests/Makefile
 		   libpurple/protocols/msn/Makefile
 		   libpurple/protocols/mxit/Makefile
 		   libpurple/protocols/novell/Makefile
 		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile
+		   libpurple/protocols/oscar/tests/Makefile
 		   libpurple/protocols/sametime/Makefile
 		   libpurple/protocols/silc/Makefile
 		   libpurple/protocols/simple/Makefile
 		   libpurple/protocols/yahoo/Makefile
+		   libpurple/protocols/yahoo/tests/Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
 		   libpurple/purple.h

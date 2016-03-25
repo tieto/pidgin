@@ -190,6 +190,7 @@ purple_coreheaders = \
 	sound-theme.h \
 	sound-theme-loader.h \
 	sslconn.h \
+	tests.h \
 	theme.h \
 	theme-loader.h \
 	theme-manager.h \
@@ -260,7 +261,7 @@ purple_enumheaders = \
 	$(srcdir)/protocols.h \
 	$(srcdir)/roomlist.h \
 	$(srcdir)/status.h \
-	${srcdir}/sound.h \
+	$(srcdir)/sound.h \
 	$(srcdir)/xfer.h \
 	$(srcdir)/xmlnode.h
 

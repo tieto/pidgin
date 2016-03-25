@@ -1,0 +1,10 @@
+syntax: regexp
+^test_jabber_caps$
+^test_jabber_digest_md5$
+^test_jabber_jutil$
+^test_jabber_scram$
+
+syntax: glob
+*.log
+*.trs
+

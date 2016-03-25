@@ -20,9 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
-#include <string.h>
+#include <glib.h>
 
-#include "tests.h"
 #include "../trie.h"
 
 static gint find_sum;
@@ -54,8 +53,8 @@ test_trie_find_cb(const gchar *word, gpointer word_data,
 	return TRUE;
 }
 
-START_TEST(test_trie_replace)
-{
+static void
+test_trie_replace_normal(void) {
 	PurpleTrie *trie;
 	const gchar *in;
 	gchar *out;
@@ -76,16 +75,19 @@ START_TEST(test_trie_replace)
 
 	out = purple_trie_replace(trie, in, test_trie_replace_cb, (gpointer)1);
 
-	assert_string_equal("Alice is [1:1002] her [1:1004] [1:1006]ation,"
-		" but she's far away from making test [1:1005] [1:1003]", out);
+	g_assert_cmpstr(
+		"Alice is [1:1002] her [1:1004] [1:1006]ation,"
+		" but she's far away from making test [1:1005] [1:1003]",
+		==,
+		out
+	);
 
 	g_object_unref(trie);
 	g_free(out);
 }
-END_TEST
 
-START_TEST(test_trie_replace_whole)
-{
+static void
+test_trie_replace_whole(void) {
 	PurpleTrie *trie;
 	const gchar *in;
 	gchar *out;
@@ -98,15 +100,14 @@ START_TEST(test_trie_replace_whole)
 
 	out = purple_trie_replace(trie, in, test_trie_replace_cb, (gpointer)2);
 
-	assert_string_equal("[2:2002]", out);
+	g_assert_cmpstr("[2:2002]", ==, out);
 
 	g_object_unref(trie);
 	g_free(out);
 }
-END_TEST
 
-START_TEST(test_trie_replace_inner)
-{
+static void
+test_trie_replace_inner(void) {
 	PurpleTrie *trie;
 	const gchar *in;
 	gchar *out;
@@ -120,15 +121,15 @@ START_TEST(test_trie_replace_inner)
 
 	out = purple_trie_replace(trie, in, test_trie_replace_cb, (gpointer)3);
 
-	assert_string_equal("the t[3:3001]!", out);
+	g_assert_cmpstr("the t[3:3001]!", ==, out);
 
 	g_object_unref(trie);
 	g_free(out);
 }
-END_TEST
 
-START_TEST(test_trie_replace_empty)
-{
+
+static void
+test_trie_replace_empty(void) {
 	PurpleTrie *trie;
 	const gchar *in;
 	gchar *out;
@@ -141,15 +142,14 @@ START_TEST(test_trie_replace_empty)
 
 	out = purple_trie_replace(trie, in, test_trie_replace_cb, (gpointer)4);
 
-	assert_string_equal("", out);
+	g_assert_cmpstr("", ==, out);
 
 	g_object_unref(trie);
 	g_free(out);
 }
-END_TEST
 
-START_TEST(test_trie_multi_replace)
-{
+static void
+test_trie_multi_replace(void) {
 	PurpleTrie *trie1, *trie2, *trie3;
 	GSList *tries = NULL;
 	const gchar *in;
@@ -185,16 +185,19 @@ START_TEST(test_trie_multi_replace)
 	out = purple_trie_multi_replace(tries, in,
 		test_trie_replace_cb, (gpointer)5);
 
-	assert_string_equal("[5:5011] [5:5011]er trie [5:5012] [5:5022] "
-		"[5:5032] [5:5023] [5:5035]ice", out);
+	g_assert_cmpstr(
+		"[5:5011] [5:5011]er trie [5:5012] [5:5022] "
+		"[5:5032] [5:5023] [5:5035]ice",
+		==,
+		out
+	);
 
 	g_slist_free_full(tries, g_object_unref);
 	g_free(out);
 }
-END_TEST
 
-START_TEST(test_trie_remove)
-{
+static void
+test_trie_remove(void) {
 	PurpleTrie *trie;
 	const gchar *in;
 	gchar *out;
@@ -211,15 +214,14 @@ START_TEST(test_trie_remove)
 
 	out = purple_trie_replace(trie, in, test_trie_replace_cb, (gpointer)6);
 
-	assert_string_equal("[6:6001] bob [6:6003]", out);
+	g_assert_cmpstr("[6:6001] bob [6:6003]", ==, out);
 
 	g_object_unref(trie);
 	g_free(out);
 }
-END_TEST
 
-START_TEST(test_trie_find)
-{
+static void
+test_trie_find_normal(void) {
 	PurpleTrie *trie;
 	const gchar *in;
 	gint out;
@@ -236,15 +238,14 @@ START_TEST(test_trie_find)
 	find_sum = 0;
 	out = purple_trie_find(trie, in, test_trie_find_cb, (gpointer)7);
 
-	assert_int_equal(4, out);
-	assert_int_equal(2*1 + 2 + 3, find_sum);
+	g_assert_cmpint(4, ==, out);
+	g_assert_cmpint(2 * 1 + 2 + 3, ==, find_sum);
 
 	g_object_unref(trie);
 }
-END_TEST
 
-START_TEST(test_trie_find_reset)
-{
+static void
+test_trie_find_reset(void) {
 	PurpleTrie *trie;
 	const gchar *in;
 	gint out;
@@ -261,15 +262,14 @@ START_TEST(test_trie_find_reset)
 	find_sum = 0;
 	out = purple_trie_find(trie, in, test_trie_find_cb, (gpointer)8);
 
-	assert_int_equal(3, out);
-	assert_int_equal(3 * 3, find_sum);
+	g_assert_cmpint(3, ==, out);
+	g_assert_cmpint(3 * 3, ==, find_sum);
 
 	g_object_unref(trie);
 }
-END_TEST
 
-START_TEST(test_trie_find_noreset)
-{
+static void
+test_trie_find_noreset(void) {
 	PurpleTrie *trie;
 	const gchar *in;
 	gint out;
@@ -286,15 +286,14 @@ START_TEST(test_trie_find_noreset)
 	find_sum = 0;
 	out = purple_trie_find(trie, in, test_trie_find_cb, (gpointer)9);
 
-	assert_int_equal(6, out);
-	assert_int_equal(3*3 + 2*2 + 1, find_sum);
+	g_assert_cmpint(6, ==, out);
+	g_assert_cmpint(3 * 3 + 2 * 2 + 1, ==, find_sum);
 
 	g_object_unref(trie);
 }
-END_TEST
 
-START_TEST(test_trie_multi_find)
-{
+static void
+test_trie_multi_find(void) {
 	PurpleTrie *trie1, *trie2, *trie3;
 	GSList *tries = NULL;
 	const gchar *in;
@@ -333,32 +332,41 @@ START_TEST(test_trie_multi_find)
 	out = purple_trie_multi_find(tries, in,
 		test_trie_find_cb, (gpointer)0x10);
 
-	assert_int_equal(9, out);
-	assert_int_equal(2 * 0x11 + 0x33 + 0x12 + 0x22 +
-		0x32 + 0x23 + 0x35 + 0x13, find_sum);
+	g_assert_cmpint(9, ==, out);
+	g_assert_cmpint(2 * 0x11 + 0x33 + 0x12 + 0x22 +
+		0x32 + 0x23 + 0x35 + 0x13, ==, find_sum);
 
 	g_slist_free_full(tries, g_object_unref);
 }
-END_TEST
 
-Suite *
-purple_trie_suite(void)
-{
-	Suite *s = suite_create("PurpleTrie class");
+gint
+main(gint argc, gchar **argv) {
+	g_test_init(&argc, &argv, NULL);
 
-	TCase *tc = tcase_create("trie");
-	tcase_add_test(tc, test_trie_replace);
-	tcase_add_test(tc, test_trie_replace_whole);
-	tcase_add_test(tc, test_trie_replace_inner);
-	tcase_add_test(tc, test_trie_replace_empty);
-	tcase_add_test(tc, test_trie_multi_replace);
-	tcase_add_test(tc, test_trie_remove);
-	tcase_add_test(tc, test_trie_find);
-	tcase_add_test(tc, test_trie_find_reset);
-	tcase_add_test(tc, test_trie_find_noreset);
-	tcase_add_test(tc, test_trie_multi_find);
+	g_test_add_func("/trie/replace/normal",
+	                test_trie_replace_normal);
+	g_test_add_func("/trie/replace/whole",
+	                test_trie_replace_whole);
+	g_test_add_func("/trie/replace/inner",
+	                test_trie_replace_inner);
+	g_test_add_func("/trie/replace/empty",
+	                test_trie_replace_empty);
 
-	suite_add_tcase(s, tc);
+	g_test_add_func("/trie/multi_replace",
+	                test_trie_multi_replace);
 
-	return s;
+	g_test_add_func("/trie/remove",
+	                test_trie_remove);
+
+	g_test_add_func("/trie/find/normal",
+	                test_trie_find_normal);
+	g_test_add_func("/trie/find/reset",
+	                test_trie_find_reset);
+	g_test_add_func("/trie/find/noreset",
+	                test_trie_find_noreset);
+
+	g_test_add_func("/trie/multi_find",
+	                test_trie_multi_find);
+
+	return g_test_run();
 }

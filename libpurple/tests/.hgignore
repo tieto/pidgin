@@ -1,0 +1,13 @@
+syntax: regexp
+^test_md[45]$
+^test_sha(1|256)$
+^test_des3?$
+^test_hmac$
+^test_trie$
+^test_util$
+^test_xmlnode$
+
+syntax: glob
+*.log
+*.trs
+
