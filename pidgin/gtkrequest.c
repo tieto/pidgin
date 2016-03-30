@@ -23,6 +23,7 @@
 
 #include "debug.h"
 #include "prefs.h"
+#include "tls-certificate.h"
 #include "util.h"
 
 #include "gtkwebview.h"
@@ -1516,12 +1517,13 @@ create_list_field(PurpleRequestField *field)
 static GtkWidget *
 create_certificate_field(PurpleRequestField *field)
 {
-	PurpleCertificate *cert;
+	GTlsCertificate *cert;
 #ifdef ENABLE_GCR
+	GByteArray *der = NULL;
 	GcrCertificateBasicsWidget *cert_widget;
-	GByteArray *der;
 	GcrCertificate *gcrt;
 #else
+	PurpleTlsCertificateInfo *info;
 	GtkWidget *cert_label;
 	char *str;
 	char *escaped;
@@ -1530,7 +1532,7 @@ create_certificate_field(PurpleRequestField *field)
 	cert = purple_request_field_certificate_get_value(field);
 
 #ifdef ENABLE_GCR
-	der = purple_certificate_get_der_data(cert);
+	g_object_get(cert, "certificate", &der, NULL);
 	g_return_val_if_fail(der, NULL);
 
 	gcrt = gcr_simple_certificate_new(der->data, der->len);
@@ -1543,7 +1545,10 @@ create_certificate_field(PurpleRequestField *field)
 
 	return GTK_WIDGET(cert_widget);
 #else
-	str = purple_certificate_get_display_string(cert);
+	info = purple_tls_certificate_get_info(cert);
+	str = purple_tls_certificate_info_get_display_string(info);
+	purple_tls_certificate_info_free(info);
+
 	escaped = g_markup_escape_text(str, -1);
 
 	cert_label = gtk_label_new(NULL);

@@ -25,7 +25,7 @@
 #include "pidgin.h"
 #include "pidginstock.h"
 
-#include "certificate.h"
+#include "tls-certificate.h"
 #include "debug.h"
 #include "notify.h"
 #include "request.h"
@@ -37,7 +37,7 @@
 #include "gtkcertmgr.h"
 
 /*****************************************************************************
- * X.509 tls_peers management interface                                      *
+ * X.509 certificate management interface                                    *
  *****************************************************************************/
 
 typedef struct {
@@ -48,7 +48,6 @@ typedef struct {
 	GtkWidget *exportbutton;
 	GtkWidget *infobutton;
 	GtkWidget *deletebutton;
-	PurpleCertificatePool *tls_peers;
 } tls_peers_mgmt_data;
 
 tls_peers_mgmt_data *tpm_dat = NULL;
@@ -76,7 +75,6 @@ static void
 tls_peers_mgmt_repopulate_list(void)
 {
 	GtkTreeView *listview = tpm_dat->listview;
-	PurpleCertificatePool *tls_peers;
 	GList *idlist, *l;
 
 	GtkListStore *store = GTK_LIST_STORE(
@@ -85,12 +83,8 @@ tls_peers_mgmt_repopulate_list(void)
 	/* First, delete everything in the list */
 	gtk_list_store_clear(store);
 
-	/* Locate the "tls_peers" pool */
-	tls_peers = purple_certificate_find_pool("x509", "tls_peers");
-	g_return_if_fail(tls_peers);
-
-	/* Grab the loaded certificates */
-	idlist = purple_certificate_pool_get_idlist(tls_peers);
+	/* Grab the available certificates */
+	idlist = purple_tls_certificate_list_ids();
 
 	/* Populate the listview */
 	for (l = idlist; l; l = l->next) {
@@ -101,15 +95,8 @@ tls_peers_mgmt_repopulate_list(void)
 				   TPM_HOSTNAME_COLUMN, l->data,
 				   -1);
 	}
-	purple_certificate_pool_destroy_idlist(idlist);
-}
 
-static void
-tls_peers_mgmt_mod_cb(PurpleCertificatePool *pool, const gchar *id, gpointer data)
-{
-	g_assert (pool == tpm_dat->tls_peers);
-
-	tls_peers_mgmt_repopulate_list();
+	purple_tls_certificate_free_ids(idlist);
 }
 
 static void
@@ -137,43 +124,54 @@ tls_peers_mgmt_select_chg_cb(GtkTreeSelection *ignored, gpointer data)
 static void
 tls_peers_mgmt_import_ok2_cb(gpointer data, const char *result)
 {
-	PurpleCertificate *crt = (PurpleCertificate *) data;
+	GTlsCertificate *crt = data;
+	GError *error = NULL;
 
 	/* TODO: Perhaps prompt if you're overwriting a cert? */
 
-	/* Drop the certificate into the pool */
-	if (result && *result)
-		purple_certificate_pool_store(tpm_dat->tls_peers, result, crt);
+	/* Trust the certificate */
+	if (result && *result) {
+		if(!purple_tls_certificate_trust(result, crt, &error)) {
+			purple_debug_error("gtkcertmgr/tls_peers_mgmt",
+					"Error trusting certificate '%s': %s",
+					result, error->message);
+			g_clear_error(&error);
+		}
+
+		tls_peers_mgmt_repopulate_list();
+	}
 
 	/* And this certificate is not needed any more */
-	purple_certificate_destroy(crt);
+	g_object_unref(crt);
 }
 
 static void
 tls_peers_mgmt_import_cancel2_cb(gpointer data, const char *result)
 {
-	PurpleCertificate *crt = (PurpleCertificate *) data;
-	purple_certificate_destroy(crt);
+	GTlsCertificate *crt = data;
+	g_object_unref(crt);
 }
 
 static void
 tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 {
-	PurpleCertificateScheme *x509;
-	PurpleCertificate *crt;
-
-	/* Load the scheme of our tls_peers pool (ought to be x509) */
-	x509 = purple_certificate_pool_get_scheme(tpm_dat->tls_peers);
+	GTlsCertificate *crt;
+	GError *error = NULL;
 
 	/* Now load the certificate from disk */
-	crt = purple_certificate_import(x509, filename);
+	crt = g_tls_certificate_new_from_file(filename, &error);
 
 	/* Did it work? */
 	if (crt != NULL) {
 		gchar *default_hostname;
-		/* Get name to add to pool as */
+		PurpleTlsCertificateInfo *info;
+
+		/* Get name to add trust as */
 		/* Make a guess about what the hostname should be */
-		 default_hostname = purple_certificate_get_subject_name(crt);
+		info = purple_tls_certificate_get_info(crt);
+		default_hostname = purple_tls_certificate_info_get_subject_name(info);
+		purple_tls_certificate_info_free(info);
+
 		/* TODO: Find a way to make sure that crt gets destroyed
 		   if the window gets closed unusually, such as by handle
 		   deletion */
@@ -201,6 +199,11 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 		   went wrong? */
 		gchar * secondary;
 
+		purple_debug_warning("gtkcertmgr/tls_peers_mgmt",
+				"File %s couldn't be imported: %s",
+				filename, error->message);
+		g_clear_error(&error);
+
 		secondary = g_strdup_printf(_("File %s could not be imported.\nMake sure that the file is readable and in PEM format.\n"), filename);
 		purple_notify_error(NULL,
 				    _("Certificate Import Error"),
@@ -226,15 +229,24 @@ tls_peers_mgmt_import_cb(GtkWidget *button, gpointer data)
 static void
 tls_peers_mgmt_export_ok_cb(gpointer data, const char *filename)
 {
-	PurpleCertificate *crt = (PurpleCertificate *) data;
+	GTlsCertificate *crt = data;
+	gchar *pem = NULL;
+	GError *error = NULL;
 
 	g_assert(filename);
 
-	if (!purple_certificate_export(filename, crt)) {
+	g_object_get(crt, "certificate-pem", &pem, NULL);
+
+	if (!g_file_set_contents(filename, pem, -1, &error)) {
 		/* Errors! Oh no! */
 		/* TODO: Perhaps find a way to be specific about what just
 		   went wrong? */
 		gchar * secondary;
+
+		purple_debug_warning("gtkcertmgr/tls_peers_mgmt",
+				"File %s couldn't be exported: %s",
+				filename, error->message);
+		g_clear_error(&error);
 
 		secondary = g_strdup_printf(_("Export to file %s failed.\nCheck that you have write permission to the target path\n"), filename);
 		purple_notify_error(NULL,
@@ -242,27 +254,24 @@ tls_peers_mgmt_export_ok_cb(gpointer data, const char *filename)
 				    _("X.509 certificate export failed"),
 				    secondary, NULL);
 		g_free(secondary);
+	} else {
+		tls_peers_mgmt_repopulate_list();
 	}
 
-	purple_certificate_destroy(crt);
-}
-
-static void
-tls_peers_mgmt_export_cancel_cb(gpointer data, const char *filename)
-{
-	PurpleCertificate *crt = (PurpleCertificate *) data;
-	/* Pressing cancel just frees the duplicated certificate */
-	purple_certificate_destroy(crt);
+	g_free(pem);
+	g_object_unref(crt);
 }
 
 static void
 tls_peers_mgmt_export_cb(GtkWidget *button, gpointer data)
 {
-	PurpleCertificate *crt;
+	GTlsCertificate *crt;
 	GtkTreeSelection *select = tpm_dat->listselect;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	gchar *id;
+	gchar *path;
+	GError *error = NULL;
 
 	/* See if things are selected */
 	if (!gtk_tree_selection_get_selected(select, &model, &iter)) {
@@ -276,12 +285,13 @@ tls_peers_mgmt_export_cb(GtkWidget *button, gpointer data)
 
 	/* Extract the certificate from the pool now to make sure it doesn't
 	   get deleted out from under us */
-	crt = purple_certificate_pool_retrieve(tpm_dat->tls_peers, id);
+	crt = purple_tls_certificate_new_from_id(id, &error);
 
 	if (NULL == crt) {
 		purple_debug_error("gtkcertmgr/tls_peers_mgmt",
-				   "Id %s was not in the peers cache?!\n",
-				   id);
+				   "Error fetching trusted cert '%s': %s\n",
+				   id, error->message);
+		g_clear_error(&error);
 		g_free(id);
 		return;
 	}
@@ -293,7 +303,7 @@ tls_peers_mgmt_export_cb(GtkWidget *button, gpointer data)
 			    "certificate.pem",
 			    TRUE, /* Is a save dialog */
 			    G_CALLBACK(tls_peers_mgmt_export_ok_cb),
-			    G_CALLBACK(tls_peers_mgmt_export_cancel_cb),
+			    G_CALLBACK(g_object_unref),
 			    NULL, /* No extra parameters */
 			    crt); /* Pass the certificate on to the callback */
 }
@@ -305,8 +315,9 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	gchar *id;
-	PurpleCertificate *crt;
+	GTlsCertificate *crt;
 	char *title;
+	GError *error = NULL;
 
 	/* See if things are selected */
 	if (!gtk_tree_selection_get_selected(select, &model, &iter)) {
@@ -319,14 +330,21 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 	gtk_tree_model_get(model, &iter, TPM_HOSTNAME_COLUMN, &id, -1);
 
 	/* Now retrieve the certificate */
-	crt = purple_certificate_pool_retrieve(tpm_dat->tls_peers, id);
-	g_return_if_fail(crt);
+	crt = purple_tls_certificate_new_from_id(id, NULL);
+
+	if (crt == NULL) {
+		purple_debug_warning("gtkcertmgr/tls_peers_mgmt",
+				"Unable to fetch certificate '%s': %s",
+				id, error->message);
+		g_clear_error(&error);
+		g_free(id);
+	}
 
 	/* Fire the notification */
 	title = g_strdup_printf(_("Certificate Information for %s"), id);
 	purple_request_certificate(tpm_dat, title, NULL, NULL, crt,
-	                           _("OK"), G_CALLBACK(purple_certificate_destroy),
-	                           _("Cancel"), G_CALLBACK(purple_certificate_destroy),
+	                           _("OK"), G_CALLBACK(g_object_unref),
+	                           _("Cancel"), G_CALLBACK(g_object_unref),
 	                           crt);
 
 	g_free(id);
@@ -342,14 +360,19 @@ tls_peers_mgmt_activated_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeVie
 static void
 tls_peers_mgmt_delete_confirm_cb(gchar *id, gint choice)
 {
+	GError *error = NULL;
+
 	if (1 == choice) {
-		/* Yes, delete was confirmed */
-		/* Now delete the thing */
-		if (!purple_certificate_pool_delete(tpm_dat->tls_peers, id)) {
+		/* Yes, distrust was confirmed */
+		/* Now distrust the thing */
+		if (!purple_tls_certificate_distrust(id, &error)) {
 			purple_debug_warning("gtkcertmgr/tls_peers_mgmt",
-					     "Deletion failed on id %s\n",
-					     id);
-		};
+					     "Deletion failed on id %s: %s\n",
+					     id, error->message);
+			g_clear_error(&error);
+		} else {
+			tls_peers_mgmt_repopulate_list();
+		}
 	}
 
 	g_free(id);
@@ -518,18 +541,6 @@ tls_peers_mgmt_build(void)
 	   all the buttons since nothing is selected yet */
 	tls_peers_mgmt_select_chg_cb(select, NULL);
 
-	/* Bind us to the tls_peers pool */
-	tpm_dat->tls_peers = purple_certificate_find_pool("x509", "tls_peers");
-
-	/**** libpurple signals ****/
-	/* Respond to certificate add/remove by just reloading everything */
-	purple_signal_connect(tpm_dat->tls_peers, "certificate-stored",
-			      tpm_dat, PURPLE_CALLBACK(tls_peers_mgmt_mod_cb),
-			      NULL);
-	purple_signal_connect(tpm_dat->tls_peers, "certificate-deleted",
-			      tpm_dat, PURPLE_CALLBACK(tls_peers_mgmt_mod_cb),
-			      NULL);
-
 	return mgmt_widget;
 }
 
@@ -571,28 +582,21 @@ pidgin_certmgr_show(void)
 
 	/* Enumerate all the certificates on file */
 	{
-		GList *idlist, *poollist;
+		GList *idlist;
+		GList *l;
 
-		for ( poollist = purple_certificate_get_pools();
-		      poollist;
-		      poollist = poollist->next ) {
-			PurpleCertificatePool *pool = poollist->data;
-			GList *l;
+		purple_debug_info("gtkcertmgr",
+				  "Enumerating X.509 certificates:\n");
 
+		idlist = purple_tls_certificate_list_ids();
+
+		for (l=idlist; l; l = l->next) {
 			purple_debug_info("gtkcertmgr",
-					  "Pool %s found for scheme %s -"
-					  "Enumerating certificates:\n",
-					  pool->name, pool->scheme_name);
+					  "- %s\n",
+					  l->data ? (gchar *) l->data : "(null)");
+		} /* idlist */
 
-			idlist = purple_certificate_pool_get_idlist(pool);
-
-			for (l=idlist; l; l = l->next) {
-				purple_debug_info("gtkcertmgr",
-						  "- %s\n",
-						  l->data ? (gchar *) l->data : "(null)");
-			} /* idlist */
-			purple_certificate_pool_destroy_idlist(idlist);
-		} /* poollist */
+		purple_tls_certificate_free_ids(idlist);
 	}
 
 
