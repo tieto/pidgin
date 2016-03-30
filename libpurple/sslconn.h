@@ -40,7 +40,7 @@ typedef enum
 	PURPLE_SSL_CERTIFICATE_INVALID = 3
 } PurpleSslErrorType;
 
-#include "certificate.h"
+#include <gio/gio.h>
 #include "proxy.h"
 
 #define PURPLE_SSL_DEFAULT_PORT 443
@@ -85,8 +85,10 @@ struct _PurpleSslConnection
 	guint inpa;
 	PurpleProxyConnectData *connect_data;
 
+	GTlsConnection *conn;
+	GCancellable *cancellable;
+
 	void *private_data;
-	PurpleCertificateVerifier *verifier;
 };
 
 /**
