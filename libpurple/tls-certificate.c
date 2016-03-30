@@ -193,12 +193,118 @@ purple_tls_certificate_distrust(const gchar *id, GError **error)
 	return ret;
 }
 
+/* Converts GTlsCertificateFlags to a translated string representation
+ * of the first set error flag in the order checked
+ */
+static const gchar *
+tls_certificate_flags_to_reason(GTlsCertificateFlags flags)
+{
+	if (flags & G_TLS_CERTIFICATE_UNKNOWN_CA) {
+		return _("The certificate is not trusted because no "
+				"certificate that can verify it is "
+				"currently trusted.");
+	} else if (flags & G_TLS_CERTIFICATE_BAD_IDENTITY) {
+		/* Translators: "domain" refers to a DNS domain
+		 * (e.g. talk.google.com)
+		 */
+		return _("The certificate presented is not issued to "
+				"this domain.");
+	} else if (flags & G_TLS_CERTIFICATE_NOT_ACTIVATED) {
+		return _("The certificate is not valid yet.  Check that your "
+				"computer's date and time are accurate.");
+	} else if (flags & G_TLS_CERTIFICATE_EXPIRED) {
+		return _("The certificate has expired and should not be "
+				"considered valid.  Check that your "
+				"computer's date and time are accurate.");
+	} else if (flags & G_TLS_CERTIFICATE_REVOKED) {
+		return _("The certificate has been revoked.");
+	} else if (flags & G_TLS_CERTIFICATE_INSECURE) {
+		return _("The certificate's algorithm is considered insecure.");
+	} else {
+		/* Also catches G_TLS_CERTIFICATE_GENERIC_ERROR here */
+		return _("An unknown certificate error occurred.");
+	}
+}
+
+/* Holds data for requesting the user to accept a given certificate */
+typedef struct {
+	gchar *identity;
+	GTlsCertificate *cert;
+} UserCertRequestData;
+
+static void
+user_cert_request_data_free(UserCertRequestData *data)
+{
+	g_return_if_fail(data != NULL);
+
+	g_free(data->identity);
+	g_object_unref(data->cert);
+
+	g_free(data);
+}
+
+static void
+user_cert_request_accept_cb(UserCertRequestData *data)
+{
+	GError *error = NULL;
+
+	g_return_if_fail(data != NULL);
+
+	/* User accepted. Trust this certificate */
+	if(!purple_tls_certificate_trust(data->identity, data->cert, &error)) {
+		purple_debug_error("tls-certificate",
+				"Error trusting certificate '%s': %s",
+				data->identity, error->message);
+		g_clear_error(&error);
+	}
+
+	user_cert_request_data_free(data);
+}
+
+static void
+user_cert_request_deny_cb(UserCertRequestData *data)
+{
+	/* User denied. Free data related to the requst */
+	user_cert_request_data_free(data);
+}
+
+/* Prompts the user to accept the certificate as it failed due to the
+ * passed errors.
+ */
+static void
+request_accept_certificate(const gchar *identity, GTlsCertificate *peer_cert,
+		GTlsCertificateFlags errors)
+{
+	UserCertRequestData *data;
+	gchar *primary;
+
+	g_return_if_fail(identity != NULL && identity[0] != '\0');
+	g_return_if_fail(G_IS_TLS_CERTIFICATE(peer_cert));
+	g_return_if_fail(errors != 0);
+
+	data = g_new(UserCertRequestData, 1);
+	data->identity = g_strdup(identity);
+	data->cert = g_object_ref(peer_cert);
+
+	primary = g_strdup_printf(_("Accept certificate for %s?"), identity);
+	purple_request_certificate(data,
+			_("TLS Certificate Verification"),
+			primary,
+			tls_certificate_flags_to_reason(errors),
+			data->cert,
+			_("Accept"), G_CALLBACK(user_cert_request_accept_cb),
+			_("Reject"), G_CALLBACK(user_cert_request_deny_cb),
+			data);
+	g_free(primary);
+}
+
 /* Called when a GTlsConnection (which this handler has been connected to)
  *   has an error validating its certificate.
  * Returns TRUE if the certificate is already trusted, so the connection
  *   can continue.
  * Returns FALSE if the certificate is not trusted, causing the
- *   connection's handshake to fail.
+ *   connection's handshake to fail, and then prompts the user to accept
+ *   the certificate.
  */
 static gboolean
 accept_certificate_cb(GTlsConnection *conn, GTlsCertificate *peer_cert,
@@ -240,9 +346,14 @@ accept_certificate_cb(GTlsConnection *conn, GTlsCertificate *peer_cert,
 		return TRUE;
 	}
 
-	/* Certificate failed and isn't trusted. Fail certificate */
-
 	g_clear_object(&trusted_cert);
+
+	/* Certificate failed and isn't trusted.
+	 * Fail certificate and prompt user.
+	 */
+
+	request_accept_certificate(identity, peer_cert, errors);
+
 	return FALSE;
 }
 
