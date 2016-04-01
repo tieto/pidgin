@@ -322,7 +322,8 @@ purple_ssl_read(PurpleSslConnection *gsc, void *data, size_t len)
 			gsc->cancellable, &error);
 
 	if (outlen < 0) {
-		if (outlen == G_IO_ERROR_WOULD_BLOCK) {
+		if (g_error_matches(error, G_IO_ERROR,
+				G_IO_ERROR_WOULD_BLOCK)) {
 			errno = EAGAIN;
 		}
 
