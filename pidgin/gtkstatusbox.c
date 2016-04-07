@@ -1992,17 +1992,21 @@ pidgin_status_box_draw(GtkWidget *widget, cairo_t *cr)
 	PidginStatusBox *status_box = PIDGIN_STATUS_BOX(widget);
 	gtk_widget_draw(status_box->toggle_button, cr);
 
-	gtk_container_propagate_draw(GTK_CONTAINER(widget), status_box->icon_box, cr);
 	gtk_container_propagate_draw(GTK_CONTAINER(widget), status_box->vbox, cr);
 
-	if (status_box->icon_box && status_box->icon_opaque) {
-		GtkAllocation allocation;
-		GtkStyleContext *context;
+	if (status_box->icon_box) {
+		gtk_container_propagate_draw(GTK_CONTAINER(widget),
+				status_box->icon_box, cr);
 
-		gtk_widget_get_allocation(status_box->icon_box, &allocation);
-		context = gtk_widget_get_style_context(widget);
-		gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
-		gtk_render_frame(context, cr, allocation.x-1, allocation.y-1, 34, 34);
+		if (status_box->icon_opaque) {
+			GtkAllocation allocation;
+			GtkStyleContext *context;
+
+			gtk_widget_get_allocation(status_box->icon_box, &allocation);
+			context = gtk_widget_get_style_context(widget);
+			gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
+			gtk_render_frame(context, cr, allocation.x-1, allocation.y-1, 34, 34);
+		}
 	}
 	return FALSE;
 }
