@@ -25,10 +25,11 @@
 #include "pidgin.h"
 #include "pidginstock.h"
 
-#include "tls-certificate.h"
 #include "debug.h"
 #include "notify.h"
 #include "request.h"
+#include "tls-certificate.h"
+#include "tls-certificate-info.h"
 
 #include "gtk3compat.h"
 #include "gtkblist.h"

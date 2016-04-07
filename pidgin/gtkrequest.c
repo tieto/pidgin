@@ -23,7 +23,7 @@
 
 #include "debug.h"
 #include "prefs.h"
-#include "tls-certificate.h"
+#include "tls-certificate-info.h"
 #include "util.h"
 
 #include "gtkwebview.h"

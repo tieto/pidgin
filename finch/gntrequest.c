@@ -34,7 +34,7 @@
 #include "finch.h"
 #include "gntrequest.h"
 #include "debug.h"
-#include "tls-certificate.h"
+#include "tls-certificate-info.h"
 #include "util.h"
 
 typedef struct

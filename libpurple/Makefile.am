@@ -115,6 +115,7 @@ purple_coresources = \
 	theme-loader.c \
 	theme-manager.c \
 	tls-certificate.c \
+	tls-certificate-info.c \
 	trie.c \
 	upnp.c \
 	util.c \
@@ -193,6 +194,7 @@ purple_coreheaders = \
 	theme-loader.h \
 	theme-manager.h \
 	tls-certificate.h \
+	tls-certificate-info.h \
 	trie.h \
 	upnp.h \
 	util.h \
