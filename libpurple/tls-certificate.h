@@ -26,8 +26,14 @@
 /**
  * SECTION:tls-certificate
  * @section_id: libpurple-tls-certificate
- * @short_description: <filename>tls-certificate.h</filename>
+ * @short_description: TLS certificate trust and storage API
  * @title: TLS Certificate API
+ *
+ * The TLS Certificate API provides functions for trusting and storing
+ * certificates for use with TLS/SSL connections. This allows certificates,
+ * which aren't considered valid by the TLS implementation, to be manually
+ * trusted by the user, distrusted at a later time, and queried by the UI.
+ * It also provides functions to simply wire this system into Gio.
  */
 
 #include <gio/gio.h>
@@ -39,7 +45,7 @@
  * purple_tls_certificate_trust() and friends. These IDs can then be passed
  * to purple_certificate_path() or used directly, if desired.
  *
- * Returns: The #GList of IDs described above
+ * Returns: (element-type utf8): The #GList of IDs described above
  *          Free with purple_certificate_free_ids()
  */
 GList *
@@ -100,7 +106,8 @@ purple_tls_certificate_distrust(const gchar *id, GError **error);
  * Connects the Purple TLS certificate subsystem to @conn so it will accept
  * certificates trusted by purple_tls_certificate_trust() and friends.
  *
- * Returns: @conn, similar to g_object_connect()
+ * Returns: (transfer: none) (type GObject.Object): @conn, similar to
+ *          g_object_connect()
  */
 gpointer
 purple_tls_certificate_attach_to_tls_connection(GTlsConnection *conn);
@@ -113,7 +120,8 @@ purple_tls_certificate_attach_to_tls_connection(GTlsConnection *conn);
  * connections it creates will accept certificates trusted by
  * purple_tls_certificate_trust() and friends.
  *
- * Returns: @client, similar to g_object_connect()
+ * Returns: (transfer: none) (type GObject.Object): @client, similar to
+ *          g_object_connect()
  */
 gpointer
 purple_tls_certificate_attach_to_socket_client(GSocketClient *client);
