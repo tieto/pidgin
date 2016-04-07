@@ -70,7 +70,7 @@ tls_handshake_cb(GObject *source, GAsyncResult *res, gpointer user_data)
 	gsc->connect_cb(gsc->connect_cb_data, gsc, PURPLE_INPUT_READ);
 }
 
-static void
+static gboolean
 tls_connect(PurpleSslConnection *gsc)
 {
 	GSocket *socket;
@@ -79,13 +79,15 @@ tls_connect(PurpleSslConnection *gsc)
 	GIOStream *tls_conn;
 	GError *error = NULL;
 
-	g_return_if_fail(gsc->conn == NULL);
+	g_return_val_if_fail(gsc->conn == NULL, FALSE);
 
 	socket = g_socket_new_from_fd(gsc->fd, &error);
 	if (socket == NULL) {
-		emit_error(gsc, PURPLE_SSL_CONNECT_FAILED);
-		purple_ssl_close(gsc);
-		return;
+		purple_debug_warning("sslconn",
+				"Error creating socket from fd (%u): %s",
+				gsc->fd, error->message);
+		g_clear_error(&error);
+		return FALSE;
 	}
 
 	conn = g_socket_connection_factory_create_connection(socket);
@@ -98,9 +100,11 @@ tls_connect(PurpleSslConnection *gsc)
 	g_object_unref(conn);
 
 	if (tls_conn == NULL) {
-		emit_error(gsc, PURPLE_SSL_CONNECT_FAILED);
-		purple_ssl_close(gsc);
-		return;
+		purple_debug_warning("sslconn",
+				"Error creating TLS client connection: %s",
+				error->message);
+		g_clear_error(&error);
+		return FALSE;
 	}
 
 	gsc->conn = G_TLS_CONNECTION(tls_conn);
@@ -110,6 +114,8 @@ tls_connect(PurpleSslConnection *gsc)
 
 	g_tls_connection_handshake_async(gsc->conn, G_PRIORITY_DEFAULT,
 			gsc->cancellable, tls_handshake_cb, gsc);
+
+	return TRUE;
 }
 
 static void
@@ -129,7 +135,10 @@ purple_ssl_connect_cb(gpointer data, gint source, const gchar *error_message)
 
 	gsc->fd = source;
 
-	tls_connect(gsc);
+	if (!tls_connect(gsc)) {
+		emit_error(gsc, PURPLE_SSL_CONNECT_FAILED);
+		purple_ssl_close(gsc);
+	}
 }
 
 PurpleSslConnection *
@@ -267,7 +276,10 @@ purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
         gsc->host            = g_strdup(host);
 	gsc->cancellable     = g_cancellable_new();
 
-	tls_connect(gsc);
+	if (!tls_connect(gsc)) {
+		emit_error(gsc, PURPLE_SSL_CONNECT_FAILED);
+		g_clear_pointer(&gsc, purple_ssl_close);
+	}
 
 	return (PurpleSslConnection *)gsc;
 }
