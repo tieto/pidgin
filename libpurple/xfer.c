@@ -1205,27 +1205,38 @@ purple_xfer_read(PurpleXfer *xfer, guchar **buffer)
 	return r;
 }
 
-gssize
-purple_xfer_write(PurpleXfer *xfer, const guchar *buffer, gsize size)
+static gssize
+do_write(PurpleXfer *xfer, const guchar *buffer, gsize size)
 {
 	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
-	gssize r, s;
+	gssize r;
 
 	g_return_val_if_fail(priv   != NULL, 0);
 	g_return_val_if_fail(buffer != NULL, 0);
 	g_return_val_if_fail(size   != 0,    0);
 
-	s = MIN((gssize)purple_xfer_get_bytes_remaining(xfer), (gssize)size);
-
 	if (priv->ops.write != NULL) {
-		r = (priv->ops.write)(buffer, s, xfer);
+		r = (priv->ops.write)(buffer, size, xfer);
 	} else {
-		r = write(priv->fd, buffer, s);
+		r = write(priv->fd, buffer, size);
 		if (r < 0 && errno == EAGAIN)
 			r = 0;
 	}
 
 	return r;
+}
+
+gssize
+purple_xfer_write(PurpleXfer *xfer, const guchar *buffer, gsize size)
+{
+	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
+	gssize s;
+
+	g_return_val_if_fail(priv != NULL, 0);
+
+	s = MIN((gssize)purple_xfer_get_bytes_remaining(xfer), (gssize)size);
+
+	return do_write(xfer, buffer, s);
 }
 
 gboolean
@@ -1405,7 +1416,7 @@ do_transfer(PurpleXfer *xfer)
 			result = priv->buffer->len;
 		}
 
-		r = purple_xfer_write(xfer, buffer, result);
+		r = do_write(xfer, buffer, result);
 
 		if (r == -1) {
 			purple_xfer_cancel_remote(xfer);
