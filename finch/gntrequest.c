@@ -34,6 +34,7 @@
 #include "finch.h"
 #include "gntrequest.h"
 #include "debug.h"
+#include "tls-certificate-info.h"
 #include "util.h"
 
 typedef struct
@@ -578,11 +579,15 @@ static GntWidget*
 create_certificate_field(PurpleRequestField *field)
 {
 	GntWidget *w;
-	PurpleCertificate *cert;
+	GTlsCertificate *cert;
+	PurpleTlsCertificateInfo *info;
 	char *str;
 
 	cert = purple_request_field_certificate_get_value(field);
-	str = purple_certificate_get_display_string(cert);
+	info = purple_tls_certificate_get_info(cert);
+	str = purple_tls_certificate_info_get_display_string(info);
+	purple_tls_certificate_info_free(info);
+
 	w = gnt_label_new(str);
 
 	g_free(str);

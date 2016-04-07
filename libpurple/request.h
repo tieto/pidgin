@@ -29,10 +29,10 @@
  */
 
 #include <stdlib.h>
+#include <gio/gio.h>
 #include <glib-object.h>
 #include <glib.h>
 
-#include "certificate.h"
 #include "conversation.h"
 #include "request-datasheet.h"
 
@@ -1793,7 +1793,7 @@ PurpleFilterAccountFunc purple_request_field_account_get_filter(
  */
 PurpleRequestField *purple_request_field_certificate_new(const char *id,
 														 const char *text,
-														 PurpleCertificate *cert);
+														 GTlsCertificate *cert);
 
 /**
  * purple_request_field_certificate_get_value:
@@ -1803,7 +1803,7 @@ PurpleRequestField *purple_request_field_certificate_new(const char *id,
  *
  * Returns: The certificate.
  */
-PurpleCertificate *purple_request_field_certificate_get_value(
+GTlsCertificate *purple_request_field_certificate_get_value(
 		const PurpleRequestField *field);
 
 /**************************************************************************/
@@ -2252,7 +2252,7 @@ purple_request_folder(void *handle, const char *title, const char *dirname,
  * @primary:       The main point of the message, or %NULL if you're
  *                 feeling enigmatic.
  * @secondary:     Secondary information, or %NULL if there is none.
- * @cert:          The #PurpleCertificate associated with this request.
+ * @cert:          The #GTlsCertificate associated with this request.
  * @ok_text:       The text for the <literal>OK</literal> button, which may not
  *                 be %NULL.
  * @ok_cb:         The callback for the <literal>OK</literal> button, which may
@@ -2270,7 +2270,7 @@ purple_request_folder(void *handle, const char *title, const char *dirname,
  * Returns: A UI-specific handle.
  */
 void *purple_request_certificate(void *handle, const char *title,
-	const char *primary, const char *secondary, PurpleCertificate *cert,
+	const char *primary, const char *secondary, GTlsCertificate *cert,
 	const char *ok_text, GCallback ok_cb,
 	const char *cancel_text, GCallback cancel_cb,
 	void *user_data);

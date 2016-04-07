@@ -22,62 +22,115 @@
 
 #include "internal.h"
 
-#include "certificate.h"
 #include "debug.h"
 #include "plugins.h"
 #include "request.h"
 #include "sslconn.h"
+#include "tls-certificate.h"
 
-static gboolean _ssl_initialized = FALSE;
-static PurpleSslOps *_ssl_ops = NULL;
+static void
+emit_error(PurpleSslConnection *gsc, int error_code)
+{
+	if (gsc->error_cb != NULL)
+		gsc->error_cb(gsc, error_code, gsc->connect_cb_data);
+}
+
+static void
+tls_handshake_cb(GObject *source, GAsyncResult *res, gpointer user_data)
+{
+	PurpleSslConnection *gsc = user_data;
+	GError *error = NULL;
+
+	if (!g_tls_connection_handshake_finish(G_TLS_CONNECTION(source), res,
+			&error)) {
+		if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+			/* Connection already closed/freed. Escape. */
+			return;
+		} else if (g_error_matches(error, G_TLS_ERROR,
+				G_TLS_ERROR_HANDSHAKE)) {
+			/* In Gio, a handshake error is because of the cert */
+			emit_error(gsc, PURPLE_SSL_CERTIFICATE_INVALID);
+		} else {
+			/* Report any other errors as handshake failing */
+			emit_error(gsc, PURPLE_SSL_HANDSHAKE_FAILED);
+		}
+
+		purple_ssl_close(gsc);
+		return;
+	}
+
+	gsc->connect_cb(gsc->connect_cb_data, gsc, PURPLE_INPUT_READ);
+}
 
 static gboolean
-ssl_init(void)
+tls_connect(PurpleSslConnection *gsc)
 {
-	PurplePlugin *plugin;
-	PurpleSslOps *ops;
+	GSocket *socket;
+	GSocketConnection *conn;
+	GSocketConnectable *identity;
+	GIOStream *tls_conn;
+	GError *error = NULL;
 
-	if (_ssl_initialized)
-		return FALSE;
+	g_return_val_if_fail(gsc->conn == NULL, FALSE);
 
-	plugin = purple_plugins_find_plugin("core-ssl");
-
-	if (plugin && !purple_plugin_is_loaded(plugin))
-		purple_plugin_load(plugin, NULL);
-
-	ops = purple_ssl_get_ops();
-	if ((ops == NULL) || (ops->init == NULL) || (ops->uninit == NULL) ||
-		(ops->connectfunc == NULL) || (ops->close == NULL) ||
-		(ops->read == NULL) || (ops->write == NULL))
-	{
+	socket = g_socket_new_from_fd(gsc->fd, &error);
+	if (socket == NULL) {
+		purple_debug_warning("sslconn",
+				"Error creating socket from fd (%u): %s",
+				gsc->fd, error->message);
+		g_clear_error(&error);
 		return FALSE;
 	}
 
-	return (_ssl_initialized = ops->init());
+	conn = g_socket_connection_factory_create_connection(socket);
+	g_object_unref(socket);
+
+	identity = g_network_address_new(gsc->host, gsc->port);
+	tls_conn = g_tls_client_connection_new(G_IO_STREAM(conn), identity,
+			&error);
+	g_object_unref(identity);
+	g_object_unref(conn);
+
+	if (tls_conn == NULL) {
+		purple_debug_warning("sslconn",
+				"Error creating TLS client connection: %s",
+				error->message);
+		g_clear_error(&error);
+		return FALSE;
+	}
+
+	gsc->conn = G_TLS_CONNECTION(tls_conn);
+	gsc->cancellable = g_cancellable_new();
+
+	purple_tls_certificate_attach_to_tls_connection(gsc->conn);
+
+	g_tls_connection_handshake_async(gsc->conn, G_PRIORITY_DEFAULT,
+			gsc->cancellable, tls_handshake_cb, gsc);
+
+	return TRUE;
 }
 
 static void
 purple_ssl_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleSslConnection *gsc;
-	PurpleSslOps *ops;
 
 	gsc = data;
 	gsc->connect_data = NULL;
 
 	if (source < 0)
 	{
-		if (gsc->error_cb != NULL)
-			gsc->error_cb(gsc, PURPLE_SSL_CONNECT_FAILED, gsc->connect_cb_data);
-
+		emit_error(gsc, PURPLE_SSL_CONNECT_FAILED);
 		purple_ssl_close(gsc);
 		return;
 	}
 
 	gsc->fd = source;
 
-	ops = purple_ssl_get_ops();
-	ops->connectfunc(gsc);
+	if (!tls_connect(gsc)) {
+		emit_error(gsc, PURPLE_SSL_CONNECT_FAILED);
+		purple_ssl_close(gsc);
+	}
 }
 
 PurpleSslConnection *
@@ -100,12 +153,6 @@ purple_ssl_connect_with_ssl_cn(PurpleAccount *account, const char *host, int por
 	g_return_val_if_fail(port != 0 && port != -1, NULL);
 	g_return_val_if_fail(func != NULL,            NULL);
 
-	if (!_ssl_initialized)
-	{
-		if (!ssl_init())
-			return NULL;
-	}
-
 	gsc = g_new0(PurpleSslConnection, 1);
 
 	gsc->fd              = -1;
@@ -114,9 +161,6 @@ purple_ssl_connect_with_ssl_cn(PurpleAccount *account, const char *host, int por
 	gsc->connect_cb_data = data;
 	gsc->connect_cb      = func;
 	gsc->error_cb        = error_func;
-
-	/* TODO: Move this elsewhere */
-	gsc->verifier = purple_certificate_find_verifier("x509","tls_cached");
 
 	gsc->connect_data = purple_proxy_connect(NULL, account, host, port, purple_ssl_connect_cb, gsc);
 
@@ -131,33 +175,45 @@ purple_ssl_connect_with_ssl_cn(PurpleAccount *account, const char *host, int por
 	return (PurpleSslConnection *)gsc;
 }
 
-static void
-recv_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+recv_cb(GObject *source, gpointer data)
 {
 	PurpleSslConnection *gsc = data;
 
-	gsc->recv_cb(gsc->recv_cb_data, gsc, cond);
+	gsc->recv_cb(gsc->recv_cb_data, gsc, PURPLE_INPUT_READ);
+
+	return TRUE;
 }
 
 void
 purple_ssl_input_add(PurpleSslConnection *gsc, PurpleSslInputFunction func,
 				   void *data)
 {
+	GInputStream *input;
+	GSource *source;
+
 	g_return_if_fail(func != NULL);
+	g_return_if_fail(gsc->conn != NULL);
 
 	purple_ssl_input_remove(gsc);
 
 	gsc->recv_cb_data = data;
 	gsc->recv_cb      = func;
 
-	gsc->inpa = purple_input_add(gsc->fd, PURPLE_INPUT_READ, recv_cb, gsc);
+	input = g_io_stream_get_input_stream(G_IO_STREAM(gsc->conn));
+	/* Pass NULL for cancellable as we don't want it notified on cancel */
+	source = g_pollable_input_stream_create_source(
+			G_POLLABLE_INPUT_STREAM(input), NULL);
+	g_source_set_callback(source, (GSourceFunc)recv_cb, gsc, NULL);
+	gsc->inpa = g_source_attach(source, NULL);
+	g_source_unref(source);
 }
 
 void
 purple_ssl_input_remove(PurpleSslConnection *gsc)
 {
 	if (gsc->inpa > 0) {
-		purple_input_remove(gsc->inpa);
+		g_source_remove(gsc->inpa);
 		gsc->inpa = 0;
 	}
 }
@@ -186,16 +242,9 @@ purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
                       void *data)
 {
 	PurpleSslConnection *gsc;
-	PurpleSslOps *ops;
 
 	g_return_val_if_fail(fd != -1,                NULL);
 	g_return_val_if_fail(func != NULL,            NULL);
-
-	if (!_ssl_initialized)
-	{
-		if (!ssl_init())
-			return NULL;
-	}
 
 	gsc = g_new0(PurpleSslConnection, 1);
 
@@ -205,13 +254,12 @@ purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
 	gsc->fd              = fd;
     if(host)
         gsc->host            = g_strdup(host);
+	gsc->cancellable     = g_cancellable_new();
 
-	/* TODO: Move this elsewhere */
-	gsc->verifier = purple_certificate_find_verifier("x509","tls_cached");
-
-
-	ops = purple_ssl_get_ops();
-	ops->connectfunc(gsc);
+	if (!tls_connect(gsc)) {
+		emit_error(gsc, PURPLE_SSL_CONNECT_FAILED);
+		g_clear_pointer(&gsc, purple_ssl_close);
+	}
 
 	return (PurpleSslConnection *)gsc;
 }
@@ -219,15 +267,10 @@ purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
 void
 purple_ssl_close(PurpleSslConnection *gsc)
 {
-	PurpleSslOps *ops;
-
 	g_return_if_fail(gsc != NULL);
 
 	purple_request_close_with_handle(gsc);
 	purple_notify_close_with_handle(gsc);
-
-	ops = purple_ssl_get_ops();
-	(ops->close)(gsc);
 
 	if (gsc->connect_data != NULL)
 		purple_proxy_connect_cancel(gsc->connect_data);
@@ -235,8 +278,19 @@ purple_ssl_close(PurpleSslConnection *gsc)
 	if (gsc->inpa > 0)
 		purple_input_remove(gsc->inpa);
 
-	if (gsc->fd >= 0)
-		close(gsc->fd);
+	/* Stop any pending operations */
+	if (G_IS_CANCELLABLE(gsc->cancellable)) {
+		g_cancellable_cancel(gsc->cancellable);
+		g_clear_object(&gsc->cancellable);
+	}
+
+	if (gsc->conn != NULL) {
+		/* Close the stream. Shouldn't take long and it can't
+		 * be further cancelled so don't pass a cancellable
+		 */
+		g_io_stream_close(G_IO_STREAM(gsc->conn), NULL, NULL);
+		g_clear_object(&gsc->conn);
+	}
 
 	g_free(gsc->host);
 	g_free(gsc);
@@ -245,73 +299,71 @@ purple_ssl_close(PurpleSslConnection *gsc)
 size_t
 purple_ssl_read(PurpleSslConnection *gsc, void *data, size_t len)
 {
-	PurpleSslOps *ops;
+	GInputStream *input;
+	gssize outlen;
+	GError *error = NULL;
 
 	g_return_val_if_fail(gsc  != NULL, 0);
 	g_return_val_if_fail(data != NULL, 0);
 	g_return_val_if_fail(len  >  0,    0);
+	g_return_val_if_fail(gsc->conn != NULL, 0);
 
-	ops = purple_ssl_get_ops();
-	return (ops->read)(gsc, data, len);
+	input = g_io_stream_get_input_stream(G_IO_STREAM(gsc->conn));
+	outlen = g_pollable_input_stream_read_nonblocking(
+			G_POLLABLE_INPUT_STREAM(input), data, len,
+			gsc->cancellable, &error);
+
+	if (outlen < 0) {
+		if (g_error_matches(error, G_IO_ERROR,
+				G_IO_ERROR_WOULD_BLOCK)) {
+			errno = EAGAIN;
+		}
+
+		g_clear_error(&error);
+	}
+
+	return outlen;
 }
 
 size_t
 purple_ssl_write(PurpleSslConnection *gsc, const void *data, size_t len)
 {
-	PurpleSslOps *ops;
+	GOutputStream *output;
+	gssize outlen;
+	GError *error = NULL;
 
 	g_return_val_if_fail(gsc  != NULL, 0);
 	g_return_val_if_fail(data != NULL, 0);
 	g_return_val_if_fail(len  >  0,    0);
+	g_return_val_if_fail(gsc->conn != NULL, 0);
 
-	ops = purple_ssl_get_ops();
-	return (ops->write)(gsc, data, len);
+	output = g_io_stream_get_output_stream(G_IO_STREAM(gsc->conn));
+	outlen = g_pollable_output_stream_write_nonblocking(
+			G_POLLABLE_OUTPUT_STREAM(output), data, len,
+			gsc->cancellable, &error);
+
+	if (outlen < 0) {
+		if (g_error_matches(error, G_IO_ERROR,
+				G_IO_ERROR_WOULD_BLOCK)) {
+			errno = EAGAIN;
+		}
+
+		g_clear_error(&error);
+	}
+
+	return outlen;
 }
 
 GList *
 purple_ssl_get_peer_certificates(PurpleSslConnection *gsc)
 {
-	PurpleSslOps *ops;
+	GTlsCertificate *certificate;
 
 	g_return_val_if_fail(gsc != NULL, NULL);
+	g_return_val_if_fail(gsc->conn != NULL, NULL);
 
-	ops = purple_ssl_get_ops();
-	return (ops->get_peer_certificates)(gsc);
+	certificate = g_tls_connection_get_peer_certificate(gsc->conn);
+
+	return certificate != NULL ? g_list_append(NULL, certificate) : NULL;
 }
 
-void
-purple_ssl_set_ops(PurpleSslOps *ops)
-{
-	_ssl_ops = ops;
-}
-
-PurpleSslOps *
-purple_ssl_get_ops(void)
-{
-	return _ssl_ops;
-}
-
-void
-purple_ssl_init(void)
-{
-	/* Although purple_ssl_is_supported will do the initialization on
-	   command, SSL plugins tend to register CertificateSchemes as well
-	   as providing SSL ops. */
-	if (!ssl_init()) {
-		purple_debug_error("sslconn", "Unable to initialize SSL.\n");
-	}
-}
-
-void
-purple_ssl_uninit(void)
-{
-	PurpleSslOps *ops;
-
-	if (!_ssl_initialized)
-		return;
-
-	ops = purple_ssl_get_ops();
-	ops->uninit();
-
-	_ssl_initialized = FALSE;
-}

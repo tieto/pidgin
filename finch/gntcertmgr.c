@@ -23,10 +23,11 @@
 #include <internal.h>
 #include "finch.h"
 
-#include "certificate.h"
 #include "debug.h"
 #include "notify.h"
 #include "request.h"
+#include "tls-certificate.h"
+#include "tls-certificate-info.h"
 
 #include "gntcertmgr.h"
 
@@ -39,7 +40,6 @@
 struct {
 	GntWidget *window;
 	GntWidget *tree;
-	PurpleCertificatePool *pool;
 } certmgr;
 
 /* Pretty much Xerox of gtkcertmgr */
@@ -48,46 +48,59 @@ struct {
 static void
 tls_peers_mgmt_import_ok2_cb(gpointer data, const char *result)
 {
-	PurpleCertificate *crt = (PurpleCertificate *) data;
+	GTlsCertificate *crt = data;
 	const char *id = result;
+	GError *error = NULL;
 
 	/* TODO: Perhaps prompt if you're overwriting a cert? */
 
-	purple_certificate_pool_store(purple_certificate_find_pool("x509", "tls_peers"), id, crt);
-	purple_certificate_destroy(crt);
-}
+	if (purple_tls_certificate_trust(id, crt, &error)) {
+		gnt_tree_add_row_last(GNT_TREE(certmgr.tree), g_strdup(id),
+				gnt_tree_create_row(GNT_TREE(certmgr.tree), id),
+				NULL);
+	} else {
+		purple_debug_error("gntcertmgr/tls_peers_mgmt",
+				"Failure trusting peer certificate '%s': %s",
+				id, error->message);
+		g_clear_error(&error);
+	}
 
-static void
-tls_peers_mgmt_import_cancel2_cb(gpointer data, const char *result)
-{
-	PurpleCertificate *crt = (PurpleCertificate *) data;
-	purple_certificate_destroy(crt);
+	g_object_unref(crt);
 }
 
 static void
 tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 {
-	PurpleCertificateScheme *x509;
-	PurpleCertificate *crt;
+	GTlsCertificate *crt;
+	GError *error = NULL;
 
-	x509 = purple_certificate_pool_get_scheme(purple_certificate_find_pool("x509", "tls_peers"));
-
-	crt = purple_certificate_import(x509, filename);
+	crt = g_tls_certificate_new_from_file(filename, &error);
 
 	if (crt != NULL) {
 		gchar *default_hostname;
-		default_hostname = purple_certificate_get_subject_name(crt);
+		PurpleTlsCertificateInfo *info;
+
+		info = purple_tls_certificate_get_info(crt);
+		default_hostname = purple_tls_certificate_info_get_subject_name(info);
+		purple_tls_certificate_info_free(info);
+
 		purple_request_input(NULL,
 				_("Certificate Import"),
 				_("Specify a hostname"),
 				_("Type the host name this certificate is for."),
 				default_hostname, FALSE, FALSE, NULL,
 				_("OK"), G_CALLBACK(tls_peers_mgmt_import_ok2_cb),
-				_("Cancel"), G_CALLBACK(tls_peers_mgmt_import_cancel2_cb),
+				_("Cancel"), G_CALLBACK(g_object_unref),
 				NULL, crt);
 		g_free(default_hostname);
 	} else {
 		gchar * secondary;
+
+		purple_debug_error("gntcertmgr/tls_peers_mgmt",
+				"Failed to import certificate '%s': %s",
+				filename, error->message);
+		g_clear_error(&error);
+
 		secondary = g_strdup_printf(_("File %s could not be imported.\nMake sure that the file is readable and in PEM format.\n"), filename);
 		purple_notify_error(NULL,
 				_("Certificate Import Error"),
@@ -113,10 +126,20 @@ add_cert_cb(GntWidget *button, gpointer null)
 static void
 tls_peers_mgmt_export_ok_cb(gpointer data, const char *filename)
 {
-	PurpleCertificate *crt = (PurpleCertificate *) data;
+	GTlsCertificate *crt = data;
+	gchar *pem = NULL;
+	GError *error = NULL;
 
-	if (!purple_certificate_export(filename, crt)) {
+	g_object_get(crt, "certificate-pem", &pem, NULL);
+	g_return_if_fail(crt != NULL);
+
+	if (!g_file_set_contents(filename, pem, -1, &error)) {
 		gchar * secondary;
+
+		purple_debug_error("gntcertmgr/tls_peers_mgmt",
+				"Failed to export certificate '%s': %s",
+				filename, error->message);
+		g_clear_error(&error);
 
 		secondary = g_strdup_printf(_("Export to file %s failed.\nCheck that you have write permission to the target path\n"), filename);
 		purple_notify_error(NULL,
@@ -126,14 +149,16 @@ tls_peers_mgmt_export_ok_cb(gpointer data, const char *filename)
 		g_free(secondary);
 	}
 
-	purple_certificate_destroy(crt);
+	g_free(pem);
+	g_object_unref(crt);
 }
 
 static void
 save_cert_cb(GntWidget *button, gpointer null)
 {
-	PurpleCertificate *crt;
+	GTlsCertificate *crt;
 	const char *key;
+	GError *error = NULL;
 
 	if (!certmgr.window)
 		return;
@@ -142,10 +167,13 @@ save_cert_cb(GntWidget *button, gpointer null)
 	if (!key)
 		return;
 
-	crt = purple_certificate_pool_retrieve(certmgr.pool, key);
+	crt = purple_tls_certificate_new_from_id(key, &error);
+
 	if (!crt) {
 		purple_debug_error("gntcertmgr/tls_peers_mgmt",
-				"Id %s was not in the peers cache?!\n", key);
+				"Failed to fetch trusted certificate '%s': %s",
+				key, error->message);
+		g_clear_error(&error);
 		return;
 	}
 
@@ -153,7 +181,7 @@ save_cert_cb(GntWidget *button, gpointer null)
 			_("PEM X.509 Certificate Export"),
 			"certificate.pem", TRUE,
 			G_CALLBACK(tls_peers_mgmt_export_ok_cb),
-			G_CALLBACK(purple_certificate_destroy),
+			G_CALLBACK(g_object_unref),
 			NULL, crt);
 }
 
@@ -162,7 +190,8 @@ static void
 info_cert_cb(GntWidget *button, gpointer null)
 {
 	const char *key;
-	PurpleCertificate *crt;
+	GTlsCertificate *crt;
+	PurpleTlsCertificateInfo *info;
 	gchar *subject;
 	GByteArray *fpr_sha1;
 	gchar *fpr_sha1_asc;
@@ -175,15 +204,18 @@ info_cert_cb(GntWidget *button, gpointer null)
 	if (!key)
 		return;
 
-	crt = purple_certificate_pool_retrieve(certmgr.pool, key);
+	crt = purple_tls_certificate_new_from_id(key, NULL);
 	g_return_if_fail(crt);
 
 	primary = g_strdup_printf(_("Certificate for %s"), key);
 
-	fpr_sha1 = purple_certificate_get_fingerprint_sha1(crt);
+	fpr_sha1 = purple_tls_certificate_get_fingerprint_sha1(crt);
 	fpr_sha1_asc = purple_base16_encode_chunked(fpr_sha1->data,
 						    fpr_sha1->len);
-	subject = purple_certificate_get_subject_name(crt);
+
+	info = purple_tls_certificate_get_info(crt);
+	subject = purple_tls_certificate_info_get_subject_name(info);
+	purple_tls_certificate_info_free(info);
 
 	secondary = g_strdup_printf(_("Common name: %s\n\nSHA1 fingerprint:\n%s"), subject, fpr_sha1_asc);
 
@@ -195,17 +227,24 @@ info_cert_cb(GntWidget *button, gpointer null)
 	g_byte_array_free(fpr_sha1, TRUE);
 	g_free(fpr_sha1_asc);
 	g_free(subject);
-	purple_certificate_destroy(crt);
+	g_object_unref(crt);
 }
 
 /* Delete a cert */
 static void
 tls_peers_mgmt_delete_confirm_cb(gchar *id, gint dontcare)
 {
-	if (!purple_certificate_pool_delete(certmgr.pool, id)) {
+	GError *error = NULL;
+
+	if (!purple_tls_certificate_distrust(id, &error)) {
 		purple_debug_warning("gntcertmgr/tls_peers_mgmt",
-				"Deletion failed on id %s\n", id);
+				"Deletion failed on id '%s': %s\n",
+				id, error->message);
+		g_clear_error(&error);
 	};
+
+	purple_request_close_with_handle((void*)id);
+	gnt_tree_remove(GNT_TREE(certmgr.tree), (void*)id);
 
 	g_free(id);
 }
@@ -248,34 +287,17 @@ populate_cert_list(void)
 
 	gnt_tree_remove_all(GNT_TREE(certmgr.tree));
 
-	idlist = purple_certificate_pool_get_idlist(purple_certificate_find_pool("x509", "tls_peers"));
+	idlist = purple_tls_certificate_list_ids();
 	for (l = idlist; l; l = l->next) {
 		gnt_tree_add_row_last(GNT_TREE(certmgr.tree), g_strdup(l->data),
 				gnt_tree_create_row(GNT_TREE(certmgr.tree), l->data), NULL);
 	}
-	purple_certificate_pool_destroy_idlist(idlist);
-}
-
-static void
-cert_list_added(PurpleCertificatePool *pool, const char *id, gpointer null)
-{
-	g_return_if_fail(certmgr.window);
-	gnt_tree_add_row_last(GNT_TREE(certmgr.tree), g_strdup(id),
-			gnt_tree_create_row(GNT_TREE(certmgr.tree), id), NULL);
-}
-
-static void
-cert_list_removed(PurpleCertificatePool *pool, const char *id, gpointer null)
-{
-	g_return_if_fail(certmgr.window);
-	purple_request_close_with_handle((void*)id);
-	gnt_tree_remove(GNT_TREE(certmgr.tree), (void*)id);
+	purple_tls_certificate_free_ids(idlist);
 }
 
 void finch_certmgr_show(void)
 {
 	GntWidget *win, *tree, *box, *button;
-	PurpleCertificatePool *pool;
 
 	if (certmgr.window) {
 		gnt_window_present(certmgr.window);
@@ -322,11 +344,6 @@ void finch_certmgr_show(void)
 
 	populate_cert_list();
 
-	pool = certmgr.pool = purple_certificate_find_pool("x509", "tls_peers");
-	purple_signal_connect(pool, "certificate-stored",
-			      win, PURPLE_CALLBACK(cert_list_added), NULL);
-	purple_signal_connect(pool, "certificate-deleted",
-			      win, PURPLE_CALLBACK(cert_list_removed), NULL);
 	g_signal_connect(G_OBJECT(win), "destroy", G_CALLBACK(purple_signals_disconnect_by_handle), NULL);
 
 	gnt_widget_show(certmgr.window);

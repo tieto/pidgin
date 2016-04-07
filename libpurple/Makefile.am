@@ -43,7 +43,6 @@ purple_coresources = \
 	blistnodetypes.c \
 	buddylist.c \
 	buddyicon.c \
-	certificate.c \
 	ciphers/aescipher.c \
 	ciphers/descipher.c \
 	ciphers/des3cipher.c \
@@ -115,6 +114,8 @@ purple_coresources = \
 	theme.c \
 	theme-loader.c \
 	theme-manager.c \
+	tls-certificate.c \
+	tls-certificate-info.c \
 	trie.c \
 	upnp.c \
 	util.c \
@@ -135,7 +136,6 @@ purple_coreheaders = \
 	blistnodetypes.h \
 	buddylist.h \
 	buddyicon.h \
-	certificate.h \
 	cipher.h \
 	circularbuffer.h \
 	cmds.h \
@@ -194,6 +194,8 @@ purple_coreheaders = \
 	theme.h \
 	theme-loader.h \
 	theme-manager.h \
+	tls-certificate.h \
+	tls-certificate-info.h \
 	trie.h \
 	upnp.h \
 	util.h \
