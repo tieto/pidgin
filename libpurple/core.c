@@ -198,7 +198,6 @@ purple_core_init(const char *ui)
 	_purple_socket_init();
 	purple_proxy_init();
 	purple_sound_init();
-	purple_ssl_init();
 	purple_stun_init();
 	purple_xfers_init();
 	purple_idle_init();
@@ -239,9 +238,6 @@ purple_core_quit(void)
 
 	/* Transmission ends */
 	purple_connections_disconnect_all();
-
-	/* The SSL plugins must be uninit before they're unloaded */
-	purple_ssl_uninit();
 
 	/* Save .xml files, remove signals, etc. */
 	_purple_smiley_theme_uninit();

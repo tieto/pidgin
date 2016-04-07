@@ -28,14 +28,6 @@
 #include "sslconn.h"
 #include "tls-certificate.h"
 
-static gboolean _ssl_initialized = FALSE;
-
-static gboolean
-ssl_init(void)
-{
-	return g_tls_backend_supports_tls(g_tls_backend_get_default());
-}
-
 static void
 emit_error(PurpleSslConnection *gsc, int error_code)
 {
@@ -161,12 +153,6 @@ purple_ssl_connect_with_ssl_cn(PurpleAccount *account, const char *host, int por
 	g_return_val_if_fail(port != 0 && port != -1, NULL);
 	g_return_val_if_fail(func != NULL,            NULL);
 
-	if (!_ssl_initialized)
-	{
-		if (!ssl_init())
-			return NULL;
-	}
-
 	gsc = g_new0(PurpleSslConnection, 1);
 
 	gsc->fd              = -1;
@@ -259,12 +245,6 @@ purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
 
 	g_return_val_if_fail(fd != -1,                NULL);
 	g_return_val_if_fail(func != NULL,            NULL);
-
-	if (!_ssl_initialized)
-	{
-		if (!ssl_init())
-			return NULL;
-	}
 
 	gsc = g_new0(PurpleSslConnection, 1);
 
@@ -387,22 +367,3 @@ purple_ssl_get_peer_certificates(PurpleSslConnection *gsc)
 	return certificate != NULL ? g_list_append(NULL, certificate) : NULL;
 }
 
-void
-purple_ssl_init(void)
-{
-	/* Although purple_ssl_is_supported will do the initialization on
-	   command, SSL plugins tend to register CertificateSchemes as well
-	   as providing SSL ops. */
-	if (!ssl_init()) {
-		purple_debug_error("sslconn", "Unable to initialize SSL.\n");
-	}
-}
-
-void
-purple_ssl_uninit(void)
-{
-	if (!_ssl_initialized)
-		return;
-
-	_ssl_initialized = FALSE;
-}
