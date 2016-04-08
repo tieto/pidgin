@@ -2246,7 +2246,6 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/example/Makefile
 		   libpurple/plugins/Makefile
 		   libpurple/plugins/keyrings/Makefile
-		   libpurple/plugins/ssl/Makefile
 		   libpurple/Makefile
 		   libpurple/protocols/Makefile
 		   libpurple/protocols/bonjour/Makefile

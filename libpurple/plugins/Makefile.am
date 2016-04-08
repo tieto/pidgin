@@ -1,4 +1,4 @@
-DIST_SUBDIRS = ssl keyrings
+DIST_SUBDIRS = keyrings
 
 if ENABLE_DBUS
 DBUS_LTLIB = dbus-example.la
