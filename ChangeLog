@@ -3,6 +3,8 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.10.13 (MM/DD/YY):
 	Pidgin:
 	* Fixed #14962
+	* Fixed alignment of incoming right-to-left messages in protocols that
+	don't support rich text
 
 	Windows-Specific Changes:
 	* Use getaddrinfo for DNS to enable IPv6 (#1075)
