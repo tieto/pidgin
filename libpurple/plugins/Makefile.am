@@ -123,7 +123,6 @@ EXTRA_DIST = \
 	Makefile.mingw \
 	dbus-buddyicons-example.py \
 	filectl.c \
-	fortuneprofile.pl \
 	startup.py
 
 AM_CPPFLAGS = \
