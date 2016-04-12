@@ -42,7 +42,6 @@ finch/plugins/lastlog.c
 libpurple/account.c
 libpurple/accounts.c
 libpurple/buddylist.c
-libpurple/certificate.c
 libpurple/connection.c
 libpurple/conversation.c
 libpurple/conversationtypes.c
@@ -75,10 +74,6 @@ libpurple/plugins/one_time_password.c
 libpurple/plugins/psychic.c
 libpurple/plugins/signals-test.c
 libpurple/plugins/simple.c
-libpurple/plugins/ssl/nss-prefs.c
-libpurple/plugins/ssl/ssl-gnutls.c
-libpurple/plugins/ssl/ssl-nss.c
-libpurple/plugins/ssl/ssl.c
 libpurple/plugins/statenotify.c
 libpurple/presence.c
 libpurple/protocols.c
@@ -203,6 +198,8 @@ libpurple/server.c
 libpurple/smiley.c
 libpurple/sslconn.c
 libpurple/status.c
+libpurple/tls-certificate-info.c
+libpurple/tls-certificate.c
 libpurple/util.c
 libpurple/win32/libc_interface.c
 libpurple/xfer.c
