@@ -64,7 +64,6 @@
       <xi:include href="xml/protocol.xml" />
       <xi:include href="xml/protocols.xml" />
       <xi:include href="xml/proxy.xml" />
-      <xi:include href="xml/certificate.xml" />
       <xi:include href="xml/signals.xml" />
       <xi:include href="xml/stringref.xml" />
       <xi:include href="xml/request.xml" />
@@ -80,6 +79,8 @@
       <xi:include href="xml/theme.xml" />
       <xi:include href="xml/theme-loader.xml" />
       <xi:include href="xml/theme-manager.xml" />
+      <xi:include href="xml/tls-certificate-info.xml" />
+      <xi:include href="xml/tls-certificate.xml" />
       <xi:include href="xml/trie.xml" />
       <xi:include href="xml/sound-theme.xml" />
       <xi:include href="xml/sound-theme-loader.xml" />
