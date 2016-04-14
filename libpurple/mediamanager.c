@@ -1127,7 +1127,10 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 			 * giving a not-linked error upon destruction
 			 */
 			fakesink = gst_element_factory_make("fakesink", NULL);
-			g_object_set(fakesink, "sync", FALSE, NULL);
+			g_object_set(fakesink,
+				"sync", FALSE,
+				"enable-last-sample", FALSE,
+				NULL);
 			gst_bin_add(GST_BIN(bin), fakesink);
 			gst_element_link(tee, fakesink);
 
