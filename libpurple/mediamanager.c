@@ -1172,6 +1172,7 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 			 */
 			fakesink = gst_element_factory_make("fakesink", NULL);
 			g_object_set(fakesink,
+				"async", FALSE,
 				"sync", FALSE,
 				"enable-last-sample", FALSE,
 				NULL);
