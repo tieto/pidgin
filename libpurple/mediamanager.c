@@ -72,6 +72,12 @@ struct _PurpleMediaManagerPrivate
 	PurpleMediaElementInfo *audio_src;
 	PurpleMediaElementInfo *audio_sink;
 
+#ifdef USE_GSTREAMER
+#if GST_CHECK_VERSION(1, 4, 0)
+	GstDeviceMonitor *device_monitor;
+#endif /* GST_CHECK_VERSION(1, 4, 0) */
+#endif /* USE_GSTREAMER */
+
 #ifdef HAVE_MEDIA_APPLICATION
 	/* Application data streams */
 	GList *appdata_info; /* holds PurpleMediaAppDataInfo */
@@ -112,6 +118,9 @@ static void purple_media_manager_init (PurpleMediaManager *media);
 static void purple_media_manager_finalize (GObject *object);
 #ifdef HAVE_MEDIA_APPLICATION
 static void free_appdata_info_locked (PurpleMediaAppDataInfo *info);
+#endif
+#ifdef USE_GSTREAMER
+static void purple_media_manager_init_device_monitor(PurpleMediaManager *manager);
 #endif
 
 static GObjectClass *parent_class = NULL;
@@ -194,6 +203,10 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 static void
 purple_media_manager_init (PurpleMediaManager *media)
 {
+#ifdef USE_GSTREAMER
+	GError *error;
+#endif /* USE_GSTREAMER */
+
 	media->priv = PURPLE_MEDIA_MANAGER_GET_PRIVATE(media);
 	media->priv->medias = NULL;
 	media->priv->private_medias = NULL;
@@ -203,6 +216,18 @@ purple_media_manager_init (PurpleMediaManager *media)
 	media->priv->appdata_info = NULL;
 	g_mutex_init (&media->priv->appdata_mutex);
 #endif
+#ifdef USE_GSTREAMER
+	if (gst_init_check(NULL, NULL, &error)) {
+		purple_media_manager_init_device_monitor(media);
+	} else {
+		purple_debug_error("mediamanager",
+				"GStreamer failed to initialize: %s.",
+				error ? error->message : "");
+		if (error) {
+			g_error_free(error);
+		}
+	}
+#endif /* USE_GSTREAMER */
 
 	purple_prefs_add_none("/purple/media");
 	purple_prefs_add_none("/purple/media/audio");
@@ -236,6 +261,14 @@ purple_media_manager_finalize (GObject *media)
 			(GDestroyNotify) free_appdata_info_locked);
 	g_mutex_clear (&priv->appdata_mutex);
 #endif
+#ifdef USE_GSTREAMER
+#if GST_CHECK_VERSION(1, 4, 0)
+	if (priv->device_monitor) {
+		gst_device_monitor_stop(priv->device_monitor);
+		g_object_unref(priv->device_monitor);
+	}
+#endif /* GST_CHECK_VERSION(1, 4, 0) */
+#endif /* USE_GSTREAMER */
 
 	parent_class->finalize(media);
 }
@@ -1844,6 +1877,208 @@ purple_media_manager_receive_application_data (
 }
 
 #ifdef USE_GSTREAMER
+
+#if GST_CHECK_VERSION(1, 4, 0)
+
+static void
+videosink_disable_last_sample(GstElement *sink)
+{
+	GObjectClass *klass = G_OBJECT_GET_CLASS(sink);
+
+	if (g_object_class_find_property(klass, "enable-last-sample")) {
+		g_object_set(sink, "enable-last-sample", FALSE, NULL);
+	}
+}
+
+static PurpleMediaElementType
+gst_class_to_purple_element_type(const gchar *device_class)
+{
+	if (purple_strequal(device_class, "Audio/Source")) {
+		return PURPLE_MEDIA_ELEMENT_AUDIO
+				| PURPLE_MEDIA_ELEMENT_SRC
+				| PURPLE_MEDIA_ELEMENT_ONE_SRC
+				| PURPLE_MEDIA_ELEMENT_UNIQUE;
+	} else if (purple_strequal(device_class, "Audio/Sink")) {
+		return PURPLE_MEDIA_ELEMENT_AUDIO
+				| PURPLE_MEDIA_ELEMENT_SINK
+				| PURPLE_MEDIA_ELEMENT_ONE_SINK;
+	} else if (purple_strequal(device_class, "Video/Source")) {
+		return PURPLE_MEDIA_ELEMENT_VIDEO
+				| PURPLE_MEDIA_ELEMENT_SRC
+				| PURPLE_MEDIA_ELEMENT_ONE_SRC
+				| PURPLE_MEDIA_ELEMENT_UNIQUE;
+	} else if (purple_strequal(device_class, "Video/Sink")) {
+		return PURPLE_MEDIA_ELEMENT_VIDEO
+				| PURPLE_MEDIA_ELEMENT_SINK
+				| PURPLE_MEDIA_ELEMENT_ONE_SINK;
+	}
+
+	return PURPLE_MEDIA_ELEMENT_NONE;
+}
+
+static GstElement *
+gst_device_create_cb(PurpleMediaElementInfo *info, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
+{
+	GstDevice *device;
+	GstElement *result;
+	PurpleMediaElementType type;
+
+	device = g_object_get_data(G_OBJECT(info), "gst-device");
+	if (!device) {
+		return NULL;
+	}
+
+	result = gst_device_create_element(device, NULL);
+	if (!result) {
+		return NULL;
+	}
+
+	type = purple_media_element_info_get_element_type(info);
+
+	if ((type & PURPLE_MEDIA_ELEMENT_VIDEO) &&
+	    (type & PURPLE_MEDIA_ELEMENT_SINK)) {
+		videosink_disable_last_sample(result);
+	}
+
+	return result;
+}
+
+static void
+purple_media_manager_register_gst_device(PurpleMediaManager *manager,
+		GstDevice *device)
+{
+	PurpleMediaElementInfo *info;
+	PurpleMediaElementType type;
+	gchar *name;
+	gchar *device_class;
+	gchar *id;
+
+	name = gst_device_get_display_name(device);
+	device_class = gst_device_get_device_class(device);
+
+	id = g_strdup_printf("%s %s", device_class, name);
+
+	type = gst_class_to_purple_element_type(device_class);
+
+	info = g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", id,
+			"name", name,
+			"type", type,
+			"create-cb", gst_device_create_cb,
+			NULL);
+
+	g_object_set_data(G_OBJECT(info), "gst-device", device);
+
+	purple_media_manager_register_element(manager, info);
+
+	purple_debug_info("mediamanager", "Registered %s device %s",
+			device_class, name);
+
+	g_free(name);
+	g_free(device_class);
+	g_free(id);
+}
+
+static void
+purple_media_manager_unregister_gst_device(PurpleMediaManager *manager,
+		GstDevice *device)
+{
+	GList *i;
+	gchar *name;
+	gchar *device_class;
+	gboolean done = FALSE;
+
+	name = gst_device_get_display_name(device);
+	device_class = gst_device_get_device_class(device);
+
+	for (i = manager->priv->elements; i && !done; i = i->next) {
+		PurpleMediaElementInfo *info = i->data;
+		GstDevice *device2;
+
+		device2 = g_object_get_data(G_OBJECT(info), "gst-device");
+		if (device2) {
+			gchar *name2;
+			gchar *device_class2;
+
+			name2 = gst_device_get_display_name(device2);
+			device_class2 = gst_device_get_device_class(device2);
+
+			if (purple_strequal(name, name2) &&
+			    purple_strequal(device_class, device_class2)) {
+				gchar *id;
+
+				id = purple_media_element_info_get_id(info);
+				purple_media_manager_unregister_element(manager,
+						id);
+
+				purple_debug_info("mediamanager",
+						"Unregistered %s device %s",
+						device_class, name);
+
+				g_free(id);
+
+				done = TRUE;
+			}
+
+			g_free(name2);
+			g_free(device_class2);
+		}
+	}
+
+	g_free(name);
+	g_free(device_class);
+}
+
+static gboolean
+device_monitor_bus_cb(GstBus *bus, GstMessage *message, gpointer user_data)
+{
+	PurpleMediaManager *manager = user_data;
+	GstMessageType message_type;
+	GstDevice *device;
+
+	message_type = GST_MESSAGE_TYPE(message);
+
+	if (message_type == GST_MESSAGE_DEVICE_ADDED) {
+		gst_message_parse_device_added(message, &device);
+		purple_media_manager_register_gst_device(manager, device);
+	} else if (message_type == GST_MESSAGE_DEVICE_REMOVED) {
+		gst_message_parse_device_removed (message, &device);
+		purple_media_manager_unregister_gst_device(manager, device);
+	}
+
+	return G_SOURCE_CONTINUE;
+}
+
+#endif /* GST_CHECK_VERSION(1, 4, 0) */
+
+static void
+purple_media_manager_init_device_monitor(PurpleMediaManager *manager)
+{
+#if GST_CHECK_VERSION(1, 4, 0)
+	GstBus *bus;
+	GList *i;
+
+	manager->priv->device_monitor = gst_device_monitor_new();
+
+	bus = gst_device_monitor_get_bus(manager->priv->device_monitor);
+	gst_bus_add_watch (bus, device_monitor_bus_cb, manager);
+	gst_object_unref (bus);
+
+	/* This avoids warning in GStreamer logs about no filters set */
+	gst_device_monitor_add_filter(manager->priv->device_monitor, NULL, NULL);
+
+	gst_device_monitor_start(manager->priv->device_monitor);
+
+	i = gst_device_monitor_get_devices(manager->priv->device_monitor);
+	for (; i; i = g_list_delete_link(i, i)) {
+		GstDevice *device = i->data;
+
+		purple_media_manager_register_gst_device(manager, device);
+		gst_object_unref(device);
+	}
+#endif /* GST_CHECK_VERSION(1, 4, 0) */
+}
 
 /*
  * PurpleMediaElementType
