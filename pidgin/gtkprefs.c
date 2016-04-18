@@ -128,58 +128,6 @@ static GtkListStore *prefs_smiley_themes;
 
 #ifdef USE_VV
 
-static const gchar *AUDIO_SRC_PLUGINS[] = {
-	"alsasrc",	"ALSA",
-	"directsoundsrc", "DirectSound",
-	/* "esdmon",	"ESD", ? */
-	"osssrc",	"OSS",
-	"pulsesrc",	"PulseAudio",
-	"sndiosrc",	"sndio",
-	/* "audiotestsrc wave=silence", "Silence", */
-	/* Translators: This is a noun that refers to one possible audio input
-	   plugin. The plugin can be used by the user to sanity check basic audio
-	   functionality within Pidgin.  */
-	"audiotestsrc",	N_("Test Sound"),
-	NULL
-};
-
-static const gchar *AUDIO_SINK_PLUGINS[] = {
-	"alsasink",	"ALSA",
-	"directsoundsink", "DirectSound",
-	/* "gconfaudiosink", "GConf", */
-	"artsdsink",	"aRts",
-	"esdsink",	"ESD",
-	"osssink",	"OSS",
-	"pulsesink",	"PulseAudio",
-	"sndiosink",	"sndio",
-	NULL
-};
-
-static const gchar *VIDEO_SRC_PLUGINS[] = {
-	"videodisabledsrc",	N_("Disabled"),
-	/* Translators: This is a noun that refers to one possible video input
-	   plugin. The plugin can be used by the user to sanity check basic video
-	   functionality within Pidgin. */
-	"videotestsrc",	N_("Test Input"),
-	"dshowvideosrc","DirectDraw",
-	"ksvideosrc",	"KS Video",
-	"qcamsrc",	"Quickcam",
-	"v4lsrc",	"Video4Linux",
-	"v4l2src",	"Video4Linux2",
-	"v4lmjpegsrc",	"Video4Linux MJPEG",
-	NULL
-};
-
-static const gchar *VIDEO_SINK_PLUGINS[] = {
-	/* "aasink",	"AALib", Didn't work for me */
-	"directdrawsink", "DirectDraw",
-	/* "gconfvideosink", "GConf", */
-	"glimagesink",	"OpenGL",
-	"ximagesink",	"X Window System",
-	"xvimagesink",	"X Window System (Xv)",
-	NULL
-};
-
 static GtkWidget *voice_level;
 static GtkWidget *voice_threshold;
 static GtkWidget *voice_volume;
@@ -3392,71 +3340,24 @@ away_page(void)
 
 #ifdef USE_VV
 static GList *
-get_vv_element_devices(const gchar *element_name)
+get_vv_device_menuitems(PurpleMediaElementType type)
 {
-	GList *ret = NULL;
-	GstElement *element;
-	GObjectClass *klass;
+	GList *result = NULL;
+	GList *i;
 
-	ret = g_list_prepend(ret, g_strdup(_("Default")));
-	ret = g_list_prepend(ret, g_strdup(""));
+	i = purple_media_manager_enumerate_elements(purple_media_manager_get(),
+			type);
+	for (; i; i = g_list_delete_link(i, i)) {
+		PurpleMediaElementInfo *info = i->data;
 
-	if (!strcmp(element_name, "<custom>") || (*element_name == '\0')) {
-		return g_list_reverse(ret);
+		result = g_list_append(result,
+				purple_media_element_info_get_name(info));
+		result = g_list_append(result,
+				purple_media_element_info_get_id(info));
+		g_object_unref(info);
 	}
 
-	if (g_strcmp0(element_name, "videodisabledsrc") == 0) {
-		/* Translators: This string refers to 'static' or 'snow' sometimes
-		   seen when trying to tune a TV to a non-existant analog station. */
-		ret = g_list_prepend(ret, g_strdup(_("Random noise")));
-		ret = g_list_prepend(ret, g_strdup("snow"));
-
-		return g_list_reverse(ret);
-	}
-
-	element = gst_element_factory_make(element_name, "test");
-	if (!element) {
-		purple_debug_info("vvconfig", "'%s' - unable to find element\n",
-			element_name);
-		return g_list_reverse(ret);
-	}
-
-	klass = G_OBJECT_GET_CLASS (element);
-	if (!klass) {
-		purple_debug_info("vvconfig", "'%s' - unable to find GObject "
-			"Class\n", element_name);
-		return g_list_reverse(ret);
-	}
-
-	purple_debug_info("vvconfig", "'%s' - gstreamer-1.0 doesn't suport "
-		"property probing\n", element_name);
-
-	gst_object_unref(element);
-	return g_list_reverse(ret);
-}
-
-static GList *
-get_vv_element_plugins(const gchar **plugins)
-{
-	GList *ret = NULL;
-
-	ret = g_list_prepend(ret, (gpointer)_("Default"));
-	ret = g_list_prepend(ret, "");
-	for (; plugins[0] && plugins[1]; plugins += 2) {
-#if GST_CHECK_VERSION(1,0,0)
-		if (gst_registry_check_feature_version(gst_registry_get(),
-			plugins[0], 0, 0, 0)
-#else
-		if (gst_default_registry_check_feature_version(plugins[0], 0, 0, 0)
-#endif
-			|| g_strcmp0(plugins[0], "videodisabledsrc") == 0)
-		{
-			ret = g_list_prepend(ret, (gpointer)_(plugins[1]));
-			ret = g_list_prepend(ret, (gpointer)plugins[0]);
-		}
-	}
-
-	return g_list_reverse(ret);
+	return result;
 }
 
 static GstElement *
@@ -3843,39 +3744,15 @@ make_video_test(GtkWidget *vbox)
 }
 
 static void
-vv_plugin_changed_cb(const gchar *name, PurplePrefType type,
+vv_device_changed_cb(const gchar *name, PurplePrefType type,
                      gconstpointer value, gpointer data)
 {
-	GtkWidget *vbox = data;
-	GtkSizeGroup *sg;
-	GtkWidget *widget;
-	gchar *pref;
-	GList *devices;
+	PurpleMediaManager *manager;
+	PurpleMediaElementInfo *info;
 
-	sg = g_object_get_data(G_OBJECT(vbox), "size-group");
-	widget = g_object_get_data(G_OBJECT(vbox), "device-hbox");
-	gtk_widget_destroy(widget);
-
-	pref = g_strdup(name);
-	strcpy(pref + strlen(pref) - strlen("plugin"), "device");
-	devices = get_vv_element_devices(value);
-	if (g_list_find_custom(devices, purple_prefs_get_string(pref),
-		(GCompareFunc)strcmp) == NULL)
-	{
-		GList *next = g_list_next(devices);
-		if (next)
-			purple_prefs_set_string(pref, next->data);
-	}
-	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
-	                                         PURPLE_PREF_STRING, pref, devices);
-	g_list_free_full(devices, g_free);
-	gtk_size_group_add_widget(sg, widget);
-	gtk_widget_set_halign(widget, GTK_ALIGN_START);
-	gtk_widget_set_valign(widget, GTK_ALIGN_CENTER);
-
-	g_object_set_data(G_OBJECT(vbox), "device-hbox",
-	                  gtk_widget_get_parent(widget));
-	g_signal_connect_swapped(widget, "destroy", G_CALLBACK(g_free), pref);
+	manager = purple_media_manager_get();
+	info = purple_media_manager_get_element_info(manager, value);
+	purple_media_manager_set_active_element(manager, info);
 
 	/* Refresh test viewers */
 	if (strstr(name, "audio") && voice_pipeline) {
@@ -3889,46 +3766,32 @@ vv_plugin_changed_cb(const gchar *name, PurplePrefType type,
 
 static void
 make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
-              const gchar *name, const gchar **plugin_strs,
-              const gchar *plugin_pref, const gchar *device_pref)
+              const gchar *name, PurpleMediaElementType element_type,
+              const gchar *preference_key)
 {
 	GtkWidget *vbox, *widget;
-	GList *plugins, *devices;
+	GList *devices;
 
 	vbox = pidgin_make_frame(parent, name);
 
-	/* Setup plugin preference */
-	plugins = get_vv_element_plugins(plugin_strs);
-	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Plugin"),
-	                                         PURPLE_PREF_STRING, plugin_pref,
-	                                         plugins);
-	g_list_free(plugins);
-	gtk_size_group_add_widget(sg, widget);
-	gtk_widget_set_halign(widget, GTK_ALIGN_START);
-	gtk_widget_set_valign(widget, GTK_ALIGN_CENTER);
-
 	/* Setup device preference */
-	devices = get_vv_element_devices(purple_prefs_get_string(plugin_pref));
-	if (g_list_find_custom(devices, purple_prefs_get_string(device_pref),
+	devices = get_vv_device_menuitems(element_type);
+	if (g_list_find_custom(devices, purple_prefs_get_string(preference_key),
 		(GCompareFunc)strcmp) == NULL)
 	{
 		GList *next = g_list_next(devices);
 		if (next)
-			purple_prefs_set_string(device_pref, next->data);
+			purple_prefs_set_string(preference_key, next->data);
 	}
 	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
-	                                         PURPLE_PREF_STRING, device_pref,
-	                                         devices);
+			PURPLE_PREF_STRING, preference_key, devices);
 	g_list_free_full(devices, g_free);
 	gtk_size_group_add_widget(sg, widget);
 	gtk_widget_set_halign(widget, GTK_ALIGN_START);
 	gtk_widget_set_valign(widget, GTK_ALIGN_CENTER);
 
-	widget = gtk_widget_get_parent(widget);
-	g_object_set_data(G_OBJECT(vbox), "size-group", sg);
-	g_object_set_data(G_OBJECT(vbox), "device-hbox", widget);
-	purple_prefs_connect_callback(vbox, plugin_pref, vv_plugin_changed_cb,
-	                              vbox);
+	purple_prefs_connect_callback(vbox, preference_key,
+			vv_device_changed_cb, vbox);
 	g_signal_connect_swapped(vbox, "destroy",
 	                         G_CALLBACK(purple_prefs_disconnect_by_handle), vbox);
 }
@@ -3946,20 +3809,20 @@ vv_page(void)
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = pidgin_make_frame(ret, _("Audio"));
-	make_vv_frame(vbox, sg, _("Input"), AUDIO_SRC_PLUGINS,
-	              PIDGIN_PREFS_ROOT "/vvconfig/audio/src/plugin",
+	make_vv_frame(vbox, sg, _("Input"),
+	              PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SRC,
 	              PIDGIN_PREFS_ROOT "/vvconfig/audio/src/device");
-	make_vv_frame(vbox, sg, _("Output"), AUDIO_SINK_PLUGINS,
-	              PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/plugin",
+	make_vv_frame(vbox, sg, _("Output"),
+	              PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SINK,
 	              PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/device");
 	make_voice_test(vbox);
 
 	vbox = pidgin_make_frame(ret, _("Video"));
-	make_vv_frame(vbox, sg, _("Input"), VIDEO_SRC_PLUGINS,
-	              PIDGIN_PREFS_ROOT "/vvconfig/video/src/plugin",
+	make_vv_frame(vbox, sg, _("Input"),
+	              PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SRC,
 	              PIDGIN_PREFS_ROOT "/vvconfig/video/src/device");
-	make_vv_frame(vbox, sg, _("Output"), VIDEO_SINK_PLUGINS,
-	              PIDGIN_PREFS_ROOT "/vvconfig/video/sink/plugin",
+	make_vv_frame(vbox, sg, _("Output"),
+	              PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SINK,
 	              PIDGIN_PREFS_ROOT "/vvconfig/video/sink/device");
 	make_video_test(vbox);
 
@@ -4140,18 +4003,14 @@ pidgin_prefs_init(void)
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/audio");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/audio/src");
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/src/plugin", "");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/src/device", "");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/audio/sink");
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/plugin", "");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/device", "");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/video");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/video/src");
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/video/src/plugin", "");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/video/src/device", "");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/video");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/vvconfig/video/sink");
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/video/sink/plugin", "");
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/vvconfig/video/sink/device", "");
 #endif
 
@@ -4250,33 +4109,17 @@ pidgin_prefs_update_old(void)
 			PIDGIN_PREFS_ROOT "/conversations/im/y");
 
 	/* Fixup vvconfig plugin prefs */
-	if (purple_prefs_exists("/plugins/core/vvconfig/audio/src/plugin")) {
-		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/src/plugin",
-				purple_prefs_get_string("/plugins/core/vvconfig/audio/src/plugin"));
-	}
 	if (purple_prefs_exists("/plugins/core/vvconfig/audio/src/device")) {
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/src/device",
 				purple_prefs_get_string("/plugins/core/vvconfig/audio/src/device"));
-	}
-	if (purple_prefs_exists("/plugins/core/vvconfig/audio/sink/plugin")) {
-		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/plugin",
-				purple_prefs_get_string("/plugins/core/vvconfig/audio/sink/plugin"));
 	}
 	if (purple_prefs_exists("/plugins/core/vvconfig/audio/sink/device")) {
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/device",
 				purple_prefs_get_string("/plugins/core/vvconfig/audio/sink/device"));
 	}
-	if (purple_prefs_exists("/plugins/core/vvconfig/video/src/plugin")) {
-		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/video/src/plugin",
-				purple_prefs_get_string("/plugins/core/vvconfig/video/src/plugin"));
-	}
 	if (purple_prefs_exists("/plugins/core/vvconfig/video/src/device")) {
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/video/src/device",
 				purple_prefs_get_string("/plugins/core/vvconfig/video/src/device"));
-	}
-	if (purple_prefs_exists("/plugins/gtk/vvconfig/video/sink/plugin")) {
-		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/video/sink/plugin",
-				purple_prefs_get_string("/plugins/gtk/vvconfig/video/sink/plugin"));
 	}
 	if (purple_prefs_exists("/plugins/gtk/vvconfig/video/sink/device")) {
 		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/vvconfig/video/sink/device",
@@ -4285,6 +4128,11 @@ pidgin_prefs_update_old(void)
 
 	purple_prefs_remove("/plugins/core/vvconfig");
 	purple_prefs_remove("/plugins/gtk/vvconfig");
+
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/vvconfig/audio/src/plugin");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/plugin");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/vvconfig/video/src/plugin");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/vvconfig/video/sink/plugin");
 
 #ifndef _WIN32
 	/* Added in 3.0.0. */
