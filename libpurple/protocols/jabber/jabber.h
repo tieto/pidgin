@@ -233,6 +233,8 @@ struct _JabberStream
 	int sasl_state;
 	int sasl_maxbuf;
 	GString *sasl_mechs;
+
+	gchar *sasl_password;
 #endif
 
 	gboolean unregistration;

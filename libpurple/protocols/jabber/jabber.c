@@ -1696,6 +1696,7 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->sasl_cb);
 	/* Note: _not_ g_free.  See auth_cyrus.c:jabber_sasl_cb_secret */
 	free(js->sasl_secret);
+	g_free(js->sasl_password);
 #endif
 	g_free(js->serverFQDN);
 	while(js->commands) {
