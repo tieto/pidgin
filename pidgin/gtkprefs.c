@@ -3687,16 +3687,19 @@ create_video_pipeline(void)
 	GstElement *pipeline;
 	GstElement *src, *sink;
 	GstElement *videoconvert;
+	GstElement *videoscale;
 
 	pipeline = gst_pipeline_new("videotest");
 	src = create_test_element(PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SRC);
 	sink = create_test_element(PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SINK);
 	videoconvert = gst_element_factory_make("videoconvert", NULL);
+	videoscale = gst_element_factory_make("videoscale", NULL);
 
 	g_object_set_data(G_OBJECT(pipeline), "sink", sink);
 
-	gst_bin_add_many(GST_BIN(pipeline), src, videoconvert, sink, NULL);
-	gst_element_link_many(src, videoconvert, sink, NULL);
+	gst_bin_add_many(GST_BIN(pipeline), src, videoconvert, videoscale, sink,
+			NULL);
+	gst_element_link_many(src, videoconvert, videoscale, sink, NULL);
 
 	return pipeline;
 }

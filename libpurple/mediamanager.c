@@ -1389,7 +1389,7 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 				(participant == ow->participant)) &&
 				!strcmp(session_id, ow->session_id)) {
 			GstBus *bus;
-			GstElement *queue, *convert;
+			GstElement *queue, *convert, *scale;
 			GstElement *tee = purple_media_get_tee(media,
 					session_id, participant);
 
@@ -1398,6 +1398,7 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 
 			queue = gst_element_factory_make("queue", NULL);
 			convert = gst_element_factory_make("videoconvert", NULL);
+			scale = gst_element_factory_make("videoscale", NULL);
 			ow->sink = purple_media_manager_get_element(
 					manager, PURPLE_MEDIA_RECV_VIDEO,
 					ow->media, ow->session_id,
@@ -1418,7 +1419,7 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 			}
 
 			gst_bin_add_many(GST_BIN(GST_ELEMENT_PARENT(tee)),
-					queue, convert, ow->sink, NULL);
+					queue, convert, scale, ow->sink, NULL);
 
 			bus = gst_pipeline_get_bus(GST_PIPELINE(
 					manager->priv->pipeline));
@@ -1427,9 +1428,11 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 			gst_object_unref(bus);
 
 			gst_element_set_state(ow->sink, GST_STATE_PLAYING);
+			gst_element_set_state(scale, GST_STATE_PLAYING);
 			gst_element_set_state(convert, GST_STATE_PLAYING);
 			gst_element_set_state(queue, GST_STATE_PLAYING);
-			gst_element_link(convert, ow->sink);
+			gst_element_link(scale, ow->sink);
+			gst_element_link(convert, scale);
 			gst_element_link(queue, convert);
 			gst_element_link(tee, queue);
 		}
