@@ -696,6 +696,14 @@ pidgin_media_add_audio_widget(PidginMedia *gtkmedia,
 	GtkWidget *volume_widget, *progress_parent, *volume, *progress;
 	double value;
 
+	static const gchar * const input_volume_icons[] = {
+		"microphone-sensitivity-muted-symbolic",
+		"microphone-sensitivity-high-symbolic",
+		"microphone-sensitivity-low-symbolic",
+		"microphone-sensitivity-medium-symbolic",
+		NULL
+	};
+
 	if (type & PURPLE_MEDIA_SEND_AUDIO) {
 		value = purple_prefs_get_int(
 			"/purple/media/audio/volume/input");
@@ -726,6 +734,9 @@ pidgin_media_add_audio_widget(PidginMedia *gtkmedia,
 		g_signal_connect (G_OBJECT(volume), "value-changed",
 				G_CALLBACK(pidgin_media_input_volume_changed),
 				gtkmedia->priv->media);
+		gtk_scale_button_set_icons(GTK_SCALE_BUTTON(volume),
+				input_volume_icons);
+
 		gtkmedia->priv->send_progress = progress;
 	} else if (type & PURPLE_MEDIA_RECV_AUDIO) {
 		g_signal_connect (G_OBJECT(volume), "value-changed",
