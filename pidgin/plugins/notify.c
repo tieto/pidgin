@@ -112,12 +112,6 @@ static void unnotify(PurpleConversation *conv, gboolean reset);
 static int unnotify_cb(GtkWidget *widget, gpointer data,
                        PurpleConversation *conv);
 
-/* gtk widget callbacks for prefs panel */
-static void type_toggle_cb(GtkWidget *widget, gpointer data);
-static void method_toggle_cb(GtkWidget *widget, gpointer data);
-static void notify_toggle_cb(GtkWidget *widget, gpointer data);
-static gboolean options_entry_cb(GtkWidget *widget, GdkEventFocus *event,
-                                 gpointer data);
 static void apply_method(void);
 static void apply_notify(void);
 
@@ -592,70 +586,6 @@ handle_present(PurpleConversation *conv)
 }
 
 static void
-type_toggle_cb(GtkWidget *widget, gpointer data)
-{
-	gboolean on = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-	gchar pref[256];
-
-	g_snprintf(pref, sizeof(pref), "/plugins/gtk/X11/notify/%s",
-	           (char *)data);
-
-	purple_prefs_set_bool(pref, on);
-}
-
-static void
-method_toggle_cb(GtkWidget *widget, gpointer data)
-{
-	gboolean on = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-	gchar pref[256];
-
-	g_snprintf(pref, sizeof(pref), "/plugins/gtk/X11/notify/%s",
-	           (char *)data);
-
-	purple_prefs_set_bool(pref, on);
-
-	if (!strcmp(data, "method_string")) {
-		GtkWidget *entry = g_object_get_data(G_OBJECT(widget), "title-entry");
-		gtk_widget_set_sensitive(entry, on);
-
-		purple_prefs_set_string("/plugins/gtk/X11/notify/title_string",
-		                      gtk_entry_get_text(GTK_ENTRY(entry)));
-	}
-
-	apply_method();
-}
-
-static void
-notify_toggle_cb(GtkWidget *widget, gpointer data)
-{
-	gboolean on = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-	gchar pref[256];
-
-	g_snprintf(pref, sizeof(pref), "/plugins/gtk/X11/notify/%s",
-	           (char *)data);
-
-	purple_prefs_set_bool(pref, on);
-
-	apply_notify();
-}
-
-static gboolean
-options_entry_cb(GtkWidget *widget, GdkEventFocus *evt, gpointer data)
-{
-	if (data == NULL)
-		return FALSE;
-
-	if (!strcmp(data, "method_string")) {
-		purple_prefs_set_string("/plugins/gtk/X11/notify/title_string",
-		                      gtk_entry_get_text(GTK_ENTRY(widget)));
-	}
-
-	apply_method();
-
-	return FALSE;
-}
-
-static void
 apply_method()
 {
 	GList *convs;
@@ -690,194 +620,136 @@ apply_notify()
 	}
 }
 
-static GtkWidget *
+static void
+settings_changed_cb(const char *name, PurplePrefType type, gconstpointer val,
+		gpointer data)
+{
+	if (g_str_has_prefix(name, "/plugins/gtk/X11/notify/method_")) {
+		apply_method();
+	} else if (g_str_has_prefix(name, "/plugins/gtk/X11/notify/notify_")) {
+		apply_notify();
+	}
+}
+
+static PurplePluginPrefFrame *
 get_config_frame(PurplePlugin *plugin)
 {
-	GtkWidget *ret = NULL, *frame = NULL;
-	GtkWidget *vbox = NULL, *hbox = NULL;
-	GtkWidget *toggle = NULL, *entry = NULL, *ref;
+	PurplePluginPrefFrame *frame;
+	PurplePluginPref *pref;
 
-	ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, 18);
-	gtk_container_set_border_width(GTK_CONTAINER (ret), 12);
+	frame = purple_plugin_pref_frame_new();
 
-	/*---------- "Notify For" ----------*/
-	frame = pidgin_make_frame(ret, _("Notify For"));
-	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	/* Notify For */
 
-	toggle = gtk_check_button_new_with_mnemonic(_("_IM windows"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/type_im"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(type_toggle_cb), "type_im");
+	pref = purple_plugin_pref_new_with_label(_("Notify For"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	ref = toggle;
-	toggle = gtk_check_button_new_with_mnemonic(_("\t_Notify for System messages"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                            purple_prefs_get_bool("/plugins/gtk/X11/notify/type_im_sys"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(type_toggle_cb), "type_im_sys");
-	gtk_widget_set_sensitive(toggle, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ref)));
-	g_signal_connect(G_OBJECT(ref), "toggled",
-	                 G_CALLBACK(pidgin_toggle_sensitive), toggle);
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/type_im", _("_IM windows"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	toggle = gtk_check_button_new_with_mnemonic(_("C_hat windows"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(type_toggle_cb), "type_chat");
+	/* TODO: Item should be enabled only when "IM windows" is on" */
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/type_im_sys",
+			_("\t_Notify for System messages"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	ref = toggle;
-	toggle = gtk_check_button_new_with_mnemonic(_("\t_Only when someone says your username"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                            purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_nick"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(type_toggle_cb), "type_chat_nick");
-	gtk_widget_set_sensitive(toggle, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ref)));
-	g_signal_connect(G_OBJECT(ref), "toggled",
-	                 G_CALLBACK(pidgin_toggle_sensitive), toggle);
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/type_chat",
+			_("C_hat windows"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	toggle = gtk_check_button_new_with_mnemonic(_("\tNotify for _System messages"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                            purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_sys"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(type_toggle_cb), "type_chat_sys");
-	gtk_widget_set_sensitive(toggle, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ref)));
-	g_signal_connect(G_OBJECT(ref), "toggled",
-	                 G_CALLBACK(pidgin_toggle_sensitive), toggle);
+	/* TODO: Item should be enabled only when "Chat windows" is on" */
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/type_chat_nick",
+			_("\t_Only when someone says your username"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	toggle = gtk_check_button_new_with_mnemonic(_("_Focused windows"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/type_focused"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(type_toggle_cb), "type_focused");
+	/* TODO: Item should be enabled only when "Chat windows" is on" */
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/type_chat_sys",
+			_("\tNotify for _System messages"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	/*---------- "Notification Methods" ----------*/
-	frame = pidgin_make_frame(ret, _("Notification Methods"));
-	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/type_focused",
+			_("_Focused windows"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	/* String method button */
-	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 18);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	toggle = gtk_check_button_new_with_mnemonic(_("Prepend _string into window title:"));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/method_string"));
-	gtk_box_pack_start(GTK_BOX(hbox), toggle, FALSE, FALSE, 0);
+	/* Notification Methods */
 
-	entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_entry_set_max_length(GTK_ENTRY(entry), 10);
-	gtk_widget_set_sensitive(GTK_WIDGET(entry),
-	                         purple_prefs_get_bool("/plugins/gtk/X11/notify/method_string"));
-	gtk_entry_set_text(GTK_ENTRY(entry),
-	                   purple_prefs_get_string("/plugins/gtk/X11/notify/title_string"));
-	g_object_set_data(G_OBJECT(toggle), "title-entry", entry);
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(method_toggle_cb), "method_string");
-	g_signal_connect(G_OBJECT(entry), "focus-out-event",
-	                 G_CALLBACK(options_entry_cb), "method_string");
+	pref = purple_plugin_pref_new_with_label(_("Notification Methods"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	/* Count method button */
-	toggle = gtk_check_button_new_with_mnemonic(_("Insert c_ount of new messages into window title"));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/method_count"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(method_toggle_cb), "method_count");
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/method_string",
+			_("Prepend _string into window title:"));
+	purple_plugin_pref_frame_add(frame, pref);
+
+	/* TODO: Item should be enabled only when "Prepend string" is on" */
+	pref = purple_plugin_pref_new_with_name(
+			"/plugins/gtk/X11/notify/title_string");
+	purple_plugin_pref_frame_add(frame, pref);
+
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/method_count",
+			_("Insert c_ount of new messages into window title"));
+	purple_plugin_pref_frame_add(frame, pref);
 
 #ifdef HAVE_X11
-	/* Count xprop method button */
-	toggle = gtk_check_button_new_with_mnemonic(_("Insert count of new message into _X property"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/method_count_xprop"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(method_toggle_cb), "method_count_xprop");
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/method_count_xprop",
+			_("Insert count of new message into _X property"));
+	purple_plugin_pref_frame_add(frame, pref);
+#endif
 
-	/* Urgent method button */
-	toggle = gtk_check_button_new_with_mnemonic(_("Set window manager \"_URGENT\" hint"));
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/method_urgent",
+#ifdef HAVE_X11
+			_("Set window manager \"_URGENT\" hint"));
 #else
-	toggle = gtk_check_button_new_with_mnemonic(_("_Flash window"));
+			_("_Flash window"));
 #endif
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/method_urgent"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(method_toggle_cb), "method_urgent");
+	purple_plugin_pref_frame_add(frame, pref);
 
-	/* Raise window method button */
-	toggle = gtk_check_button_new_with_mnemonic(_("R_aise conversation window"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/method_raise"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(method_toggle_cb), "method_raise");
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/method_raise",
+			_("R_aise conversation window"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	/* Present conversation method button */
-	/* Translators: "Present" as used here is a verb. The plugin presents
-	 * the window to the user. */
-	toggle = gtk_check_button_new_with_mnemonic(_("_Present conversation window"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/method_present"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(method_toggle_cb), "method_present");
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/method_present",
+			/* Translators: "Present" as used here is a verb.
+			 * The plugin presents the window to the user. */
+			_("_Present conversation window"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	/*---------- "Notification Removals" ----------*/
-	frame = pidgin_make_frame(ret, _("Notification Removal"));
-	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	/* Notification Removals */
 
-	/* Remove on focus button */
-	toggle = gtk_check_button_new_with_mnemonic(_("Remove when conversation window _gains focus"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_focus"));
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(notify_toggle_cb), "notify_focus");
+	pref = purple_plugin_pref_new_with_label(_("Notification Removal"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	/* Remove on click button */
-	toggle = gtk_check_button_new_with_mnemonic(_("Remove when conversation window _receives click"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_click"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(notify_toggle_cb), "notify_click");
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/notify_focus",
+			_("Remove when conversation window _gains focus"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	/* Remove on type button */
-	toggle = gtk_check_button_new_with_mnemonic(_("Remove when _typing in conversation window"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_type"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(notify_toggle_cb), "notify_type");
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/notify_click",
+			_("Remove when conversation window _receives click"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	/* Remove on message send button */
-	toggle = gtk_check_button_new_with_mnemonic(_("Remove when a _message gets sent"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_send"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(notify_toggle_cb), "notify_send");
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/notify_type",
+			_("Remove when _typing in conversation window"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-#if 0
-	/* Remove on conversation switch button */
-	toggle = gtk_check_button_new_with_mnemonic(_("Remove on switch to conversation ta_b"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-	                             purple_prefs_get_bool("/plugins/gtk/X11/notify/notify_switch"));
-	g_signal_connect(G_OBJECT(toggle), "toggled",
-	                 G_CALLBACK(notify_toggle_cb), "notify_switch");
-#endif
+	pref = purple_plugin_pref_new_with_name_and_label(
+			"/plugins/gtk/X11/notify/notify_send",
+			_("Remove when a _message gets sent"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	gtk_widget_show_all(ret);
-	return ret;
+	return frame;
 }
 
 static PidginPluginInfo *
@@ -901,7 +773,7 @@ plugin_query(GError **error)
 		"authors",              authors,
 		"website",              PURPLE_WEBSITE,
 		"abi-version",          PURPLE_ABI_VERSION,
-		"gtk-config-frame-cb",  get_config_frame,
+		"pref-frame-cb",        get_config_frame,
 		NULL
 	);
 }
@@ -965,6 +837,9 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 		convs = convs->next;
 	}
+
+	purple_prefs_connect_callback(plugin, "/plugins/gtk/X11/notify",
+			settings_changed_cb, NULL);
 
 	return TRUE;
 }
