@@ -971,7 +971,7 @@ static gg_action_t gg_handle_reading_hub_proxy(struct gg_session *sess,
 	struct gg_event *e, enum gg_state_t next_state,
 	enum gg_state_t alt_state, enum gg_state_t alt2_state)
 {
-	char buf[1024], *tmp, host[128];
+	char buf[1024], *tmp, host[129];
 	int port = GG_DEFAULT_PORT;
 	int reply;
 	const char *body;

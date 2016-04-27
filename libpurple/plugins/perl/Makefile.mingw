@@ -27,11 +27,11 @@ INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(PERL_LIB_TOP)/CORE
+			-I$(PERL_LIB_TOP)/lib/CORE
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
-			-L$(PERL_LIB_TOP)
+			-L$(PERL_LIB_TOP)/lib/CORE
 
 ##
 ##  SOURCES, OBJECTS
@@ -52,7 +52,7 @@ LIBS =	\
 			-lws2_32 \
 			-lintl \
 			-lpurple \
-			-lperl510
+			-lperl520
 
 include $(PIDGIN_COMMON_RULES)
 

@@ -12,7 +12,7 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 ##
 TARGET = ssl
 TARGET_NSS = ssl-nss
-TARGET_NSSPREEFS = nss-prefs
+TARGET_NSSPREFS = nss-prefs
 
 NEEDED_DLLS = \
 			$(NSS_TOP)/lib/freebl3.dll \

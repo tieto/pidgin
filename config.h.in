@@ -29,9 +29,6 @@
 /* use the given file as GnuTLS default trust store */
 #undef GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE
 
-/* Define if gst_registry_fork_set_enabled exists */
-#undef GST_CAN_DISABLE_FORKING
-
 /* Define to 1 if you have `alloca', as a function or macro. */
 #undef HAVE_ALLOCA
 
@@ -177,6 +174,9 @@
 
 /* Define to 1 if you have the <malloc.h> header file. */
 #undef HAVE_MALLOC_H
+
+/* Define if we have support for application media type. */
+#undef HAVE_MEDIA_APPLICATION
 
 /* Define to 1 if you have the `memcpy' function. */
 #undef HAVE_MEMCPY
@@ -444,11 +444,17 @@
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME
 
-/* Use GStreamer interfaces for X overlay support */
+/* Use GStreamer Video Overlay support */
+#undef USE_GSTAPP
+
+/* Use GStreamer 0.10 interfaces for X overlay support */
 #undef USE_GSTINTERFACES
 
-/* Use GStreamer for playing sounds */
+/* Use GStreamer 0.10 for playing sounds */
 #undef USE_GSTREAMER
+
+/* Use GStreamer Video Overlay support */
+#undef USE_GSTVIDEO
 
 /* Define if we're using GtkSpell */
 #undef USE_GTKSPELL

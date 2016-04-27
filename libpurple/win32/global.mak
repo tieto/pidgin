@@ -14,16 +14,14 @@ GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.16
 ENCHANT_TOP ?= $(WIN32_DEV_TOP)/enchant_1.6.0_win32
 GTK_TOP ?= $(WIN32_DEV_TOP)/gtk_2_0-2.14
 GTK_BIN ?= $(GTK_TOP)/bin
-BONJOUR_TOP ?= $(WIN32_DEV_TOP)/Bonjour_SDK
-LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2-2.9.0
+LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2-2.9.2_daa1
 MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0.2_daa3
-NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.17.1-nspr-4.10.7
-PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl-5.10.0
-SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.10
-TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.4.5
+NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.17.3-nspr-4.10.7
+PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl-5.20.1.1
+SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.12
 GSTREAMER_TOP ?= $(WIN32_DEV_TOP)/gstreamer-0.10.13
 GCC_SSP_TOP ?= $(shell dirname $(shell which $(CC)))
-CYRUS_SASL_TOP ?= $(WIN32_DEV_TOP)/cyrus-sasl-2.1.25
+CYRUS_SASL_TOP ?= $(WIN32_DEV_TOP)/cyrus-sasl-2.1.26_daa1
 
 # Where we installing this stuff to?
 PIDGIN_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir

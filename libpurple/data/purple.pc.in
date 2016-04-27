@@ -5,6 +5,7 @@ includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@
 sysconfdir=@sysconfdir@
+gstreamer=@GSTREAMER_VER@
 
 plugindir=${libdir}/purple-@PURPLE_MAJOR_VERSION@
 
