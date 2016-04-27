@@ -831,6 +831,7 @@ libpurple.so.0 libpurple0 #MINVER#
  PURPLE_DBUS_TYPE_PurpleLogLogger@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleLogSet@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleMedia@Base 2.6.0
+ PURPLE_DBUS_TYPE_PurpleMediaAppDataCallbacks@Base 2.10.12
  PURPLE_DBUS_TYPE_PurpleMediaBackend@Base 2.7.0
  PURPLE_DBUS_TYPE_PurpleMediaBackendIface@Base 2.7.0
  PURPLE_DBUS_TYPE_PurpleMediaCandidate@Base 2.6.0
@@ -1634,9 +1635,12 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_media_backend_get_codecs@Base 2.7.0
  purple_media_backend_get_local_candidates@Base 2.7.0
  purple_media_backend_get_type@Base 2.7.0
+ purple_media_backend_set_decryption_parameters@Base 2.10.12
+ purple_media_backend_set_encryption_parameters@Base 2.10.12
  purple_media_backend_set_params@Base 2.8.0
  purple_media_backend_set_remote_codecs@Base 2.7.0
  purple_media_backend_set_send_codec@Base 2.7.0
+ purple_media_backend_set_send_rtcp_mux@Base 2.10.12
  purple_media_candidate_copy@Base 2.7.0
  purple_media_candidate_get_base_ip@Base 2.6.0
  purple_media_candidate_get_base_port@Base 2.6.0
@@ -1697,6 +1701,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_media_is_initiator@Base 2.6.0
  purple_media_manager_create_media@Base 2.6.0
  purple_media_manager_create_output_window@Base 2.6.0
+ purple_media_manager_create_private_media@Base 2.10.12
  purple_media_manager_get@Base 2.6.0
  purple_media_manager_get_active_element@Base 2.6.0
  purple_media_manager_get_backend_type@Base 2.7.0
@@ -1705,14 +1710,19 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_media_manager_get_media@Base 2.6.0
  purple_media_manager_get_media_by_account@Base 2.6.0
  purple_media_manager_get_pipeline@Base 2.6.0
+ purple_media_manager_get_private_media@Base 2.10.12
+ purple_media_manager_get_private_media_by_account@Base 2.10.12
  purple_media_manager_get_type@Base 2.6.0
  purple_media_manager_get_ui_caps@Base 2.6.0
  purple_media_manager_get_video_caps@Base 2.8.0
+ purple_media_manager_receive_application_data@Base 2.10.12
  purple_media_manager_register_element@Base 2.6.0
  purple_media_manager_remove_media@Base 2.6.0
  purple_media_manager_remove_output_window@Base 2.6.0
  purple_media_manager_remove_output_windows@Base 2.6.0
+ purple_media_manager_send_application_data@Base 2.10.12
  purple_media_manager_set_active_element@Base 2.6.0
+ purple_media_manager_set_application_data_callbacks@Base 2.10.12
  purple_media_manager_set_backend_type@Base 2.7.0
  purple_media_manager_set_output_window@Base 2.6.0
  purple_media_manager_set_ui_caps@Base 2.6.0
@@ -1721,7 +1731,10 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_media_network_protocol_get_type@Base 2.6.0
  purple_media_param_is_supported@Base 2.8.0
  purple_media_remove_output_windows@Base 2.6.0
+ purple_media_send_dtmf@Base 2.10.12
  purple_media_session_type_get_type@Base 2.6.0
+ purple_media_set_decryption_parameters@Base 2.10.12
+ purple_media_set_encryption_parameters@Base 2.10.12
  purple_media_set_input_volume@Base 2.6.0
  purple_media_set_output_volume@Base 2.6.0
  purple_media_set_output_window@Base 2.6.0
@@ -1729,6 +1742,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_media_set_prpl_data@Base 2.6.0
  purple_media_set_remote_codecs@Base 2.6.0
  purple_media_set_send_codec@Base 2.6.0
+ purple_media_set_send_rtcp_mux@Base 2.10.12
  purple_media_state_changed_get_type@Base 2.6.0
  purple_media_stream_info@Base 2.6.0
  purple_menu_action_free@Base 2.2.0
@@ -2249,6 +2263,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_smarshal_VOID__ENUM_STRING_STRING_BOOLEAN@Base 2.6.0
  purple_smarshal_VOID__FLAGS_FLAGS@Base 2.7.0
  purple_smarshal_VOID__POINTER_POINTER_OBJECT@Base 2.6.0
+ purple_smarshal_VOID__POINTER_POINTER_OBJECT_OBJECT@Base 2.10.12
  purple_smarshal_VOID__STRING_STRING@Base 2.6.0
  purple_smarshal_VOID__STRING_STRING_DOUBLE@Base 2.6.0
  purple_smarshal_VOID__STRING_STRING_OBJECT_OBJECT@Base 2.7.0
@@ -2548,6 +2563,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_xfer_prepare_thumbnail@Base 2.7.0
  purple_xfer_prpl_ready@Base 2.6.0
  purple_xfer_read@Base 2.2.0
+ purple_xfer_read_file@Base 2.10.12
  purple_xfer_ref@Base 2.2.0
  purple_xfer_request@Base 2.2.0
  purple_xfer_request_accepted@Base 2.2.0
@@ -2573,6 +2589,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_xfer_unref@Base 2.2.0
  purple_xfer_update_progress@Base 2.2.0
  purple_xfer_write@Base 2.2.0
+ purple_xfer_write_file@Base 2.10.12
  purple_xfers_get_all@Base 2.2.0
  purple_xfers_get_handle@Base 2.2.0
  purple_xfers_get_ui_ops@Base 2.2.0
