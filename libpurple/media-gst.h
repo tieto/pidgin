@@ -71,6 +71,7 @@ typedef enum {
 
 	PURPLE_MEDIA_ELEMENT_SRC = 1 << 9,		/** can be set as an active src */
 	PURPLE_MEDIA_ELEMENT_SINK = 1 << 10,		/** can be set as an active sink */
+	PURPLE_MEDIA_ELEMENT_APPLICATION = 1 << 11,	/** supports application data */
 } PurpleMediaElementType;
 
 #ifdef __cplusplus

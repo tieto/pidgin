@@ -353,7 +353,7 @@ debug_command_cb(PurpleConversation *conv,
 
 		tmp = g_string_free(str, FALSE);
 	} else {
-		purple_conversation_write(conv, NULL, _("Supported debug options are: plugins version"),
+		purple_conversation_write(conv, NULL, _("Supported debug options are: plugins, version"),
 		                        PURPLE_MESSAGE_NO_LOG|PURPLE_MESSAGE_ERROR, time(NULL));
 		return PURPLE_CMD_RET_OK;
 	}

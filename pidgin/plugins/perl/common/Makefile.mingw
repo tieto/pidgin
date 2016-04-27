@@ -33,9 +33,9 @@ INCLUDE_PATHS =		-I. \
 			-I$(GTK_TOP)/include/pango-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
-			-I$(PERL_LIB_TOP)/CORE
+			-I$(PERL_LIB_TOP)/lib/CORE
 
-LIB_PATHS += 		-L$(PERL_LIB_TOP) \
+LIB_PATHS += 		-L$(PERL_LIB_TOP)/lib/CORE \
 			-L$(PURPLE_TOP) \
 			-L$(PIDGIN_TOP) \
 			-L$(PURPLE_PERL_TOP) \
@@ -77,7 +77,7 @@ OBJECTS = $(C_FILES:%.c=%.o)
 ##
 ## LIBRARIES
 ##
-LIBS =			-lperl510 \
+LIBS =			-lperl520 \
 			-lperl \
 			-lpurple \
 			-lpidgin \

@@ -349,6 +349,43 @@ gboolean purple_media_candidates_prepared(PurpleMedia *media,
 gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, PurpleMediaCodec *codec);
 
 /**
+ * Sets the encryption parameters of our media in the session.
+ *
+ * @param media The media object to find the session in.
+ * @param sess_id The session id of the session to set parameters of.
+ * @param cipher The cipher to use to encrypt our media in the session.
+ * @param auth The algorithm to use to compute authentication codes for our
+ *        media frames.
+ * @param key The encryption key.
+ * @param key_len Byte length of the encryption key.
+ *
+ * @since 2.11.0
+ */
+gboolean purple_media_set_encryption_parameters(PurpleMedia *media,
+		const gchar *sess_id, const gchar *cipher,
+		const gchar *auth, const gchar *key, gsize key_len);
+
+/**
+ * Sets the decryption parameters for a session participant's media.
+ *
+ * @param media The media object to find the session in.
+ * @param sess_id The session id of the session to set parameters of.
+ * @param participant The participant of the session to set parameters of.
+ * @param cipher The cipher to use to decrypt media coming from this session's
+ *          participant.
+ * @param auth The algorithm to use for authentication of the media coming
+ *        from the session's participant.
+ * @param key The decryption key.
+ * @param key_len Byte length of the decryption key.
+ *
+ * @since 2.11.0
+ */
+gboolean purple_media_set_decryption_parameters(PurpleMedia *media,
+		const gchar *sess_id, const gchar *participant,
+		const gchar *cipher, const gchar *auth,
+		const gchar *key, gsize key_len);
+
+/**
  * Gets whether a session's codecs are ready to be used.
  *
  * @param media The media object to find the session in.
@@ -359,6 +396,19 @@ gboolean purple_media_set_send_codec(PurpleMedia *media, const gchar *sess_id, P
  * @since 2.6.0
  */
 gboolean purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id);
+
+/**
+ * Sets the rtcp-mux option for the stream.
+ *
+ * @param media The media object to find the session in.
+ * @param sess_id The session id of the session find the stream in.
+ * @param participant The name of the remote user to set the rtcp-mux for.
+ * @paran send_rtcp_mux Whether to enable the rtcp-mux option
+ *
+ * @return @c TRUE RTCP-Mux was set successfully, or @c FALSE otherwise.
+ */
+gboolean purple_media_set_send_rtcp_mux(PurpleMedia *media,
+		const gchar *sess_id, const gchar *participant, gboolean send_rtcp_mux);
 
 /**
  * Gets whether the local user is the conference/session/stream's initiator.
@@ -436,6 +486,21 @@ gulong purple_media_set_output_window(PurpleMedia *media,
  * @since 2.6.0
  */
 void purple_media_remove_output_windows(PurpleMedia *media);
+
+/**
+ * Sends a DTMF signal out-of-band.
+ *
+ * @param media The media instance to send a DTMF signal to.
+ * @param sess_id The session id of the session to send the DTMF signal on.
+ * @param dtmf The character representing the DTMF in the range [0-9#*A-D].
+ * @param volume The power level expressed in dBm0 after dropping the sign
+ *      in the range of 0 to 63.  A larger value represents a lower volume.
+ * @param duration The duration of the tone in milliseconds.
+ *
+ * @since 2.11
+ */
+gboolean purple_media_send_dtmf(PurpleMedia *media, const gchar *session_id,
+		gchar dtmf, guint8 volume, guint16 duration);
 
 #ifdef __cplusplus
 }

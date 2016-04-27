@@ -416,7 +416,7 @@ int gg_pubdir50_handle_reply_sess(struct gg_session *sess, struct gg_event *e, c
 		/* jeśli dostaliśmy namier na następne wyniki, to znaczy że
 		 * mamy koniec wyników i nie jest to kolejna osoba. */
 		if (!strcasecmp(field, "nextstart")) {
-			res->next = atoi(value);
+			res->next = value ? atoi(value) : 0;
 			num--;
 		} else {
 			if (sess->encoding == GG_ENCODING_CP1250) {

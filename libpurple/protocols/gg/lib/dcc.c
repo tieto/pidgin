@@ -650,6 +650,7 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 		unsigned int utmp;
 		socklen_t res_size = sizeof(res);
 		char buf[1024], ack[] = "UDAG";
+		void *tmp_buf;
 
 		struct gg_dcc_file_info_packet {
 			struct gg_dcc_big_packet big;
@@ -799,11 +800,14 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 				h->state = GG_STATE_READING_FILE_HEADER;
 				h->chunk_size = sizeof(big_pkt);
 				h->chunk_offset = 0;
-				if (!(h->chunk_buf = malloc(sizeof(big_pkt)))) {
+				h->chunk_buf = NULL;
+				tmp_buf = malloc(sizeof(big_pkt));
+				if (!tmp_buf) {
 					gg_debug(GG_DEBUG_MISC, "// gg_dcc_watch_fd() out of memory\n");
 					free(e);
 					return NULL;
 				}
+				h->chunk_buf = tmp_buf;
 				h->check = GG_CHECK_READ;
 				h->timeout = GG_DEFAULT_TIMEOUT;
 
@@ -1342,11 +1346,14 @@ struct gg_event *gg_dcc_watch_fd(struct gg_dcc *h)
 					h->timeout = GG_DEFAULT_TIMEOUT;
 					h->chunk_offset = 0;
 					h->chunk_size = sizeof(big_pkt);
-					if (!(h->chunk_buf = malloc(sizeof(big_pkt)))) {
+					h->chunk_buf = NULL;
+					tmp_buf = malloc(sizeof(big_pkt));
+					if (!tmp_buf) {
 						gg_debug(GG_DEBUG_MISC, "// gg_dcc_watch_fd() out of memory\n");
 						free(e);
 						return NULL;
 					}
+					h->chunk_buf = tmp_buf;
 				} else {
 					h->state = GG_STATE_GETTING_FILE;
 					h->timeout = GG_DCC_TIMEOUT_GET;

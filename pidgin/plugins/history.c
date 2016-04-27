@@ -134,7 +134,7 @@ static void historize(PurpleConversation *c)
 		header_date = purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time));
 
 	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), escaped_alias, header_date);
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options);
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options|GTK_IMHTML_NO_SMILEY);
 	g_free(header);
 	g_free(escaped_alias);
 
