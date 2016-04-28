@@ -343,6 +343,7 @@ pidgin_plugin_open_config(PurplePlugin *plugin, GtkWindow *parent)
 			purple_plugin_info_set_ui_data(info, NULL);
 			return;
 		}
+		gtk_widget_set_vexpand(box, TRUE);
 
 		ui_data->u.frame.dialog = dialog = gtk_dialog_new_with_buttons(
 			PIDGIN_ALERT_TITLE, parent,
