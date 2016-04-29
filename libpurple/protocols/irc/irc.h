@@ -32,6 +32,7 @@
 
 #include "circularbuffer.h"
 #include "xfer.h"
+#include "queuedoutputstream.h"
 #include "roomlist.h"
 #include "sslconn.h"
 
@@ -74,17 +75,16 @@ struct irc_conn {
 	GHashTable *msgs;
 	GHashTable *cmds;
 	char *server;
-	int fd;
-	guint inpa;
+	GSocketConnection *conn;
+	GCancellable *cancellable;
 	guint timer;
 	GHashTable *buddies;
 
 	gboolean ison_outstanding;
 	GList *buddies_outstanding;
 
-	char *inbuf;
-	int inbuflen;
-	int inbufused;
+	GDataInputStream *input;
+	PurpleQueuedOutputStream *output;
 
 	GString *motd;
 	GString *names;
@@ -104,12 +104,8 @@ struct irc_conn {
 		time_t signon;
 	} whois;
 	PurpleRoomlist *roomlist;
-	PurpleSslConnection *gsc;
 
 	gboolean quitting;
-
-	PurpleCircularBuffer *outbuf;
-	guint writeh;
 
 	time_t recv_time;
 
