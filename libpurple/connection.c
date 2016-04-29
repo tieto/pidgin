@@ -542,6 +542,44 @@ purple_connection_ssl_error (PurpleConnection *gc,
 		purple_ssl_strerror(ssl_error));
 }
 
+void
+purple_connection_g_error(PurpleConnection *pc, const GError *error,
+		const gchar *description)
+{
+	PurpleConnectionError reason;
+	gchar *tmp;
+
+	if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+		/* Not a connection error. Ignore. */
+		return;
+	}
+
+	if (error->domain == G_TLS_ERROR) {
+		switch (error->code) {
+			case G_TLS_ERROR_UNAVAILABLE:
+				reason = PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT;
+			case G_TLS_ERROR_NOT_TLS:
+			case G_TLS_ERROR_HANDSHAKE:
+				reason = PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR;
+			case G_TLS_ERROR_BAD_CERTIFICATE:
+			case G_TLS_ERROR_CERTIFICATE_REQUIRED:
+				reason = PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR;
+			case G_TLS_ERROR_EOF:
+			case G_TLS_ERROR_MISC:
+			default:
+				reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
+		}
+	} else if (error->domain == G_IO_ERROR) {
+		reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
+	} else {
+		reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
+	}
+
+	tmp = g_strdup_printf(description, error->message);
+	purple_connection_error(pc, reason, tmp);
+	g_free(tmp);
+}
+
 gboolean
 purple_connection_error_is_fatal (PurpleConnectionError reason)
 {

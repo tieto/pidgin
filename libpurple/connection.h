@@ -506,6 +506,27 @@ void
 purple_connection_ssl_error (PurpleConnection *gc,
                              PurpleSslErrorType ssl_error);
 
+/*
+ * purple_connection_g_error
+ * @gc: Connection the error is associated with
+ * @error: Error information
+ * @description: Extra string which further explains the error.
+ *               Substitutes a "%s" with the GError message.
+ *
+ * Closes a connection similar to purple_connection_error(), but
+ * takes a GError which is then converted to purple error codes.
+ *
+ * This function ignores G_IO_ERROR_CANCELLED, returning without
+ * closing the connection. This can be used as a shortcut when
+ * cancelling connections, as this is commonly done when shutting
+ * down a connection. If G_IO_ERROR_CANCELLED needs to be caught,
+ * do so with g_error_matches() prior to calling this function.
+ */
+void
+purple_connection_g_error(PurpleConnection *pc,
+                          const GError *error,
+                          const gchar *description);
+
 /**
  * purple_connection_error_is_fatal:
  *
