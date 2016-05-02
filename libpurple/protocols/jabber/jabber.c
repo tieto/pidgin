@@ -220,12 +220,13 @@ static char *jabber_prep_resource(char *input) {
 static gboolean
 jabber_process_starttls(JabberStream *js, PurpleXmlNode *packet)
 {
-	PurpleAccount *account;
 	PurpleXmlNode *starttls;
+
+#if 0
+	PurpleAccount *account;
 
 	account = purple_connection_get_account(js->gc);
 
-#if 0
 	/*
 	 * This code DOES NOT EXIST, will never be enabled by default, and
 	 * will never ever be supported (by me).
