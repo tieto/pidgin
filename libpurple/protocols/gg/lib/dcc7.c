@@ -333,7 +333,7 @@ static int gg_dcc7_reverse_connect(struct gg_dcc7 *dcc)
 {
 	gg_debug_dcc(dcc, GG_DEBUG_FUNCTION, "** gg_dcc7_reverse_connect(%p)\n", dcc);
 
-	if (dcc->reverse) {
+	if (dcc && dcc->reverse) {
 		gg_debug_dcc(dcc, GG_DEBUG_MISC, "// gg_dcc7_reverse_connect() already reverse connection\n");
 		return -1;
 	}
