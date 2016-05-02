@@ -1347,10 +1347,16 @@ state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 			gst_object_unref(session->session);
 			g_hash_table_remove(priv->sessions, session->id);
 
-			pad = gst_pad_get_peer(session->srcpad);
-			gst_element_remove_pad(GST_ELEMENT_PARENT(pad), pad);
-			gst_object_unref(pad);
-			gst_object_unref(session->srcpad);
+			if (session->srcpad) {
+				pad = gst_pad_get_peer(session->srcpad);
+				if (pad) {
+					gst_element_remove_pad(
+							GST_PAD_PARENT(pad),
+							pad);
+					gst_object_unref(pad);
+				}
+				gst_object_unref(session->srcpad);
+			}
 
 			remove_element(session->srcvalve);
 			remove_element(session->tee);
