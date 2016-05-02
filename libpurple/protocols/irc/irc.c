@@ -121,6 +121,7 @@ int irc_send(struct irc_conn *irc, const char *buf)
 int irc_send_len(struct irc_conn *irc, const char *buf, int buflen)
 {
  	char *tosend= g_strdup(buf);
+	int len;
 	GBytes *data;
 
 	purple_signal_emit(_irc_protocol, "irc-sending-text", purple_account_get_connection(irc->account), &tosend);
@@ -128,7 +129,8 @@ int irc_send_len(struct irc_conn *irc, const char *buf, int buflen)
 	if (tosend == NULL)
 		return 0;
 
-	data = g_bytes_new_take(tosend, strlen(tosend));
+	len = strlen(tosend);
+	data = g_bytes_new_take(tosend, len);
 	purple_queued_output_stream_push_bytes(irc->output, data);
 	g_bytes_unref(data);
 
@@ -140,7 +142,7 @@ int irc_send_len(struct irc_conn *irc, const char *buf, int buflen)
 				purple_account_get_connection(irc->account));
 	}
 
-	return strlen(tosend);
+	return len;
 }
 
 /* XXX I don't like messing directly with these buddies */
