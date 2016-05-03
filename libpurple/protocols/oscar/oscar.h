@@ -1367,7 +1367,7 @@ struct name_data
 
 void oscar_free_name_data(struct name_data *data);
 
-void oscar_init_account_options(PurpleProtocol *protocol);
+void oscar_init_account_options(PurpleProtocol *protocol, gboolean is_icq);
 
 #ifdef __cplusplus
 }

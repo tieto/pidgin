@@ -5559,7 +5559,7 @@ gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable *param
 	return FALSE;
 }
 
-void oscar_init_account_options(PurpleProtocol *protocol)
+void oscar_init_account_options(PurpleProtocol *protocol, gboolean is_icq)
 {
 	PurpleAccountOption *option;
 	static const gchar *encryption_keys[] = {
@@ -5588,6 +5588,9 @@ void oscar_init_account_options(PurpleProtocol *protocol)
 	GList *login_options = NULL;
 	int i;
 
+	option = purple_account_option_string_new(_("Server"), "server", oscar_get_login_server(is_icq, TRUE));
+	protocol->account_options = g_list_append(protocol->account_options, option);
+
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
 	protocol->account_options = g_list_append(protocol->account_options, option);
 
@@ -5613,6 +5616,15 @@ void oscar_init_account_options(PurpleProtocol *protocol)
 		_("Always use AIM/ICQ proxy server for\nfile transfers and direct IM (slower,\nbut does not reveal your IP address)"), "always_use_rv_proxy",
 		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
 	protocol->account_options = g_list_append(protocol->account_options, option);
+
+	if (is_icq) {
+		option = purple_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
+		protocol->account_options = g_list_append(protocol->account_options, option);
+	} else {
+		option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
+												OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
+		protocol->account_options = g_list_append(protocol->account_options, option);
+	}
 }
 
 static void
