@@ -43,7 +43,7 @@ aim_protocol_init(PurpleProtocol *protocol)
 	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_string_new(_("Server"), "server", oscar_get_login_server(FALSE, TRUE));
-	protocol->account_options = g_list_append(protocol->account_options, option);
+	protocol->account_options = g_list_prepend(protocol->account_options, option);
 }
 
 static void
