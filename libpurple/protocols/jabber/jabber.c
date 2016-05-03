@@ -246,6 +246,7 @@ jabber_process_starttls(JabberStream *js, PurpleXmlNode *packet)
 	return TRUE;
 #endif
 
+#if 0
 	starttls = purple_xmlnode_get_child(packet, "starttls");
 	if(purple_xmlnode_get_child(starttls, "required")) {
 		purple_connection_error(js->gc,
@@ -262,6 +263,7 @@ jabber_process_starttls(JabberStream *js, PurpleXmlNode *packet)
 	}
 
 	return FALSE;
+#endif
 }
 
 void jabber_stream_features_parse(JabberStream *js, PurpleXmlNode *packet)
