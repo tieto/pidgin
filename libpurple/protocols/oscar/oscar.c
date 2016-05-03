@@ -348,7 +348,9 @@ connection_common_established_cb(FlapConnection *conn)
 		flap_connection_send_version(od, conn);
 	else
 	{
-		if (purple_account_get_bool(account, "use_clientlogin", OSCAR_DEFAULT_USE_CLIENTLOGIN))
+		const gchar *login_type = purple_account_get_string(account, "login_type", OSCAR_DEFAULT_LOGIN);
+
+		if (strcmp(login_type, OSCAR_CLIENT_LOGIN) == 0)
 		{
 			ClientInfo aiminfo = CLIENTINFO_PURPLE_AIM;
 			ClientInfo icqinfo = CLIENTINFO_PURPLE_ICQ;
@@ -641,6 +643,7 @@ oscar_login(PurpleAccount *account)
 	PurpleConnection *gc;
 	OscarData *od;
 	const gchar *encryption_type;
+	const gchar *login_type;
 	GList *handlers;
 	GList *sorted_handlers;
 	GList *cur;
@@ -740,6 +743,7 @@ oscar_login(PurpleAccount *account)
 
 	od->default_port = purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
 
+	login_type = purple_account_get_string(account, "login_type", OSCAR_DEFAULT_LOGIN);
 	encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
 	od->use_ssl = strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0;
 
@@ -757,7 +761,7 @@ oscar_login(PurpleAccount *account)
 	 * This authentication method is used for both ICQ and AIM when
 	 * clientLogin is not enabled.
 	 */
-	if (purple_account_get_bool(account, "use_clientlogin", OSCAR_DEFAULT_USE_CLIENTLOGIN)) {
+	if (strcmp(login_type, OSCAR_CLIENT_LOGIN) == 0) {
 		send_client_login(od, purple_account_get_username(account));
 	} else {
 		FlapConnection *newconn;
@@ -5570,7 +5574,18 @@ void oscar_init_account_options(PurpleProtocol *protocol)
 		OSCAR_NO_ENCRYPTION,
 		NULL
 	};
+	static const gchar *login_keys[] = {
+		N_("Use clientLogin authentication"),
+		N_("Use MD5 based authentication"),
+		NULL
+	};
+	static const gchar *login_values[] = {
+		OSCAR_CLIENT_LOGIN,
+		OSCAR_MD5_LOGIN,
+		NULL
+	};
 	GList *encryption_options = NULL;
+	GList *login_options = NULL;
 	int i;
 
 	option = purple_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
@@ -5585,8 +5600,13 @@ void oscar_init_account_options(PurpleProtocol *protocol)
 	option = purple_account_option_list_new(_("Connection security"), "encryption", encryption_options);
 	protocol->account_options = g_list_append(protocol->account_options, option);
 
-	option = purple_account_option_bool_new(_("Use clientLogin"), "use_clientlogin",
-			OSCAR_DEFAULT_USE_CLIENTLOGIN);
+	for (i = 0; login_keys[i]; i++) {
+		PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1);
+		kvp->key = g_strdup(_(login_keys[i]));
+		kvp->value = g_strdup(login_values[i]);
+		login_options = g_list_append(login_options, kvp);
+	}
+	option = purple_account_option_list_new(_("Authentication method"), "login_type", login_options);
 	protocol->account_options = g_list_append(protocol->account_options, option);
 
 	option = purple_account_option_bool_new(
