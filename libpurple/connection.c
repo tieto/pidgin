@@ -558,12 +558,15 @@ purple_connection_g_error(PurpleConnection *pc, const GError *error,
 		switch (error->code) {
 			case G_TLS_ERROR_UNAVAILABLE:
 				reason = PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT;
+				break;
 			case G_TLS_ERROR_NOT_TLS:
 			case G_TLS_ERROR_HANDSHAKE:
 				reason = PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR;
+				break;
 			case G_TLS_ERROR_BAD_CERTIFICATE:
 			case G_TLS_ERROR_CERTIFICATE_REQUIRED:
 				reason = PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR;
+				break;
 			case G_TLS_ERROR_EOF:
 			case G_TLS_ERROR_MISC:
 			default:
