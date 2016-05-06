@@ -220,12 +220,13 @@ static char *jabber_prep_resource(char *input) {
 static gboolean
 jabber_process_starttls(JabberStream *js, PurpleXmlNode *packet)
 {
-	PurpleAccount *account;
 	PurpleXmlNode *starttls;
+
+#if 0
+	PurpleAccount *account;
 
 	account = purple_connection_get_account(js->gc);
 
-#if 0
 	/*
 	 * This code DOES NOT EXIST, will never be enabled by default, and
 	 * will never ever be supported (by me).
@@ -245,6 +246,7 @@ jabber_process_starttls(JabberStream *js, PurpleXmlNode *packet)
 	return TRUE;
 #endif
 
+#if 0
 	starttls = purple_xmlnode_get_child(packet, "starttls");
 	if(purple_xmlnode_get_child(starttls, "required")) {
 		purple_connection_error(js->gc,
@@ -261,6 +263,7 @@ jabber_process_starttls(JabberStream *js, PurpleXmlNode *packet)
 	}
 
 	return FALSE;
+#endif
 }
 
 void jabber_stream_features_parse(JabberStream *js, PurpleXmlNode *packet)

@@ -302,7 +302,7 @@ der_parse_name(DerNodeData *name_node)
 {
 	GSList *list;
 	GSList *ret = NULL;
-	DerOIDValue *value;
+	DerOIDValue *value = NULL;
 
 	g_return_val_if_fail(name_node != NULL, NULL);
 
@@ -381,6 +381,8 @@ der_parse_time(DerNodeData *node)
 
 	g_return_val_if_fail(node != NULL, NULL);
 	g_return_val_if_fail(node->content != NULL, NULL);
+
+	memset(time_parts, 0, sizeof(gint) * sizeof(time_parts));
 
 	time = der_parse_string(node);
 

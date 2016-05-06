@@ -336,7 +336,7 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 	if (crt == NULL) {
 		purple_debug_warning("gtkcertmgr/tls_peers_mgmt",
 				"Unable to fetch certificate '%s': %s",
-				id, error->message);
+				id, error ? error->message : "unknown error");
 		g_clear_error(&error);
 		g_free(id);
 	}
