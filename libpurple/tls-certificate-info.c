@@ -382,7 +382,7 @@ der_parse_time(DerNodeData *node)
 	g_return_val_if_fail(node != NULL, NULL);
 	g_return_val_if_fail(node->content != NULL, NULL);
 
-	memset(time_parts, 0, sizeof(gint) * sizeof(time_parts));
+	memset(time_parts, 0, sizeof(time_parts));
 
 	time = der_parse_string(node);
 
