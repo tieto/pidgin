@@ -350,7 +350,7 @@ connection_common_established_cb(FlapConnection *conn)
 	{
 		const gchar *login_type = purple_account_get_string(account, "login_type", OSCAR_DEFAULT_LOGIN);
 
-		if (strcmp(login_type, OSCAR_CLIENT_LOGIN) == 0)
+		if (strcmp(login_type, OSCAR_MD5_LOGIN) != 0)
 		{
 			ClientInfo aiminfo = CLIENTINFO_PURPLE_AIM;
 			ClientInfo icqinfo = CLIENTINFO_PURPLE_ICQ;
@@ -762,7 +762,35 @@ oscar_login(PurpleAccount *account)
 	 * clientLogin is not enabled.
 	 */
 	if (strcmp(login_type, OSCAR_CLIENT_LOGIN) == 0) {
+		/* Note: Actual server/port configuration is ignored here */
 		send_client_login(od, purple_account_get_username(account));
+	} else if (strcmp(login_type, OSCAR_KERBEROS_LOGIN) == 0) {
+		const char *server;
+
+		if (!od->use_ssl) {
+			purple_connection_error(
+				gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+				_("You required Kerberos authentication but encryption is disabled in your account settings."));
+			return;
+		}
+		server = purple_account_get_string(account, "server", AIM_DEFAULT_KDC_SERVER);
+		/*
+		 * If the account's server is what the oscar protocol has offered as
+		 * the default login server through the vast eons (all two of
+		 * said default options, AFAIK) and the user wants KDC, we'll
+		 * do what we know is best for them and change the setting out
+		 * from under them to the KDC login server.
+		 */
+		if (!strcmp(server, oscar_get_login_server(od->icq, FALSE)) ||
+			!strcmp(server, oscar_get_login_server(od->icq, TRUE)) ||
+			!strcmp(server, AIM_ALT_LOGIN_SERVER) ||
+			!strcmp(server, "")) {
+			purple_debug_info("oscar", "Account uses Kerberos auth, so changing server to default KDC server\n");
+			purple_account_set_string(account, "server", AIM_DEFAULT_KDC_SERVER);
+			purple_account_set_int(account, "port", AIM_DEFAULT_KDC_PORT);
+		}
+		send_kerberos_login(od, purple_account_get_username(account));
 	} else {
 		FlapConnection *newconn;
 		const char *server;
@@ -779,9 +807,13 @@ oscar_login(PurpleAccount *account)
 			 * do what we know is best for them and change the setting out
 			 * from under them to the SSL login server.
 			 */
-			if (!strcmp(server, oscar_get_login_server(od->icq, FALSE)) || !strcmp(server, AIM_ALT_LOGIN_SERVER)) {
+			if (!strcmp(server, oscar_get_login_server(od->icq, FALSE)) ||
+				!strcmp(server, AIM_ALT_LOGIN_SERVER) ||
+				!strcmp(server, AIM_DEFAULT_KDC_SERVER) ||
+				!strcmp(server, "")) {
 				purple_debug_info("oscar", "Account uses SSL, so changing server to default SSL server\n");
 				purple_account_set_string(account, "server", oscar_get_login_server(od->icq, TRUE));
+				purple_account_set_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
 				server = oscar_get_login_server(od->icq, TRUE);
 			}
 
@@ -796,9 +828,12 @@ oscar_login(PurpleAccount *account)
 			 * SSL but their server is set to OSCAR_DEFAULT_SSL_LOGIN_SERVER,
 			 * set it back to the default.
 			 */
-			if (!strcmp(server, oscar_get_login_server(od->icq, TRUE))) {
+			if (!strcmp(server, oscar_get_login_server(od->icq, TRUE)) ||
+				!strcmp(server, AIM_DEFAULT_KDC_SERVER) ||
+				!strcmp(server, "")) {
 				purple_debug_info("oscar", "Account does not use SSL, so changing server back to non-SSL\n");
 				purple_account_set_string(account, "server", oscar_get_login_server(od->icq, FALSE));
+				purple_account_set_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
 				server = oscar_get_login_server(od->icq, FALSE);
 			}
 
@@ -5574,16 +5609,30 @@ void oscar_init_account_options(PurpleProtocol *protocol, gboolean is_icq)
 		OSCAR_NO_ENCRYPTION,
 		NULL
 	};
-	static const gchar *login_keys[] = {
+	static const gchar *aim_login_keys[] = {
+		N_("Use clientLogin authentication"),
+		N_("Use Kerberos-based authentication"),
+		N_("Use MD5 based authentication"),
+		NULL
+	};
+	static const gchar *aim_login_values[] = {
+		OSCAR_CLIENT_LOGIN,
+		OSCAR_KERBEROS_LOGIN,
+		OSCAR_MD5_LOGIN,
+		NULL
+	};
+	static const gchar *icq_login_keys[] = {
 		N_("Use clientLogin authentication"),
 		N_("Use MD5 based authentication"),
 		NULL
 	};
-	static const gchar *login_values[] = {
+	static const gchar *icq_login_values[] = {
 		OSCAR_CLIENT_LOGIN,
 		OSCAR_MD5_LOGIN,
 		NULL
 	};
+	const gchar **login_keys;
+	const gchar **login_values;
 	GList *encryption_options = NULL;
 	GList *login_options = NULL;
 	int i;
@@ -5603,6 +5652,13 @@ void oscar_init_account_options(PurpleProtocol *protocol, gboolean is_icq)
 	option = purple_account_option_list_new(_("Connection security"), "encryption", encryption_options);
 	protocol->account_options = g_list_append(protocol->account_options, option);
 
+	if (is_icq) {
+		login_keys = icq_login_keys;
+		login_values = icq_login_values;
+	} else {
+		login_keys = aim_login_keys;
+		login_values = aim_login_values;
+	}
 	for (i = 0; login_keys[i]; i++) {
 		PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1);
 		kvp->key = g_strdup(_(login_keys[i]));

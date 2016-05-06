@@ -38,6 +38,9 @@
 #define ICQ_DEFAULT_LOGIN_SERVER "login.icq.com"
 #define ICQ_DEFAULT_SSL_LOGIN_SERVER "slogin.icq.com"
 
+#define AIM_DEFAULT_KDC_SERVER "kdc.uas.aol.com"
+#define AIM_DEFAULT_KDC_PORT 443
+
 #define OSCAR_DEFAULT_LOGIN_PORT 5190
 
 #define OSCAR_OPPORTUNISTIC_ENCRYPTION "opportunistic_encryption"
@@ -46,6 +49,7 @@
 
 #define OSCAR_MD5_LOGIN "md5_login"
 #define OSCAR_CLIENT_LOGIN "client_login"
+#define OSCAR_KERBEROS_LOGIN "kerberos_login"
 
 #ifndef _WIN32
 #define OSCAR_DEFAULT_CUSTOM_ENCODING "ISO-8859-1"

@@ -11,6 +11,7 @@ OSCARSOURCES = \
 	aim.h               \
 	bstream.c           \
 	clientlogin.c       \
+	kerberos.c          \
 	encoding.c          \
 	encoding.h          \
 	family_admin.c      \
