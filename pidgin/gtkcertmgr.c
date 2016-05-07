@@ -317,7 +317,7 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 	GtkTreeModel *model;
 	gchar *id;
 	GTlsCertificate *crt;
-	char *title;
+	gchar *title;
 	GError *error = NULL;
 
 	/* See if things are selected */
@@ -331,7 +331,7 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 	gtk_tree_model_get(model, &iter, TPM_HOSTNAME_COLUMN, &id, -1);
 
 	/* Now retrieve the certificate */
-	crt = purple_tls_certificate_new_from_id(id, NULL);
+	crt = purple_tls_certificate_new_from_id(id, &error);
 
 	if (crt == NULL) {
 		purple_debug_warning("gtkcertmgr/tls_peers_mgmt",
