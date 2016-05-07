@@ -39,7 +39,6 @@
 #include	"formcmds.h"
 #include	"http.h"
 #include	"cipher.h"
-#include	"voicevideo.h"
 
 
 #define		MXIT_MS_OFFSET		3
@@ -707,12 +706,6 @@ void mxit_send_register( struct MXitSession* session )
 
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
 
-	/* Voice and Video supported */
-	if ( mxit_audio_enabled() && mxit_video_enabled() )
-		features |= ( MXIT_CF_VOICE | MXIT_CF_VIDEO );
-	else if ( mxit_audio_enabled() )
-		features |= MXIT_CF_VOICE;
-
 	/* generate client version string (eg, P-2.7.10-Y-PURPLE) */
 	clientVersion = g_strdup_printf( "%c-%i.%i.%i-%s-%s", MXIT_CP_DISTCODE, PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION, PURPLE_MICRO_VERSION, MXIT_CP_ARCH, MXIT_CP_PLATFORM );
 
@@ -750,12 +743,6 @@ void mxit_send_login( struct MXitSession* session )
 	unsigned int	features	= MXIT_CP_FEATURES;
 
 	locale = purple_account_get_string( session->acc, MXIT_CONFIG_LOCALE, MXIT_DEFAULT_LOCALE );
-
-	/* Voice and Video supported */
-	if ( mxit_audio_enabled() && mxit_video_enabled() )
-		features |= ( MXIT_CF_VOICE | MXIT_CF_VIDEO );
-	else if ( mxit_audio_enabled() )
-		features |= MXIT_CF_VOICE;
 
 	/* generate client version string (eg, P-2.7.10-Y-PURPLE) */
 	clientVersion = g_strdup_printf( "%c-%i.%i.%i-%s-%s", MXIT_CP_DISTCODE, PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION, PURPLE_MICRO_VERSION, MXIT_CP_ARCH, MXIT_CP_PLATFORM );
@@ -1487,10 +1474,6 @@ static void mxit_parse_cmd_login( struct MXitSession* session, struct record** r
 	/* extract UserId (from protocol 5.9) */
 	if ( records[1]->fcount >= 9 )
 		session->uid = g_strdup( records[1]->fields[8]->data );
-
-	/* extract VoIP server (from protocol 6.2) */
-	if ( records[1]->fcount >= 11 )
-		g_strlcpy( session->voip_server, records[1]->fields[10]->data, sizeof( session->voip_server ) );
 
 	/* display the current splash-screen */
 	if ( splash_popup_enabled( session ) )
