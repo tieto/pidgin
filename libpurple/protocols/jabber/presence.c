@@ -305,6 +305,8 @@ PurpleXmlNode *jabber_presence_create_js(JabberStream *js, JabberBuddyState stat
 	gboolean audio_enabled, video_enabled;
 #endif
 
+	g_return_val_if_fail(js !=NULL, NULL);
+
 	presence = purple_xmlnode_new("presence");
 
 	if(state == JABBER_BUDDY_STATE_UNAVAILABLE)
@@ -332,7 +334,7 @@ PurpleXmlNode *jabber_presence_create_js(JabberStream *js, JabberBuddyState stat
 	}
 
 	/* if we are idle and not offline, include idle */
-	if (js && js->idle && state != JABBER_BUDDY_STATE_UNAVAILABLE) {
+	if (js->idle && state != JABBER_BUDDY_STATE_UNAVAILABLE) {
 		PurpleXmlNode *query = purple_xmlnode_new_child(presence, "query");
 		gchar seconds[10];
 		g_snprintf(seconds, 10, "%d", (int) (time(NULL) - js->idle));
