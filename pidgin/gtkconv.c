@@ -6760,9 +6760,13 @@ pidgin_conv_write_conv(PurpleConversation *conv, PurpleMessage *pmsg)
 	gtkconv->last_flags = flags;
 	gtkconv->last_conversed = conv;
 
-	smileyed = purple_smiley_parser_smileify(conv, displaying,
-		(flags & PURPLE_MESSAGE_RECV), pidgin_conv_write_smiley,
-		(gpointer)purple_account_get_protocol_name(account));
+	if(purple_message_get_flags(pmsg) & PURPLE_MESSAGE_SYSTEM) {
+		smileyed = g_strdup(displaying);
+	} else {
+		smileyed = purple_smiley_parser_smileify(conv, displaying,
+			(flags & PURPLE_MESSAGE_RECV), pidgin_conv_write_smiley,
+			(gpointer)purple_account_get_protocol_name(account));
+	}
 	imgized = box_remote_images(conv, smileyed);
 	msg_tokenized = replace_message_tokens(message_html, conv,
 		purple_message_get_author(pmsg),
