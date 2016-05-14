@@ -5,6 +5,7 @@ version 2.10.13 (MM/DD/YY):
 	* Fixed #14962
 	* Fixed alignment of incoming right-to-left messages in protocols that
 	don't support rich text
+	* Fix a potential crash while exiting pidgin
 
 	Windows-Specific Changes:
 	* Use getaddrinfo for DNS to enable IPv6 (#1075)

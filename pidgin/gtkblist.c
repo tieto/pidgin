@@ -119,6 +119,8 @@ typedef struct
 	PidginMiniDialog *signed_on_elsewhere;
 
 	PidginBlistTheme *current_theme;
+
+	guint select_page_timeout;       /**< The timeout for pidgin_blist_select_notebook_page_cb */
 } PidginBuddyListPrivate;
 
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
@@ -4875,6 +4877,8 @@ static gboolean pidgin_blist_select_notebook_page_cb(gpointer user_data)
 
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 
+	priv->select_page_timeout = 0;
+
 	/* this is far too ugly thanks to me not wanting to fix #3989 properly right now */
 	if (priv->error_scrollbook != NULL) {
 		errors = gtk_notebook_get_n_pages(GTK_NOTEBOOK(priv->error_scrollbook->notebook));
@@ -4890,7 +4894,11 @@ static gboolean pidgin_blist_select_notebook_page_cb(gpointer user_data)
 
 static void pidgin_blist_select_notebook_page(PidginBuddyList *gtkblist)
 {
-	purple_timeout_add(0, pidgin_blist_select_notebook_page_cb, gtkblist);
+	PidginBuddyListPrivate *priv;
+
+	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+
+	priv->select_page_timeout = purple_timeout_add(0, pidgin_blist_select_notebook_page_cb, gtkblist);
 }
 
 static void account_modified(PurpleAccount *account, PidginBuddyList *gtkblist)
@@ -6902,6 +6910,8 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 	if (priv->current_theme)
 		g_object_unref(priv->current_theme);
+	if (priv->select_page_timeout)
+		purple_timeout_remove(priv->select_page_timeout);
 	g_free(priv);
 
 	g_free(gtkblist);
