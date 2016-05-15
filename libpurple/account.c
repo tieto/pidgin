@@ -3207,6 +3207,15 @@ purple_accounts_init(void)
 						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_ACCOUNT));
 
+	purple_signal_register(handle, "account-status-changing",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_STATUS),
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_STATUS));
+
 	purple_signal_register(handle, "account-status-changed",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
