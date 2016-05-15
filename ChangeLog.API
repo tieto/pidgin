@@ -4,6 +4,7 @@ version 2.11.0:
 	libpurple:
 		Added:
 		* account-status-changing signal (account signals)
+		* buddy-removed-from-group signal (blist signals)
 
 version 2.10.12:
 	* No changes
