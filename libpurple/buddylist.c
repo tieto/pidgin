@@ -994,8 +994,10 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		purple_counting_node_change_total_size(contact_counter, -1);
 		/* the group totalsize will be taken care of by remove_contact below */
 
-		if (bnode->parent->parent != (PurpleBlistNode*)g)
+		if (bnode->parent->parent != (PurpleBlistNode*)g) {
+			purple_signal_emit(purple_blist_get_handle(), "buddy-removed-from-group", buddy);
 			purple_serv_move_buddy(buddy, (PurpleGroup *)bnode->parent->parent, g);
+		}
 
 		if (bnode->next)
 			bnode->next->prev = bnode->prev;
@@ -1971,6 +1973,10 @@ purple_blist_init(void)
 	purple_signal_register(handle, "blist-node-removed",
 						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
 						 PURPLE_TYPE_BLIST_NODE);
+
+	purple_signal_register(handle, "buddy-removed-from-group",
+						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+						 PURPLE_TYPE_BUDDY);
 
 	purple_signal_register(handle, "buddy-icon-changed",
 						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
