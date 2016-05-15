@@ -93,6 +93,7 @@ purple_coresources = \
 	protocol.c \
 	protocols.c \
 	purple-socket.c \
+	queuedoutputstream.c \
 	request.c \
 	request-datasheet.c \
 	roomlist.c \
@@ -172,6 +173,7 @@ purple_coreheaders = \
 	protocol.h \
 	protocols.h \
 	purple-socket.h \
+	queuedoutputstream.h \
 	request.h \
 	request-datasheet.h \
 	roomlist.h \

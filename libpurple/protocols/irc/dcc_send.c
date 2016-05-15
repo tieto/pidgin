@@ -279,6 +279,8 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 	struct irc_xfer_send_data *xd;
 	PurpleConnection *gc;
 	struct irc_conn *irc;
+	GSocket *gsock;
+	int fd = -1;
 	const char *arg[2];
 	char *tmp;
 	struct in_addr addr;
@@ -317,7 +319,14 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 
 	/* Send the intended recipient the DCC request */
 	arg[0] = purple_xfer_get_remote_user(xfer);
-	inet_aton(purple_network_get_my_ip(irc->fd), &addr);
+
+	/* Fetching this fd here assumes it won't be modified */
+	gsock = g_socket_connection_get_socket(irc->conn);
+	if (gsock != NULL) {
+		fd = g_socket_get_fd(gsock);
+	}
+
+	inet_aton(purple_network_get_my_ip(fd), &addr);
 	arg[1] = tmp = g_strdup_printf("\001DCC SEND \"%s\" %u %hu %" G_GOFFSET_FORMAT "\001",
 	                               purple_xfer_get_filename(xfer), ntohl(addr.s_addr),
 	                               port, purple_xfer_get_size(xfer));
