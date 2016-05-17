@@ -1,0 +1,26 @@
+From daebe3a9519a34e0b6ca984c03e3bd86221da9f1 Mon Sep 17 00:00:00 2001
+From: Jakub Adam <jakub.adam@ktknet.cz>
+Date: Tue, 17 May 2016 19:28:00 +0200
+Subject: [PATCH] Workaround 14.04 build
+
+---
+ libpurple/queuedoutputstream.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/libpurple/queuedoutputstream.c b/libpurple/queuedoutputstream.c
+index 83bc98a..10b7a70 100644
+--- a/libpurple/queuedoutputstream.c
++++ b/libpurple/queuedoutputstream.c
+@@ -140,7 +140,8 @@ purple_queued_output_stream_flush(GOutputStream *stream,
+ 				queue_bytes = g_bytes_ref(bytes);
+ 			}
+ 
+-			g_async_queue_push_front(queue, queue_bytes);
++			g_assert_not_reached();
++			//g_async_queue_push_front(queue, queue_bytes);
+ 		}
+ 
+ 		g_bytes_unref(bytes);
+-- 
+2.8.1
+
