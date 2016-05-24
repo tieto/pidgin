@@ -1,6 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.10.13 (MM/DD/YY):
+	libpurple:
+	* media: fix an issue with ximagesink displaying only a corner cut-out of
+	  a larger webcam video (Jakub Adam)
+	* mediamanager: update output window destruction so that it reflects recent
+	  changes in the media pipeline structure (Jakub Adam)
+
 	Pidgin:
 	* Fixed #14962
 	* Fixed alignment of incoming right-to-left messages in protocols that
