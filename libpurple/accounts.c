@@ -929,6 +929,11 @@ purple_accounts_init(void)
 						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
 						 PURPLE_TYPE_ACCOUNT);
 
+	purple_signal_register(handle, "account-status-changing",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER,
+						 G_TYPE_NONE, 3, PURPLE_TYPE_ACCOUNT,
+						 PURPLE_TYPE_STATUS, PURPLE_TYPE_STATUS);
+
 	purple_signal_register(handle, "account-status-changed",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER,
 						 G_TYPE_NONE, 3, PURPLE_TYPE_ACCOUNT,
