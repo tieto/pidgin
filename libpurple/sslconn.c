@@ -28,6 +28,8 @@
 #include "sslconn.h"
 #include "tls-certificate.h"
 
+#define CONNECTION_CLOSE_TIMEOUT 15
+
 static void
 emit_error(PurpleSslConnection *gsc, int error_code)
 {
@@ -264,6 +266,31 @@ purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
 	return (PurpleSslConnection *)gsc;
 }
 
+static void
+connection_closed_cb(GObject *stream, GAsyncResult *result,
+		gpointer timeout_id)
+{
+	GError *error = NULL;
+
+	purple_timeout_remove(GPOINTER_TO_UINT(timeout_id));
+
+	g_io_stream_close_finish(G_IO_STREAM(stream), result, &error);
+
+	if (error) {
+		purple_debug_info("sslconn", "Connection close error: %s",
+				error->message);
+		g_clear_error(&error);
+	} else {
+		purple_debug_info("sslconn", "Connection closed.");
+	}
+}
+
+static void
+cleanup_cancellable_cb(gpointer data, GObject *where_the_object_was)
+{
+	g_object_unref(G_CANCELLABLE(data));
+}
+
 void
 purple_ssl_close(PurpleSslConnection *gsc)
 {
@@ -285,10 +312,20 @@ purple_ssl_close(PurpleSslConnection *gsc)
 	}
 
 	if (gsc->conn != NULL) {
-		/* Close the stream. Shouldn't take long and it can't
-		 * be further cancelled so don't pass a cancellable
-		 */
-		g_io_stream_close(G_IO_STREAM(gsc->conn), NULL, NULL);
+		GCancellable *cancellable;
+		guint timer_id;
+
+		cancellable = g_cancellable_new();
+		g_object_weak_ref(G_OBJECT(gsc->conn), cleanup_cancellable_cb,
+				cancellable);
+
+		timer_id = purple_timeout_add_seconds(CONNECTION_CLOSE_TIMEOUT,
+				(GSourceFunc)g_cancellable_cancel, cancellable);
+
+		g_io_stream_close_async(G_IO_STREAM(gsc->conn),
+				G_PRIORITY_DEFAULT, cancellable,
+				connection_closed_cb,
+				GUINT_TO_POINTER(timer_id));
 		g_clear_object(&gsc->conn);
 	}
 
