@@ -1691,6 +1691,24 @@ static short mxit_parse_presence( const char* value )
 
 
 /*------------------------------------------------------------------------
+ * Parse the received mood value, and ensure that it is supported.
+ *
+ *  @param value		The received mood value.
+ *  @return				A valid mood value.
+ */
+static short mxit_parse_mood( const char* value )
+{
+	short mood = atoi( value );
+
+	/* ensure that the mood value is valid */
+	if ( ( mood >= MXIT_MOOD_NONE ) && ( mood <= MXIT_MOOD_STRESSED ) )
+		return mood;
+
+	return MXIT_MOOD_NONE;
+}
+
+
+/*------------------------------------------------------------------------
  * Process a received contact update packet.
  *
  *  @param session		The MXit session object
@@ -1723,7 +1741,7 @@ static void mxit_parse_cmd_contact( struct MXitSession* session, struct record**
 
 		contact->presence = mxit_parse_presence( rec->fields[3]->data );
 		contact->type = atoi( rec->fields[4]->data );
-		contact->mood = atoi( rec->fields[5]->data );
+		contact->mood = mxit_parse_mood( rec->fields[5]->data );
 
 		if ( rec->fcount > 6 ) {
 			/* added in protocol 5.9 - flags & subtype */
@@ -1780,7 +1798,7 @@ static void mxit_parse_cmd_presence( struct MXitSession* session, struct record*
 		if ( rec->fcount >= 7 )		/* flags field is included */
 			flags = atoi( rec->fields[6]->data );
 
-		mxit_update_buddy_presence( session, rec->fields[0]->data, mxit_parse_presence( rec->fields[1]->data ), atoi( rec->fields[2]->data ),
+		mxit_update_buddy_presence( session, rec->fields[0]->data, mxit_parse_presence( rec->fields[1]->data ), mxit_parse_mood( rec->fields[2]->data ),
 				rec->fields[3]->data, rec->fields[4]->data, flags );
 		mxit_update_buddy_avatar( session, rec->fields[0]->data, rec->fields[5]->data );
 	}
