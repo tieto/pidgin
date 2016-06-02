@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.10.13 (MM/DD/YY):
+version 2.11.0 (MM/DD/YY):
 	Pidgin:
 	* Fixed #14962
 	* Fixed alignment of incoming right-to-left messages in protocols that
@@ -12,6 +12,11 @@ version 2.10.13 (MM/DD/YY):
 
 	Bonjour
 	* Fixed building on Mac OSX (Patrick Cloke) (#16883)
+
+	MXit
+	* Fixed a remote denial of service vulnerability that could result in
+	  a null pointer dereference.  Discovered by Yves Younan of Cisco Talos.
+	  (TALOS-CAN-0133)
 
 version 2.10.12 (12/31/15):
 	General:
