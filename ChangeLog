@@ -16,6 +16,8 @@ version 2.10.13 (MM/DD/YY):
 	MXit
 	* Fixed a buffer overflow.  Discovered by Yves Younan of Cisco Talos.
 	  (TALOS-CAN-0120)
+	* Fixed a remote out-of-bounds read.  Discovered by Yves Younan of Cisco
+	  Talos.  (TALOS-CAN-0140)
 
 version 2.10.12 (12/31/15):
 	General:
