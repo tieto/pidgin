@@ -334,11 +334,10 @@ static void mxit_write_http_get( struct MXitSession* session, struct tx_packet* 
  */
 static void mxit_write_http_post( struct MXitSession* session, struct tx_packet* packet )
 {
-	char		request[256 + packet->datalen];
-	int			reqlen;
 	char*		host_name;
 	int			host_port;
 	gboolean	ok;
+	gchar*		httpheader;
 
 	/* extract the HTTP host name and host port number to connect to */
 	ok = purple_url_parse( session->http_server, &host_name, &host_port, NULL, NULL, NULL );
@@ -350,8 +349,8 @@ static void mxit_write_http_post( struct MXitSession* session, struct tx_packet*
 	packet->header[packet->headerlen - 1] = '\0';
 	packet->headerlen--;
 
-	/* build the HTTP request packet */
-	reqlen = g_snprintf( request, 256,
+	/* build the HTTP request header */
+	httpheader = g_strdup_printf(
 					"POST %s?%s HTTP/1.1\r\n"
 					"User-Agent: " MXIT_HTTP_USERAGENT "\r\n"
 					"Content-Type: application/octet-stream\r\n"
@@ -364,17 +363,17 @@ static void mxit_write_http_post( struct MXitSession* session, struct tx_packet*
 					packet->datalen - MXIT_MS_OFFSET
 	);
 
-	/* copy over the packet body data (could be binary) */
-	memcpy( request + reqlen, packet->data + MXIT_MS_OFFSET, packet->datalen - MXIT_MS_OFFSET );
-	reqlen += packet->datalen;
-
 #ifdef	DEBUG_PROTOCOL
 	purple_debug_info( MXIT_PLUGIN_ID, "HTTP POST:\n" );
-	dump_bytes( session, request, reqlen );
+	dump_bytes( session, httpheader, strlen( httpheader ) );
+	dump_bytes( session, packet->data + MXIT_MS_OFFSET, packet->datalen - MXIT_MS_OFFSET );
 #endif
 
 	/* send the request to the HTTP server */
-	mxit_http_send_request( session, host_name, host_port, request, reqlen );
+	mxit_http_send_request( session, host_name, host_port, httpheader, packet->data + MXIT_MS_OFFSET, packet->datalen - MXIT_MS_OFFSET );
+
+	/* cleanup */
+	g_free( httpheader );
 }
 
 
