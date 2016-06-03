@@ -85,7 +85,7 @@ static inline void set_chunk_type( gchar* chunkheader, guint type )
 static inline guint32 chunk_length( gchar* chunkheader )
 {
 	guint32 length = *( (const guint32*) &chunkheader[1] );
-	return htonl( length );
+	return ntohl( length );
 }
 
 static inline void set_chunk_length( gchar* chunkheader, guint32 size )

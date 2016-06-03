@@ -241,7 +241,7 @@ struct MXitSession;
 
 struct field {
 	char*				data;
-	int					len;
+	size_t				len;
 };
 
 struct record {
