@@ -1993,6 +1993,12 @@ static void mxit_parse_cmd_suggestcontacts( struct MXitSession* session, struct 
 	 * userid \1 contactType \1 value0 \1 value1 ... valueN
 	 */
 
+	/* ensure that record[0] contacts the minumum number of fields */
+	if ( records[0]->fcount < 4 ) {
+		purple_debug_error( MXIT_PLUGIN_ID, "Insufficient number of fields in suggest contacts response. fields=%i", records[0]->fcount );
+		return;
+	}
+
 	/* the type of results */
 	searchType = atoi( records[0]->fields[0]->data );
 
@@ -2002,10 +2008,23 @@ static void mxit_parse_cmd_suggestcontacts( struct MXitSession* session, struct 
 	/* set the count for attributes */
 	count = atoi( records[0]->fields[3]->data );
 
+	/* ensure that record[0] contains the specified number of attributes */
+	if ( records[0]->fcount < ( 4 + count ) ) {
+		purple_debug_error( MXIT_PLUGIN_ID, "Insufficient number of fields in suggest contacts response. fields=%i attributes=%i", records[0]->fcount, count );
+		return;
+	}
+
 	for ( i = 1; i < rcount; i ++ ) {
 		struct record*		rec		= records[i];
 		struct MXitProfile*	profile	= g_new0( struct MXitProfile, 1 );
 		int j;
+
+		/* ensure that each result contains the specified number of attributes */
+		if ( rec->fcount != ( 2 + count ) ) {
+			purple_debug_error( MXIT_PLUGIN_ID, "Insufficient number of fields in suggest contacts response. fields=%i attributes=%i", rec->fcount, count );
+			g_free( profile );
+			continue;
+		}
 
 		g_strlcpy( profile->userid, rec->fields[0]->data, sizeof( profile->userid ) );
 		// TODO: ContactType - User or Service
