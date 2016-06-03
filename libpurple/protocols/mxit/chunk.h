@@ -182,11 +182,12 @@ size_t mxit_chunk_create_set_avatar( char* chunkdata, const unsigned char* data,
 size_t mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const char* avatarId );
 
 /* Decode chunk */
-void mxit_chunk_parse_offer( char* chunkdata, size_t datalen, struct offerfile_chunk* offer );
-void mxit_chunk_parse_get( char* chunkdata, size_t datalen, struct getfile_chunk* getfile );
-void mxit_chunk_parse_cr( char* chunkdata, size_t datalen, struct cr_chunk* cr );
-void mxit_chunk_parse_sendfile( char* chunkdata, size_t datalen, struct sendfile_chunk* sendfile );
-void mxit_chunk_parse_get_avatar( char* chunkdata, size_t datalen, struct getavatar_chunk* avatar );
+gboolean mxit_chunk_parse_offer( char* chunkdata, size_t datalen, struct offerfile_chunk* offer );
+gboolean mxit_chunk_parse_get( char* chunkdata, size_t datalen, struct getfile_chunk* getfile );
+gboolean mxit_chunk_parse_cr( char* chunkdata, size_t datalen, struct cr_chunk* cr );
+gboolean mxit_chunk_parse_sendfile( char* chunkdata, size_t datalen, struct sendfile_chunk* sendfile );
+gboolean mxit_chunk_parse_get_avatar( char* chunkdata, size_t datalen, struct getavatar_chunk* avatar );
+gboolean mxit_chunk_parse_splash( char* chunkdata, size_t datalen, struct splash_chunk* splash );
 
 #endif		/* _MXIT_CHUNK_H_ */
 

@@ -449,12 +449,15 @@ size_t mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const 
  *  @param chunkdata		Chunked data buffer
  *  @param datalen			The length of the chunked data
  *  @param offer			Decoded offerfile information
+ *  @return					TRUE if successfully parsed, otherwise FALSE
  */
-void mxit_chunk_parse_offer( char* chunkdata, size_t datalen, struct offerfile_chunk* offer )
+gboolean mxit_chunk_parse_offer( char* chunkdata, size_t datalen, struct offerfile_chunk* offer )
 {
 	int		pos			= 0;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_offer (%zu bytes)\n", datalen );
+
+	memset( offer, 0, sizeof( struct offerfile_chunk ) );
 
 	/* id [8 bytes] */
 	pos += get_data( &chunkdata[pos], offer->fileid, 8);
@@ -483,6 +486,8 @@ void mxit_chunk_parse_offer( char* chunkdata, size_t datalen, struct offerfile_c
 
 	/* flags [4 bytes] */
 	/* not used by libPurple */
+
+	return TRUE;
 }
 
 
@@ -492,12 +497,15 @@ void mxit_chunk_parse_offer( char* chunkdata, size_t datalen, struct offerfile_c
  *  @param chunkdata		Chunked data buffer
  *  @param datalen			The length of the chunked data
  *  @param offer			Decoded getfile information
+ *  @return					TRUE if successfully parsed, otherwise FALSE
  */
-void mxit_chunk_parse_get( char* chunkdata, size_t datalen, struct getfile_chunk* getfile )
+gboolean mxit_chunk_parse_get( char* chunkdata, size_t datalen, struct getfile_chunk* getfile )
 {
 	int			pos			= 0;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_file (%zu bytes)\n", datalen );
+
+	memset( getfile, 0, sizeof( struct getfile_chunk ) );
 
 	/* id [8 bytes] */
 	pos += get_data( &chunkdata[pos], getfile->fileid, 8 );
@@ -513,6 +521,8 @@ void mxit_chunk_parse_get( char* chunkdata, size_t datalen, struct getfile_chunk
 
 	/* file data */
 	getfile->data = &chunkdata[pos];
+
+	return TRUE;
 }
 
 
@@ -522,12 +532,15 @@ void mxit_chunk_parse_get( char* chunkdata, size_t datalen, struct getfile_chunk
  *  @param chunkdata		Chunked data buffer
  *  @param datalen			The length of the chunked data
  *  @param splash			Decoded splash image information
+ *  @return					TRUE if successfully parsed, otherwise FALSE
  */
-static void mxit_chunk_parse_splash( char* chunkdata, size_t datalen, struct splash_chunk* splash )
+gboolean mxit_chunk_parse_splash( char* chunkdata, size_t datalen, struct splash_chunk* splash )
 {
 	int			pos			= 0;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_splash (%zu bytes)\n", datalen );
+
+	memset( splash, 0, sizeof( struct splash_chunk ) );
 
 	/* anchor [1 byte] */
 	pos += get_int8( &chunkdata[pos], &(splash->anchor) );
@@ -543,6 +556,8 @@ static void mxit_chunk_parse_splash( char* chunkdata, size_t datalen, struct spl
 
 	/* data length */
 	splash->datalen = datalen - pos;
+
+	return TRUE;
 }
 
 
@@ -552,13 +567,16 @@ static void mxit_chunk_parse_splash( char* chunkdata, size_t datalen, struct spl
  *  @param chunkdata		Chunked data buffer
  *  @param datalen			The length of the chunked data
  *  @param offer			Decoded custom resource
+ *  @return					TRUE if successfully parsed, otherwise FALSE
  */
-void mxit_chunk_parse_cr( char* chunkdata, size_t datalen, struct cr_chunk* cr )
+gboolean mxit_chunk_parse_cr( char* chunkdata, size_t datalen, struct cr_chunk* cr )
 {
 	int				pos			= 0;
 	unsigned int	chunklen	= 0;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_cr (%zu bytes)\n", datalen );
+
+	memset( cr, 0, sizeof( struct cr_chunk ) );
 
 	/* id [UTF-8] */
 	pos += get_utf8_string( &chunkdata[pos], cr->id, sizeof( cr->id ) );
@@ -584,9 +602,10 @@ void mxit_chunk_parse_cr( char* chunkdata, size_t datalen, struct cr_chunk* cr )
 				{
 					struct splash_chunk* splash = g_new0( struct splash_chunk, 1 );
 
-					mxit_chunk_parse_splash( &chunkdata[pos], chunk_length( chunk ), splash );
-
-					cr->resources = g_list_append( cr->resources, splash );
+					if ( mxit_chunk_parse_splash( &chunkdata[pos], chunk_length( chunk ), splash ) )
+						cr->resources = g_list_append( cr->resources, splash );
+					else
+						g_free( splash );
 					break;
 				}
 			case CP_CHUNK_CLICK :			/* splash click */
@@ -604,6 +623,8 @@ void mxit_chunk_parse_cr( char* chunkdata, size_t datalen, struct cr_chunk* cr )
 		pos += chunk_length( chunk );
 		chunklen -= ( MXIT_CHUNK_HEADER_SIZE + chunk_length( chunk ) );
 	}
+
+	return TRUE;
 }
 
 
@@ -613,19 +634,22 @@ void mxit_chunk_parse_cr( char* chunkdata, size_t datalen, struct cr_chunk* cr )
  *  @param chunkdata		Chunked data buffer
  *  @param datalen			The length of the chunked data
  *  @param sendfile			Decoded sendfile information
+ *  @return					TRUE if successfully parsed, otherwise FALSE
  */
-void mxit_chunk_parse_sendfile( char* chunkdata, size_t datalen, struct sendfile_chunk* sendfile )
+gboolean mxit_chunk_parse_sendfile( char* chunkdata, size_t datalen, struct sendfile_chunk* sendfile )
 {
 	int				pos		= 0;
 	unsigned short	entries	= 0;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_sendfile (%zu bytes)\n", datalen );
 
+	memset( sendfile, 0, sizeof( struct sendfile_chunk ) );
+
 	/* number of entries [2 bytes] */
 	pos += get_int16( &chunkdata[pos], &entries );
 
 	if ( entries < 1 )		/* no data */
-		return;
+		return FALSE;
 
 	/* contactAddress [UTF-8 string] */
 	pos += get_utf8_string( &chunkdata[pos], sendfile->username, sizeof( sendfile->username ) );
@@ -635,6 +659,8 @@ void mxit_chunk_parse_sendfile( char* chunkdata, size_t datalen, struct sendfile
 
 	/* status message [UTF-8 string] */
 	pos += get_utf8_string( &chunkdata[pos], sendfile->statusmsg, sizeof( sendfile->statusmsg ) );
+
+	return TRUE;
 }
 
 
@@ -644,19 +670,22 @@ void mxit_chunk_parse_sendfile( char* chunkdata, size_t datalen, struct sendfile
  *  @param chunkdata		Chunked data buffer
  *  @param datalen			The length of the chunked data
  *  @param avatar			Decoded avatar information
+ *  @return					TRUE if successfully parsed, otherwise FALSE
  */
-void mxit_chunk_parse_get_avatar( char* chunkdata, size_t datalen, struct getavatar_chunk* avatar )
+gboolean mxit_chunk_parse_get_avatar( char* chunkdata, size_t datalen, struct getavatar_chunk* avatar )
 {
 	int				pos			= 0;
 	unsigned int	numfiles	= 0;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_get_avatar (%zu bytes)\n", datalen );
 
+	memset( avatar, 0, sizeof( struct getavatar_chunk ) );
+
 	/* number of files [4 bytes] */
 	pos += get_int32( &chunkdata[pos], &numfiles );
 
 	if ( numfiles < 1 )		/* no data */
-		return;
+		return FALSE;
 
 	/* mxitId [UTF-8 string] */
 	pos += get_utf8_string( &chunkdata[pos], avatar->mxitid, sizeof( avatar->mxitid ) );
@@ -684,4 +713,6 @@ void mxit_chunk_parse_get_avatar( char* chunkdata, size_t datalen, struct getava
 
 	/* file data */
 	avatar->data = &chunkdata[pos];
+
+	return TRUE;
 }

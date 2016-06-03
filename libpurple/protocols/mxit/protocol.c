@@ -2114,27 +2114,26 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 				struct cr_chunk chunk;
 
 				/* decode the chunked data */
-				memset( &chunk, 0, sizeof( struct cr_chunk ) );
-				mxit_chunk_parse_cr( &records[0]->fields[0]->data[sizeof( char ) + sizeof( int )], records[0]->fields[0]->len, &chunk );
+				if ( mxit_chunk_parse_cr( &records[0]->fields[0]->data[sizeof( char ) + sizeof( int )], records[0]->fields[0]->len, &chunk ) ) {
 
-				purple_debug_info( MXIT_PLUGIN_ID, "chunk info id=%s handle=%s op=%i\n", chunk.id, chunk.handle, chunk.operation );
+					purple_debug_info( MXIT_PLUGIN_ID, "chunk info id=%s handle=%s op=%i\n", chunk.id, chunk.handle, chunk.operation );
 
-				/* this is a splash-screen operation */
-				if ( strcmp( chunk.handle, HANDLE_SPLASH2 ) == 0 ) {
-					if ( chunk.operation == CR_OP_UPDATE ) {		/* update the splash-screen */
-						struct splash_chunk *splash = chunk.resources->data;			// TODO: Fix - assuming 1st resource is splash
-						gboolean clickable = ( g_list_length( chunk.resources ) > 1 );	// TODO: Fix - if 2 resources, then is clickable
+					/* this is a splash-screen operation */
+					if ( strcmp( chunk.handle, HANDLE_SPLASH2 ) == 0 ) {
+						if ( chunk.operation == CR_OP_UPDATE ) {		/* update the splash-screen */
+							struct splash_chunk *splash = chunk.resources->data;			// TODO: Fix - assuming 1st resource is splash
+							gboolean clickable = ( g_list_length( chunk.resources ) > 1 );	// TODO: Fix - if 2 resources, then is clickable
 
-						if ( splash != NULL )
-							splash_update( session, chunk.id, splash->data, splash->datalen, clickable );
+							if ( splash != NULL )
+								splash_update( session, chunk.id, splash->data, splash->datalen, clickable );
+						}
+						else if ( chunk.operation == CR_OP_REMOVE )		/* remove the splash-screen */
+							splash_remove( session );
 					}
-					else if ( chunk.operation == CR_OP_REMOVE )		/* remove the splash-screen */
-						splash_remove( session );
+
+					/* cleanup custom resources */
+					g_list_foreach( chunk.resources, (GFunc)g_free, NULL );
 				}
-
-				/* cleanup custom resources */
-				g_list_foreach( chunk.resources, (GFunc)g_free, NULL );
-
 			}
 			break;
 
@@ -2143,11 +2142,10 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 				struct offerfile_chunk chunk;
 
 				/* decode the chunked data */
-				memset( &chunk, 0, sizeof( struct offerfile_chunk ) );
-				mxit_chunk_parse_offer( &records[0]->fields[0]->data[sizeof( char ) + sizeof( int )], records[0]->fields[0]->len, &chunk );
-
-				/* process the offer */
-				mxit_xfer_rx_offer( session, chunk.username, chunk.filename, chunk.filesize, chunk.fileid );
+				if ( mxit_chunk_parse_offer( &records[0]->fields[0]->data[sizeof( char ) + sizeof( int )], records[0]->fields[0]->len, &chunk ) ) {
+					/* process the offer */
+					mxit_xfer_rx_offer( session, chunk.username, chunk.filename, chunk.filesize, chunk.fileid );
+				}
 			}
 			break;
 
@@ -2156,11 +2154,10 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 				struct getfile_chunk chunk;
 
 				/* decode the chunked data */
-				memset( &chunk, 0, sizeof( struct getfile_chunk ) );
-				mxit_chunk_parse_get( &records[0]->fields[0]->data[sizeof( char ) + sizeof( int )], records[0]->fields[0]->len, &chunk );
-
-				/* process the getfile */
-				mxit_xfer_rx_file( session, chunk.fileid, chunk.data, chunk.length );
+				if ( mxit_chunk_parse_get( &records[0]->fields[0]->data[sizeof( char ) + sizeof( int )], records[0]->fields[0]->len, &chunk ) ) {
+					/* process the getfile */
+					mxit_xfer_rx_file( session, chunk.fileid, chunk.data, chunk.length );
+				}
 			}
 			break;
 
@@ -2170,11 +2167,8 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 				struct contact* contact = NULL;
 
 				/* decode the chunked data */
-				memset( &chunk, 0, sizeof( struct getavatar_chunk ) );
-				mxit_chunk_parse_get_avatar( &records[0]->fields[0]->data[sizeof( char ) + sizeof( int )], records[0]->fields[0]->len, &chunk );
-
-				/* update avatar image */
-				if ( chunk.data ) {
+				if ( mxit_chunk_parse_get_avatar( &records[0]->fields[0]->data[sizeof( char ) + sizeof( int )], records[0]->fields[0]->len, &chunk ) ) {
+					/* update avatar image */
 					purple_debug_info( MXIT_PLUGIN_ID, "updating avatar for contact '%s'\n", chunk.mxitid );
 
 					contact = get_mxit_invite_contact( session, chunk.mxitid );
@@ -2201,13 +2195,12 @@ static void mxit_parse_cmd_media( struct MXitSession* session, struct record** r
 			{
 				struct sendfile_chunk chunk;
 
-				memset( &chunk, 0, sizeof( struct sendfile_chunk ) );
-				mxit_chunk_parse_sendfile( &records[0]->fields[0]->data[sizeof( char ) + sizeof( int )], records[0]->fields[0]->len, &chunk );
+				if ( mxit_chunk_parse_sendfile( &records[0]->fields[0]->data[sizeof( char ) + sizeof( int )], records[0]->fields[0]->len, &chunk ) ) {
+					purple_debug_info( MXIT_PLUGIN_ID, "file-send send to '%s' [status=%i message='%s']\n", chunk.username, chunk.status, chunk.statusmsg );
 
-				purple_debug_info( MXIT_PLUGIN_ID, "file-send send to '%s' [status=%i message='%s']\n", chunk.username, chunk.status, chunk.statusmsg );
-
-				if ( chunk.status != 0 )	/* not success */
-					mxit_popup( PURPLE_NOTIFY_MSG_ERROR, _( "File Send Failed" ), chunk.statusmsg );
+					if ( chunk.status != 0 )	/* not success */
+						mxit_popup( PURPLE_NOTIFY_MSG_ERROR, _( "File Send Failed" ), chunk.statusmsg );
+				}
 			}
 			break;
 
