@@ -13,6 +13,10 @@ version 2.10.13 (MM/DD/YY):
 	Bonjour
 	* Fixed building on Mac OSX (Patrick Cloke) (#16883)
 
+	MXit
+	* Fixed a remote out-of-bounds write vulnerability.  Discovered by Yves
+	  Younan of Cisco Talos. (TALOS-CAN-0139)
+
 version 2.10.12 (12/31/15):
 	General:
 	* purple-url-handler now works with Python 3.x (Daniël van Eeden)
