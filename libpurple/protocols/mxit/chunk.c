@@ -507,6 +507,10 @@ gboolean mxit_chunk_parse_get( char* chunkdata, size_t datalen, struct getfile_c
 
 	memset( getfile, 0, sizeof( struct getfile_chunk ) );
 
+	/* ensure that the chunk size is atleast the minimum size for a "get file" chunk */
+	if ( datalen < 20 )
+		return FALSE;
+
 	/* id [8 bytes] */
 	pos += get_data( &chunkdata[pos], getfile->fileid, 8 );
 
