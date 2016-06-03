@@ -112,7 +112,7 @@ void splash_remove(struct MXitSession* session)
  *  @param data			Splash-screen image data (PNG format)
  *  @param datalen		Splash-screen image data size
  */
-void splash_update(struct MXitSession* session, const char* splashId, const char* data, int datalen, gboolean clickable)
+void splash_update(struct MXitSession* session, const char* splashId, const char* data, unsigned int datalen, gboolean clickable)
 {
 	char* dir;
 	char* filename;

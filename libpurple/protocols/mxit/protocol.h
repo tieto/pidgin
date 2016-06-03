@@ -332,11 +332,11 @@ void mxit_send_update_contact( struct MXitSession* session, const char* username
 void mxit_send_splashclick( struct MXitSession* session, const char* splashid );
 void mxit_send_msgevent( struct MXitSession* session, const char* to, const char* id, int event);
 
-void mxit_send_file( struct MXitSession* session, const char* username, const char* filename, const unsigned char* buf, int buflen );
+void mxit_send_file( struct MXitSession* session, const char* username, const char* filename, const unsigned char* buf, size_t buflen );
 void mxit_send_file_reject( struct MXitSession* session, const char* fileid );
-void mxit_send_file_accept( struct MXitSession* session, const char* fileid, int filesize, int offset );
+void mxit_send_file_accept( struct MXitSession* session, const char* fileid, size_t filesize, size_t offset );
 void mxit_send_file_received( struct MXitSession* session, const char* fileid, short status );
-void mxit_set_avatar( struct MXitSession* session, const unsigned char* avatar, int avatarlen );
+void mxit_set_avatar( struct MXitSession* session, const unsigned char* avatar, size_t avatarlen );
 void mxit_get_avatar( struct MXitSession* session, const char* mxitId, const char* avatarId );
 
 void mxit_send_groupchat_create( struct MXitSession* session, const char* groupname, int nr_usernames, const char* usernames[] );

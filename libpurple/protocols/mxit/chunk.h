@@ -103,22 +103,22 @@ static inline gchar* chunk_data( gchar* chunkheader )
  * Offer File chunk (6).
  */
 struct offerfile_chunk {
-	char	fileid[MXIT_CHUNK_FILEID_LEN];
-	char	username[MXIT_CP_MAX_JID_LEN + 1];
-	int		filesize;
-	char	filename[FILENAME_MAX];
-	char	mimetype[64];
+	char			fileid[MXIT_CHUNK_FILEID_LEN];
+	char			username[MXIT_CP_MAX_JID_LEN + 1];
+	unsigned int	filesize;
+	char			filename[FILENAME_MAX];
+	char			mimetype[64];
 };
 
 /*
  * Get File chunk (8) response.
  */
 struct getfile_chunk {
-	char	fileid[MXIT_CHUNK_FILEID_LEN];
-	int		offset;
-	int		length;
-	int		crc;
-	char*	data;
+	char			fileid[MXIT_CHUNK_FILEID_LEN];
+	unsigned int	offset;
+	unsigned int	length;
+	unsigned int	crc;
+	char*			data;
 };
 
 /*
@@ -135,11 +135,11 @@ struct cr_chunk {
  * Splash Image chunk (2)
  */
 struct splash_chunk {
-	char	anchor;
-	char	showtime;
-	int		bgcolor;
-	char*	data;
-	int		datalen;
+	char			anchor;
+	char			showtime;
+	unsigned int	bgcolor;
+	char*			data;
+	unsigned int	datalen;
 };
 
 /*
@@ -153,40 +153,40 @@ struct splash_click_chunk {
  * Get Avatar chunk (14) response.
  */
 struct getavatar_chunk {
-	char	mxitid[50];
-	char	avatarid[64];
-	char	format[16];
-	char	bitdepth;
-	int		crc;
-	int		width;
-	int		height;
-	int		length;
-	char*	data;
+	char			mxitid[50];
+	char			avatarid[64];
+	char			format[16];
+	char			bitdepth;
+	unsigned int	crc;
+	unsigned int	width;
+	unsigned int	height;
+	unsigned int	length;
+	char*			data;
 };
 
 /*
  * Send File Direct chunk (10) response.
  */
 struct sendfile_chunk {
-	char	username[MXIT_CP_MAX_JID_LEN + 1];
-	int		status;
-	char	statusmsg[1024];
+	char			username[MXIT_CP_MAX_JID_LEN + 1];
+	unsigned int	status;
+	char			statusmsg[1024];
 };
 
 /* Encode chunk */
-int mxit_chunk_create_senddirect( char* chunkdata, const char* username, const char* filename, const unsigned char* data, int datalen );
-int mxit_chunk_create_reject( char* chunkdata, const char* fileid );
-int mxit_chunk_create_get( char* chunkdata, const char* fileid, int filesize, int offset );
-int mxit_chunk_create_received( char* chunkdata, const char* fileid, unsigned char status );
-int mxit_chunk_create_set_avatar( char* chunkdata, const unsigned char* data, int datalen );
-int mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const char* avatarId );
+size_t mxit_chunk_create_senddirect( char* chunkdata, const char* username, const char* filename, const unsigned char* data, size_t datalen );
+size_t mxit_chunk_create_reject( char* chunkdata, const char* fileid );
+size_t mxit_chunk_create_get( char* chunkdata, const char* fileid, size_t filesize, size_t offset );
+size_t mxit_chunk_create_received( char* chunkdata, const char* fileid, unsigned char status );
+size_t mxit_chunk_create_set_avatar( char* chunkdata, const unsigned char* data, size_t datalen );
+size_t mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const char* avatarId );
 
 /* Decode chunk */
-void mxit_chunk_parse_offer( char* chunkdata, int datalen, struct offerfile_chunk* offer );
-void mxit_chunk_parse_get( char* chunkdata, int datalen, struct getfile_chunk* getfile );
-void mxit_chunk_parse_cr( char* chunkdata, int datalen, struct cr_chunk* cr );
-void mxit_chunk_parse_sendfile( char* chunkdata, int datalen, struct sendfile_chunk* sendfile );
-void mxit_chunk_parse_get_avatar( char* chunkdata, int datalen, struct getavatar_chunk* avatar );
+void mxit_chunk_parse_offer( char* chunkdata, size_t datalen, struct offerfile_chunk* offer );
+void mxit_chunk_parse_get( char* chunkdata, size_t datalen, struct getfile_chunk* getfile );
+void mxit_chunk_parse_cr( char* chunkdata, size_t datalen, struct cr_chunk* cr );
+void mxit_chunk_parse_sendfile( char* chunkdata, size_t datalen, struct sendfile_chunk* sendfile );
+void mxit_chunk_parse_get_avatar( char* chunkdata, size_t datalen, struct getavatar_chunk* avatar );
 
 #endif		/* _MXIT_CHUNK_H_ */
 

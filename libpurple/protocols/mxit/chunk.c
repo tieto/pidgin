@@ -168,7 +168,7 @@ static int get_int8( const char* chunkdata, char* value )
  *  @param value			The 16-bit value
  *  @return					The number of bytes extracted
  */
-static int get_int16( const char* chunkdata, short* value )
+static int get_int16( const char* chunkdata, unsigned short* value )
 {
 	*value = ntohs( *( (const short*) chunkdata ) );	/* host byte-order */
 
@@ -182,7 +182,7 @@ static int get_int16( const char* chunkdata, short* value )
  *  @param value			The 32-bit value
  *  @return					The number of bytes extracted
  */
-static int get_int32( const char* chunkdata, int* value )
+static int get_int32( const char* chunkdata, unsigned int* value )
 {
 	*value = ntohl( *( (const int*) chunkdata ) );	/* host byte-order */
 
@@ -230,9 +230,9 @@ static int get_data( const char* chunkdata, char* dest, int datalen )
  */
 static int get_utf8_string( const char* chunkdata, char* str, int maxstrlen )
 {
-	int		pos = 0;
-	short	len;
-	int		skip = 0;
+	int				pos = 0;
+	unsigned short	len;
+	int				skip = 0;
 
 	/* string length [2 bytes] */
 	pos += get_int16( &chunkdata[pos], &len );
@@ -263,9 +263,9 @@ static int get_utf8_string( const char* chunkdata, char* str, int maxstrlen )
  *  @param fileid			A unique ID that identifies this file
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_reject( char* chunkdata, const char* fileid )
+size_t mxit_chunk_create_reject( char* chunkdata, const char* fileid )
 {
-	int		pos		= 0;
+	size_t	pos		= 0;
 
 	/* file id [8 bytes] */
 	pos += add_data( &chunkdata[pos], fileid, MXIT_CHUNK_FILEID_LEN );
@@ -289,9 +289,9 @@ int mxit_chunk_create_reject( char* chunkdata, const char* fileid )
  *  @param offset			The start offset in the file
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_get( char* chunkdata, const char* fileid, int filesize, int offset )
+size_t mxit_chunk_create_get( char* chunkdata, const char* fileid, size_t filesize, size_t offset )
 {
-	int		pos		= 0;
+	size_t	pos		= 0;
 
 	/* file id [8 bytes] */
 	pos += add_data( &chunkdata[pos], fileid, MXIT_CHUNK_FILEID_LEN );
@@ -314,9 +314,9 @@ int mxit_chunk_create_get( char* chunkdata, const char* fileid, int filesize, in
  *  @param status			The status of the file transfer (see chunk.h)
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_received( char* chunkdata, const char* fileid, unsigned char status )
+size_t mxit_chunk_create_received( char* chunkdata, const char* fileid, unsigned char status )
 {
-	int		pos		= 0;
+	size_t	pos		= 0;
 
 	/* file id [8 bytes] */
 	pos += add_data( &chunkdata[pos], fileid, MXIT_CHUNK_FILEID_LEN );
@@ -338,9 +338,9 @@ int mxit_chunk_create_received( char* chunkdata, const char* fileid, unsigned ch
  *  @param datalen			The size of the file contents
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_senddirect( char* chunkdata, const char* username, const char* filename, const unsigned char* data, int datalen )
+size_t mxit_chunk_create_senddirect( char* chunkdata, const char* username, const char* filename, const unsigned char* data, size_t datalen )
 {
-	int			pos		= 0;
+	size_t		pos		= 0;
 	const char*	mime	= NULL;
 
 	/* data length [4 bytes] */
@@ -380,10 +380,10 @@ int mxit_chunk_create_senddirect( char* chunkdata, const char* username, const c
  *  @param datalen			The size of the avatar data
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_set_avatar( char* chunkdata, const unsigned char* data, int datalen )
+size_t mxit_chunk_create_set_avatar( char* chunkdata, const unsigned char* data, size_t datalen )
 {
 	char	fileid[MXIT_CHUNK_FILEID_LEN];
-	int			pos = 0;
+	size_t	pos = 0;
 
 	/* id [8 bytes] */
 	memset( &fileid, 0, sizeof( fileid ) );		/* set to 0 for file upload */
@@ -410,9 +410,9 @@ int mxit_chunk_create_set_avatar( char* chunkdata, const unsigned char* data, in
  *  @param avatarId			The Id of the avatar image (as string)
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const char* avatarId )
+size_t mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const char* avatarId )
 {
-	int			pos = 0;
+	size_t	pos = 0;
 
 	/* number of avatars [4 bytes] */
 	pos += add_int32( &chunkdata[pos], 1 );
@@ -450,11 +450,11 @@ int mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const cha
  *  @param datalen			The length of the chunked data
  *  @param offer			Decoded offerfile information
  */
-void mxit_chunk_parse_offer( char* chunkdata, int datalen, struct offerfile_chunk* offer )
+void mxit_chunk_parse_offer( char* chunkdata, size_t datalen, struct offerfile_chunk* offer )
 {
-	int			pos			= 0;
+	int		pos			= 0;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_offer (%i bytes)\n", datalen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_offer (%zu bytes)\n", datalen );
 
 	/* id [8 bytes] */
 	pos += get_data( &chunkdata[pos], offer->fileid, 8);
@@ -493,11 +493,11 @@ void mxit_chunk_parse_offer( char* chunkdata, int datalen, struct offerfile_chun
  *  @param datalen			The length of the chunked data
  *  @param offer			Decoded getfile information
  */
-void mxit_chunk_parse_get( char* chunkdata, int datalen, struct getfile_chunk* getfile )
+void mxit_chunk_parse_get( char* chunkdata, size_t datalen, struct getfile_chunk* getfile )
 {
 	int			pos			= 0;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_file (%i bytes)\n", datalen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_file (%zu bytes)\n", datalen );
 
 	/* id [8 bytes] */
 	pos += get_data( &chunkdata[pos], getfile->fileid, 8 );
@@ -523,11 +523,11 @@ void mxit_chunk_parse_get( char* chunkdata, int datalen, struct getfile_chunk* g
  *  @param datalen			The length of the chunked data
  *  @param splash			Decoded splash image information
  */
-static void mxit_chunk_parse_splash( char* chunkdata, int datalen, struct splash_chunk* splash )
+static void mxit_chunk_parse_splash( char* chunkdata, size_t datalen, struct splash_chunk* splash )
 {
 	int			pos			= 0;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_splash (%i bytes)\n", datalen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_splash (%zu bytes)\n", datalen );
 
 	/* anchor [1 byte] */
 	pos += get_int8( &chunkdata[pos], &(splash->anchor) );
@@ -553,12 +553,12 @@ static void mxit_chunk_parse_splash( char* chunkdata, int datalen, struct splash
  *  @param datalen			The length of the chunked data
  *  @param offer			Decoded custom resource
  */
-void mxit_chunk_parse_cr( char* chunkdata, int datalen, struct cr_chunk* cr )
+void mxit_chunk_parse_cr( char* chunkdata, size_t datalen, struct cr_chunk* cr )
 {
-	int			pos			= 0;
-	int			chunklen	= 0;
+	int				pos			= 0;
+	unsigned int	chunklen	= 0;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_cr (%i bytes)\n", datalen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_cr (%zu bytes)\n", datalen );
 
 	/* id [UTF-8] */
 	pos += get_utf8_string( &chunkdata[pos], cr->id, sizeof( cr->id ) );
@@ -614,12 +614,12 @@ void mxit_chunk_parse_cr( char* chunkdata, int datalen, struct cr_chunk* cr )
  *  @param datalen			The length of the chunked data
  *  @param sendfile			Decoded sendfile information
  */
-void mxit_chunk_parse_sendfile( char* chunkdata, int datalen, struct sendfile_chunk* sendfile )
+void mxit_chunk_parse_sendfile( char* chunkdata, size_t datalen, struct sendfile_chunk* sendfile )
 {
-	int			pos		= 0;
-	short		entries	= 0;
+	int				pos		= 0;
+	unsigned short	entries	= 0;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_sendfile (%i bytes)\n", datalen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_sendfile (%zu bytes)\n", datalen );
 
 	/* number of entries [2 bytes] */
 	pos += get_int16( &chunkdata[pos], &entries );
@@ -645,12 +645,12 @@ void mxit_chunk_parse_sendfile( char* chunkdata, int datalen, struct sendfile_ch
  *  @param datalen			The length of the chunked data
  *  @param avatar			Decoded avatar information
  */
-void mxit_chunk_parse_get_avatar( char* chunkdata, int datalen, struct getavatar_chunk* avatar )
+void mxit_chunk_parse_get_avatar( char* chunkdata, size_t datalen, struct getavatar_chunk* avatar )
 {
-	int			pos			= 0;
-	int			numfiles	= 0;
+	int				pos			= 0;
+	unsigned int	numfiles	= 0;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_get_avatar (%i bytes)\n", datalen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_get_avatar (%zu bytes)\n", datalen );
 
 	/* number of files [4 bytes] */
 	pos += get_int32( &chunkdata[pos], &numfiles );

@@ -1223,14 +1223,14 @@ void mxit_send_groupchat_invite( struct MXitSession* session, const char* roomid
  *  @param buf			The content of the file
  *  @param buflen		The length of the file contents
  */
-void mxit_send_file( struct MXitSession* session, const char* username, const char* filename, const unsigned char* buf, int buflen )
+void mxit_send_file( struct MXitSession* session, const char* username, const char* filename, const unsigned char* buf, size_t buflen )
 {
 	char				data[CP_MAX_PACKET];
 	int					datalen		= 0;
 	gchar*				chunk;
-	int					size;
+	size_t				chunksize;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "SENDING FILE '%s' of %i bytes to user '%s'\n", filename, buflen, username );
+	purple_debug_info( MXIT_PLUGIN_ID, "SENDING FILE '%s' of %zu bytes to user '%s'\n", filename, buflen, username );
 
 	/* convert the packet to a byte stream */
 	datalen = g_snprintf( data, sizeof( data ), "ms=" );
@@ -1238,15 +1238,11 @@ void mxit_send_file( struct MXitSession* session, const char* username, const ch
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
 
-	size = mxit_chunk_create_senddirect( chunk_data( chunk ), username, filename, buf, buflen );
-	if ( size < 0 ) {
-		purple_debug_error( MXIT_PLUGIN_ID, "Error creating senddirect chunk (%i)\n", size );
-		return;
-	}
-
+	/* encode chunk */
+	chunksize = mxit_chunk_create_senddirect( chunk_data( chunk ), username, filename, buf, buflen );
 	set_chunk_type( chunk, CP_CHUNK_DIRECT_SND );
-	set_chunk_length( chunk, size );
-	datalen += MXIT_CHUNK_HEADER_SIZE + size;
+	set_chunk_length( chunk, chunksize );
+	datalen += MXIT_CHUNK_HEADER_SIZE + chunksize;
 
 	/* send the byte stream to the mxit server */
 	mxit_queue_packet( session, data, datalen, CP_CMD_MEDIA );
@@ -1264,7 +1260,7 @@ void mxit_send_file_reject( struct MXitSession* session, const char* fileid )
 	char				data[CP_MAX_PACKET];
 	int					datalen		= 0;
 	gchar*				chunk;
-	int					size;
+	size_t				chunksize;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_send_file_reject\n" );
 
@@ -1274,15 +1270,11 @@ void mxit_send_file_reject( struct MXitSession* session, const char* fileid )
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
 
-	size = mxit_chunk_create_reject( chunk_data( chunk ), fileid );
-	if ( size < 0 ) {
-		purple_debug_error( MXIT_PLUGIN_ID, "Error creating reject chunk (%i)\n", size );
-		return;
-	}
-
+	/* encode chunk */
+	chunksize = mxit_chunk_create_reject( chunk_data( chunk ), fileid );
 	set_chunk_type( chunk, CP_CHUNK_REJECT );
-	set_chunk_length( chunk, size );
-	datalen += MXIT_CHUNK_HEADER_SIZE + size;
+	set_chunk_length( chunk, chunksize );
+	datalen += MXIT_CHUNK_HEADER_SIZE + chunksize;
 
 	/* send the byte stream to the mxit server */
 	mxit_queue_packet( session, data, datalen, CP_CMD_MEDIA );
@@ -1297,12 +1289,12 @@ void mxit_send_file_reject( struct MXitSession* session, const char* fileid )
  *  @param filesize		The number of bytes to retrieve
  *  @param offset		Offset in file at which to start retrieving
  */
-void mxit_send_file_accept( struct MXitSession* session, const char* fileid, int filesize, int offset )
+void mxit_send_file_accept( struct MXitSession* session, const char* fileid, size_t filesize, size_t offset )
 {
 	char				data[CP_MAX_PACKET];
 	int					datalen		= 0;
 	gchar*				chunk;
-	int					size;
+	size_t				chunksize;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_send_file_accept\n" );
 
@@ -1312,15 +1304,11 @@ void mxit_send_file_accept( struct MXitSession* session, const char* fileid, int
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
 
-	size = mxit_chunk_create_get( chunk_data(chunk), fileid, filesize, offset );
-	if ( size < 0 ) {
-		purple_debug_error( MXIT_PLUGIN_ID, "Error creating getfile chunk (%i)\n", size );
-		return;
-	}
-
+	/* encode chunk */
+	chunksize = mxit_chunk_create_get( chunk_data(chunk), fileid, filesize, offset );
 	set_chunk_type( chunk, CP_CHUNK_GET );
-	set_chunk_length( chunk, size );
-	datalen += MXIT_CHUNK_HEADER_SIZE + size;
+	set_chunk_length( chunk, chunksize );
+	datalen += MXIT_CHUNK_HEADER_SIZE + chunksize;
 
 	/* send the byte stream to the mxit server */
 	mxit_queue_packet( session, data, datalen, CP_CMD_MEDIA );
@@ -1338,7 +1326,7 @@ void mxit_send_file_received( struct MXitSession* session, const char* fileid, s
 	char				data[CP_MAX_PACKET];
 	int					datalen		= 0;
 	gchar*				chunk;
-	int					size;
+	size_t				chunksize;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_send_file_received\n" );
 
@@ -1348,15 +1336,11 @@ void mxit_send_file_received( struct MXitSession* session, const char* fileid, s
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
 
-	size = mxit_chunk_create_received( chunk_data(chunk), fileid, status );
-	if ( size < 0 ) {
-		purple_debug_error( MXIT_PLUGIN_ID, "Error creating received chunk (%i)\n", size );
-		return;
-	}
-
+	/* encode chunk */
+	chunksize = mxit_chunk_create_received( chunk_data(chunk), fileid, status );
 	set_chunk_type( chunk, CP_CHUNK_RECEIVED );
-	set_chunk_length( chunk, size );
-	datalen += MXIT_CHUNK_HEADER_SIZE + size;
+	set_chunk_length( chunk, chunksize );
+	datalen += MXIT_CHUNK_HEADER_SIZE + chunksize;
 
 	/* send the byte stream to the mxit server */
 	mxit_queue_packet( session, data, datalen, CP_CMD_MEDIA );
@@ -1370,14 +1354,14 @@ void mxit_send_file_received( struct MXitSession* session, const char* fileid, s
  *  @param data			The avatar data
  *  @param buflen		The length of the avatar data
  */
-void mxit_set_avatar( struct MXitSession* session, const unsigned char* avatar, int avatarlen )
+void mxit_set_avatar( struct MXitSession* session, const unsigned char* avatar, size_t avatarlen )
 {
 	char				data[CP_MAX_PACKET];
 	int					datalen		= 0;
 	gchar*				chunk;
-	int					size;
+	size_t				chunksize;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_set_avatar: %i bytes\n", avatarlen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_set_avatar: %zu bytes\n", avatarlen );
 
 	/* convert the packet to a byte stream */
 	datalen = g_snprintf( data, sizeof( data ), "ms=" );
@@ -1385,15 +1369,11 @@ void mxit_set_avatar( struct MXitSession* session, const unsigned char* avatar, 
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
 
-	size = mxit_chunk_create_set_avatar( chunk_data(chunk), avatar, avatarlen );
-	if ( size < 0 ) {
-		purple_debug_error( MXIT_PLUGIN_ID, "Error creating set avatar chunk (%i)\n", size );
-		return;
-	}
-
+	/* encode chunk */
+	chunksize = mxit_chunk_create_set_avatar( chunk_data(chunk), avatar, avatarlen );
 	set_chunk_type( chunk, CP_CHUNK_SET_AVATAR );
-	set_chunk_length( chunk, size );
-	datalen += MXIT_CHUNK_HEADER_SIZE + size;
+	set_chunk_length( chunk, chunksize );
+	datalen += MXIT_CHUNK_HEADER_SIZE + chunksize;
 
 	/* send the byte stream to the mxit server */
 	mxit_queue_packet( session, data, datalen, CP_CMD_MEDIA );
@@ -1414,7 +1394,7 @@ void mxit_get_avatar( struct MXitSession* session, const char* mxitId, const cha
 	char				data[CP_MAX_PACKET];
 	int					datalen		= 0;
 	gchar*				chunk;
-	int					size;
+	size_t				chunksize;
 
 	purple_debug_info( MXIT_PLUGIN_ID, "mxit_get_avatar: %s\n", mxitId );
 
@@ -1424,15 +1404,11 @@ void mxit_get_avatar( struct MXitSession* session, const char* mxitId, const cha
 	/* map chunk header over data buffer */
 	chunk = &data[datalen];
 
-	size = mxit_chunk_create_get_avatar( chunk_data(chunk), mxitId, avatarId );
-	if ( size < 0 ) {
-		purple_debug_error( MXIT_PLUGIN_ID, "Error creating get avatar chunk (%i)\n", size );
-		return;
-	}
-
+	/* encode chunk */
+	chunksize = mxit_chunk_create_get_avatar( chunk_data(chunk), mxitId, avatarId );
 	set_chunk_type( chunk, CP_CHUNK_GET_AVATAR );
-	set_chunk_length( chunk, size );
-	datalen += MXIT_CHUNK_HEADER_SIZE + size;
+	set_chunk_length( chunk, chunksize );
+	datalen += MXIT_CHUNK_HEADER_SIZE + chunksize;
 
 	/* send the byte stream to the mxit server */
 	mxit_queue_packet( session, data, datalen, CP_CMD_MEDIA );
