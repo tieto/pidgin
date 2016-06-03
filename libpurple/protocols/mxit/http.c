@@ -97,9 +97,9 @@ static void mxit_cb_http_read( gpointer user_data, gint source, PurpleInputCondi
 {
 	struct MXitSession*	session		= (struct MXitSession*) user_data;
 	char				buf[256];
-	int					buflen;
+	unsigned int		buflen;
 	char*				body;
-	int					bodylen;
+	unsigned int		bodylen;
 	char*				ch;
 	int					len;
 	char*				tmp;
@@ -182,7 +182,7 @@ nextpacket:
 			goto done;
 		}
 		tmp = g_strndup( ch, tmp - ch );
-		bodylen = atoi( tmp );
+		bodylen = strtoul( tmp, NULL, 10 );
 		g_free( tmp );
 		tmp = NULL;
 
