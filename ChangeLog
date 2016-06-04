@@ -14,7 +14,7 @@ version 2.10.13 (MM/DD/YY):
 	* Fixed building on Mac OSX (Patrick Cloke) (#16883)
 
 	MXit
-	* Fixed multiple remote buffere overflows.  Discovered by Yves Younan of
+	* Fixed multiple remote buffer overflows.  Discovered by Yves Younan of
 	  Cisco Talos.  (TALOS-CAN-0136)
 
 version 2.10.12 (12/31/15):
