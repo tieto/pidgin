@@ -608,7 +608,7 @@ ssl_gnutls_get_peer_certificates(PurpleSslConnection * gsc)
 		   TODO: Is anyone complaining? (Maybe elb?) */
 		/* only append if previous cert was actually signed by this one.
 		 * Thanks Microsoft. */
-		if ((prvcrt == NULL) || x509_certificate_signed_by(prvcrt, newcrt)) {
+		if ((newcrt != NULL) && ((prvcrt == NULL) || x509_certificate_signed_by(prvcrt, newcrt))) {
 			peer_certs = g_list_append(peer_certs, newcrt);
 			prvcrt = newcrt;
 		} else {
@@ -685,12 +685,18 @@ x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode)
 
 	/* Allocate and prepare the internal certificate data */
 	certdat = g_new0(x509_crtdata_t, 1);
-	gnutls_x509_crt_init(&(certdat->crt));
+	if (gnutls_x509_crt_init(&(certdat->crt)) != 0) {
+		g_free(certdat);
+		return NULL;
+	}
 	certdat->refcount = 0;
 
 	/* Perform the actual certificate parse */
 	/* Yes, certdat->crt should be passed as-is */
-	gnutls_x509_crt_import(certdat->crt, &dt, mode);
+	if (gnutls_x509_crt_import(certdat->crt, &dt, mode) != 0) {
+		g_free(certdat);
+		return NULL;
+	}
 
 	/* Allocate the certificate and load it with data */
 	crt = g_new0(PurpleCertificate, 1);
@@ -780,7 +786,9 @@ x509_importcerts_from_file(const gchar * filename)
 
 		/* Perform the conversion; files should be in PEM format */
 		crt = x509_import_from_datum(dt, GNUTLS_X509_FMT_PEM);
-		crts = g_slist_prepend(crts, crt);
+		if (crt != NULL) {
+			crts = g_slist_prepend(crts, crt);
+		}
 		begin = end;
 	}
 
