@@ -750,7 +750,7 @@ choose_cb(GntWidget *button, gpointer null)
 	FinchSoundEvent * event = &sounds[id];
 	char *path = NULL;
 
-	gnt_box_set_title(GNT_BOX(w), _("Select Sound File ..."));
+	gnt_box_set_title(GNT_BOX(w), _("Select Sound File..."));
 	gnt_file_sel_set_current_location(sel,
 			(event && event->file) ? (path = g_path_get_dirname(event->file))
 				: purple_home_dir());
