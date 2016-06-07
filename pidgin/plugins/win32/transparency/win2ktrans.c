@@ -682,8 +682,7 @@ static PurplePluginInfo info =
 					/**  summary        */
 	N_("Variable Transparency for the buddy list and conversations."),
 					/**  description    */
-	N_("This plugin enables variable alpha transparency on conversation windows and the buddy list.\n\n"
-	"* Note: This plugin requires Win2000 or greater."),
+	N_("This plugin enables variable alpha transparency on conversation windows and the buddy list."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",	/**< author         */
 	PURPLE_WEBSITE,			/**< homepage       */
 	plugin_load,			/**< load           */
