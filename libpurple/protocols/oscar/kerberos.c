@@ -40,10 +40,6 @@
 #include "oscarcommon.h"
 #include "core.h"
 
-#include "ciphers/hmaccipher.h"
-#include "ciphers/sha256hash.h"
-
-
 #define MAXAIMPASSLEN 16
 
 /*
