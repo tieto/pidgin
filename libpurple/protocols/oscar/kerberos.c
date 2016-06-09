@@ -338,8 +338,7 @@ void send_kerberos_login(OscarData *od, const char *username)
 	guint8 password_xored[MAXAIMPASSLEN];
 	const gchar *client_key;
 	gchar *imapp_key;
-	gchar *body;
-	gint body_len;
+	GString *body;
 	guint16 len_be;
 	guint16 reqid;
 	const gchar header[] = {
@@ -387,64 +386,35 @@ void send_kerberos_login(OscarData *od, const char *username)
 	imapp_key = g_strdup_printf ("imApp key=%s", client_key);
 
 	/* Construct the body of the HTTP POST request */
-	body_len = sizeof(header);
-	body_len += 2 + strlen (imapp_key);
-	body_len += sizeof(pre_username);
-	body_len += 2 + strlen (username);
-	body_len += sizeof(post_username);
-	body_len += 2 + sizeof(pre_password);
-	body_len += 4 + strlen (password);
-	body_len += sizeof(post_password);
-	body_len += 2 + strlen (client_key);
-	body_len += sizeof(footer);
-
-	body = g_malloc (body_len);
-
-	body_len = 0;
+	body = g_string_new(NULL);
+	g_string_append_len (body, header, sizeof(header));
 	reqid = (guint16) g_random_int();
-	memcpy (body, header, sizeof(header));
-	memcpy (body + 0xC, (void *)&reqid, sizeof(guint16));
-	body_len += sizeof(header);
+	g_string_overwrite_len (body, 0xC, (void *)&reqid, sizeof(guint16));
 
 	len_be = GUINT16_TO_BE (strlen (imapp_key));
-	memcpy (body + body_len, (void *)&len_be, sizeof(guint16));
-	body_len += sizeof(guint16);
-	memcpy (body + body_len, imapp_key, strlen (imapp_key));
-	body_len += strlen (imapp_key);
+	g_string_append_len (body, (void *)&len_be, sizeof(guint16));
+	g_string_append (body, imapp_key);
 
-	memcpy (body + body_len, pre_username, sizeof(pre_username));
-	body_len += sizeof(pre_username);
 	len_be = GUINT16_TO_BE (strlen (username));
-	memcpy (body + body_len, (void *)&len_be, sizeof(guint16));
-	body_len += sizeof(guint16);
-	memcpy (body + body_len, username, strlen (username));
-	body_len += strlen (username);
-	memcpy (body + body_len, post_username, sizeof(post_username));
-	body_len += sizeof(post_username);
+	g_string_append_len (body, pre_username, sizeof(pre_username));
+	g_string_append_len (body, (void *)&len_be, sizeof(guint16));
+	g_string_append (body, username);
+	g_string_append_len (body, post_username, sizeof(post_username));
 
 	len_be = GUINT16_TO_BE (strlen (password) + 0x10);
-	memcpy (body + body_len, (void *)&len_be, sizeof(guint16));
-	body_len += sizeof(guint16);
-	memcpy (body + body_len, pre_password, sizeof(pre_password));
-	body_len += sizeof(pre_password);
+	g_string_append_len (body, (void *)&len_be, sizeof(guint16));
+	g_string_append_len (body, pre_password, sizeof(pre_password));
 	len_be = GUINT16_TO_BE (strlen (password) + 4);
-	memcpy (body + body_len, (void *)&len_be, sizeof(guint16));
-	body_len += sizeof(guint16);
+	g_string_append_len (body, (void *)&len_be, sizeof(guint16));
 	len_be = GUINT16_TO_BE (strlen (password));
-	memcpy (body + body_len, (void *)&len_be, sizeof(guint16));
-	body_len += sizeof(guint16);
-	memcpy (body + body_len, password_xored, strlen (password));
-	body_len += strlen (password);
-	memcpy (body + body_len, post_password, sizeof(post_password));
-	body_len += sizeof(post_password);
+	g_string_append_len (body, (void *)&len_be, sizeof(guint16));
+	g_string_append_len (body, password_xored, strlen (password));
+	g_string_append_len (body, post_password, sizeof(post_password));
 
 	len_be = GUINT16_TO_BE (strlen (client_key));
-	memcpy (body + body_len, (void *)&len_be, sizeof(guint16));
-	body_len += sizeof(guint16);
-	memcpy (body + body_len, client_key, strlen (client_key));
-	body_len += strlen (client_key);
-	memcpy (body + body_len, footer, sizeof(footer));
-	body_len += sizeof(footer);
+	g_string_append_len (body, (void *)&len_be, sizeof(guint16));
+	g_string_append (body, client_key);
+	g_string_append_len (body, footer, sizeof(footer));
 
 	g_free(imapp_key);
 
@@ -455,10 +425,10 @@ void send_kerberos_login(OscarData *od, const char *username)
 		"application/x-snac");
 	purple_http_request_header_set(req, "Accept",
 		"application/x-snac");
-	purple_http_request_set_contents(req, body, body_len);
+	purple_http_request_set_contents(req, body->str, body->len);
 	od->hc = purple_http_request(gc, req, kerberos_login_cb, od);
 	purple_http_request_unref(req);
 
-	g_free (body);
+	g_string_free (body, TRUE);
 	g_free (url);
 }
