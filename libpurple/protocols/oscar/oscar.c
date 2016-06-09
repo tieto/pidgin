@@ -350,7 +350,7 @@ connection_common_established_cb(FlapConnection *conn)
 	{
 		const gchar *login_type = purple_account_get_string(account, "login_type", OSCAR_DEFAULT_LOGIN);
 
-		if (strcmp(login_type, OSCAR_MD5_LOGIN) != 0)
+		if (!purple_strequal(login_type, OSCAR_MD5_LOGIN))
 		{
 			ClientInfo aiminfo = CLIENTINFO_PURPLE_AIM;
 			ClientInfo icqinfo = CLIENTINFO_PURPLE_ICQ;
@@ -745,7 +745,7 @@ oscar_login(PurpleAccount *account)
 
 	login_type = purple_account_get_string(account, "login_type", OSCAR_DEFAULT_LOGIN);
 	encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
-	od->use_ssl = strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0;
+	od->use_ssl = purple_strequal(encryption_type, OSCAR_NO_ENCRYPTION) == FALSE;
 
 	/* Connect to core Purple signals */
 	purple_prefs_connect_callback(purple_connection_get_protocol(gc), "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
@@ -761,10 +761,10 @@ oscar_login(PurpleAccount *account)
 	 * This authentication method is used for both ICQ and AIM when
 	 * clientLogin is not enabled.
 	 */
-	if (strcmp(login_type, OSCAR_CLIENT_LOGIN) == 0) {
+	if (purple_strequal(login_type, OSCAR_CLIENT_LOGIN)) {
 		/* Note: Actual server/port configuration is ignored here */
 		send_client_login(od, purple_account_get_username(account));
-	} else if (strcmp(login_type, OSCAR_KERBEROS_LOGIN) == 0) {
+	} else if (purple_strequal(login_type, OSCAR_KERBEROS_LOGIN)) {
 		const char *server;
 
 		if (!od->use_ssl) {
@@ -782,10 +782,10 @@ oscar_login(PurpleAccount *account)
 		 * do what we know is best for them and change the setting out
 		 * from under them to the KDC login server.
 		 */
-		if (!strcmp(server, oscar_get_login_server(od->icq, FALSE)) ||
-			!strcmp(server, oscar_get_login_server(od->icq, TRUE)) ||
-			!strcmp(server, AIM_ALT_LOGIN_SERVER) ||
-			!strcmp(server, "")) {
+		if (purple_strequal(server, oscar_get_login_server(od->icq, FALSE)) ||
+			purple_strequal(server, oscar_get_login_server(od->icq, TRUE)) ||
+			purple_strequal(server, AIM_ALT_LOGIN_SERVER) ||
+			purple_strequal(server, "")) {
 			purple_debug_info("oscar", "Account uses Kerberos auth, so changing server to default KDC server\n");
 			purple_account_set_string(account, "server", AIM_DEFAULT_KDC_SERVER);
 			purple_account_set_int(account, "port", AIM_DEFAULT_KDC_PORT);
@@ -807,10 +807,10 @@ oscar_login(PurpleAccount *account)
 			 * do what we know is best for them and change the setting out
 			 * from under them to the SSL login server.
 			 */
-			if (!strcmp(server, oscar_get_login_server(od->icq, FALSE)) ||
-				!strcmp(server, AIM_ALT_LOGIN_SERVER) ||
-				!strcmp(server, AIM_DEFAULT_KDC_SERVER) ||
-				!strcmp(server, "")) {
+			if (purple_strequal(server, oscar_get_login_server(od->icq, FALSE)) ||
+				purple_strequal(server, AIM_ALT_LOGIN_SERVER) ||
+				purple_strequal(server, AIM_DEFAULT_KDC_SERVER) ||
+				purple_strequal(server, "")) {
 				purple_debug_info("oscar", "Account uses SSL, so changing server to default SSL server\n");
 				purple_account_set_string(account, "server", oscar_get_login_server(od->icq, TRUE));
 				purple_account_set_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
@@ -828,9 +828,9 @@ oscar_login(PurpleAccount *account)
 			 * SSL but their server is set to OSCAR_DEFAULT_SSL_LOGIN_SERVER,
 			 * set it back to the default.
 			 */
-			if (!strcmp(server, oscar_get_login_server(od->icq, TRUE)) ||
-				!strcmp(server, AIM_DEFAULT_KDC_SERVER) ||
-				!strcmp(server, "")) {
+			if (purple_strequal(server, oscar_get_login_server(od->icq, TRUE)) ||
+				purple_strequal(server, AIM_DEFAULT_KDC_SERVER) ||
+				purple_strequal(server, "")) {
 				purple_debug_info("oscar", "Account does not use SSL, so changing server back to non-SSL\n");
 				purple_account_set_string(account, "server", oscar_get_login_server(od->icq, FALSE));
 				purple_account_set_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
@@ -1118,9 +1118,9 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	if (!redir->use_ssl) {
 		const gchar *encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
-		if (strcmp(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION) == 0) {
+		if (purple_strequal(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION)) {
 			purple_debug_warning("oscar", "We won't use SSL for FLAP type 0x%04hx.\n", redir->group);
-		} else if (strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
+		} else if (purple_strequal(encryption_type, OSCAR_REQUIRE_ENCRYPTION)) {
 			purple_debug_error("oscar", "FLAP server %s:%d of type 0x%04hx doesn't support encryption.\n", host, port, redir->group);
 			purple_connection_error(
 				gc,
@@ -1291,7 +1291,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			? oscar_encoding_to_utf8(info->status_encoding, info->status, info->status_len)
 			: NULL;
 
-	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0) {
+	if (purple_strequal(status_id, OSCAR_STATUS_ID_AVAILABLE)) {
 		/* TODO: If itmsurl is NULL, does that mean the URL has been
 		   cleared?  Or does it mean the URL should remain unchanged? */
 		if (info->itmsurl != NULL) {
