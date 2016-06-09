@@ -102,7 +102,7 @@ static gchar *get_kdc_url(OscarData *od)
 }
 
 /*
- * Using clientLogin requires a developer ID.  This key is for libpurple.
+ * Using kerberos auth requires a developer ID. This key is for libpurple.
  * It is the default key for all libpurple-based clients.  AOL encourages
  * UIs (especially ones with lots of users) to override this with their
  * own key.  This key is owned by the AIM account "markdoliner"
@@ -324,10 +324,10 @@ kerberos_login_cb(PurpleHttpConnection *http_conn,
 }
 
 /**
- * This function sends a request to
- * https://api.screenname.aol.com/auth/clientLogin with the user's
- * username and password and receives the user's session key, which is
- * used to request a connection to the BOSS server.
+ * This function sends a binary blob request to the Kerberos KDC server
+ * https://kdc.uas.aol.com with the user's username and password and
+ * receives the IM cookie, which is used to request a connection to the
+ * BOSS server.
  */
 void send_kerberos_login(OscarData *od, const char *username)
 {
