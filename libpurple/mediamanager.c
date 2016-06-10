@@ -458,14 +458,18 @@ purple_media_manager_remove_media(PurpleMediaManager *manager, PurpleMedia *medi
 
 #ifdef HAVE_MEDIA_APPLICATION
 		g_mutex_lock (&manager->priv->appdata_mutex);
-		for (list = manager->priv->appdata_info; list; list = list->next) {
+		list = manager->priv->appdata_info;
+		while (list) {
 			PurpleMediaAppDataInfo *info = list->data;
+			GList *next = list->next;
 
 			if (info->media == media) {
 				manager->priv->appdata_info = g_list_delete_link (
 					manager->priv->appdata_info, list);
 				free_appdata_info_locked (info);
 			}
+
+			list = next;
 		}
 		g_mutex_unlock (&manager->priv->appdata_mutex);
 #endif
