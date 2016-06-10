@@ -562,8 +562,23 @@ purple_media_manager_get_private_media_by_account(PurpleMediaManager *manager,
 static void
 free_appdata_info_locked (PurpleMediaAppDataInfo *info)
 {
+	GstAppSrcCallbacks null_src_cb = { NULL, NULL, NULL, { NULL } };
+	GstAppSinkCallbacks null_sink_cb = { NULL, NULL, NULL , { NULL } };
+
 	if (info->notify)
 		info->notify (info->user_data);
+
+	info->media = NULL;
+	if (info->appsrc) {
+		/* Will call appsrc_destroyed. */
+		gst_app_src_set_callbacks (info->appsrc, &null_src_cb,
+				NULL, NULL);
+	}
+	if (info->appsink) {
+		/* Will call appsink_destroyed. */
+		gst_app_sink_set_callbacks (info->appsink, &null_sink_cb,
+				NULL, NULL);
+	}
 
 	/* Make sure no other thread is using the structure */
 	g_free (info->session_id);
@@ -871,7 +886,14 @@ appsrc_seek_data (GstAppSrc *appsrc, guint64 offset, gpointer user_data)
 static void
 appsrc_destroyed (PurpleMediaAppDataInfo *info)
 {
-	PurpleMediaManager *manager = purple_media_manager_get ();
+	PurpleMediaManager *manager;
+
+	if (!info->media) {
+		/* PurpleMediaAppDataInfo is being freed. Return at once. */
+		return;
+	}
+
+	manager = purple_media_manager_get ();
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
 	info->appsrc = NULL;
@@ -1029,7 +1051,14 @@ appsink_new_sample (GstAppSink *appsink, gpointer user_data)
 static void
 appsink_destroyed (PurpleMediaAppDataInfo *info)
 {
-	PurpleMediaManager *manager = purple_media_manager_get ();
+	PurpleMediaManager *manager;
+
+	if (!info->media) {
+		/* PurpleMediaAppDataInfo is being freed. Return at once. */
+		return;
+	}
+
+	manager = purple_media_manager_get ();
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
 	info->appsink = NULL;
