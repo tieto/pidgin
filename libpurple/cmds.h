@@ -108,12 +108,12 @@ typedef struct
 {
 	/** If implemented, the UI is responsible for handling commands. */
 	/* @see purple_cmd_register for the argument values. */
-	void (*register_command)(const gchar *name, PurpleCmdPriority p,
-				 PurpleCmdFlag f, const gchar *prpl_id,
-				 const gchar *helpstr, PurpleCmd *cmd);
+	void (*register_command)(const gchar *name, PurpleCmdPriority priority,
+				 PurpleCmdFlag flags, const gchar *prpl_id,
+				 const gchar *help, PurpleCmd *cmd);
 
 	/** Should be implemented if register_command is implemented.
-	 *  name and prpl_id should have the same value that were used
+	 *  name and prpl_id will have the same value that were used
 	 *  for the register_command call.
 	 */
 	void (*unregister_command)(const gchar *name, const gchar *prpl_id);
@@ -209,9 +209,9 @@ void purple_cmd_unregister(PurpleCmdId id);
  * @param cmdline The command the user typed (including all arguments) as a single string.
  *            The caller doesn't have to do any parsing, except removing the command
  *            prefix, which the core has no knowledge of. cmd should not contain any
- *            formatting, and should be in plain text (no html entities).
+ *            formatting, and should be in plain text (no HTML entities).
  * @param markup This is the same as cmd, but is the formatted version. It should be in
- *               HTML, with < > and &, at least, escaped to html entities, and should
+ *               HTML, with < > and &, at least, escaped to HTML entities, and should
  *               include both the default formatting and any extra manual formatting.
  * @param errormsg If the command failed errormsg is filled in with the appropriate error
  *                 message. It must be freed by the caller with g_free().
@@ -231,8 +231,8 @@ PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmd
  * @param cmdline The command the user typed (only the arguments).
  *            The caller should remove the prefix and the command name.
  *            It should not contain any formatting, and should be
- *            in plain text (no html entities).
- * @return TRUE if the command handled the cmdline, FALSE otherwise.
+ *            in plain text (no HTML entities).
+ * @return TRUE if the command handled the @a cmdline, FALSE otherwise.
  */
 gboolean purple_cmd_execute(PurpleCmd *c, PurpleConversation *conv,
 			    const gchar *cmdline);
