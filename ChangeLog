@@ -22,6 +22,8 @@ version 2.10.13 (MM/DD/YY):
 	  Talos.  (TALOS-CAN-0138, TALOS-CAN-0135)
 	* Fixed an invalid read.  Discovered by Yves Younan of Cisco Talos
 	  (TALOS-CAN-0118)
+	* Fixed a remote buffer overflow vulnerability.  Discovered by Yves
+	  Younan of Cisco Talos.  (TALOS-CAN-0119)
 
 version 2.10.12 (12/31/15):
 	General:
