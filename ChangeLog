@@ -39,6 +39,8 @@ version 2.10.13 (MM/DD/YY):
 	  Cisco Talos (TALOS-CAN-0137)
 	* Fixed a remote code execution issue discovered by Yves Younan of Cisco
 	  Talos.  (TALOS-CAN-0142)
+	* Fixed a remote denial of service vulnerability in contact mood
+	  handling.  Discovered by Yves Younan of Cisco Talos (TALOS-CAN-0141)
 
 version 2.10.12 (12/31/15):
 	General:
