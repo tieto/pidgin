@@ -328,6 +328,20 @@ kerberos_login_cb(PurpleHttpConnection *http_conn,
  * https://kdc.uas.aol.com with the user's username and password and
  * receives the IM cookie, which is used to request a connection to the
  * BOSS server.
+ * The binary data below is what AIM 8.0.8.1 sends in order to authenticate
+ * to the KDC server. It is an 'X-SNAC' packet, which is relatively similar
+ * to SNAC packets but somehow different.
+ * The header starts with the 0x50C family follow by 0x0002 subtype, then
+ * some fixed length data and TLVs. The string "COOL" appears in there for
+ * some reason followed by the 'US' and 'en' strings.
+ * Then the 'imApp key=<client key>' comes after that, and then the username
+ * and the string "im/boss" which seems to represent the service we are
+ * requesting the authentication for. Changing that will lead to a
+ * 'unknown service' error. The client key is then added again (without the
+ * 'imApp key' string prepended to it) then a XOR-ed version of the password.
+ * The meaning of the header/footer/in-between bytes is not known but never
+ * seems to change so there is no need to reverse engineer their meaning at
+ * this point.
  */
 void send_kerberos_login(OscarData *od, const char *username)
 {
