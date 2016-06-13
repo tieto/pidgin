@@ -1840,6 +1840,12 @@ static void mxit_parse_cmd_extprofile( struct MXitSession* session, struct recor
 	/* set the count for attributes */
 	count = atoi( records[0]->fields[1]->data );
 
+	/* ensure the packet has the correct number of fields */
+	if ( records[0]->fcount < ( 2 + ( count * 3 ) ) ) {
+		purple_debug_error( MXIT_PLUGIN_ID, "Insufficient number of fields in extprofile response. fields=%i records=%i", records[0]->fcount, count );
+		return;
+	}
+
 	for ( i = 0; i < count; i++ ) {
 		char* fname;
 		char* fvalue;
