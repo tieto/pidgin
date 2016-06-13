@@ -24,6 +24,8 @@ version 2.10.13 (MM/DD/YY):
 	  (TALOS-CAN-0118)
 	* Fixed a remote buffer overflow vulnerability.  Discovered by Yves
 	  Younan of Cisco Talos.  (TALOS-CAN-0119)
+	* Fixed an out-of-bounds read discovered by Yves Younan of Cisco Talos.
+	  (TALOS-CAN-0123)
 
 version 2.10.12 (12/31/15):
 	General:
