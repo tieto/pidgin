@@ -23,7 +23,9 @@ Homepage: http://www.pidgin.im
 
 Package: libpurple0
 Architecture: any
-Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}, libsasl2-modules
+Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}, libsasl2-modules,
+ gstreamer1.0-plugins-base (>= 1.4.4-2+sipe),
+ libgstreamer-plugins-base1.0-0 (>= 1.4.4-2+sipe)
 Recommends: ca-certificates, libpurple-bin
 Suggests: ${shlibs:Suggests}
 Conflicts: network-manager (<< 0.9.0)
