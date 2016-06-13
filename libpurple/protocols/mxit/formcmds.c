@@ -522,9 +522,9 @@ static void command_table(struct RXMsgData* mx, GHashTable* hash)
 	const char* tmp;
 	const char* name;
 	int mode;
-	int nr_columns = 0, nr_rows = 0;
+	unsigned int nr_columns = 0, nr_rows = 0;
 	gchar** coldata;
-	int i, j;
+	unsigned int i, j;
 
 	/* table name */
 	name = g_hash_table_lookup(hash, "nm");
@@ -550,6 +550,12 @@ static void command_table(struct RXMsgData* mx, GHashTable* hash)
 
 	coldata = g_strsplit(tmp, "~", 0);			/* split into entries for each row & column */
 
+	if (g_strv_length(coldata) != (nr_rows * nr_columns)) {
+		purple_debug_info(MXIT_PLUGIN_ID, "Invalid table data: cols=%i rows=%i\n", nr_columns, nr_rows);
+		g_strfreev(coldata);
+		return;
+	}
+
 	purple_debug_info(MXIT_PLUGIN_ID, "Table %s from %s: [cols=%i rows=%i mode=%i]\n", name, mx->from, nr_columns, nr_rows, mode);
 
 	for (i = 0; i < nr_rows; i++) {
@@ -557,6 +563,8 @@ static void command_table(struct RXMsgData* mx, GHashTable* hash)
 			purple_debug_info(MXIT_PLUGIN_ID, " Row %i Column %i = %s\n", i, j, coldata[i*nr_columns + j]);
 		}
 	}
+
+	g_strfreev(coldata);
 }
 
 

@@ -31,6 +31,8 @@ version 2.10.13 (MM/DD/YY):
 	* Fixed a remote denial of service vulnerability that could result in
 	  a null pointer dereference.  Discovered by Yves Younan of Cisco Talos.
 	  (TALOS-CAN-0133)
+	* Fixed a remote denial of service that could result in an out-of-bounds
+	  read.  Discovered by Yves Younan of Cisco Talos (TALOS-CAN-0134)
 
 version 2.10.12 (12/31/15):
 	General:
