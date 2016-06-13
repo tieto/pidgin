@@ -28,6 +28,9 @@ version 2.10.13 (MM/DD/YY):
 	  (TALOS-CAN-0123)
 	* Fixed a directory traversal issue.  Discovered by Yves Younan of Cisco
 	  Talos (TALOS-CAN-0128)
+	* Fixed a remote denial of service vulnerability that could result in
+	  a null pointer dereference.  Discovered by Yves Younan of Cisco Talos.
+	  (TALOS-CAN-0133)
 
 version 2.10.12 (12/31/15):
 	General:
