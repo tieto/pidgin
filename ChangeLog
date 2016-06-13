@@ -35,6 +35,8 @@ version 2.10.13 (MM/DD/YY):
 	  read.  Discovered by Yves Younan of Cisco Talos (TALOS-CAN-0134)
 	* Fixed multiple remote buffer overflows.  Discovered by Yves Younan of
 	  Cisco Talos.  (TALOS-CAN-0136)
+	* Fixed a remote NULL pointer dereference.  Discovered by Yves Younan of
+	  Cisco Talos (TALOS-CAN-0137)
 
 version 2.10.12 (12/31/15):
 	General:

@@ -2662,7 +2662,8 @@ int mxit_parse_packet( struct MXitSession* session )
 						/* new record */
 						if ( packet.rcount == 1 ) {
 							/* packet command */
-							packet.cmd = atoi( packet.records[0]->fields[0]->data );
+							if ( packet.records[0]->fcount > 0 )
+								packet.cmd = atoi( packet.records[0]->fields[0]->data );
 						}
 						else if ( packet.rcount == 2 ) {
 							/* special case: binary multimedia packets should not be parsed here */
