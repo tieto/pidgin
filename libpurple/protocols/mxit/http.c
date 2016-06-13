@@ -63,9 +63,9 @@ static void free_http_request( struct http_request* req )
  *  @param pktlen		The length of the packet data
  *  @return				Return -1 on error, otherwise 0
  */
-static int mxit_http_raw_write( int fd, const char* pktdata, int pktlen )
+static int mxit_http_raw_write( int fd, const char* pktdata, size_t pktlen )
 {
-	int		written;
+	size_t	written;
 	int		res;
 
 	written = 0;
@@ -315,22 +315,25 @@ static void mxit_cb_http_connect( gpointer user_data, gint source, const gchar* 
  *	@param session		The MXit session object
  *	@param host			The server name to connect to
  *	@param port			The port number to connect to
- *	@param data			The HTTP request data (including HTTP headers etc.)
+ *	@param header		The HTTP header.
+ *	@param data			The HTTP request data.
  *	@param datalen		The HTTP request data length
  */
-void mxit_http_send_request( struct MXitSession* session, char* host, int port, const char* data, int datalen )
+void mxit_http_send_request( struct MXitSession* session, char* host, int port, gchar* header, const char* data, size_t datalen )
 {
 	PurpleProxyConnectData*		con	= NULL;
 	struct http_request*		req;
+	size_t						headerlen = strlen( header );
 
 	/* build the http request */
 	req = g_new0( struct http_request, 1 );
 	req->session = session;
 	req->host = host;
 	req->port = port;
-	req->data = g_malloc0( datalen );
-	memcpy( req->data, data, datalen );
-	req->datalen = datalen;
+	req->data = g_malloc0( headerlen + datalen );
+	memcpy( req->data, header, headerlen );
+	memcpy( req->data + headerlen, data, datalen );
+	req->datalen = headerlen + datalen;
 
 	/* open connection to the HTTP server */
 	con = purple_proxy_connect( NULL, session->acc, host, port, mxit_cb_http_connect, req );
