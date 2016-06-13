@@ -43,6 +43,8 @@ version 2.10.13 (MM/DD/YY):
 	  handling.  Discovered by Yves Younan of Cisco Talos (TALOS-CAN-0141)
 	* Fixed a remote out-of-bounds write vulnerability.  Discovered by Yves
 	  Younan of Cisco Talos. (TALOS-CAN-0139)
+	* Fix a remote out-of-bounds read.  Discovered by Yves Younan of Cisco
+	  Talos.  (TALOS-CAN-0143)
 
 version 2.10.12 (12/31/15):
 	General:
