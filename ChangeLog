@@ -37,6 +37,8 @@ version 2.10.13 (MM/DD/YY):
 	  Cisco Talos.  (TALOS-CAN-0136)
 	* Fixed a remote NULL pointer dereference.  Discovered by Yves Younan of
 	  Cisco Talos (TALOS-CAN-0137)
+	* Fixed a remote code execution issue discovered by Yves Younan of Cisco
+	  Talos.  (TALOS-CAN-0142)
 
 version 2.10.12 (12/31/15):
 	General:
