@@ -2775,8 +2775,9 @@ void mxit_cb_rx( gpointer user_data, gint source, PurpleInputCondition cond )
 				/* the end of the length record found */
 				session->rx_lbuf[session->rx_i] = '\0';
 				session->rx_res = atoi( &session->rx_lbuf[3] );
-				if ( session->rx_res > CP_MAX_PACKET ) {
+				if ( ( session->rx_res <= 0 ) || ( session->rx_res > CP_MAX_PACKET ) ) {
 					purple_connection_error( session->con, _( "A connection error occurred to MXit. (read stage 0x03)" ) );
+					return;
 				}
 				session->rx_state = RX_STATE_DATA;
 				session->rx_i = 0;

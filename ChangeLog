@@ -20,6 +20,8 @@ version 2.10.13 (MM/DD/YY):
 	  Talos.  (TALOS-CAN-0140)
 	* Fixed a remote out-of-band read.  Discovered by Yves Younan of Cisco
 	  Talos.  (TALOS-CAN-0138, TALOS-CAN-0135)
+	* Fixed an invalid read.  Discovered by Yves Younan of Cisco Talos
+	  (TALOS-CAN-0118)
 
 version 2.10.12 (12/31/15):
 	General:
