@@ -102,7 +102,7 @@ static gchar *get_kdc_url(OscarData *od)
 }
 
 /*
- * Using kerberos auth requires a developer ID.  This key is for libpurple.
+ * Using kerberos auth requires a developer ID. This key is for libpurple.
  * It is the default key for all libpurple-based clients.  AOL encourages
  * UIs (especially ones with lots of users) to override this with their
  * own key.  This key is owned by the AIM account "markdoliner"
@@ -350,7 +350,6 @@ void send_kerberos_login(OscarData *od, const char *username)
 	const gchar *client_key;
 	gchar *imapp_key;
 	GString *body;
-	gsize body_len;
 	guint16 len_be;
 	guint16 reqid;
 	const gchar header[] = {
