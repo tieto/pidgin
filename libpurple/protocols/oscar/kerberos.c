@@ -119,7 +119,7 @@ static const char *get_client_key(OscarData *od)
 }
 
 static void
-aim_encode_password(const char *password, guint8 *encoded)
+aim_encode_password(const char *password, gchar *encoded)
 {
 	guint8 encoding_table[] = {
 		0x76, 0x91, 0xc5, 0xe7,
@@ -346,7 +346,7 @@ void send_kerberos_login(OscarData *od, const char *username)
 	GString *request;
 	gchar *url;
 	const gchar *password;
-	guint8 password_xored[MAXAIMPASSLEN];
+	gchar password_xored[MAXAIMPASSLEN];
 	const gchar *client_key;
 	gchar *imapp_key;
 	GString *body;
