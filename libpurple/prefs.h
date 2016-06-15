@@ -62,9 +62,79 @@ typedef enum _PurplePrefType
 typedef void (*PurplePrefCallback) (const char *name, PurplePrefType type,
 		gconstpointer val, gpointer data);
 
+
+/** @copydoc _PurplePrefsUiOps */
+typedef struct _PurplePrefsUiOps PurplePrefsUiOps;
+
+
+/**  Prefs UI operations
+ */
+struct _PurplePrefsUiOps
+{
+	void (*add_none)(const char *name);
+	void (*add_bool)(const char *name, gboolean value);
+	void (*add_int)(const char *name, int value);
+	void (*add_string)(const char *name, const char *value);
+	void (*add_string_list)(const char *name, GList *value);
+
+	void (*set_bool)(const char *name, gboolean value);
+	void (*set_int)(const char *name, int value);
+	void (*set_string)(const char *name, const char *value);
+	void (*set_string_list)(const char *name, GList *value);
+
+	gboolean (*get_bool)(const char *name);
+	int (*get_int)(const char *name);
+	const char *(*get_string)(const char *name);
+	GList *(*get_string_list)(const char *name);
+
+	PurplePrefType (*get_type)(const char *name);
+	GList *(*get_children_names)(const char *name);
+
+	gboolean (*exists)(const char *name);
+	void (*remove)(const char *name);
+
+	void (*rename)(const char *oldname, const char *newname);
+	void (*rename_boolean_toggle)(const char *oldname, const char *newname);
+
+	gboolean (*load)(void);
+	void (*save)(void);
+	void (*schedule_save)(void);
+
+	void *(*add_observer)(const char *name, gpointer data);
+	void (*remove_observer)(const char *name, void *observer);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+	void (*_purple_reserved5)(void);
+};
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**************************************************************************/
+/** @name UI Registration Functions                                       */
+/**************************************************************************/
+/*@{*/
+/**
+ * Sets the UI operations structure to be used for preferences.
+ *
+ * @param ops The UI operations structure.
+ */
+void purple_prefs_set_ui_ops(PurplePrefsUiOps *ops);
+
+/**
+ * Returns the UI operations structure used for preferences.
+ *
+ * @return The UI operations structure in use.
+ */
+PurplePrefsUiOps *purple_prefs_get_ui_ops(void);
+
+/*@}*/
 
 /**************************************************************************/
 /** @name Prefs API

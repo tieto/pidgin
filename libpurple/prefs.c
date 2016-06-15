@@ -40,6 +40,8 @@
 #include "win32dep.h"
 #endif
 
+static PurplePrefsUiOps *prefs_ui_ops = NULL;
+
 struct pref_cb {
 	PurplePrefCallback func;
 	gpointer data;
@@ -78,6 +80,23 @@ static struct purple_pref prefs = {
 static GHashTable *prefs_hash = NULL;
 static guint       save_timer = 0;
 static gboolean    prefs_loaded = FALSE;
+
+#define PURPLE_PREFS_UI_OP_CALL(member, ...) \
+	{ \
+		PurplePrefsUiOps *uiop = purple_prefs_get_ui_ops(); \
+		if (uiop && uiop->member) { \
+			uiop->member(__VA_ARGS__); \
+			return; \
+		} \
+	}
+
+#define PURPLE_PREFS_UI_OP_CALL_RETURN(member, ...) \
+	{ \
+		PurplePrefsUiOps *uiop = purple_prefs_get_ui_ops(); \
+		if (uiop && uiop->member) { \
+			return uiop->member(__VA_ARGS__); \
+		} \
+	}
 
 
 /*********************************************************************
@@ -207,6 +226,8 @@ sync_prefs(void)
 		return;
 	}
 
+	PURPLE_PREFS_UI_OP_CALL(save);
+
 	node = prefs_to_xmlnode();
 	data = xmlnode_to_formatted_str(node, NULL);
 	purple_util_write_data_to_file("prefs.xml", data, -1);
@@ -225,6 +246,8 @@ save_cb(gpointer data)
 static void
 schedule_prefs_save(void)
 {
+	PURPLE_PREFS_UI_OP_CALL(schedule_save);
+
 	if (save_timer == 0)
 		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
@@ -376,11 +399,20 @@ static GMarkupParser prefs_parser = {
 gboolean
 purple_prefs_load()
 {
-	gchar *filename = g_build_filename(purple_user_dir(), "prefs.xml", NULL);
+	gchar *filename;
 	gchar *contents = NULL;
 	gsize length;
 	GMarkupParseContext *context;
 	GError *error = NULL;
+
+	PurplePrefsUiOps *uiop = purple_prefs_get_ui_ops();
+
+	if (uiop && uiop->load) {
+		prefs_loaded = TRUE;
+		return uiop->load();
+	}
+
+	filename = g_build_filename(purple_user_dir(), "prefs.xml", NULL);
 
 	if (!filename) {
 		prefs_loaded = TRUE;
@@ -605,13 +637,19 @@ add_pref(PurplePrefType type, const char *name)
 void
 purple_prefs_add_none(const char *name)
 {
+	PURPLE_PREFS_UI_OP_CALL(add_none, name);
+
 	add_pref(PURPLE_PREF_NONE, name);
 }
 
 void
 purple_prefs_add_bool(const char *name, gboolean value)
 {
-	struct purple_pref *pref = add_pref(PURPLE_PREF_BOOLEAN, name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL(add_bool, name, value);
+
+	pref = add_pref(PURPLE_PREF_BOOLEAN, name);
 
 	if(!pref)
 		return;
@@ -622,7 +660,11 @@ purple_prefs_add_bool(const char *name, gboolean value)
 void
 purple_prefs_add_int(const char *name, int value)
 {
-	struct purple_pref *pref = add_pref(PURPLE_PREF_INT, name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL(add_int, name, value);
+
+	pref = add_pref(PURPLE_PREF_INT, name);
 
 	if(!pref)
 		return;
@@ -640,6 +682,8 @@ purple_prefs_add_string(const char *name, const char *value)
 		return;
 	}
 
+	PURPLE_PREFS_UI_OP_CALL(add_string, name, value);
+
 	pref = add_pref(PURPLE_PREF_STRING, name);
 
 	if(!pref)
@@ -651,8 +695,12 @@ purple_prefs_add_string(const char *name, const char *value)
 void
 purple_prefs_add_string_list(const char *name, GList *value)
 {
-	struct purple_pref *pref = add_pref(PURPLE_PREF_STRING_LIST, name);
+	struct purple_pref *pref;
 	GList *tmp;
+
+	PURPLE_PREFS_UI_OP_CALL(add_string_list, name, value);
+
+	pref = add_pref(PURPLE_PREF_STRING_LIST, name);
 
 	if(!pref)
 		return;
@@ -670,7 +718,12 @@ purple_prefs_add_string_list(const char *name, GList *value)
 void
 purple_prefs_add_path(const char *name, const char *value)
 {
-	struct purple_pref *pref = add_pref(PURPLE_PREF_PATH, name);
+	struct purple_pref *pref;
+
+	/* re-use the string UI OP */
+	PURPLE_PREFS_UI_OP_CALL(add_string, name, value);
+
+	pref = add_pref(PURPLE_PREF_PATH, name);
 
 	if(!pref)
 		return;
@@ -681,8 +734,13 @@ purple_prefs_add_path(const char *name, const char *value)
 void
 purple_prefs_add_path_list(const char *name, GList *value)
 {
-	struct purple_pref *pref = add_pref(PURPLE_PREF_PATH_LIST, name);
+	struct purple_pref *pref;
 	GList *tmp;
+
+	/* re-use the string list UI OP */
+	PURPLE_PREFS_UI_OP_CALL(add_string_list, name, value);
+
+	pref = add_pref(PURPLE_PREF_PATH_LIST, name);
 
 	if(!pref)
 		return;
@@ -740,7 +798,11 @@ remove_pref(struct purple_pref *pref)
 void
 purple_prefs_remove(const char *name)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL(remove, name);
+
+	pref = find_pref(name);
 
 	if(!pref)
 		return;
@@ -781,6 +843,7 @@ purple_prefs_trigger_callback(const char *name)
 	do_callbacks(name, pref);
 }
 
+/* this function is deprecated, so it doesn't get the new UI ops */
 void
 purple_prefs_set_generic(const char *name, gpointer value)
 {
@@ -799,7 +862,11 @@ purple_prefs_set_generic(const char *name, gpointer value)
 void
 purple_prefs_set_bool(const char *name, gboolean value)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL(set_bool, name, value);
+
+	pref = find_pref(name);
 
 	if(pref) {
 		if(pref->type != PURPLE_PREF_BOOLEAN) {
@@ -820,7 +887,11 @@ purple_prefs_set_bool(const char *name, gboolean value)
 void
 purple_prefs_set_int(const char *name, int value)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL(set_int, name, value);
+
+	pref = find_pref(name);
 
 	if(pref) {
 		if(pref->type != PURPLE_PREF_INT) {
@@ -841,12 +912,16 @@ purple_prefs_set_int(const char *name, int value)
 void
 purple_prefs_set_string(const char *name, const char *value)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
 
 	if(value != NULL && !g_utf8_validate(value, -1, NULL)) {
 		purple_debug_error("prefs", "purple_prefs_set_string: Cannot store invalid UTF8 for string pref %s\n", name);
 		return;
 	}
+
+	PURPLE_PREFS_UI_OP_CALL(set_string, name, value);
+
+	pref = find_pref(name);
 
 	if(pref) {
 		if(pref->type != PURPLE_PREF_STRING && pref->type != PURPLE_PREF_PATH) {
@@ -868,7 +943,12 @@ purple_prefs_set_string(const char *name, const char *value)
 void
 purple_prefs_set_string_list(const char *name, GList *value)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL(set_string_list, name, value);
+
+	pref = find_pref(name);
+
 	if(pref) {
 		GList *tmp;
 
@@ -903,7 +983,11 @@ purple_prefs_set_string_list(const char *name, GList *value)
 void
 purple_prefs_set_path(const char *name, const char *value)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL(set_string, name, value);
+
+	pref = find_pref(name);
 
 	if(pref) {
 		if(pref->type != PURPLE_PREF_PATH) {
@@ -925,7 +1009,12 @@ purple_prefs_set_path(const char *name, const char *value)
 void
 purple_prefs_set_path_list(const char *name, GList *value)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL(set_string_list, name, value);
+
+	pref = find_pref(name);
+
 	if(pref) {
 		GList *tmp;
 
@@ -956,7 +1045,11 @@ purple_prefs_set_path_list(const char *name, GList *value)
 gboolean
 purple_prefs_exists(const char *name)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL_RETURN(exists, name);
+
+	pref = find_pref(name);
 
 	if (pref != NULL)
 		return TRUE;
@@ -967,7 +1060,11 @@ purple_prefs_exists(const char *name)
 PurplePrefType
 purple_prefs_get_type(const char *name)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL_RETURN(get_type, name);
+
+	pref = find_pref(name);
 
 	if (pref == NULL)
 		return PURPLE_PREF_NONE;
@@ -978,7 +1075,11 @@ purple_prefs_get_type(const char *name)
 gboolean
 purple_prefs_get_bool(const char *name)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL_RETURN(get_bool, name);
+
+	pref = find_pref(name);
 
 	if(!pref) {
 		purple_debug_error("prefs",
@@ -996,7 +1097,11 @@ purple_prefs_get_bool(const char *name)
 int
 purple_prefs_get_int(const char *name)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL_RETURN(get_int, name);
+
+	pref = find_pref(name);
 
 	if(!pref) {
 		purple_debug_error("prefs",
@@ -1014,7 +1119,11 @@ purple_prefs_get_int(const char *name)
 const char *
 purple_prefs_get_string(const char *name)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL_RETURN(get_string, name);
+
+	pref = find_pref(name);
 
 	if(!pref) {
 		purple_debug_error("prefs",
@@ -1032,8 +1141,12 @@ purple_prefs_get_string(const char *name)
 GList *
 purple_prefs_get_string_list(const char *name)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
 	GList *ret = NULL, *tmp;
+
+	PURPLE_PREFS_UI_OP_CALL_RETURN(get_string_list, name);
+
+	pref = find_pref(name);
 
 	if(!pref) {
 		purple_debug_error("prefs",
@@ -1055,7 +1168,11 @@ purple_prefs_get_string_list(const char *name)
 const char *
 purple_prefs_get_path(const char *name)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
+
+	PURPLE_PREFS_UI_OP_CALL_RETURN(get_string, name);
+
+	pref = find_pref(name);
 
 	if(!pref) {
 		purple_debug_error("prefs",
@@ -1073,8 +1190,12 @@ purple_prefs_get_path(const char *name)
 GList *
 purple_prefs_get_path_list(const char *name)
 {
-	struct purple_pref *pref = find_pref(name);
+	struct purple_pref *pref;
 	GList *ret = NULL, *tmp;
+
+	PURPLE_PREFS_UI_OP_CALL_RETURN(get_string_list, name);
+
+	pref = find_pref(name);
 
 	if(!pref) {
 		purple_debug_error("prefs",
@@ -1166,6 +1287,8 @@ purple_prefs_rename(const char *oldname, const char *newname)
 {
 	struct purple_pref *oldpref, *newpref;
 
+	PURPLE_PREFS_UI_OP_CALL(rename, oldname, newname);
+
 	oldpref = find_pref(oldname);
 
 	/* it's already been renamed, call off the dogs */
@@ -1187,6 +1310,8 @@ void
 purple_prefs_rename_boolean_toggle(const char *oldname, const char *newname)
 {
 		struct purple_pref *oldpref, *newpref;
+
+		PURPLE_PREFS_UI_OP_CALL(rename_boolean_toggle, oldname, newname);
 
 		oldpref = find_pref(oldname);
 
@@ -1323,8 +1448,12 @@ GList *
 purple_prefs_get_children_names(const char *name)
 {
 	GList * list = NULL;
-	struct purple_pref *pref = find_pref(name), *child;
+	struct purple_pref *pref, *child;
 	char sep[2] = "\0\0";;
+
+	PURPLE_PREFS_UI_OP_CALL_RETURN(get_children_names, name);
+
+	pref = find_pref(name);
 
 	if (pref == NULL)
 		return NULL;
@@ -1451,8 +1580,7 @@ purple_prefs_uninit()
 	if (save_timer != 0)
 	{
 		purple_timeout_remove(save_timer);
-		save_timer = 0;
-		sync_prefs();
+		save_cb(NULL);
 	}
 
 	purple_prefs_disconnect_by_handle(purple_prefs_get_handle());
@@ -1462,4 +1590,16 @@ purple_prefs_uninit()
 	g_hash_table_destroy(prefs_hash);
 	prefs_hash = NULL;
 
+}
+
+void
+purple_prefs_set_ui_ops(PurplePrefsUiOps *ops)
+{
+	prefs_ui_ops = ops;
+}
+
+PurplePrefsUiOps *
+purple_prefs_get_ui_ops(void)
+{
+	return prefs_ui_ops;
 }
