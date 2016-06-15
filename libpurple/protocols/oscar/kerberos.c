@@ -272,7 +272,7 @@ kerberos_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	xsnac.tlvlist = aim_tlvlist_readnum(&bs, len);
 
 	for (i = 0; i < xsnac.num_tokens; i++) {
-		if (strcmp (xsnac.tokens[i].service, "im/boss") == 0) {
+		if (purple_strequal (xsnac.tokens[i].service, "im/boss")) {
 			aim_tlv_t *tlv;
 			GSList *tlvlist;
 			ByteStream tbs;
