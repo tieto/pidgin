@@ -23,17 +23,15 @@
  * users.  This replaces the older MD5-based and XOR-based
  * authentication methods that use SNAC family 0x0017.
  *
- * This doesn't use SNACs or FLAPs at all.  It makes http and https
- * POSTs to AOL to validate the user based on the password they
- * provided to us.  Upon successful authentication we request a
- * connection to the BOS server by calling startOSCARsession.  The
- * AOL server gives us the hostname and port number to use, as well
- * as the cookie to use to authenticate to the BOS server.  And then
- * everything else is the same as with BUCP.
+ * This doesn't use SNACs or FLAPs at all.  It makes https
+ * POSTs to AOL KDC server to validate the user based on the password they
+ * provided to us.  Upon successful authentication we receive two tokens
+ * in the response. One is assumed to be the kerberos ticket for authentication
+ * on the various AOL websites, while the other contains BOSS information, such
+ * as the hostname and port number to use, the TLS certificate name as well as
+ * the cookie to use to authenticate to the BOS server.
+ * And then everything else is the same as with BUCP.
  *
- * For details, see:
- * http://dev.aol.com/aim/oscar/#AUTH
- * http://dev.aol.com/authentication_for_clients
  */
 
 #include "oscar.h"
