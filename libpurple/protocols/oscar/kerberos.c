@@ -91,9 +91,9 @@ static gchar *get_kdc_url(OscarData *od)
 	server = purple_account_get_string(account, "server", AIM_DEFAULT_KDC_SERVER);
 	port = purple_account_get_int(account, "port", AIM_DEFAULT_KDC_PORT);
 	if (port != 443)
-		port_str = g_strdup_printf (":%d", port);
-	url = g_strdup_printf ("https://%s%s/", server, port_str ? port_str : "");
-	g_free (port_str);
+		port_str = g_strdup_printf(":%d", port);
+	url = g_strdup_printf("https://%s%s/", server, port_str ? port_str : "");
+	g_free(port_str);
 
 	return url;
 }
@@ -140,21 +140,21 @@ aim_xsnac_free(aim_xsnac_t *xsnac)
 {
 	gint i;
 
-	g_free (xsnac->principal1);
-	g_free (xsnac->principal2);
-	aim_tlvlist_free (xsnac->tlvlist);
+	g_free(xsnac->principal1);
+	g_free(xsnac->principal2);
+	aim_tlvlist_free(xsnac->tlvlist);
 
 	for (i = 0; i < xsnac->num_tokens; i++) {
 		g_free(xsnac->tokens[i].main_tlv->value);
 		g_free(xsnac->tokens[i].main_tlv);
-		g_free (xsnac->tokens[i].principal1);
-		g_free (xsnac->tokens[i].service);
-		g_free (xsnac->tokens[i].principal1_again);
-		g_free (xsnac->tokens[i].principal2);
-		g_free (xsnac->tokens[i].footer);
-		aim_tlvlist_free (xsnac->tokens[i].tlvlist);
+		g_free(xsnac->tokens[i].principal1);
+		g_free(xsnac->tokens[i].service);
+		g_free(xsnac->tokens[i].principal1_again);
+		g_free(xsnac->tokens[i].principal2);
+		g_free(xsnac->tokens[i].footer);
+		aim_tlvlist_free(xsnac->tokens[i].tlvlist);
 	}
-	g_free (xsnac->tokens);
+	g_free(xsnac->tokens);
 }
 
 static void
@@ -194,9 +194,9 @@ kerberos_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	purple_debug_info("oscar", "Received kerberos login HTTP response %lu : ", got_len);
 
-	byte_stream_init (&bs, (guint8 *)got_data, got_len);
+	byte_stream_init(&bs, (guint8 *)got_data, got_len);
 
-	xsnac.family = byte_stream_get16 (&bs);
+	xsnac.family = byte_stream_get16(&bs);
 	xsnac.subtype = byte_stream_get16(&bs);
 	byte_stream_getrawbuf(&bs, (guint8 *) xsnac.flags, 8);
 
@@ -223,14 +223,14 @@ kerberos_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	purple_debug_info("oscar", "KDC: %d tokens between '%s' and '%s'\n",
 		xsnac.num_tokens, xsnac.principal1, xsnac.principal2);
-	xsnac.tokens = g_new0 (aim_xsnac_token_t, xsnac.num_tokens);
+	xsnac.tokens = g_new0(aim_xsnac_token_t, xsnac.num_tokens);
 	for (i = 0; i < xsnac.num_tokens; i++) {
 		GSList *tlv;
 
 		tlv = aim_tlvlist_readnum(&bs, 1);
 		if (tlv)
 			xsnac.tokens[i].main_tlv = tlv->data;
-		g_slist_free (tlv);
+		g_slist_free(tlv);
 
 		len = byte_stream_get16(&bs);
 		xsnac.tokens[i].principal1 = byte_stream_getstr(&bs, len);
@@ -264,7 +264,7 @@ kerberos_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	xsnac.tlvlist = aim_tlvlist_readnum(&bs, len);
 
 	for (i = 0; i < xsnac.num_tokens; i++) {
-		if (purple_strequal (xsnac.tokens[i].service, "im/boss")) {
+		if (purple_strequal(xsnac.tokens[i].service, "im/boss")) {
 			aim_tlv_t *tlv;
 			GSList *tlvlist;
 			ByteStream tbs;
@@ -273,11 +273,11 @@ kerberos_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 			if (tlv != NULL) {
 				byte_stream_init(&tbs, tlv->value, tlv->length);
 				byte_stream_get32(&tbs);
-				tlvlist =  aim_tlvlist_read (&tbs);
-				if (aim_tlv_gettlv (tlvlist, 0x0005, 1))
-					bosip = aim_tlv_getstr (tlvlist, 0x0005, 1);
-				if (aim_tlv_gettlv (tlvlist, 0x0005, 1))
-					tlsCertName = aim_tlv_getstr (tlvlist, 0x008D, 1);
+				tlvlist =  aim_tlvlist_read(&tbs);
+				if (aim_tlv_gettlv(tlvlist, 0x0005, 1))
+					bosip = aim_tlv_getstr(tlvlist, 0x0005, 1);
+				if (aim_tlv_gettlv(tlvlist, 0x0005, 1))
+					tlsCertName = aim_tlv_getstr(tlvlist, 0x008D, 1);
 				tlv = aim_tlv_gettlv(tlvlist, 0x0006, 1);
 				if (tlv) {
 					cookie_len = tlv->length;
@@ -297,15 +297,15 @@ kerberos_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		}
 		host = g_strndup(bosip, i);
 		oscar_connect_to_bos(gc, od, host, port, cookie, cookie_len, tlsCertName);
-		g_free (host);
+		g_free(host);
 	} else {
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unknown error during authentication"));
 	}
-	aim_xsnac_free (&xsnac);
-	g_free (tlsCertName);
-	g_free (bosip);
+	aim_xsnac_free(&xsnac);
+	g_free(tlsCertName);
+	g_free(bosip);
 }
 
 /**
@@ -379,41 +379,41 @@ void send_kerberos_login(OscarData *od, const char *username)
 	gc = od->gc;
 
 	password = purple_connection_get_password(gc);
-	aim_encode_password (password, password_xored);
+	aim_encode_password(password, password_xored);
 
 	client_key = get_client_key(od);
-	imapp_key = g_strdup_printf ("imApp key=%s", client_key);
+	imapp_key = g_strdup_printf("imApp key=%s", client_key);
 
 	/* Construct the body of the HTTP POST request */
 	body = g_string_new(NULL);
-	g_string_append_len (body, header, sizeof(header));
+	g_string_append_len(body, header, sizeof(header));
 	reqid = (guint16) g_random_int();
-	g_string_overwrite_len (body, 0xC, (void *)&reqid, sizeof(guint16));
+	g_string_overwrite_len(body, 0xC, (void *)&reqid, sizeof(guint16));
 
-	len_be = GUINT16_TO_BE (strlen (imapp_key));
-	g_string_append_len (body, (void *)&len_be, sizeof(guint16));
-	g_string_append (body, imapp_key);
+	len_be = GUINT16_TO_BE(strlen(imapp_key));
+	g_string_append_len(body, (void *)&len_be, sizeof(guint16));
+	g_string_append(body, imapp_key);
 
-	len_be = GUINT16_TO_BE (strlen (username));
-	g_string_append_len (body, pre_username, sizeof(pre_username));
-	g_string_append_len (body, (void *)&len_be, sizeof(guint16));
-	g_string_append (body, username);
-	g_string_append_len (body, post_username, sizeof(post_username));
+	len_be = GUINT16_TO_BE(strlen(username));
+	g_string_append_len(body, pre_username, sizeof(pre_username));
+	g_string_append_len(body, (void *)&len_be, sizeof(guint16));
+	g_string_append(body, username);
+	g_string_append_len(body, post_username, sizeof(post_username));
 
-	len_be = GUINT16_TO_BE (strlen (password) + 0x10);
-	g_string_append_len (body, (void *)&len_be, sizeof(guint16));
-	g_string_append_len (body, pre_password, sizeof(pre_password));
-	len_be = GUINT16_TO_BE (strlen (password) + 4);
-	g_string_append_len (body, (void *)&len_be, sizeof(guint16));
-	len_be = GUINT16_TO_BE (strlen (password));
-	g_string_append_len (body, (void *)&len_be, sizeof(guint16));
-	g_string_append_len (body, password_xored, strlen (password));
-	g_string_append_len (body, post_password, sizeof(post_password));
+	len_be = GUINT16_TO_BE(strlen(password) + 0x10);
+	g_string_append_len(body, (void *)&len_be, sizeof(guint16));
+	g_string_append_len(body, pre_password, sizeof(pre_password));
+	len_be = GUINT16_TO_BE(strlen(password) + 4);
+	g_string_append_len(body, (void *)&len_be, sizeof(guint16));
+	len_be = GUINT16_TO_BE(strlen(password));
+	g_string_append_len(body, (void *)&len_be, sizeof(guint16));
+	g_string_append_len(body, password_xored, strlen(password));
+	g_string_append_len(body, post_password, sizeof(post_password));
 
-	len_be = GUINT16_TO_BE (strlen (client_key));
-	g_string_append_len (body, (void *)&len_be, sizeof(guint16));
-	g_string_append (body, client_key);
-	g_string_append_len (body, footer, sizeof(footer));
+	len_be = GUINT16_TO_BE(strlen(client_key));
+	g_string_append_len(body, (void *)&len_be, sizeof(guint16));
+	g_string_append(body, client_key);
+	g_string_append_len(body, footer, sizeof(footer));
 
 	g_free(imapp_key);
 
@@ -436,6 +436,6 @@ void send_kerberos_login(OscarData *od, const char *username)
 			kerberos_login_cb, od);
 	g_string_free(request, TRUE);
 
-	g_string_free (body, TRUE);
-	g_free (url);
+	g_string_free(body, TRUE);
+	g_free(url);
 }
