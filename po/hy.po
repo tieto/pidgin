@@ -4,14 +4,15 @@
 #
 # Translators:
 # David Avsharyan <avsharyan@gmail.com>, 2009
+# Վահե Գրիգորյան <vahe554@inbox.ru>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2015-03-19 23:36+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Armenian (http://www.transifex.com/projects/p/pidgin/language/"
+"POT-Creation-Date: 2016-06-15 23:12-0500\n"
+"PO-Revision-Date: 2016-06-06 21:08+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Armenian (http://www.transifex.com/pidgin/pidgin/language/"
 "hy/)\n"
 "Language: hy\n"
 "MIME-Version: 1.0\n"
@@ -26,7 +27,7 @@ msgstr "Սերինոս"
 
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "%s. Ավելի շատ ինֆորմացիայի համար հավագեք `%s -h'.\n"
+msgstr "%s. Ավելի շատ ինֆորմացիայի համար հավաքեք `%s -h'.\n"
 
 #, c-format
 msgid ""
@@ -58,24 +59,24 @@ msgstr ""
 
 #. the user did not fill in the captcha
 msgid "Error"
-msgstr ""
+msgstr "Սխալ"
 
 msgid "Account was not modified"
-msgstr ""
+msgstr "Հաշիվը չի փոխվել"
 
 msgid "Account was not added"
-msgstr ""
+msgstr "Հաշիվը ավելացված չէ"
 
 msgid "Username of an account must be non-empty."
 msgstr "Օգտագործողի անունը  ..."
 
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "հաշվի պրոտոկոլը չի կարող փոփոխվել,այն միացված է սերվերի։"
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "հաշվի անունը չի կարող փոփոխվել,այն միացված է սերվերի։"
 
 msgid "New mail notifications"
 msgstr "Նոր նամակի ծանուցումներ"
@@ -151,14 +152,14 @@ msgid "%s%s%s%s has made %s his or her buddy%s%s"
 msgstr ""
 
 msgid "Add buddy to your list?"
-msgstr ""
+msgstr "Ավելացնե՞լ ընկերների ցուցակ"
 
 #, c-format
 msgid "%s%s%s%s wants to add %s to his or her buddy list%s%s"
 msgstr ""
 
 msgid "Authorize buddy?"
-msgstr ""
+msgstr "Լիազորե՞լ ընկեր"
 
 msgid "Authorize"
 msgstr "Լիազորում"
@@ -184,126 +185,126 @@ msgid ""
 "Last Seen: %s ago"
 msgstr ""
 "\n"
-"Last Seen: %s ago"
+"Վերջին անգամ եղել է %s առաջ "
 
 msgid "Default"
-msgstr ""
+msgstr "Լռելյայն"
 
 msgid "You must provide a username for the buddy."
-msgstr ""
+msgstr "Դուք պետք է գրեք օգտատերի անունը ընկերության համար։"
 
 msgid "You must provide a group."
-msgstr ""
+msgstr "Դուք պետք է տրամադրեք խումբ։"
 
 msgid "You must select an account."
-msgstr ""
+msgstr "Դուք պետք է ընտրեք հաշիվ։"
 
 msgid "The selected account is not online."
-msgstr ""
+msgstr "Որոշ հաշիվներ օնլայն չեն։"
 
 msgid "Error adding buddy"
-msgstr ""
+msgstr "Ինչ որ սխալ ընկերոջը ավելացնելիս"
 
 msgid "Username"
-msgstr ""
+msgstr "Անուն"
 
 msgid "Alias (optional)"
-msgstr ""
+msgstr "Կեղծանուն (ըստ ցանկության)"
 
 msgid "Invite message (optional)"
-msgstr ""
+msgstr "առաջարկել հաղորդագրություն (ըստ ցանկության)"
 
 msgid "Add in group"
-msgstr ""
+msgstr "Ավելացնել խումբ"
 
 msgid "Account"
-msgstr ""
+msgstr "Հաշիվ"
 
 msgid "Add Buddy"
-msgstr ""
+msgstr "Ավելացնել ընկեր"
 
 msgid "Please enter buddy information."
-msgstr ""
+msgstr "Խնդրում եմ մուտքագրել ընկերոջ մասին։"
 
 msgid "Chats"
-msgstr ""
+msgstr "Զրույցներ"
 
 #. Extract their Name and put it in
 msgid "Name"
-msgstr ""
+msgstr "Անուն"
 
 msgid "Alias"
-msgstr ""
+msgstr "կեղծանուն "
 
 msgid "Group"
-msgstr ""
+msgstr "Խումբ"
 
 msgid "Auto-join"
-msgstr ""
+msgstr "Ավտոմատ֊մուտք "
 
 msgid "Add Chat"
-msgstr ""
+msgstr "Ավելացնել զրույց"
 
 msgid "You can edit more information from the context menu later."
 msgstr ""
 
 msgid "Error adding group"
-msgstr ""
+msgstr "Սխալ խումբ ավելացնելուց"
 
 msgid "You must give a name for the group to add."
-msgstr ""
+msgstr "Դուք պետք է գրեք օգտատերի անունը խմբի համար։"
 
 msgid "Add Group"
-msgstr ""
+msgstr "Ավելացնել խումբ"
 
 msgid "Enter the name of the group"
-msgstr ""
+msgstr "Մուտքագրել խմբի անունը"
 
 msgid "Edit Chat"
-msgstr ""
+msgstr "Խմբագրել զրույցը"
 
 msgid "Please Update the necessary fields."
-msgstr ""
+msgstr "Խնդրում ենք թարմացնել անհրաժեշտ դաշտը  "
 
 msgid "Edit"
-msgstr ""
+msgstr "Խմբագրել"
 
 msgid "Edit Settings"
-msgstr ""
+msgstr "Խմբագրել Կարգավորումները"
 
 msgid "Information"
-msgstr ""
+msgstr "Ինֆորմացիա"
 
 msgid "Retrieving..."
-msgstr ""
+msgstr "Վերականգնում..."
 
 msgid "Get Info"
-msgstr ""
+msgstr "ստանալ ինֆո"
 
 msgid "Add Buddy Pounce"
 msgstr ""
 
 msgid "Send File"
-msgstr ""
+msgstr "Ուղարկել ֆայլ "
 
 msgid "Blocked"
-msgstr ""
+msgstr "Արգելափակված"
 
 msgid "Show when offline"
-msgstr ""
+msgstr "Ցույց տալ, երբ օֆլայն է "
 
 #, c-format
 msgid "Please enter the new name for %s"
-msgstr ""
+msgstr "Խնդրում ենք ներմուծել նոր անուն %s -ի համար"
 
 msgid "Rename"
-msgstr ""
+msgstr "Վերանվանել"
 
 msgid "Set Alias"
-msgstr ""
+msgstr "Փոխանուն հայտարարել"
 
 msgid "Enter empty string to reset the name."
-msgstr ""
+msgstr "Ներմուծել դատարկ տող անունը վերաթողարկելու համար"
 
 msgid "Removing this contact will also remove all the buddies in the contact"
 msgstr ""
@@ -313,18 +314,18 @@ msgstr ""
 
 #, c-format
 msgid "Are you sure you want to remove %s?"
-msgstr ""
+msgstr "Համոզված ե՞ք, որ ուզում եք ջնջել %s"
 
 #. XXX: anything to do with the returned ui-handle?
 msgid "Confirm Remove"
-msgstr ""
+msgstr "Հաստատել "
 
 msgid "Remove"
-msgstr ""
+msgstr "Հեռացնել"
 
 #. Buddy List
 msgid "Buddy List"
-msgstr ""
+msgstr "Ընկերների Ցուցակ"
 
 msgid "Place tagged"
 msgstr ""
@@ -333,11 +334,11 @@ msgid "Toggle Tag"
 msgstr ""
 
 msgid "View Log"
-msgstr ""
+msgstr "Ցույց տալ լոգը"
 
 #. General
 msgid "Nickname"
-msgstr ""
+msgstr "Անուն"
 
 #. Never know what those translations might end up like...
 #. Idle stuff
@@ -348,27 +349,29 @@ msgid "On Mobile"
 msgstr ""
 
 msgid "New..."
-msgstr ""
+msgstr "Նոր..."
 
 msgid "Saved..."
-msgstr ""
+msgstr "Պահպանվածներ..."
 
 msgid "Plugins"
-msgstr ""
+msgstr "հավելվածներ"
 
 msgid "Block/Unblock"
-msgstr ""
+msgstr "Արգելափակել / Հանել արգելափակումից"
 
 msgid "Block"
-msgstr ""
+msgstr "Արգելափակել"
 
 msgid "Unblock"
-msgstr ""
+msgstr "Հանել արգելափակումը"
 
 msgid ""
 "Please enter the username or alias of the person you would like to Block/"
 "Unblock."
 msgstr ""
+"Խնդրում ենք ներմուծել օգտագործողի անունը կամ փոխանունը, ում ցանկանում եք "
+"արգելափակել:"
 
 #. Not multiline
 #. Not masked?
@@ -377,10 +380,11 @@ msgid "OK"
 msgstr "OK"
 
 msgid "New Instant Message"
-msgstr ""
+msgstr "Նոր հաղորդագրություն"
 
 msgid "Please enter the username or alias of the person you would like to IM."
 msgstr ""
+"Խնդրում ենք ներմուծել օգտագործողի անունը կամ փոխանունը, ում ցանկանում եք IM "
 
 msgid "Channel"
 msgstr "Ալիք"
@@ -389,7 +393,7 @@ msgid "Join a Chat"
 msgstr "Միանալ զրույցին"
 
 msgid "Please enter the name of the chat you want to join."
-msgstr ""
+msgstr "Խնդրում ենք ներմուծել զրույցի անունը , որին ցանկանում եք միանալ:"
 
 msgid "Join"
 msgstr "Միանալ"
@@ -398,13 +402,15 @@ msgid ""
 "Please enter the username or alias of the person whose log you would like to "
 "view."
 msgstr ""
+"Խնդրում ենք ներմուծել օգտագործողի անունը կամ փոխանունը, ում լոերը ցանկանում "
+"եք ցուցադրել:"
 
 #. Create the "Options" frame.
 msgid "Options"
-msgstr ""
+msgstr "Կարգավորումներ "
 
 msgid "Send IM..."
-msgstr ""
+msgstr "Ուղարկել IM:"
 
 msgid "Block/Unblock..."
 msgstr "Փակել/Բացել"
@@ -425,7 +431,7 @@ msgid "Empty groups"
 msgstr "Դատարկ խմբեր"
 
 msgid "Offline buddies"
-msgstr ""
+msgstr "Օֆլայն ընկերներ"
 
 msgid "Sort"
 msgstr "Դասակարգել"
@@ -440,19 +446,19 @@ msgid "By Log Size"
 msgstr ""
 
 msgid "Buddy"
-msgstr ""
+msgstr "ԸՆկեր"
 
 msgid "Chat"
 msgstr "Զրույց"
 
 msgid "Grouping"
-msgstr ""
+msgstr "Խմբավորել"
 
 msgid "Certificate Import"
-msgstr ""
+msgstr "սերտիֆիտակի ներմուծում"
 
 msgid "Specify a hostname"
-msgstr ""
+msgstr "Նշել հոսթինգը"
 
 msgid "Type the host name this certificate is for."
 msgstr ""
@@ -489,7 +495,7 @@ msgstr ""
 
 #, c-format
 msgid "Certificate for %s"
-msgstr ""
+msgstr "Սերտիֆիկատ  %s համար"
 
 #, c-format
 msgid ""
@@ -500,7 +506,7 @@ msgid ""
 msgstr ""
 
 msgid "SSL Host Certificate"
-msgstr ""
+msgstr "SSL Հոսթ սերտիֆիկատ"
 
 #, c-format
 msgid "Really delete certificate for %s?"
@@ -513,22 +519,22 @@ msgid "Certificate Manager"
 msgstr ""
 
 msgid "Hostname"
-msgstr ""
+msgstr "Հոսթանուն"
 
 msgid "Info"
-msgstr ""
+msgstr "Ինֆո"
 
 #. Close button
 msgid "Close"
-msgstr ""
+msgstr "Փակել"
 
 #, c-format
 msgid "%s (%s)"
-msgstr ""
+msgstr "%s (%s)"
 
 #, c-format
 msgid "%s disconnected."
-msgstr ""
+msgstr "%s ապատիվացավ։"
 
 #, c-format
 msgid ""
@@ -542,7 +548,7 @@ msgid "Re-enable Account"
 msgstr ""
 
 msgid "No such command."
-msgstr ""
+msgstr "Չկա այդպիսի հրաման"
 
 msgid "Syntax Error:  You typed the wrong number of arguments to that command."
 msgstr ""
@@ -592,7 +598,7 @@ msgid ""
 msgstr ""
 
 msgid "Send To"
-msgstr ""
+msgstr "Ուղարկել "
 
 msgid "Conversation"
 msgstr ""
@@ -607,7 +613,7 @@ msgid "Add Buddy Pounce..."
 msgstr ""
 
 msgid "Invite..."
-msgstr ""
+msgstr "Հրավիրել..."
 
 msgid "Enable Logging"
 msgstr ""
@@ -619,7 +625,7 @@ msgid "You are not connected."
 msgstr ""
 
 msgid "<AUTO-REPLY> "
-msgstr ""
+msgstr "<Ավտո֊պատասխան>"
 
 #, c-format
 msgid "List of %d user:\n"
@@ -710,10 +716,10 @@ msgid "Clear"
 msgstr ""
 
 msgid "Filter:"
-msgstr ""
+msgstr "Ֆիլտրել․"
 
 msgid "Pause"
-msgstr ""
+msgstr "Դադար"
 
 #, c-format
 msgid "File Transfers - %d%% of %d file"
@@ -723,7 +729,7 @@ msgstr[1] ""
 
 #. Create the window.
 msgid "File Transfers"
-msgstr ""
+msgstr "Ֆայլի փոխանցում"
 
 msgid "Progress"
 msgstr ""
@@ -752,7 +758,7 @@ msgid "Clear finished transfers"
 msgstr ""
 
 msgid "Stop"
-msgstr ""
+msgstr "Կանգ "
 
 msgid "Waiting for transfer to begin"
 msgstr ""
@@ -761,30 +767,30 @@ msgid "Cancelled"
 msgstr ""
 
 msgid "Failed"
-msgstr ""
+msgstr "Չհաջողվեց "
 
 #, c-format
 msgid "%.2f KiB/s"
 msgstr ""
 
 msgid "Sent"
-msgstr ""
+msgstr "Ուղարկել "
 
 msgid "Received"
-msgstr ""
+msgstr "Ստացել է"
 
 msgid "Finished"
-msgstr ""
+msgstr "Ավարտել է"
 
 #, c-format
 msgid "The file was saved as %s."
 msgstr ""
 
 msgid "Sending"
-msgstr ""
+msgstr "Ուղարկվում է"
 
 msgid "Receiving"
-msgstr ""
+msgstr "Ստանում է"
 
 #, c-format
 msgid "Conversation in %s on %s"
@@ -815,7 +821,7 @@ msgid "No logs were found"
 msgstr ""
 
 msgid "Total log size:"
-msgstr ""
+msgstr "Ընդհանուր լոգի չափը․"
 
 #. Search box *********
 msgid "Scroll/Search: "
@@ -1930,7 +1936,7 @@ msgid "Purple's D-BUS server is not running for the reason listed below"
 msgstr ""
 
 msgid "No name"
-msgstr ""
+msgstr "Չկա անուն"
 
 msgid "Unable to create new resolver process\n"
 msgstr ""
@@ -2621,10 +2627,10 @@ msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
 msgstr ""
 
 msgid "Yes"
-msgstr ""
+msgstr "Այո"
 
 msgid "No"
-msgstr ""
+msgstr "Ոչ"
 
 msgid "Save offline messages in pounce"
 msgstr ""
@@ -2731,31 +2737,31 @@ msgid "Tests to see that most things are working."
 msgstr ""
 
 msgid "TLS/SSL Versions"
-msgstr ""
+msgstr "TLS/SSL Ընտրանքներ"
 
 msgid "Minimum Version"
-msgstr ""
+msgstr "Մինիմում  Ընտրանքներ"
 
 msgid "Maximum Version"
-msgstr ""
+msgstr "Մաքսիմում  Ընտրանքներ"
 
 msgid "SSL 2"
-msgstr ""
+msgstr "SSL 2"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "SSL 3"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "TLS 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "TLS 1.1"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "TLS 1.2"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "TLS 1.3"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
@@ -2823,7 +2829,7 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #. *< name
 #. *< version
@@ -2906,20 +2912,20 @@ msgid ""
 msgstr ""
 
 msgid "First name"
-msgstr ""
+msgstr "Անուն"
 
 msgid "Last name"
-msgstr ""
+msgstr "Ազգանուն"
 
 #. email
 msgid "Email"
-msgstr ""
+msgstr "Էլ․փոստ"
 
 msgid "AIM Account"
-msgstr ""
+msgstr "AIM  հաշիվ"
 
 msgid "XMPP Account"
-msgstr ""
+msgstr "XMPP հաշիվ"
 
 #. *< type
 #. *< ui_requirement
@@ -2942,7 +2948,7 @@ msgid "Local Port"
 msgstr ""
 
 msgid "Bonjour"
-msgstr ""
+msgstr "Bonjour"
 
 #, c-format
 msgid "%s has closed the conversation."
@@ -2991,27 +2997,27 @@ msgid "Load buddylist from file..."
 msgstr ""
 
 msgid "City"
-msgstr ""
+msgstr "Քաղաք"
 
 msgid "Year of birth"
-msgstr ""
+msgstr "Ձեր ծննդյան օրը "
 
 #. gender
 msgid "Gender"
-msgstr ""
+msgstr "Gender"
 
 msgid "Male or female"
-msgstr ""
+msgstr "Արական կամ իգական"
 
 #. 0
 msgid "Male"
-msgstr ""
+msgstr "Տղամարդ"
 
 msgid "Female"
-msgstr ""
+msgstr "Կին"
 
 msgid "Only online"
-msgstr ""
+msgstr "Միայն առցանց"
 
 msgid "Find buddies"
 msgstr ""
@@ -3023,7 +3029,7 @@ msgid "Show status to:"
 msgstr ""
 
 msgid "All people"
-msgstr ""
+msgstr "Բոլոր մարդիկ"
 
 msgid "Only buddies"
 msgstr ""
@@ -3044,7 +3050,7 @@ msgstr ""
 #. 0
 #. Global
 msgid "Available"
-msgstr ""
+msgstr "Հասանելի է"
 
 #. 2
 msgid "Chatty"
@@ -3059,7 +3065,7 @@ msgstr ""
 #. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
 msgid "Away"
-msgstr ""
+msgstr "Հեռու"
 
 msgid "UIN"
 msgstr ""
@@ -3067,10 +3073,10 @@ msgstr ""
 #. first name
 #. optional information
 msgid "First Name"
-msgstr ""
+msgstr "Անուն"
 
 msgid "Birth Year"
-msgstr ""
+msgstr "Ծննդյան տարի"
 
 msgid "Unable to display the search results."
 msgstr ""
@@ -3100,22 +3106,22 @@ msgid "Connection failed"
 msgstr ""
 
 msgid "Add to chat"
-msgstr ""
+msgstr "Ավելացնել զրույց"
 
 msgid "Chat _name:"
-msgstr ""
+msgstr "Զրուց_անուն"
 
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
-msgstr ""
+msgstr "Միացում"
 
 #, c-format
 msgid "Unable to resolve hostname: %s"
 msgstr ""
 
 msgid "Chat error"
-msgstr ""
+msgstr "Զրույցի սխալ "
 
 msgid "This chat name is already in use"
 msgstr ""
@@ -3148,7 +3154,7 @@ msgid "Polish popular IM"
 msgstr ""
 
 msgid "Gadu-Gadu User"
-msgstr ""
+msgstr "Gadu-Gadu օգտատեր"
 
 msgid "GG server"
 msgstr ""
@@ -3210,10 +3216,10 @@ msgid "View MOTD"
 msgstr ""
 
 msgid "_Channel:"
-msgstr ""
+msgstr "_Ալիք"
 
 msgid "_Password:"
-msgstr ""
+msgstr "_Գաղտնաբառ"
 
 msgid "IRC nick and server may not contain whitespace"
 msgstr ""
@@ -3942,17 +3948,17 @@ msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 
 msgid "Email Address"
-msgstr ""
+msgstr "Էլ․փոստ"
 
 msgid "Search for XMPP users"
-msgstr ""
+msgstr "փնտրել XMPP օգտվողներ"
 
 #. "Search"
 msgid "Search"
-msgstr ""
+msgstr "Փնտրել"
 
 msgid "Invalid Directory"
-msgstr ""
+msgstr "Սխալ Կատալոգ"
 
 msgid "Enter a User Directory"
 msgstr ""
@@ -3964,10 +3970,10 @@ msgid "Search Directory"
 msgstr ""
 
 msgid "_Room:"
-msgstr ""
+msgstr "_Սենյակ"
 
 msgid "_Server:"
-msgstr ""
+msgstr "_Սերվեր"
 
 msgid "_Handle:"
 msgstr ""
@@ -3994,7 +4000,7 @@ msgid "Invalid Room Handle"
 msgstr ""
 
 msgid "Configuration error"
-msgstr ""
+msgstr "Սխալ կոնֆիգուրացիա"
 
 msgid "Unable to configure"
 msgstr ""
@@ -4006,7 +4012,7 @@ msgid "This room is not capable of being configured"
 msgstr ""
 
 msgid "Registration error"
-msgstr ""
+msgstr "Սխալ գրանցում"
 
 msgid "Nick changing not supported in non-MUC chatrooms"
 msgstr ""
@@ -4087,16 +4093,16 @@ msgid "Postal code"
 msgstr ""
 
 msgid "Phone"
-msgstr ""
+msgstr "Հեռախոս"
 
 msgid "Date"
-msgstr ""
+msgstr "Ամսաթիվ"
 
 msgid "Already Registered"
 msgstr ""
 
 msgid "Password"
-msgstr ""
+msgstr "Գաղտնաբառ"
 
 msgid "Unregister"
 msgstr ""
