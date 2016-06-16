@@ -3,17 +3,22 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Firoj Ghimire <firojghimire@gmail.com>, 2015
+# Saroj Dhakal <lotusnagarkot@gmail.com>, 2015
 # Pawan Chitrakar <pchitrakar@gmail.com>, 2006
+# Saroj Dhakal <lotusnagarkot@gmail.com>, 2015
+# shubhamghimire <shubhamghimire1996@gmail.com>, 2015
+# shubhamghimire <shubhamghimire1996@gmail.com>, 2015
 # Shyam Krishna Bal <shyamkrishna_bal@yahoo.com>, 2006
+# Surit Aryal <surit_people@hotmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Nepali (http://www.transifex.com/projects/p/pidgin/language/"
-"ne/)\n"
+"POT-Creation-Date: 2016-06-15 23:16-0500\n"
+"PO-Revision-Date: 2016-06-06 21:08+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Nepali (http://www.transifex.com/pidgin/pidgin/language/ne/)\n"
 "Language: ne\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,11 +28,11 @@ msgstr ""
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
 msgid "Finch"
-msgstr ""
+msgstr "फिन्च"
 
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr ""
+msgstr "%s , अरु धेरै जानकारीका लागि  `%s -h' प्रयास गर्नुहोस् । \n"
 
 #, c-format
 msgid ""
@@ -40,6 +45,14 @@ msgid ""
 "  -n, --nologin       don't automatically login\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
+"%s\n"
+"Usage: %s [OPTION]...\n"
+"\n"
+"  -c, --config=DIR    use DIR for config files\n"
+"  -d, --debug         print debugging messages to stderr\n"
+"  -h, --help          display this help and exit\n"
+"  -n, --nologin       don't automatically login\n"
+"  -v, --version       display the current version and exit\n"
 
 #, c-format
 msgid ""
@@ -53,55 +66,55 @@ msgid "Error"
 msgstr "त्रुटि"
 
 msgid "Account was not modified"
-msgstr ""
+msgstr "खाता परिवर्तन गरिएन"
 
 msgid "Account was not added"
-msgstr ""
+msgstr "खाता थपिएन"
 
 msgid "Username of an account must be non-empty."
-msgstr ""
+msgstr "खाताको प्रयोगकर्तानाम खाली हुनु हुन्न ।"
 
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "यो खाताको प्रोटोकल सर्भरमा जडान गरिएको बेला परिवर्तन गर्न सकिँदैन।"
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "यो खाताको प्रयोगकर्तानाम सर्भरमा जडान गरिएको बेला परिवर्तन गर्न सकिँदैन।"
 
 msgid "New mail notifications"
-msgstr "नयाँ प्रत्र सूचनाहरू"
+msgstr "नयाँ मेल सूचनाहरू"
 
 msgid "Remember password"
 msgstr "पासवर्ड सम्झनुहोस्"
 
 msgid "There are no protocol plugins installed."
-msgstr ""
+msgstr "कुनै पनि प्रोटोकल एडअन स्थापना गरिएको छैन"
 
 msgid "(You probably forgot to 'make install'.)"
-msgstr ""
+msgstr "(तपाईँले सायद  'make install' गर्न विर्सनुभयो ।)"
 
 msgid "Modify Account"
 msgstr "खाता परिमार्जन गर्नुहोस्"
 
 msgid "New Account"
-msgstr ""
+msgstr "नयाँ खाता"
 
 msgid "Protocol:"
 msgstr "प्रोटोकल:"
 
 msgid "Username:"
-msgstr ""
+msgstr "प्रयोगकर्ता नाम:"
 
 msgid "Password:"
 msgstr "पासवर्ड:"
 
 msgid "Alias:"
-msgstr "उपनाम:"
+msgstr "उर्फ:"
 
 #. Register checkbox
 msgid "Create this account on the server"
-msgstr ""
+msgstr "यो खाता सर्भरमा बनाउनुहोस"
 
 #. Cancel button
 #. Cancel
@@ -111,14 +124,14 @@ msgstr "रद्द गर्नुहोस्"
 #. Save button
 #. Save
 msgid "Save"
-msgstr "बचत गर्नुहोस्"
+msgstr "सङ्ग्रह गर्नुहोस्"
 
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "के तपाईँ %s मेटाउन निश्चित रुपले चाहानुहुन्छ ?"
 
 msgid "Delete Account"
-msgstr ""
+msgstr "खाता मेट्नुहोस"
 
 #. Delete button
 msgid "Delete"
@@ -128,7 +141,7 @@ msgid "Accounts"
 msgstr "खाताहरू"
 
 msgid "You can enable/disable accounts from the following list."
-msgstr ""
+msgstr "तपाईँ निम्न सूचीबाट आफ्नो अकाउन्ट सक्रिय वा निस्क्रिय गर्न सक्नुहुन्छ ।"
 
 #. Add button
 msgid "Add"
@@ -136,21 +149,21 @@ msgstr "थप्नुहोस्"
 
 #. Modify button
 msgid "Modify"
-msgstr ""
+msgstr "परिमार्जन गर्नुहोस्"
 
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
-msgstr ""
+msgstr "%s%s%s%s ले  %s लाई आफ्नो साथि %s%s बनाउनुभयो"
 
 msgid "Add buddy to your list?"
-msgstr "तपाईँको सूचीमा साथी थप्नुहुन्छ?"
+msgstr "तपाईँको सूचीमा बड्डी थप्नुहुन्छ?"
 
 #, c-format
 msgid "%s%s%s%s wants to add %s to his or her buddy list%s%s"
-msgstr ""
+msgstr "%s%s%s%s ले  %s लाई आफ्नो %s%s बड्डी सुचीमा थप्न चाहनुहुन्छ"
 
 msgid "Authorize buddy?"
-msgstr ""
+msgstr "बड्डीलाई प्रमाणीकरण गर्ने हो  ?"
 
 msgid "Authorize"
 msgstr "प्रमाणीकरण गर्नुहोस् "
@@ -163,55 +176,59 @@ msgid ""
 "Online: %d\n"
 "Total: %d"
 msgstr ""
+"अनलाइन: %d\n"
+"जम्मा: %d"
 
 #, c-format
 msgid "Account: %s (%s)"
-msgstr ""
+msgstr "खाता: %s (%s)"
 
 #, c-format
 msgid ""
 "\n"
 "Last Seen: %s ago"
 msgstr ""
+"\n"
+"अन्तिम पटक देखिएको: %s पहिले"
 
 msgid "Default"
-msgstr ""
+msgstr "पूर्वनिर्धारित "
 
 msgid "You must provide a username for the buddy."
-msgstr ""
+msgstr "बड्डीको लागि प्रयोगकर्ता नाम उपलब्ध गराउनु पर्छ।"
 
 msgid "You must provide a group."
-msgstr ""
+msgstr "कुनै समूह प्रदान गर्नै पर्छ ।"
 
 msgid "You must select an account."
-msgstr ""
+msgstr "कुनै खाता छान्नै पर्छ ।"
 
 msgid "The selected account is not online."
-msgstr ""
+msgstr "छानिएको खाता अनलाइन छैन ।"
 
 msgid "Error adding buddy"
-msgstr ""
+msgstr "बड्डी थप्दा त्रुटि"
 
 msgid "Username"
 msgstr "प्रयोगकर्ता नाम"
 
 msgid "Alias (optional)"
-msgstr ""
+msgstr "उर्फ(स्वेच्छिक)"
 
 msgid "Invite message (optional)"
-msgstr ""
+msgstr "आमन्त्रण सन्देश(स्वेच्छिक)"
 
 msgid "Add in group"
-msgstr ""
+msgstr "समूहमा थप्नुहोस"
 
 msgid "Account"
 msgstr "खाता"
 
 msgid "Add Buddy"
-msgstr "साथी थप्नुहोस्"
+msgstr "बड्डी थप्नुहोस्"
 
 msgid "Please enter buddy information."
-msgstr ""
+msgstr "बड्डी जानकारी थप्नुहोस"
 
 msgid "Chats"
 msgstr "कुराकानीहरू"
@@ -221,13 +238,13 @@ msgid "Name"
 msgstr "नाम"
 
 msgid "Alias"
-msgstr "उपनाम"
+msgstr "उर्फ"
 
 msgid "Group"
-msgstr ""
+msgstr "समूह"
 
 msgid "Auto-join"
-msgstr ""
+msgstr "स्वत-सम्पर्कहुने"
 
 msgid "Add Chat"
 msgstr "कुराकानी थप्नुहोस्"
@@ -236,40 +253,40 @@ msgid "You can edit more information from the context menu later."
 msgstr ""
 
 msgid "Error adding group"
-msgstr ""
+msgstr "समूह थप्दा त्रुटि भएको छ"
 
 msgid "You must give a name for the group to add."
-msgstr ""
+msgstr "नयाँ समूह थप्दा नाम दिनु पर्छ ।"
 
 msgid "Add Group"
 msgstr "समूह थप्नुहोस्"
 
 msgid "Enter the name of the group"
-msgstr ""
+msgstr "समूहको नाम लेख्नुहोस"
 
 msgid "Edit Chat"
-msgstr ""
+msgstr "कुराकानी परिवर्तन गर्नुहोस"
 
 msgid "Please Update the necessary fields."
-msgstr ""
+msgstr "सम्पूर्ण आवश्यक जानकारीहरू अद्यावधिक गर्नुहोस"
 
 msgid "Edit"
-msgstr ""
+msgstr "सम्पादन"
 
 msgid "Edit Settings"
-msgstr ""
+msgstr "सेटिङ सम्पादन गर्नुहोस"
 
 msgid "Information"
 msgstr "सूचना"
 
 msgid "Retrieving..."
-msgstr ""
+msgstr "खोल्दै"
 
 msgid "Get Info"
 msgstr "जानकारी प्राप्त गर्नुहोस्"
 
 msgid "Add Buddy Pounce"
-msgstr ""
+msgstr "बड्डी पाउन्स थप्नुहोस्"
 
 msgid "Send File"
 msgstr "फाइल पठाउनुहोस्"
@@ -278,20 +295,20 @@ msgid "Blocked"
 msgstr "रोकिएको छ"
 
 msgid "Show when offline"
-msgstr ""
+msgstr "अफलाइन हुँदा देखाउने"
 
 #, c-format
 msgid "Please enter the new name for %s"
-msgstr ""
+msgstr "%s को लागि नयाँ नाम प्रविष्ट गर्नुहोस् ।"
 
 msgid "Rename"
-msgstr ""
+msgstr "पुन:नामाकरण गर्नुहोस्"
 
 msgid "Set Alias"
-msgstr ""
+msgstr "उर्फ राख्नुहोस"
 
 msgid "Enter empty string to reset the name."
-msgstr ""
+msgstr "खाली पाठ प्रविष्टि गरेर नामलाई पूर्वरूपमा फर्काउन सक्नुहुन्छ "
 
 msgid "Removing this contact will also remove all the buddies in the contact"
 msgstr ""
@@ -301,31 +318,31 @@ msgstr ""
 
 #, c-format
 msgid "Are you sure you want to remove %s?"
-msgstr ""
+msgstr "के तपाईं %s हटाउनेमा निश्चित हुनुहुन्छ ?"
 
 #. XXX: anything to do with the returned ui-handle?
 msgid "Confirm Remove"
-msgstr ""
+msgstr "हटाउन निश्चित गर्नुहोस"
 
 msgid "Remove"
 msgstr "हटाउनुहोस्"
 
 #. Buddy List
 msgid "Buddy List"
-msgstr "साथी सूची"
+msgstr "बड्डी सूची"
 
 msgid "Place tagged"
-msgstr ""
+msgstr "स्थान ट्याग गरियो "
 
 msgid "Toggle Tag"
-msgstr ""
+msgstr "ट्याग बदल्ने"
 
 msgid "View Log"
-msgstr ""
+msgstr "लग हेर्ने"
 
 #. General
 msgid "Nickname"
-msgstr "उपनाम"
+msgstr "उर्फ"
 
 #. Never know what those translations might end up like...
 #. Idle stuff
@@ -333,25 +350,25 @@ msgid "Idle"
 msgstr "निस्क्रिय"
 
 msgid "On Mobile"
-msgstr ""
+msgstr "मोबाइलमा"
 
 msgid "New..."
 msgstr "नयाँ..."
 
 msgid "Saved..."
-msgstr ""
+msgstr "सङ्ग्रह गरियो..."
 
 msgid "Plugins"
 msgstr "प्लगइनहरू"
 
 msgid "Block/Unblock"
-msgstr ""
+msgstr "बन्देज खोल्ने/बन्द गर्ने"
 
 msgid "Block"
 msgstr "रोक्नुहोस्"
 
 msgid "Unblock"
-msgstr ""
+msgstr "बन्देज खोल्ने"
 
 msgid ""
 "Please enter the username or alias of the person you would like to Block/"
@@ -365,22 +382,22 @@ msgid "OK"
 msgstr "ठीक छ"
 
 msgid "New Instant Message"
-msgstr "नयाँ आवश्यक सन्देश"
+msgstr "नयाँ इन्स्ट्यान्ट सन्देश"
 
 msgid "Please enter the username or alias of the person you would like to IM."
 msgstr ""
 
 msgid "Channel"
-msgstr ""
+msgstr "च्यानल"
 
 msgid "Join a Chat"
 msgstr "एउटा कुराकानीमा भाग लिनुहोस्"
 
 msgid "Please enter the name of the chat you want to join."
-msgstr ""
+msgstr "कृपया आफुले भाग लिन चाहेको च्याटको नाम प्रविष्टि गर्नुहोस् "
 
 msgid "Join"
-msgstr ""
+msgstr "सम्पर्क गर्ने"
 
 msgid ""
 "Please enter the username or alias of the person whose log you would like to "
@@ -389,58 +406,58 @@ msgstr ""
 
 #. Create the "Options" frame.
 msgid "Options"
-msgstr ""
+msgstr "विकल्पहरू"
 
 msgid "Send IM..."
-msgstr ""
+msgstr "आइएम पठाउने"
 
 msgid "Block/Unblock..."
-msgstr ""
+msgstr "बन्देज खोल्ने/बन्द गर्ने"
 
 msgid "Join Chat..."
-msgstr ""
+msgstr "कुराकानीमा भाग लिने"
 
 msgid "View Log..."
-msgstr ""
+msgstr "लग हेर्नुहोस्..."
 
 msgid "View All Logs"
-msgstr ""
+msgstr "सबै लगहरू हेर्नुहोस्"
 
 msgid "Show"
-msgstr ""
+msgstr "देखाउने"
 
 msgid "Empty groups"
-msgstr ""
+msgstr "खाली समूहहरू"
 
 msgid "Offline buddies"
-msgstr ""
+msgstr "अफलाइन बड्डीहरू"
 
 msgid "Sort"
-msgstr ""
+msgstr "क्रम मिलाउने"
 
 msgid "By Status"
-msgstr ""
+msgstr "स्टेटसको आधारमा"
 
 msgid "Alphabetically"
-msgstr ""
+msgstr "वर्णानुक्रम अनुसार"
 
 msgid "By Log Size"
-msgstr ""
+msgstr "लग आकार अनुसार"
 
 msgid "Buddy"
-msgstr ""
+msgstr "बड्डी"
 
 msgid "Chat"
 msgstr "कुराकानी"
 
 msgid "Grouping"
-msgstr ""
+msgstr "समूहकरण"
 
 msgid "Certificate Import"
-msgstr ""
+msgstr "सर्टिफिकेट आयात"
 
 msgid "Specify a hostname"
-msgstr ""
+msgstr "होस्ट नाम खुलाउनुहोस"
 
 msgid "Type the host name this certificate is for."
 msgstr ""
@@ -452,13 +469,13 @@ msgid ""
 msgstr ""
 
 msgid "Certificate Import Error"
-msgstr ""
+msgstr "सर्टिफिकेट आयात त्रुटि"
 
 msgid "X.509 certificate import failed"
-msgstr ""
+msgstr "X.509 सर्टिफिकेट आयात त्रुटि"
 
 msgid "Select a PEM certificate"
-msgstr ""
+msgstr "एक PEM सर्टिफिकेट छान्नुहोस"
 
 #, c-format
 msgid ""
@@ -467,17 +484,17 @@ msgid ""
 msgstr ""
 
 msgid "Certificate Export Error"
-msgstr ""
+msgstr "सर्टिफिकेट निर्यात त्रुटि"
 
 msgid "X.509 certificate export failed"
-msgstr ""
+msgstr "X.509 सर्टिफिकेट निर्यात त्रुटि"
 
 msgid "PEM X.509 Certificate Export"
-msgstr ""
+msgstr "PEM X.509 सर्टिफिकेट निर्यात"
 
 #, c-format
 msgid "Certificate for %s"
-msgstr ""
+msgstr "%s को लागि सर्टिफिकेट"
 
 #, c-format
 msgid ""
@@ -488,23 +505,23 @@ msgid ""
 msgstr ""
 
 msgid "SSL Host Certificate"
-msgstr ""
+msgstr "SSL होस्ट सर्टिफिकेट"
 
 #, c-format
 msgid "Really delete certificate for %s?"
-msgstr ""
+msgstr " %sको सर्टिफिकेट मेट्ने हो ?"
 
 msgid "Confirm certificate delete"
-msgstr ""
+msgstr "सर्टिफिकेट हटाउन निस्चित गर्नुहोस"
 
 msgid "Certificate Manager"
-msgstr ""
+msgstr "सर्टिफिकेट व्यवस्थापक"
 
 msgid "Hostname"
-msgstr ""
+msgstr "होस्ट नाम"
 
 msgid "Info"
-msgstr "सूचना"
+msgstr "जानकारी"
 
 #. Close button
 msgid "Close"
@@ -512,11 +529,11 @@ msgstr "बन्द गर्नुहोस्"
 
 #, c-format
 msgid "%s (%s)"
-msgstr ""
+msgstr "%s (%s)"
 
 #, c-format
 msgid "%s disconnected."
-msgstr ""
+msgstr "%s सँग जडान बिच्छेद भएको छ "
 
 #, c-format
 msgid ""
@@ -527,7 +544,7 @@ msgid ""
 msgstr ""
 
 msgid "Re-enable Account"
-msgstr ""
+msgstr "खातालाई पुन: सक्रिय पार्नुहोस"
 
 msgid "No such command."
 msgstr "कुनै त्यस्तो आदेश हैन ।"
@@ -552,20 +569,22 @@ msgstr ""
 
 #, c-format
 msgid "%s (%s -- %s)"
-msgstr ""
+msgstr "%s (%s -- %s)"
 
 #, c-format
 msgid "%s [%s]"
-msgstr ""
+msgstr "%s [%s]"
 
 #, c-format
 msgid ""
 "\n"
 "%s is typing..."
 msgstr ""
+"\n"
+"%s लेख्दै हुनुहुन्छ..."
 
 msgid "You have left this chat."
-msgstr ""
+msgstr "तपाईँले यो वार्तालाप छोड्नु भयो ।"
 
 msgid ""
 "The account has disconnected and you are no longer in this chat. You will be "
@@ -580,40 +599,40 @@ msgid ""
 msgstr ""
 
 msgid "Send To"
-msgstr ""
+msgstr "पठाउनुहोस्"
 
 msgid "Conversation"
-msgstr ""
+msgstr "वार्तालाप"
 
 msgid "Clear Scrollback"
-msgstr ""
+msgstr "स्क्रोल ब्याक सफा गर्नुहोस् "
 
 msgid "Show Timestamps"
-msgstr ""
+msgstr "टाइमस्ट्यापहरू देखाउनुहोस्"
 
 msgid "Add Buddy Pounce..."
-msgstr ""
+msgstr "बड्डी पाउन्स थप्नुहोस्..."
 
 msgid "Invite..."
-msgstr ""
+msgstr "आमन्त्रण गर्नुहोस्..."
 
 msgid "Enable Logging"
-msgstr ""
+msgstr "लग गर्न सक्रिय पार्नुहोस्"
 
 msgid "Enable Sounds"
-msgstr ""
+msgstr "ध्वनीहरू सक्षम पार्नुहोस्"
 
 msgid "You are not connected."
-msgstr ""
+msgstr "तपाईँ जोडिनु भएको छैन"
 
 msgid "<AUTO-REPLY> "
-msgstr ""
+msgstr "<AUTO-REPLY> "
 
 #, c-format
 msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d प्रयोग कर्ताको सूची:\n"
+msgstr[1] "%d प्रयोगकर्ताहरूखो सुची:\n"
 
 msgid "Supported debug options are: plugins version"
 msgstr ""
@@ -699,10 +718,10 @@ msgstr "त्रुटि सच्याउने सञ्झ्याल"
 #. * it doesn't make sense. The bug is likely in the packing in gntbox.c.
 #.
 msgid "Clear"
-msgstr ""
+msgstr "हटाउने"
 
 msgid "Filter:"
-msgstr ""
+msgstr "फिल्टर:"
 
 msgid "Pause"
 msgstr "पज गर्नुहोस्"
@@ -727,7 +746,7 @@ msgid "Size"
 msgstr "साइज"
 
 msgid "Speed"
-msgstr ""
+msgstr "गति"
 
 msgid "Remaining"
 msgstr "बाँकी"
@@ -741,10 +760,10 @@ msgid "Close this window when all transfers finish"
 msgstr ""
 
 msgid "Clear finished transfers"
-msgstr ""
+msgstr "सकिएका ट्रान्सफरहरू खाली गर्नुहोस्"
 
 msgid "Stop"
-msgstr ""
+msgstr "रोक्ने"
 
 msgid "Waiting for transfer to begin"
 msgstr "स्थानान्तरण सुरू गर्नकोलागि पर्खिरहेको"
@@ -757,26 +776,26 @@ msgstr "असफल भयो"
 
 #, c-format
 msgid "%.2f KiB/s"
-msgstr ""
+msgstr "%.2f किबा/से"
 
 msgid "Sent"
-msgstr ""
+msgstr "पठाइएको"
 
 msgid "Received"
-msgstr ""
+msgstr "प्राप्त"
 
 msgid "Finished"
 msgstr "समाप्त भयो"
 
 #, c-format
 msgid "The file was saved as %s."
-msgstr ""
+msgstr "फाइलको %s को रूपमा सङ्ग्रह गरियो ।"
 
 msgid "Sending"
-msgstr ""
+msgstr "पठाउँदै"
 
 msgid "Receiving"
-msgstr ""
+msgstr "प्राप्तगर्दै"
 
 #, c-format
 msgid "Conversation in %s on %s"
@@ -787,7 +806,7 @@ msgid "Conversation with %s on %s"
 msgstr ""
 
 msgid "%B %Y"
-msgstr ""
+msgstr "%B %Y"
 
 msgid ""
 "System events will only be logged if the \"Log all status changes to system "
@@ -804,44 +823,44 @@ msgid ""
 msgstr ""
 
 msgid "No logs were found"
-msgstr ""
+msgstr "कुनै लग भेटिएन"
 
 msgid "Total log size:"
-msgstr ""
+msgstr "कुल लग आकार :"
 
 #. Search box *********
 msgid "Scroll/Search: "
-msgstr ""
+msgstr "सार्नुहोस्/खोजी गर्नुहोस्:"
 
 #, c-format
 msgid "Conversations in %s"
-msgstr ""
+msgstr "%sमा वार्तालाप"
 
 #, c-format
 msgid "Conversations with %s"
 msgstr "%s सँग  वार्तालाप"
 
 msgid "All Conversations"
-msgstr ""
+msgstr "सबै वार्तालापहरू"
 
 msgid "System Log"
 msgstr "प्रणाली लग"
 
 msgid "Calling..."
-msgstr ""
+msgstr "कलगर्दै…"
 
 msgid "Hangup"
-msgstr ""
+msgstr "कलअन्त्य गर्नुहोस्"
 
 #. Number of actions
 msgid "Accept"
 msgstr "स्वीकार गर्नुहोस्"
 
 msgid "Reject"
-msgstr ""
+msgstr "अस्विकार गर्नुहोस्"
 
 msgid "Call in progress."
-msgstr ""
+msgstr "कल प्रगतिमा ।"
 
 msgid "The call has been terminated."
 msgstr ""
@@ -861,16 +880,16 @@ msgid "call: Make an audio call."
 msgstr ""
 
 msgid "Emails"
-msgstr ""
+msgstr "इमेलहरू"
 
 msgid "You have mail!"
-msgstr ""
+msgstr "तपाईँलाई इमेल प्राप्त भएको छ !"
 
 msgid "Sender"
-msgstr ""
+msgstr "प्रेषक"
 
 msgid "Subject"
-msgstr ""
+msgstr "विषय"
 
 #, c-format
 msgid "%s (%s) has %d new message."
@@ -879,7 +898,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "New Mail"
-msgstr ""
+msgstr "नयाँ इमेल"
 
 #, c-format
 msgid "Info for %s"
@@ -889,7 +908,7 @@ msgid "Buddy Information"
 msgstr "साथी जानकारी"
 
 msgid "Continue"
-msgstr ""
+msgstr "जारी राख्नुहोस"
 
 msgid "IM"
 msgstr "IM"
@@ -898,22 +917,22 @@ msgid "Invite"
 msgstr "आमन्त्रण गर्नुहोस्"
 
 msgid "(none)"
-msgstr ""
+msgstr "(कुनै पनि हैन)"
 
 #. XXX: The following expects that finch_notify_message gets called. This
 #. * may not always happen, e.g. when another plugin sets its own
 #. * notify_message. So tread carefully.
 msgid "URI"
-msgstr ""
+msgstr "URI"
 
 msgid "ERROR"
-msgstr ""
+msgstr "ERROR"
 
 msgid "loading plugin failed"
-msgstr ""
+msgstr "प्लगइन लोड गर्न असफल"
 
 msgid "unloading plugin failed"
-msgstr ""
+msgstr "प्लगइन अनलोड गर्न असफल"
 
 #, c-format
 msgid ""
@@ -924,6 +943,12 @@ msgid ""
 "Website: %s\n"
 "Filename: %s\n"
 msgstr ""
+"नाम: %s\n"
+"संस्करण: %s\n"
+"वर्णन: %s\n"
+"सर्जक: %s\n"
+"वेबसाइट: %s\n"
+"फाइलनाम: %s\n"
 
 msgid "Plugin need to be loaded before you can configure it."
 msgstr ""
@@ -932,7 +957,7 @@ msgid "No configuration options for this plugin."
 msgstr ""
 
 msgid "Error loading plugin"
-msgstr ""
+msgstr "प्लगइन लोड गर्दा त्रुटी"
 
 msgid "The selected file is not a valid plugin."
 msgstr ""
@@ -942,16 +967,16 @@ msgid ""
 msgstr ""
 
 msgid "Select plugin to install"
-msgstr ""
+msgstr "प्लगिन स्थापना गर्न छान्नुहोस"
 
 msgid "You can (un)load plugins from the following list."
 msgstr ""
 
 msgid "Install Plugin..."
-msgstr ""
+msgstr "प्लगिन स्थापना गर्नुहोस्…"
 
 msgid "Configure Plugin"
-msgstr ""
+msgstr "प्लगिन कन्फिगर गर्नुहोस्"
 
 #. copy the preferences to tmp values...
 #. * I liked "take affect immediately" Oh well :-(
@@ -978,72 +1003,72 @@ msgid "Account:"
 msgstr "खाता:"
 
 msgid "Buddy name:"
-msgstr ""
+msgstr "साथी नाम:"
 
 #. Create the "Pounce When Buddy..." frame.
 msgid "Pounce When Buddy..."
 msgstr ""
 
 msgid "Signs on"
-msgstr ""
+msgstr "प्रवेश गरे"
 
 msgid "Signs off"
-msgstr ""
+msgstr "बाहिरिए"
 
 msgid "Goes away"
-msgstr ""
+msgstr "टाढा भए"
 
 msgid "Returns from away"
-msgstr ""
+msgstr "टाढाबाट फर्किए"
 
 msgid "Becomes idle"
-msgstr ""
+msgstr "निस्क्रिय भए"
 
 msgid "Is no longer idle"
-msgstr ""
+msgstr "अब निस्क्रिय छैनन"
 
 msgid "Starts typing"
-msgstr ""
+msgstr "टाइप गर्नसुरू गर्दै"
 
 msgid "Pauses while typing"
-msgstr ""
+msgstr "टाइप गर्दा रोकिन्छ"
 
 msgid "Stops typing"
-msgstr ""
+msgstr "टाइप गर्न छोड्छ"
 
 msgid "Sends a message"
-msgstr ""
+msgstr "सन्देश पठाउँछ"
 
 #. Create the "Action" frame.
 msgid "Action"
-msgstr ""
+msgstr "क्रियाकलाप"
 
 msgid "Open an IM window"
-msgstr ""
+msgstr "IM सञ्झ्याल खोल्नुहोस्"
 
 msgid "Pop up a notification"
-msgstr ""
+msgstr "सन्देश पप-अप गर्ने"
 
 msgid "Send a message"
-msgstr ""
+msgstr "सन्देश पठाउनुहोस्"
 
 msgid "Execute a command"
-msgstr ""
+msgstr "कमान्ड चलाउनुहोस्"
 
 msgid "Play a sound"
-msgstr ""
+msgstr "आवाज बजाउनुहोस्"
 
 msgid "Pounce only when my status is not Available"
 msgstr ""
 
 msgid "Recurring"
-msgstr ""
+msgstr "दोहोरिरहने"
 
 msgid "Cannot create pounce"
-msgstr ""
+msgstr "पाउन्स बनाउन सकिएन"
 
 msgid "You do not have any accounts."
-msgstr ""
+msgstr "तपाईँका खाताहरू छैनन् ।"
 
 msgid "You must create an account first before you can create a pounce."
 msgstr ""
@@ -1093,7 +1118,7 @@ msgstr "%s टाढा गइसकेको छ । (%s)"
 
 #, c-format
 msgid "%s has sent you a message. (%s)"
-msgstr ""
+msgstr " %sले तपाईँ लाई टाइप शन्देस पठाउनुभएको छ ।(%s)"
 
 msgid "Unknown pounce event. Please report this!"
 msgstr "अज्ञात घटना पाउन्स गर्नुहोस् । कृपया यो प्रतिवेदन गर्नुहोस्!"
@@ -1111,25 +1136,25 @@ msgid "Show Idle Time"
 msgstr ""
 
 msgid "Show Offline Buddies"
-msgstr ""
+msgstr "अफलाइन बड्डीहरू देखाउने"
 
 msgid "Notify buddies when you are typing"
-msgstr ""
+msgstr "तपाईँ टाइप गर्दै गर्दा साथीहरुलाई सूचना गर्नुहोस् "
 
 msgid "Log format"
-msgstr ""
+msgstr "लग ढाँचा"
 
 msgid "Log IMs"
-msgstr ""
+msgstr "IM लग गर्ने"
 
 msgid "Log chats"
-msgstr ""
+msgstr "वार्तालाफहरू लग गर्ने"
 
 msgid "Log status change events"
-msgstr ""
+msgstr "स्टेटस परिवर्तन घटनाहरू लग गर्ने"
 
 msgid "Report Idle time"
-msgstr ""
+msgstr "निष्क्रिय समयको देखाउने"
 
 msgid "Change status when idle"
 msgstr ""
@@ -1162,13 +1187,13 @@ msgid "Open File..."
 msgstr "फाइल खोल्नुहोस्..."
 
 msgid "Choose Location..."
-msgstr ""
+msgstr "स्थान छान्नुहोस्..."
 
 msgid "Hit 'Enter' to find more rooms of this category."
 msgstr ""
 
 msgid "Get"
-msgstr ""
+msgstr "पाउनुहोस"
 
 #. Create the window.
 msgid "Room List"
@@ -1202,71 +1227,73 @@ msgid "Others talk in chat"
 msgstr "अरुले कुरा गर्दा"
 
 msgid "Someone says your username in chat"
-msgstr ""
+msgstr "कसैले तपाईँको प्रयोगकर्तानाम वार्तालापमा उल्लेख गर्नुभयो "
 
 msgid "Attention received"
-msgstr ""
+msgstr "ध्यानाकर्षण गराइयो"
 
 msgid "GStreamer Failure"
-msgstr ""
+msgstr "GStreamer त्रुटि"
 
 msgid "GStreamer failed to initialize."
-msgstr ""
+msgstr "GStreamer सुरुहुन असफल भयो"
 
 msgid "(default)"
-msgstr ""
+msgstr "(पूर्वनिर्धारित)"
 
 msgid "Select Sound File ..."
-msgstr ""
+msgstr "एक आवाज फाइल छान्नुहोस..."
 
 msgid "Sound Preferences"
-msgstr ""
+msgstr "आवास प्राथमिकताहरू"
 
 msgid "Profiles"
-msgstr ""
+msgstr "प्रोफाइलहरू"
 
 msgid "Automatic"
 msgstr "स्वचालित"
 
 msgid "Console Beep"
-msgstr ""
+msgstr "कन्सोल बिप"
 
 msgid "Command"
 msgstr "आदेश"
 
 msgid "No Sound"
-msgstr ""
+msgstr "बिना आवाज"
 
 msgid "Sound Method"
 msgstr "ध्वनी विधि"
 
 msgid "Method: "
-msgstr ""
+msgstr "तरिका :"
 
 #, c-format
 msgid ""
 "Sound Command\n"
 "(%s for filename)"
 msgstr ""
+"आवाज कमान्ड\n"
+"(%s फाइलनामको लागि)"
 
 #. Sound options
 msgid "Sound Options"
 msgstr "ध्वन विकल्पहरू"
 
 msgid "Sounds when conversation has focus"
-msgstr ""
+msgstr "वार्तालापमा रहेकोबेला आावाजहरू"
 
 msgid "Always"
-msgstr ""
+msgstr "जहिले पनि"
 
 msgid "Only when available"
-msgstr ""
+msgstr "उपलब्ध हुँदा मात्र"
 
 msgid "Only when not available"
-msgstr ""
+msgstr "अनुपलब्ध हुँदा मात्र"
 
 msgid "Volume(0-100):"
-msgstr ""
+msgstr "भोल्युम(०-१००) :"
 
 #. Sound events
 msgid "Sound Events"
@@ -1276,7 +1303,7 @@ msgid "Event"
 msgstr "घटना"
 
 msgid "File"
-msgstr ""
+msgstr "फाइ"
 
 msgid "Test"
 msgstr "परिक्षण"
@@ -1289,20 +1316,20 @@ msgstr "रोज्नुहोस्..."
 
 #, c-format
 msgid "Are you sure you want to delete \"%s\""
-msgstr ""
+msgstr " तपाईँ  \"%s\" मेट्ने कुरामा निस्चित हुनुहुन्छ ?"
 
 msgid "Delete Status"
-msgstr ""
+msgstr "स्थिती मेट्नुहोस"
 
 msgid "Saved Statuses"
-msgstr ""
+msgstr "सङ्ग्रह गरिएका स्थितीहरू "
 
 #. title
 msgid "Title"
 msgstr "शीर्षक"
 
 msgid "Type"
-msgstr ""
+msgstr "प्रकार"
 
 #. Statuses are almost all the same. Define a macro to reduce code repetition.
 #. PurpleStatusPrimitive
@@ -1317,31 +1344,31 @@ msgstr "सन्देश"
 
 #. Use
 msgid "Use"
-msgstr ""
+msgstr "प्रयोग गर्ने"
 
 msgid "Invalid title"
-msgstr ""
+msgstr "अमान्य शीर्षक"
 
 msgid "Please enter a non-empty title for the status."
 msgstr ""
 
 msgid "Duplicate title"
-msgstr ""
+msgstr "दोहोरिएको शीर्षक"
 
 msgid "Please enter a different title for the status."
 msgstr ""
 
 msgid "Substatus"
-msgstr ""
+msgstr "स्ट्याटस"
 
 msgid "Status:"
 msgstr "स्थिति:"
 
 msgid "Message:"
-msgstr ""
+msgstr "सन्देश:"
 
 msgid "Edit Status"
-msgstr ""
+msgstr "स्टेटस सम्पादनगर्नुहोस"
 
 msgid "Use different status for following accounts"
 msgstr ""
@@ -1351,16 +1378,16 @@ msgid "Save & Use"
 msgstr ""
 
 msgid "Certificates"
-msgstr ""
+msgstr "सर्टिफिकेटहरू"
 
 msgid "Sounds"
 msgstr "ध्वनिहरू"
 
 msgid "Statuses"
-msgstr ""
+msgstr "स्टेटसहरू"
 
 msgid "Error loading the plugin."
-msgstr ""
+msgstr "प्लगइन लोड गर्दा त्रुटी ।"
 
 msgid "Couldn't find X display"
 msgstr ""
@@ -1384,15 +1411,15 @@ msgstr ""
 
 #, c-format
 msgid "%s just signed on"
-msgstr ""
+msgstr "%s ले भर्खरै साइन इन गर्‍यो"
 
 #, c-format
 msgid "%s just signed off"
-msgstr ""
+msgstr "%s ले भर्खरै साइन अफ गर्‍यो"
 
 #, c-format
 msgid "%s sent you a message"
-msgstr ""
+msgstr "%s ले तपाईँलाई सन्देश पठायो"
 
 #, c-format
 msgid "%s said your nick in %s"
@@ -1492,19 +1519,19 @@ msgid "Offline"
 msgstr "अफलाइन"
 
 msgid "Online Buddies"
-msgstr ""
+msgstr "अनलाइन साथीहरू"
 
 msgid "Offline Buddies"
-msgstr ""
+msgstr "अफलाइन बड्डीहरू"
 
 msgid "Online/Offline"
-msgstr ""
+msgstr "अनलाईन/अफलाइन"
 
 msgid "Meebo"
-msgstr ""
+msgstr "मिबो"
 
 msgid "No Grouping"
-msgstr ""
+msgstr "समूहकरण छैन"
 
 msgid "Nested Subgroup"
 msgstr ""
@@ -1529,20 +1556,20 @@ msgid "Lastlog plugin."
 msgstr ""
 
 msgid "accounts"
-msgstr ""
+msgstr "खाताहरू"
 
 msgid "Password is required to sign on."
-msgstr ""
+msgstr "लगइन गर्न पासवर्ड आवश्यक ।"
 
 #, c-format
 msgid "Enter password for %s (%s)"
 msgstr "%s (%s) का लागि पासवर्ड प्रविष्टि गर्नुहोस्"
 
 msgid "Enter Password"
-msgstr ""
+msgstr "पासवर्ड प्रविष्टि गर्नुहोस्"
 
 msgid "Save password"
-msgstr ""
+msgstr "पासवर्ड सङ्ग्रह गर्नुहोस्"
 
 #, c-format
 msgid "Missing protocol plugin for %s"
@@ -1593,7 +1620,7 @@ msgid "Buddies"
 msgstr "साथीहरू"
 
 msgid "buddy list"
-msgstr ""
+msgstr "बड्डी सुची"
 
 msgid "The certificate is self-signed and cannot be automatically checked."
 msgstr ""
@@ -1652,12 +1679,12 @@ msgstr ""
 #. Scheme name
 #. Pool name
 msgid "Certificate Authorities"
-msgstr ""
+msgstr "सर्टिफिकेट अथोरिटीहरू"
 
 #. Scheme name
 #. Pool name
 msgid "SSL Peers Cache"
-msgstr ""
+msgstr "SSL पियरहरूको क्याश"
 
 #. Make messages
 #, c-format
@@ -2123,21 +2150,19 @@ msgstr "<font color=\"red\"><b>फाइल पढ्न सकेन: %s</b></f
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "%s बाट सन्देश"
+msgstr ""
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
 
-#, fuzzy
 msgid "Network error."
-msgstr "सञ्जाल"
+msgstr ""
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
@@ -2153,9 +2178,8 @@ msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "फाइल स्थान्तरण सुरू गर्न सकिएन"
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr ""
@@ -2203,21 +2227,21 @@ msgstr ""
 "आवश्यक प्लगइन %s फेला परेन । कृपया यो प्लगइन स्थापना गर्नुहोस् र फेरि प्रयास गर्नुहोस् ।"
 
 msgid "Unable to load the plugin"
-msgstr ""
+msgstr "प्लगइन लोड गर्न अक्षम भयो"
 
 #, c-format
 msgid "The required plugin %s was unable to load."
 msgstr "आवश्यक प्लगइन %s लोड गर्न अक्षम भयो ।"
 
 msgid "Unable to load your plugin."
-msgstr ""
+msgstr "तपाईँको प्लगइन लोड गर्न अक्षम भयो ।"
 
 #, c-format
 msgid "%s requires %s, but it failed to unload."
 msgstr ""
 
 msgid "Autoaccept"
-msgstr ""
+msgstr "स्वत स्वीकार"
 
 msgid "Auto-accept file transfer requests from selected users."
 msgstr ""
@@ -2243,13 +2267,13 @@ msgid "_Cancel"
 msgstr "रद्द गर्नुहोस्"
 
 msgid "Ask"
-msgstr ""
+msgstr "सोध्नुहोस्"
 
 msgid "Auto Accept"
-msgstr ""
+msgstr "स्वत: स्विकर"
 
 msgid "Auto Reject"
-msgstr ""
+msgstr "स्वतः अस्विकार"
 
 msgid "Autoaccept File Transfers..."
 msgstr ""
@@ -2754,29 +2778,29 @@ msgid "Maximum Version"
 msgstr ""
 
 msgid "SSL 2"
-msgstr ""
+msgstr "एसएसएल २"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "एसएसएल ३"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "टिएसएल 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "टिएसएल १.१"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "टिएसएल १.२"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "टिएसएल १.३"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
 msgstr ""
 
 msgid "Ciphers"
-msgstr ""
+msgstr "सिफरहरू"
 
 #. *< type
 #. *< ui_requirement
@@ -2921,20 +2945,20 @@ msgid ""
 msgstr ""
 
 msgid "First name"
-msgstr ""
+msgstr "नाम"
 
 msgid "Last name"
-msgstr ""
+msgstr "थर"
 
 #. email
 msgid "Email"
 msgstr "इमेल"
 
 msgid "AIM Account"
-msgstr ""
+msgstr "AIM खाता"
 
 msgid "XMPP Account"
-msgstr ""
+msgstr "XMPP खाता"
 
 #. *< type
 #. *< ui_requirement
@@ -2950,14 +2974,14 @@ msgid "Bonjour Protocol Plugin"
 msgstr ""
 
 msgid "Purple Person"
-msgstr ""
+msgstr "पर्पल व्यक्ति"
 
 #. Creating the options for the protocol
 msgid "Local Port"
-msgstr ""
+msgstr "स्थानिय पोर्ट"
 
 msgid "Bonjour"
-msgstr ""
+msgstr "बोन्जोर"
 
 #, c-format
 msgid "%s has closed the conversation."
@@ -3010,14 +3034,14 @@ msgid "City"
 msgstr "शहर"
 
 msgid "Year of birth"
-msgstr ""
+msgstr "जन्म वर्ष"
 
 #. gender
 msgid "Gender"
 msgstr "लिङ्ग"
 
 msgid "Male or female"
-msgstr ""
+msgstr "महिला या पुरूष"
 
 #. 0
 msgid "Male"
@@ -3083,7 +3107,7 @@ msgstr "UIN"
 #. first name
 #. optional information
 msgid "First Name"
-msgstr "पहिलो नाम"
+msgstr "नाम"
 
 msgid "Birth Year"
 msgstr "जन्म वर्ष"
@@ -3124,7 +3148,7 @@ msgstr ""
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
-msgstr "जडान"
+msgstr "जडान हुँदै "
 
 #, c-format
 msgid "Unable to resolve hostname: %s"
@@ -3337,7 +3361,7 @@ msgid "Nick"
 msgstr "निक"
 
 msgid "Login name"
-msgstr ""
+msgstr "लगिन नाम"
 
 msgid "Host name"
 msgstr ""
@@ -3346,7 +3370,7 @@ msgid "Currently on"
 msgstr "हालसालै"
 
 msgid "Idle for"
-msgstr ""
+msgstr "निस्क्रिय समय"
 
 msgid "Online since"
 msgstr "देखि अनलाइन"
@@ -3963,7 +3987,7 @@ msgid "Initiate _Chat"
 msgstr "कुराकानी सुरू गर्नुहोस्"
 
 msgid "Log In"
-msgstr ""
+msgstr "लगइन"
 
 msgid "Log Out"
 msgstr ""
@@ -4088,7 +4112,7 @@ msgid "Affiliations:"
 msgstr ""
 
 msgid "No users found"
-msgstr ""
+msgstr "प्रयोकर्ता फेला परेन"
 
 msgid "Roles:"
 msgstr ""
@@ -4707,7 +4731,7 @@ msgid "_Accept Defaults"
 msgstr ""
 
 msgid "No reason"
-msgstr ""
+msgstr "कारण दिइएको छैन ।"
 
 #, c-format
 msgid "You have been kicked: (%s)"
@@ -4745,25 +4769,25 @@ msgid "Please select the resource of %s to which you would like to send a file"
 msgstr ""
 
 msgid "Afraid"
-msgstr ""
+msgstr "त्राश"
 
 msgid "Amazed"
-msgstr ""
+msgstr "मख्ख"
 
 msgid "Amorous"
-msgstr ""
+msgstr "कामुक"
 
 msgid "Angry"
 msgstr "रिसाएको"
 
 msgid "Annoyed"
-msgstr ""
+msgstr "दिक्क"
 
 msgid "Anxious"
 msgstr "चिन्तित"
 
 msgid "Aroused"
-msgstr ""
+msgstr "उत्तेजीत"
 
 msgid "Ashamed"
 msgstr "लज्जित"
@@ -4772,49 +4796,49 @@ msgid "Bored"
 msgstr "नरमाइलो महशुस"
 
 msgid "Brave"
-msgstr ""
+msgstr "हिम्मती"
 
 msgid "Calm"
-msgstr ""
+msgstr "शान्त"
 
 msgid "Cautious"
-msgstr ""
+msgstr "होसियार"
 
 msgid "Cold"
-msgstr ""
+msgstr "चिसो"
 
 msgid "Confident"
-msgstr ""
+msgstr "आत्मविश्वासी"
 
 msgid "Confused"
-msgstr ""
+msgstr "भ्रमित"
 
 msgid "Contemplative"
-msgstr ""
+msgstr "विचारशील"
 
 msgid "Contented"
-msgstr ""
+msgstr "सन्तुष्ट"
 
 msgid "Cranky"
-msgstr ""
+msgstr "पागल"
 
 msgid "Crazy"
-msgstr ""
+msgstr "दिवाना"
 
 msgid "Creative"
-msgstr ""
+msgstr "सिर्जनात्मक"
 
 msgid "Curious"
-msgstr ""
+msgstr "जिज्ञासु"
 
 msgid "Dejected"
-msgstr ""
+msgstr "हरेस"
 
 msgid "Depressed"
-msgstr ""
+msgstr "हिनताबोध"
 
 msgid "Disappointed"
-msgstr ""
+msgstr "निराश"
 
 msgid "Disgusted"
 msgstr ""
@@ -4829,67 +4853,67 @@ msgid "Embarrassed"
 msgstr ""
 
 msgid "Envious"
-msgstr ""
+msgstr "इर्ष्यालु"
 
 msgid "Excited"
 msgstr "उत्तेजित"
 
 msgid "Flirtatious"
-msgstr ""
+msgstr "जिस्कनमन"
 
 msgid "Frustrated"
-msgstr ""
+msgstr "दिक्दार"
 
 msgid "Grateful"
-msgstr ""
+msgstr "कृतज्ञ"
 
 msgid "Grieving"
-msgstr ""
+msgstr "सन्तप्त"
 
 msgid "Grumpy"
 msgstr ""
 
 msgid "Guilty"
-msgstr ""
+msgstr "दोषी महसुस"
 
 msgid "Happy"
 msgstr "खुशी"
 
 msgid "Hopeful"
-msgstr ""
+msgstr "आशावादी"
 
 msgid "Hot"
-msgstr ""
+msgstr "तातो"
 
 msgid "Humbled"
-msgstr ""
+msgstr "विनम्र"
 
 msgid "Humiliated"
-msgstr ""
+msgstr "बेइज्जत गरिएको"
 
 msgid "Hungry"
-msgstr ""
+msgstr "भोको"
 
 msgid "Hurt"
-msgstr ""
+msgstr "चोटलागेको"
 
 msgid "Impressed"
-msgstr ""
+msgstr "प्रेरित"
 
 msgid "In awe"
 msgstr ""
 
 msgid "In love"
-msgstr ""
+msgstr "प्रेममा"
 
 msgid "Indignant"
 msgstr ""
 
 msgid "Interested"
-msgstr ""
+msgstr "रुची"
 
 msgid "Intoxicated"
-msgstr ""
+msgstr "नशामा"
 
 msgid "Invincible"
 msgstr "अजेय"
@@ -4898,43 +4922,43 @@ msgid "Jealous"
 msgstr "इर्ष्यालु"
 
 msgid "Lonely"
-msgstr ""
+msgstr "एक्लो"
 
 msgid "Lost"
-msgstr ""
+msgstr "रुमल्लिरहेको"
 
 msgid "Lucky"
-msgstr ""
+msgstr "भाग्यमानी"
 
 msgid "Mean"
-msgstr ""
+msgstr "छुच्चो"
 
 msgid "Moody"
-msgstr ""
+msgstr "मुडी"
 
 msgid "Nervous"
-msgstr ""
+msgstr "डरमा"
 
 msgid "Neutral"
-msgstr ""
+msgstr "तटस्थ"
 
 msgid "Offended"
-msgstr ""
+msgstr "चोट पुर्‍याइएको"
 
 msgid "Outraged"
-msgstr ""
+msgstr "जगाइएको"
 
 msgid "Playful"
 msgstr ""
 
 msgid "Proud"
-msgstr ""
+msgstr "गौरवान्वित"
 
 msgid "Relaxed"
 msgstr ""
 
 msgid "Relieved"
-msgstr ""
+msgstr "सन्चो"
 
 msgid "Remorseful"
 msgstr ""
@@ -4955,50 +4979,50 @@ msgid "Serious"
 msgstr ""
 
 msgid "Shocked"
-msgstr ""
+msgstr "झट्का लागेको"
 
 msgid "Shy"
-msgstr ""
+msgstr "लजालु"
 
 msgid "Sick"
-msgstr ""
+msgstr "बिमार"
 
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "निद्रालु"
 
 msgid "Spontaneous"
-msgstr ""
+msgstr "स्वतस्फूर्त"
 
 msgid "Stressed"
-msgstr ""
+msgstr "व्यथित"
 
 msgid "Strong"
-msgstr ""
+msgstr "बलियो"
 
 msgid "Surprised"
-msgstr ""
+msgstr "अचम्ममा"
 
 msgid "Thankful"
-msgstr ""
+msgstr "धन्यवाद"
 
 msgid "Thirsty"
-msgstr ""
+msgstr "प्यासी"
 
 msgid "Tired"
-msgstr ""
+msgstr "थकित"
 
 msgid "Undefined"
-msgstr ""
+msgstr "अपरिभाषित"
 
 msgid "Weak"
-msgstr ""
+msgstr "कमजोर"
 
 msgid "Worried"
-msgstr ""
+msgstr "चिन्तित"
 
 msgid "Set User Nickname"
-msgstr ""
+msgstr "उपनाम निर्धारण गर्नुहोस"
 
 msgid "Please specify a new nickname for you."
 msgstr ""
@@ -5009,7 +5033,7 @@ msgid ""
 msgstr ""
 
 msgid "Set"
-msgstr ""
+msgstr "निर्धारण गर्नुहोस"
 
 msgid "Set Nickname..."
 msgstr ""
@@ -5359,13 +5383,13 @@ msgid "Has you"
 msgstr "तपाईँ सँग  छ"
 
 msgid "Home Phone Number"
-msgstr ""
+msgstr "घरको फोन नम्बर"
 
 msgid "Work Phone Number"
-msgstr ""
+msgstr "कार्यस्थलको फोन नम्बर"
 
 msgid "Mobile Phone Number"
-msgstr ""
+msgstr "मोवाइल नम्बर"
 
 msgid "Be Right Back"
 msgstr "पछाडि छु"
@@ -5374,10 +5398,10 @@ msgid "Busy"
 msgstr "व्यस्त छु"
 
 msgid "On the Phone"
-msgstr ""
+msgstr "फोनमा छु"
 
 msgid "Out to Lunch"
-msgstr ""
+msgstr "खानाका लागि बाहिर "
 
 msgid "Game Title"
 msgstr ""
@@ -6976,88 +7000,88 @@ msgid "Unable to send message to %s: %s"
 msgstr ""
 
 msgid "Thinking"
-msgstr ""
+msgstr "सोच्दै"
 
 msgid "Shopping"
-msgstr ""
+msgstr "किनमेल गर्दै"
 
 msgid "Questioning"
-msgstr ""
+msgstr "सोध्दै"
 
 msgid "Eating"
-msgstr ""
+msgstr "खाँदै"
 
 msgid "Watching a movie"
-msgstr ""
+msgstr "चलचित्र हेर्दै"
 
 msgid "Typing"
-msgstr ""
+msgstr "टाइप गर्दै"
 
 msgid "At the office"
-msgstr ""
+msgstr "कार्यलयमा"
 
 msgid "Taking a bath"
-msgstr ""
+msgstr "नुहाउँदै"
 
 msgid "Watching TV"
-msgstr ""
+msgstr "टिभी हेर्दै"
 
 msgid "Having fun"
-msgstr ""
+msgstr "रमाइलो गर्दै"
 
 msgid "Sleeping"
-msgstr ""
+msgstr "सुत्दै"
 
 msgid "Using a PDA"
-msgstr ""
+msgstr "पिडिए चलाउँदै"
 
 msgid "Meeting friends"
-msgstr ""
+msgstr "साथीहरूसँग भेटघाट"
 
 msgid "On the phone"
-msgstr ""
+msgstr "फोनमा"
 
 msgid "Surfing"
-msgstr ""
+msgstr "सर्फिङ गर्दै"
 
 #. "I am mobile." / "John is mobile."
 msgid "Mobile"
-msgstr ""
+msgstr "मोबाइल"
 
 msgid "Searching the web"
-msgstr ""
+msgstr "वेबमा खोजीगर्दै"
 
 msgid "At a party"
-msgstr ""
+msgstr "भोजमा"
 
 msgid "Having Coffee"
-msgstr ""
+msgstr "कफी पिउँदै"
 
 #. Playing video games
 msgid "Gaming"
-msgstr ""
+msgstr "गेमखेल्दै"
 
 msgid "Browsing the web"
-msgstr ""
+msgstr "वेब ब्राउजगर्दै"
 
 msgid "Smoking"
-msgstr ""
+msgstr "धुम्रपान गर्दै"
 
 msgid "Writing"
-msgstr ""
+msgstr "लेख्दै"
 
 #. Drinking [Alcohol]
 msgid "Drinking"
-msgstr ""
+msgstr "पिउँदै"
 
 msgid "Listening to music"
-msgstr ""
+msgstr "संगीत सुन्दै"
 
 msgid "Studying"
-msgstr ""
+msgstr "पढ्दै"
 
 msgid "In the restroom"
-msgstr ""
+msgstr "शौचालयमा"
 
 msgid "Received invalid data on connection with server"
 msgstr ""
@@ -7145,13 +7169,13 @@ msgid "Depression"
 msgstr ""
 
 msgid "At home"
-msgstr ""
+msgstr "घरमा"
 
 msgid "At work"
-msgstr ""
+msgstr "काममा"
 
 msgid "At lunch"
-msgstr ""
+msgstr "खानामा"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
@@ -7304,10 +7328,10 @@ msgid "Do you want to add this buddy to your buddy list?"
 msgstr "के तपाईँं आफ्नो साथी सूचीमा यो साथी थप्न चाहानुहुन्छ?"
 
 msgid "_Add"
-msgstr ""
+msgstr "थप्ने"
 
 msgid "_Decline"
-msgstr ""
+msgstr "अस्वीकार गर्ने"
 
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
@@ -7998,25 +8022,25 @@ msgid "Place Closed"
 msgstr ""
 
 msgid "Microphone"
-msgstr ""
+msgstr "माइक्रोफोन"
 
 msgid "Speakers"
-msgstr ""
+msgstr "स्पिकहरू"
 
 msgid "Video Camera"
-msgstr ""
+msgstr "भिडियो क्यामरा"
 
 msgid "File Transfer"
-msgstr ""
+msgstr "फाइल स्थान्तरण"
 
 msgid "Supports"
-msgstr ""
+msgstr "सहायताहरू"
 
 msgid "External User"
-msgstr ""
+msgstr "वाह्य प्रयोगकर्ता"
 
 msgid "Create conference with user"
-msgstr ""
+msgstr "प्रयोगकर्तासँग कन्फरेन्स सिर्जना गर्ने"
 
 #, c-format
 msgid ""
@@ -8025,19 +8049,19 @@ msgid ""
 msgstr ""
 
 msgid "New Conference"
-msgstr ""
+msgstr "नयाँ कन्फरेन्स"
 
 msgid "Create"
-msgstr ""
+msgstr "सिर्जना गर्ने"
 
 msgid "Available Conferences"
-msgstr ""
+msgstr "उपलब्ध कन्फरेन्सहरू"
 
 msgid "Create New Conference..."
-msgstr ""
+msgstr "नयाँ कन्फरेन्स सिर्जना गर्नुहोस् ..."
 
 msgid "Invite user to a conference"
-msgstr ""
+msgstr "प्रयोगकर्तालाई कन्फरेन्समा निमन्त्रणा गर्ने"
 
 #, c-format
 msgid ""
@@ -8047,10 +8071,10 @@ msgid ""
 msgstr ""
 
 msgid "Invite to Conference"
-msgstr ""
+msgstr "कन्फरेन्समा निमन्त्रणा गर्ने"
 
 msgid "Invite to Conference..."
-msgstr ""
+msgstr "कन्फरेन्समा निमन्त्रणा गर्ने..."
 
 msgid "Send TEST Announcement"
 msgstr ""
@@ -8855,7 +8879,7 @@ msgid "Download %s: %s"
 msgstr ""
 
 msgid "Your Current Mood"
-msgstr "तपाईँंको हालको स्वाभाव"
+msgstr "तपाईँको हालको स्वाभाव"
 
 #, c-format
 msgid "Normal"
@@ -8866,7 +8890,7 @@ msgid ""
 "Your Preferred Contact Methods"
 msgstr ""
 "\n"
-"तपाईँंका रूचाइएका जडान विधिहरू"
+"तपाईँका रूचाइएका जडान विधिहरू"
 
 msgid "SMS"
 msgstr "SMS"
@@ -10191,7 +10215,7 @@ msgid "Tor/Privacy (SOCKS5)"
 msgstr ""
 
 msgid "HTTP"
-msgstr "एच टि टि पी"
+msgstr "एचटिटिपी"
 
 msgid "Use Environmental Settings"
 msgstr "परिवेष सेटिङ्हरू प्रयोग गर्नुहोस्"
@@ -10245,7 +10269,7 @@ msgid "P_roxy"
 msgstr ""
 
 msgid "Enabled"
-msgstr ""
+msgstr "सक्षम गरियो"
 
 msgid "Protocol"
 msgstr "प्रोटोकल"
@@ -10278,13 +10302,13 @@ msgstr ""
 
 #. Buddy List
 msgid "Background Color"
-msgstr ""
+msgstr "पृष्ठभूमि रङ्"
 
 msgid "The background color for the buddy list"
 msgstr ""
 
 msgid "Layout"
-msgstr ""
+msgstr "लेआउट"
 
 msgid "The layout of icons, name, and status of the buddy list"
 msgstr ""
@@ -10334,42 +10358,42 @@ msgstr ""
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list contact when in its expanded state
 msgid "Contact Text"
-msgstr ""
+msgstr "सम्पर्क पाठ"
 
 msgid "The text information for when a contact is expanded"
-msgstr ""
+msgstr "सम्पर्क जानकारी ठूलो बनाउँदा पाठ जानकारी"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is online
 msgid "Online Text"
-msgstr ""
+msgstr "अनलाइन पाठ"
 
 msgid "The text information for when a buddy is online"
-msgstr ""
+msgstr "बड्डी अनलाइनहुँदा पाठ जानकारी"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is away
 msgid "Away Text"
-msgstr ""
+msgstr "टाढा पाठ"
 
 msgid "The text information for when a buddy is away"
-msgstr ""
+msgstr "बड्डी टाढा पाठ जानकारी"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is offline
 msgid "Offline Text"
-msgstr ""
+msgstr "अफलाइन पाठ"
 
 msgid "The text information for when a buddy is offline"
-msgstr ""
+msgstr "बड्डी अफलाइन हुँदा पाठ जानकारी"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when it is idle
 msgid "Idle Text"
-msgstr ""
+msgstr "निस्क्रिय पाठ"
 
 msgid "The text information for when a buddy is idle"
-msgstr ""
+msgstr "बड्डी निस्क्रिय हुँदा पाठ जानकारी"
 
 #. Note to translators: These two strings refer to the font and color
 #. of a buddy list buddy when they have sent you a new message
@@ -10409,7 +10433,7 @@ msgid "Please update the necessary fields."
 msgstr ""
 
 msgid "A_ccount"
-msgstr ""
+msgstr "खाता"
 
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
@@ -10418,16 +10442,16 @@ msgstr ""
 "कृपया तपाईँले जडान गर्न चाहेको कुराकानीको बारेमा उचित जानकारीहरू प्रविष्टि गराउनुहोस् ।\n"
 
 msgid "Room _List"
-msgstr ""
+msgstr "कोठा सूची"
 
 msgid "_Block"
-msgstr ""
+msgstr "रोक्नुहोस्"
 
 msgid "Un_block"
-msgstr ""
+msgstr "बन्देज खोल्ने"
 
 msgid "Move to"
-msgstr ""
+msgstr "मा सार्ने"
 
 msgid "Get _Info"
 msgstr "सूचना प्राप्त गर्नुहोस्"
@@ -10436,28 +10460,28 @@ msgid "I_M"
 msgstr "IM "
 
 msgid "_Audio Call"
-msgstr ""
+msgstr "भोइस कल"
 
 msgid "Audio/_Video Call"
-msgstr ""
+msgstr "अडियो/भिडियो कल"
 
 msgid "_Video Call"
-msgstr ""
+msgstr "भिडियो कल"
 
 msgid "_Send File..."
-msgstr ""
+msgstr "फाइल पठाउने"
 
 msgid "Add Buddy _Pounce..."
-msgstr ""
+msgstr "बड्डी पाउन्स थप्नुहोस्…"
 
 msgid "View _Log"
 msgstr "लग हेर्नुहोस्"
 
 msgid "Hide When Offline"
-msgstr ""
+msgstr "अफलाइन हुँदा देखाउने"
 
 msgid "Show When Offline"
-msgstr ""
+msgstr "अफलाइन हुँदा देखाउने"
 
 msgid "_Alias..."
 msgstr "उपनामहरू..."
@@ -10466,16 +10490,16 @@ msgid "_Remove"
 msgstr "हटाउनुहोस्"
 
 msgid "Set Custom Icon"
-msgstr ""
+msgstr "अनुकूल आइकन राख्ने"
 
 msgid "Remove Custom Icon"
-msgstr ""
+msgstr "अनुकूल आइकन हटाउने"
 
 msgid "Add _Buddy..."
-msgstr ""
+msgstr "बड्डी थप्नुहोस्"
 
 msgid "Add C_hat..."
-msgstr ""
+msgstr "च्याट थप्नुहोस"
 
 msgid "_Delete Group"
 msgstr "समूह मेट्नुहोस्"
@@ -10491,10 +10515,10 @@ msgid "Auto-Join"
 msgstr "स्वत:जडान"
 
 msgid "Persistent"
-msgstr ""
+msgstr "सधै जोगाउने"
 
 msgid "_Edit Settings..."
-msgstr ""
+msgstr "सेटिङ सम्पादन गर्नुहोस…"
 
 msgid "_Collapse"
 msgstr "नष्ट गर्नुहोस्"
@@ -11219,52 +11243,52 @@ msgid "Highlight matches"
 msgstr ""
 
 msgid "_Icon Only"
-msgstr ""
+msgstr "आइकन मात्र"
 
 msgid "_Text Only"
-msgstr ""
+msgstr "पाठ मात्र"
 
 msgid "_Both Icon & Text"
-msgstr ""
+msgstr "आइकन र पाठ दुबै"
 
 msgid "Filter"
-msgstr ""
+msgstr "फिल्टर"
 
 msgid "Right click for more options."
 msgstr ""
 
 msgid "Level "
-msgstr ""
+msgstr "स्तर"
 
 msgid "Select the debug filter level."
 msgstr ""
 
 msgid "All"
-msgstr ""
+msgstr "सबै"
 
 msgid "Misc"
-msgstr ""
+msgstr "विविध"
 
 msgid "Warning"
-msgstr ""
+msgstr "चेतावनी"
 
 msgid "Error "
-msgstr ""
+msgstr "त्रुटी"
 
 msgid "Fatal Error"
-msgstr ""
+msgstr "ठुलो त्रुटी"
 
 msgid "artist"
-msgstr ""
+msgstr "कलाकार"
 
 msgid "voice and video"
-msgstr ""
+msgstr "आवाज र भिडियो"
 
 msgid "support"
 msgstr "समर्थन"
 
 msgid "webmaster"
-msgstr ""
+msgstr "वेबमास्टर"
 
 msgid "win32 port"
 msgstr "win32 पोर्ट"
@@ -11272,7 +11296,7 @@ msgstr "win32 पोर्ट"
 #. Translators: This is a person's name. For most languages we recommend
 #. not translating it.
 msgid "Ka-Hing Cheung"
-msgstr ""
+msgstr "Ka-Hing Cheung"
 
 msgid "maintainer"
 msgstr "सम्भारकर्ता"
@@ -11300,43 +11324,43 @@ msgid "Senior Contributor/QA"
 msgstr ""
 
 msgid "Afrikaans"
-msgstr ""
+msgstr "अफ्रिकान्स"
 
 msgid "Arabic"
-msgstr ""
+msgstr "अरबी भाषा"
 
 msgid "Assamese"
-msgstr ""
+msgstr "आसामी"
 
 msgid "Asturian"
-msgstr ""
+msgstr "अस्तुरियाली"
 
 msgid "Belarusian Latin"
-msgstr ""
+msgstr "बेलारुसी ल्याटिन"
 
 msgid "Bulgarian"
 msgstr "बुल्गेरियन"
 
 msgid "Bengali"
-msgstr ""
+msgstr "बङ्गाली"
 
 msgid "Bengali-India"
-msgstr ""
+msgstr "बङ्गाली भारत"
 
 msgid "Breton"
-msgstr ""
+msgstr "ब्रेटोन"
 
 msgid "Bodo"
-msgstr ""
+msgstr "बोडो"
 
 msgid "Bosnian"
-msgstr ""
+msgstr "बोस्नियाली"
 
 msgid "Catalan"
 msgstr "क्याटालन भाषा"
 
 msgid "Valencian-Catalan"
-msgstr ""
+msgstr "भ्यालेन्सियाली कातालान"
 
 msgid "Czech"
 msgstr "चेक भाषा"
@@ -11348,10 +11372,10 @@ msgid "German"
 msgstr "जर्मन"
 
 msgid "Dzongkha"
-msgstr ""
+msgstr "जोङ्खा"
 
 msgid "Greek"
-msgstr ""
+msgstr "ग्रिक"
 
 msgid "Australian English"
 msgstr "अष्ट्रेलीयन अंग्रेजी"
@@ -11363,37 +11387,37 @@ msgid "Canadian English"
 msgstr "क्यानेडियन अंग्रेजी"
 
 msgid "Esperanto"
-msgstr ""
+msgstr "एस्पेरान्तो"
 
 msgid "Spanish"
 msgstr "स्पेनिस"
 
 msgid "Argentine Spanish"
-msgstr ""
+msgstr "अर्जेन्टेनियाली स्पेनिश"
 
 msgid "Estonian"
 msgstr "एस्टोनियन"
 
 msgid "Basque"
-msgstr ""
+msgstr "बास्क"
 
 msgid "Persian"
-msgstr ""
+msgstr "फारसी"
 
 msgid "Finnish"
 msgstr "फिन्नीस"
 
 msgid "Irish"
-msgstr ""
+msgstr "आयरिस"
 
 msgid "Galician"
 msgstr "ग्यलिसियन"
 
 msgid "Gujarati"
-msgstr ""
+msgstr "गुजराती"
 
 msgid "Gujarati Language Team"
-msgstr ""
+msgstr "गुजराती भाषा समूह"
 
 msgid "Hebrew"
 msgstr "हिब्रु"
@@ -11402,13 +11426,13 @@ msgid "Hindi"
 msgstr "हिन्दी"
 
 msgid "Croatian"
-msgstr ""
+msgstr "क्रोएसियाली"
 
 msgid "Hungarian"
 msgstr "हन्गेरियन"
 
 msgid "Indonesian"
-msgstr ""
+msgstr "इन्डोनिसियाली"
 
 msgid "Italian"
 msgstr "ईटालियन"
@@ -11420,79 +11444,79 @@ msgid "Georgian"
 msgstr "जर्जीयन"
 
 msgid "Ubuntu Georgian Translators"
-msgstr ""
+msgstr "उबुन्टु जर्जियाली अनुवादकहरू"
 
 msgid "Kazakh"
-msgstr ""
+msgstr "कजाख"
 
 msgid "Khmer"
-msgstr ""
+msgstr "खमेर"
 
 msgid "Kannada"
-msgstr ""
+msgstr "कान्नडा"
 
 msgid "Kannada Translation team"
-msgstr ""
+msgstr "कान्नडा अनुवादक समूह"
 
 msgid "Korean"
 msgstr "कोरियाली"
 
 msgid "Kashmiri"
-msgstr ""
+msgstr "काश्मिरी"
 
 msgid "Kurdish"
-msgstr ""
+msgstr "कुर्दिस"
 
 msgid "Kurdish (Sorani)"
-msgstr ""
+msgstr "कुर्दिस(सोरानी)"
 
 msgid "Lithuanian"
 msgstr "लिथुवानियाली"
 
 msgid "Latvian"
-msgstr ""
+msgstr "लाट्भियाली"
 
 msgid "Maithili"
-msgstr ""
+msgstr "मैथिली"
 
 msgid "Meadow Mari"
-msgstr ""
+msgstr "मिडो मरी"
 
 msgid "Macedonian"
 msgstr "म्यासिडोनियन"
 
 msgid "Malay"
-msgstr ""
+msgstr "मलाय"
 
 msgid "Malayalam"
-msgstr ""
+msgstr "मलायालम"
 
 msgid "Mongolian"
-msgstr ""
+msgstr "मङ्गोलियाली"
 
 msgid "Marathi"
-msgstr ""
+msgstr "मराठी"
 
 msgid "Burmese"
 msgstr "बर्मेली"
 
 msgid "Bokmål Norwegian"
-msgstr ""
+msgstr "नर्वेजियन"
 
 msgid "Nepali"
-msgstr ""
+msgstr "नेपाली"
 
 msgid "Dutch, Flemish"
-msgstr ""
+msgstr "डच, फ्लेमी"
 
 msgid "Norwegian Nynorsk"
-msgstr ""
+msgstr "नर्वेजियन न्योनोर्सक"
 
 msgid "Occitan"
-msgstr ""
+msgstr "अक्सिटान"
 
 msgid "Oriya"
-msgstr ""
+msgstr "ओडिया"
 
 msgid "Punjabi"
 msgstr "पन्जाबी"
@@ -11507,7 +11531,7 @@ msgid "Portuguese-Brazil"
 msgstr "प्रोचुगिज-ब्राजिल"
 
 msgid "Pashto"
-msgstr ""
+msgstr "पास्तो"
 
 msgid "Romanian"
 msgstr "रोमानियन"
@@ -11516,7 +11540,7 @@ msgid "Russian"
 msgstr "रसियाली"
 
 msgid "Sindhi"
-msgstr ""
+msgstr "सिन्धी"
 
 msgid "Slovak"
 msgstr "स्लोभाक"
@@ -11531,42 +11555,42 @@ msgid "Serbian"
 msgstr "सेर्वियन"
 
 msgid "Serbian Latin"
-msgstr ""
+msgstr "सर्बियाली ल्याटिन"
 
 msgid "Sinhala"
-msgstr ""
+msgstr "सिंहला"
 
 msgid "Swedish"
 msgstr "स्विडिस"
 
 msgid "Swahili"
-msgstr ""
+msgstr "स्वाहिली"
 
 msgid "Tamil"
-msgstr ""
+msgstr "तामिल"
 
 msgid "Telugu"
-msgstr ""
+msgstr "तेलगु"
 
 msgid "Thai"
-msgstr ""
+msgstr "थाइ"
 
 msgid "Tatar"
-msgstr ""
+msgstr "टाटार"
 
 msgid "Ukranian"
-msgstr ""
+msgstr "युक्रेनियाली"
 
 msgid "Urdu"
-msgstr ""
+msgstr "उर्दु"
 
 msgid "Uzbek"
-msgstr ""
+msgstr "उज्वेक"
 
 #. Translators: This is a person's name. For most languages we recommend
 #. not translating it.
 msgid "Akmal Khushvakov"
-msgstr ""
+msgstr "अक्माल खुस्वाकोभ"
 
 msgid "Vietnamese"
 msgstr "भियतनामिज"
@@ -11575,7 +11599,7 @@ msgid "Simplified Chinese"
 msgstr "सरलीकृत चिनियाँ"
 
 msgid "Hong Kong Chinese"
-msgstr ""
+msgstr "हङकङ चिनियाँ"
 
 msgid "Traditional Chinese"
 msgstr "परम्परागत चिनियाँ"
@@ -11587,10 +11611,10 @@ msgid "French"
 msgstr "फ्रान्सेली"
 
 msgid "Armenian"
-msgstr ""
+msgstr "अर्मेनियाली"
 
 msgid "Lao"
-msgstr ""
+msgstr "लाओ"
 
 msgid "Turkish"
 msgstr "टर्कीस"
@@ -12057,25 +12081,25 @@ msgid "Foreground Color"
 msgstr ""
 
 msgid "Reset Formatting"
-msgstr ""
+msgstr "पूर्वनिर्धारित ढाँचा"
 
 msgid "Insert IM Image"
-msgstr ""
+msgstr "IM छवि घुसाउनुहोस्"
 
 msgid "Insert Smiley"
-msgstr ""
+msgstr "स्माइली हाल्नुहोस"
 
 msgid "Send Attention"
-msgstr ""
+msgstr "ध्यानाकर्षण पठाउने"
 
 msgid "<b>_Bold</b>"
-msgstr ""
+msgstr "<b>_मोटो</b>"
 
 msgid "<i>_Italic</i>"
-msgstr ""
+msgstr "<i>_ढल्के</i>"
 
 msgid "<u>_Underline</u>"
-msgstr ""
+msgstr "<u>_निम्नरेखाङ्कन</u>"
 
 msgid "<span strikethrough='true'>Strikethrough</span>"
 msgstr ""
@@ -12096,22 +12120,22 @@ msgid "_Font face"
 msgstr ""
 
 msgid "Foreground _color"
-msgstr ""
+msgstr "अग्रभूमि रङ"
 
 msgid "Bac_kground color"
 msgstr ""
 
 msgid "_Image"
-msgstr ""
+msgstr "छवि"
 
 msgid "_Link"
-msgstr ""
+msgstr "लिङ्क"
 
 msgid "_Horizontal rule"
 msgstr ""
 
 msgid "_Smile!"
-msgstr ""
+msgstr "मुस्कान!"
 
 msgid "_Attention!"
 msgstr ""
@@ -12230,9 +12254,8 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
-#, fuzzy
 msgid "Media error"
-msgstr "पढाइ त्रुटि"
+msgstr ""
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12251,44 +12274,44 @@ msgstr ""
 #.
 #. Letters on the '2' key of a numeric keypad
 msgid "ABC"
-msgstr ""
+msgstr "ABC"
 
 #. Letters on the '3' key of a numeric keypad
 msgid "DEF"
-msgstr ""
+msgstr "DEF"
 
 #. Letters on the '4' key of a numeric keypad
 msgid "GHI"
-msgstr ""
+msgstr "GHI"
 
 #. Letters on the '5' key of a numeric keypad
 msgid "JKL"
-msgstr ""
+msgstr "JKL"
 
 #. Letters on the '6' key of a numeric keypad
 msgid "MNO"
-msgstr ""
+msgstr "MNO"
 
 #. Letters on the '7' key of a numeric keypad
 msgid "PQRS"
-msgstr ""
+msgstr "PQRS"
 
 #. Letters on the '8' key of a numeric keypad
 msgid "TUV"
-msgstr ""
+msgstr "TUV"
 
 #. Letters on the '9' key of a numeric keypad
 msgid "WXYZ"
-msgstr ""
+msgstr "WXYZ"
 
 msgid "_Hold"
-msgstr ""
+msgstr "होल्ड"
 
 msgid "_Pause"
 msgstr "पज गर्नुहोस्"
 
 msgid "_Mute"
-msgstr ""
+msgstr "मौन"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12299,8 +12322,8 @@ msgstr[1] "%s सँग  %d वटा नयाँ सन्देश छ ।"
 #, c-format
 msgid "<b>%d new email.</b>"
 msgid_plural "<b>%d new emails.</b>"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "<b>%d new email.</b>"
+msgstr[1] "<b>%d नयाँ इमेलहरू ।</b>"
 
 #, c-format
 msgid "The browser command \"%s\" is invalid."
@@ -12823,10 +12846,10 @@ msgid "P_ort:"
 msgstr ""
 
 msgid "User_name:"
-msgstr ""
+msgstr "प्रयोगकर्ता नाम:"
 
 msgid "Log _format:"
-msgstr ""
+msgstr "लग ढाँचा:"
 
 msgid "Log all _instant messages"
 msgstr ""
@@ -12842,27 +12865,27 @@ msgstr "ध्वनि चयन"
 
 #, c-format
 msgid "Quietest"
-msgstr ""
+msgstr "सबै भन्दा शान्त"
 
 #, c-format
 msgid "Quieter"
-msgstr ""
+msgstr "थोरै शान्त"
 
 #, c-format
 msgid "Quiet"
-msgstr ""
+msgstr "शान्त"
 
 #, c-format
 msgid "Loud"
-msgstr ""
+msgstr "आवाज"
 
 #, c-format
 msgid "Louder"
-msgstr ""
+msgstr "ठूलो आवाज"
 
 #, c-format
 msgid "Loudest"
-msgstr ""
+msgstr "अति ठूलो आवाज"
 
 msgid "_Method:"
 msgstr "विधि:"
@@ -12871,7 +12894,7 @@ msgid "Console beep"
 msgstr "कन्सोल बीप"
 
 msgid "No sounds"
-msgstr ""
+msgstr "ध्वनिहरू रहित"
 
 #, c-format
 msgid ""
@@ -12882,25 +12905,25 @@ msgstr ""
 "(फाइल नामका लागि%s)"
 
 msgid "M_ute sounds"
-msgstr ""
+msgstr "ध्वनिहरू बन्दगर्ने"
 
 msgid "Sounds when conversation has _focus"
 msgstr "वार्तालापहरू फोकस गरिँदा ध्वनि उत्पन्न गर्दछ"
 
 msgid "_Enable sounds:"
-msgstr ""
+msgstr "ध्वनीहरू सक्षम पार्नुहोस्:"
 
 msgid "V_olume:"
-msgstr ""
+msgstr "आवाज स्तर:"
 
 msgid "Play"
 msgstr "प्ले गर्नुहोस्"
 
 msgid "_Browse..."
-msgstr ""
+msgstr "ब्राउज गर्नुहोस्..."
 
 msgid "_Reset"
-msgstr ""
+msgstr "रिसेट गर्नुहोस्"
 
 msgid "_Report idle time:"
 msgstr ""
@@ -13202,13 +13225,13 @@ msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
 msgstr ""
 
 msgid "Icon Error"
-msgstr ""
+msgstr "आइकन त्रुटी"
 
 msgid "Could not set icon"
-msgstr ""
+msgstr "आइकन राख्न सकिएन"
 
 msgid "_Open Link"
-msgstr ""
+msgstr "लिङ्क खोल्नुहोस"
 
 msgid "_Copy Link Location"
 msgstr "लिङ्क स्थान प्रतिलिपि बनाउनुहोस्"
@@ -13217,69 +13240,69 @@ msgid "_Copy Email Address"
 msgstr "इ-मेल ठेगाना प्रतिलिपि गर्नुहोस्"
 
 msgid "_Open File"
-msgstr ""
+msgstr "फाइल खोल्नुहोस्"
 
 msgid "Open _Containing Directory"
-msgstr ""
+msgstr "यो रहेको डिरेक्ट्री खोल्नुहोस्"
 
 msgid "Save File"
-msgstr ""
+msgstr "फाइल सङ्ग्रह गर्नुहोस्"
 
 msgid "_Play Sound"
-msgstr ""
+msgstr "आवाज बजाउनुहोस्"
 
 msgid "_Save File"
-msgstr ""
+msgstr "फाइल सङ्ग्रह गर्नुहोस्"
 
 msgid "Do you really want to clear?"
-msgstr ""
+msgstr "हटाउन निस्चित हुनुहुन्छ ?"
 
 msgid "Select color"
-msgstr ""
+msgstr "रङ् छान्नुहोस्"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
 msgid "Pidgin"
-msgstr ""
+msgstr "पिड्जिन"
 
 msgid "_Alias"
 msgstr "उपनाम राख्नुहोस्"
 
 msgid "Close _tabs"
-msgstr ""
+msgstr "ट्याब बन्दगर्नुहोस"
 
 msgid "_Get Info"
-msgstr ""
+msgstr "सूचना प्राप्त गर्नुहोस्"
 
 msgid "_Invite"
 msgstr "निमन्त्रणा गर्नुहोस्"
 
 msgid "_Modify..."
-msgstr ""
+msgstr "परिमार्जन गर्नुहोस्"
 
 msgid "_Add..."
-msgstr ""
+msgstr "थप्नुहोस"
 
 msgid "_Open Mail"
 msgstr "मेल खोल्नुहोस्"
 
 msgid "_Edit"
-msgstr ""
+msgstr "सम्पादन गर्नुहोस्"
 
 msgid "Pidgin Tooltip"
-msgstr ""
+msgstr "पिड्जिन औजार जानकारी"
 
 msgid "Pidgin smileys"
-msgstr ""
+msgstr "पिड्जिन स्माइलीहरू"
 
 msgid "none"
-msgstr ""
+msgstr "कुनै होइन"
 
 msgid "Selecting this disables graphical emoticons."
-msgstr ""
+msgstr "यो छान्नाले ग्राफिकल स्माइलीहरू निस्क्रिय हुन्छन् ।"
 
 msgid "Small"
-msgstr ""
+msgstr "सानो"
 
 msgid "Smaller versions of the default smileys"
 msgstr ""
@@ -13893,30 +13916,30 @@ msgid "GtkTreeView Horizontal Separation"
 msgstr ""
 
 msgid "Conversation Entry"
-msgstr ""
+msgstr "वार्तालाप प्रविष्टी"
 
 msgid "Conversation History"
-msgstr ""
+msgstr "वार्तालाप इतिहास"
 
 msgid "Request Dialog"
-msgstr ""
+msgstr "अनुरोध डायलग"
 
 msgid "Notify Dialog"
-msgstr ""
+msgstr "जानकारी डायलग"
 
 msgid "Select Color"
-msgstr ""
+msgstr "रङ्ग छान्नुहोस्"
 
 #, c-format
 msgid "Select Interface Font"
-msgstr ""
+msgstr "इन्टरफेस फन्ट छान्नुहोस्"
 
 #, c-format
 msgid "Select Font for %s"
-msgstr ""
+msgstr "%s को लागि फन्ट छान्नुहोस्"
 
 msgid "GTK+ Interface Font"
-msgstr ""
+msgstr "GTK+ इन्टरफेस फन्ट"
 
 msgid "GTK+ Text Shortcut Theme"
 msgstr ""
@@ -13928,10 +13951,10 @@ msgid "GTK+ Theme Control Settings"
 msgstr ""
 
 msgid "Colors"
-msgstr ""
+msgstr "रङ्गहरू"
 
 msgid "Fonts"
-msgstr ""
+msgstr "फन्टहरू"
 
 msgid "Miscellaneous"
 msgstr ""
@@ -13971,7 +13994,7 @@ msgid "New Version Available"
 msgstr "उपलब्ध नयाँ संस्करण"
 
 msgid "Later"
-msgstr ""
+msgstr "पछि"
 
 msgid "Download Now"
 msgstr ""
@@ -14071,69 +14094,71 @@ msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr "प्रयोगकर्ता परिभाषित नियम अनुसार बाहिर जाने सन्देशहरूमा पाठ बदल्छ ।"
 
 msgid "Just logged in"
-msgstr ""
+msgstr "भर्खर लगइन भयो"
 
 msgid "Just logged out"
-msgstr ""
+msgstr "भर्खर लगआउन भयो"
 
 msgid ""
 "Icon for Contact/\n"
 "Icon for Unknown person"
 msgstr ""
+"सम्पर्कको लागि आइकन/\n"
+"अपरिचितको लागि आइकन"
 
 msgid "Icon for Chat"
-msgstr ""
+msgstr "वार्तालापको आइकन"
 
 msgid "Ignored"
-msgstr ""
+msgstr "वेवास्ता गरिएको"
 
 msgid "Founder"
-msgstr ""
+msgstr "संस्थापक"
 
 #. A user in a chat room who has special privileges.
 msgid "Operator"
-msgstr ""
+msgstr "सञ्चालनकर्ता"
 
 #. A half operator is someone who has a subset of the privileges
 #. that an operator has.
 msgid "Half Operator"
-msgstr ""
+msgstr "अर्ध सञ्चालनकर्ता"
 
 msgid "Authorization dialog"
-msgstr ""
+msgstr "प्रमाणीकरण डायलग"
 
 msgid "Error dialog"
-msgstr ""
+msgstr "त्रुटि डायलग"
 
 msgid "Information dialog"
-msgstr ""
+msgstr "सूचना डायलग"
 
 msgid "Mail dialog"
-msgstr ""
+msgstr "मेल डायलग"
 
 msgid "Question dialog"
-msgstr ""
+msgstr "प्रश्न डायलग"
 
 msgid "Warning dialog"
-msgstr ""
+msgstr "चेतावनी डायलग"
 
 msgid "What kind of dialog is this?"
 msgstr ""
 
 msgid "Status Icons"
-msgstr ""
+msgstr "स्थिति आइकन"
 
 msgid "Chatroom Emblems"
-msgstr ""
+msgstr "वार्तालाप कोठा चित्रहरू"
 
 msgid "Dialog Icons"
-msgstr ""
+msgstr "डायलग आइकन"
 
 msgid "Pidgin Icon Theme Editor"
-msgstr ""
+msgstr "पिड्जिन आइकन थिम सम्पादक"
 
 msgid "Contact"
-msgstr ""
+msgstr "सम्पर्क"
 
 msgid "Pidgin Buddylist Theme Editor"
 msgstr ""
@@ -14152,13 +14177,13 @@ msgstr ""
 #. *< id
 #. *  description
 msgid "Pidgin Theme Editor"
-msgstr ""
+msgstr "पिड्जिन थिम सम्पादक"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Pidgin Theme Editor."
-msgstr ""
+msgstr "पिड्जिन थिम सम्पादक ।"
 
 #. *< type
 #. *< ui_requirement
@@ -14208,25 +14233,25 @@ msgid "Use system default"
 msgstr ""
 
 msgid "12 hour time format"
-msgstr ""
+msgstr "१२ घन्टा समय ढाँचा"
 
 msgid "24 hour time format"
-msgstr ""
+msgstr "२४ घन्टा समय ढाँचा"
 
 msgid "Show dates in..."
-msgstr ""
+msgstr "समय यसमा देखाउनुहोस…"
 
 msgid "Co_nversations:"
-msgstr ""
+msgstr "वार्तालापहरू:"
 
 msgid "For delayed messages"
-msgstr ""
+msgstr "ढिलाइ गरिएका सन्देशहरू "
 
 msgid "For delayed messages and in chats"
-msgstr ""
+msgstr "वार्तालापमा ढिलाइ गरिएका सन्देशहरूको लागि"
 
 msgid "_Message Logs:"
-msgstr ""
+msgstr "सन्देश लगहरू:"
 
 #. *< type
 #. *< ui_requirement
@@ -14235,13 +14260,13 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "Message Timestamp Formats"
-msgstr ""
+msgstr "शन्देश टाइमस्ट्याम्प ढाँचाहरू"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Customizes the message timestamp formats."
-msgstr ""
+msgstr "शन्देश टाइमस्ट्याम्प ढाँचाहरू अनुकुल गर्दछ"
 
 #. *  description
 msgid ""
@@ -14251,17 +14276,17 @@ msgstr ""
 
 #. Alerts
 msgid "Chatroom alerts"
-msgstr ""
+msgstr "वार्तालाप कोठा जानकारी"
 
 msgid "Chatroom message alerts _only where someone says your username"
 msgstr ""
 
 #. Launcher integration
 msgid "Launcher Icon"
-msgstr ""
+msgstr "लन्चर प्रतिमा"
 
 msgid "_Disable launcher integration"
-msgstr ""
+msgstr "लन्चर एकिकरण निस्क्रिय पार्नुहोस्"
 
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
@@ -14299,28 +14324,28 @@ msgid "Provides integration with Unity's messaging menu and launcher."
 msgstr ""
 
 msgid "Audio"
-msgstr ""
+msgstr "अडियो"
 
 msgid "Video"
-msgstr ""
+msgstr "भिडियो"
 
 msgid "Output"
-msgstr ""
+msgstr "निर्गत"
 
 msgid "_Plugin"
-msgstr ""
+msgstr "प्लगइन"
 
 msgid "_Device"
-msgstr ""
+msgstr "यन्त्र"
 
 msgid "Input"
-msgstr ""
+msgstr "आगत"
 
 msgid "P_lugin"
-msgstr ""
+msgstr "प्लगइन"
 
 msgid "D_evice"
-msgstr ""
+msgstr "यन्त्र"
 
 msgid "DROP"
 msgstr ""
@@ -14452,19 +14477,19 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "XMPP Console"
-msgstr ""
+msgstr "XMPP कन्सोल"
 
 msgid "Account: "
-msgstr ""
+msgstr "खाता: "
 
 msgid "<font color='#777777'>Not connected to XMPP</font>"
-msgstr ""
+msgstr "<font color='#777777'>XMPP मा जडान भएको छैन</font>"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Send and receive raw XMPP stanzas."
-msgstr ""
+msgstr "XMPP हरफहरू पठाउनुहोस् र प्राप्तगर्नुहोस्"
 
 #. *  description
 msgid "This plugin is useful for debugging XMPP servers or clients."
@@ -14498,15 +14523,15 @@ msgstr ""
 
 #. Installer Subsection Text
 msgid "Shortcuts"
-msgstr ""
+msgstr "सर्टकटहरू"
 
 #. Installer Subsection Text
 msgid "Desktop"
-msgstr ""
+msgstr "डेस्कटप"
 
 #. Installer Subsection Text
 msgid "Start Menu"
-msgstr ""
+msgstr "स्टार्ट मेनु"
 
 #. Installer Subsection Text
 msgid "Localizations"
