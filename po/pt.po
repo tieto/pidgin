@@ -3,17 +3,19 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Bruno Queiros <bqueiros@gmail.com>, 2015
 # Gonçalo Silva <de2a9293@opayq.com>, 2013
 # Gonçalo Silva <de2a9293@opayq.com>, 2013
+# Paulo Ribeiro <paulo@diffraction.pt>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Portuguese (http://www.transifex.com/projects/p/pidgin/"
-"language/pt/)\n"
+"POT-Creation-Date: 2016-06-15 23:16-0500\n"
+"PO-Revision-Date: 2016-06-06 21:09+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Portuguese (http://www.transifex.com/pidgin/pidgin/language/"
+"pt/)\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1787,7 +1789,7 @@ msgid "Certificate Information"
 msgstr "Informação de Certificado"
 
 msgid "Unable to find Issuer Certificate"
-msgstr ""
+msgstr "Não foi possível encontrar o Certificado Emissor"
 
 #. Make messages
 #, c-format
@@ -1801,12 +1803,20 @@ msgid ""
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
+"Nome comum: %s\n"
+"\n"
+"Emitidor Por: %s\n"
+"\n"
+"Fingerprint (SHA1): %s\n"
+"\n"
+"Data de Activação: %s\n"
+"Data de Expiração: %s\n"
 
 msgid "(self-signed)"
-msgstr ""
+msgstr "(auto-assinado)"
 
 msgid "View Issuer Certificate"
-msgstr ""
+msgstr "Ver Certificado Emissor"
 
 #. show error to user
 msgid "Registration Error"
@@ -2242,26 +2252,31 @@ msgstr "<font color=\"red\"><b>Impossível ler ficheiro: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <RESPOSTA-AUTOMATICA>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "Mensagem de %s"
+msgstr ""
+"\n"
+"\n"
+"Mensagem de Farsight: "
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
+"Erro ao inicializar a chamada. Isto provavelmente denota um problema na "
+"instalação do GStreamer ou Farsight."
 
-#, fuzzy
 msgid "Network error."
-msgstr "Rede"
+msgstr "Erro de rede."
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
 "GStreamer codecs."
 msgstr ""
+"A negociação do codec falhou. Este problema pode ser resolvido pela "
+"instalação de mais codecs GStreamer."
 
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
@@ -2276,9 +2291,8 @@ msgstr ""
 "Nenhum codec encontrado. As suas preferências de codecs em fs-codecs.conf "
 "são demasiado rígidas."
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "Não está ligado ao servidor"
+msgstr "Não foi possível ligar ao lado remoto"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Ocorreu um erro Farsight2 não recuperável."
@@ -2907,38 +2921,38 @@ msgid "Tests to see that most things are working."
 msgstr "Verifica se a maioria das coisas está a funcionar."
 
 msgid "TLS/SSL Versions"
-msgstr ""
+msgstr "Versões TLS/SSL"
 
 msgid "Minimum Version"
-msgstr ""
+msgstr "Versão Mínima"
 
 msgid "Maximum Version"
-msgstr ""
+msgstr "Versão Máxima"
 
 msgid "SSL 2"
-msgstr ""
+msgstr "SSL 2"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "SSL 3"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "TLS 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "TLS 1.1"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "TLS 1.2"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "TLS 1.3"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
-msgstr ""
+msgstr "Não Suportado para NSS < 3.14"
 
 msgid "Ciphers"
-msgstr ""
+msgstr "Cifras"
 
 #. *< type
 #. *< ui_requirement
@@ -2947,14 +2961,14 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "NSS Preferences"
-msgstr ""
+msgstr "Preferências NSS"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
-msgstr ""
+msgstr "Configurar Cifras e outras Configurações para o Plugin NSS SSL/TLS"
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5989,7 +6003,7 @@ msgstr "Incapaz de autenticar: %s"
 
 #, c-format
 msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
+msgstr "A sua lista de contactos do MSN está temporáriamente indisponível: %s"
 
 msgid "Handshaking"
 msgstr "Bacalhauzada"
@@ -10562,20 +10576,24 @@ msgstr ""
 "ficheiro antigo foi renomeado para %s~."
 
 msgid "Instant Messaging Client"
-msgstr ""
+msgstr "Cliente de Mensagens Instântaneas"
 
 msgid ""
 "Pidgin is a chat program which lets you log in to accounts on multiple chat "
 "networks simultaneously."
 msgstr ""
+"Pidgin é um programa de chat que lhe permite entrar em várias contas em "
+"múltiplas redes de chat simultâneamente."
 
 msgid ""
 "This means that you can be chatting with friends on MSN, talking to a friend "
 "on Google Talk, and sitting in a Yahoo chat room all at the same time."
 msgstr ""
+"Isto significa que pode conversar com amigos no MSN, falar com um amigo no "
+"Google Talk, e estar numa chat room da Yahoo tudo ao mesmo tempo."
 
 msgid "The buddy list showing friends on different networks."
-msgstr ""
+msgstr "A lista de amigos mostrando amigos em diferentes redes."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Mensageiro de Internet Pidgin"
@@ -11314,13 +11332,11 @@ msgstr "A_lcunha:"
 msgid "_Group:"
 msgstr "_Grupo:"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "Entrar automaticamente quando a conta se ligar."
+msgstr ""
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
-msgstr "_Continuar no chat depois da janela ser fechada."
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "Por favor introduza o nome do grupo a ser criado."
@@ -11359,9 +11375,8 @@ msgstr "Introduza o hostname para este certificado."
 msgid "SSL Servers"
 msgstr "Servidores SSL"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "As opções de debug suportadas são: plugins version"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "Comando desconhecido."
@@ -11804,7 +11819,7 @@ msgid "Bengali-India"
 msgstr "Bengali-Índia"
 
 msgid "Breton"
-msgstr ""
+msgstr "Bretão"
 
 msgid "Bodo"
 msgstr "Bodo"
@@ -11924,7 +11939,7 @@ msgid "Kurdish"
 msgstr "Curdo"
 
 msgid "Kurdish (Sorani)"
-msgstr ""
+msgstr "Kurdish (Sorani)"
 
 msgid "Lithuanian"
 msgstr "Lituano"
@@ -12046,7 +12061,7 @@ msgstr "Uzbeque"
 #. Translators: This is a person's name. For most languages we recommend
 #. not translating it.
 msgid "Akmal Khushvakov"
-msgstr ""
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "Vietnamita"
@@ -12760,9 +12775,8 @@ msgstr "_Média"
 msgid "_Hangup"
 msgstr "_Desligar"
 
-#, fuzzy
 msgid "Media error"
-msgstr "Erro de leitura"
+msgstr "Erro de média"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12781,35 +12795,35 @@ msgstr "Chamada Recebida"
 #.
 #. Letters on the '2' key of a numeric keypad
 msgid "ABC"
-msgstr ""
+msgstr "ABC"
 
 #. Letters on the '3' key of a numeric keypad
 msgid "DEF"
-msgstr ""
+msgstr "DEF"
 
 #. Letters on the '4' key of a numeric keypad
 msgid "GHI"
-msgstr ""
+msgstr "GHI"
 
 #. Letters on the '5' key of a numeric keypad
 msgid "JKL"
-msgstr ""
+msgstr "JKL"
 
 #. Letters on the '6' key of a numeric keypad
 msgid "MNO"
-msgstr ""
+msgstr "MNO"
 
 #. Letters on the '7' key of a numeric keypad
 msgid "PQRS"
-msgstr ""
+msgstr "PQRS"
 
 #. Letters on the '8' key of a numeric keypad
 msgid "TUV"
-msgstr ""
+msgstr "TUV"
 
 #. Letters on the '9' key of a numeric keypad
 msgid "WXYZ"
-msgstr ""
+msgstr "WXYZ"
 
 msgid "_Hold"
 msgstr "Em _Espera"
@@ -14354,16 +14368,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Notificar para"
 
-#, fuzzy
 msgid "\t_Notify for System messages"
-msgstr "Mensagens de Sistema"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_Apenas quando alguém diz o seu nome de utilizador"
 
-#, fuzzy
 msgid "\tNotify for _System messages"
-msgstr "Mensagens de Sistema"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "Janelas com _Foco"
@@ -15165,13 +15177,10 @@ msgstr ""
 "Não foi possível desinstalar a versão actualmente instalada do Pidgin. A "
 "nova versão irá ser instalada sem remover a versão actualmente instalada."
 
-#, fuzzy
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
 "installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"O Pidgin necessita dum runtime GTK+ compatível (que ainda não parece estar "
-"instalado).$\\rTem a certeza que quer saltar a instalação do runtime GTK+?"
 
 #. Installer Subsection Text
 msgid "URI Handlers"
