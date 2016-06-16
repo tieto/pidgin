@@ -3,17 +3,17 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Hasan Al Banna, 2013
+# Mohamad Hasan Al Banna <se7entime@protonmail.com>, 2013
 # Rai S. Regawa <raireg@yahoo.com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Indonesian (http://www.transifex.com/projects/p/pidgin/"
-"language/id/)\n"
+"POT-Creation-Date: 2016-06-15 23:14-0500\n"
+"PO-Revision-Date: 2016-06-06 21:08+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Indonesian (http://www.transifex.com/pidgin/pidgin/language/"
+"id/)\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2203,21 +2203,19 @@ msgstr "<font color=\"red\"><b>Tidak dapat membaca file: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "Pesan dari %s"
+msgstr ""
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
 
-#, fuzzy
 msgid "Network error."
-msgstr "Jaringan"
+msgstr ""
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
@@ -2233,9 +2231,8 @@ msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "Kehilangan sambungan dengan pengguna terpisah:<br>%s"
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr ""
@@ -11019,9 +11016,8 @@ msgstr "Nama A_lias:"
 msgid "_Group:"
 msgstr "_Kelompok:"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "Buka papan tulis secara otomatis"
+msgstr ""
 
 msgid "_Remain in chat after window is closed"
 msgstr ""
@@ -12420,9 +12416,8 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
-#, fuzzy
 msgid "Media error"
-msgstr "Keslahan Pembacaan"
+msgstr ""
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13979,16 +13974,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Beritahu untuk"
 
-#, fuzzy
 msgid "\t_Notify for System messages"
-msgstr "Pesan-pesan Sistem"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr ""
 
-#, fuzzy
 msgid "\tNotify for _System messages"
-msgstr "Pesan-pesan Sistem"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "Jendela dengan _Fokus"
