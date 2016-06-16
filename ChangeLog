@@ -1,16 +1,23 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.10.13 (MM/DD/YY):
+version 2.11.0 (06/21/16):
+	General:
+	* 2.10.12 was accidentally released with new additions to the API and
+	  should have been released as 2.11.0.  Unfortunately, we did not catch
+	  the mistake until after 2.10.12 was released, but we're fixing it now.
+	  See ChangeLog.API for more information.
+
 	libpurple:
 	* media: fix an issue with ximagesink displaying only a corner cut-out of
 	  a larger webcam video (Jakub Adam)
 	* mediamanager: update output window destruction so that it reflects recent
 	  changes in the media pipeline structure (Jakub Adam)
+	* Ported Instantbird's CommandUiOps to libpurple (Dequis)
 
 	Pidgin:
 	* Fixed #14962
 	* Fixed alignment of incoming right-to-left messages in protocols that
-	don't support rich text
+	  don't support rich text
 	* Fix a potential crash while exiting pidgin
 
 	AIM:
@@ -24,8 +31,8 @@ version 2.10.13 (MM/DD/YY):
 
 	ICQ:
 	* Stop truncating passwords to 8 characters like old ICQ clients did.
-	(#16692). If you actually needed this, truncate your password
-	manually by pressing backspace a few times.
+	  (#16692). If you actually needed this, truncate your password
+	  manually by pressing backspace a few times.
 
 	IRC:
 	* Base64-decode SASL messages before passing to libsasl (#16268)
