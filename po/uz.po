@@ -9,11 +9,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Uzbek (http://www.transifex.com/projects/p/pidgin/language/"
-"uz/)\n"
+"POT-Creation-Date: 2016-06-15 23:18-0500\n"
+"PO-Revision-Date: 2016-06-06 21:08+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Uzbek (http://www.transifex.com/pidgin/pidgin/language/uz/)\n"
 "Language: uz\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -4344,16 +4343,16 @@ msgid "Subscription Required"
 msgstr ""
 
 msgid "Unexpected Request"
-msgstr ""
+msgstr "Kutilmagan so‘rov"
 
 msgid "Authorization Aborted"
-msgstr ""
+msgstr "Tasdiqdan o‘tish to‘xtatildi"
 
 msgid "Incorrect encoding in authorization"
-msgstr ""
+msgstr "Tasdiqdan o‘tishda noto‘g‘ri kodlash"
 
 msgid "Invalid authzid"
-msgstr ""
+msgstr "Noto‘g‘ri tasdiq.o‘t."
 
 msgid "Invalid Authorization Mechanism"
 msgstr ""
@@ -4404,22 +4403,22 @@ msgid "Policy Violation"
 msgstr ""
 
 msgid "Remote Connection Failed"
-msgstr ""
+msgstr "Masofadan ulanish amalga oshmadi"
 
 msgid "Restricted XML"
-msgstr ""
+msgstr "Cheklangan XML"
 
 msgid "See Other Host"
-msgstr ""
+msgstr "Boshqa hostni ko‘rish"
 
 msgid "System Shutdown"
-msgstr ""
+msgstr "Tizimni o‘chirish"
 
 msgid "Undefined Condition"
-msgstr ""
+msgstr "Aniqlab bo‘lmaydigan muhit"
 
 msgid "Unsupported Encoding"
-msgstr ""
+msgstr "Mos kelmaydigan kodlash"
 
 msgid "Unsupported Stanza Type"
 msgstr ""
@@ -6288,11 +6287,11 @@ msgid_plural ""
 msgstr[0] ""
 
 msgid "Add contacts from server"
-msgstr ""
+msgstr "Serverdan kontrast qo‘shish"
 
 #, c-format
 msgid "Protocol error, code %d: %s"
-msgstr ""
+msgstr "Protokol xatosi, kod %d: %s"
 
 #, c-format
 msgid ""
@@ -6302,10 +6301,10 @@ msgid ""
 msgstr ""
 
 msgid "Incorrect username or password"
-msgstr ""
+msgstr "Foydalanuvchi nomi yoki parol noto‘g‘ri"
 
 msgid "MySpaceIM Error"
-msgstr ""
+msgstr "MySpaceIM xatosi"
 
 msgid "Invalid input condition"
 msgstr ""
@@ -7096,17 +7095,17 @@ msgid "Depression"
 msgstr ""
 
 msgid "At home"
-msgstr ""
+msgstr "Uyda"
 
 msgid "At work"
-msgstr ""
+msgstr "Ishda"
 
 msgid "At lunch"
-msgstr ""
+msgstr "Tushlikda"
 
 #, c-format
 msgid "Unable to connect to authentication server: %s"
-msgstr ""
+msgstr "Tasdiqdan o‘tkazish serveriga ulana olmadi: %s"
 
 #, c-format
 msgid "Unable to connect to BOS server: %s"
@@ -7664,19 +7663,19 @@ msgid "Hiptop"
 msgstr ""
 
 msgid "Security Enabled"
-msgstr ""
+msgstr "Xavfsizlik yoqildi"
 
 msgid "Video Chat"
-msgstr ""
+msgstr "Video suhbat"
 
 msgid "iChat AV"
-msgstr ""
+msgstr "iChat AV"
 
 msgid "Live Video"
-msgstr ""
+msgstr "Jonli video"
 
 msgid "Camera"
-msgstr ""
+msgstr "Kamera"
 
 msgid "Screen Sharing"
 msgstr ""
@@ -10698,9 +10697,8 @@ msgstr ""
 msgid "SSL Servers"
 msgstr ""
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "Qo‘llab-quvvatlanadigan tuzatish moslamalari: plaginlar versiyasi"
+msgstr ""
 
 msgid "Unknown command."
 msgstr ""
