@@ -3,15 +3,17 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Josef Andersson <josef.andersson@fripost.org>, 2014
+# Anders Jonsson <transifex@norsjovallen.se>, 2016
+# Josef Andersson <josef.andersson@fripost.org>, 2014-2015
+# Linus Malmgren <linus@malmgren.nu>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-22 13:23+0000\n"
-"Last-Translator: Josef Andersson <josef.andersson@fripost.org>\n"
-"Language-Team: Swedish (http://www.transifex.com/projects/p/pidgin/language/"
+"POT-Creation-Date: 2016-06-15 23:17-0500\n"
+"PO-Revision-Date: 2016-06-07 08:26+0000\n"
+"Last-Translator: Anders Jonsson <transifex@norsjovallen.se>\n"
+"Language-Team: Swedish (http://www.transifex.com/pidgin/pidgin/language/"
 "sv/)\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
@@ -26,7 +28,7 @@ msgstr "Finch"
 
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "%s. Försök med '%s -h' för mer information.\n"
+msgstr "%s. Prova med '%s -h' för mer information.\n"
 
 #, c-format
 msgid ""
@@ -81,7 +83,7 @@ msgstr ""
 "Kontots användarnamn kan inte ändras medan det är anslutet till servern."
 
 msgid "New mail notifications"
-msgstr "Notifiera vid ny e-post"
+msgstr "Avisera vid ny e-post"
 
 msgid "Remember password"
 msgstr "Kom ihåg lösenordet"
@@ -1086,7 +1088,7 @@ msgid "Open an IM window"
 msgstr "Öppna ett snabbmeddelandefönster"
 
 msgid "Pop up a notification"
-msgstr "Visa en notifiering"
+msgstr "Visa en avisering"
 
 msgid "Send a message"
 msgstr "Skicka ett meddelande"
@@ -1163,7 +1165,7 @@ msgid "Unknown pounce event. Please report this!"
 msgstr "Okänd kompishändelse. Var snäll och rapportera detta!"
 
 msgid "Based on keyboard use"
-msgstr "Baserat på tangetbordsanvändning"
+msgstr "Baserat på tangentbordsanvändning"
 
 msgid "From last sent message"
 msgstr "Från senast sända meddelande"
@@ -1485,7 +1487,7 @@ msgstr "Någon nämner ditt namn i en chatt"
 
 #. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
-msgstr "Notifiera med en toaster då"
+msgstr "Avisera med en toaster då"
 
 msgid "Beep too!"
 msgstr "Pip också!"
@@ -2231,26 +2233,31 @@ msgstr "<font color=\"red\"><b>Kunde inte läsa fil: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-SVAR>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "Meddelande från %s"
+msgstr ""
+"\n"
+"\n"
+"Meddelande från Farsight:"
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
+"Misslyckades med att initialisera anropet. Det beror troligen på problem med "
+"installationen av GStreamer eller Farsight."
 
-#, fuzzy
 msgid "Network error."
-msgstr "Nätverk"
+msgstr "Nätverksfel."
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
 "GStreamer codecs."
 msgstr ""
+"Kodeköverrenskommelse misslyckades. Problemet kan lösas genom att installera "
+"mer GStreamer-kodekar."
 
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
@@ -2264,9 +2271,8 @@ msgid ""
 msgstr ""
 "Ingen kodek kvar. Dina kodekinställningar i fs-codecs.conf är för strikta."
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "Inte ansluten till servern"
+msgstr "Kunde inte ansluta till fjärrparten"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Ett okänt Farsight2-fel har inträffat."
@@ -2758,7 +2764,7 @@ msgid ""
 "The rest of the messages will be saved as pounces. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
-"Resten av meddelanden kommer sparas som kompishändelser. Du kan ändra/ta "
+"Resten av meddelandena kommer sparas som kompishändelser. Du kan ändra/ta "
 "bort händelserna från ”Kompishändelser”-dialogen."
 
 #, c-format
@@ -2853,7 +2859,7 @@ msgid "Disable when away"
 msgstr "Stäng av vid frånvaro"
 
 msgid "Display notification message in conversations"
-msgstr "Visa notifieringsmeddelande i konversationer"
+msgstr "Visa aviseringsmeddelande i konversationer"
 
 msgid "Raise psychic conversations"
 msgstr "Höj siade konversationer"
@@ -3032,7 +3038,7 @@ msgstr "En kompi_s loggar in/kopplar ifrån"
 #. *< priority
 #. *< id
 msgid "Buddy State Notification"
-msgstr "Notifiering av kompisstatus"
+msgstr "Avisering av kompisstatus"
 
 #. *< name
 #. *< version
@@ -3042,7 +3048,7 @@ msgid ""
 "Notifies in a conversation window when a buddy goes or returns from away or "
 "idle."
 msgstr ""
-"Notifierar i konversationsfönstret när en kompis blir frånvarande/inaktiv "
+"Aviserar i konversationsfönstret när en kompis blir frånvarande/inaktiv "
 "eller kommer tillbaka."
 
 msgid "Tcl Plugin Loader"
@@ -3680,7 +3686,7 @@ msgstr ""
 "för att återvända från frånvaro."
 
 msgid "ctcp <nick> <msg>: sends ctcp msg to nick."
-msgstr "ctcp <alias> <meddelande>: skicka ett ctcp meddelande till alias"
+msgstr "ctcp <alias> <meddelande>: skicka ett ctcp-meddelande till alias"
 
 msgid "chanserv: Send a command to chanserv"
 msgstr "chanserv: Skicka ett kommando till chanserv"
@@ -3767,7 +3773,7 @@ msgstr "nickserv: Skicka ett kommando till nickserv"
 
 msgid "notice &lt;target&lt;:  Send a notice to a user or channel."
 msgstr ""
-"notice &lt;mål&gt;:  Skickar en notifiering till en användare eller en kanal."
+"notice &lt;mål&gt;:  Skickar en avisering till en användare eller en kanal."
 
 msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
@@ -4841,7 +4847,7 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Leverans av meddelande till %s misslyckades: %s"
 
 msgid "XMPP Message Error"
-msgstr "XMPP meddelandefel"
+msgstr "XMPP-meddelandefel"
 
 #, c-format
 msgid "(Code %s)"
@@ -5316,7 +5322,7 @@ msgid "Server unavailable"
 msgstr "Servern är ej tillgänglig"
 
 msgid "Peer notification server down"
-msgstr "Motpartsnotifieringsservern är nere"
+msgstr "Motpartsaviseringsservern är nere"
 
 msgid "Database connect error"
 msgstr "Databasanslutningsfel"
@@ -6275,7 +6281,7 @@ msgid "Rejection Message"
 msgstr "Avvisningsmeddelande"
 
 msgid "No profile available"
-msgstr "Ingen profil tillgänlig"
+msgstr "Ingen profil tillgänglig"
 
 msgid "This contact does not have a profile."
 msgstr "Kontakten har ingen profil."
@@ -6353,7 +6359,7 @@ msgstr[1] "Du har %i vänförslag."
 #, c-format
 msgid "We found %i contact that matches your search."
 msgid_plural "We found %i contacts that match your search."
-msgstr[0] "Vi hittade %i kontakt som överrensstämmer med din sökning."
+msgstr[0] "Vi hittade %i kontakt som överensstämmer med din sökning."
 msgstr[1] "Vi hittade %i kontakter som överensstämde med din sökning."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
@@ -6980,7 +6986,7 @@ msgstr "Kan inte hämta detaljer om användaren %s (%s)."
 
 #, c-format
 msgid "Unable to add user to privacy list (%s)."
-msgstr "Kan inte lägga till användare på sekretesslista (%s)."
+msgstr "Kan inte lägga till användare till sekretesslista (%s)."
 
 #, c-format
 msgid "Unable to add %s to deny list (%s)."
@@ -6992,7 +6998,7 @@ msgstr "Kunde inte lägga till %s till din tillåtelselista (%s)."
 
 #, c-format
 msgid "Unable to remove %s from privacy list (%s)."
-msgstr "Kunde inte ta bort %s från din sekretesslista (%s)."
+msgstr "Kunde inte ta bort %s från sekretesslista (%s)."
 
 #, c-format
 msgid "Unable to change server side privacy settings (%s)."
@@ -8187,7 +8193,7 @@ msgid "Warning level too high (receiver)"
 msgstr "Varningsnivån för hög (mottagaren)"
 
 msgid "User temporarily unavailable"
-msgstr "Användare är tillfälligt oåtkommlig"
+msgstr "Användaren är för tillfället inte tillgänglig"
 
 msgid "No match"
 msgstr "Ingen träff"
@@ -8660,7 +8666,7 @@ msgid ""
 "You cannot receive buddy notifications until you import his/her public key.  "
 "You can use the Get Public Key command to get the public key."
 msgstr ""
-"Du kan inte ta emot kompisnotifiering förrän du har importerat dennes öppna "
+"Du kan inte ta emot kompisavisering förrän du har importerat dennes öppna "
 "nyckel. Du kan använda ”Hämta publik nyckel”-kommandot för att få den."
 
 #. Open file selector to select the public key.
@@ -8872,10 +8878,10 @@ msgid "Set User Limit"
 msgstr "Sätt användarbegränsning"
 
 msgid "Reset Topic Restriction"
-msgstr "Nollställ ämnesrestriktioner"
+msgstr "Återställ ämnesrestriktioner"
 
 msgid "Set Topic Restriction"
-msgstr "Sätt Ämnesestriktioner"
+msgstr "Sätt ämnesrestriktioner"
 
 msgid "Reset Private Channel"
 msgstr "Nollställ Privat Kanal"
@@ -10551,7 +10557,7 @@ msgid "_Local alias:"
 msgstr "_Lokalt alias:"
 
 msgid "New _mail notifications"
-msgstr "Notifiera om ny e-_post"
+msgstr "Avisera om ny e-_post"
 
 #. Buddy icon
 msgid "Use this buddy _icon for this account:"
@@ -11009,7 +11015,7 @@ msgid "/Tools/Pr_eferences"
 msgstr "/Verktyg/_Inställningar"
 
 msgid "/Tools/Pr_ivacy"
-msgstr "/Verktyg/_Spärrlista"
+msgstr "/Verktyg/_Sekretess"
 
 msgid "/Tools/Set _Mood"
 msgstr "/Verktyg/Ange Hu_mör"
@@ -11126,7 +11132,7 @@ msgid "/Buddies/Add Group..."
 msgstr "/Kompisar/Lägg till grupp..."
 
 msgid "/Tools/Privacy"
-msgstr "/Verktyg/_Spärrlista"
+msgstr "/Verktyg/Sekretess"
 
 msgid "/Tools/Room List"
 msgstr "/Verktyg/Rumslista"
@@ -11258,13 +11264,11 @@ msgstr "A_lias:"
 msgid "_Group:"
 msgstr "_Grupp:"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "_Anslut automatiskt då kontot ansluter."
+msgstr "_Anslut automatiskt då kontot ansluter"
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
-msgstr "Va_r kvar i chattfönster efter att det stängts."
+msgstr "Va_r kvar i chattfönster efter att det stängts"
 
 msgid "Please enter the name of the group to be added."
 msgstr "Ange namnet på den grupp som du vill lägga till."
@@ -11303,9 +11307,8 @@ msgstr "Ange värdnamnet för detta certifikatet."
 msgid "SSL Servers"
 msgstr "SSL-Server"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "De felsökningsalternativ som stöds är: plugins version"
+msgstr "De felsökningsalternativ som stöds är: plugins, version"
 
 msgid "Unknown command."
 msgstr "Okänt kommando."
@@ -11750,7 +11753,7 @@ msgid "Bengali-India"
 msgstr "Bengali-indisk"
 
 msgid "Breton"
-msgstr ""
+msgstr "Breton"
 
 msgid "Bodo"
 msgstr "Bodo"
@@ -11795,7 +11798,7 @@ msgid "Spanish"
 msgstr "Spanska"
 
 msgid "Argentine Spanish"
-msgstr "Argetinsk spanska"
+msgstr "Argentinsk spanska"
 
 msgid "Estonian"
 msgstr "Estniska"
@@ -12358,7 +12361,7 @@ msgstr "\"Uppmärksam\" Namnfärg"
 
 msgid "Color to draw the name of a message you received containing your name."
 msgstr ""
-"Färg att rita namner på ett meddelande som du tagit emot och som innehåller "
+"Färg att rita namn på ett meddelande som du tagit emot och som innehåller "
 "ditt namn."
 
 msgid "Action Message Name Color"
@@ -12380,19 +12383,19 @@ msgid "Color to draw the name of a whispered message."
 msgstr "Färgen för namnet i ett viskat meddelande."
 
 msgid "Typing notification color"
-msgstr "Färg på notifiering"
+msgstr "Färg på avisering"
 
 msgid "The color to use for the typing notification"
-msgstr "Färgen för skriftnotifiering"
+msgstr "Färgen för skriftavisering"
 
 msgid "Typing notification font"
-msgstr "Typsnitt för skriftnotifiering"
+msgstr "Typsnitt för skriftavisering"
 
 msgid "The font to use for the typing notification"
-msgstr "Typsnittet använt för skrivnotifieringen"
+msgstr "Typsnittet använt för skrivavisering"
 
 msgid "Enable typing notification"
-msgstr "Aktivera skriftnotifiering"
+msgstr "Aktivera skriftavisering"
 
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
@@ -12709,9 +12712,8 @@ msgstr "_Media"
 msgid "_Hangup"
 msgstr "_Lägg på"
 
-#, fuzzy
 msgid "Media error"
-msgstr "Läsfel"
+msgstr "Mediafel"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12730,35 +12732,35 @@ msgstr "Inkommande samtal"
 #.
 #. Letters on the '2' key of a numeric keypad
 msgid "ABC"
-msgstr ""
+msgstr "ABC"
 
 #. Letters on the '3' key of a numeric keypad
 msgid "DEF"
-msgstr ""
+msgstr "DEF"
 
 #. Letters on the '4' key of a numeric keypad
 msgid "GHI"
-msgstr ""
+msgstr "GHI"
 
 #. Letters on the '5' key of a numeric keypad
 msgid "JKL"
-msgstr ""
+msgstr "JKL"
 
 #. Letters on the '6' key of a numeric keypad
 msgid "MNO"
-msgstr ""
+msgstr "MNO"
 
 #. Letters on the '7' key of a numeric keypad
 msgid "PQRS"
-msgstr ""
+msgstr "PQRS"
 
 #. Letters on the '8' key of a numeric keypad
 msgid "TUV"
-msgstr ""
+msgstr "TUV"
 
 #. Letters on the '9' key of a numeric keypad
 msgid "WXYZ"
-msgstr ""
+msgstr "WXYZ"
 
 msgid "_Hold"
 msgstr "_Vänta"
@@ -12823,7 +12825,8 @@ msgid "Dismiss"
 msgstr "Avfärda"
 
 msgid "<span weight=\"bold\" size=\"larger\">You have pounced!</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Du har notifierat!</span>"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Du har utfört en kompishändelse!</span>"
 
 msgid "The following plugins will be unloaded."
 msgstr "De följande insticksmodulerna kommer att avslutas."
@@ -12920,7 +12923,7 @@ msgid "Ope_n an IM window"
 msgstr "_Öppna ett snabbmeddelandefönster"
 
 msgid "_Pop up a notification"
-msgstr "Visa en _notifiering"
+msgstr "Visa en _avisering"
 
 msgid "Send a _message"
 msgstr "Skicka ett _meddelande"
@@ -13170,7 +13173,7 @@ msgid "Ports"
 msgstr "Portar"
 
 msgid "_Enable automatic router port forwarding"
-msgstr "_Aktivera automatisk router portvidareberfodran"
+msgstr "_Aktivera automatisk router portvidarebefordran"
 
 msgid "_Manually specify range of ports to listen on:"
 msgstr "Ange _manuellt vilken portserie som ska användas:"
@@ -13314,7 +13317,7 @@ msgid "User_name:"
 msgstr "Användar_namn:"
 
 msgid "Log _format:"
-msgstr "Logg _format:"
+msgstr "Logg_format:"
 
 msgid "Log all _instant messages"
 msgstr "_Logga alla snabbmeddelanden"
@@ -14281,7 +14284,7 @@ msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
 "on a piece of music by editing a common score in real-time."
 msgstr ""
-"Musicmeddelandeinsticksmodulen tillåter ett antal användare att samtidigt "
+"Musikmeddelandeinsticksmodulen tillåter ett antal användare att samtidigt "
 "arbeta på ett stycke musik genom att redigera ett gemensamt notblad i "
 "realtid."
 
@@ -14289,16 +14292,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Rapportera i"
 
-#, fuzzy
 msgid "\t_Notify for System messages"
-msgstr "Systemmeddelanden"
+msgstr "_Avisera för systemmeddelanden"
 
 msgid "\t_Only when someone says your username"
 msgstr "\tBara då någ_on nämner ditt användarnamn"
 
-#, fuzzy
 msgid "\tNotify for _System messages"
-msgstr "Systemmeddelanden"
+msgstr "Avisera för _systemmeddelanden"
 
 msgid "_Focused windows"
 msgstr "_Fokuserade fönster"
@@ -14366,7 +14367,7 @@ msgstr "Ta _bort vid byte till konversationsflik"
 #. *< priority
 #. *< id
 msgid "Message Notification"
-msgstr "Meddelandenotifiering"
+msgstr "Meddelandeavisering"
 
 #. *< name
 #. *< version
@@ -14374,7 +14375,7 @@ msgstr "Meddelandenotifiering"
 #. *  description
 msgid "Provides a variety of ways of notifying you of unread messages."
 msgstr ""
-"Erbjuder ett antal olika sätt att få notifieringar om olästa meddelanden."
+"Erbjuder ett antal olika sätt att få aviseringar om olästa meddelanden."
 
 #. *< type
 #. *< ui_requirement
@@ -14414,7 +14415,7 @@ msgid "Highlighted Message Name Color"
 msgstr "Färg på namn i markerade färger"
 
 msgid "Typing Notification Color"
-msgstr "Färg på skrivnotifiering"
+msgstr "Färg på skrivavisering"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "GtkTreeView horisontal separation"
@@ -14449,7 +14450,7 @@ msgid "GTK+ Text Shortcut Theme"
 msgstr "GTK+ Textgenvägstema"
 
 msgid "Disable Typing Notification Text"
-msgstr "Avaktivera skriftnotifieringstext"
+msgstr "Inaktivera skriftaviseringstext"
 
 msgid "GTK+ Theme Control Settings"
 msgstr "GTK+ temakontroll"
@@ -14554,7 +14555,7 @@ msgstr ""
 "när inget fysiskt tangentbord finns."
 
 msgid "Duplicate Correction"
-msgstr "Dublettkorrigering"
+msgstr "Dubblettkorrigering"
 
 msgid "The specified word already exists in the correction list."
 msgstr "Det angivna ordet finns redan i korrigeringslistan."
@@ -15097,14 +15098,13 @@ msgstr ""
 "kommer att installeras utan att ta bort den för närvarande installerade "
 "versionen."
 
-#, fuzzy
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
 "installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"Pidgin kräver en kompatibel version av GTK+ biblioteken (vilka inte verkar "
-"vara installerade).$\\rÄr du säker på att du vill hoppa över installationen "
-"av dem?"
+"Pidgin kräver en kompatibel GTK+-exekveringsmiljö (vilken inte verkar vara "
+"installerad).$\\rÄr du säker på att du vill hoppa över installationen av GTK"
+"+-exekveringsmiljön?"
 
 #. Installer Subsection Text
 msgid "URI Handlers"
