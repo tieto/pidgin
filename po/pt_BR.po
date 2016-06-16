@@ -4,16 +4,17 @@
 #
 # Translators:
 # Renato Silva <br.renatosilva@gmail.com>, 2014
-# Renato Silva <br.renatosilva@gmail.com>, 2014
+# Rafael H L Moretti <rafael.moretti@gmail.com>, 2015
+# Renato Silva <br.renatosilva@gmail.com>, 2014-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/"
-"pidgin/language/pt_BR/)\n"
+"POT-Creation-Date: 2016-06-15 23:16-0500\n"
+"PO-Revision-Date: 2016-06-06 21:09+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Portuguese (Brazil) (http://www.transifex.com/pidgin/pidgin/"
+"language/pt_BR/)\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -698,7 +699,7 @@ msgstr ""
 
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr ""
-"me &lt;ação&gt;:  Envia uma ação do tipo do IRC para um amigo ou bate-papo."
+"me &lt;ação&gt;:  Envia uma ação do tipo IRC para um amigo ou bate-papo."
 
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
@@ -2263,26 +2264,31 @@ msgstr "<font color=\"red\"><b>Não foi possível ler o arquivo: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-RESPOSTA>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "Mensagem de %s"
+msgstr ""
+"\n"
+"\n"
+"Mensagem de Farsight: "
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
+"Erro ao inicializar a chamada. Isso provavelmente indica um problema na "
+"instalação do GStreamer ou do Farsight."
 
-#, fuzzy
 msgid "Network error."
-msgstr "Rede"
+msgstr "Erro de rede."
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
 "GStreamer codecs."
 msgstr ""
+"A negociação de codec falhou. Este problema deve ser resolvido instalando "
+"mais codecs do GStreamer."
 
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
@@ -2297,9 +2303,8 @@ msgstr ""
 "Nenhum codec encontrado. Suas preferências de codec em fs-codecs.conf são "
 "muito rígidas."
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "Não conectado ao servidor"
+msgstr "Não foi possível conectar ao correspondente remoto"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Um erro não recuperado Farsight2 ocorreu."
@@ -3811,7 +3816,8 @@ msgid "nickserv: Send a command to nickserv"
 msgstr "nickserv: Envia um comando para o nickserv"
 
 msgid "notice &lt;target&lt;:  Send a notice to a user or channel."
-msgstr "me &lt;ação&gt;:  Envia uma notícia para um usuário ou canal."
+msgstr ""
+"notice &lt;destino&lt;:  Envia uma notificação para um usuário ou canal."
 
 msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
@@ -11361,13 +11367,11 @@ msgstr "Ape_lido:"
 msgid "_Group:"
 msgstr "_Grupo:"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "Entrar automaticamente ao conectar."
+msgstr ""
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
-msgstr "Continuar no chat quando a janela for fechada."
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "Por favor, digite o nome do grupo a ser criado."
@@ -11406,9 +11410,8 @@ msgstr "Digite o nome de host para este certificado."
 msgid "SSL Servers"
 msgstr "Servidores SSL"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "As opções de depuração suportadas são: plugins version"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "Comando desconhecido."
@@ -11852,7 +11855,7 @@ msgid "Bengali-India"
 msgstr "Bengali-Índia"
 
 msgid "Breton"
-msgstr ""
+msgstr "Breton"
 
 msgid "Bodo"
 msgstr "Bodo"
@@ -12815,9 +12818,8 @@ msgstr "_Mídia"
 msgid "_Hangup"
 msgstr "_Desligar"
 
-#, fuzzy
 msgid "Media error"
-msgstr "Erro de leitura"
+msgstr "Erro de mídia"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12836,35 +12838,35 @@ msgstr "Recebendo chamada"
 #.
 #. Letters on the '2' key of a numeric keypad
 msgid "ABC"
-msgstr ""
+msgstr "ABC"
 
 #. Letters on the '3' key of a numeric keypad
 msgid "DEF"
-msgstr ""
+msgstr "DEF"
 
 #. Letters on the '4' key of a numeric keypad
 msgid "GHI"
-msgstr ""
+msgstr "GHI"
 
 #. Letters on the '5' key of a numeric keypad
 msgid "JKL"
-msgstr ""
+msgstr "JKL"
 
 #. Letters on the '6' key of a numeric keypad
 msgid "MNO"
-msgstr ""
+msgstr "MNO"
 
 #. Letters on the '7' key of a numeric keypad
 msgid "PQRS"
-msgstr ""
+msgstr "PQRS"
 
 #. Letters on the '8' key of a numeric keypad
 msgid "TUV"
-msgstr ""
+msgstr "TUV"
 
 #. Letters on the '9' key of a numeric keypad
 msgid "WXYZ"
-msgstr ""
+msgstr "WXYZ"
 
 msgid "_Hold"
 msgstr "_Segurar"
@@ -14413,16 +14415,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Notificar para"
 
-#, fuzzy
 msgid "\t_Notify for System messages"
-msgstr "Mensagens de sistema"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_Apenas quando alguém menciona seu nome"
 
-#, fuzzy
 msgid "\tNotify for _System messages"
-msgstr "Mensagens de sistema"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "_Janelas com foco"
@@ -14457,7 +14457,7 @@ msgstr "Coloc_ar janela de conversa no topo"
 #. Translators: "Present" as used here is a verb. The plugin presents
 #. * the window to the user.
 msgid "_Present conversation window"
-msgstr "Janela de conversa atual"
+msgstr "A_presentar janela de conversa"
 
 #. ---------- "Notification Removals" ----------
 msgid "Notification Removal"
@@ -15223,13 +15223,10 @@ msgstr ""
 "atualmente. A nova versão será instalada sem que a versão antiga seja "
 "removida."
 
-#, fuzzy
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
 "installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"O Pidgin requer um runtime GTK+ compatível (que parece não estar presente).$"
-"\\rVocê tem certeza que quer pular a instalação do runtime GTK+?"
 
 #. Installer Subsection Text
 msgid "URI Handlers"
