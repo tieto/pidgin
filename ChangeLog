@@ -13,6 +13,9 @@ version 2.10.13 (MM/DD/YY):
 	don't support rich text
 	* Fix a potential crash while exiting pidgin
 
+	AIM:
+	* Add support for the newer kerberos-based authentication of AIM 8.x
+
 	Windows-Specific Changes:
 	* Use getaddrinfo for DNS to enable IPv6 (#1075)
 
