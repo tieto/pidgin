@@ -10,18 +10,17 @@
 # Copyright (C) Piotr Makowski <pmakowski@aviary.pl>, 2008
 # Copyright (C) Przemysław Sułek <pbs@linux.net.pl>, 2001
 # Copyright (C) Tomasz Sałaciński <tsalacinski@gmail.com>, 2007
-# Piotr Drąg <piotrdrag@gmail.com>, 2009,2012-2014
+# Piotr Drąg <piotrdrag@gmail.com>, 2009,2012-2016
 # Tomek Wasilczyk <twasilczyk@pidgin.im>, 2013
 # tomkiewicz, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Polish (http://www.transifex.com/projects/p/pidgin/language/"
-"pl/)\n"
+"POT-Creation-Date: 2016-06-15 23:16-0500\n"
+"PO-Revision-Date: 2016-06-08 12:51+0000\n"
+"Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
+"Language-Team: Polish (http://www.transifex.com/pidgin/pidgin/language/pl/)\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -36,7 +35,7 @@ msgstr "Finch"
 
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "%s. Należy wpisać \"%s -h\", aby uzyskać więcej informacji.\n"
+msgstr "%s. Polecenie „%s -h” wyświetli więcej informacji.\n"
 
 #, c-format
 msgid ""
@@ -50,14 +49,14 @@ msgid ""
 "  -v, --version       display the current version and exit\n"
 msgstr ""
 "%s\n"
-"Użycie: %s [OPCJA]...\n"
+"Użycie: %s [OPCJA]…\n"
 "\n"
 "  -c, --config=KATALOG  używa KATALOGU z plikami konfiguracji\n"
 "  -d, --debug         przekazuje komunikaty debugowania na standardowe\n"
 "                      wyjście błędów\n"
 "  -h, --help          wyświetla tę pomoc i kończy pracę\n"
 "  -n, --nologin       bez automatycznego logowania\n"
-"  -v, --version       wyświetla bieżącą wersję i kończy pracę\n"
+"  -v, --version       wyświetla bieżącą wersję i kończy działanie\n"
 
 #, c-format
 msgid ""
@@ -103,7 +102,7 @@ msgid "There are no protocol plugins installed."
 msgstr "Nie zainstalowano żadnych wtyczek protokołów."
 
 msgid "(You probably forgot to 'make install'.)"
-msgstr "(Prawdopodobnie zapomniano o wykonaniu polecenia \"make install\")"
+msgstr "(Prawdopodobnie zapomniano o wykonaniu polecenia „make install”)"
 
 msgid "Modify Account"
 msgstr "Modyfikacja konta"
@@ -160,7 +159,7 @@ msgstr "Dodaj"
 
 #. Modify button
 msgid "Modify"
-msgstr "Zmodyfikuj"
+msgstr "Modyfikuj"
 
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
@@ -276,7 +275,7 @@ msgid "Enter the name of the group"
 msgstr "Proszę podać nazwę dodawanej grupy"
 
 msgid "Edit Chat"
-msgstr "Zmodyfikuj konferencję"
+msgstr "Modyfikuj konferencję"
 
 msgid "Please Update the necessary fields."
 msgstr "Proszę zaktualizować wymagane pola."
@@ -285,13 +284,13 @@ msgid "Edit"
 msgstr "Edycja"
 
 msgid "Edit Settings"
-msgstr "Zmodyfikuj ustawienia"
+msgstr "Modyfikuj ustawienia"
 
 msgid "Information"
 msgstr "Informacje"
 
 msgid "Retrieving..."
-msgstr "Pobieranie..."
+msgstr "Pobieranie…"
 
 msgid "Get Info"
 msgstr "Pobierz informacje"
@@ -367,10 +366,10 @@ msgid "On Mobile"
 msgstr "Używa telefonu komórkowego"
 
 msgid "New..."
-msgstr "Nowy..."
+msgstr "Nowy…"
 
 msgid "Saved..."
-msgstr "Zapisane..."
+msgstr "Zapisane…"
 
 msgid "Plugins"
 msgstr "Wtyczki"
@@ -427,16 +426,16 @@ msgid "Options"
 msgstr "Opcje"
 
 msgid "Send IM..."
-msgstr "Wyślij wiadomość..."
+msgstr "Wyślij wiadomość…"
 
 msgid "Block/Unblock..."
-msgstr "Zablokuj/odblokuj..."
+msgstr "Zablokuj/odblokuj…"
 
 msgid "Join Chat..."
-msgstr "Dołącz do konferencji..."
+msgstr "Dołącz do konferencji…"
 
 msgid "View Log..."
-msgstr "Wyświetl dziennik rozmów..."
+msgstr "Wyświetl dziennik rozmów…"
 
 msgid "View All Logs"
 msgstr "Wyświetl wszystkie dzienniki rozmów"
@@ -542,7 +541,7 @@ msgid "Confirm certificate delete"
 msgstr "Potwierdzenie usunięcia certyfikatu"
 
 msgid "Certificate Manager"
-msgstr "Menadżer certyfikatów"
+msgstr "Menedżer certyfikatów"
 
 msgid "Hostname"
 msgstr "Nazwa komputera"
@@ -605,7 +604,7 @@ msgstr ""
 
 #, c-format
 msgid "%s (%s -- %s)"
-msgstr "%s (%s -- %s)"
+msgstr "%s (%s — %s)"
 
 #, c-format
 msgid "%s [%s]"
@@ -617,7 +616,7 @@ msgid ""
 "%s is typing..."
 msgstr ""
 "\n"
-"%s pisze..."
+"%s pisze…"
 
 msgid "You have left this chat."
 msgstr "Użytkownik opuścił tę konferencję."
@@ -654,10 +653,10 @@ msgid "Show Timestamps"
 msgstr "Wyświetl datę i godzinę"
 
 msgid "Add Buddy Pounce..."
-msgstr "Dodaj przechwytywanie zdarzeń..."
+msgstr "Dodaj przechwytywanie zdarzeń…"
 
 msgid "Invite..."
-msgstr "Zaproś..."
+msgstr "Zaproś…"
 
 msgid "Enable Logging"
 msgstr "Zapis do dziennika"
@@ -688,7 +687,7 @@ msgid ""
 "Use \"/help &lt;command&gt;\" for help on a specific command.\n"
 "The following commands are available in this context:\n"
 msgstr ""
-"Należy użyć \"/help &lt;polecenie&gt;\", aby uzyskać pomoc dla konkretnego "
+"Należy użyć „/help &lt;polecenie&gt;”, aby uzyskać pomoc dla konkretnego "
 "polecenia.\n"
 "W tym kontekście dostępne są następujące polecenia:\n"
 
@@ -697,13 +696,13 @@ msgid ""
 "%s is not a valid message class. See '/help msgcolor' for valid message "
 "classes."
 msgstr ""
-"%s nie jest prawidłową klasą wiadomości. Proszę zobaczyć \"/help msgcolor\", "
+"%s nie jest prawidłową klasą wiadomości. Proszę zobaczyć „/help msgcolor”, "
 "aby uzyskać prawidłowe klasy wiadomości."
 
 #, c-format
 msgid "%s is not a valid color. See '/help msgcolor' for valid colors."
 msgstr ""
-"%s nie jest prawidłowym kolorem. Proszę zobaczyć \"/help msgcolor\", aby "
+"%s nie jest prawidłowym kolorem. Proszę zobaczyć „/help msgcolor”, aby "
 "uzyskać prawidłowe kolory."
 
 msgid ""
@@ -785,9 +784,9 @@ msgstr "Wstrzymaj"
 #, c-format
 msgid "File Transfers - %d%% of %d file"
 msgid_plural "File Transfers - %d%% of %d files"
-msgstr[0] "Przesyłanie pliku - %d%% z %d pliku"
-msgstr[1] "Przesyłanie plików - %d%% z %d plików"
-msgstr[2] "Przesyłanie plików - %d%% z %d plików"
+msgstr[0] "Przesyłanie pliku — %d%% z %d pliku"
+msgstr[1] "Przesyłanie plików — %d%% z %d plików"
+msgstr[2] "Przesyłanie plików — %d%% z %d plików"
 
 #. Create the window.
 msgid "File Transfers"
@@ -869,21 +868,21 @@ msgid ""
 "System events will only be logged if the \"Log all status changes to system "
 "log\" preference is enabled."
 msgstr ""
-"Zdarzenia systemowe będą zapisywane wyłącznie, jeśli opcja \"Zapis zmian "
-"stanu do dziennika systemowego\" jest włączona."
+"Zdarzenia systemowe będą zapisywane wyłącznie, jeśli opcja „Zapis zmian "
+"stanu do dziennika systemowego” jest włączona."
 
 msgid ""
 "Instant messages will only be logged if the \"Log all instant messages\" "
 "preference is enabled."
 msgstr ""
-"Wiadomości będą zapisywane wyłącznie, jeśli opcja \"Zapis wszystkich "
-"wiadomości\" jest włączona."
+"Wiadomości będą zapisywane wyłącznie, jeśli opcja „Zapis wszystkich "
+"wiadomości” jest włączona."
 
 msgid ""
 "Chats will only be logged if the \"Log all chats\" preference is enabled."
 msgstr ""
-"Konferencje będą zapisywane wyłącznie, jeśli opcja \"Zapis wszystkich "
-"konferencji\" jest włączona."
+"Konferencje będą zapisywane wyłącznie, jeśli opcja „Zapis wszystkich "
+"konferencji” jest włączona."
 
 msgid "No logs were found"
 msgstr "Nie odnaleziono żadnych dzienników rozmów"
@@ -910,7 +909,7 @@ msgid "System Log"
 msgstr "Dziennik systemowy"
 
 msgid "Calling..."
-msgstr "Dzwonienie..."
+msgstr "Dzwonienie…"
 
 msgid "Hangup"
 msgstr "Rozłącz się"
@@ -1040,7 +1039,7 @@ msgid "You can (un)load plugins from the following list."
 msgstr "Można wczytać/wyłączyć wtyczki z poniższej listy."
 
 msgid "Install Plugin..."
-msgstr "Zainstaluj wtyczkę..."
+msgstr "Zainstaluj wtyczkę…"
 
 msgid "Configure Plugin"
 msgstr "Skonfiguruj wtyczkę"
@@ -1060,7 +1059,7 @@ msgid "New Buddy Pounce"
 msgstr "Nowe przechwytywanie zdarzeń"
 
 msgid "Edit Buddy Pounce"
-msgstr "Zmodyfikuj przechwytywane zdarzenie"
+msgstr "Modyfikuj przechwytywane zdarzenie"
 
 msgid "Pounce Who"
 msgstr "Źródło zdarzeń"
@@ -1074,7 +1073,7 @@ msgstr "Nazwa znajomego:"
 
 #. Create the "Pounce When Buddy..." frame.
 msgid "Pounce When Buddy..."
-msgstr "Przechwytywane zdarzenia, kiedy znajomy..."
+msgstr "Przechwytywane zdarzenia, kiedy znajomy…"
 
 msgid "Signs on"
 msgstr "Zaloguje się"
@@ -1248,16 +1247,16 @@ msgid "Not implemented yet."
 msgstr "Jeszcze nie zaimplementowano."
 
 msgid "Save File..."
-msgstr "Zapisz plik..."
+msgstr "Zapisz plik…"
 
 msgid "Open File..."
-msgstr "Otwórz plik..."
+msgstr "Otwórz plik…"
 
 msgid "Choose Location..."
-msgstr "Wybierz położenie..."
+msgstr "Wybierz położenie…"
 
 msgid "Hit 'Enter' to find more rooms of this category."
-msgstr "Naciśnięcie klawisza \"Enter\" wyszuka więcej pokoi w tej kategorii."
+msgstr "Naciśnięcie klawisza „Enter” wyszuka więcej pokoi w tej kategorii."
 
 msgid "Get"
 msgstr "Uzyskaj"
@@ -1309,7 +1308,7 @@ msgid "(default)"
 msgstr "(domyślnie)"
 
 msgid "Select Sound File ..."
-msgstr "Wybierz plik dźwiękowy..."
+msgstr "Wybierz plik dźwiękowy…"
 
 msgid "Sound Preferences"
 msgstr "Preferencje dźwięku"
@@ -1379,11 +1378,11 @@ msgid "Reset"
 msgstr "Przywróć"
 
 msgid "Choose..."
-msgstr "Wybierz..."
+msgstr "Wybierz…"
 
 #, c-format
 msgid "Are you sure you want to delete \"%s\""
-msgstr "Czy na pewno usunąć \"%s\""
+msgstr "Czy na pewno usunąć „%s”"
 
 msgid "Delete Status"
 msgstr "Usuń stan"
@@ -1435,7 +1434,7 @@ msgid "Message:"
 msgstr "Wiadomość:"
 
 msgid "Edit Status"
-msgstr "Zmodyfikuj stan"
+msgstr "Modyfikuj stan"
 
 msgid "Use different status for following accounts"
 msgstr "Użycie innych stanów dla poszczególnych kont"
@@ -1512,7 +1511,7 @@ msgstr "Ktoś wymawia imię użytkownika na konferencji"
 
 #. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
-msgstr "Powiadamianie za pomocą tostera, kiedy"
+msgstr "Wyskakujące powiadomienie, kiedy"
 
 msgid "Beep too!"
 msgstr "Także sygnał dźwiękowy."
@@ -1525,7 +1524,7 @@ msgstr "GntGf"
 
 #. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
-msgstr "Wtyczka tostera"
+msgstr "Wtyczka wyskakujących powiadomień"
 
 #, c-format
 msgid "<b>Conversation with %s on %s:</b><br>"
@@ -1565,14 +1564,14 @@ msgid ""
 "Fetching TinyURL..."
 msgstr ""
 "\n"
-"Przechwytywanie adresu TinyURL..."
+"Przechwytywanie adresu TinyURL…"
 
 #, c-format
 msgid "TinyURL for above: %s"
 msgstr "Adres TinyURL dla powyższego: %s"
 
 msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr "Proszę czekać, aż TinyURL przechwyci skrócony adres URL..."
+msgstr "Proszę czekać, aż TinyURL przechwyci skrócony adres URL…"
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr ""
@@ -1766,7 +1765,7 @@ msgstr ""
 
 #. TODO: Find what the handle ought to be
 msgid "Single-use Certificate Verification"
-msgstr "Sprawdzanie jednorazowego certyfikatu"
+msgstr "Sprawdzanie poprawności jednorazowego certyfikatu"
 
 #. Scheme name
 #. Pool name
@@ -1785,28 +1784,28 @@ msgstr "Zaakceptować certyfikat dla %s?"
 
 #. TODO: Find what the handle ought to be
 msgid "SSL Certificate Verification"
-msgstr "Sprawdzanie certyfikatu SSL"
+msgstr "Sprawdzanie poprawności certyfikatu SSL"
 
 msgid "_View Certificate..."
-msgstr "_Wyświetl certyfikat..."
+msgstr "_Wyświetl certyfikat…"
 
 #, c-format
 msgid "The certificate for %s could not be validated."
-msgstr "Nie udało się sprawdzić certyfikatu dla %s."
+msgstr "Nie udało się sprawdzić poprawności certyfikatu dla %s."
 
 #. TODO: Probably wrong.
 msgid "SSL Certificate Error"
 msgstr "Błąd certyfikatu SSL"
 
 msgid "Unable to validate certificate"
-msgstr "Nie można sprawdzić certyfikatu"
+msgstr "Nie można sprawdzić poprawności certyfikatu"
 
 #, c-format
 msgid ""
 "The certificate claims to be from \"%s\" instead. This could mean that you "
 "are not connecting to the service you believe you are."
 msgstr ""
-"Z danych certyfikatu wynika, że pochodzi on z \"%s\". Może to oznaczać, że "
+"Z danych certyfikatu wynika, że pochodzi on z „%s”. Może to oznaczać, że "
 "użytkownik łączy się z usługą inną niż żądana."
 
 #. TODO: Find what the handle ought to be
@@ -1918,20 +1917,20 @@ msgstr ""
 "zaproszenia (opcjonalnie)."
 
 msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"aim\""
+msgstr "Czy podane polecenie powinno obsługiwać adresy URL „aim”"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
 "URLs."
 msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"aim\"."
+"Wartość „prawda”, jeśli polecenie podane w kluczu „command” powinno "
+"obsługiwać adresy URL „aim”."
 
 msgid "The handler for \"aim\" URLs"
-msgstr "Obsługa adresów URL \"aim\""
+msgstr "Obsługa adresów URL „aim”"
 
 msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"aim\", jeśli włączone."
+msgstr "Polecenie używane do obsługi adresów URL „aim”, jeśli włączone."
 
 msgid "Run the command in a terminal"
 msgstr "Wykonanie polecenie w terminalu"
@@ -1940,120 +1939,120 @@ msgid ""
 "True if the command used to handle this type of URL should be run in a "
 "terminal."
 msgstr ""
-"Wartość \"prawda\", jeśli polecenie użyte do obsługi tego typu adresów URL "
+"Wartość „prawda”, jeśli polecenie użyte do obsługi tego typu adresów URL "
 "powinno być wykonywane w terminalu."
 
 msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"gg\""
+msgstr "Czy podane polecenie powinno obsługiwać adresy URL „gg”"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"gg\" "
 "URLs."
 msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"gg\"."
+"Wartość „prawda”, jeśli polecenie podane w kluczu „command” powinno "
+"obsługiwać adresy URL „gg”."
 
 msgid "The handler for \"gg\" URLs"
-msgstr "Obsługa adresów URL \"gg\""
+msgstr "Obsługa adresów URL „gg”"
 
 msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"gg\", jeśli włączone."
+msgstr "Polecenie używane do obsługi adresów URL „gg”, jeśli włączone."
 
 msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"icq\""
+msgstr "Czy podane polecenie powinno obsługiwać adresy URL „icq”"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"icq\" "
 "URLs."
 msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"icq\"."
+"Wartość „prawda”, jeśli polecenie podane w kluczu „command” powinno "
+"obsługiwać adresy URL „icq”."
 
 msgid "The handler for \"icq\" URLs"
-msgstr "Obsługa adresów URL \"icq\""
+msgstr "Obsługa adresów URL „icq”"
 
 msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"icq\", jeśli włączone."
+msgstr "Polecenie używane do obsługi adresów URL „icq”, jeśli włączone."
 
 msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"irc\""
+msgstr "Czy podane polecenie powinno obsługiwać adresy URL „irc”"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"irc\" "
 "URLs."
 msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"irc\"."
+"Wartość „prawda”, jeśli polecenie podane w kluczu „command” powinno "
+"obsługiwać adresy URL „irc”."
 
 msgid "The handler for \"irc\" URLs"
-msgstr "Obsługa adresów URL \"irc\""
+msgstr "Obsługa adresów URL „irc”"
 
 msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"irc\", jeśli włączone."
+msgstr "Polecenie używane do obsługi adresów URL „irc”, jeśli włączone."
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"msnim\""
+msgstr "Czy podane polecenie powinno obsługiwać adresy URL „msnim”"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"msnim\" "
 "URLs."
 msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"msnim\"."
+"Wartość „prawda”, jeśli polecenie podane w kluczu „command” powinno "
+"obsługiwać adresy URL „msnim”."
 
 msgid "The handler for \"msnim\" URLs"
-msgstr "Obsługa adresów URL \"msnim\""
+msgstr "Obsługa adresów URL „msnim”"
 
 msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"msnim\", jeśli włączone."
+msgstr "Polecenie używane do obsługi adresów URL „msnim”, jeśli włączone."
 
 msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"sip\""
+msgstr "Czy podane polecenie powinno obsługiwać adresy URL „sip”"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"sip\" "
 "URLs."
 msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"sip\"."
+"Wartość „prawda”, jeśli polecenie podane w kluczu „command” powinno "
+"obsługiwać adresy URL „sip”."
 
 msgid "The handler for \"sip\" URLs"
-msgstr "Obsługa adresów URL \"sip\""
+msgstr "Obsługa adresów URL „sip”"
 
 msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"sip\", jeśli włączone."
+msgstr "Polecenie używane do obsługi adresów URL „sip”, jeśli włączone."
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"xmpp\""
+msgstr "Czy podane polecenie powinno obsługiwać adresy URL „xmpp”"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"xmpp\" "
 "URLs."
 msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"xmpp\"."
+"Wartość „prawda”, jeśli polecenie podane w kluczu „command” powinno "
+"obsługiwać adresy URL „xmpp”."
 
 msgid "The handler for \"xmpp\" URLs"
-msgstr "Obsługa adresów URL \"xmpp\""
+msgstr "Obsługa adresów URL „xmpp”"
 
 msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"xmpp\", jeśli włączone."
+msgstr "Polecenie używane do obsługi adresów URL „xmpp”, jeśli włączone."
 
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Czy podane polecenie powinno obsługiwać adresy URL \"ymsgr\""
+msgstr "Czy podane polecenie powinno obsługiwać adresy URL „ymsgr”"
 
 msgid ""
 "True if the command specified in the \"command\" key should handle \"ymsgr\" "
 "URLs."
 msgstr ""
-"Wartość \"prawda\", jeśli polecenie podane w kluczu \"command\" powinno "
-"obsługiwać adresy URL \"ymsgr\"."
+"Wartość „prawda”, jeśli polecenie podane w kluczu „command” powinno "
+"obsługiwać adresy URL „ymsgr”."
 
 msgid "The handler for \"ymsgr\" URLs"
-msgstr "Obsługa adresów URL \"ymsgr\""
+msgstr "Obsługa adresów URL „ymsgr”"
 
 msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Polecenie używane do obsługi adresów URL \"ymsgr\", jeśli włączone."
+msgstr "Polecenie używane do obsługi adresów URL „ymsgr”, jeśli włączone."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2277,26 +2276,31 @@ msgstr "<font color=\"red\"><b>Nie można odczytać pliku: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <ODPOWIEDŹ-AUTOMATYCZNA>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "Wiadomość od użytkownika %s"
+msgstr ""
+"\n"
+"\n"
+"Komunikat z biblioteki Farsight: "
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
+"Błąd podczas inicjowania rozmowy. Prawdopodobnie oznacza to błąd w "
+"instalacji biblioteki GStreamer lub Farsight."
 
-#, fuzzy
 msgid "Network error."
-msgstr "Sieć"
+msgstr "Błąd sieci."
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
 "GStreamer codecs."
 msgstr ""
+"Negocjacja kodeka się nie powiodła. Ten problem może zostać rozwiązany przez "
+"zainstalowanie większej liczby kodeków biblioteki GStreamer."
 
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
@@ -2311,9 +2315,8 @@ msgstr ""
 "Nie pozostały żadne kodeki. Preferencje kodeków w pliku fs-codecs.conf są za "
 "ścisłe."
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "Nie połączono z serwerem"
+msgstr "Nie można połączyć się ze zdalną częścią"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Wystąpił nieodwracalny błąd biblioteki Farsight2."
@@ -2387,8 +2390,7 @@ msgstr ""
 
 #, c-format
 msgid "Autoaccepted file transfer of \"%s\" from \"%s\" completed."
-msgstr ""
-"Ukończono automatycznie zaakceptowane przesyłanie pliku \"%s\" od \"%s\"."
+msgstr "Ukończono automatycznie zaakceptowane przesyłanie pliku „%s” od „%s”."
 
 msgid "Autoaccept complete"
 msgstr "Ukończono automatyczne akceptowanie"
@@ -2416,7 +2418,7 @@ msgid "Auto Reject"
 msgstr "Automatycznie odrzuć"
 
 msgid "Autoaccept File Transfers..."
-msgstr "Automatycznie akceptowane przesyłania plików..."
+msgstr "Automatycznie akceptowane przesyłania plików…"
 
 #. XXX: Is there a better way than this? There really should be.
 msgid ""
@@ -2450,10 +2452,10 @@ msgid "Notes"
 msgstr "Notatki"
 
 msgid "Enter your notes below..."
-msgstr "Poniżej można wpisywać notatki..."
+msgstr "Poniżej można wpisywać notatki…"
 
 msgid "Edit Notes..."
-msgstr "Zmodyfikuj notatki..."
+msgstr "Modyfikuj notatki…"
 
 #. *< major version
 #. *< minor version
@@ -2807,24 +2809,24 @@ msgid ""
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
 "Reszta wiadomości zostanie zapisana jako przechwytywane zdarzenie. Można "
-"zmodyfikować/usunąć zdarzenie z okna dialogowego \"Przechwytywanie zdarzeń\"."
+"zmodyfikować/usunąć zdarzenie z okna dialogowego „Przechwytywanie zdarzeń”."
 
 #, c-format
 msgid ""
 "\"%s\" is currently offline. Do you want to save the rest of the messages in "
 "a pounce and automatically send them when \"%s\" logs back in?"
 msgstr ""
-"Użytkownik \"%s\" jest obecnie w trybie offline. Zapisać resztę wiadomości "
+"Użytkownik „%s” jest obecnie w trybie offline. Zapisać resztę wiadomości "
 "jako przechwytywane zdarzenie i automatycznie wysłać je, kiedy użytkownik "
-"\"%s\" zaloguje się ponownie?"
+"„%s” zaloguje się ponownie?"
 
 msgid "Offline Message"
 msgstr "Wiadomość w trybie offline"
 
 msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
 msgstr ""
-"Można zmodyfikować/usunąć zdarzenie z okna dialogowego \"Przechwytywanie "
-"zdarzeń\""
+"Można zmodyfikować/usunąć zdarzenie z okna dialogowego „Przechwytywanie "
+"zdarzeń”"
 
 msgid "Yes"
 msgstr "Tak"
@@ -2896,7 +2898,7 @@ msgstr ""
 "XMPP, Sametime i Yahoo!"
 
 msgid "You feel a disturbance in the force..."
-msgstr "Wyczuwasz zaburzenia mocy..."
+msgstr "Wyczuwasz zaburzenia mocy…"
 
 msgid "Only enable for users on the buddy list"
 msgstr "Tylko dla użytkowników z listy znajomych"
@@ -3113,9 +3115,8 @@ msgid ""
 "Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
 "im/BonjourWindows for more information."
 msgstr ""
-"Nie można odnaleźć zestawu narzędzi \"Bonjour dla systemu Windows\" firmy "
-"Apple. Aby uzyskać więcej informacji, proszę odwiedzić stronę http://d."
-"pidgin.im/BonjourWindows."
+"Nie można odnaleźć zestawu narzędzi „Bonjour for Windows” firmy Apple. "
+"Więcej informacji znajduje się na stronie http://d.pidgin.im/BonjourWindows ."
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "Nie można nasłuchiwać przychodzących połączeń komunikatora"
@@ -3186,7 +3187,7 @@ msgstr ""
 "pośrednika."
 
 msgid "Save Buddylist..."
-msgstr "Zapisz listę znajomych..."
+msgstr "Zapisz listę znajomych…"
 
 msgid "Your buddylist is empty, nothing was written to the file."
 msgstr "Lista znajomych jest pusta, nic nie zostało zapisane do pliku."
@@ -3202,16 +3203,16 @@ msgid "Couldn't load buddylist"
 msgstr "Nie można wczytać listy znajomych"
 
 msgid "Load Buddylist..."
-msgstr "Wczytaj listę znajomych..."
+msgstr "Wczytaj listę znajomych…"
 
 msgid "Buddylist loaded successfully!"
 msgstr "Pomyślnie wczytano listę znajomych."
 
 msgid "Save buddylist..."
-msgstr "Zapisz listę znajomych..."
+msgstr "Zapisz listę znajomych…"
 
 msgid "Load buddylist from file..."
-msgstr "Wczytaj listę znajomych z pliku..."
+msgstr "Wczytaj listę znajomych z pliku…"
 
 msgid "City"
 msgstr "Miasto"
@@ -3262,7 +3263,7 @@ msgid "Select a chat for buddy: %s"
 msgstr "Wybierz konferencję dla znajomego: %s"
 
 msgid "Add to chat..."
-msgstr "Dodaj do konferencji..."
+msgstr "Dodaj do konferencji…"
 
 #. 0
 #. Global
@@ -3347,10 +3348,10 @@ msgid "Not connected to the server"
 msgstr "Nie połączono z serwerem"
 
 msgid "Find buddies..."
-msgstr "Znajdź znajomych..."
+msgstr "Znajdź znajomych…"
 
 msgid "Save buddylist to file..."
-msgstr "Zapisz listę znajomych do pliku..."
+msgstr "Zapisz listę znajomych do pliku…"
 
 #. magic
 #. major_version
@@ -3584,7 +3585,7 @@ msgstr "Temat dla %s ustawiony przez użytkownika %s o godzinie %s w dniu %s"
 
 #, c-format
 msgid "Unknown message '%s'"
-msgstr "Nieznana wiadomość \"%s\""
+msgstr "Nieznana wiadomość „%s”"
 
 msgid "Unknown message"
 msgstr "Nieznana wiadomość"
@@ -3660,7 +3661,7 @@ msgstr ""
 #. notify the user that their /nick command didn't go.
 #, c-format
 msgid "The nickname \"%s\" is already being used."
-msgstr "Pseudonim \"%s\" jest już używany."
+msgstr "Pseudonim „%s” jest już używany."
 
 msgid "Nickname in use"
 msgstr "Używany pseudonim"
@@ -3680,7 +3681,7 @@ msgstr "Błąd: nieprawidłowe PONG od serwera"
 
 #, c-format
 msgid "PING reply -- Lag: %lu seconds"
-msgstr "Odpowiedź PING - opóźnienie: %lu sekund"
+msgstr "Odpowiedź PING — opóźnienie: %lu sekund"
 
 #, c-format
 msgid "Cannot join %s: Registration is required."
@@ -3750,7 +3751,7 @@ msgid ""
 "deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from "
 "someone. You must be a channel operator to do this."
 msgstr ""
-"deop &lt;pseudonim1&gt; [pseudonim2]...: usuwa stan operatora kanału z "
+"deop &lt;pseudonim1&gt; [pseudonim2]…: usuwa stan operatora kanału z "
 "podanych osób. Aby użyć tego polecenia, należy być operatorem kanału."
 
 msgid ""
@@ -3758,9 +3759,9 @@ msgid ""
 "someone, preventing them from speaking if the channel is moderated (+m). You "
 "must be a channel operator to do this."
 msgstr ""
-"devoice &lt;pseudonim1&gt; [pseudonim2]...: usuwa prawo głosu z podanej "
-"osoby, uniemożliwiając jej rozmowę, jeśli kanał jest moderowany (+m). Aby "
-"użyć tego polecenia, należy być operatorem kanału."
+"devoice &lt;pseudonim1&gt; [pseudonim2]…: usuwa prawo głosu z podanej osoby, "
+"uniemożliwiając jej rozmowę, jeśli kanał jest moderowany (+m). Aby użyć tego "
+"polecenia, należy być operatorem kanału."
 
 msgid ""
 "invite &lt;nick&gt; [room]:  Invite someone to join you in the specified "
@@ -3773,17 +3774,16 @@ msgid ""
 "j &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more "
 "channels, optionally providing a channel key for each if needed."
 msgstr ""
-"j &lt;pokój1&gt;[,pokój2][,...] [klucz1[,klucz2][,...]]: dołącza do jednego "
-"lub więcej kanałów, opcjonalnie dostarczając klucz kanałom, które tego "
-"wymagają."
+"j &lt;pokój1&gt;[,pokój2][,…] [klucz1[,klucz2][,…]]: dołącza do jednego lub "
+"więcej kanałów, opcjonalnie dostarczając klucz kanałom, które tego wymagają."
 
 msgid ""
 "join &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more "
 "channels, optionally providing a channel key for each if needed."
 msgstr ""
-"join &lt;pokój1&gt;[,pokój2][,...] [klucz1[,klucz2][,...]]: dołącza do "
-"jednego lub więcej kanałów, opcjonalnie dostarczając klucz kanałom, które "
-"tego wymagają."
+"join &lt;pokój1&gt;[,pokój2][,…] [klucz1[,klucz2][,…]]: dołącza do jednego "
+"lub więcej kanałów, opcjonalnie dostarczając klucz kanałom, które tego "
+"wymagają."
 
 msgid ""
 "kick &lt;nick&gt; [message]:  Remove someone from a channel. You must be a "
@@ -3835,7 +3835,7 @@ msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
 "must be a channel operator to do this."
 msgstr ""
-"op &lt;pseudonim1&gt; [pseudonim2]...: nadaje podanej osobie stan operatora "
+"op &lt;pseudonim1&gt; [pseudonim2]…: nadaje podanej osobie stan operatora "
 "kanału. Aby użyć tego polecenia, należy być operatorem kanału."
 
 msgid ""
@@ -3874,7 +3874,7 @@ msgstr ""
 "quit [wiadomość]: rozłącza z serwera, opcjonalnie z wiadomością pożegnalną."
 
 msgid "quote [...]:  Send a raw command to the server."
-msgstr "quote [...]: wysyła surowe polecenie do serwera."
+msgstr "quote […]: wysyła surowe polecenie do serwera."
 
 msgid ""
 "remove &lt;nick&gt; [message]:  Remove someone from a room. You must be a "
@@ -3901,7 +3901,7 @@ msgid ""
 "voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You "
 "must be a channel operator to do this."
 msgstr ""
-"voice &lt;pseudonim1&gt; [pseudonim2]...: nadaje prawo głosu podanej osobie. "
+"voice &lt;pseudonim1&gt; [pseudonim2]…: nadaje prawo głosu podanej osobie. "
 "Aby użyć tego polecenia, należy być operatorem kanału."
 
 msgid ""
@@ -4540,15 +4540,15 @@ msgid "Please enter your new password"
 msgstr "Proszę podać nowe hasło"
 
 msgid "Set User Info..."
-msgstr "Ustaw informacje o użytkowniku..."
+msgstr "Ustaw informacje o użytkowniku…"
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
 msgid "Change Password..."
-msgstr "Zmień hasło..."
+msgstr "Zmień hasło…"
 
 #. }
 msgid "Search for Users..."
-msgstr "Wyszukaj użytkowników..."
+msgstr "Wyszukaj użytkowników…"
 
 msgid "Bad Request"
 msgstr "Błędne żądanie"
@@ -4700,19 +4700,19 @@ msgstr "Nie można zablokować użytkownika %s"
 
 #, c-format
 msgid "Unknown affiliation: \"%s\""
-msgstr "Nieznana przynależność: \"%s\""
+msgstr "Nieznana przynależność: „%s”"
 
 #, c-format
 msgid "Unable to affiliate user %s as \"%s\""
-msgstr "Nie można zmienić przynależności użytkownika %s jako \"%s\""
+msgstr "Nie można zmienić przynależności użytkownika %s jako „%s”"
 
 #, c-format
 msgid "Unknown role: \"%s\""
-msgstr "Nieznana rola: \"%s\""
+msgstr "Nieznana rola: „%s”"
 
 #, c-format
 msgid "Unable to set role \"%s\" for user: %s"
-msgstr "Nie można ustawić roli \"%s\" dla użytkownika: %s"
+msgstr "Nie można ustawić roli „%s” dla użytkownika: %s"
 
 #, c-format
 msgid "Unable to kick user %s"
@@ -4749,7 +4749,7 @@ msgstr "Użytkownik %s zaszeptał."
 
 #, c-format
 msgid "Buzzing %s..."
-msgstr "Szeptanie do użytkownika %s..."
+msgstr "Szeptanie do użytkownika %s…"
 
 #, c-format
 msgid "Unable to initiate media with %s: invalid JID"
@@ -4816,17 +4816,16 @@ msgid ""
 "affiliate &lt;owner|admin|member|outcast|none&gt; [nick1] [nick2] ...: Get "
 "the users with an affiliation or set users' affiliation with the room."
 msgstr ""
-"affiliate &lt;owner|admin|member|outcast|none&gt; [pseudonim1] "
-"[pseudonim2]...: uzyskuje użytkowników z przynależnością lub ustawia "
-"przynależność użytkowników z pokojem."
+"affiliate &lt;owner|admin|member|outcast|none&gt; [pseudonim1] [pseudonim2]"
+"…: uzyskuje użytkowników z przynależnością lub ustawia przynależność "
+"użytkowników z pokojem."
 
 msgid ""
 "role &lt;moderator|participant|visitor|none&gt; [nick1] [nick2] ...: Get the "
 "users with a role or set users' role with the room."
 msgstr ""
-"role &lt;moderator|participant|visitor|none&gt; [pseudonim1] "
-"[pseudonim2]...: uzyskuje użytkowników z rolami lub ustawia role "
-"użytkowników w pokoju."
+"role &lt;moderator|participant|visitor|none&gt; [pseudonim1] [pseudonim2]…: "
+"uzyskuje użytkowników z rolami lub ustawia role użytkowników w pokoju."
 
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;użytkownik&gt; [wiadomość]: zaprasza użytkownika do pokoju."
@@ -4899,7 +4898,7 @@ msgstr "Adres URL protokołu BOSH"
 #. this should probably be part of global smiley theme settings later on,
 #. shared with MSN
 msgid "Show Custom Smileys"
-msgstr "Wyświetlanie własnych emotikon"
+msgstr "Wyświetlanie niestandardowych emotikon"
 
 #, c-format
 msgid "%s has left the conversation."
@@ -4929,7 +4928,7 @@ msgid "(Code %s)"
 msgstr "(Kod %s)"
 
 msgid "A custom smiley in the message is too large to send."
-msgstr "Własna emotikona w wiadomości jest za duża do wysłania."
+msgstr "Niestandardowa emotikona w wiadomości jest za duża do wysłania."
 
 msgid "XMPP stream header missing"
 msgstr "Brak nagłówka strumienia XMPP"
@@ -5278,7 +5277,7 @@ msgid "Set"
 msgstr "Ustaw"
 
 msgid "Set Nickname..."
-msgstr "Ustaw pseudonim..."
+msgstr "Ustaw pseudonim…"
 
 msgid "Actions"
 msgstr "Czynności"
@@ -5291,7 +5290,7 @@ msgstr "Wybór czynności"
 #. * won't cause too many problems if we just ignore it
 #, c-format
 msgid "Unable to add \"%s\"."
-msgstr "Nie można dodać \"%s\"."
+msgstr "Nie można dodać „%s”."
 
 msgid "Buddy Add error"
 msgstr "Błąd podczas dodawania znajomego"
@@ -5478,7 +5477,7 @@ msgid ""
 "%s on the local list is inside the group \"%s\" but not on the server list. "
 "Do you want this buddy to be added?"
 msgstr ""
-"Użytkownik %s na lokalnej liście jest w grupie \"%s\", ale nie ma go na "
+"Użytkownik %s na lokalnej liście jest w grupie „%s”, ale nie ma go na "
 "serwerze. Dodać tego znajomego?"
 
 #, c-format
@@ -5530,10 +5529,10 @@ msgstr "%s szturchnął użytkownika."
 
 #, c-format
 msgid "Nudging %s..."
-msgstr "Szturchanie użytkownika %s..."
+msgstr "Szturchanie użytkownika %s…"
 
 msgid "Email Address..."
-msgstr "Adres e-mail..."
+msgstr "Adres e-mail…"
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Nowy pseudonim MSN jest za długi."
@@ -5660,31 +5659,31 @@ msgid "Office Title"
 msgstr "Nazwa biura"
 
 msgid "Set Friendly Name..."
-msgstr "Ustaw pseudonim..."
+msgstr "Ustaw pseudonim…"
 
 msgid "View Locations..."
-msgstr "Wyświetl położenia..."
+msgstr "Wyświetl położenia…"
 
 msgid "Set Home Phone Number..."
-msgstr "Ustaw domowy numer telefonu..."
+msgstr "Ustaw domowy numer telefonu…"
 
 msgid "Set Work Phone Number..."
-msgstr "Ustaw numer telefonu służbowego..."
+msgstr "Ustaw numer telefonu służbowego…"
 
 msgid "Set Mobile Phone Number..."
-msgstr "Ustaw numer telefonu komórkowego..."
+msgstr "Ustaw numer telefonu komórkowego…"
 
 msgid "Enable/Disable Mobile Devices..."
-msgstr "Włącz/wyłącz urządzenia przenośne..."
+msgstr "Włącz/wyłącz urządzenia przenośne…"
 
 msgid "Allow/Disallow Multiple Logins..."
-msgstr "Zezwól/zabroń na wiele logowań..."
+msgstr "Zezwól/zabroń na wiele logowań…"
 
 msgid "Allow/Disallow Mobile Pages..."
-msgstr "Zezwól/zabroń strony Mobile..."
+msgstr "Zezwól/zabroń strony Mobile…"
 
 msgid "View Blocked Text..."
-msgstr "Wyświetl zablokowany tekst..."
+msgstr "Wyświetl zablokowany tekst…"
 
 msgid "Open Hotmail Inbox"
 msgstr "Otwórz skrzynkę Hotmail"
@@ -5880,7 +5879,7 @@ msgid "HTTP Method Server"
 msgstr "Serwer metody HTTP"
 
 msgid "Show custom smileys"
-msgstr "Wyświetlanie własnych emotikon"
+msgstr "Wyświetlanie niestandardowych emotikon"
 
 msgid "Allow direct connections"
 msgstr "Zezwalanie na bezpośrednie połączenia"
@@ -6121,7 +6120,7 @@ msgstr "Podana wyświetlana nazwa jest nieprawidłowa."
 msgid ""
 "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
 msgstr ""
-"Podana data urodzenia jest nieprawidłowa. Poprawna forma to: \"YYYY-MM-DD\"."
+"Podana data urodzenia jest nieprawidłowa. Poprawna forma to: „YYYY-MM-DD”."
 
 #. show error to user
 msgid "Profile Update Error"
@@ -6223,27 +6222,27 @@ msgstr "Wy_szukaj"
 
 #. display / change profile
 msgid "Change Profile..."
-msgstr "Zmień profil..."
+msgstr "Zmień profil…"
 
 #. change PIN
 msgid "Change PIN..."
-msgstr "Zmień kod PIN..."
+msgstr "Zmień kod PIN…"
 
 #. suggested friends
 msgid "Suggested friends..."
-msgstr "Zaproponuj znajomych..."
+msgstr "Zaproponuj znajomych…"
 
 #. search for contacts
 msgid "Search for contacts..."
-msgstr "Wyszukaj kontakty..."
+msgstr "Wyszukaj kontakty…"
 
 #. display splash-screen
 msgid "View Splash..."
-msgstr "Wyświetl ekran powitalny..."
+msgstr "Wyświetl ekran powitalny…"
 
 #. display plugin version
 msgid "About..."
-msgstr "O wtyczce..."
+msgstr "O wtyczce…"
 
 #. the file is too big
 msgid "The file you are trying to send is too large!"
@@ -6264,7 +6263,7 @@ msgstr ""
 "ustawienia serwera."
 
 msgid "Logging In..."
-msgstr "Logowanie..."
+msgstr "Logowanie…"
 
 msgid ""
 "Unable to connect to the MXit server. Please check your server settings."
@@ -6272,7 +6271,7 @@ msgstr ""
 "Nie można połączyć się z serwerem MXit. Proszę sprawdzić ustawienia serwera."
 
 msgid "Connecting..."
-msgstr "Łączenie..."
+msgstr "Łączenie…"
 
 msgid "The Display Name you entered is too short."
 msgstr "Podana wyświetlana nazwa jest za krótka."
@@ -6345,10 +6344,10 @@ msgid "MXit Authorization"
 msgstr "Upoważnienie MXit"
 
 msgid "MXit account validation"
-msgstr "Sprawdzenie konta MXit"
+msgstr "Sprawdzenie poprawności konta MXit"
 
 msgid "Retrieving User Information..."
-msgstr "Pobieranie informacji o użytkowniku..."
+msgstr "Pobieranie informacji o użytkowniku…"
 
 msgid "was kicked"
 msgstr "został wyrzucony"
@@ -6364,7 +6363,7 @@ msgid "You have invited"
 msgstr "Zaproszono"
 
 msgid "Loading menu..."
-msgstr "Wczytywanie menu..."
+msgstr "Wczytywanie menu…"
 
 msgid "Status Message"
 msgstr "Wiadomość stanu"
@@ -6379,7 +6378,7 @@ msgid "This contact does not have a profile."
 msgstr "Ten kontakt nie posiada profilu."
 
 msgid "Your MXit ID..."
-msgstr "Identyfikator MXit użytkownika..."
+msgstr "Identyfikator MXit użytkownika…"
 
 #. contact is in Deleted, Rejected or None state
 msgid "Re-Invite"
@@ -6471,7 +6470,7 @@ msgid "Timeout while waiting for a response from the MXit server."
 msgstr "Przekroczono czas oczekiwania na odpowiedź od serwera MXit."
 
 msgid "Successfully Logged In..."
-msgstr "Pomyślnie zalogowano..."
+msgstr "Pomyślnie zalogowano…"
 
 #, c-format
 msgid ""
@@ -6602,7 +6601,7 @@ msgid "Logging in"
 msgstr "Logowanie"
 
 msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM - nie ustawiono nazwy użytkownika"
+msgstr "MySpaceIM — nie ustawiono nazwy użytkownika"
 
 msgid "You appear to have no MySpace username."
 msgstr "Brak nazwy użytkownika MySpace."
@@ -6684,19 +6683,19 @@ msgid "Failed to add buddy"
 msgstr "Dodanie znajomego się nie powiodło"
 
 msgid "'addbuddy' command failed."
-msgstr "Polecenie \"addbuddy\" się nie powiodło."
+msgstr "Polecenie „addbuddy” się nie powiodło."
 
 msgid "persist command failed"
-msgstr "Polecenie \"persist\" się nie powiodło"
+msgstr "Polecenie „persist” się nie powiodło"
 
 msgid "Failed to remove buddy"
 msgstr "Usunięcie znajomego się nie powiodło"
 
 msgid "'delbuddy' command failed"
-msgstr "Polecenie \"delbuddy\" się nie powiodło"
+msgstr "Polecenie „delbuddy” się nie powiodło"
 
 msgid "blocklist command failed"
-msgstr "Polecenie \"blocklist\" się nie powiodło"
+msgstr "Polecenie „blocklist” się nie powiodło"
 
 msgid "Missing Cipher"
 msgstr "Brak szyfru"
@@ -6719,10 +6718,10 @@ msgstr "Zaimportowanie przyjaciół się nie powiodło"
 
 #. TODO: find out how
 msgid "Find people..."
-msgstr "Znajdź osoby..."
+msgstr "Znajdź osoby…"
 
 msgid "Change IM name..."
-msgstr "Zmień nazwę komunikatora..."
+msgstr "Zmień nazwę komunikatora…"
 
 msgid "myim URL handler"
 msgstr "obsługa adresów URL myim"
@@ -6775,7 +6774,7 @@ msgstr ""
 "fuseaction=profile.username , aby ustawić nazwę użytkownika."
 
 msgid "MySpaceIM - Username Available"
-msgstr "MySpaceIM - nazwa użytkownika jest dostępna"
+msgstr "MySpaceIM — nazwa użytkownika jest dostępna"
 
 msgid "This username is available. Would you like to set it?"
 msgstr "Ta nazwa użytkownika jest dostępna. Ustawić ją?"
@@ -6784,7 +6783,7 @@ msgid "ONCE SET, THIS CANNOT BE CHANGED!"
 msgstr "PO USTAWIENIU NIE MOŻNA TEGO ZMIENIĆ"
 
 msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM - proszę ustawić nazwę użytkownika"
+msgstr "MySpaceIM — proszę ustawić nazwę użytkownika"
 
 msgid "This username is unavailable."
 msgstr "Ta nazwa użytkownika jest niedostępna."
@@ -6814,7 +6813,7 @@ msgstr "Użytkownik %s wstrząsnął Tobą."
 
 #, c-format
 msgid "Zapping %s..."
-msgstr "Wstrząsanie użytkownikiem %s..."
+msgstr "Wstrząsanie użytkownikiem %s…"
 
 #. Whack means "to hit or strike someone with a sharp blow"
 msgid "Whack"
@@ -6826,7 +6825,7 @@ msgstr "Użytkownik %s uderzył Cię."
 
 #, c-format
 msgid "Whacking %s..."
-msgstr "Uderzanie użytkownika %s..."
+msgstr "Uderzanie użytkownika %s…"
 
 #. Torch means "to set on fire."  Don't worry, this doesn't
 #. * make a whole lot of sense in English, either.  Feel free
@@ -6840,7 +6839,7 @@ msgstr "Użytkownik %s podpalił Cię."
 
 #, c-format
 msgid "Torching %s..."
-msgstr "Podpalanie użytkownika %s..."
+msgstr "Podpalanie użytkownika %s…"
 
 #. Smooch means "to kiss someone, often enthusiastically"
 msgid "Smooch"
@@ -6852,7 +6851,7 @@ msgstr "Użytkownik %s pocałował Cię."
 
 #, c-format
 msgid "Smooching %s..."
-msgstr "Całowanie użytkownika %s..."
+msgstr "Całowanie użytkownika %s…"
 
 #. A hug is a display of affection; wrapping your arms around someone
 msgid "Hug"
@@ -6864,7 +6863,7 @@ msgstr "Użytkownik %s przytulił Cię."
 
 #, c-format
 msgid "Hugging %s..."
-msgstr "Przytulanie użytkownika %s..."
+msgstr "Przytulanie użytkownika %s…"
 
 #. Slap means "to hit someone with an open/flat hand"
 msgid "Slap"
@@ -6876,7 +6875,7 @@ msgstr "Użytkownik %s spoliczkował Cię."
 
 #, c-format
 msgid "Slapping %s..."
-msgstr "Policzkowanie użytkownika %s..."
+msgstr "Policzkowanie użytkownika %s…"
 
 #. Goose means "to pinch someone on their butt"
 msgid "Goose"
@@ -6888,7 +6887,7 @@ msgstr "Użytkownik %s kopnął Cię."
 
 #, c-format
 msgid "Goosing %s..."
-msgstr "Kopanie użytkownika %s..."
+msgstr "Kopanie użytkownika %s…"
 
 #. A high-five is when two people's hands slap each other
 #. * in the air above their heads.  It is done to celebrate
@@ -6902,7 +6901,7 @@ msgstr "Użytkownik %s przybił piątkę."
 
 #, c-format
 msgid "High-fiving %s..."
-msgstr "Przybijanie piątki użytkownikowi %s..."
+msgstr "Przybijanie piątki użytkownikowi %s…"
 
 #. We're not entirely sure what the MySpace people mean by
 #. * this... but we think it's the equivalent of "prank."  Or, for
@@ -6916,7 +6915,7 @@ msgstr "Użytkownik %s zażartował z Ciebie."
 
 #, c-format
 msgid "Punking %s..."
-msgstr "Żartowanie z użytkownika %s..."
+msgstr "Żartowanie z użytkownika %s…"
 
 #. Raspberry is a slang term for the vibrating sound made
 #. * when you stick your tongue out of your mouth with your
@@ -6934,7 +6933,7 @@ msgstr "Użytkownik %s pokazał ci język."
 
 #, c-format
 msgid "Raspberrying %s..."
-msgstr "Pokazywanie języka użytkownikowi %s..."
+msgstr "Pokazywanie języka użytkownikowi %s…"
 
 msgid "Required parameters not passed in"
 msgstr "Wymagane parametry nie zostały przekazane"
@@ -7132,10 +7131,10 @@ msgid "GroupWise Conference %d"
 msgstr "Konferencja GroupWise %d"
 
 msgid "Authenticating..."
-msgstr "Uwierzytelnianie..."
+msgstr "Uwierzytelnianie…"
 
 msgid "Waiting for response..."
-msgstr "Oczekiwanie na odpowiedź..."
+msgstr "Oczekiwanie na odpowiedź…"
 
 #, c-format
 msgid "%s has been invited to this conversation."
@@ -7432,7 +7431,7 @@ msgid "AIM Protocol Plugin"
 msgstr "Wtyczka protokołu AIM"
 
 msgid "ICQ UIN..."
-msgstr "Nazwa użytkownika ICQ..."
+msgstr "Nazwa użytkownika ICQ…"
 
 #. *< type
 #. *< ui_requirement
@@ -7678,7 +7677,7 @@ msgid "Do you want to add this buddy to your buddy list?"
 msgstr "Dodać tego znajomego do listy?"
 
 msgid "_Add"
-msgstr "Dod_aj"
+msgstr "_Dodaj"
 
 msgid "_Decline"
 msgstr "O_drzuć"
@@ -8019,7 +8018,7 @@ msgstr "Pobierz informacje AIM"
 
 #. We only do this if the user is in our buddy list
 msgid "Edit Buddy Comment"
-msgstr "Zmodyfikuj komentarz o znajomym"
+msgstr "Modyfikuj komentarz o znajomym"
 
 msgid "Get X-Status Msg"
 msgstr "Pobierz wiadomość X-Status"
@@ -8056,7 +8055,7 @@ msgid ""
 "them and selecting \"Re-request Authorization.\""
 msgstr ""
 "Można ponownie poprosić o upoważnienia od tych znajomych, naciskają na nich "
-"prawym przyciskiem myszy i wybierając \"Ponownie poproś o upoważnienie\"."
+"prawym przyciskiem myszy i wybierając „Ponownie poproś o upoważnienie”."
 
 msgid "Find Buddy by Email"
 msgstr "Znajdź użytkownika według adresu e-mail"
@@ -8068,7 +8067,7 @@ msgid "Type the email address of the buddy you are searching for."
 msgstr "Proszę podać adres e-mail wyszukiwanego znajomego."
 
 msgid "Set User Info (web)..."
-msgstr "Ustaw informacje o użytkowniku (WWW)..."
+msgstr "Ustaw informacje o użytkowniku (WWW)…"
 
 #. This only happens when connecting with the old-style BUCP login
 msgid "Change Password (web)"
@@ -8079,7 +8078,7 @@ msgstr "Skonfiguruj przekierowanie komunikatora (WWW)"
 
 #. ICQ actions
 msgid "Set Privacy Options..."
-msgstr "Ustaw opcje prywatności..."
+msgstr "Ustaw opcje prywatności…"
 
 msgid "Show Visible List"
 msgstr "Wyświetl lista widocznych"
@@ -8095,13 +8094,13 @@ msgid "Display Currently Registered Email Address"
 msgstr "Wyświetl aktualnie zarejestrowany adres e-mail"
 
 msgid "Change Currently Registered Email Address..."
-msgstr "Zmień aktualnie zarejestrowany adres e-mail..."
+msgstr "Zmień aktualnie zarejestrowany adres e-mail…"
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Wyświetl znajomych oczekujących na upoważnienie"
 
 msgid "Search for Buddy by Email Address..."
-msgstr "Wyszukaj znajomych według adresu e-mail..."
+msgstr "Wyszukaj znajomych według adresu e-mail…"
 
 msgid "Use clientLogin"
 msgstr "Użycie logowania klienta"
@@ -8365,7 +8364,7 @@ msgid ""
 "\""
 msgstr ""
 "Można dodać znajomych do tej listy naciskają ma nich prawym przyciskiem "
-"myszy i wybierając \"%s\""
+"myszy i wybierając „%s”"
 
 msgid "Visible List"
 msgstr "Lista widocznych"
@@ -8373,7 +8372,7 @@ msgstr "Lista widocznych"
 msgid "These buddies will see your status when you switch to \"Invisible\""
 msgstr ""
 "Znajomi na tej liście będą widzieli stan użytkownika po przełączeniu na "
-"\"Niewidoczny\""
+"„Niewidoczny”"
 
 msgid "Invisible List"
 msgstr "Lista niewidocznych"
@@ -8397,7 +8396,7 @@ msgid "Notes Address Book Information"
 msgstr "Informacje o książce adresowej programu Notes"
 
 msgid "Invite Group to Conference..."
-msgstr "Zaproś grupę do konferencji..."
+msgstr "Zaproś grupę do konferencji…"
 
 msgid "Get Notes Address Book Info"
 msgstr "Uzyskaj informacje o książce adresowej programu Notes"
@@ -8490,7 +8489,7 @@ msgid "Available Conferences"
 msgstr "Dostępne konferencje"
 
 msgid "Create New Conference..."
-msgstr "Utwórz nową konferencję..."
+msgstr "Utwórz nową konferencję…"
 
 msgid "Invite user to a conference"
 msgstr "Zaproś użytkownika do konferencji"
@@ -8502,14 +8501,14 @@ msgid ""
 "this user to."
 msgstr ""
 "Proszę wybrać konferencję z poniższej listy, aby wysłać zaproszenie "
-"użytkownikowi %s. Aby utworzyć nową konferencję, należy wybrać \"Utwórz nową "
-"konferencję\"."
+"użytkownikowi %s. Aby utworzyć nową konferencję, należy wybrać „Utwórz nową "
+"konferencję”."
 
 msgid "Invite to Conference"
 msgstr "Zaproś do konferencji"
 
 msgid "Invite to Conference..."
-msgstr "Zaproś do konferencji..."
+msgstr "Zaproś do konferencji…"
 
 msgid "Send TEST Announcement"
 msgstr "Wyślij ogłoszenie TESTOWE"
@@ -8541,9 +8540,9 @@ msgid ""
 "The identifier '%s' may possibly refer to any of the following users. Please "
 "select the correct user from the list below to add them to your buddy list."
 msgstr ""
-"Identyfikator \"%s\" może odnosić się do dowolnego z poniższych "
-"użytkowników. Proszę wybrać poprawnego użytkownika z poniższej listy, aby "
-"dodać go do listy znajomych."
+"Identyfikator „%s” może odnosić się do dowolnego z poniższych użytkowników. "
+"Proszę wybrać poprawnego użytkownika z poniższej listy, aby dodać go do "
+"listy znajomych."
 
 msgid "Select User"
 msgstr "Wybór użytkownika"
@@ -8556,7 +8555,7 @@ msgid ""
 "The identifier '%s' did not match any users in your Sametime community. This "
 "entry has been removed from your buddy list."
 msgstr ""
-"Identyfikator \"%s\" nie pasuje do żadnego użytkownika w społeczności "
+"Identyfikator „%s” nie pasuje do żadnego użytkownika w społeczności "
 "Sametime. Ten wpis został usunięty z listy znajomych."
 
 #, c-format
@@ -8598,7 +8597,7 @@ msgstr "Nie można dodać grupy: grupa już istnieje"
 
 #, c-format
 msgid "A group named '%s' already exists in your buddy list."
-msgstr "Grupa o nazwie \"%s\" już istnieje na liście znajomych."
+msgstr "Grupa o nazwie „%s” już istnieje na liście znajomych."
 
 msgid "Unable to add group"
 msgstr "Nie można dodać grupy"
@@ -8615,7 +8614,7 @@ msgid ""
 "Book groups. Please select the correct group from the list below to add it "
 "to your buddy list."
 msgstr ""
-"Identyfikator \"%s\" może odnosić się do dowolnej grupy książki adresowej "
+"Identyfikator „%s” może odnosić się do dowolnej grupy książki adresowej "
 "programu Notes. Proszę wybrać poprawną grupę z poniższej listy, aby dodać ją "
 "do listy znajomych."
 
@@ -8630,7 +8629,7 @@ msgid ""
 "The identifier '%s' did not match any Notes Address Book groups in your "
 "Sametime community."
 msgstr ""
-"Identyfikator \"%s\" nie pasuje do żadnej grupy książki adresowej programu "
+"Identyfikator „%s” nie pasuje do żadnej grupy książki adresowej programu "
 "Notes w społeczności Sametime."
 
 msgid "Notes Address Book Group"
@@ -8645,7 +8644,7 @@ msgstr ""
 
 #, c-format
 msgid "Search results for '%s'"
-msgstr "Wyniki wyszukiwania dla \"%s\""
+msgstr "Wyniki wyszukiwania dla „%s”"
 
 #, c-format
 msgid ""
@@ -8653,9 +8652,9 @@ msgid ""
 "may add these users to your buddy list or send them messages with the action "
 "buttons below."
 msgstr ""
-"Identyfikator \"%s\" może odnosić się do dowolnego z poniższych "
-"użytkowników. Można dodać tych użytkowników do listy znajomych lub wysłać im "
-"wiadomości za pomocą poniższych przycisków czynności."
+"Identyfikator „%s” może odnosić się do dowolnego z poniższych użytkowników. "
+"Można dodać tych użytkowników do listy znajomych lub wysłać im wiadomości za "
+"pomocą poniższych przycisków czynności."
 
 msgid "Search Results"
 msgstr "Wyniki wyszukiwania"
@@ -8666,8 +8665,7 @@ msgstr "Brak wyników"
 #, c-format
 msgid "The identifier '%s' did not match any users in your Sametime community."
 msgstr ""
-"Identyfikator \"%s\" nie pasuje do żadnego użytkownika w społeczności "
-"Sametime."
+"Identyfikator „%s” nie pasuje do żadnego użytkownika w społeczności Sametime."
 
 msgid "No Matches"
 msgstr "Brak wyników"
@@ -8686,16 +8684,16 @@ msgid "User Search"
 msgstr "Wyszukiwanie użytkownika"
 
 msgid "Import Sametime List..."
-msgstr "Zaimportuj listę Sametime..."
+msgstr "Zaimportuj listę Sametime…"
 
 msgid "Export Sametime List..."
-msgstr "Wyeksportuj listę Sametime..."
+msgstr "Wyeksportuj listę Sametime…"
 
 msgid "Add Notes Address Book Group..."
-msgstr "Dodaj grupę książki adresowej programu Notes..."
+msgstr "Dodaj grupę książki adresowej programu Notes…"
 
 msgid "User Search..."
-msgstr "Wyszukiwanie użytkownika..."
+msgstr "Wyszukiwanie użytkownika…"
 
 msgid "Force login (ignore server redirects)"
 msgstr "Wymuszenie logowania (ignorowanie przekierowań serwera)"
@@ -8797,7 +8795,7 @@ msgstr ""
 
 #. Open file selector to select the public key.
 msgid "Open..."
-msgstr "Otwórz..."
+msgstr "Otwórz…"
 
 #, c-format
 msgid "The %s buddy is not present in the network"
@@ -8811,7 +8809,7 @@ msgstr ""
 "celu należy nacisnąć przycisk Zaimportuj."
 
 msgid "_Import..."
-msgstr "Zai_mportuj..."
+msgstr "Zai_mportuj…"
 
 msgid "Select correct user"
 msgstr "Wybór właściwego użytkownika"
@@ -8874,7 +8872,7 @@ msgid "IM with Password"
 msgstr "Wiadomość z hasłem"
 
 msgid "Get Public Key..."
-msgstr "Pobierz klucz publiczny..."
+msgstr "Pobierz klucz publiczny…"
 
 msgid "Kill User"
 msgstr "Zabij użytkownika"
@@ -8937,7 +8935,7 @@ msgstr "Dodaj klucz publiczny kanału"
 
 #. Add new public key
 msgid "Open Public Key..."
-msgstr "Otwórz klucz publiczny..."
+msgstr "Otwórz klucz publiczny…"
 
 msgid "Channel Passphrase"
 msgstr "Hasło kanału"
@@ -9161,7 +9159,7 @@ msgid "Public Key Babbleprint"
 msgstr "Czytelny odcisk klucza publicznego"
 
 msgid "_More..."
-msgstr "_Więcej..."
+msgstr "_Więcej…"
 
 msgid "Detach From Server"
 msgstr "Odłącz od serwera"
@@ -9261,7 +9259,7 @@ msgid "Authenticating connection"
 msgstr "Uwierzytelnianie połączenia"
 
 msgid "Verifying server public key"
-msgstr "Sprawdzanie klucza publicznego serwera"
+msgstr "Sprawdzanie poprawności klucza publicznego serwera"
 
 msgid "Passphrase required"
 msgstr "Hasło jest wymagane"
@@ -9294,7 +9292,7 @@ msgid "Verify Public Key"
 msgstr "Sprawdź klucz publiczny"
 
 msgid "_View..."
-msgstr "_Wyświetl..."
+msgstr "_Wyświetl…"
 
 msgid "Unsupported public key type"
 msgstr "Nieobsługiwany typ klucza publicznego"
@@ -9430,7 +9428,7 @@ msgid "View Message of the Day"
 msgstr "Wyświetl wiadomość dnia"
 
 msgid "Create SILC Key Pair..."
-msgstr "Utwórz parę kluczy SILC..."
+msgstr "Utwórz parę kluczy SILC…"
 
 #, c-format
 msgid "User <I>%s</I> is not present in the network"
@@ -9617,10 +9615,10 @@ msgid "Automatically open whiteboard"
 msgstr "Automatyczne otwieranie tablicy"
 
 msgid "Digitally sign and verify all messages"
-msgstr "Cyfrowe podpisywanie i sprawdzanie wszystkich wiadomości"
+msgstr "Cyfrowe podpisywanie i sprawdzanie poprawności wszystkich wiadomości"
 
 msgid "Creating SILC key pair..."
-msgstr "Tworzenie pary kluczy SILC..."
+msgstr "Tworzenie pary kluczy SILC…"
 
 msgid "Unable to create SILC key pair"
 msgstr "Nie można utworzyć pary kluczy SILC"
@@ -9830,7 +9828,7 @@ msgid "doodle: Request user to start a Doodle session"
 msgstr "doodle: prosi użytkownika o rozpoczęcia sesji Doodle"
 
 msgid "Yahoo ID..."
-msgstr "Identyfikator Yahoo!..."
+msgstr "Identyfikator Yahoo!…"
 
 #. *< type
 #. *< ui_requirement
@@ -9867,7 +9865,7 @@ msgid "Chat room list URL"
 msgstr "Adres URL listy pokoi konferencji"
 
 msgid "Yahoo JAPAN ID..."
-msgstr "Identyfikator Yahoo! Japan..."
+msgstr "Identyfikator Yahoo! Japan…"
 
 #. *< type
 #. *< ui_requirement
@@ -9967,7 +9965,7 @@ msgid ""
 "\"Yes\" will remove and ignore the buddy."
 msgstr ""
 "Próbowano zignorować użytkownika %s, ale znajduje się on na liście "
-"znajomych. Naciśnięcie przycisku \"Tak\" usunie i zignoruje znajomego."
+"znajomych. Naciśnięcie przycisku „Tak” usunie i zignoruje znajomego."
 
 msgid "Ignore buddy?"
 msgstr "Zignorować znajomego?"
@@ -10078,10 +10076,10 @@ msgid "Join whom in chat?"
 msgstr "Kogo dołączyć do konferencji?"
 
 msgid "Activate ID..."
-msgstr "Aktywuj identyfikator..."
+msgstr "Aktywuj identyfikator…"
 
 msgid "Join User in Chat..."
-msgstr "Dołącz użytkownika do konferencji..."
+msgstr "Dołącz użytkownika do konferencji…"
 
 msgid "Open Inbox"
 msgstr "Otwórz skrzynkę odbiorczą"
@@ -10247,7 +10245,7 @@ msgid ""
 "in the Account Editor)"
 msgstr ""
 "(Wystąpił błąd podczas konwertowania tej wiadomości.\t Proszę sprawdzić "
-"opcję \"Kodowanie\" w edytorze kont)"
+"opcję „Kodowanie” w edytorze kont)"
 
 #, c-format
 msgid "Unable to send to chat %s,%s,%s"
@@ -10391,7 +10389,7 @@ msgstr "Błąd podczas rozwiązywania %s"
 
 #, c-format
 msgid "Requesting %s's attention..."
-msgstr "Proszenie o uwagę użytkownika %s..."
+msgstr "Proszenie o uwagę użytkownika %s…"
 
 #, c-format
 msgid "%s has requested your attention!"
@@ -10521,7 +10519,7 @@ msgid "%x %X"
 msgstr "%x %X"
 
 msgid "Calculating..."
-msgstr "Obliczanie..."
+msgstr "Obliczanie…"
 
 msgid "Unknown."
 msgstr "Nieznany."
@@ -10604,7 +10602,7 @@ msgstr "Nie można połączyć się z %s: %s"
 
 #, c-format
 msgid " - %s"
-msgstr " - %s"
+msgstr " — %s"
 
 #, c-format
 msgid " (%s)"
@@ -10663,10 +10661,10 @@ msgid "The buddy list showing friends on different networks."
 msgstr "Lista znajomych wyświetlająca osoby używające różnych sieci."
 
 msgid "Pidgin Internet Messenger"
-msgstr "Komunikator internetowy Pidgin"
+msgstr "Pidgin"
 
 msgid "Internet Messenger"
-msgstr "Komunikator internetowy"
+msgstr "Komunikator"
 
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
@@ -10798,8 +10796,8 @@ msgstr ""
 "\n"
 "Nie skonfigurowano jeszcze żadnych kont komunikatora. Aby rozpocząć łączenie "
 "się za pomocą programu %s, należy najpierw nacisnąć poniższy przycisk "
-"<b>Dodaj...</b> i skonfigurować konto. Aby program %s łączył się z wieloma "
-"kontami, należy nacisnąć przycisk <b>Dodaj...</b> ponownie, aby je "
+"<b>Dodaj…</b> i skonfigurować konto. Aby program %s łączył się z wieloma "
+"kontami, należy nacisnąć przycisk <b>Dodaj…</b> ponownie, aby je "
 "skonfigurować.\n"
 "\n"
 "Można wrócić do tego okna, aby dodać, zmodyfikować lub usunąć konta z menu "
@@ -10954,7 +10952,7 @@ msgid ""
 msgstr ""
 "Połączenie tych kontaktów spowoduje współdzielenie pojedynczego wpisu na "
 "liście znajomych i używanie pojedynczego okna rozmowy. Można oddzielić je "
-"ponownie przez wybranie \"Rozwiń\" z menu kontekstowego kontaktu"
+"ponownie przez wybranie „Rozwiń” z menu kontekstowego kontaktu"
 
 msgid "Please update the necessary fields."
 msgstr "Proszę zaktualizować wymagane pola."
@@ -10996,10 +10994,10 @@ msgid "_Video Call"
 msgstr "Rozmowa _wideo"
 
 msgid "_Send File..."
-msgstr "_Wyślij plik..."
+msgstr "_Wyślij plik…"
 
 msgid "Add Buddy _Pounce..."
-msgstr "Dodaj przechwytywanie _zdarzeń..."
+msgstr "Dodaj przechwytywanie _zdarzeń…"
 
 msgid "View _Log"
 msgstr "Wyświetl _dziennik rozmów"
@@ -11011,22 +11009,22 @@ msgid "Show When Offline"
 msgstr "Wyświetl w trybie offline"
 
 msgid "_Alias..."
-msgstr "_Alias..."
+msgstr "_Alias…"
 
 msgid "_Remove"
 msgstr "_Usuń"
 
 msgid "Set Custom Icon"
-msgstr "Ustaw własną ikonę"
+msgstr "Ustaw niestandardową ikonę"
 
 msgid "Remove Custom Icon"
-msgstr "Usuń własną ikonę"
+msgstr "Usuń niestandardową ikonę"
 
 msgid "Add _Buddy..."
-msgstr "Dodaj _znajomego..."
+msgstr "Dodaj _znajomego…"
 
 msgid "Add C_hat..."
-msgstr "Dodaj _konferencję..."
+msgstr "Dodaj _konferencję…"
 
 msgid "_Delete Group"
 msgstr "_Usuń grupę"
@@ -11039,13 +11037,13 @@ msgid "_Join"
 msgstr "_Dołącz"
 
 msgid "Auto-Join"
-msgstr "Automatyczne dołączenie"
+msgstr "Automatyczne dołączanie"
 
 msgid "Persistent"
 msgstr "Trwałe"
 
 msgid "_Edit Settings..."
-msgstr "Zmodyfikuj ustawi_enia..."
+msgstr "Modyfikuj ustawi_enia…"
 
 msgid "_Collapse"
 msgstr "_Zwiń"
@@ -11083,16 +11081,16 @@ msgid "/_Buddies"
 msgstr "/_Znajomi"
 
 msgid "/Buddies/New Instant _Message..."
-msgstr "/Znajomi/Nowa wiado_mość..."
+msgstr "/Znajomi/Nowa wiado_mość…"
 
 msgid "/Buddies/Join a _Chat..."
-msgstr "/Znajomi/Dołącz do _konferencji..."
+msgstr "/Znajomi/Dołącz do _konferencji…"
 
 msgid "/Buddies/Get User _Info..."
-msgstr "/Znajomi/_Informacje o użytkowniku..."
+msgstr "/Znajomi/_Informacje o użytkowniku…"
 
 msgid "/Buddies/View User _Log..."
-msgstr "/Znajomi/_Dziennik rozmów użytkownika..."
+msgstr "/Znajomi/_Dziennik rozmów użytkownika…"
 
 msgid "/Buddies/Sh_ow"
 msgstr "/Znajomi/Wyświ_etlanie"
@@ -11116,13 +11114,13 @@ msgid "/Buddies/_Sort Buddies"
 msgstr "/Znajomi/_Porządkowanie znajomych"
 
 msgid "/Buddies/_Add Buddy..."
-msgstr "/Znajomi/Dod_aj znajomego..."
+msgstr "/Znajomi/_Dodaj znajomego…"
 
 msgid "/Buddies/Add C_hat..."
-msgstr "/Znajomi/Dodaj ko_nferencję..."
+msgstr "/Znajomi/Dodaj ko_nferencję…"
 
 msgid "/Buddies/Add _Group..."
-msgstr "/Znajomi/Dodaj g_rupę..."
+msgstr "/Znajomi/Dodaj g_rupę…"
 
 msgid "/Buddies/_Quit"
 msgstr "/Znajomi/Za_kończ"
@@ -11145,7 +11143,7 @@ msgid "/Tools/_Certificates"
 msgstr "/Narzędzia/_Certyfikaty"
 
 msgid "/Tools/Custom Smile_ys"
-msgstr "/Narzędzia/Własne _emotikony"
+msgstr "/Narzędzia/Niestandardowe _emotikony"
 
 msgid "/Tools/Plu_gins"
 msgstr "/Narzędzia/W_tyczki"
@@ -11253,22 +11251,22 @@ msgid "Idle %dm"
 msgstr "Bezczynny %dm"
 
 msgid "/Buddies/New Instant Message..."
-msgstr "/Znajomi/Nowa wiadomość..."
+msgstr "/Znajomi/Nowa wiadomość…"
 
 msgid "/Buddies/Join a Chat..."
-msgstr "/Znajomi/Dołącz do konferencji..."
+msgstr "/Znajomi/Dołącz do konferencji…"
 
 msgid "/Buddies/Get User Info..."
-msgstr "/Znajomi/Pobierz informacje o użytkowniku..."
+msgstr "/Znajomi/Pobierz informacje o użytkowniku…"
 
 msgid "/Buddies/Add Buddy..."
-msgstr "/Znajomi/Dodaj znajomego..."
+msgstr "/Znajomi/Dodaj znajomego…"
 
 msgid "/Buddies/Add Chat..."
-msgstr "/Znajomi/Dodaj konferencję..."
+msgstr "/Znajomi/Dodaj konferencję…"
 
 msgid "/Buddies/Add Group..."
-msgstr "/Znajomi/Dodaj grupę..."
+msgstr "/Znajomi/Dodaj grupę…"
 
 msgid "/Tools/Privacy"
 msgstr "/Narzędzia/Prywatność"
@@ -11404,11 +11402,9 @@ msgstr "A_lias:"
 msgid "_Group:"
 msgstr "_Grupa:"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
 msgstr "Aut_omatyczne dołączanie podczas połączenia konta"
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
 msgstr "Pozostawanie w konfe_rencji po zamknięciu okna"
 
@@ -11425,10 +11421,10 @@ msgid "<PurpleMain>/Accounts/"
 msgstr "<PurpleMain>/Konta/"
 
 msgid "_Edit Account"
-msgstr "Zm_odyfikuj konto"
+msgstr "M_odyfikuj konto"
 
 msgid "Set _Mood..."
-msgstr "Ustaw _nastrój..."
+msgstr "Ustaw _nastrój…"
 
 msgid "No actions available"
 msgstr "Brak dostępnych czynności"
@@ -11449,9 +11445,8 @@ msgstr "Proszę podać nazwę komputera dla tego certyfikatu."
 msgid "SSL Servers"
 msgstr "Serwery SSL"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "Obsługiwane opcje debugowania: plugins version"
+msgstr "Obsługiwane opcje debugowania: plugins, version"
 
 msgid "Unknown command."
 msgstr "Nieznane polecenie."
@@ -11505,10 +11500,10 @@ msgid "Hide Icon"
 msgstr "Ukryj ikonę"
 
 msgid "Save Icon As..."
-msgstr "Zapisz ikonę jako..."
+msgstr "Zapisz ikonę jako…"
 
 msgid "Set Custom Icon..."
-msgstr "Ustaw własną ikonkę..."
+msgstr "Ustaw niestandardową ikonę…"
 
 msgid "Change Size"
 msgstr "Zmień rozmiar"
@@ -11521,19 +11516,19 @@ msgid "/_Conversation"
 msgstr "/_Rozmowa"
 
 msgid "/Conversation/New Instant _Message..."
-msgstr "/Rozmowa/Nowa _wiadomość..."
+msgstr "/Rozmowa/Nowa _wiadomość…"
 
 msgid "/Conversation/Join a _Chat..."
-msgstr "/Rozmowa/_Dołącz do konferencji..."
+msgstr "/Rozmowa/_Dołącz do konferencji…"
 
 msgid "/Conversation/_Find..."
-msgstr "/Rozmowa/_Znajdź..."
+msgstr "/Rozmowa/_Znajdź…"
 
 msgid "/Conversation/View _Log"
 msgstr "/Rozmowa/Wyświetl _dziennik rozmów"
 
 msgid "/Conversation/_Save As..."
-msgstr "/Rozmowa/Zapi_sz jako..."
+msgstr "/Rozmowa/Zapi_sz jako…"
 
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Rozmowa/Wy_czyść okno"
@@ -11551,43 +11546,43 @@ msgid "/Conversation/Media/Audio\\/Video _Call"
 msgstr "/Rozmowa/Multimedia/_Rozmowa głosowa\\/wideo"
 
 msgid "/Conversation/Se_nd File..."
-msgstr "/Rozmowa/Wyślij p_lik..."
+msgstr "/Rozmowa/Wyślij p_lik…"
 
 msgid "/Conversation/Get _Attention"
 msgstr "/Rozmowa/Zw_róć uwagę"
 
 msgid "/Conversation/Add Buddy _Pounce..."
-msgstr "/Rozmowa/Dodaj przechwytywanie _zdarzeń..."
+msgstr "/Rozmowa/Dodaj przechwytywanie _zdarzeń…"
 
 msgid "/Conversation/_Get Info"
 msgstr "/Rozmowy/_Pobierz informacje"
 
 msgid "/Conversation/In_vite..."
-msgstr "/Rozmowa/Z_aproś..."
+msgstr "/Rozmowa/Z_aproś…"
 
 msgid "/Conversation/M_ore"
 msgstr "/Rozmowa/Więc_ej"
 
 msgid "/Conversation/Al_ias..."
-msgstr "/Rozmowy/_Alias..."
+msgstr "/Rozmowy/_Alias…"
 
 msgid "/Conversation/_Block..."
-msgstr "/Rozmowa/Za_blokuj..."
+msgstr "/Rozmowa/Za_blokuj…"
 
 msgid "/Conversation/_Unblock..."
-msgstr "/Rozmowa/Od_blokuj..."
+msgstr "/Rozmowa/Od_blokuj…"
 
 msgid "/Conversation/_Add..."
-msgstr "/Rozmowa/Dod_aj..."
+msgstr "/Rozmowa/_Dodaj…"
 
 msgid "/Conversation/_Remove..."
-msgstr "/Rozmowa/_Usuń..."
+msgstr "/Rozmowa/_Usuń…"
 
 msgid "/Conversation/Insert Lin_k..."
-msgstr "/Rozmowa/Wstaw odnośni_k..."
+msgstr "/Rozmowa/Wstaw odnośni_k…"
 
 msgid "/Conversation/Insert Imag_e..."
-msgstr "/Rozmowa/Wstaw _obraz..."
+msgstr "/Rozmowa/Wstaw _obraz…"
 
 msgid "/Conversation/_Close"
 msgstr "/Rozmowa/Za_mknij"
@@ -11635,40 +11630,40 @@ msgid "/Conversation/Media/Audio\\/Video Call"
 msgstr "/Rozmowa/Multimedia/Rozmowa głosowa\\/wideo"
 
 msgid "/Conversation/Send File..."
-msgstr "/Rozmowa/Wyślij plik..."
+msgstr "/Rozmowa/Wyślij plik…"
 
 msgid "/Conversation/Get Attention"
 msgstr "/Rozmowa/Zwróć uwagę"
 
 msgid "/Conversation/Add Buddy Pounce..."
-msgstr "/Rozmowa/Dodaj przechwytywanie zdarzeń..."
+msgstr "/Rozmowa/Dodaj przechwytywanie zdarzeń…"
 
 msgid "/Conversation/Get Info"
 msgstr "/Rozmowa/Pobierz informacje"
 
 msgid "/Conversation/Invite..."
-msgstr "/Rozmowa/Zaproś..."
+msgstr "/Rozmowa/Zaproś…"
 
 msgid "/Conversation/Alias..."
-msgstr "/Rozmowa/Alias..."
+msgstr "/Rozmowa/Alias…"
 
 msgid "/Conversation/Block..."
-msgstr "/Rozmowa/Zablokuj..."
+msgstr "/Rozmowa/Zablokuj…"
 
 msgid "/Conversation/Unblock..."
-msgstr "/Rozmowa/Odblokuj..."
+msgstr "/Rozmowa/Odblokuj…"
 
 msgid "/Conversation/Add..."
-msgstr "/Rozmowa/Dodaj..."
+msgstr "/Rozmowa/Dodaj…"
 
 msgid "/Conversation/Remove..."
-msgstr "/Rozmowa/Usuń..."
+msgstr "/Rozmowa/Usuń…"
 
 msgid "/Conversation/Insert Link..."
-msgstr "/Rozmowa/Wstaw odnośnik..."
+msgstr "/Rozmowa/Wstaw odnośnik…"
 
 msgid "/Conversation/Insert Image..."
-msgstr "/Rozmowa/Wstaw obraz..."
+msgstr "/Rozmowa/Wstaw obraz…"
 
 msgid "/Options/Enable Logging"
 msgstr "/Opcje/Zapis do dziennika"
@@ -11683,7 +11678,7 @@ msgid "/Options/Show Timestamps"
 msgstr "/Opcje/Wyświetlanie dat"
 
 msgid "User is typing..."
-msgstr "Użytkownik coś pisze..."
+msgstr "Użytkownik coś pisze…"
 
 #, c-format
 msgid ""
@@ -11896,7 +11891,7 @@ msgid "Bengali-India"
 msgstr "bengalski (Indie)"
 
 msgid "Breton"
-msgstr ""
+msgstr "bretoński"
 
 msgid "Bodo"
 msgstr "bodo"
@@ -11908,7 +11903,7 @@ msgid "Catalan"
 msgstr "kataloński"
 
 msgid "Valencian-Catalan"
-msgstr "walencki - kataloński"
+msgstr "walencki (kataloński)"
 
 msgid "Czech"
 msgstr "czeski"
@@ -12378,7 +12373,7 @@ msgstr "Usuń konfe_rencję"
 msgid "Right-click for more unread messages...\n"
 msgstr ""
 "Naciśnięcie prawym przyciskiem myszy wyświetli więcej nieprzeczytanych "
-"wiadomości...\n"
+"wiadomości…\n"
 
 msgid "_Change Status"
 msgstr "_Zmień stan"
@@ -12390,7 +12385,7 @@ msgid "_Unread Messages"
 msgstr "_Nieprzeczytane wiadomości"
 
 msgid "New _Message..."
-msgstr "Nowa wiado_mość..."
+msgstr "Nowa wiado_mość…"
 
 msgid "_Accounts"
 msgstr "Kont_a"
@@ -12508,7 +12503,7 @@ msgid "Color to draw the name of a message you received."
 msgstr "Kolor wyświetlania nazwy odebranej wiadomości."
 
 msgid "\"Attention\" Name Color"
-msgstr "Kolor nazwy \"uwagi\""
+msgstr "Kolor nazwy „uwagi”"
 
 msgid "Color to draw the name of a message you received containing your name."
 msgstr ""
@@ -12571,10 +12566,10 @@ msgid "Save Image"
 msgstr "Zapis obrazu"
 
 msgid "_Save Image..."
-msgstr "Zapi_sz obraz..."
+msgstr "Zapi_sz obraz…"
 
 msgid "_Add Custom Smiley..."
-msgstr "Dod_aj własną emotikonę..."
+msgstr "_Dodaj niestandardową emotikonę…"
 
 msgid "Select Font"
 msgstr "Wybór czcionki"
@@ -12618,15 +12613,15 @@ msgid ""
 "This smiley is disabled because a custom smiley exists for this shortcut:\n"
 " %s"
 msgstr ""
-"Ta emotikona jest wyłączona, ponieważ istnieje własna emotikona dla tego "
-"skrótu:\n"
+"Ta emotikona jest wyłączona, ponieważ istnieje niestandardowa emotikona dla "
+"tego skrótu:\n"
 " %s"
 
 msgid "Smile!"
 msgstr "Uśmiech!"
 
 msgid "_Manage custom smileys"
-msgstr "_Zarządzaj własnymi emotikonami"
+msgstr "_Zarządzaj niestandardowymi emotikonami"
 
 msgid "This theme has no available smileys."
 msgstr "Ten motyw nie posiada emotikon."
@@ -12754,7 +12749,7 @@ msgid "Delete Log?"
 msgstr "Usunąć dziennik?"
 
 msgid "Delete Log..."
-msgstr "Usuń dziennik..."
+msgstr "Usuń dziennik…"
 
 #, c-format
 msgid "<span size='larger' weight='bold'>Conversation in %s on %s</span>"
@@ -12771,14 +12766,14 @@ msgstr "_Przeglądaj katalog dzienników rozmów"
 
 #, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
-msgstr "%s %s. Należy podać \"%s -h\", aby uzyskać więcej informacji.\n"
+msgstr "%s %s. Polecenie „%s -h” wyświetli więcej informacji.\n"
 
 #, c-format
 msgid ""
 "Usage: %s [OPTION]...\n"
 "\n"
 msgstr ""
-"Użycie: %s [OPCJA]...\n"
+"Użycie: %s [OPCJA]…\n"
 "\n"
 
 msgid "DIR"
@@ -12859,9 +12854,8 @@ msgstr "_Multimedia"
 msgid "_Hangup"
 msgstr "_Rozłącz się"
 
-#, fuzzy
 msgid "Media error"
-msgstr "Błąd odczytywania"
+msgstr "Błąd multimediów"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12880,35 +12874,35 @@ msgstr "Rozmowa przychodząca"
 #.
 #. Letters on the '2' key of a numeric keypad
 msgid "ABC"
-msgstr ""
+msgstr "AĄBCĆ"
 
 #. Letters on the '3' key of a numeric keypad
 msgid "DEF"
-msgstr ""
+msgstr "DEĘF"
 
 #. Letters on the '4' key of a numeric keypad
 msgid "GHI"
-msgstr ""
+msgstr "GHI"
 
 #. Letters on the '5' key of a numeric keypad
 msgid "JKL"
-msgstr ""
+msgstr "JKLŁ"
 
 #. Letters on the '6' key of a numeric keypad
 msgid "MNO"
-msgstr ""
+msgstr "MNŃOÓ"
 
 #. Letters on the '7' key of a numeric keypad
 msgid "PQRS"
-msgstr ""
+msgstr "PQRSŚ"
 
 #. Letters on the '8' key of a numeric keypad
 msgid "TUV"
-msgstr ""
+msgstr "TUV"
 
 #. Letters on the '9' key of a numeric keypad
 msgid "WXYZ"
-msgstr ""
+msgstr "WXYZŻŹ"
 
 msgid "_Hold"
 msgstr "_Wstrzymaj"
@@ -12935,23 +12929,22 @@ msgstr[2] "<b>%d nowych wiadomości e-mail.</b>"
 
 #, c-format
 msgid "The browser command \"%s\" is invalid."
-msgstr "Polecenie przeglądarki \"%s\" jest nieprawidłowe."
+msgstr "Polecenie przeglądarki „%s” jest nieprawidłowe."
 
 msgid "Unable to open URL"
 msgstr "Nie można otworzyć adresu URL"
 
 #, c-format
 msgid "Error launching \"%s\": %s"
-msgstr "Błąd podczas uruchamiania \"%s\": %s"
+msgstr "Błąd podczas uruchamiania „%s”: %s"
 
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
-msgstr ""
-"Wybrano \"ręczne\" polecenie przeglądarki, ale nie ustawiono polecenia."
+msgstr "Wybrano „ręczne” polecenie przeglądarki, ale nie ustawiono polecenia."
 
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
 msgstr ""
-"Nie można otworzyć adresu URL: \"ręczne\" polecenie przeglądarki jest "
+"Nie można otworzyć adresu URL: „ręczne” polecenie przeglądarki jest "
 "nieprawidłowe."
 
 msgid "No message"
@@ -13029,7 +13022,7 @@ msgid "Select a file"
 msgstr "Wybór pliku"
 
 msgid "Modify Buddy Pounce"
-msgstr "Zmodyfikuj przechwytywanie zdarzenie"
+msgstr "Modyfikuj przechwytywanie zdarzenie"
 
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
@@ -13087,10 +13080,10 @@ msgid "P_lay a sound"
 msgstr "O_dtworzenie dźwięku"
 
 msgid "Brows_e..."
-msgstr "Prz_eglądaj..."
+msgstr "Prz_eglądaj…"
 
 msgid "Br_owse..."
-msgstr "Przegląd_aj..."
+msgstr "Przegląd_aj…"
 
 msgid "Pre_view"
 msgstr "Podg_ląd"
@@ -13135,10 +13128,10 @@ msgid "Sent a message"
 msgstr "Wysłanie wiadomości"
 
 msgid "Unknown.... Please report this!"
-msgstr "Nieznane... Proszę to zgłosić."
+msgstr "Nieznane… Proszę to zgłosić."
 
 msgid "(Custom)"
-msgstr "(Własne)"
+msgstr "(Niestandardowe)"
 
 msgid "Penguin Pimps"
 msgstr "Pingwinki"
@@ -13272,7 +13265,7 @@ msgid "F_lash window when IMs are received"
 msgstr "_Migotanie okna po odebraniu wiadomości"
 
 msgid "Resize incoming custom smileys"
-msgstr "Zmiana rozmiaru przychodzących własnych emotikon"
+msgstr "Zmiana rozmiaru przychodzących niestandardowych emotikon"
 
 msgid "Maximum size:"
 msgstr "Maksymalny rozmiar:"
@@ -13542,7 +13535,7 @@ msgid "Play"
 msgstr "Odtwórz"
 
 msgid "_Browse..."
-msgstr "_Przeglądaj..."
+msgstr "_Przeglądaj…"
 
 msgid "_Reset"
 msgstr "P_rzywróć"
@@ -13669,7 +13662,7 @@ msgid "Choose New Name"
 msgstr "Wybór nowej nazwy"
 
 msgid "Select Folder..."
-msgstr "Wybierz katalog..."
+msgstr "Wybierz katalog…"
 
 #. list button
 msgid "_Get List"
@@ -13677,7 +13670,7 @@ msgstr "_Pobierz listę"
 
 #. add button
 msgid "_Add Chat"
-msgstr "Dod_aj konferencję"
+msgstr "_Dodaj konferencję"
 
 msgid "Are you sure you want to delete the selected saved statuses?"
 msgstr "Na pewno usunąć wybrane zapisane stany?"
@@ -13713,10 +13706,11 @@ msgstr "Stan dla %s"
 #, c-format
 msgid ""
 "A custom smiley for '%s' already exists.  Please use a different shortcut."
-msgstr "Własna emotikona dla \"%s\" już istnieje. Proszę wybrać inny skrót."
+msgstr ""
+"Niestandardowa emotikona dla „%s” już istnieje. Proszę wybrać inny skrót."
 
 msgid "Custom Smiley"
-msgstr "Własna emotikona"
+msgstr "Niestandardowa emotikona"
 
 msgid "Duplicate Shortcut"
 msgstr "Duplikat skrótu"
@@ -13741,7 +13735,7 @@ msgid "Shortcut Text"
 msgstr "Tekst skrótu"
 
 msgid "Custom Smiley Manager"
-msgstr "Menadżer własnych emotikon"
+msgstr "Menedżer niestandardowych emotikon"
 
 msgid "Select Buddy Icon"
 msgstr "Wybór ikony znajomego"
@@ -13756,10 +13750,10 @@ msgid "Waiting for network connection"
 msgstr "Oczekiwanie na połączenie sieciowe"
 
 msgid "New status..."
-msgstr "Nowy stan..."
+msgstr "Nowy stan…"
 
 msgid "Saved statuses..."
-msgstr "Zapisane stany..."
+msgstr "Zapisane stany…"
 
 msgid "Status Selector"
 msgstr "Wybór stanu"
@@ -13850,11 +13844,11 @@ msgid ""
 msgstr ""
 "<b>Plik:</b> %s\n"
 "<b>Rozmiar pliku:</b> %s\n"
-"<b>Rozmiar obrazu:</b> %dx%d"
+"<b>Rozmiar obrazu:</b> %d×%d"
 
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
-msgstr "Plik \"%s\" jest za duży dla %s. Proszę spróbować mniejszego obrazu.\n"
+msgstr "Plik „%s” jest za duży dla %s. Proszę spróbować mniejszego obrazu.\n"
 
 msgid "Icon Error"
 msgstr "Błąd ikony"
@@ -13910,10 +13904,10 @@ msgid "_Invite"
 msgstr "_Zaproś"
 
 msgid "_Modify..."
-msgstr "Zm_odyfikuj..."
+msgstr "M_odyfikuj…"
 
 msgid "_Add..."
-msgstr "Dod_aj..."
+msgstr "_Dodaj…"
 
 msgid "_Open Mail"
 msgstr "_Otwórz pocztę"
@@ -13985,7 +13979,7 @@ msgid "Buddy is away"
 msgstr "Znajomy zaraz wraca"
 
 msgid "Buddy is \"extended\" away"
-msgstr "Użytkownik ma stan \"wrócę później\""
+msgstr "Użytkownik ma stan „wrócę później”"
 
 #. Not used yet.
 msgid "Buddy is mobile"
@@ -13995,7 +13989,7 @@ msgid "Buddy is offline"
 msgstr "Użytkownik jest w trybie offline"
 
 msgid "Point values to use when..."
-msgstr "Wskazywanie używanych wartości, kiedy..."
+msgstr "Wskazywanie używanych wartości, kiedy…"
 
 msgid ""
 "The buddy with the <i>largest score</i> is the buddy who will have priority "
@@ -14008,7 +14002,7 @@ msgid "Use last buddy when scores are equal"
 msgstr "Użycie ostatniego znajomego w przypadku równej ilości punktów"
 
 msgid "Point values to use for account..."
-msgstr "Wskazywanie używanej wartości dla konta..."
+msgstr "Wskazywanie używanej wartości dla konta…"
 
 #. *< type
 #. *< ui_requirement
@@ -14145,8 +14139,8 @@ msgid ""
 "Note: The preference for \"New conversations\" must be set to \"By "
 "conversation count\"."
 msgstr ""
-"Uwaga: preferencja dla \"Nowe rozmowy\" musi zostać ustawiona na \"Według "
-"liczby rozmów\"."
+"Uwaga: preferencja dla „Nowe rozmowy” musi zostać ustawiona na „Według "
+"liczby rozmów”."
 
 msgid "Number of conversations per window"
 msgstr "Liczba rozmów w jednym oknie"
@@ -14448,16 +14442,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Powiadamianie dla"
 
-#, fuzzy
 msgid "\t_Notify for System messages"
-msgstr "Komunikaty systemowe"
+msgstr "\t_Komunikaty systemowe"
 
 msgid "\t_Only when someone says your username"
 msgstr "\tTylk_o, kiedy ktoś wymawia nazwę użytkownika"
 
-#, fuzzy
 msgid "\tNotify for _System messages"
-msgstr "Komunikaty systemowe"
+msgstr "\tKomunikaty _systemowe"
 
 msgid "_Focused windows"
 msgstr "A_ktywnych oknach"
@@ -14479,7 +14471,7 @@ msgstr "Wstawianie liczby nowych wiadomości do właściwości _X"
 
 #. Urgent method button
 msgid "Set window manager \"_URGENT\" hint"
-msgstr "_Ustawienie podpowiedzi \"PILNY\" menedżera okien"
+msgstr "_Ustawienie podpowiedzi „PILNY” menedżera okien"
 
 msgid "_Flash window"
 msgstr "_Miganie okna"
@@ -14549,7 +14541,7 @@ msgstr "Wtyczka demonstracyjna programu Pidgin"
 #. *< version
 #. *  summary
 msgid "An example plugin that does stuff - see the description."
-msgstr "Przykładowa wtyczka, która coś robi - proszę zobaczyć opis."
+msgstr "Przykładowa wtyczka, która coś robi — proszę zobaczyć opis."
 
 #. *  description
 msgid ""
@@ -14559,9 +14551,9 @@ msgid ""
 "- It sends a message to people on your list immediately when they sign on"
 msgstr ""
 "To jest naprawdę doskonała wtyczka, która wiele robi:\n"
-"- Oznajmia, kto napisał program podczas logowania\n"
-"- Przepisuje przychodzący tekst od tyłu\n"
-"- Wysyła wiadomość do osób na liście zaraz po ich zalogowaniu"
+"• Oznajmia, kto napisał program podczas logowania\n"
+"• Przepisuje przychodzący tekst od tyłu\n"
+"• Wysyła wiadomość do osób na liście zaraz po ich zalogowaniu"
 
 msgid "Hyperlink Color"
 msgstr "Kolor odnośnika"
@@ -14649,7 +14641,7 @@ msgid ""
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Umożliwia wysyłanie surowego tekstu w protokołach tekstowych (XMPP, MSN, "
-"IRC, TOC). Naciśnięcie przycisku \"Enter\" w polu wprowadzania tekstu wysyła "
+"IRC, TOC). Naciśnięcie przycisku „Enter” w polu wprowadzania tekstu wysyła "
 "go. Należy obserwować okno debugowania."
 
 #, c-format
@@ -14836,10 +14828,10 @@ msgid "Pidgin Buddylist Theme Editor"
 msgstr "Edytor motywu listy znajomych programu Pidgin"
 
 msgid "Edit Buddylist Theme"
-msgstr "Zmodyfikuj motyw listy znajomych"
+msgstr "Modyfikuj motyw listy znajomych"
 
 msgid "Edit Icon Theme"
-msgstr "Zmodyfikuj motyw ikon"
+msgstr "Modyfikuj motyw ikon"
 
 #. *< type
 #. *< ui_requirement
@@ -14911,7 +14903,7 @@ msgid "24 hour time format"
 msgstr "24 godzinny format czasu"
 
 msgid "Show dates in..."
-msgstr "Wyświetlanie dat w..."
+msgstr "Wyświetlanie dat w…"
 
 msgid "Co_nversations:"
 msgstr "_Rozmowach:"
@@ -15265,13 +15257,12 @@ msgstr ""
 "Nie można odinstalować obecnie zainstalowanej wersji programu Pidgin. Nowa "
 "wersja zostanie zainstalowana bez usuwania obecnej."
 
-#, fuzzy
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
 "installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"Program Pidgin wymaga zgodnej biblioteki GTK+ (która nie jest jeszcze "
-"obecna).$\\rNa pewno pominąć instalowanie biblioteki GTK+?"
+"Program Pidgin wymaga zgodnej biblioteki GTK+ (która nie jest zainstalowana)."
+"$\\rNa pewno pominąć instalowanie biblioteki GTK+?"
 
 #. Installer Subsection Text
 msgid "URI Handlers"
