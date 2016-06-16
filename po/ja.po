@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Naoki Matsumoto (nekomatu) <nekomatu@gmail.com>, 2015
 # Yuki Shira <shirayuking@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Japanese (http://www.transifex.com/projects/p/pidgin/language/"
+"POT-Creation-Date: 2016-06-15 23:15-0500\n"
+"PO-Revision-Date: 2016-06-06 21:09+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Japanese (http://www.transifex.com/pidgin/pidgin/language/"
 "ja/)\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -1745,7 +1746,7 @@ msgid "SSL Certificate Error"
 msgstr "SSL 証明書エラー"
 
 msgid "Unable to validate certificate"
-msgstr "証明書を見所言うできません"
+msgstr "証明書を検証できません"
 
 #, c-format
 msgid ""
@@ -2211,21 +2212,19 @@ msgstr "<font color=\"red\"><b>ファイルを読み込めませんでした: %s
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "%s さんからのメッセージ"
+msgstr ""
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
 
-#, fuzzy
 msgid "Network error."
-msgstr "ネットワーク"
+msgstr ""
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
@@ -2241,9 +2240,8 @@ msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "サーバへ接続していません"
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "復帰できない Farsight2 のエラーが起こりました。"
@@ -11061,13 +11059,11 @@ msgstr "別名(_L):"
 msgid "_Group:"
 msgstr "グループ(_G):"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "アカウントが接続されたら自動的に参加する(_J)"
+msgstr ""
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
-msgstr "ウィンドウを閉じた後もチャットに残る(_R)"
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "追加するグループの名前を入力してください:"
@@ -11106,9 +11102,8 @@ msgstr ""
 msgid "SSL Servers"
 msgstr ""
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "サポートしているデバッグ・オプション: plugins version"
+msgstr ""
 
 msgid "Unknown command."
 msgstr ""
@@ -12476,9 +12471,8 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
-#, fuzzy
 msgid "Media error"
-msgstr "読み込み時にエラー"
+msgstr ""
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -14034,16 +14028,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "通知先"
 
-#, fuzzy
 msgid "\t_Notify for System messages"
-msgstr "システムのメッセージ"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t誰かがあなたのユーザ名を呼んだ時だけ(_O)"
 
-#, fuzzy
 msgid "\tNotify for _System messages"
-msgstr "システムのメッセージ"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "フォーカスしたウィンドウ(_F)"
