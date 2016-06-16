@@ -4,7 +4,7 @@ See AUTHORS and COPYRIGHT for the list of contributors.
 
 libpurple is a library intended to be used by programmers seeking
 to write an IM client that connects to many IM networks.  It supports
-AIM, ICQ, XMPP, MSN and Yahoo!, among others.
+AIM, ICQ, XMPP, and Yahoo!, among others.
 
 Pidgin is a graphical IM client written in C which uses the GTK+
 toolkit.
@@ -61,4 +61,3 @@ To build a plugin from a .c file, put it in the plugins/ directory in
 the source and run 'make filename.so', e.g. if you have the .c file
 'kickass.c', put it in the plugins/ directory, and from that directory,
 run 'make kickass.so'.
-
