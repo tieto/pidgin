@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"POT-Creation-Date: 2016-06-15 23:24-0500\n"
 "PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/pidgin/"
@@ -1494,6 +1494,7 @@ msgstr "Хтось говорить у балачці"
 msgid "Someone says your name in a chat"
 msgstr "Хтось сказав ваше ім'я у балачці"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Сповіщати виринаючим повідомленням коли"
 
@@ -1506,6 +1507,7 @@ msgstr "Встановити URGENT для вікна терміналу."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Додаток Toaster"
 
@@ -2254,6 +2256,27 @@ msgstr "<font color=\"red\"><b>Не вдається прочитати файл
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <АВТО-ВІДПОВІДЬ>: %s\n"
 
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr "Повідомлення від %s"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+#, fuzzy
+msgid "Network error."
+msgstr "Мережа"
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
@@ -2266,6 +2289,10 @@ msgid ""
 msgstr ""
 "Не залишилось жодного кодеку. Налаштування кодеків у fs-codecs.conf занадто "
 "суворі."
+
+#, fuzzy
+msgid "Could not connect to the remote party"
+msgstr "Немає з'єднання з сервером"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Сталася невиправна помилка Farsight2."
@@ -11304,10 +11331,12 @@ msgstr "Прізвисько:"
 msgid "_Group:"
 msgstr "_Група:"
 
-msgid "Auto_join when account connects."
+#, fuzzy
+msgid "Automatically _join when account connects"
 msgstr "Автоматично _приєднатися, коли обліковий запис з'єднається."
 
-msgid "_Remain in chat after window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed"
 msgstr "_Залишатися в балачці після того, як вікно закрите."
 
 msgid "Please enter the name of the group to be added."
@@ -11346,6 +11375,10 @@ msgstr "Напишіть назву вузла, якому належить це
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Сервери SSL"
+
+#, fuzzy
+msgid "Supported debug options are: plugins, version"
+msgstr "Підтримуються параметри зневадження: plugins version"
 
 msgid "Unknown command."
 msgstr "Невідома команда."
@@ -11788,6 +11821,9 @@ msgstr "Бенгальська"
 msgid "Bengali-India"
 msgstr "Бенгальська Індія"
 
+msgid "Breton"
+msgstr ""
+
 msgid "Bodo"
 msgstr ""
 
@@ -11844,9 +11880,6 @@ msgstr "Перська"
 
 msgid "Finnish"
 msgstr "Фінська"
-
-msgid "French"
-msgstr "Французька"
 
 msgid "Irish"
 msgstr "Ірландська"
@@ -11925,6 +11958,9 @@ msgstr "Луговомарійська"
 
 msgid "Macedonian"
 msgstr "Македонська"
+
+msgid "Malay"
+msgstr "Малайська"
 
 msgid "Malayalam"
 msgstr "Малаялам"
@@ -12045,14 +12081,14 @@ msgstr "Китайська традиційна"
 msgid "Amharic"
 msgstr "Амхарська"
 
+msgid "French"
+msgstr "Французька"
+
 msgid "Armenian"
 msgstr "Вірменська"
 
 msgid "Lao"
 msgstr "Лао"
-
-msgid "Malay"
-msgstr "Малайська"
 
 msgid "Turkish"
 msgstr "Турецька"
@@ -12740,6 +12776,10 @@ msgstr "_Медіа"
 msgid "_Hangup"
 msgstr "_Завершити"
 
+#, fuzzy
+msgid "Media error"
+msgstr "Помилка читання"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s бажає розпочати з вами аудіо та відеосеанс."
@@ -12750,6 +12790,42 @@ msgstr "%s бажає розпочати з вами відеосеанс."
 
 msgid "Incoming Call"
 msgstr "Вхідний виклик"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr ""
 
 msgid "_Hold"
 msgstr ""
@@ -14279,8 +14355,16 @@ msgstr ""
 msgid "Notify For"
 msgstr "Сповіщати про"
 
+#, fuzzy
+msgid "\t_Notify for System messages"
+msgstr "Системні повідомлення"
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Тільки коли хтось говорить ваше ім'я"
+
+#, fuzzy
+msgid "\tNotify for _System messages"
+msgstr "Системні повідомлення"
 
 msgid "_Focused windows"
 msgstr "Вікна з _фокусом"
@@ -14312,6 +14396,8 @@ msgid "R_aise conversation window"
 msgstr "_Розгорнути вікно розмови"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_Показати вікно розмови"
 
@@ -15074,10 +15160,10 @@ msgstr ""
 "Неможливо видалити версію Pidgin, що зараз встановлена. Нова версія буде "
 "встановлена без видалення поточної."
 
+#, fuzzy
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "Pidgin потребує сумісну бібліотеку GTK+ (яка, схоже, ще не встановлена).$"
 "\\rВИ впевнені, що хочете пропустити встановлення бібліотеки GTK+?"

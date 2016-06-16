@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"POT-Creation-Date: 2016-06-15 23:24-0500\n"
 "PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Greek (http://www.transifex.com/projects/p/pidgin/language/"
@@ -1511,6 +1511,7 @@ msgstr "Κάποιος μιλάει σε μια συζήτηση"
 msgid "Someone says your name in a chat"
 msgstr "Κάποιος είπε το όνομά σας σε μια συζήτηση"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Ειδοποίηση σε στυλ τοστιέρας όταν"
 
@@ -1523,6 +1524,7 @@ msgstr "Ορισμός URGENT για το παράθυρο τερματικού.
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Πρόσθετο ειδοποήσεων σε στυλ τοστιέρας"
 
@@ -2289,6 +2291,27 @@ msgstr ""
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <ΑΥΤΟΜΑΤΗ-ΑΠΑΝΤΗΣΗ>: %s\n"
 
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr "Μήνυμα από %s"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+#, fuzzy
+msgid "Network error."
+msgstr "Δίκτυο"
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
@@ -2301,6 +2324,10 @@ msgid ""
 msgstr ""
 "Δεν απέμεινε κανένας κωδικοποιητής. Οι επιλογές κωδικοποιητών στο fs-codecs."
 "conf είναι πολύ περιορισμένες."
+
+#, fuzzy
+msgid "Could not connect to the remote party"
+msgstr "Δεν υπάρχει σύνδεση με τον εξυπηρετητή"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Ένα ανεπανόρθωτο σφάλμα Farsight2 συνέβη."
@@ -11427,10 +11454,12 @@ msgstr "_Γνωστός ως:"
 msgid "_Group:"
 msgstr "_Ομάδα:"
 
-msgid "Auto_join when account connects."
+#, fuzzy
+msgid "Automatically _join when account connects"
 msgstr "Αυτόματη _συμμετοχή όταν ο λογαριασμός συνδέεται."
 
-msgid "_Remain in chat after window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed"
 msgstr "_Να μένει στη συζήτηση μετά το κλείσιμο του παραθύρου"
 
 msgid "Please enter the name of the group to be added."
@@ -11469,6 +11498,10 @@ msgstr "Εισάγετε το όνομα του υπολογιστή για αυ
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Εξυπηρετητές SSL"
+
+#, fuzzy
+msgid "Supported debug options are: plugins, version"
+msgstr "Οι υποστηριζόμενες επιλογές αποσφαλμάτωσης είναι:  plugin version"
 
 msgid "Unknown command."
 msgstr "Άγνωστη εντολή."
@@ -11914,6 +11947,9 @@ msgstr "Μπεγκάλι"
 msgid "Bengali-India"
 msgstr "Μπενγκάλι Ινδίας"
 
+msgid "Breton"
+msgstr ""
+
 msgid "Bodo"
 msgstr ""
 
@@ -11970,9 +12006,6 @@ msgstr "Περσικά"
 
 msgid "Finnish"
 msgstr "Φινλανδικά"
-
-msgid "French"
-msgstr "Γαλλικά"
 
 msgid "Irish"
 msgstr "Ιρλανδικά"
@@ -12051,6 +12084,9 @@ msgstr "Ανατολικά Μάρι"
 
 msgid "Macedonian"
 msgstr "Μακεδονικά (Σλαβικά)"
+
+msgid "Malay"
+msgstr "Μαλαισιακά"
 
 msgid "Malayalam"
 msgstr "Μαλαγιάλαμ"
@@ -12171,14 +12207,14 @@ msgstr "Παραδοσιακά Κινέζικα"
 msgid "Amharic"
 msgstr "Αμχαρικά"
 
+msgid "French"
+msgstr "Γαλλικά"
+
 msgid "Armenian"
 msgstr "Αρμενικά"
 
 msgid "Lao"
 msgstr "Λαοτινά"
-
-msgid "Malay"
-msgstr "Μαλαισιακά"
 
 msgid "Turkish"
 msgstr "Τούρκικα"
@@ -12883,6 +12919,10 @@ msgstr "_Πολυμέσα"
 msgid "_Hangup"
 msgstr "_Κλείσιμο"
 
+#, fuzzy
+msgid "Media error"
+msgstr "Σφάλμα ανάγνωσης"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s επιθυμεί να ξεκινήσει μία συνεδρία ήχου/βίντεο μαζί σας."
@@ -12893,6 +12933,42 @@ msgstr "%s επιθυμεί να ξεκινήσει μία συνεδρία βί
 
 msgid "Incoming Call"
 msgstr "Εισερχόμενη κλήση"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr ""
 
 msgid "_Hold"
 msgstr "_Συγκράτηση"
@@ -14458,8 +14534,16 @@ msgstr ""
 msgid "Notify For"
 msgstr "Ειδοποίηση για"
 
+#, fuzzy
+msgid "\t_Notify for System messages"
+msgstr "Μηνύματα συστήματος"
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Μόνο όταν κάποιος αναφέρει το όνομα χρήστη σας"
+
+#, fuzzy
+msgid "\tNotify for _System messages"
+msgstr "Μηνύματα συστήματος"
 
 msgid "_Focused windows"
 msgstr "_Εστιασμένα παράθυρα"
@@ -14491,6 +14575,8 @@ msgid "R_aise conversation window"
 msgstr "Α_νύψωση παραθύρου συνομιλίας"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_Παράθυρο τρέχουσας συνομιλίας"
 
@@ -15267,10 +15353,10 @@ msgstr ""
 "Αδυναμία απεγκατάστασης της ήδη εγκατεστημένης έκδοσης του Pidgin. Η νέα "
 "έκδοση θα εγκατασταθεί χωρίς να γίνει αφαίρεση της τρέχουσας έκδοσης."
 
+#, fuzzy
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "Το Pidgin απαιτεί ένα συμβατό GTK+ Runtime (το οποίο δε φαίνεται να υπάρχει)."
 "$\\rΘέλετε σίγουρα να παραλείψετε την εγκατάσταση του GTK+ Runtime;"

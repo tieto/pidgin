@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"POT-Creation-Date: 2016-06-15 23:24-0500\n"
 "PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/pidgin/language/"
@@ -1499,6 +1499,7 @@ msgstr "Alguien habla5~e en el chat"
 msgid "Someone says your name in a chat"
 msgstr "Alguien dice su nombre en el chat"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Notificar con un «toaster» cuando"
 
@@ -1511,6 +1512,7 @@ msgstr "Fija la ventana de terminal como URGENTE."
 msgid "GntGf"
 msgstr "GntFg"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Complemento «toaster»"
 
@@ -2257,6 +2259,27 @@ msgstr "<font color=\"red\"><b>No se pudo leer el archivo: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <RESPUESTA AUTOMÁTICA>: %s\n"
 
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr "Mensaje de %s"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+#, fuzzy
+msgid "Network error."
+msgstr "Red"
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
@@ -2267,6 +2290,10 @@ msgid ""
 msgstr ""
 "No queda ningún codificador. Sus preferencias de codificadores en fs-codecs."
 "conf son demasiado estrictas."
+
+#, fuzzy
+msgid "Could not connect to the remote party"
+msgstr "No está conectado al servidor"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Se ha producido un error no recuperable de Farsight2."
@@ -11326,10 +11353,12 @@ msgstr "_Apodo:"
 msgid "_Group:"
 msgstr "_Grupo:"
 
-msgid "Auto_join when account connects."
+#, fuzzy
+msgid "Automatically _join when account connects"
 msgstr "Reconec_tarse cuando la cuenta se conecta."
 
-msgid "_Remain in chat after window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed"
 msgstr "_Permanecer en el chat cuando se cierra la ventana."
 
 msgid "Please enter the name of the group to be added."
@@ -11368,6 +11397,10 @@ msgstr "Especifique el nombre de sistema para este certificado."
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Servidores SSL"
+
+#, fuzzy
+msgid "Supported debug options are: plugins, version"
+msgstr "Las opciones de depuración soportadas son:  versión de incrustación"
 
 msgid "Unknown command."
 msgstr "Orden desconocida."
@@ -11810,6 +11843,9 @@ msgstr "Bengalí"
 msgid "Bengali-India"
 msgstr "Bengalí-India"
 
+msgid "Breton"
+msgstr ""
+
 msgid "Bodo"
 msgstr ""
 
@@ -11866,9 +11902,6 @@ msgstr "Persa"
 
 msgid "Finnish"
 msgstr "Finlandés"
-
-msgid "French"
-msgstr "Francés"
 
 msgid "Irish"
 msgstr "Irlandés"
@@ -11947,6 +11980,9 @@ msgstr "Mari"
 
 msgid "Macedonian"
 msgstr "Macedonio"
+
+msgid "Malay"
+msgstr "Malayo"
 
 msgid "Malayalam"
 msgstr "Malayalam"
@@ -12067,14 +12103,14 @@ msgstr "Chino tradicional"
 msgid "Amharic"
 msgstr "Amhárico"
 
+msgid "French"
+msgstr "Francés"
+
 msgid "Armenian"
 msgstr "Armenio"
 
 msgid "Lao"
 msgstr "Laosiano"
-
-msgid "Malay"
-msgstr "Malayo"
 
 msgid "Turkish"
 msgstr "Turco"
@@ -12754,6 +12790,10 @@ msgstr "_Media"
 msgid "_Hangup"
 msgstr "_Colgar"
 
+#, fuzzy
+msgid "Media error"
+msgstr "Error de lectura"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s desea iniciar una sesión de audio/vídeo con vd."
@@ -12764,6 +12804,42 @@ msgstr "%s desea iniciar una sesión de vídeo con vd."
 
 msgid "Incoming Call"
 msgstr "Llamada entrante"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr ""
 
 msgid "_Hold"
 msgstr "_Retener"
@@ -14312,8 +14388,16 @@ msgstr ""
 msgid "Notify For"
 msgstr "Notificar de"
 
+#, fuzzy
+msgid "\t_Notify for System messages"
+msgstr "Mensaje del sistema"
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Sólo si alguien menciona su nombre de usuario"
+
+#, fuzzy
+msgid "\tNotify for _System messages"
+msgstr "Mensaje del sistema"
 
 msgid "_Focused windows"
 msgstr "Ventanas _enfocadas"
@@ -14345,6 +14429,8 @@ msgid "R_aise conversation window"
 msgstr "_Subir la ventana de conversación"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_Mostrar la ventana de conversación"
 
@@ -15114,10 +15200,10 @@ msgstr ""
 "Pidgin. La nueva versión se instalará sin eliminar la versión actualmente "
 "instalada."
 
+#, fuzzy
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "Pidgin necesita un entorno de ejecución compatible GTK+ (que no parece que "
 "esté disponible).$\\r¿Está seguro que quiere omitir el paso de instalación "

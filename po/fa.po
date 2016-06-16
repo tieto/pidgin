@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"POT-Creation-Date: 2016-06-15 23:24-0500\n"
 "PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Persian (http://www.transifex.com/projects/p/pidgin/language/"
@@ -1467,6 +1467,7 @@ msgstr "کسی در گپ حرف می‌زند"
 msgid "Someone says your name in a chat"
 msgstr "کسی نام شما را در گپ می‌گوید"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr ""
 
@@ -1479,6 +1480,7 @@ msgstr ""
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "متصل‌شوندهٔ‌ تستر"
 
@@ -2185,6 +2187,27 @@ msgstr "<font color=\"red\"><b>خواندن پرونده ممکن نیست: %s</
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <پاسخ خودکار>: %s\n"
 
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr "پیغام از %s"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+#, fuzzy
+msgid "Network error."
+msgstr "شبکه"
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
@@ -2193,6 +2216,10 @@ msgstr ""
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
+
+#, fuzzy
+msgid "Could not connect to the remote party"
+msgstr "اتصال به کاربر دوردست قطع شد:<br>%s"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr ""
@@ -10907,10 +10934,11 @@ msgstr ""
 msgid "_Group:"
 msgstr "_گروه:"
 
-msgid "Auto_join when account connects."
-msgstr ""
+#, fuzzy
+msgid "Automatically _join when account connects"
+msgstr "باز کردن تخته‌سفید به طور _خودکار"
 
-msgid "_Remain in chat after window is closed."
+msgid "_Remain in chat after window is closed"
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -10949,6 +10977,10 @@ msgstr ""
 #. Widget creation function
 msgid "SSL Servers"
 msgstr ""
+
+#, fuzzy
+msgid "Supported debug options are: plugins, version"
+msgstr "گزینه‌های اشکال‌زدایی پشتیبانی‌شده عبارتند از: plugins version"
 
 msgid "Unknown command."
 msgstr ""
@@ -11387,6 +11419,9 @@ msgstr "بنگالی"
 msgid "Bengali-India"
 msgstr ""
 
+msgid "Breton"
+msgstr ""
+
 msgid "Bodo"
 msgstr ""
 
@@ -11443,9 +11478,6 @@ msgstr "فارسی"
 
 msgid "Finnish"
 msgstr "فنلاندی"
-
-msgid "French"
-msgstr "فرانسوی"
 
 msgid "Irish"
 msgstr ""
@@ -11524,6 +11556,9 @@ msgstr ""
 
 msgid "Macedonian"
 msgstr "مقدونی"
+
+msgid "Malay"
+msgstr ""
 
 msgid "Malayalam"
 msgstr ""
@@ -11644,13 +11679,13 @@ msgstr "چینی سنتی"
 msgid "Amharic"
 msgstr "امهری"
 
+msgid "French"
+msgstr "فرانسوی"
+
 msgid "Armenian"
 msgstr ""
 
 msgid "Lao"
-msgstr ""
-
-msgid "Malay"
 msgstr ""
 
 msgid "Turkish"
@@ -12306,6 +12341,10 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
+#, fuzzy
+msgid "Media error"
+msgstr "خطای خواندن"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr ""
@@ -12315,6 +12354,42 @@ msgid "%s wishes to start a video session with you."
 msgstr ""
 
 msgid "Incoming Call"
+msgstr ""
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
 msgstr ""
 
 msgid "_Hold"
@@ -13813,8 +13888,16 @@ msgstr ""
 msgid "Notify For"
 msgstr "اطلاع دادنِ"
 
+#, fuzzy
+msgid "\t_Notify for System messages"
+msgstr "پیغام‌های سیستم"
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_فقط وقتی کسی نام کاربری شما را در گپ می‌گوید"
+
+#, fuzzy
+msgid "\tNotify for _System messages"
+msgstr "پیغام‌های سیستم"
 
 msgid "_Focused windows"
 msgstr "_پنجره‌های دارای تمرکز"
@@ -13846,6 +13929,8 @@ msgid "R_aise conversation window"
 msgstr "پنجرهٔ گفتگو _بالا آورده شود"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr ""
 
@@ -14602,9 +14687,8 @@ msgstr ""
 "نسخه موجود نصب مى‌شود."
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 
 #. Installer Subsection Text
