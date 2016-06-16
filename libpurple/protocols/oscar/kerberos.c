@@ -93,8 +93,7 @@ static gchar *get_kdc_url(OscarData *od)
 	if (port != 443)
 		port_str = g_strdup_printf (":%d", port);
 	url = g_strdup_printf ("https://%s%s/", server, port_str ? port_str : "");
-	if (port_str)
-		g_free (port_str);
+	g_free (port_str);
 
 	return url;
 }
@@ -141,25 +140,18 @@ aim_xsnac_free(aim_xsnac_t *xsnac)
 {
 	gint i;
 
-	if (xsnac->principal1)
-		g_free (xsnac->principal1);
-	if (xsnac->principal2)
-		g_free (xsnac->principal2);
+	g_free (xsnac->principal1);
+	g_free (xsnac->principal2);
 	aim_tlvlist_free (xsnac->tlvlist);
 
 	for (i = 0; i < xsnac->num_tokens; i++) {
 		g_free(xsnac->tokens[i].main_tlv->value);
 		g_free(xsnac->tokens[i].main_tlv);
-		if (xsnac->tokens[i].principal1)
-			g_free (xsnac->tokens[i].principal1);
-		if (xsnac->tokens[i].principal1_again)
-		if (xsnac->tokens[i].service)
-			g_free (xsnac->tokens[i].service);
-			g_free (xsnac->tokens[i].principal1_again);
-		if (xsnac->tokens[i].principal2)
-			g_free (xsnac->tokens[i].principal2);
-		if (xsnac->tokens[i].footer)
-			g_free (xsnac->tokens[i].footer);
+		g_free (xsnac->tokens[i].principal1);
+		g_free (xsnac->tokens[i].service);
+		g_free (xsnac->tokens[i].principal1_again);
+		g_free (xsnac->tokens[i].principal2);
+		g_free (xsnac->tokens[i].footer);
 		aim_tlvlist_free (xsnac->tokens[i].tlvlist);
 	}
 	g_free (xsnac->tokens);
@@ -312,10 +304,8 @@ kerberos_login_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 			_("Unknown error during authentication"));
 	}
 	aim_xsnac_free (&xsnac);
-	if (tlsCertName)
-		g_free (tlsCertName);
-	if (bosip)
-		g_free (bosip);
+	g_free (tlsCertName);
+	g_free (bosip);
 }
 
 /**
