@@ -4,18 +4,18 @@
 #
 # Translators:
 # Panayotis Katsaloulis <panayotis@panayotis.com>, 2005
-# Panos Bouklis <panos@echidna-band.com>, 2012-2014
+# Panos Bouklis <panos@echidna-band.com>, 2012-2015
 # Richard Laager <rlaager@wiktel.com>, 2011
 # Ubuntu Greek Translators <ubuntu-gr@lists.ubuntu.com.>, 2005
+# Wasilis Mandratzis-Walz, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Greek (http://www.transifex.com/projects/p/pidgin/language/"
-"el/)\n"
+"POT-Creation-Date: 2016-06-15 23:14-0500\n"
+"PO-Revision-Date: 2016-06-06 21:09+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Greek (http://www.transifex.com/pidgin/pidgin/language/el/)\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1818,7 +1818,7 @@ msgid "Certificate Information"
 msgstr "Πληροφορίες πιστοποιητικού"
 
 msgid "Unable to find Issuer Certificate"
-msgstr ""
+msgstr "Αδυναμία εύρεσης εκδότη του πιστοποιητικού"
 
 #. Make messages
 #, c-format
@@ -1832,12 +1832,20 @@ msgid ""
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
+"Σύνηθες όνομα: %s\n"
+"\n"
+"Εκδόθηκε από: %s\n"
+"\n"
+"Αποτύπωμα (SHA1): %s\n"
+"\n"
+"Ημερομηνία ενεργοποίησης: %s\n"
+"Ημερομηνία λήξης: %s\n"
 
 msgid "(self-signed)"
-msgstr ""
+msgstr "(αυτο-υπογεγραμμένα)"
 
 msgid "View Issuer Certificate"
-msgstr ""
+msgstr "Προβολή Εκδότη του πιστοποιητικού"
 
 #. show error to user
 msgid "Registration Error"
@@ -2291,26 +2299,31 @@ msgstr ""
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <ΑΥΤΟΜΑΤΗ-ΑΠΑΝΤΗΣΗ>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "Μήνυμα από %s"
+msgstr ""
+"\n"
+"\n"
+"Μήνυμα από το Farsight: "
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
+"Σφάλμα κατά την αρχικοποίηση της κλήσης. Αυτό δείχνει ένα πιθανό πρόβλημα "
+"στην εγκατάσταση του GStreamer ή του Farsight."
 
-#, fuzzy
 msgid "Network error."
-msgstr "Δίκτυο"
+msgstr "Σφάλμα δικτύου"
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
 "GStreamer codecs."
 msgstr ""
+"Η διαπραγμάτευση κωδικοποίησης απέτυχε. Αυτό το πρόβλημα θα μπορούσε να "
+"λυθεί με την εγκατάσταση περισσότερων κωδικοποιήσεων Gstreamer."
 
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
@@ -2325,9 +2338,8 @@ msgstr ""
 "Δεν απέμεινε κανένας κωδικοποιητής. Οι επιλογές κωδικοποιητών στο fs-codecs."
 "conf είναι πολύ περιορισμένες."
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "Δεν υπάρχει σύνδεση με τον εξυπηρετητή"
+msgstr "Αδυναμία σύνδεσης με την απομακρυσμένη πλευρά"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Ένα ανεπανόρθωτο σφάλμα Farsight2 συνέβη."
@@ -2963,38 +2975,38 @@ msgid "Tests to see that most things are working."
 msgstr "Δοκιμάζει αν τα περισσότερα πράγματα δουλεύουν σωστά."
 
 msgid "TLS/SSL Versions"
-msgstr ""
+msgstr "Εκδόσεις TLS/SSL"
 
 msgid "Minimum Version"
-msgstr ""
+msgstr "Ελάχιστη έκδοση"
 
 msgid "Maximum Version"
-msgstr ""
+msgstr "Μέγιστη έκδοση"
 
 msgid "SSL 2"
-msgstr ""
+msgstr "SSL 2"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "SSL 3"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "TLS 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "TLS 1.1"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "TLS 1.2"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "TLS 1.3"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
-msgstr ""
+msgstr "Δεν υποστηρίζεται για την NSS <3.14"
 
 msgid "Ciphers"
-msgstr ""
+msgstr "Κρυπτογραφήσεις"
 
 #. *< type
 #. *< ui_requirement
@@ -3003,7 +3015,7 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "NSS Preferences"
-msgstr ""
+msgstr "NSS Προτιμήσεις"
 
 #. *< name
 #. *< version
@@ -3011,6 +3023,8 @@ msgstr ""
 #. *  description
 msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
 msgstr ""
+"Διαμόρφωση των αλγόριθμων κρυπτογράφησης και άλλων ρυθμίσεων για το NSS SSL/"
+"TLS plugin "
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -3511,7 +3525,7 @@ msgid "Auto-detect incoming UTF-8"
 msgstr "Αυτόματος εντοπισμός εισερχόμενου UTF-8"
 
 msgid "Ident name"
-msgstr ""
+msgstr "Ονομα αναγνώρισης"
 
 msgid "Real name"
 msgstr "Πραγματικό όνομα"
@@ -6053,7 +6067,7 @@ msgstr "Αδυναμία ταυτοποίησης: %s"
 
 #, c-format
 msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
+msgstr "Η λίστα φίλων σας στο MSN είναι προσωρινά μη διαθέσιμη: %s"
 
 msgid "Handshaking"
 msgstr "Γίνεται χειραψία"
@@ -10692,20 +10706,25 @@ msgstr ""
 "αρχείο μετονομάστηκε σε %s~."
 
 msgid "Instant Messaging Client"
-msgstr ""
+msgstr "Πελάτης άμεσων μηνυμάτων "
 
 msgid ""
 "Pidgin is a chat program which lets you log in to accounts on multiple chat "
 "networks simultaneously."
 msgstr ""
+"Το Pidgin είναι μια εφαρμογή συνομιλίας που σας επιτρέπει να συνδεθείτε σε "
+"λογαριασμούς σε πολλαπλά δίκτυα συνομιλίας ταυτόχρονα."
 
 msgid ""
 "This means that you can be chatting with friends on MSN, talking to a friend "
 "on Google Talk, and sitting in a Yahoo chat room all at the same time."
 msgstr ""
+"Αυτό σημαίνει ότι μπορείτε να συνομιλείτε με τους φίλους σας στο MSN, "
+"μιλώντας με ένα φίλο στο Google Talk, και στο Yahoo chat room, όλα την ίδια "
+"στιγμή."
 
 msgid "The buddy list showing friends on different networks."
-msgstr ""
+msgstr "Η λίστα φίλων εμφανίζει φίλους σε διαφορετικά δίκτυα."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Αποστολέας μηνυμάτων διαδικτύου Pidgin"
@@ -11454,13 +11473,11 @@ msgstr "_Γνωστός ως:"
 msgid "_Group:"
 msgstr "_Ομάδα:"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "Αυτόματη _συμμετοχή όταν ο λογαριασμός συνδέεται."
+msgstr ""
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
-msgstr "_Να μένει στη συζήτηση μετά το κλείσιμο του παραθύρου"
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "Παρακαλούμε εισάγετε το όνομα της ομάδας που θα προστεθεί."
@@ -11499,9 +11516,8 @@ msgstr "Εισάγετε το όνομα του υπολογιστή για αυ
 msgid "SSL Servers"
 msgstr "Εξυπηρετητές SSL"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "Οι υποστηριζόμενες επιλογές αποσφαλμάτωσης είναι:  plugin version"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "Άγνωστη εντολή."
@@ -11948,10 +11964,10 @@ msgid "Bengali-India"
 msgstr "Μπενγκάλι Ινδίας"
 
 msgid "Breton"
-msgstr ""
+msgstr "Βρετονικά"
 
 msgid "Bodo"
-msgstr ""
+msgstr "Μπόντο"
 
 msgid "Bosnian"
 msgstr "Βοσνιακά"
@@ -12047,7 +12063,7 @@ msgid "Ubuntu Georgian Translators"
 msgstr "Γεωργιανοί μεταφραστές Ubuntu"
 
 msgid "Kazakh"
-msgstr ""
+msgstr "Καζακικά"
 
 msgid "Khmer"
 msgstr "Κχμερ"
@@ -12062,13 +12078,13 @@ msgid "Korean"
 msgstr "Κορεάτικα"
 
 msgid "Kashmiri"
-msgstr ""
+msgstr "Κασμίρι"
 
 msgid "Kurdish"
 msgstr "Κουρδικά"
 
 msgid "Kurdish (Sorani)"
-msgstr ""
+msgstr "Κουρδικά (Sorani)"
 
 msgid "Lithuanian"
 msgstr "Λιθουανικά"
@@ -12140,7 +12156,7 @@ msgid "Russian"
 msgstr "Ρώσικα"
 
 msgid "Sindhi"
-msgstr ""
+msgstr "Σίντι"
 
 msgid "Slovak"
 msgstr "Σλοβακικά"
@@ -12176,7 +12192,7 @@ msgid "Thai"
 msgstr "Ταϊλανδικά"
 
 msgid "Tatar"
-msgstr ""
+msgstr "Ταταρική"
 
 msgid "Ukranian"
 msgstr "Ουκρανικά"
@@ -12185,12 +12201,12 @@ msgid "Urdu"
 msgstr "Ούρντου"
 
 msgid "Uzbek"
-msgstr ""
+msgstr "Ουζμπεκική"
 
 #. Translators: This is a person's name. For most languages we recommend
 #. not translating it.
 msgid "Akmal Khushvakov"
-msgstr ""
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "Βιετναμέζικα"
@@ -12919,9 +12935,8 @@ msgstr "_Πολυμέσα"
 msgid "_Hangup"
 msgstr "_Κλείσιμο"
 
-#, fuzzy
 msgid "Media error"
-msgstr "Σφάλμα ανάγνωσης"
+msgstr "Σφάλμα πολυμέσων"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12940,35 +12955,35 @@ msgstr "Εισερχόμενη κλήση"
 #.
 #. Letters on the '2' key of a numeric keypad
 msgid "ABC"
-msgstr ""
+msgstr "ΑΒΓ"
 
 #. Letters on the '3' key of a numeric keypad
 msgid "DEF"
-msgstr ""
+msgstr "ΔΕΖ"
 
 #. Letters on the '4' key of a numeric keypad
 msgid "GHI"
-msgstr ""
+msgstr "ΗΘΙ"
 
 #. Letters on the '5' key of a numeric keypad
 msgid "JKL"
-msgstr ""
+msgstr "ΚΛΜ"
 
 #. Letters on the '6' key of a numeric keypad
 msgid "MNO"
-msgstr ""
+msgstr "ΝΞΟ"
 
 #. Letters on the '7' key of a numeric keypad
 msgid "PQRS"
-msgstr ""
+msgstr "ΠΡΣΤ"
 
 #. Letters on the '8' key of a numeric keypad
 msgid "TUV"
-msgstr ""
+msgstr "ΥΦΧ"
 
 #. Letters on the '9' key of a numeric keypad
 msgid "WXYZ"
-msgstr ""
+msgstr "ΨΩ"
 
 msgid "_Hold"
 msgstr "_Συγκράτηση"
@@ -14534,16 +14549,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Ειδοποίηση για"
 
-#, fuzzy
 msgid "\t_Notify for System messages"
-msgstr "Μηνύματα συστήματος"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_Μόνο όταν κάποιος αναφέρει το όνομα χρήστη σας"
 
-#, fuzzy
 msgid "\tNotify for _System messages"
-msgstr "Μηνύματα συστήματος"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "_Εστιασμένα παράθυρα"
@@ -15353,13 +15366,10 @@ msgstr ""
 "Αδυναμία απεγκατάστασης της ήδη εγκατεστημένης έκδοσης του Pidgin. Η νέα "
 "έκδοση θα εγκατασταθεί χωρίς να γίνει αφαίρεση της τρέχουσας έκδοσης."
 
-#, fuzzy
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
 "installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"Το Pidgin απαιτεί ένα συμβατό GTK+ Runtime (το οποίο δε φαίνεται να υπάρχει)."
-"$\\rΘέλετε σίγουρα να παραλείψετε την εγκατάσταση του GTK+ Runtime;"
 
 #. Installer Subsection Text
 msgid "URI Handlers"
