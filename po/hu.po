@@ -3,19 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Balázs Meskó <meskobalazs@gmail.com>, 2015
 # Gabor Kelemen <kelemeng at gnome dot hu>, 2014
 # kelemeng <kelemeng@ubuntu.com>, 2011
 # kelemeng <kelemeng@ubuntu.com>, 2011,2014
-# kelemeng <kelemeng@ubuntu.com>, 2014
+# kelemeng <kelemeng@ubuntu.com>, 2014-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Hungarian (http://www.transifex.com/projects/p/pidgin/"
-"language/hu/)\n"
+"POT-Creation-Date: 2016-06-15 23:14-0500\n"
+"PO-Revision-Date: 2016-06-06 22:30+0000\n"
+"Last-Translator: kelemeng <kelemeng@ubuntu.com>\n"
+"Language-Team: Hungarian (http://www.transifex.com/pidgin/pidgin/language/"
+"hu/)\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2254,26 +2255,31 @@ msgstr "<font color=\"red\"><b>A fájl olvasása sikertelen: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTOMATIKUS VÁLASZ>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "%s üzenetet küldött"
+msgstr ""
+"\n"
+"\n"
+"A Farsight üzenete:"
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
+"Hiba a hívás előkészítésekor. Ez valószínűleg a GStreamer vagy Farsight "
+"telepítési hibáját jelzi."
 
-#, fuzzy
 msgid "Network error."
-msgstr "Hálózat"
+msgstr "Hálózati hiba."
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
 "GStreamer codecs."
 msgstr ""
+"A kodekben való megállapodás meghiúsult. Ezt a problémát több GStreamer "
+"kodek telepítésével lehet megoldani."
 
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
@@ -2288,9 +2294,8 @@ msgstr ""
 "Nincs több kodek. A fs-codecs.conf fájlban megadott kodekbeállítások túl "
 "szigorúak."
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "Nincs kapcsolat a kiszolgálóval"
+msgstr "Nem lehet kapcsolódni a túloldali félhez"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Helyrehozhatatlan Farsight2 hiba történt."
@@ -2916,38 +2921,38 @@ msgid "Tests to see that most things are working."
 msgstr "Tesztek, hogy a legtöbb dolog működik-e."
 
 msgid "TLS/SSL Versions"
-msgstr ""
+msgstr "TLS/SSL verziók"
 
 msgid "Minimum Version"
-msgstr ""
+msgstr "Minimális verzió"
 
 msgid "Maximum Version"
-msgstr ""
+msgstr "Maximális verzió"
 
 msgid "SSL 2"
-msgstr ""
+msgstr "SSL 2"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "SSL 3"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "TLS 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "TLS 1.1"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "TLS 1.2"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "TLS 1.3"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
-msgstr ""
+msgstr "Nem támogatott az NSS < 3.14 esetén"
 
 msgid "Ciphers"
-msgstr ""
+msgstr "Titkosítók"
 
 #. *< type
 #. *< ui_requirement
@@ -2956,14 +2961,14 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "NSS Preferences"
-msgstr ""
+msgstr "NSS beállítások"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
-msgstr ""
+msgstr "Titkosítók és más beállítások az NSS SSL/TLS bővítményhez"
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5991,7 +5996,7 @@ msgstr "Nem sikerült a hitelesítés: %s"
 
 #, c-format
 msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
+msgstr "Az Ön MSN partnerlistája átmenetileg nem érhető el: %s"
 
 msgid "Handshaking"
 msgstr "Kézfogás"
@@ -10581,20 +10586,24 @@ msgstr ""
 "%s~ néven lett elmentve."
 
 msgid "Instant Messaging Client"
-msgstr ""
+msgstr "Azonnaliüzenet-küldő kliens"
 
 msgid ""
 "Pidgin is a chat program which lets you log in to accounts on multiple chat "
 "networks simultaneously."
 msgstr ""
+"A Pidgin egy csevegőprogram, ami lehetővé teszi egyszerre több "
+"csevegőhálózat fiókjaiba való belépést."
 
 msgid ""
 "This means that you can be chatting with friends on MSN, talking to a friend "
 "on Google Talk, and sitting in a Yahoo chat room all at the same time."
 msgstr ""
+"Ez azt jelenti, hogy egyidejűleg cseveghet ismerőseivel az MSN-en, Google "
+"Talkon és Yahoo csevegőszobában."
 
 msgid "The buddy list showing friends on different networks."
-msgstr ""
+msgstr "A partnerlista különböző hálózatokon elérhető ismerősökkel."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin üzenetküldő"
@@ -11336,13 +11345,11 @@ msgstr "Ál_név:"
 msgid "_Group:"
 msgstr "_Csoport:"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "Automatikus _csatlakozás a fiók csatlakozásakor."
+msgstr "Automatikus _csatlakozás a fiók csatlakozásakor"
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
-msgstr "Csevegésben mara_dás az ablak bezárásakor."
+msgstr "Csevegésben mara_dás az ablak bezárásakor"
 
 msgid "Please enter the name of the group to be added."
 msgstr "Adja meg a felvenni kívánt csoport nevét."
@@ -11381,9 +11388,8 @@ msgstr "Írja be a tanúsítványt birtokló gép nevét."
 msgid "SSL Servers"
 msgstr "SSL kiszolgálók"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "A támogatott hibakeresési parancsok: plugins version"
+msgstr "A támogatott hibakeresési parancsok: plugins, version"
 
 msgid "Unknown command."
 msgstr "Ismeretlen parancs."
@@ -11828,7 +11834,7 @@ msgid "Bengali-India"
 msgstr "Indiai bengáli"
 
 msgid "Breton"
-msgstr ""
+msgstr "Breton"
 
 msgid "Bodo"
 msgstr "Bodo"
@@ -11948,7 +11954,7 @@ msgid "Kurdish"
 msgstr "Kurd"
 
 msgid "Kurdish (Sorani)"
-msgstr ""
+msgstr "Kurd (Sorani)"
 
 msgid "Lithuanian"
 msgstr "Litván"
@@ -12070,7 +12076,7 @@ msgstr "Üzbég"
 #. Translators: This is a person's name. For most languages we recommend
 #. not translating it.
 msgid "Akmal Khushvakov"
-msgstr ""
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "Vietnami"
@@ -12786,9 +12792,8 @@ msgstr "Méd_ia"
 msgid "_Hangup"
 msgstr "_Lerakás"
 
-#, fuzzy
 msgid "Media error"
-msgstr "Olvasási hiba"
+msgstr "Médiahiba"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12807,35 +12812,35 @@ msgstr "Bejövő hívás"
 #.
 #. Letters on the '2' key of a numeric keypad
 msgid "ABC"
-msgstr ""
+msgstr "ABC"
 
 #. Letters on the '3' key of a numeric keypad
 msgid "DEF"
-msgstr ""
+msgstr "DEF"
 
 #. Letters on the '4' key of a numeric keypad
 msgid "GHI"
-msgstr ""
+msgstr "GHI"
 
 #. Letters on the '5' key of a numeric keypad
 msgid "JKL"
-msgstr ""
+msgstr "JKL"
 
 #. Letters on the '6' key of a numeric keypad
 msgid "MNO"
-msgstr ""
+msgstr "MNO"
 
 #. Letters on the '7' key of a numeric keypad
 msgid "PQRS"
-msgstr ""
+msgstr "PQRS"
 
 #. Letters on the '8' key of a numeric keypad
 msgid "TUV"
-msgstr ""
+msgstr "TUV"
 
 #. Letters on the '9' key of a numeric keypad
 msgid "WXYZ"
-msgstr ""
+msgstr "WXYZ"
 
 msgid "_Hold"
 msgstr "_Tartás"
@@ -14374,16 +14379,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Figyelmeztetés"
 
-#, fuzzy
 msgid "\t_Notify for System messages"
-msgstr "Rendszerüzenetek"
+msgstr "\tÉrtesítés rendszerüzenetekről"
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_Csak ha valaki kimondja az Ön felhasználónevét"
 
-#, fuzzy
 msgid "\tNotify for _System messages"
-msgstr "Rendszerüzenetek"
+msgstr "\tÉrtesítés _rendszerüzenetekről"
 
 msgid "_Focused windows"
 msgstr "_Fókuszban lévő ablakok"
@@ -15187,13 +15190,12 @@ msgstr ""
 "A Pidgin jelenleg telepített változata nem távolítható el. Az új verzió a "
 "jelenleg telepített verzió eltávolítása nélkül kerül telepítésre. "
 
-#, fuzzy
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
 "installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "A Pidgin egy kompatibilis GTK+ futtatókörnyezet meglétét igényli (úgy tűnik, "
-"ez nincs jelen).$\\rBiztos benne, hogy kihagyja a GTK+ futtatókörnyezet "
+"ez nincs telepítve).$\\rBiztos benne, hogy kihagyja a GTK+ futtatókörnyezet "
 "telepítését?"
 
 #. Installer Subsection Text
