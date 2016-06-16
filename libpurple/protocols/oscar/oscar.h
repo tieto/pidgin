@@ -110,7 +110,7 @@ extern "C" {
 /**
  * Maximum length for the password of an ICQ account
  */
-#define MAXICQPASSLEN 8
+#define MAXICQPASSLEN 16
 
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
 
