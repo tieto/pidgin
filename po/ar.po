@@ -4,7 +4,7 @@
 #
 # Translators:
 # AbdulAziz AlSharif <a.a-a.s@hotmail.com>, 2007
-# abdXelrhman <abdXelrhman@gmail.com>, 2014
+# abd alrhman aiman <abdo.alrhman.aiman@gmail.com>, 2014
 # Afief Halumi <Afief.h@gmail.com>, 2007
 # Ahmad Gharbeia <gharbeia@gmail.com>, 2008
 # Hafid BENHADRIA <ghosn@php4arab.info>, 2003
@@ -12,16 +12,15 @@
 # Mohamed Magdy <alnokta@yahoo.com>, 2006
 # Youssef Chahibi <chahibi@gmail.com>, 2007
 # محمد سعد  Mohamed SAAD <metehyi@free.fr>, 2006
-# محيي الدين <tx99h4@hotmail.com>, 2014
+# محيي الدين <tx99h4@hotmail.com>, 2014-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Arabic (http://www.transifex.com/projects/p/pidgin/language/"
-"ar/)\n"
+"POT-Creation-Date: 2016-06-15 23:12-0500\n"
+"PO-Revision-Date: 2016-06-06 21:09+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Arabic (http://www.transifex.com/pidgin/pidgin/language/ar/)\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1255,7 +1254,7 @@ msgid "Someone says your username in chat"
 msgstr "أحدهم يذكر اسمك في دردشة"
 
 msgid "Attention received"
-msgstr ""
+msgstr "وصل الانتباه"
 
 msgid "GStreamer Failure"
 msgstr "فشل GStreamer"
@@ -1518,28 +1517,30 @@ msgid ""
 "\n"
 "Fetching TinyURL..."
 msgstr ""
+"\n"
+"يجري جلب TinyURL ..."
 
 #, c-format
 msgid "TinyURL for above: %s"
-msgstr ""
+msgstr "TinyURL لما هو أسفله : %s"
 
 msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr ""
+msgstr "يرجى الانتظار إلى حين قيام TinyURL بجلب عنوان أقصر ..."
 
 msgid "Only create TinyURL for URLs of this length or greater"
-msgstr ""
+msgstr "إنشاء TinyURL فقط للعناوين الأطول من هذا"
 
 msgid "TinyURL (or other) address prefix"
 msgstr ""
 
 msgid "TinyURL"
-msgstr ""
+msgstr "TinyURL"
 
 msgid "TinyURL plugin"
-msgstr ""
+msgstr "ملحق TinyURL"
 
 msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-msgstr ""
+msgstr "عند تلقي رسالة تحوي عنوانا (أو عناوينا)، استخدم TinyURL للنسخ بسهولة"
 
 msgid "Online"
 msgstr "متصل"
@@ -1771,7 +1772,7 @@ msgid ""
 msgstr ""
 
 msgid "(self-signed)"
-msgstr ""
+msgstr "(موقَّع ذاتيا)"
 
 msgid "View Issuer Certificate"
 msgstr "اعرض مُصدر الشهادة"
@@ -2204,21 +2205,19 @@ msgstr "<font color=\"red\"><b>تعذَّرت قراءة الملف: %s</b></fon
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <رد-تلقائي>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "رسالة من %s"
+msgstr ""
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
 
-#, fuzzy
 msgid "Network error."
-msgstr "الشبكة"
+msgstr "خطـأ في الشبكة."
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
@@ -2234,9 +2233,8 @@ msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "غير متصل بالخادم."
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr ""
@@ -2520,10 +2518,10 @@ msgid "For rooms with more than this many people"
 msgstr ""
 
 msgid "If user has not spoken in this many minutes"
-msgstr ""
+msgstr "إن لم يتحدث المستخدم لعدة دقائق"
 
 msgid "Apply hiding rules to buddies"
-msgstr ""
+msgstr "طبِّق قواعد الإخفاء للأصدقاء"
 
 #. *< type
 #. *< ui_requirement
@@ -2837,7 +2835,7 @@ msgid "Tests to see that most things are working."
 msgstr "اختبار للتحقق من أن معظم الوظائف تعمل."
 
 msgid "TLS/SSL Versions"
-msgstr ""
+msgstr "إصدارات TLS/SSL"
 
 msgid "Minimum Version"
 msgstr ""
@@ -2846,29 +2844,29 @@ msgid "Maximum Version"
 msgstr ""
 
 msgid "SSL 2"
-msgstr ""
+msgstr "SSL 2"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "SSL 3"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "TLS 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "TLS 1.1"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "TLS 1.2"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "TLS 1.3"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
 msgstr ""
 
 msgid "Ciphers"
-msgstr ""
+msgstr "التعميات"
 
 #. *< type
 #. *< ui_requirement
@@ -2877,14 +2875,14 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "NSS Preferences"
-msgstr ""
+msgstr "تفضيلات NSS"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
-msgstr ""
+msgstr "تهيئة التعميات والإعدادات الأخرى بالنسبة لملحق NSS SSL/TLS"
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -3337,7 +3335,7 @@ msgstr "تعذّر الاتصال"
 #. this is a regular connect, error out
 #, c-format
 msgid "Unable to connect: %s"
-msgstr ""
+msgstr "تعذّر الاتصال : %s"
 
 msgid "Server closed the connection"
 msgstr "أَغلقَ الخادم الاتصال"
@@ -3431,10 +3429,10 @@ msgid "Nick"
 msgstr "الكنية"
 
 msgid "Login name"
-msgstr ""
+msgstr "اسم المستخدم"
 
 msgid "Host name"
-msgstr ""
+msgstr "اسم المضيف"
 
 msgid "Currently on"
 msgstr "حاليًا على"
@@ -3545,7 +3543,7 @@ msgid "The nickname \"%s\" is already being used."
 msgstr ""
 
 msgid "Nickname in use"
-msgstr ""
+msgstr "الكنية المستخدمة"
 
 msgid "Cannot change nick"
 msgstr "تعذّر تغيير الكنية"
@@ -3888,11 +3886,11 @@ msgstr ""
 "الاستيثاق؟ "
 
 msgid "SASL authentication failed"
-msgstr ""
+msgstr "فشل استيثاق SASL"
 
 #, c-format
 msgid "SASL error: %s"
-msgstr ""
+msgstr "خطأ SASL :‏ %s"
 
 msgid "Invalid Encoding"
 msgstr "ترميز غير سليم"
@@ -3903,12 +3901,14 @@ msgstr "إضافات غير مدعومة"
 msgid ""
 "Unexpected response from the server.  This may indicate a possible MITM "
 "attack"
-msgstr ""
+msgstr "جواب غير متوقع من الخادم. قد يدل على تعرضك لهجوم رجل في الوسط"
 
 msgid ""
 "The server does support channel binding, but did not appear to advertise "
 "it.  This indicates a likely MITM attack"
 msgstr ""
+"إن الخادم لا يدعم الارتباط بالقناة، لكن لا يظهر على أنه يخبرك بذلك. هذا يدل "
+"على الأرجح بوجود هجوم رجل في الوسط."
 
 msgid "Server does not support channel binding"
 msgstr ""
@@ -3954,7 +3954,7 @@ msgid "Unable to establish a connection with the server: %s"
 msgstr ""
 
 msgid "Unable to establish SSL connection"
-msgstr ""
+msgstr "تعذر القيام باتصال SSL"
 
 msgid "Full Name"
 msgstr "الاسم الكامل"
@@ -4856,11 +4856,11 @@ msgstr ""
 
 #, c-format
 msgid "You have been kicked: (%s)"
-msgstr ""
+msgstr "لقد طُردتَ : (%s)"
 
 #, c-format
 msgid "Kicked (%s)"
-msgstr ""
+msgstr "طُرد : (%s)"
 
 msgid "Unknown Error in presence"
 msgstr "خطأ مجهول في التواجد"
@@ -4890,25 +4890,25 @@ msgid "Please select the resource of %s to which you would like to send a file"
 msgstr "من فضلك حدد موْرِد %s الذي تود إرسال ملف إليه"
 
 msgid "Afraid"
-msgstr ""
+msgstr "خائف"
 
 msgid "Amazed"
-msgstr ""
+msgstr "مندهش"
 
 msgid "Amorous"
-msgstr ""
+msgstr "عاشق"
 
 msgid "Angry"
 msgstr "غاضب"
 
 msgid "Annoyed"
-msgstr ""
+msgstr "ضَجِر"
 
 msgid "Anxious"
 msgstr "قلق"
 
 msgid "Aroused"
-msgstr ""
+msgstr "مُثار"
 
 msgid "Ashamed"
 msgstr "مخزي"
@@ -4917,25 +4917,25 @@ msgid "Bored"
 msgstr "ملّان"
 
 msgid "Brave"
-msgstr ""
+msgstr "شجاع"
 
 msgid "Calm"
-msgstr ""
+msgstr "هادئ"
 
 msgid "Cautious"
-msgstr ""
+msgstr "حَذِر"
 
 msgid "Cold"
-msgstr ""
+msgstr "بارد"
 
 msgid "Confident"
-msgstr ""
+msgstr "واثق"
 
 msgid "Confused"
-msgstr ""
+msgstr "حائر"
 
 msgid "Contemplative"
-msgstr ""
+msgstr "متأمِّل"
 
 msgid "Contented"
 msgstr ""
@@ -4944,25 +4944,25 @@ msgid "Cranky"
 msgstr ""
 
 msgid "Crazy"
-msgstr ""
+msgstr "مجنون"
 
 msgid "Creative"
-msgstr ""
+msgstr "خلاَّق"
 
 msgid "Curious"
-msgstr ""
+msgstr "فضولي"
 
 msgid "Dejected"
 msgstr ""
 
 msgid "Depressed"
-msgstr ""
+msgstr "مكتئب"
 
 msgid "Disappointed"
-msgstr ""
+msgstr "خائب الأمل"
 
 msgid "Disgusted"
-msgstr ""
+msgstr "مشمئز"
 
 msgid "Dismayed"
 msgstr ""
@@ -4971,10 +4971,10 @@ msgid "Distracted"
 msgstr ""
 
 msgid "Embarrassed"
-msgstr ""
+msgstr "مُحرَج"
 
 msgid "Envious"
-msgstr ""
+msgstr "حسود"
 
 msgid "Excited"
 msgstr "متحمّس"
@@ -4983,10 +4983,10 @@ msgid "Flirtatious"
 msgstr ""
 
 msgid "Frustrated"
-msgstr ""
+msgstr "محبط"
 
 msgid "Grateful"
-msgstr ""
+msgstr "ممتن"
 
 msgid "Grieving"
 msgstr ""
@@ -4995,28 +4995,28 @@ msgid "Grumpy"
 msgstr ""
 
 msgid "Guilty"
-msgstr ""
+msgstr "مذنب"
 
 msgid "Happy"
 msgstr "سعيد"
 
 msgid "Hopeful"
-msgstr ""
+msgstr "متفائل"
 
 msgid "Hot"
-msgstr ""
+msgstr "حار"
 
 msgid "Humbled"
 msgstr ""
 
 msgid "Humiliated"
-msgstr ""
+msgstr "مذلول"
 
 msgid "Hungry"
-msgstr ""
+msgstr "جائع"
 
 msgid "Hurt"
-msgstr ""
+msgstr "مجروح"
 
 msgid "Impressed"
 msgstr ""
@@ -5031,7 +5031,7 @@ msgid "Indignant"
 msgstr ""
 
 msgid "Interested"
-msgstr ""
+msgstr "مهتم"
 
 msgid "Intoxicated"
 msgstr ""
@@ -5043,13 +5043,13 @@ msgid "Jealous"
 msgstr "غيور"
 
 msgid "Lonely"
-msgstr ""
+msgstr "وحيد"
 
 msgid "Lost"
-msgstr ""
+msgstr "ضائع"
 
 msgid "Lucky"
-msgstr ""
+msgstr "محظوظ"
 
 msgid "Mean"
 msgstr ""
@@ -5058,25 +5058,25 @@ msgid "Moody"
 msgstr ""
 
 msgid "Nervous"
-msgstr ""
+msgstr "متوتر"
 
 msgid "Neutral"
-msgstr ""
+msgstr "محايد"
 
 msgid "Offended"
-msgstr ""
+msgstr "مُهان"
 
 msgid "Outraged"
 msgstr ""
 
 msgid "Playful"
-msgstr ""
+msgstr "لعوب"
 
 msgid "Proud"
-msgstr ""
+msgstr "مفتخر"
 
 msgid "Relaxed"
-msgstr ""
+msgstr "مسترخ"
 
 msgid "Relieved"
 msgstr ""
@@ -5091,56 +5091,56 @@ msgid "Sad"
 msgstr "حزين"
 
 msgid "Sarcastic"
-msgstr ""
+msgstr "ساخر"
 
 msgid "Satisfied"
-msgstr ""
+msgstr "راض"
 
 msgid "Serious"
-msgstr ""
+msgstr "جدي"
 
 msgid "Shocked"
-msgstr ""
+msgstr "مصدوم"
 
 msgid "Shy"
-msgstr ""
+msgstr "خجول"
 
 msgid "Sick"
-msgstr ""
+msgstr "مريض"
 
 #. Sleepy / Tired
 msgid "Sleepy"
 msgstr "نعسان"
 
 msgid "Spontaneous"
-msgstr ""
+msgstr "عفوي"
 
 msgid "Stressed"
 msgstr ""
 
 msgid "Strong"
-msgstr ""
+msgstr "قوي"
 
 msgid "Surprised"
-msgstr ""
+msgstr "متفاجئ"
 
 msgid "Thankful"
-msgstr ""
+msgstr "شاكر"
 
 msgid "Thirsty"
-msgstr ""
+msgstr "متعطش"
 
 msgid "Tired"
-msgstr ""
+msgstr "متعب"
 
 msgid "Undefined"
-msgstr ""
+msgstr "غير محدد"
 
 msgid "Weak"
-msgstr ""
+msgstr "ضعيف"
 
 msgid "Worried"
-msgstr ""
+msgstr "قلق"
 
 msgid "Set User Nickname"
 msgstr "حدد كنية المستخدم"
@@ -5173,10 +5173,10 @@ msgid "Unable to add \"%s\"."
 msgstr "تعذّرت إضافة \"%s\"."
 
 msgid "Buddy Add error"
-msgstr ""
+msgstr "عطل أثناء إضافة الصديق"
 
 msgid "The username specified does not exist."
-msgstr ""
+msgstr "اسم المستخدم المحدد غير موجود."
 
 msgid "Unable to parse message"
 msgstr "تعذّر تحليل الرسالة"
@@ -5314,7 +5314,7 @@ msgid "Not expected"
 msgstr "غير متوقع"
 
 msgid "Friendly name is changing too rapidly"
-msgstr ""
+msgstr "الاسم الودّي يتغير أسرع من اللازم"
 
 msgid "Server too busy"
 msgstr "الخادوم مشغول جدًا"
@@ -5497,10 +5497,10 @@ msgid "Page"
 msgstr "صفحة"
 
 msgid "Playing a game"
-msgstr ""
+msgstr "يلهو بلعبة"
 
 msgid "Working"
-msgstr ""
+msgstr "يعمل"
 
 msgid "Has you"
 msgstr "أنت لديه"
@@ -5527,16 +5527,16 @@ msgid "Out to Lunch"
 msgstr "خرجت للغداء"
 
 msgid "Game Title"
-msgstr ""
+msgstr "عنوان اللعبة"
 
 msgid "Office Title"
-msgstr ""
+msgstr "عنوان المكتب"
 
 msgid "Set Friendly Name..."
 msgstr "أدخل اسما ودّيا..."
 
 msgid "View Locations..."
-msgstr ""
+msgstr "عرض المواقع..."
 
 msgid "Set Home Phone Number..."
 msgstr "أدخل رقم هاتف المنزل..."
@@ -5551,7 +5551,7 @@ msgid "Enable/Disable Mobile Devices..."
 msgstr "فعّل/عطّل الأجهزة المحمولة..."
 
 msgid "Allow/Disallow Multiple Logins..."
-msgstr ""
+msgstr "السماح أو رفض الولوج المتعدد..."
 
 msgid "Allow/Disallow Mobile Pages..."
 msgstr "اسمح/ارفض الصفحات المتنقلة..."
@@ -5573,9 +5573,11 @@ msgid ""
 "Unable to add the buddy %s because the username is invalid.  Usernames must "
 "be valid email addresses."
 msgstr ""
+"تعذرت إضافة الصديق %s لأن اسم المستخدم غير صالح. يجب أن تكون العناوين "
+"الإلكترونية لاسماء المستخدمين .صالحة."
 
 msgid "Unable to Add"
-msgstr ""
+msgstr "تعذرت الإضافة"
 
 msgid "Error retrieving profile"
 msgstr "عطل في جلب اللاحة"
@@ -5752,10 +5754,10 @@ msgid "Show custom smileys"
 msgstr "اعرض البسمات المخصصة"
 
 msgid "Allow direct connections"
-msgstr ""
+msgstr "السماح بالاتصالات المباشرة"
 
 msgid "Allow connecting from multiple locations"
-msgstr ""
+msgstr "السماح بالاتصال من مواقع متعددة"
 
 msgid "nudge: nudge a user to get their attention"
 msgstr ""
@@ -5773,7 +5775,7 @@ msgstr "المستخدمين التاليين ناقصين في دفتر عنا�
 
 #, c-format
 msgid "Unknown error (%d): %s"
-msgstr ""
+msgstr "خطأ مجهول (%d)‏ : %s"
 
 msgid "Unable to add user"
 msgstr "تعذّرت إضافة مستخدم"
@@ -5784,13 +5786,13 @@ msgid "Unknown error (%d)"
 msgstr "عُطل مجهول (%d)"
 
 msgid "Unable to remove user"
-msgstr ""
+msgstr "تعذرت إزالة المستخدم"
 
 msgid "Mobile message was not sent because it was too long."
 msgstr "لم تُرسل رسالة المحمول لأنها طويلة جدا."
 
 msgid "Mobile message was not sent because an unknown error occurred."
-msgstr ""
+msgstr "لم تُرسَل الرسالة المحمولة بسبب حدوث خطأ مجهول."
 
 #, c-format
 msgid ""
@@ -6004,19 +6006,19 @@ msgstr ""
 #. display name
 #. nick name (required)
 msgid "Display Name"
-msgstr ""
+msgstr "الاسم المعروض"
 
 #. about me
 msgid "About Me"
-msgstr ""
+msgstr "من أنا"
 
 #. where I live
 msgid "Where I Live"
-msgstr ""
+msgstr "أين أقيم"
 
 #. relationship status
 msgid "Relationship Status"
-msgstr ""
+msgstr "حالة علاقتي"
 
 #. mobile number
 msgid "Mobile Number"
@@ -6024,11 +6026,11 @@ msgstr "رقم الهاتف الجوال"
 
 #. is searchable
 msgid "Can be searched"
-msgstr ""
+msgstr "يمكن العثور علي"
 
 #. is suggestable
 msgid "Can be suggested"
-msgstr ""
+msgstr "يمكن اقتراحي للآخرين"
 
 msgid "Update your MXit Profile"
 msgstr ""
@@ -6096,11 +6098,11 @@ msgstr ""
 
 #. suggested friends
 msgid "Suggested friends..."
-msgstr ""
+msgstr "الأصدقاء المُقترَحين...‏"
 
 #. search for contacts
 msgid "Search for contacts..."
-msgstr ""
+msgstr "البحث عن جهات الاتصال...‏"
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6116,28 +6118,28 @@ msgstr "الملف الذي تريد إرساله كبير جدا !"
 
 #. file read error
 msgid "Unable to access the local file"
-msgstr ""
+msgstr "تعذر الوصول إلى الملف المحلي"
 
 #. file write error
 msgid "Unable to save the file"
-msgstr ""
+msgstr "تعذر حفظ الملف"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
 msgstr "تعذّر الاتصال بالخادم HTTP ل MXit. رجاءً تحقق من إعدادات خادمك."
 
 msgid "Logging In..."
-msgstr ""
+msgstr "يجري الولوج...‏"
 
 msgid ""
 "Unable to connect to the MXit server. Please check your server settings."
 msgstr ""
 
 msgid "Connecting..."
-msgstr ""
+msgstr "يجري الاتصال...‏"
 
 msgid "The Display Name you entered is too short."
-msgstr ""
+msgstr "الاسم المعروض الذي أدخلته قصير جدا."
 
 msgid "The PIN you entered has an invalid length [7-10]."
 msgstr ""
@@ -6257,47 +6259,47 @@ msgid "Don't want to say"
 msgstr ""
 
 msgid "Single"
-msgstr ""
+msgstr "عازب"
 
 msgid "In a relationship"
 msgstr ""
 
 msgid "Engaged"
-msgstr ""
+msgstr "خاطب"
 
 msgid "Married"
-msgstr ""
+msgstr "متزوج"
 
 msgid "It's complicated"
-msgstr ""
+msgstr "الأمر معقد"
 
 msgid "Widowed"
-msgstr ""
+msgstr "أرمل"
 
 msgid "Separated"
-msgstr ""
+msgstr "هاجِرٌ"
 
 msgid "Divorced"
-msgstr ""
+msgstr "مطلق"
 
 msgid "Last Online"
-msgstr ""
+msgstr "آخر اتصال"
 
 msgid "Invite Message"
-msgstr ""
+msgstr "رسالة الدعوة"
 
 msgid "No results"
-msgstr ""
+msgstr "لا وجود للنتائج"
 
 msgid "No contacts found."
-msgstr ""
+msgstr "لم يُعثَر على أي جهة اتصال."
 
 #. define columns
 msgid "UserId"
-msgstr ""
+msgstr "معرف المستخدم"
 
 msgid "Where I live"
-msgstr ""
+msgstr "أين أقيم"
 
 #, c-format
 msgid "You have %i suggested friend."
@@ -6334,19 +6336,19 @@ msgid "Timeout while waiting for a response from the MXit server."
 msgstr ""
 
 msgid "Successfully Logged In..."
-msgstr ""
+msgstr "ولج بنجاج...‏"
 
 #, c-format
 msgid ""
 "%s sent you an encrypted message, but it is not supported on this client."
-msgstr ""
+msgstr "أرسل إليك %s رسالة مُعمَّاة، لكنها ليست مدعومة من طرف هذا الزبون.‏"
 
 msgid "Message Error"
-msgstr ""
+msgstr "خطأ في الرسالة"
 
 #. could not be decrypted
 msgid "An encrypted message was received which could not be decrypted."
-msgstr ""
+msgstr "لم يُتمكَّن من فك تعمية الرسالة المُعمَّاة التي تلقيتها.‏"
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr ""
@@ -11195,9 +11197,8 @@ msgstr "الك_نية:"
 msgid "_Group:"
 msgstr "_مجموعة:"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "افتح السبورة تلقائيا"
+msgstr ""
 
 msgid "_Remain in chat after window is closed"
 msgstr ""
@@ -11239,9 +11240,8 @@ msgstr ""
 msgid "SSL Servers"
 msgstr "خادوم SSL"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "خيارات التنقيح المدعومة هي: الإصدارة الملحقات"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "أمرٌ مجهول."
@@ -12606,9 +12606,8 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
-#, fuzzy
 msgid "Media error"
-msgstr "عطل في القراءة"
+msgstr ""
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -14159,16 +14158,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "نبّه عن"
 
-#, fuzzy
 msgid "\t_Notify for System messages"
-msgstr "رسائل النظام"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_فقط عندما يقول شخص ما اسمك"
 
-#, fuzzy
 msgid "\tNotify for _System messages"
-msgstr "رسائل النظام"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "_نوافذ مركز عليها"
