@@ -9,6 +9,8 @@ version 2.11.0:
 		  built-in handling of commands.
 		* PurplePrefsUiOps, to allow the UI to override the way global
 		  preferences are stored.
+		* PurpleAccountPrefsUiOps, to allow the UI to handle storage
+		  of account preferences.
 		* purple_media_set_encryption_parameters
 		* purple_media_set_decryption_parameters
 		* purple_xfer_write_file
