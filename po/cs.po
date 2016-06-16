@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# David Vachulka <david@konstrukce-cad.com>, 2015-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Czech (http://www.transifex.com/projects/p/pidgin/language/"
-"cs/)\n"
+"POT-Creation-Date: 2016-06-15 23:13-0500\n"
+"PO-Revision-Date: 2016-06-07 08:45+0000\n"
+"Last-Translator: David Vachulka <david@konstrukce-cad.com>\n"
+"Language-Team: Czech (http://www.transifex.com/pidgin/pidgin/language/cs/)\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1774,7 +1774,7 @@ msgid "Certificate Information"
 msgstr "Informace o certifikátu"
 
 msgid "Unable to find Issuer Certificate"
-msgstr ""
+msgstr "Nemohu nalézt certifikát vydavatele"
 
 #. Make messages
 #, c-format
@@ -1788,12 +1788,20 @@ msgid ""
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
+"Veřejné jméno: %s\n"
+"\n"
+"Vydán: %s\n"
+"\n"
+"Otisk (SHA1): %s\n"
+"\n"
+"Datum aktivace: %s\n"
+"Datum vypršení: %s\n"
 
 msgid "(self-signed)"
-msgstr ""
+msgstr "(podepsaný sám sebou)"
 
 msgid "View Issuer Certificate"
-msgstr ""
+msgstr "Zobrazit certifikát vydavatele"
 
 #. show error to user
 msgid "Registration Error"
@@ -2222,26 +2230,31 @@ msgstr "<font color=\"red\"><b>Nemohu přečíst soubor: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-ODPOVĚĎ>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "Zpráva od %s"
+msgstr ""
+"\n"
+"\n"
+"Zpráva od Farsight: "
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
+"Chyba při inicializaci volání. Pravděpodobně problém v instalaci GStreamer "
+"nebo Farsight."
 
-#, fuzzy
 msgid "Network error."
-msgstr "Síť"
+msgstr "Chyba sítě."
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
 "GStreamer codecs."
 msgstr ""
+"Vyjednávání kodeku selhalo. Problém by mohl být vyřešen instalací dalších "
+"GStreamer kodeků."
 
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
@@ -2254,15 +2267,14 @@ msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr "Nezanechán kodek. Preference v fs-codecs.conf jsou příliš přísné."
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "Nepřipojen k serveru"
+msgstr "Nemohu se připojit ke vzdálené párty"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Nastala neobnovitelná Farsight2 chyba."
 
 msgid "A non-recoverable Farstream error has occurred."
-msgstr ""
+msgstr "Nastala neodstranitelná Farsight chyba."
 
 msgid "Error with your microphone"
 msgstr "Chyba mikrofonu"
@@ -2877,38 +2889,38 @@ msgid "Tests to see that most things are working."
 msgstr "Test pro zjištění, zda většina věcí funguje."
 
 msgid "TLS/SSL Versions"
-msgstr ""
+msgstr "Verze TLS/SSL"
 
 msgid "Minimum Version"
-msgstr ""
+msgstr "Minimální verze"
 
 msgid "Maximum Version"
-msgstr ""
+msgstr "Maximální verze"
 
 msgid "SSL 2"
-msgstr ""
+msgstr "SSL 2"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "SSL 3"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "TLS 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "TLS 1.1"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "TLS 1.2"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "TLS 1.3"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
-msgstr ""
+msgstr "Nepodporováno pro NSS < 3.14"
 
 msgid "Ciphers"
-msgstr ""
+msgstr "Šifry"
 
 #. *< type
 #. *< ui_requirement
@@ -2917,14 +2929,14 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "NSS Preferences"
-msgstr ""
+msgstr "Nastavení NSS"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
-msgstr ""
+msgstr "Konfigurace šifer a dalšího nastavení pro zásuvný modul NSS SSL/TSL"
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -3266,7 +3278,7 @@ msgstr "Připojuji se"
 
 #, c-format
 msgid "Unable to resolve hostname: %s"
-msgstr ""
+msgstr "Nemohu vyřešit jméno hosta: %s"
 
 msgid "Chat error"
 msgstr "Chyba chatu"
@@ -3422,7 +3434,7 @@ msgid "Auto-detect incoming UTF-8"
 msgstr "Automaticky detekovat příchozí UTF-8"
 
 msgid "Ident name"
-msgstr ""
+msgstr "Identifikační jméno"
 
 msgid "Real name"
 msgstr "Skutečné jméno"
@@ -3435,10 +3447,10 @@ msgid "Use SSL"
 msgstr "Používat SSL"
 
 msgid "Authenticate with SASL"
-msgstr ""
+msgstr "Autentizace pomocí SASL"
 
 msgid "Allow plaintext SASL auth over unencrypted connection"
-msgstr ""
+msgstr "Povolit textovou autentizaci SASL po nešifrovaných proudech"
 
 msgid "Bad mode"
 msgstr "Špatný mód"
@@ -3475,10 +3487,10 @@ msgid "Nick"
 msgstr "Přezdívka"
 
 msgid "Login name"
-msgstr ""
+msgstr "Přihlašovací jméno"
 
 msgid "Host name"
-msgstr ""
+msgstr "Název počítače"
 
 msgid "Currently on"
 msgstr "Momentálně na"
@@ -3509,7 +3521,7 @@ msgstr "Téma pro %s je: %s"
 
 #, c-format
 msgid "Topic for %s set by %s at %s on %s"
-msgstr ""
+msgstr "Téma pro %s nastaveno %s v %s %s"
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3627,27 +3639,27 @@ msgstr "Wallops od %s"
 
 #, c-format
 msgid "Failed to initialize SASL authentication: %s"
-msgstr ""
+msgstr "Selhala inicializace SASL autentizace: %s"
 
 msgid "SASL authentication failed: No worthy authentication mechanisms found."
-msgstr ""
+msgstr "SASL autentizace selhala: Nenalezen vhodný mechanismus autentizace."
 
 #, c-format
 msgid "SASL authentication failed: %s"
-msgstr ""
+msgstr "SASL autentizace selhala: %s"
 
 msgid ""
 "SASL authentication failed: Server does not support SASL authentication."
-msgstr ""
+msgstr "SASL autentizace selhala: Server nepodporuje SASL autentizaci."
 
 msgid "SASL authentication failed: Initializing SASL failed."
-msgstr ""
+msgstr "SASL autentizace selhala: Inicializace SASL selhala."
 
 msgid "Incorrect Password"
-msgstr ""
+msgstr "Nesprávné heslo"
 
 msgid "SASL authentication failed: No worthy mechanisms found"
-msgstr ""
+msgstr "SASL autentizace selhala: Nenalezen vhodný mechanismus"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;akce, kterou provést&gt;: Provést akci."
@@ -4670,7 +4682,7 @@ msgstr "Nemohu inicializovat multimédia s %s: uživatel není online"
 
 #, c-format
 msgid "Unable to initiate media with %s: resource is not online"
-msgstr ""
+msgstr "Nemohu inicializovat multimédia s %s: zdroj není online"
 
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
@@ -4731,7 +4743,7 @@ msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;uživatel&gt; [zpráva]: Pozvat uživatele do místnosti."
 
 msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
-msgstr ""
+msgstr "join: &lt;místnost[@server]&gt; [heslo]: Připojit se k chatu."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;uživatel&gt; [důvod]: Vykopnout uživatele z místnosti."
@@ -5860,18 +5872,24 @@ msgid ""
 "%s (There was an error receiving this message. Converting the encoding from "
 "%s to UTF-8 failed.)"
 msgstr ""
+"%s (Při přijímání této zprávy došlo k chybě. Konverze z kódování %s na UTF-8 "
+"selhala.)"
 
 #, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was %s, but it "
 "was not valid UTF-8.)"
 msgstr ""
+"%s (Při přijímání této zprávy došlo k chybě. Znaková sada byla %s, ale to "
+"není platné UTF-8.)"
 
 #, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was missing, but "
 "it was not valid UTF-8.)"
 msgstr ""
+"%s (Při přijímání této zprávy došlo k chybě. Znaková sada chyběla, ale to "
+"není platné UTF-8.)"
 
 msgid "Writing error"
 msgstr "Chyba zápisu"
@@ -5909,7 +5927,7 @@ msgstr "Nemohu se autentizovat: %s"
 
 #, c-format
 msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
+msgstr "Váš seznam kamarádů MSN dočasně není k dispozici: %s"
 
 msgid "Handshaking"
 msgstr "Vyjednávám"
@@ -6020,7 +6038,7 @@ msgstr "Kde bydlím"
 
 #. relationship status
 msgid "Relationship Status"
-msgstr ""
+msgstr "Status vztahu"
 
 #. mobile number
 msgid "Mobile Number"
@@ -6120,11 +6138,11 @@ msgstr "Soubor, který se pokoušíte poslat, je příliš velký!"
 
 #. file read error
 msgid "Unable to access the local file"
-msgstr ""
+msgstr "Nemohu získat přístup k souboru"
 
 #. file write error
 msgid "Unable to save the file"
-msgstr ""
+msgstr "Nemohu uložit soubor"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6258,31 +6276,31 @@ msgid "Enable splash-screen popup"
 msgstr "Povolit zobrazení spouštěcí obrazovky"
 
 msgid "Don't want to say"
-msgstr ""
+msgstr "Nechci říct"
 
 msgid "Single"
-msgstr ""
+msgstr "Svobodný/á"
 
 msgid "In a relationship"
-msgstr ""
+msgstr "Ve vztahu"
 
 msgid "Engaged"
-msgstr ""
+msgstr "Zasnoubený/á"
 
 msgid "Married"
-msgstr ""
+msgstr "Ženatý/Vdaná"
 
 msgid "It's complicated"
-msgstr ""
+msgstr "Je to komplikované"
 
 msgid "Widowed"
-msgstr ""
+msgstr "Ovdovělý/á"
 
 msgid "Separated"
-msgstr ""
+msgstr "Odděleni"
 
 msgid "Divorced"
-msgstr ""
+msgstr "Rozvedený/á"
 
 msgid "Last Online"
 msgstr "Naposledy připojen"
@@ -6306,16 +6324,16 @@ msgstr "Kde bydlím"
 #, c-format
 msgid "You have %i suggested friend."
 msgid_plural "You have %i suggested friends."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Máte %i doporučeného přítele."
+msgstr[1] "Máte %i doporučené přátele."
+msgstr[2] "Máte %i doporučených přátel."
 
 #, c-format
 msgid "We found %i contact that matches your search."
 msgid_plural "We found %i contacts that match your search."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Nalezen %i odpovídající kontakt."
+msgstr[1] "Nalezeny %i odpovídající kontakty."
+msgstr[2] "Nalezeno %i odpovídajících kontaktů."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6345,7 +6363,7 @@ msgstr "Chyba zprávy"
 
 #. could not be decrypted
 msgid "An encrypted message was received which could not be decrypted."
-msgstr ""
+msgstr "Doručena šifrovaná zpráva, která nemohla být rozšifrována."
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Nemohu provést přesměrování pomocí daného protokolu"
@@ -8346,7 +8364,7 @@ msgid "Topic:"
 msgstr "Téma:"
 
 msgid "A server is required to connect this account"
-msgstr ""
+msgstr "Je vyžadován server pro připojení tohoto účtu"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -9885,7 +9903,7 @@ msgid "Start Doodling"
 msgstr "Začít kreslit"
 
 msgid "Activate which ID?"
-msgstr ""
+msgstr "Aktivovat ID?"
 
 msgid "Select the ID you want to activate"
 msgstr "Vyberte ID, které chcete aktivovat"
@@ -10456,20 +10474,24 @@ msgstr ""
 "přejmenován na %s~."
 
 msgid "Instant Messaging Client"
-msgstr ""
+msgstr "Instant Messaging Klient"
 
 msgid ""
 "Pidgin is a chat program which lets you log in to accounts on multiple chat "
 "networks simultaneously."
 msgstr ""
+"Pidgin je chatovací program umožňující přihlášení k účtům na různých sítích "
+"soušasně. "
 
 msgid ""
 "This means that you can be chatting with friends on MSN, talking to a friend "
 "on Google Talk, and sitting in a Yahoo chat room all at the same time."
 msgstr ""
+"To znamená chatování s přáteli na MSN, rozhovory na Google Talk a sezení v "
+"chatovacích místnostech Yahoo současně."
 
 msgid "The buddy list showing friends on different networks."
-msgstr ""
+msgstr "Seznam kamarádů zobrazuje kamarády na různých sítích."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internet Messenger"
@@ -10991,7 +11013,7 @@ msgid "/Help/De_veloper Information"
 msgstr "/Nápověda/Informace o vývojářích"
 
 msgid "/Help/_Plugin Information"
-msgstr ""
+msgstr "/Nápověda/_Informace o zásuvných modulech"
 
 msgid "/Help/_Translator Information"
 msgstr "/Nápověda/Informace o _překladatelích"
@@ -11205,13 +11227,11 @@ msgstr "_Alias:"
 msgid "_Group:"
 msgstr "_Skupina:"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "Automaticky _připojit při připojení účtu."
+msgstr "Automaticky _připojit při připojení účtu"
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
-msgstr "_Zůstat na chatu po zavření okna."
+msgstr "_Zůstat na chatu po zavření okna"
 
 msgid "Please enter the name of the group to be added."
 msgstr "Zadejte prosím název skupiny, kterou přidat."
@@ -11250,9 +11270,8 @@ msgstr "Zadejte jméno hostitele pro tento certifikát."
 msgid "SSL Servers"
 msgstr "SSL servery"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "Podporované ladicí přepínače jsou: plugins version"
+msgstr "Podporované ladicí přepínače jsou: plugins, version"
 
 msgid "Unknown command."
 msgstr "Neznámý příkaz."
@@ -11533,6 +11552,8 @@ msgid ""
 "The account has disconnected and you are no longer in this chat. You will "
 "automatically rejoin the chat when the account reconnects."
 msgstr ""
+"Účet byl odpojen a nejste dále na chatu. Budete automaticky znovu připojen k "
+"chatu při připojení účtu."
 
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Vymaže všechny paměti řádků konverzace."
@@ -11679,7 +11700,7 @@ msgid "Assamese"
 msgstr "Ásámština"
 
 msgid "Asturian"
-msgstr ""
+msgstr "Asturština"
 
 msgid "Belarusian Latin"
 msgstr "Běloruština (latinka)"
@@ -11694,10 +11715,10 @@ msgid "Bengali-India"
 msgstr "Bengálština (Indie)"
 
 msgid "Breton"
-msgstr ""
+msgstr "Bretonština"
 
 msgid "Bodo"
-msgstr ""
+msgstr "Bodo"
 
 msgid "Bosnian"
 msgstr "Bosenština"
@@ -11739,7 +11760,7 @@ msgid "Spanish"
 msgstr "Španělština"
 
 msgid "Argentine Spanish"
-msgstr ""
+msgstr "Argentinská španělština"
 
 msgid "Estonian"
 msgstr "Estonština"
@@ -11772,7 +11793,7 @@ msgid "Hindi"
 msgstr "Hindština"
 
 msgid "Croatian"
-msgstr ""
+msgstr "Chorvatština"
 
 msgid "Hungarian"
 msgstr "Maďarština"
@@ -11793,7 +11814,7 @@ msgid "Ubuntu Georgian Translators"
 msgstr "Překladatelé Gruzínštiny z Ubuntu"
 
 msgid "Kazakh"
-msgstr ""
+msgstr "Kazachština"
 
 msgid "Khmer"
 msgstr "Khmérština"
@@ -11808,19 +11829,19 @@ msgid "Korean"
 msgstr "Korejština"
 
 msgid "Kashmiri"
-msgstr ""
+msgstr "Kašmírština"
 
 msgid "Kurdish"
 msgstr "Kurdština"
 
 msgid "Kurdish (Sorani)"
-msgstr ""
+msgstr "Kurdština (Sorani)"
 
 msgid "Lithuanian"
 msgstr "Litevština"
 
 msgid "Latvian"
-msgstr ""
+msgstr "Lotyština"
 
 msgid "Maithili"
 msgstr "Maithili"
@@ -11844,7 +11865,7 @@ msgid "Marathi"
 msgstr "Marathi"
 
 msgid "Burmese"
-msgstr ""
+msgstr "Barmština"
 
 msgid "Bokmål Norwegian"
 msgstr "Norština Bokmål"
@@ -11886,7 +11907,7 @@ msgid "Russian"
 msgstr "Ruština"
 
 msgid "Sindhi"
-msgstr ""
+msgstr "Sindhština"
 
 msgid "Slovak"
 msgstr "Slovenština"
@@ -11901,7 +11922,7 @@ msgid "Serbian"
 msgstr "Srbština"
 
 msgid "Serbian Latin"
-msgstr ""
+msgstr "Srbština latinka"
 
 msgid "Sinhala"
 msgstr "Sinhálština"
@@ -11922,7 +11943,7 @@ msgid "Thai"
 msgstr "Thajština"
 
 msgid "Tatar"
-msgstr ""
+msgstr "Tatarština"
 
 msgid "Ukranian"
 msgstr "Ukrajinština"
@@ -11931,12 +11952,12 @@ msgid "Urdu"
 msgstr "Urdu"
 
 msgid "Uzbek"
-msgstr ""
+msgstr "Uzbekština"
 
 #. Translators: This is a person's name. For most languages we recommend
 #. not translating it.
 msgid "Akmal Khushvakov"
-msgstr ""
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "Vietnamština"
@@ -12051,10 +12072,10 @@ msgstr "Informace o překladatelích %s"
 
 #, c-format
 msgid "%s Plugin Information"
-msgstr ""
+msgstr "%s Informace o zásuvném modulu"
 
 msgid "Plugin Information"
-msgstr ""
+msgstr "Informace o zásuvném modulu"
 
 msgid "_Name"
 msgstr "_Název"
@@ -12646,9 +12667,8 @@ msgstr "_Média"
 msgid "_Hangup"
 msgstr "_Zavěsit"
 
-#, fuzzy
 msgid "Media error"
-msgstr "Chyba čtení"
+msgstr "Chuba multimédia"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12667,44 +12687,44 @@ msgstr "Příchozí hovor"
 #.
 #. Letters on the '2' key of a numeric keypad
 msgid "ABC"
-msgstr ""
+msgstr "ABC"
 
 #. Letters on the '3' key of a numeric keypad
 msgid "DEF"
-msgstr ""
+msgstr "DEF"
 
 #. Letters on the '4' key of a numeric keypad
 msgid "GHI"
-msgstr ""
+msgstr "GHI"
 
 #. Letters on the '5' key of a numeric keypad
 msgid "JKL"
-msgstr ""
+msgstr "JKL"
 
 #. Letters on the '6' key of a numeric keypad
 msgid "MNO"
-msgstr ""
+msgstr "MNO"
 
 #. Letters on the '7' key of a numeric keypad
 msgid "PQRS"
-msgstr ""
+msgstr "PQRS"
 
 #. Letters on the '8' key of a numeric keypad
 msgid "TUV"
-msgstr ""
+msgstr "TUV"
 
 #. Letters on the '9' key of a numeric keypad
 msgid "WXYZ"
-msgstr ""
+msgstr "WXYZ"
 
 msgid "_Hold"
-msgstr ""
+msgstr "_Podržet"
 
 msgid "_Pause"
 msgstr "_Pozastavit"
 
 msgid "_Mute"
-msgstr ""
+msgstr "_Ztlumit"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12736,7 +12756,7 @@ msgid ""
 msgstr "Byl zvolen 'Ruční' příkaz prohlížeče, ale nebyl nastaven žádný příkaz."
 
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
-msgstr ""
+msgstr "Nemohu otevřít URL: Ručně zadaný příkaz prohlížeče není platný."
 
 msgid "No message"
 msgstr "Žádná zpráva"
@@ -13053,10 +13073,10 @@ msgid "F_lash window when IMs are received"
 msgstr "_Bliknout oknem, když jsou přijaty IM"
 
 msgid "Resize incoming custom smileys"
-msgstr ""
+msgstr "Změnit velikost příchozích uživatelských smajlíků"
 
 msgid "Maximum size:"
-msgstr ""
+msgstr "Maximální velikost:"
 
 msgid "Minimum input area height in lines:"
 msgstr "Minimální výška plochy pro zadání v řádcích:"
@@ -13128,7 +13148,7 @@ msgid "_UDP Port:"
 msgstr "_UDP Port:"
 
 msgid "T_CP Port:"
-msgstr ""
+msgstr "T_CP Port:"
 
 msgid "Use_rname:"
 msgstr "Jméno _uživatele:"
@@ -14216,16 +14236,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Upozorňovat na"
 
-#, fuzzy
 msgid "\t_Notify for System messages"
-msgstr "Systémové zprávy"
+msgstr "\t_Upozorňovat na Systémové zprávy"
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_Jen když někdo řekne vaše jméno uživatele"
 
-#, fuzzy
 msgid "\tNotify for _System messages"
-msgstr "Systémové zprávy"
+msgstr "\tUpozorňovat na _Systémové zprávy"
 
 msgid "_Focused windows"
 msgstr "_Aktivní okna"
@@ -14712,33 +14730,34 @@ msgstr ""
 
 #. Alerts
 msgid "Chatroom alerts"
-msgstr ""
+msgstr "Upozornění chatu"
 
 msgid "Chatroom message alerts _only where someone says your username"
 msgstr ""
+"Upozornění na zprávy v chatu _jen když někdo řekne vaše jméno uživatele"
 
 #. Launcher integration
 msgid "Launcher Icon"
-msgstr ""
+msgstr "Launcher ikona"
 
 msgid "_Disable launcher integration"
-msgstr ""
+msgstr "_Zakázat integraci s launcherem"
 
 msgid "Show number of unread _messages on launcher icon"
-msgstr ""
+msgstr "Zobrazit počet nepřečtených _zpráv na ikoně launcheru"
 
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr ""
+msgstr "Zobrazit počet nepřečtených kon_verzací na ikoně launcheru"
 
 #. Messaging menu integration
 msgid "Messaging Menu"
-msgstr ""
+msgstr "Menu zpráv"
 
 msgid "Show number of _unread messages for conversations in messaging menu"
-msgstr ""
+msgstr "Zobrazit počet _nepřečtených zpráv v menu zpráv"
 
 msgid "Show _elapsed time for unread conversations in messaging menu"
-msgstr ""
+msgstr "Zobrazit _uplynulý čas nepřečtených konverzací v menu zpráv"
 
 #. *< type
 #. *< ui_requirement
@@ -14747,17 +14766,17 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "Unity Integration"
-msgstr ""
+msgstr "Integrace s Unity"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Provides integration with Unity."
-msgstr ""
+msgstr "Poskytuje integraci s Unity."
 
 #. *  description
 msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr ""
+msgstr "Poskytuje integraci s menu zpráv a launcherem Unity."
 
 msgid "Audio"
 msgstr "Audio"
@@ -15017,7 +15036,6 @@ msgstr ""
 "Nemohu odinstalovat aktuálně nainstalovanou verzi Pidgin. Nová verze bude "
 "nainstalována bez odstranění aktuálně nainstalované verze."
 
-#, fuzzy
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
 "installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
