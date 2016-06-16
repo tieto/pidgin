@@ -45,8 +45,8 @@ AC_PREREQ([2.50])
 #
 m4_define([purple_lt_current], [10])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [10])
-m4_define([purple_micro_version], [13])
+m4_define([purple_minor_version], [11])
+m4_define([purple_micro_version], [0])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
