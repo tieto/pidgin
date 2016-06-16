@@ -62,6 +62,11 @@ typedef enum _PurplePrefType
 typedef void (*PurplePrefCallback) (const char *name, PurplePrefType type,
 		gconstpointer val, gpointer data);
 
+/**
+ * Opaque type to carry callback information
+ */
+typedef struct _PurplePrefCallbackData PurplePrefCallbackData;
+
 
 /** @copydoc _PurplePrefsUiOps */
 typedef struct _PurplePrefsUiOps PurplePrefsUiOps;
@@ -100,8 +105,8 @@ struct _PurplePrefsUiOps
 	void (*save)(void);
 	void (*schedule_save)(void);
 
-	void *(*add_observer)(const char *name, gpointer data);
-	void (*remove_observer)(const char *name, void *observer);
+	void *(*connect_callback)(const char *name, PurplePrefCallbackData *data);
+	void (*disconnect_callback)(const char *name, void *ui_data);
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -421,6 +426,13 @@ void purple_prefs_disconnect_by_handle(void *handle);
  * Trigger callbacks as if the pref changed
  */
 void purple_prefs_trigger_callback(const char *name);
+
+/**
+ * Trigger callbacks as if the pref changed, taking a #PurplePrefCallbackData
+ * instead of a name
+ */
+void purple_prefs_trigger_callback_object(PurplePrefCallbackData *data);
+
 
 /**
  * Read preferences
