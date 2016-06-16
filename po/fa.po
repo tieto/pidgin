@@ -4,16 +4,16 @@
 #
 # Translators:
 # Elnaz Sarbar <elnaz.s@gmail.com>, 2013
-# Elnaz Sarbar <elnaz.s@gmail.com>, 2013
+# Elnaz Sarbar <elnaz.s@gmail.com>, 2013,2015
 # Richard Laager <rlaager@wiktel.com>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Persian (http://www.transifex.com/projects/p/pidgin/language/"
+"POT-Creation-Date: 2016-06-15 23:16-0500\n"
+"PO-Revision-Date: 2016-06-06 21:08+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Persian (http://www.transifex.com/pidgin/pidgin/language/"
 "fa/)\n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
@@ -113,12 +113,12 @@ msgstr "اسم مستعار:"
 
 #. Register checkbox
 msgid "Create this account on the server"
-msgstr "ایجاد حساب روی کارگزار"
+msgstr "ایجاد حساب در کارگزار"
 
 #. Cancel button
 #. Cancel
 msgid "Cancel"
-msgstr "انصراف"
+msgstr "لغو"
 
 #. Save button
 #. Save
@@ -790,7 +790,7 @@ msgid "Waiting for transfer to begin"
 msgstr "در حال انتظار برای آغاز انتقال"
 
 msgid "Cancelled"
-msgstr "صرف نظر شد"
+msgstr "لغو شد"
 
 msgid "Failed"
 msgstr "شکست خورد"
@@ -2121,18 +2121,18 @@ msgstr "انتقال پرونده انجام شد"
 
 #, c-format
 msgid "You cancelled the transfer of %s"
-msgstr "شما از انتقال %s صرف نظر کردید"
+msgstr "شما انتقال %s را لغو کردید"
 
 msgid "File transfer cancelled"
-msgstr "از انتقال پرونده صرف نظر شد"
+msgstr "انتقال پرونده لغو شد"
 
 #, c-format
 msgid "%s cancelled the transfer of %s"
-msgstr "%s ‌از انتقال %s‌ صرف نظر کرد"
+msgstr "%s ‌انتقال %s‌ را لغو کرد"
 
 #, c-format
 msgid "%s cancelled the file transfer"
-msgstr "%s از انتقال پرونده صرف نظر کرد"
+msgstr "%s انتقال پرونده را لغو کرد"
 
 #, c-format
 msgid "File transfer to %s failed."
@@ -2187,21 +2187,19 @@ msgstr "<font color=\"red\"><b>خواندن پرونده ممکن نیست: %s</
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <پاسخ خودکار>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "پیغام از %s"
+msgstr ""
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
 
-#, fuzzy
 msgid "Network error."
-msgstr "شبکه"
+msgstr ""
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
@@ -2217,9 +2215,8 @@ msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "اتصال به کاربر دوردست قطع شد:<br>%s"
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr ""
@@ -2306,7 +2303,7 @@ msgid "_Save"
 msgstr "_ذخیره"
 
 msgid "_Cancel"
-msgstr "ان_صراف"
+msgstr "_لغو"
 
 msgid "Ask"
 msgstr "سؤال شود"
@@ -4020,7 +4017,7 @@ msgid ""
 msgstr ""
 
 msgid "Cancel Presence Notification"
-msgstr "انصراف از اعلان حضور"
+msgstr "لغو اعلان حضور"
 
 msgid "Un-hide From"
 msgstr "نامخفی شدن از"
@@ -10934,9 +10931,8 @@ msgstr ""
 msgid "_Group:"
 msgstr "_گروه:"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "باز کردن تخته‌سفید به طور _خودکار"
+msgstr ""
 
 msgid "_Remain in chat after window is closed"
 msgstr ""
@@ -10978,9 +10974,8 @@ msgstr ""
 msgid "SSL Servers"
 msgstr ""
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "گزینه‌های اشکال‌زدایی پشتیبانی‌شده عبارتند از: plugins version"
+msgstr ""
 
 msgid "Unknown command."
 msgstr ""
@@ -12341,9 +12336,8 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
-#, fuzzy
 msgid "Media error"
-msgstr "خطای خواندن"
+msgstr ""
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -13888,16 +13882,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "اطلاع دادنِ"
 
-#, fuzzy
 msgid "\t_Notify for System messages"
-msgstr "پیغام‌های سیستم"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_فقط وقتی کسی نام کاربری شما را در گپ می‌گوید"
 
-#, fuzzy
 msgid "\tNotify for _System messages"
-msgstr "پیغام‌های سیستم"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "_پنجره‌های دارای تمرکز"
