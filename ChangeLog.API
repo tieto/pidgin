@@ -6,7 +6,9 @@ version 2.11.0:
 		* account-status-changing signal (account signals)
 		* buddy-removed-from-group signal (blist signals)
 		* PurpleCommandsUiOps, to allow the UI to override the
-		built-in handling of commands.
+		  built-in handling of commands.
+		* PurplePrefsUiOps, to allow the UI to override the way global
+		  preferences are stored.
 
 version 2.10.12:
 	* No changes
