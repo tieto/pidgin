@@ -129,15 +129,33 @@ struct _PurpleAccountUiOps
  *   it must set them to the account on load and handle changes with set_
  *   methods. Implementing load/save/schedule_save disables the built-in
  *   accounts.xml code.
+ *
+ *   @since 2.11.0
  */
 struct _PurpleAccountPrefsUiOps
 {
+	/** Notifies the UI that an integer account setting was set. */
 	void (*set_int)(PurpleAccount *account, const char *name, int value);
+
+	/** Notifies the UI that a string account setting was set. */
 	void (*set_string)(PurpleAccount *account, const char *name, const char *value);
+
+	/** Notifies the UI that a boolean account setting was set. */
 	void (*set_bool)(PurpleAccount *account, const char *name, gboolean value);
 
+	/** If this is set, accounts.xml loading will be disabled and this
+	 *  function will be called instead.
+	 */
 	void (*load)(void);
+
+	/** If this is set, accounts.xml saving will be disabled and this
+	 *  function will be called instead.
+	 */
 	void (*save)(void);
+
+	/** If this is set, the UI will handle scheduling the timer to call the
+	 *  save function, overriding the default timeout of 5 seconds.
+	 */
 	void (*schedule_save)(void);
 
 	void (*_purple_reserved1)(void);
@@ -1189,6 +1207,7 @@ PurpleAccountUiOps *purple_accounts_get_ui_ops(void);
  * Sets the UI operations structure to be used for account preferences.
  *
  * @param ops The UI operations structure.
+ * @since 2.11.0
  */
 void purple_account_prefs_set_ui_ops(PurpleAccountPrefsUiOps *ops);
 
@@ -1196,6 +1215,7 @@ void purple_account_prefs_set_ui_ops(PurpleAccountPrefsUiOps *ops);
  * Returns the UI operations structure used for account preferences.
  *
  * @return The UI operations structure in use.
+ * @since 2.11.0
  */
 PurpleAccountPrefsUiOps *purple_account_prefs_get_ui_ops(void);
 

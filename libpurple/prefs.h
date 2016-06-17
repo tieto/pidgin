@@ -64,6 +64,8 @@ typedef void (*PurplePrefCallback) (const char *name, PurplePrefType type,
 
 /**
  * Opaque type to carry callback information
+ *
+ * @since 2.11.0
  */
 typedef struct _PurplePrefCallbackData PurplePrefCallbackData;
 
@@ -72,7 +74,15 @@ typedef struct _PurplePrefCallbackData PurplePrefCallbackData;
 typedef struct _PurplePrefsUiOps PurplePrefsUiOps;
 
 
-/**  Prefs UI operations
+/**
+ * Prefs UI operations. This allows overriding the prefs.xml storage with
+ * anything else. 
+ *
+ * Unless specified otherwise, each entry provides an implementation for the
+ * corresponding purple_prefs_* method, and disables the prefs.xml code for it.
+ * This means that to do anything useful, all the methods must be implemented.
+ *
+ * @since 2.11.0
  */
 struct _PurplePrefsUiOps
 {
@@ -105,7 +115,25 @@ struct _PurplePrefsUiOps
 	void (*save)(void);
 	void (*schedule_save)(void);
 
+	/**
+	 * Called when a callback is added to a preference. The UI must keep
+	 * track of it and call #purple_prefs_trigger_callback_object with the
+	 * data attribute.
+	 *
+	 * @param name The preference name.
+	 * @param data The object to be passed when triggering the callback
+	 * @return A pointer to a ui_data object.
+	 * */
 	void *(*connect_callback)(const char *name, PurplePrefCallbackData *data);
+
+	/**
+	 * Called when a callback is removed from a preference. The ui_data
+	 * object is the one returned from connect_callback.
+	 *
+	 * @param name The preference name
+	 * @param ui_data The object that was returned from the
+	 * connect_callback UI OP.
+	 * */
 	void (*disconnect_callback)(const char *name, void *ui_data);
 
 	void (*_purple_reserved1)(void);
@@ -129,6 +157,7 @@ extern "C" {
  * Sets the UI operations structure to be used for preferences.
  *
  * @param ops The UI operations structure.
+ * @since 2.11.0
  */
 void purple_prefs_set_ui_ops(PurplePrefsUiOps *ops);
 
@@ -136,6 +165,7 @@ void purple_prefs_set_ui_ops(PurplePrefsUiOps *ops);
  * Returns the UI operations structure used for preferences.
  *
  * @return The UI operations structure in use.
+ * @since 2.11.0
  */
 PurplePrefsUiOps *purple_prefs_get_ui_ops(void);
 
@@ -430,6 +460,8 @@ void purple_prefs_trigger_callback(const char *name);
 /**
  * Trigger callbacks as if the pref changed, taking a #PurplePrefCallbackData
  * instead of a name
+ *
+ * @since 2.11.0
  */
 void purple_prefs_trigger_callback_object(PurplePrefCallbackData *data);
 
