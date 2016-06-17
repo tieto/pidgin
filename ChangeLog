@@ -83,6 +83,9 @@ version 3.0.0 (??/??/????):
 	* Support file transfers up to ~9 EiB.
 	* Invalid user moods can no longer be sent to the server.
 
+	AIM:
+	* Add support for the newer kerberos-based authentication of AIM 8.x
+
 	Plugins:
 	* A new plugin API has been introduced. Plugins are no longer required
 	  to be of a predefined type (such as protocol, standard, loader etc),

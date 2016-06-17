@@ -52,13 +52,8 @@ icq_protocol_init(PurpleProtocol *protocol)
 	protocol->id   = "prpl-icq";
 	protocol->name = "ICQ";
 
-	oscar_init_account_options(protocol);
+	oscar_init_account_options(protocol, TRUE);
 
-	option = purple_account_option_string_new(_("Server"), "server", oscar_get_login_server(TRUE, TRUE));
-	protocol->account_options = g_list_append(protocol->account_options, option);
-
-	option = purple_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
-	protocol->account_options = g_list_append(protocol->account_options, option);
 }
 
 static void
