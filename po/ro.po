@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"POT-Creation-Date: 2016-06-15 23:24-0500\n"
 "PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Romanian (http://www.transifex.com/projects/p/pidgin/language/"
@@ -1498,6 +1498,7 @@ msgstr "Cineva scrie ceva într-un chat"
 msgid "Someone says your name in a chat"
 msgstr "Cineva v-a scris numele într-un chat"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Notificare animată atunci când:"
 
@@ -1510,6 +1511,7 @@ msgstr "Schimbă starea ferestrei terminalului în URGENT"
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Modul de notificare animată"
 
@@ -2260,6 +2262,27 @@ msgstr "<font color=\"red\"><b>Nu s-a putut citi fișierul: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <Răspuns-Automat>: %s\n"
 
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr "Mesaj de la %s"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+#, fuzzy
+msgid "Network error."
+msgstr "Rețea"
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
@@ -2272,6 +2295,10 @@ msgid ""
 msgstr ""
 "Nu s-a găsit niciun codec. Preferințele legate de codecuri în fișierul fs-"
 "codecs.conf sunt prea stricte."
+
+#, fuzzy
+msgid "Could not connect to the remote party"
+msgstr "Neconectat la server."
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "A intervenit o eroare Farsight2 peste care nu se poate trece."
@@ -11333,10 +11360,12 @@ msgstr "_Alias:"
 msgid "_Group:"
 msgstr "_Grup:"
 
-msgid "Auto_join when account connects."
+#, fuzzy
+msgid "Automatically _join when account connects"
 msgstr "I_ntră automat la autentificarea contului."
 
-msgid "_Remain in chat after window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed"
 msgstr "Rămâi în chat _după închiderea ferestrei."
 
 msgid "Please enter the name of the group to be added."
@@ -11375,6 +11404,10 @@ msgstr "Introduceți numele calculatorului pentru acest certificat."
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Servere SSL"
+
+#, fuzzy
+msgid "Supported debug options are: plugins, version"
+msgstr "Opțiunile de depanare suportate sunt: „plugins” și „version”"
 
 msgid "Unknown command."
 msgstr "Comandă necunoscută."
@@ -11817,6 +11850,9 @@ msgstr "Bengali"
 msgid "Bengali-India"
 msgstr "Bengali-India"
 
+msgid "Breton"
+msgstr ""
+
 msgid "Bodo"
 msgstr ""
 
@@ -11873,9 +11909,6 @@ msgstr "Persană"
 
 msgid "Finnish"
 msgstr "Finlandeză"
-
-msgid "French"
-msgstr "Franceză"
 
 msgid "Irish"
 msgstr "Irlandeză"
@@ -11954,6 +11987,9 @@ msgstr "Meadow Mari"
 
 msgid "Macedonian"
 msgstr "Macedoneană"
+
+msgid "Malay"
+msgstr "Malay"
 
 msgid "Malayalam"
 msgstr "Malaeză"
@@ -12074,14 +12110,14 @@ msgstr "Chineză tradițională"
 msgid "Amharic"
 msgstr "Amharic"
 
+msgid "French"
+msgstr "Franceză"
+
 msgid "Armenian"
 msgstr "Armeană"
 
 msgid "Lao"
 msgstr "Lao"
-
-msgid "Malay"
-msgstr "Malay"
 
 msgid "Turkish"
 msgstr "Turcă"
@@ -12778,6 +12814,10 @@ msgstr "_Media"
 msgid "_Hangup"
 msgstr "Înc_hide"
 
+#, fuzzy
+msgid "Media error"
+msgstr "Eroare la citire"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s dorește să inițieze o sesiune audio/video."
@@ -12788,6 +12828,42 @@ msgstr "%s dorește să inițieze o sesiune video."
 
 msgid "Incoming Call"
 msgstr "Apel primit"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr ""
 
 msgid "_Hold"
 msgstr ""
@@ -14321,8 +14397,16 @@ msgstr ""
 msgid "Notify For"
 msgstr "Notifică pentru"
 
+#, fuzzy
+msgid "\t_Notify for System messages"
+msgstr "Mesaje de sistem"
+
 msgid "\t_Only when someone says your username"
 msgstr "\tD_oar când cineva vă spune numele de utilizator"
+
+#, fuzzy
+msgid "\tNotify for _System messages"
+msgstr "Mesaje de sistem"
 
 msgid "_Focused windows"
 msgstr "_Ferestrele în prim plan"
@@ -14354,6 +14438,8 @@ msgid "R_aise conversation window"
 msgstr "R_idică fereastra de discuții"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_Prezintă fereastra de discuții"
 
@@ -15116,10 +15202,10 @@ msgstr ""
 "Nu s-a putut dezinstala versiunea curent instalată de Pidgin. Noua versiune "
 "va fi instalată peste versiunea curent instalată."
 
+#, fuzzy
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "Pidgin necesită o instalare GTK+ compatibilă (care nu pare să fie prezentă "
 "deja).$\\rSigur doriţi să omiteţi instalarea bibliotecilor GTK+?"

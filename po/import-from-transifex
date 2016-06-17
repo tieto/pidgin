@@ -1,0 +1,85 @@
+#!/bin/bash -eu
+# This uses bash for the <() syntax.
+
+# TODO: Is there a way we can ignore files with only fuzzy-string changes?
+
+# These are the languages which are maintained in Transifex.
+transifex_languages="sq ar ar_SA hy hy_AM ast be brx br my_MM ca cs nl en_AU en_GB et fi gl ka de el he hi hu id ga it ja ks kk km ku_IQ lv lt mai ms_MY mr ne nqo nb nn oc pa fa pl pt pt_BR ro ru szl sd sl es es_AR sv tt te tr uk uz cy
+"
+
+if ! which tx > /dev/null
+then
+    cat >&2 << EOF
+You must install the Transifex command-line client:
+http://docs.transifex.com/client/setup/
+EOF
+    exit 1
+fi
+
+cat << EOF
+This script assumes your working tree is clean, at least in the po directory.
+It pulls the translations from Transifex, works out what has changed, and
+COMMITS intltool-update changes without prompting.  It then leaves the
+remaining changes for manual review and committing.
+
+Ctrl-C now to abort...
+EOF
+sleep 10
+
+if [ -d po ]
+then
+    cd po
+fi
+
+changed_files=
+commitable_files=
+for i in $transifex_languages
+do
+    if [ -e $i.po ]
+    then
+        cp $i.po $i.po.original
+        XGETTEXT_ARGS=--no-location intltool-update $i
+        cp $i.po $i.po.cleaned
+    fi
+
+    tx pull -f -l $i
+    XGETTEXT_ARGS=--no-location intltool-update $i
+
+    if [ -e $i.po.cleaned ]
+    then
+        if cmp -s <(grep ^msg $i.po.cleaned) <(grep ^msg $i.po)
+        then
+            # There were no actual changes.
+            mv $i.po.original $i.po
+        else
+            # There were changes.
+            mv $i.po $i.po.transifex
+            changed_files="$changed_files $i.po"
+
+            if cmp -s <(grep ^msg $i.po.original) <(grep ^msg $i.po.cleaned)
+            then
+                # The cleaning produced no actual changes; undo the cleaning.
+                mv $i.po.original $i.po
+            else
+                # The cleaning produced changes; leave it for committing.
+                mv $i.po.cleaned $i.po
+                commitable_files="$commitable_files $i.po"
+            fi
+        fi
+    fi
+
+    rm -f $i.po.original $i.po.cleaned
+done
+
+# Commit cleaned versions of the changed files.
+if [ -n "$commitable_files" ]
+then
+    hg commit -u "Pidgin Translators <translators@pidgin.im>" \
+        -m "Clean changed translations" $commitable_files
+fi
+
+# Leave the cleaned Transifex versions in place, ready for committing.
+for i in $changed_files
+do
+    mv $i.transifex $i
+done
