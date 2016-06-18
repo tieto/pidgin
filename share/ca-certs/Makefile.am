@@ -1,12 +1,6 @@
 CERTIFICATES = \
 		CAcert_Root.pem \
 		CAcert_Class3.pem \
-		Entrust.net_Secure_Server_CA.pem \
-		Entrust.net_2048.pem \
-		Equifax_Secure_CA.pem \
-		Equifax_Secure_Global_eBusiness_CA-1.pem \
-		GTE_CyberTrust_Global_Root.pem \
-		ValiCert_Class_2_VA.pem \
 		mozilla.pem
 
 #EXTRA_CERTS = \
