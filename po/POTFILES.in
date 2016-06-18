@@ -144,6 +144,7 @@ libpurple/protocols/oscar/family_chatnav.c
 libpurple/protocols/oscar/family_icbm.c
 libpurple/protocols/oscar/family_locate.c
 libpurple/protocols/oscar/flap_connection.c
+libpurple/protocols/oscar/kerberos.c
 libpurple/protocols/oscar/libaim.c
 libpurple/protocols/oscar/libicq.c
 libpurple/protocols/oscar/odc.c
