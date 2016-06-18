@@ -1325,6 +1325,11 @@ purple_prefs_rename(const char *oldname, const char *newname)
 {
 	struct purple_pref *oldpref, *newpref;
 
+/* win32dep.h causes rename to be defined as wpurple_rename, so we need to undefine it here */
+#if defined(_WIN32) && defined(rename)
+#undef rename
+#endif
+
 	PURPLE_PREFS_UI_OP_CALL(rename, oldname, newname);
 
 	oldpref = find_pref(oldname);
