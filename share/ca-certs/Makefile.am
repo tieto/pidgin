@@ -27,3 +27,12 @@ EXTRA_DIST =	\
 		Makefile.mingw \
 		$(CERTIFICATES) \
 		$(EXTRA_CERTS)
+
+.PHONY: mk-ca-bundle.pl
+mk-ca-bundle.pl:
+	curl -o $@ https://raw.githubusercontent.com/curl/curl/HEAD/lib/mk-ca-bundle.pl
+	chmod +x $@
+
+.PHONY: mozilla.pem
+mozilla.pem: mk-ca-bundle.pl
+	./mk-ca-bundle.pl -u mozilla.pem
