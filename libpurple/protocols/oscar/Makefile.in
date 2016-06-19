@@ -142,7 +142,7 @@ libicq_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 am__DEPENDENCIES_1 =
 @STATIC_OSCAR_FALSE@liboscar_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__liboscar_la_SOURCES_DIST = authorization.c bstream.c clientlogin.c \
-	encoding.c encoding.h family_admin.c family_alert.c \
+	kerberos.c encoding.c encoding.h family_admin.c family_alert.c \
 	family_auth.c family_bart.c family_bos.c family_buddy.c \
 	family_chat.c family_chatnav.c family_icq.c family_icbm.c \
 	family_locate.c family_oservice.c family_popup.c \
@@ -152,15 +152,16 @@ am__liboscar_la_SOURCES_DIST = authorization.c bstream.c clientlogin.c \
 	rxhandlers.c snac.c snactypes.h tlv.c userinfo.c util.c \
 	visibility.c visibility.h libaim.c libicq.c
 am__objects_1 = liboscar_la-authorization.lo liboscar_la-bstream.lo \
-	liboscar_la-clientlogin.lo liboscar_la-encoding.lo \
-	liboscar_la-family_admin.lo liboscar_la-family_alert.lo \
-	liboscar_la-family_auth.lo liboscar_la-family_bart.lo \
-	liboscar_la-family_bos.lo liboscar_la-family_buddy.lo \
-	liboscar_la-family_chat.lo liboscar_la-family_chatnav.lo \
-	liboscar_la-family_icq.lo liboscar_la-family_icbm.lo \
-	liboscar_la-family_locate.lo liboscar_la-family_oservice.lo \
-	liboscar_la-family_popup.lo liboscar_la-family_feedbag.lo \
-	liboscar_la-family_stats.lo liboscar_la-family_userlookup.lo \
+	liboscar_la-clientlogin.lo liboscar_la-kerberos.lo \
+	liboscar_la-encoding.lo liboscar_la-family_admin.lo \
+	liboscar_la-family_alert.lo liboscar_la-family_auth.lo \
+	liboscar_la-family_bart.lo liboscar_la-family_bos.lo \
+	liboscar_la-family_buddy.lo liboscar_la-family_chat.lo \
+	liboscar_la-family_chatnav.lo liboscar_la-family_icq.lo \
+	liboscar_la-family_icbm.lo liboscar_la-family_locate.lo \
+	liboscar_la-family_oservice.lo liboscar_la-family_popup.lo \
+	liboscar_la-family_feedbag.lo liboscar_la-family_stats.lo \
+	liboscar_la-family_userlookup.lo \
 	liboscar_la-flap_connection.lo liboscar_la-misc.lo \
 	liboscar_la-msgcookie.lo liboscar_la-odc.lo liboscar_la-oft.lo \
 	liboscar_la-oscar.lo liboscar_la-oscar_data.lo \
@@ -510,6 +511,7 @@ OSCARSOURCES = \
 	authorization.c     \
 	bstream.c           \
 	clientlogin.c       \
+	kerberos.c          \
 	encoding.c          \
 	encoding.h          \
 	family_admin.c      \
@@ -689,6 +691,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_la-family_stats.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_la-family_userlookup.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_la-flap_connection.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_la-kerberos.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_la-libaim.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_la-libicq.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liboscar_la-misc.Plo@am__quote@
@@ -747,6 +750,13 @@ liboscar_la-clientlogin.lo: clientlogin.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='clientlogin.c' object='liboscar_la-clientlogin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_la_CFLAGS) $(CFLAGS) -c -o liboscar_la-clientlogin.lo `test -f 'clientlogin.c' || echo '$(srcdir)/'`clientlogin.c
+
+liboscar_la-kerberos.lo: kerberos.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_la_CFLAGS) $(CFLAGS) -MT liboscar_la-kerberos.lo -MD -MP -MF $(DEPDIR)/liboscar_la-kerberos.Tpo -c -o liboscar_la-kerberos.lo `test -f 'kerberos.c' || echo '$(srcdir)/'`kerberos.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/liboscar_la-kerberos.Tpo $(DEPDIR)/liboscar_la-kerberos.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='kerberos.c' object='liboscar_la-kerberos.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_la_CFLAGS) $(CFLAGS) -c -o liboscar_la-kerberos.lo `test -f 'kerberos.c' || echo '$(srcdir)/'`kerberos.c
 
 liboscar_la-encoding.lo: encoding.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(liboscar_la_CFLAGS) $(CFLAGS) -MT liboscar_la-encoding.lo -MD -MP -MF $(DEPDIR)/liboscar_la-encoding.Tpo -c -o liboscar_la-encoding.lo `test -f 'encoding.c' || echo '$(srcdir)/'`encoding.c

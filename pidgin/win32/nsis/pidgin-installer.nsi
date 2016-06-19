@@ -515,6 +515,7 @@ Section Uninstall
     Push "xmpp"
     Call un.UnregisterURIHandler
 
+    ; Some of these aren't shipped anymore. Delete them anyway.
     Delete "$INSTDIR\ca-certs\AddTrust_External_Root.pem"
     Delete "$INSTDIR\ca-certs\America_Online_Root_Certification_Authority_1.pem"
     Delete "$INSTDIR\ca-certs\AOL_Member_CA.pem"
@@ -545,6 +546,7 @@ Section Uninstall
     Delete "$INSTDIR\ca-certs\VeriSign_Class_3_Primary_CA-G5-2.pem"
     Delete "$INSTDIR\ca-certs\VeriSign_International_Server_Class_3_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_RSA_Secure_Server_CA.pem"
+    Delete "$INSTDIR\ca-certs\mozilla.pem"
     RMDir "$INSTDIR\ca-certs"
     RMDir /r "$INSTDIR\locale"
     RMDir /r "$INSTDIR\pixmaps"

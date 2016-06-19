@@ -491,14 +491,18 @@ purple_media_manager_remove_media(PurpleMediaManager *manager, PurpleMedia *medi
 
 #ifdef HAVE_MEDIA_APPLICATION
 		g_mutex_lock (&manager->priv->appdata_mutex);
-		for (list = manager->priv->appdata_info; list; list = list->next) {
+		list = manager->priv->appdata_info;
+		while (list) {
 			PurpleMediaAppDataInfo *info = list->data;
+			GList *next = list->next;
 
 			if (info->media == media) {
 				manager->priv->appdata_info = g_list_delete_link (
 					manager->priv->appdata_info, list);
 				free_appdata_info_locked (info);
 			}
+
+			list = next;
 		}
 		g_mutex_unlock (&manager->priv->appdata_mutex);
 #endif
@@ -558,8 +562,23 @@ purple_media_manager_get_private_media_by_account(PurpleMediaManager *manager,
 static void
 free_appdata_info_locked (PurpleMediaAppDataInfo *info)
 {
+	GstAppSrcCallbacks null_src_cb = { NULL, NULL, NULL, { NULL } };
+	GstAppSinkCallbacks null_sink_cb = { NULL, NULL, NULL , { NULL } };
+
 	if (info->notify)
 		info->notify (info->user_data);
+
+	info->media = NULL;
+	if (info->appsrc) {
+		/* Will call appsrc_destroyed. */
+		gst_app_src_set_callbacks (info->appsrc, &null_src_cb,
+				NULL, NULL);
+	}
+	if (info->appsink) {
+		/* Will call appsink_destroyed. */
+		gst_app_sink_set_callbacks (info->appsink, &null_sink_cb,
+				NULL, NULL);
+	}
 
 	/* Make sure no other thread is using the structure */
 	g_free (info->session_id);
@@ -867,7 +886,14 @@ appsrc_seek_data (GstAppSrc *appsrc, guint64 offset, gpointer user_data)
 static void
 appsrc_destroyed (PurpleMediaAppDataInfo *info)
 {
-	PurpleMediaManager *manager = purple_media_manager_get ();
+	PurpleMediaManager *manager;
+
+	if (!info->media) {
+		/* PurpleMediaAppDataInfo is being freed. Return at once. */
+		return;
+	}
+
+	manager = purple_media_manager_get ();
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
 	info->appsrc = NULL;
@@ -1025,7 +1051,14 @@ appsink_new_sample (GstAppSink *appsink, gpointer user_data)
 static void
 appsink_destroyed (PurpleMediaAppDataInfo *info)
 {
-	PurpleMediaManager *manager = purple_media_manager_get ();
+	PurpleMediaManager *manager;
+
+	if (!info->media) {
+		/* PurpleMediaAppDataInfo is being freed. Return at once. */
+		return;
+	}
+
+	manager = purple_media_manager_get ();
 
 	g_mutex_lock (&manager->priv->appdata_mutex);
 	info->appsink = NULL;
@@ -1171,7 +1204,11 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 			 * giving a not-linked error upon destruction
 			 */
 			fakesink = gst_element_factory_make("fakesink", NULL);
-			g_object_set(fakesink, "sync", FALSE, NULL);
+			g_object_set(fakesink,
+				"async", FALSE,
+				"sync", FALSE,
+				"enable-last-sample", FALSE,
+				NULL);
 			gst_bin_add(GST_BIN(bin), fakesink);
 			gst_element_link(tee, fakesink);
 
@@ -1445,7 +1482,7 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 				(participant == ow->participant)) &&
 				!strcmp(session_id, ow->session_id)) {
 			GstBus *bus;
-			GstElement *queue, *convert;
+			GstElement *queue, *convert, *scale;
 			GstElement *tee = purple_media_get_tee(media,
 					session_id, participant);
 
@@ -1458,6 +1495,7 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 #else
 			convert = gst_element_factory_make("ffmpegcolorspace", NULL);
 #endif
+			scale = gst_element_factory_make("videoscale", NULL);
 			ow->sink = purple_media_manager_get_element(
 					manager, PURPLE_MEDIA_RECV_VIDEO,
 					ow->media, ow->session_id,
@@ -1478,7 +1516,7 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 			}
 
 			gst_bin_add_many(GST_BIN(GST_ELEMENT_PARENT(tee)),
-					queue, convert, ow->sink, NULL);
+					queue, convert, scale, ow->sink, NULL);
 
 			bus = gst_pipeline_get_bus(GST_PIPELINE(
 					manager->priv->pipeline));
@@ -1487,9 +1525,11 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 			gst_object_unref(bus);
 
 			gst_element_set_state(ow->sink, GST_STATE_PLAYING);
+			gst_element_set_state(scale, GST_STATE_PLAYING);
 			gst_element_set_state(convert, GST_STATE_PLAYING);
 			gst_element_set_state(queue, GST_STATE_PLAYING);
-			gst_element_link(convert, ow->sink);
+			gst_element_link(scale, ow->sink);
+			gst_element_link(convert, scale);
 			gst_element_link(queue, convert);
 			gst_element_link(tee, queue);
 		}
@@ -1556,32 +1596,53 @@ purple_media_manager_remove_output_window(PurpleMediaManager *manager,
 		return FALSE;
 
 	if (output_window->sink != NULL) {
-		GstPad *pad = gst_element_get_static_pad(
-				output_window->sink, "sink");
-		GstPad *peer = gst_pad_get_peer(pad);
-		GstElement *colorspace = GST_ELEMENT_PARENT(peer), *queue;
-		gst_object_unref(pad);
-		gst_object_unref(peer);
-		pad = gst_element_get_static_pad(colorspace, "sink");
-		peer = gst_pad_get_peer(pad);
-		queue = GST_ELEMENT_PARENT(peer);
-		gst_object_unref(pad);
-		gst_object_unref(peer);
-		pad = gst_element_get_static_pad(queue, "sink");
-		peer = gst_pad_get_peer(pad);
-		gst_object_unref(pad);
-		if (peer != NULL)
-			gst_element_release_request_pad(GST_ELEMENT_PARENT(peer), peer);
-		gst_element_set_locked_state(queue, TRUE);
-		gst_element_set_state(queue, GST_STATE_NULL);
-		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(queue)), queue);
-		gst_element_set_locked_state(colorspace, TRUE);
-		gst_element_set_state(colorspace, GST_STATE_NULL);
-		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(colorspace)), colorspace);
-		gst_element_set_locked_state(output_window->sink, TRUE);
-		gst_element_set_state(output_window->sink, GST_STATE_NULL);
-		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(output_window->sink)),
-				output_window->sink);
+		GstElement *element = output_window->sink;
+		GstPad *teepad = NULL;
+		GSList *to_remove = NULL;
+
+		/* Find the tee element this output is connected to. */
+		while (!teepad) {
+			GstPad *pad;
+			GstPad *peer;
+			GstElementFactory *factory;
+			const gchar *factory_name;
+
+			to_remove = g_slist_append(to_remove, element);
+
+			pad = gst_element_get_static_pad(element, "sink");
+			peer = gst_pad_get_peer(pad);
+			if (!peer) {
+				/* Output is disconnected from the pipeline. */
+				gst_object_unref(pad);
+				break;
+			}
+
+			factory = gst_element_get_factory(GST_PAD_PARENT(peer));
+			factory_name = gst_plugin_feature_get_name(factory);
+			if (purple_strequal(factory_name, "tee")) {
+				teepad = peer;
+			}
+
+			element = GST_PAD_PARENT(peer);
+
+			gst_object_unref(pad);
+			gst_object_unref(peer);
+		}
+
+		if (teepad) {
+			gst_element_release_request_pad(GST_PAD_PARENT(teepad),
+					teepad);
+		}
+
+		while (to_remove) {
+			GstElement *element = to_remove->data;
+
+			gst_element_set_locked_state(element, TRUE);
+			gst_element_set_state(element, GST_STATE_NULL);
+			gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(element)),
+					element);
+			to_remove = g_slist_delete_link(to_remove, to_remove);
+		}
 	}
 
 	g_free(output_window->session_id);

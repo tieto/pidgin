@@ -43,8 +43,8 @@ void mxit_xfer_tx( PurpleConnection* gc, const char* who, const char* filename )
 PurpleXfer* mxit_xfer_new( PurpleConnection* gc, const char* who );
 
 /* MXit Protocol callbacks */
-void mxit_xfer_rx_offer( struct MXitSession* session, const char* username, const char* filename, int filesize, const char* fileid );
-void mxit_xfer_rx_file( struct MXitSession* session, const char* fileid, const char* data, int datalen );
+void mxit_xfer_rx_offer( struct MXitSession* session, const char* username, const char* filename, unsigned int filesize, const char* fileid );
+void mxit_xfer_rx_file( struct MXitSession* session, const char* fileid, const char* data, unsigned int datalen );
 
 
 #endif		/* _MXIT_FILEXFER_H_ */
