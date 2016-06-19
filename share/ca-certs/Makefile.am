@@ -30,3 +30,8 @@ mk-ca-bundle.pl:
 .PHONY: mozilla.pem
 mozilla.pem: mk-ca-bundle.pl
 	./mk-ca-bundle.pl -u mozilla.pem
+
+CLEANFILES = \
+	certdata.txt \
+	mozilla.pem
+
