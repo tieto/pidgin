@@ -465,9 +465,6 @@ get_WorkingAreaRectForWindow(HWND hwnd, RECT *workingAreaRc) {
 	return TRUE;
 }
 
-void winpidgin_ensure_onscreen(GtkWidget *win) {
-	RECT winR, wAR, intR;
-	HWND hwnd = GDK_WINDOW_HWND(win->window);
 typedef HRESULT (WINAPI* DwmIsCompositionEnabledFunction)(BOOL*);
 typedef HRESULT (WINAPI* DwmGetWindowAttributeFunction)(HWND, DWORD, PVOID, DWORD);
 static HMODULE dwmapi_module = NULL;
@@ -481,9 +478,9 @@ static RECT
 get_actualWindowRect(HWND hwnd)
 {
 	RECT winR;
-	
+
 	GetWindowRect(hwnd, &winR);
-	
+
 	if (dwmapi_module == NULL) {
 		dwmapi_module = GetModuleHandleW(L"dwmapi.dll");
 		if (dwmapi_module != NULL) {
@@ -491,7 +488,7 @@ get_actualWindowRect(HWND hwnd)
 			DwmGetWindowAttribute = (DwmGetWindowAttributeFunction) GetProcAddress(dwmapi_module, "DwmGetWindowAttribute");
 		}
 	}
-	
+
 	if (DwmIsCompositionEnabled != NULL && DwmGetWindowAttribute != NULL) {
 		BOOL pfEnabled;
 		if (SUCCEEDED(DwmIsCompositionEnabled(&pfEnabled))) {
@@ -501,10 +498,13 @@ get_actualWindowRect(HWND hwnd)
 			}
 		}
 	}
-	
+
 	return winR;
 }
 
+void winpidgin_ensure_onscreen(GtkWidget *win) {
+	RECT winR, wAR, intR;
+	HWND hwnd = GDK_WINDOW_HWND(win->window);
 
 	g_return_if_fail(hwnd != NULL);
 	winR = get_actualWindowRect(hwnd);

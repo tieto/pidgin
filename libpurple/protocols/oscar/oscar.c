@@ -350,7 +350,9 @@ connection_common_established_cb(FlapConnection *conn)
 		flap_connection_send_version(od, conn);
 	else
 	{
-		if (purple_account_get_bool(account, "use_clientlogin", OSCAR_DEFAULT_USE_CLIENTLOGIN))
+		const gchar *login_type = purple_account_get_string(account, "login_type", OSCAR_DEFAULT_LOGIN);
+
+		if (!purple_strequal(login_type, OSCAR_MD5_LOGIN))
 		{
 			ClientInfo aiminfo = CLIENTINFO_PURPLE_AIM;
 			ClientInfo icqinfo = CLIENTINFO_PURPLE_ICQ;
@@ -652,6 +654,7 @@ oscar_login(PurpleAccount *account)
 	PurpleConnection *gc;
 	OscarData *od;
 	const gchar *encryption_type;
+	const gchar *login_type;
 	GList *handlers;
 	GList *sorted_handlers;
 	GList *cur;
@@ -755,6 +758,7 @@ oscar_login(PurpleAccount *account)
 
 	od->default_port = purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
 
+	login_type = purple_account_get_string(account, "login_type", OSCAR_DEFAULT_LOGIN);
 	encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
 	if (!purple_ssl_is_supported() && strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
 		purple_connection_error_reason(
@@ -779,8 +783,36 @@ oscar_login(PurpleAccount *account)
 	 * This authentication method is used for both ICQ and AIM when
 	 * clientLogin is not enabled.
 	 */
-	if (purple_account_get_bool(account, "use_clientlogin", OSCAR_DEFAULT_USE_CLIENTLOGIN)) {
+	if (purple_strequal(login_type, OSCAR_CLIENT_LOGIN)) {
+		/* Note: Actual server/port configuration is ignored here */
 		send_client_login(od, purple_account_get_username(account));
+	} else if (purple_strequal(login_type, OSCAR_KERBEROS_LOGIN)) {
+		const char *server;
+
+		if (!od->use_ssl) {
+			purple_connection_error_reason(
+				gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+				_("You required Kerberos authentication but encryption is disabled in your account settings."));
+			return;
+		}
+		server = purple_account_get_string(account, "server", AIM_DEFAULT_KDC_SERVER);
+		/*
+		 * If the account's server is what the oscar protocol has offered as
+		 * the default login server through the vast eons (all two of
+		 * said default options, AFAIK) and the user wants KDC, we'll
+		 * do what we know is best for them and change the setting out
+		 * from under them to the KDC login server.
+		 */
+		if (purple_strequal(server, get_login_server(od->icq, FALSE)) ||
+			purple_strequal(server, get_login_server(od->icq, TRUE)) ||
+			purple_strequal(server, AIM_ALT_LOGIN_SERVER) ||
+			purple_strequal(server, "")) {
+			purple_debug_info("oscar", "Account uses Kerberos auth, so changing server to default KDC server\n");
+			purple_account_set_string(account, "server", AIM_DEFAULT_KDC_SERVER);
+			purple_account_set_int(account, "port", AIM_DEFAULT_KDC_PORT);
+		}
+		send_kerberos_login(od, purple_account_get_username(account));
 	} else {
 		FlapConnection *newconn;
 		const char *server;
@@ -797,9 +829,13 @@ oscar_login(PurpleAccount *account)
 			 * do what we know is best for them and change the setting out
 			 * from under them to the SSL login server.
 			 */
-			if (!strcmp(server, get_login_server(od->icq, FALSE)) || !strcmp(server, AIM_ALT_LOGIN_SERVER)) {
+			if (purple_strequal(server, get_login_server(od->icq, FALSE)) ||
+				purple_strequal(server, AIM_ALT_LOGIN_SERVER) ||
+				purple_strequal(server, AIM_DEFAULT_KDC_SERVER) ||
+				purple_strequal(server, "")) {
 				purple_debug_info("oscar", "Account uses SSL, so changing server to default SSL server\n");
 				purple_account_set_string(account, "server", get_login_server(od->icq, TRUE));
+				purple_account_set_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
 				server = get_login_server(od->icq, TRUE);
 			}
 
@@ -814,9 +850,12 @@ oscar_login(PurpleAccount *account)
 			 * SSL but their server is set to OSCAR_DEFAULT_SSL_LOGIN_SERVER,
 			 * set it back to the default.
 			 */
-			if (!strcmp(server, get_login_server(od->icq, TRUE))) {
+			if (purple_strequal(server, get_login_server(od->icq, TRUE)) ||
+				purple_strequal(server, AIM_DEFAULT_KDC_SERVER) ||
+				purple_strequal(server, "")) {
 				purple_debug_info("oscar", "Account does not use SSL, so changing server back to non-SSL\n");
 				purple_account_set_string(account, "server", get_login_server(od->icq, FALSE));
+				purple_account_set_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
 				server = get_login_server(od->icq, FALSE);
 			}
 
@@ -1287,9 +1326,9 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	if (!redir->use_ssl) {
 		const gchar *encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
-		if (strcmp(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION) == 0) {
+		if (purple_strequal(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION)) {
 			purple_debug_warning("oscar", "We won't use SSL for FLAP type 0x%04hx.\n", redir->group);
-		} else if (strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
+		} else if (purple_strequal(encryption_type, OSCAR_REQUIRE_ENCRYPTION)) {
 			purple_debug_error("oscar", "FLAP server %s:%d of type 0x%04hx doesn't support encryption.", host, port, redir->group);
 			purple_connection_error_reason(
 				gc,
@@ -1460,7 +1499,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			? oscar_encoding_to_utf8(info->status_encoding, info->status, info->status_len)
 			: NULL;
 
-	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0) {
+	if (purple_strequal(status_id, OSCAR_STATUS_ID_AVAILABLE)) {
 		/* TODO: If itmsurl is NULL, does that mean the URL has been
 		   cleared?  Or does it mean the URL should remain unchanged? */
 		if (info->itmsurl != NULL) {
@@ -5744,7 +5783,32 @@ void oscar_init(PurplePlugin *plugin, gboolean is_icq)
 		OSCAR_NO_ENCRYPTION,
 		NULL
 	};
+	static const gchar *aim_login_keys[] = {
+		N_("Use clientLogin authentication"),
+		N_("Use Kerberos-based authentication"),
+		N_("Use MD5 based authentication"),
+		NULL
+	};
+	static const gchar *aim_login_values[] = {
+		OSCAR_CLIENT_LOGIN,
+		OSCAR_KERBEROS_LOGIN,
+		OSCAR_MD5_LOGIN,
+		NULL
+	};
+	static const gchar *icq_login_keys[] = {
+		N_("Use clientLogin authentication"),
+		N_("Use MD5 based authentication"),
+		NULL
+	};
+	static const gchar *icq_login_values[] = {
+		OSCAR_CLIENT_LOGIN,
+		OSCAR_MD5_LOGIN,
+		NULL
+	};
+	const gchar **login_keys;
+	const gchar **login_values;
 	GList *encryption_options = NULL;
+	GList *login_options = NULL;
 	int i;
 
 	option = purple_account_option_string_new(_("Server"), "server", get_login_server(is_icq, TRUE));
@@ -5762,8 +5826,20 @@ void oscar_init(PurplePlugin *plugin, gboolean is_icq)
 	option = purple_account_option_list_new(_("Connection security"), "encryption", encryption_options);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
-	option = purple_account_option_bool_new(_("Use clientLogin"), "use_clientlogin",
-			OSCAR_DEFAULT_USE_CLIENTLOGIN);
+	if (is_icq) {
+		login_keys = icq_login_keys;
+		login_values = icq_login_values;
+	} else {
+		login_keys = aim_login_keys;
+		login_values = aim_login_values;
+	}
+	for (i = 0; login_keys[i]; i++) {
+		PurpleKeyValuePair *kvp = g_new0(PurpleKeyValuePair, 1);
+		kvp->key = g_strdup(_(login_keys[i]));
+		kvp->value = g_strdup(login_values[i]);
+		login_options = g_list_append(login_options, kvp);
+	}
+	option = purple_account_option_list_new(_("Authentication method"), "login_type", login_options);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_bool_new(
