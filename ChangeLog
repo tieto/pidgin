@@ -6,6 +6,9 @@ version 2.11.0 (06/21/16):
 	  should have been released as 2.11.0.  Unfortunately, we did not catch
 	  the mistake until after 2.10.12 was released, but we're fixing it now.
 	  See ChangeLog.API for more information.
+	* Include the Mozilla certificate bundle. This fixes connecting to servers
+	  with certificates from Let's Encrypt.
+	* Remove all 1024-bit CAs
 
 	libpurple:
 	* media: fix an issue with ximagesink displaying only a corner cut-out of
