@@ -60,6 +60,7 @@ struct _PurpleUtilFetchUrlData
 	char *user_agent;
 	gboolean http11;
 	char *request;
+	gsize request_len;
 	gsize request_written;
 	gboolean include_headers;
 
@@ -4082,6 +4083,7 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		g_string_append(request_str, "\r\n");
 
 		gfud->request = g_string_free(request_str, FALSE);
+		gfud->request_len = strlen(gfud->request);
 	}
 
 	if(purple_debug_is_unsafe())
@@ -4089,7 +4091,7 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 	else
 		purple_debug_misc("util", "request constructed\n");
 
-	total_len = strlen(gfud->request);
+	total_len = gfud->request_len;
 
 	if (gfud->is_ssl)
 		len = purple_ssl_write(gfud->ssl_connection, gfud->request + gfud->request_written,
@@ -4196,6 +4198,17 @@ purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
 		const char *request, gboolean include_headers, gssize max_len,
 		PurpleUtilFetchUrlCallback callback, void *user_data)
 {
+	return purple_util_fetch_url_request_data_len_with_account(account, url, full,
+		user_agent, http11, request, request ? strlen (request) : 0, include_headers, max_len, callback,
+			user_data);
+}
+
+PurpleUtilFetchUrlData *
+purple_util_fetch_url_request_data_len_with_account(PurpleAccount *account,
+		const char *url, gboolean full,	const char *user_agent, gboolean http11,
+		const char *request, gsize request_len, gboolean include_headers, gssize max_len,
+		PurpleUtilFetchUrlCallback callback, void *user_data)
+{
 	PurpleUtilFetchUrlData *gfud;
 
 	g_return_val_if_fail(url      != NULL, NULL);
@@ -4216,7 +4229,8 @@ purple_util_fetch_url_request_len_with_account(PurpleAccount *account,
 	gfud->user_agent = g_strdup(user_agent);
 	gfud->http11 = http11;
 	gfud->full = full;
-	gfud->request = g_strdup(request);
+	gfud->request = request_len ? g_memdup(request, request_len) : NULL;
+	gfud->request_len = request_len;
 	gfud->include_headers = include_headers;
 	gfud->fd = -1;
 	if (max_len <= 0) {

@@ -4,16 +4,17 @@
 #
 # Translators:
 # Renato Silva <br.renatosilva@gmail.com>, 2014
-# Renato Silva <br.renatosilva@gmail.com>, 2014
+# Rafael H L Moretti <rafael.moretti@gmail.com>, 2015
+# Renato Silva <br.renatosilva@gmail.com>, 2014-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/"
-"pidgin/language/pt_BR/)\n"
+"POT-Creation-Date: 2016-06-15 23:16-0500\n"
+"PO-Revision-Date: 2016-06-06 21:09+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Portuguese (Brazil) (http://www.transifex.com/pidgin/pidgin/"
+"language/pt_BR/)\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -698,7 +699,7 @@ msgstr ""
 
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr ""
-"me &lt;ação&gt;:  Envia uma ação do tipo do IRC para um amigo ou bate-papo."
+"me &lt;ação&gt;:  Envia uma ação do tipo IRC para um amigo ou bate-papo."
 
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
@@ -1495,6 +1496,7 @@ msgstr "Alguém fala num bate-papo"
 msgid "Someone says your name in a chat"
 msgstr "Alguém diz seu nome num bate-papo"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Notificação com mensagem do tipo \"torradeira\" quando"
 
@@ -1507,6 +1509,7 @@ msgstr "Definir URGENT na janela de terminal."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Plug-in para notificações do tipo \"torradeira\""
 
@@ -2262,6 +2265,32 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-RESPOSTA>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+"\n"
+"\n"
+"Mensagem de Farsight: "
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+"Erro ao inicializar a chamada. Isso provavelmente indica um problema na "
+"instalação do GStreamer ou do Farsight."
+
+msgid "Network error."
+msgstr "Erro de rede."
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+"A negociação de codec falhou. Este problema deve ser resolvido instalando "
+"mais codecs do GStreamer."
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2273,6 +2302,9 @@ msgid ""
 msgstr ""
 "Nenhum codec encontrado. Suas preferências de codec em fs-codecs.conf são "
 "muito rígidas."
+
+msgid "Could not connect to the remote party"
+msgstr "Não foi possível conectar ao correspondente remoto"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Um erro não recuperado Farsight2 ocorreu."
@@ -3784,7 +3816,8 @@ msgid "nickserv: Send a command to nickserv"
 msgstr "nickserv: Envia um comando para o nickserv"
 
 msgid "notice &lt;target&lt;:  Send a notice to a user or channel."
-msgstr "me &lt;ação&gt;:  Envia uma notícia para um usuário ou canal."
+msgstr ""
+"notice &lt;destino&lt;:  Envia uma notificação para um usuário ou canal."
 
 msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
@@ -11334,11 +11367,11 @@ msgstr "Ape_lido:"
 msgid "_Group:"
 msgstr "_Grupo:"
 
-msgid "Auto_join when account connects."
-msgstr "Entrar automaticamente ao conectar."
+msgid "Automatically _join when account connects"
+msgstr ""
 
-msgid "_Remain in chat after window is closed."
-msgstr "Continuar no chat quando a janela for fechada."
+msgid "_Remain in chat after window is closed"
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "Por favor, digite o nome do grupo a ser criado."
@@ -11376,6 +11409,9 @@ msgstr "Digite o nome de host para este certificado."
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Servidores SSL"
+
+msgid "Supported debug options are: plugins, version"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "Comando desconhecido."
@@ -11818,6 +11854,9 @@ msgstr "Bengali"
 msgid "Bengali-India"
 msgstr "Bengali-Índia"
 
+msgid "Breton"
+msgstr "Breton"
+
 msgid "Bodo"
 msgstr "Bodo"
 
@@ -11874,9 +11913,6 @@ msgstr "Persa"
 
 msgid "Finnish"
 msgstr "Finlandês"
-
-msgid "French"
-msgstr "Francês"
 
 msgid "Irish"
 msgstr "Irlandês"
@@ -11955,6 +11991,9 @@ msgstr "Mari oriental"
 
 msgid "Macedonian"
 msgstr "Macedônio"
+
+msgid "Malay"
+msgstr "Malaio"
 
 msgid "Malayalam"
 msgstr "Malaiala"
@@ -12075,14 +12114,14 @@ msgstr "Chinês Tradicional"
 msgid "Amharic"
 msgstr "Amhárico"
 
+msgid "French"
+msgstr "Francês"
+
 msgid "Armenian"
 msgstr "Armênio"
 
 msgid "Lao"
 msgstr "Laociano"
-
-msgid "Malay"
-msgstr "Malaio"
 
 msgid "Turkish"
 msgstr "Turco"
@@ -12779,6 +12818,9 @@ msgstr "_Mídia"
 msgid "_Hangup"
 msgstr "_Desligar"
 
+msgid "Media error"
+msgstr "Erro de mídia"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s quer começar uma sessão de aúdio/vídeo com você."
@@ -12789,6 +12831,42 @@ msgstr "%s quer iniciar uma sessão de vídeo com você."
 
 msgid "Incoming Call"
 msgstr "Recebendo chamada"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr "ABC"
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr "DEF"
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr "GHI"
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr "JKL"
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr "MNO"
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr "PQRS"
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr "TUV"
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr "WXYZ"
 
 msgid "_Hold"
 msgstr "_Segurar"
@@ -14337,8 +14415,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Notificar para"
 
+msgid "\t_Notify for System messages"
+msgstr ""
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Apenas quando alguém menciona seu nome"
+
+msgid "\tNotify for _System messages"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "_Janelas com foco"
@@ -14370,8 +14454,10 @@ msgid "R_aise conversation window"
 msgstr "Coloc_ar janela de conversa no topo"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
-msgstr "Janela de conversa atual"
+msgstr "A_presentar janela de conversa"
 
 #. ---------- "Notification Removals" ----------
 msgid "Notification Removal"
@@ -15138,12 +15224,9 @@ msgstr ""
 "removida."
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"O Pidgin requer um runtime GTK+ compatível (que parece não estar presente).$"
-"\\rVocê tem certeza que quer pular a instalação do runtime GTK+?"
 
 #. Installer Subsection Text
 msgid "URI Handlers"

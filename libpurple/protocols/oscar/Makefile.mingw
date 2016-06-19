@@ -62,6 +62,7 @@ C_SRC = \
 	family_stats.c		\
 	family_userlookup.c	\
 	flap_connection.c	\
+	kerberos.c		\
 	misc.c			\
 	msgcookie.c		\
 	odc.c			\

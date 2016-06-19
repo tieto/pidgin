@@ -406,6 +406,8 @@ gboolean purple_media_codecs_ready(PurpleMedia *media, const gchar *sess_id);
  * @paran send_rtcp_mux Whether to enable the rtcp-mux option
  *
  * @return @c TRUE RTCP-Mux was set successfully, or @c FALSE otherwise.
+ *
+ * @since 2.11.0
  */
 gboolean purple_media_set_send_rtcp_mux(PurpleMedia *media,
 		const gchar *sess_id, const gchar *participant, gboolean send_rtcp_mux);
