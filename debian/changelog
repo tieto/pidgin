@@ -1,3 +1,11 @@
+pidgin (2.11.0-1) unstable; urgency=high
+
+  * Update description (Closes: #561624)
+  * Imported Upstream version 2.11.0
+    * Fixes many security issues in MXit
+
+ -- Ari Pollak <ari@debian.org>  Sun, 19 Jun 2016 14:25:31 -0400
+
 pidgin (2.10.12-1) unstable; urgency=low
 
   [ Peter Spiess-Knafl ]
