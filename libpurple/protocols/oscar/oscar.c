@@ -5784,9 +5784,9 @@ void oscar_init(PurplePlugin *plugin, gboolean is_icq)
 		NULL
 	};
 	static const gchar *aim_login_keys[] = {
-		N_("Use clientLogin authentication"),
-		N_("Use Kerberos-based authentication"),
-		N_("Use MD5 based authentication"),
+		N_("clientLogin"),
+		N_("Kerberos"),
+		N_("MD5-based"),
 		NULL
 	};
 	static const gchar *aim_login_values[] = {
@@ -5796,8 +5796,8 @@ void oscar_init(PurplePlugin *plugin, gboolean is_icq)
 		NULL
 	};
 	static const gchar *icq_login_keys[] = {
-		N_("Use clientLogin authentication"),
-		N_("Use MD5 based authentication"),
+		N_("clientLogin"),
+		N_("MD5-based"),
 		NULL
 	};
 	static const gchar *icq_login_values[] = {
