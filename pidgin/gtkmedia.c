@@ -1309,7 +1309,7 @@ create_configured_vv_element(const gchar *type, const gchar *dir)
 }
 
 static GstElement *
-create_default_video_src(PurpleMedia *media,
+create_default_video_src(PurpleMediaElementInfo *info, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
 	GstElement *sendbin, *src;
@@ -1361,7 +1361,7 @@ create_default_video_src(PurpleMedia *media,
 }
 
 static GstElement *
-create_default_video_sink(PurpleMedia *media,
+create_default_video_sink(PurpleMediaElementInfo *info, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
 	GstElement *sink;
@@ -1381,7 +1381,7 @@ create_default_video_sink(PurpleMedia *media,
 }
 
 static GstElement *
-create_default_audio_src(PurpleMedia *media,
+create_default_audio_src(PurpleMediaElementInfo *info, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
 	GstElement *src;
@@ -1412,7 +1412,7 @@ create_default_audio_src(PurpleMedia *media,
 }
 
 static GstElement *
-create_default_audio_sink(PurpleMedia *media,
+create_default_audio_sink(PurpleMediaElementInfo *info, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
 	GstElement *sink;

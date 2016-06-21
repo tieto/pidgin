@@ -49,8 +49,9 @@
 typedef struct _PurpleMediaElementInfo PurpleMediaElementInfo;
 typedef struct _PurpleMediaElementInfoClass PurpleMediaElementInfoClass;
 
-typedef GstElement *(*PurpleMediaElementCreateCallback)(PurpleMedia *media,
-			const gchar *session_id, const gchar *participant);
+typedef GstElement *(*PurpleMediaElementCreateCallback)(
+		PurpleMediaElementInfo *info, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant);
 
 /**
  * PurpleMediaElementType:

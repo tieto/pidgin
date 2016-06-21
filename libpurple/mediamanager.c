@@ -876,7 +876,7 @@ media_established_cb (PurpleMedia *media,const gchar *session_id,
 }
 
 static GstElement *
-create_send_appsrc(PurpleMedia *media,
+create_send_appsrc(PurpleMediaElementInfo *element_info, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
 	PurpleMediaManager *manager = purple_media_manager_get ();
@@ -1022,7 +1022,7 @@ appsink_destroyed (PurpleMediaAppDataInfo *info)
 }
 
 static GstElement *
-create_recv_appsink(PurpleMedia *media,
+create_recv_appsink(PurpleMediaElementInfo *element_info, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
 	PurpleMediaManager *manager = purple_media_manager_get ();
@@ -2122,7 +2122,7 @@ purple_media_element_info_call_create(PurpleMediaElementInfo *info,
 	g_return_val_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(info), NULL);
 	g_object_get(info, "create-cb", &create, NULL);
 	if (create)
-		return create(media, session_id, participant);
+		return create(info, media, session_id, participant);
 #endif
 	return NULL;
 }

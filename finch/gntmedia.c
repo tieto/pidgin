@@ -409,7 +409,7 @@ call_cmd_cb(PurpleConversation *conv, const char *cmd, char **args,
 }
 
 static GstElement *
-create_default_audio_src(PurpleMedia *media,
+create_default_audio_src(PurpleMediaElementInfo *info, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
 	GstElement *src;
@@ -432,7 +432,7 @@ create_default_audio_src(PurpleMedia *media,
 }
 
 static GstElement *
-create_default_audio_sink(PurpleMedia *media,
+create_default_audio_sink(PurpleMediaElementInfo *info, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
 	GstElement *sink;
