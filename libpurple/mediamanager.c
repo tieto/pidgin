@@ -2118,6 +2118,28 @@ purple_media_manager_init_device_monitor(PurpleMediaManager *manager)
 #endif /* GST_CHECK_VERSION(1, 4, 0) */
 }
 
+GList *
+purple_media_manager_enumerate_elements(PurpleMediaManager *manager,
+		PurpleMediaElementType type)
+{
+	GList *result = NULL;
+	GList *i;
+
+	for (i = manager->priv->elements; i; i = i->next) {
+		PurpleMediaElementInfo *info = i->data;
+		PurpleMediaElementType type2;
+
+		type2 = purple_media_element_info_get_element_type(info);
+
+		if ((type2 & type) == type) {
+			g_object_ref(info);
+			result = g_list_prepend(result, info);
+		}
+	}
+
+	return result;
+}
+
 /*
  * PurpleMediaElementType
  */

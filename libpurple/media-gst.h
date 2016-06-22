@@ -163,6 +163,17 @@ GstElement *purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
 
+/**
+ * purple_media_manager_enumerate_elements:
+ * @manager: The media manager to use to obtain the element infos.
+ * @type: The type of element infos to get.
+ *
+ * Returns: A #GList of registered #PurpleMediaElementInfo instances that match
+ * @type.
+ */
+GList *purple_media_manager_enumerate_elements(PurpleMediaManager *manager,
+		PurpleMediaElementType type);
+
 PurpleMediaElementInfo *purple_media_manager_get_element_info(
 		PurpleMediaManager *manager, const gchar *name);
 gboolean purple_media_manager_register_element(PurpleMediaManager *manager,
