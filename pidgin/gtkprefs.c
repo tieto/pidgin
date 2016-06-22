@@ -2490,8 +2490,8 @@ proxy_page(void)
 		gtk_container_add(GTK_CONTAINER(prefs_proxy_subframe), grid);
 
 		label = GTK_LABEL(gtk_label_new_with_mnemonic(_("_Host:")));
-		gtk_widget_set_halign(label, GTK_ALIGN_END);
-		gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
+		gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_END);
+		gtk_widget_set_valign(GTK_WIDGET(label), GTK_ALIGN_CENTER);
 		gtk_grid_attach_full(GTK_GRID(grid), GTK_WIDGET(label), 0, 0, 1, 1,
 			GTK_FILL, 0, 0, 0);
 
@@ -2512,8 +2512,8 @@ proxy_page(void)
 		pidgin_set_accessible_label(entry, label);
 
 		label = GTK_LABEL(gtk_label_new_with_mnemonic(_("P_ort:")));
-		gtk_widget_set_halign(label, GTK_ALIGN_END);
-		gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
+		gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_END);
+		gtk_widget_set_valign(GTK_WIDGET(label), GTK_ALIGN_CENTER);
 		gtk_grid_attach_full(GTK_GRID(grid), GTK_WIDGET(label), 2, 0, 1, 1,
 			GTK_FILL, 0, 0, 0);
 
@@ -2531,8 +2531,8 @@ proxy_page(void)
 		pidgin_set_accessible_label(entry, label);
 
 		label = GTK_LABEL(gtk_label_new_with_mnemonic(_("User_name:")));
-		gtk_widget_set_halign(label, GTK_ALIGN_END);
-		gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
+		gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_END);
+		gtk_widget_set_valign(GTK_WIDGET(label), GTK_ALIGN_CENTER);
 		gtk_grid_attach_full(GTK_GRID(grid), GTK_WIDGET(label), 0, 1, 1, 1,
 			GTK_FILL, 0, 0, 0);
 
@@ -2553,8 +2553,8 @@ proxy_page(void)
 		pidgin_set_accessible_label(entry, label);
 
 		label = GTK_LABEL(gtk_label_new_with_mnemonic(_("Pa_ssword:")));
-		gtk_widget_set_halign(label, GTK_ALIGN_END);
-		gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
+		gtk_widget_set_halign(GTK_WIDGET(label), GTK_ALIGN_END);
+		gtk_widget_set_valign(GTK_WIDGET(label), GTK_ALIGN_CENTER);
 		gtk_grid_attach_full(GTK_GRID(grid), GTK_WIDGET(label), 2, 1, 1, 1,
 			GTK_FILL, 0, 0, 0);
 
