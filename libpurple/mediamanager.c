@@ -1944,6 +1944,40 @@ gst_device_create_cb(PurpleMediaElementInfo *info, PurpleMedia *media,
 	return result;
 }
 
+static gboolean
+device_is_ignored(GstDevice *device)
+{
+	gboolean result = FALSE;
+
+#if GST_CHECK_VERSION(1, 6, 0)
+	gchar *device_class;
+
+	g_return_val_if_fail(device, TRUE);
+
+	device_class = gst_device_get_device_class(device);
+
+	/* Ignore PulseAudio monitor audio sources since they have little use
+	 * in the context of telephony.*/
+	if (purple_strequal(device_class, "Audio/Source")) {
+		GstStructure *properties;
+		const gchar *pa_class;
+
+		properties = gst_device_get_properties(device);
+
+		pa_class = gst_structure_get_string(properties, "device.class");
+		if (purple_strequal(pa_class, "monitor")) {
+			result = TRUE;
+		}
+
+		gst_structure_free(properties);
+	}
+
+	g_free(device_class);
+#endif /* GST_CHECK_VERSION(1, 6, 0) */
+
+	return result;
+}
+
 static void
 purple_media_manager_register_gst_device(PurpleMediaManager *manager,
 		GstDevice *device)
@@ -1953,6 +1987,10 @@ purple_media_manager_register_gst_device(PurpleMediaManager *manager,
 	gchar *name;
 	gchar *device_class;
 	gchar *id;
+
+	if (device_is_ignored(device)) {
+		return;
+	}
 
 	name = gst_device_get_display_name(device);
 	device_class = gst_device_get_device_class(device);
