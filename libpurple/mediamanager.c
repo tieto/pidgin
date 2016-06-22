@@ -121,6 +121,7 @@ static void free_appdata_info_locked (PurpleMediaAppDataInfo *info);
 #endif
 #ifdef USE_GSTREAMER
 static void purple_media_manager_init_device_monitor(PurpleMediaManager *manager);
+static void purple_media_manager_register_static_elements(PurpleMediaManager *manager);
 #endif
 
 static GObjectClass *parent_class = NULL;
@@ -218,6 +219,7 @@ purple_media_manager_init (PurpleMediaManager *media)
 #endif
 #ifdef USE_GSTREAMER
 	if (gst_init_check(NULL, NULL, &error)) {
+		purple_media_manager_register_static_elements(media);
 		purple_media_manager_init_device_monitor(media);
 	} else {
 		purple_debug_error("mediamanager",
@@ -1878,8 +1880,6 @@ purple_media_manager_receive_application_data (
 
 #ifdef USE_GSTREAMER
 
-#if GST_CHECK_VERSION(1, 4, 0)
-
 static void
 videosink_disable_last_sample(GstElement *sink)
 {
@@ -1889,6 +1889,8 @@ videosink_disable_last_sample(GstElement *sink)
 		g_object_set(sink, "enable-last-sample", FALSE, NULL);
 	}
 }
+
+#if GST_CHECK_VERSION(1, 4, 0)
 
 static PurpleMediaElementType
 gst_class_to_purple_element_type(const gchar *device_class)
@@ -2138,6 +2140,183 @@ purple_media_manager_enumerate_elements(PurpleMediaManager *manager,
 	}
 
 	return result;
+}
+
+static GstElement *
+gst_factory_make_cb(PurpleMediaElementInfo *info, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
+{
+	gchar *id;
+	GstElement *element;
+
+	id = purple_media_element_info_get_id(info);
+
+	element = gst_element_factory_make(id, NULL);
+
+	g_free(id);
+
+	return element;
+}
+
+static void
+autovideosink_child_added_cb (GstChildProxy *child_proxy, GObject *object,
+		gchar *name, gpointer user_data)
+{
+	videosink_disable_last_sample(GST_ELEMENT(object));
+}
+
+static GstElement *
+default_video_sink_create_cb(PurpleMediaElementInfo *info, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
+{
+	GstElement *videosink = gst_element_factory_make("autovideosink", NULL);
+
+	g_signal_connect(videosink, "child-added",
+			G_CALLBACK(autovideosink_child_added_cb), NULL);
+
+	return videosink;
+}
+
+static GstElement *
+disabled_video_create_cb(PurpleMediaElementInfo *info, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
+{
+	GstElement *src = gst_element_factory_make("videotestsrc", NULL);
+
+	/* GST_VIDEO_TEST_SRC_BLACK */
+	g_object_set(src, "pattern", 2, NULL);
+
+	return src;
+}
+
+static GstElement *
+test_video_create_cb(PurpleMediaElementInfo *info, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant)
+{
+	GstElement *src = gst_element_factory_make("videotestsrc", NULL);
+
+	g_object_set(src, "is-live", TRUE, NULL);
+
+	return src;
+}
+
+static void
+purple_media_manager_register_static_elements(PurpleMediaManager *manager)
+{
+	static const gchar *VIDEO_SINK_PLUGINS[] = {
+		/* "aasink", "AALib", Didn't work for me */
+		"directdrawsink", "DirectDraw",
+		"glimagesink", "OpenGL",
+		"ximagesink", "X Window System",
+		"xvimagesink", "X Window System (Xv)",
+		NULL
+	};
+	const gchar **sinks = VIDEO_SINK_PLUGINS;
+
+	/* Default auto* elements. */
+
+	purple_media_manager_register_element(manager,
+		g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "autoaudiosrc",
+			"name", N_("Default"),
+			"type", PURPLE_MEDIA_ELEMENT_AUDIO
+				| PURPLE_MEDIA_ELEMENT_SRC
+				| PURPLE_MEDIA_ELEMENT_ONE_SRC
+				| PURPLE_MEDIA_ELEMENT_UNIQUE,
+			"create-cb", gst_factory_make_cb,
+			NULL));
+
+	purple_media_manager_register_element(manager,
+		g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "autoaudiosink",
+			"name", N_("Default"),
+			"type", PURPLE_MEDIA_ELEMENT_AUDIO
+					| PURPLE_MEDIA_ELEMENT_SINK
+					| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+			"create-cb", gst_factory_make_cb,
+			NULL));
+
+	purple_media_manager_register_element(manager,
+		g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "autovideosrc",
+			"name", N_("Default"),
+			"type", PURPLE_MEDIA_ELEMENT_VIDEO
+				| PURPLE_MEDIA_ELEMENT_SRC
+				| PURPLE_MEDIA_ELEMENT_ONE_SRC
+				| PURPLE_MEDIA_ELEMENT_UNIQUE,
+			"create-cb", gst_factory_make_cb,
+			NULL));
+
+	purple_media_manager_register_element(manager,
+		g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "autovideosink",
+			"name", N_("Default"),
+			"type", PURPLE_MEDIA_ELEMENT_VIDEO
+				| PURPLE_MEDIA_ELEMENT_SINK
+				| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+			"create-cb", default_video_sink_create_cb,
+			NULL));
+
+	/* Special elements */
+
+	purple_media_manager_register_element(manager,
+		g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "audiotestsrc",
+			/* Translators: This is a noun that refers to one
+			 * possible audio input device. The user can employ the
+			 * device to sanity check basic audio functionality
+			 * within the libpurple client. */
+			"name", N_("Test Sound"),
+			"type", PURPLE_MEDIA_ELEMENT_AUDIO
+				| PURPLE_MEDIA_ELEMENT_SRC
+				| PURPLE_MEDIA_ELEMENT_ONE_SRC,
+			"create-cb", gst_factory_make_cb,
+			NULL));
+
+	purple_media_manager_register_element(manager,
+		g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "disabledvideosrc",
+			"name", N_("Disabled"),
+			"type", PURPLE_MEDIA_ELEMENT_VIDEO
+				| PURPLE_MEDIA_ELEMENT_SRC
+				| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+			"create-cb", disabled_video_create_cb,
+			NULL));
+
+	purple_media_manager_register_element(manager,
+		g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+			"id", "videotestsrc",
+			/* Translators: This is a noun that refers to one
+			 * possible video input device. The user can employ the
+			 * device to sanity check basic video functionality
+			 * within the libpurple client. */
+			"name", N_("Test Pattern"),
+			"type", PURPLE_MEDIA_ELEMENT_VIDEO
+				| PURPLE_MEDIA_ELEMENT_SRC
+				| PURPLE_MEDIA_ELEMENT_ONE_SRC,
+			"create-cb", test_video_create_cb,
+			NULL));
+
+	for (sinks = VIDEO_SINK_PLUGINS; sinks[0]; sinks += 2) {
+		GstElementFactory *factory;
+
+		factory = gst_element_factory_find(sinks[0]);
+		if (!factory) {
+			continue;
+		}
+
+		purple_media_manager_register_element(manager,
+			g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
+				"id", sinks[0],
+				"name", sinks[1],
+				"type", PURPLE_MEDIA_ELEMENT_VIDEO
+					| PURPLE_MEDIA_ELEMENT_SINK
+					| PURPLE_MEDIA_ELEMENT_ONE_SINK,
+				"create-cb", gst_factory_make_cb,
+				NULL));
+
+		gst_object_unref(factory);
+	}
 }
 
 /*
