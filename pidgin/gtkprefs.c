@@ -3764,18 +3764,37 @@ vv_device_changed_cb(const gchar *name, PurplePrefType type,
 	}
 }
 
-static void
-make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
-              const gchar *name, PurpleMediaElementType element_type,
-              const gchar *preference_key)
+static const char *
+purple_media_type_to_preference_key(PurpleMediaElementType type)
 {
-	GtkWidget *vbox, *widget;
+	if (type & PURPLE_MEDIA_ELEMENT_AUDIO) {
+		if (type & PURPLE_MEDIA_ELEMENT_SRC) {
+			return PIDGIN_PREFS_ROOT "/vvconfig/audio/src/device";
+		} else if (type & PURPLE_MEDIA_ELEMENT_SINK) {
+			return PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/device";
+		}
+	} else if (type & PURPLE_MEDIA_ELEMENT_VIDEO) {
+		if (type & PURPLE_MEDIA_ELEMENT_SRC) {
+			return PIDGIN_PREFS_ROOT "/vvconfig/video/src/device";
+		} else if (type & PURPLE_MEDIA_ELEMENT_SINK) {
+			return PIDGIN_PREFS_ROOT "/vvconfig/video/sink/device";
+		}
+	}
+
+	return NULL;
+}
+
+static GtkWidget *
+make_vv_dropdown(GtkWidget *parent, GtkSizeGroup *size_group,
+		PurpleMediaElementType element_type)
+{
+	GtkWidget *label;
+	const gchar *preference_key;
 	GList *devices;
 
-	vbox = pidgin_make_frame(parent, name);
-
-	/* Setup device preference */
+	preference_key = purple_media_type_to_preference_key(element_type);
 	devices = get_vv_device_menuitems(element_type);
+
 	if (g_list_find_custom(devices, purple_prefs_get_string(preference_key),
 		(GCompareFunc)strcmp) == NULL)
 	{
@@ -3783,17 +3802,64 @@ make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
 		if (next)
 			purple_prefs_set_string(preference_key, next->data);
 	}
-	widget = pidgin_prefs_dropdown_from_list(vbox, _("_Device"),
-			PURPLE_PREF_STRING, preference_key, devices);
-	g_list_free_full(devices, g_free);
-	gtk_size_group_add_widget(sg, widget);
-	gtk_widget_set_halign(widget, GTK_ALIGN_START);
-	gtk_widget_set_valign(widget, GTK_ALIGN_CENTER);
 
-	purple_prefs_connect_callback(vbox, preference_key,
+	label = pidgin_prefs_dropdown_from_list(parent, _("_Device"),
+			PURPLE_PREF_STRING, preference_key, devices);
+
+	g_list_free_full(devices, g_free);
+
+	gtk_size_group_add_widget(size_group, label);
+	gtk_widget_set_halign(label, GTK_ALIGN_START);
+	gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
+
+	/* Return the parent GtkBox of dropdown and label, which was created
+	 * in pidgin_prefs_dropdown_from_list(). */
+	return gtk_widget_get_parent(label);
+}
+
+static GtkWidget *
+make_vv_frame(GtkWidget *parent, GtkSizeGroup *sg,
+              const gchar *name, PurpleMediaElementType type)
+{
+	GtkWidget *vbox;
+	GtkWidget *dropdown;
+
+	vbox = pidgin_make_frame(parent, name);
+
+	dropdown = make_vv_dropdown(vbox, sg, type);
+
+	purple_prefs_connect_callback(vbox,
+			purple_media_type_to_preference_key(type),
 			vv_device_changed_cb, vbox);
 	g_signal_connect_swapped(vbox, "destroy",
 	                         G_CALLBACK(purple_prefs_disconnect_by_handle), vbox);
+
+	g_object_set_data(G_OBJECT(vbox), "vv_frame", vbox);
+	g_object_set_data(G_OBJECT(vbox), "vv_dropdown", dropdown);
+	g_object_set_data(G_OBJECT(vbox), "vv_size_group", sg);
+	g_object_set_data(G_OBJECT(vbox), "vv_media_type", (gpointer)type);
+
+	return vbox;
+}
+
+static void
+device_list_changed_cb(PurpleMediaManager *manager, GtkWidget *widget)
+{
+	GtkWidget *frame;
+	GtkWidget *dropdown;
+	PurpleMediaElementType media_type;
+
+	gtk_widget_destroy(g_object_get_data(G_OBJECT(widget), "vv_dropdown"));
+
+	frame = g_object_get_data(G_OBJECT(widget), "vv_frame");
+	media_type = (PurpleMediaElementType)g_object_get_data(G_OBJECT(widget),
+			"vv_media_type");
+
+	dropdown = make_vv_dropdown(frame,
+			g_object_get_data(G_OBJECT(widget), "vv_size_group"),
+			media_type);
+
+	g_object_set_data(G_OBJECT(widget), "vv_dropdown", dropdown);
 }
 
 static GtkWidget *
@@ -3801,29 +3867,41 @@ vv_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
+	GtkWidget *frame;
 	GtkSizeGroup *sg;
+	PurpleMediaManager *manager;
 
 	ret = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
+	manager = purple_media_manager_get();
+
 	vbox = pidgin_make_frame(ret, _("Audio"));
-	make_vv_frame(vbox, sg, _("Input"),
-	              PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SRC,
-	              PIDGIN_PREFS_ROOT "/vvconfig/audio/src/device");
-	make_vv_frame(vbox, sg, _("Output"),
-	              PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SINK,
-	              PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/device");
+	frame = make_vv_frame(vbox, sg, _("Input"),
+			PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SRC);
+	g_signal_connect_object(manager, "elements-changed::audiosrc",
+			G_CALLBACK(device_list_changed_cb), frame, 0);
+
+	frame = make_vv_frame(vbox, sg, _("Output"),
+			PURPLE_MEDIA_ELEMENT_AUDIO | PURPLE_MEDIA_ELEMENT_SINK);
+	g_signal_connect_object(manager, "elements-changed::audiosink",
+			G_CALLBACK(device_list_changed_cb), frame, 0);
+
 	make_voice_test(vbox);
 
 	vbox = pidgin_make_frame(ret, _("Video"));
-	make_vv_frame(vbox, sg, _("Input"),
-	              PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SRC,
-	              PIDGIN_PREFS_ROOT "/vvconfig/video/src/device");
-	make_vv_frame(vbox, sg, _("Output"),
-	              PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SINK,
-	              PIDGIN_PREFS_ROOT "/vvconfig/video/sink/device");
+	frame = make_vv_frame(vbox, sg, _("Input"),
+	              PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SRC);
+	g_signal_connect_object(manager, "elements-changed::videosrc",
+			G_CALLBACK(device_list_changed_cb), frame, 0);
+
+	frame = make_vv_frame(vbox, sg, _("Output"),
+			PURPLE_MEDIA_ELEMENT_VIDEO | PURPLE_MEDIA_ELEMENT_SINK);
+	g_signal_connect_object(manager, "elements-changed::videosink",
+			G_CALLBACK(device_list_changed_cb), frame, 0);
+
 	make_video_test(vbox);
 
 	gtk_widget_show_all(ret);
