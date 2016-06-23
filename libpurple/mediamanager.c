@@ -132,6 +132,7 @@ enum {
 	INIT_MEDIA,
 	INIT_PRIVATE_MEDIA,
 	UI_CAPS_CHANGED,
+	ELEMENTS_CHANGED,
 	LAST_SIGNAL
 };
 static guint purple_media_manager_signals[LAST_SIGNAL] = {0};
@@ -197,6 +198,14 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 		purple_smarshal_VOID__FLAGS_FLAGS,
 		G_TYPE_NONE, 2, PURPLE_MEDIA_TYPE_CAPS,
 		PURPLE_MEDIA_TYPE_CAPS);
+
+	purple_media_manager_signals[ELEMENTS_CHANGED] =
+		g_signal_new("elements-changed",
+			G_TYPE_FROM_CLASS(klass),
+			G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED,
+			0, NULL, NULL,
+			g_cclosure_marshal_VOID__VOID,
+			G_TYPE_NONE, 0);
 
 	g_type_class_add_private(klass, sizeof(PurpleMediaManagerPrivate));
 }
@@ -1268,6 +1277,30 @@ purple_media_manager_get_element_info(PurpleMediaManager *manager,
 	return NULL;
 }
 
+static GQuark
+element_info_to_detail(PurpleMediaElementInfo *info)
+{
+	PurpleMediaElementType type;
+
+	type = purple_media_element_info_get_element_type(info);
+
+	if (type & PURPLE_MEDIA_ELEMENT_AUDIO) {
+		if (type & PURPLE_MEDIA_ELEMENT_SRC) {
+			return g_quark_from_string("audiosrc");
+		} else if (type & PURPLE_MEDIA_ELEMENT_SINK) {
+			return g_quark_from_string("audiosink");
+		}
+	} else if (type & PURPLE_MEDIA_ELEMENT_VIDEO) {
+		if (type & PURPLE_MEDIA_ELEMENT_SRC) {
+			return g_quark_from_string("videosrc");
+		} else if (type & PURPLE_MEDIA_ELEMENT_SINK) {
+			return g_quark_from_string("videosink");
+		}
+	}
+
+	return 0;
+}
+
 gboolean
 purple_media_manager_register_element(PurpleMediaManager *manager,
 		PurpleMediaElementInfo *info)
@@ -1275,6 +1308,7 @@ purple_media_manager_register_element(PurpleMediaManager *manager,
 #ifdef USE_VV
 	PurpleMediaElementInfo *info2;
 	gchar *id;
+	GQuark detail;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), FALSE);
 	g_return_val_if_fail(info != NULL, FALSE);
@@ -1290,6 +1324,14 @@ purple_media_manager_register_element(PurpleMediaManager *manager,
 
 	manager->priv->elements =
 			g_list_prepend(manager->priv->elements, info);
+
+	detail = element_info_to_detail(info);
+	if (detail != 0) {
+		g_signal_emit(manager,
+				purple_media_manager_signals[ELEMENTS_CHANGED],
+				detail);
+	}
+
 	return TRUE;
 #else
 	return FALSE;
@@ -1302,6 +1344,7 @@ purple_media_manager_unregister_element(PurpleMediaManager *manager,
 {
 #ifdef USE_VV
 	PurpleMediaElementInfo *info;
+	GQuark detail;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), FALSE);
 
@@ -1321,9 +1364,18 @@ purple_media_manager_unregister_element(PurpleMediaManager *manager,
 	if (manager->priv->video_sink == info)
 		manager->priv->video_sink = NULL;
 
+	detail = element_info_to_detail(info);
+
 	manager->priv->elements = g_list_remove(
 			manager->priv->elements, info);
 	g_object_unref(info);
+
+	if (detail != 0) {
+		g_signal_emit(manager,
+				purple_media_manager_signals[ELEMENTS_CHANGED],
+				detail);
+	}
+
 	return TRUE;
 #else
 	return FALSE;
