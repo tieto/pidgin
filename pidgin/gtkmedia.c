@@ -696,7 +696,7 @@ pidgin_media_add_audio_widget(PidginMedia *gtkmedia,
 	GtkWidget *volume_widget, *progress_parent, *volume, *progress;
 	double value;
 
-	static const gchar * const input_volume_icons[] = {
+	static const gchar * input_volume_icons[] = {
 		"microphone-sensitivity-muted-symbolic",
 		"microphone-sensitivity-high-symbolic",
 		"microphone-sensitivity-low-symbolic",
