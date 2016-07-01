@@ -368,7 +368,7 @@ tinyurl_notify_uri(const char *uri)
 	 * may not always happen, e.g. when another plugin sets its own
 	 * notify_message. So tread carefully. */
 	win = purple_notify_message(NULL, PURPLE_NOTIFY_MSG_INFO, _("URI"), uri,
-			_("Please wait while TinyURL fetches a shorter URL ..."), NULL, NULL);
+			_("Please wait while TinyURL fetches a shorter URL..."), NULL, NULL);
 	if (!GNT_IS_WINDOW(win) || !g_object_get_data(G_OBJECT(win), "info-widget"))
 		return win;
 
@@ -471,7 +471,7 @@ static PurplePluginInfo info =
 	N_("TinyURL"),
 	DISPLAY_VERSION,
 	N_("TinyURL plugin"),
-	N_("When receiving a message with URL(s), use TinyURL for easier copying"),
+	N_("Shorten URLs in messages using TinyURL"),
 	"Richard Nelson <wabz@whatsbeef.net>",
 	PURPLE_WEBSITE,
 	plugin_load,
