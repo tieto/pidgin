@@ -569,7 +569,7 @@ void finch_savedstatus_edit(PurpleSavedStatus *saved)
 	gnt_box_add_widget(GNT_BOX(window), entry);
 
 	gnt_box_add_widget(GNT_BOX(window), gnt_hline_new());
-	gnt_box_add_widget(GNT_BOX(window), gnt_label_new(_("Use different status for following accounts")));
+	gnt_box_add_widget(GNT_BOX(window), gnt_label_new(_("Use a different status for some accounts")));
 
 	edit->hash = g_hash_table_new(g_direct_hash, g_direct_equal);
 	edit->tree = tree = gnt_tree_new_with_columns(3);
