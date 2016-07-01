@@ -551,7 +551,7 @@ void pidgin_dialogs_about(void)
 
 	g_string_append(str,
 			_("<font size=\"4\"><b>Help from other Pidgin users</b></font> is "
-			  "available by e-mailing <a "
+			  "available by emailing <a "
 			  "href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>"
 			  "This is a <b>public</b> mailing list! "
 			  "(<a href=\"http://pidgin.im/pipermail/support/\">archive</a>)<br/>"
