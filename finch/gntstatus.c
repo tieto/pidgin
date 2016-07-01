@@ -602,8 +602,8 @@ void finch_savedstatus_edit(PurpleSavedStatus *saved)
 	g_object_set_data(G_OBJECT(button), "use", NULL);
 	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(save_savedstatus_cb), edit);
 
-	/* Save & Use */
-	button = gnt_button_new(_("Save & Use"));
+	/* Save and Use */
+	button = gnt_button_new(_("Save and Use"));
 	gnt_box_add_widget(GNT_BOX(box), button);
 	g_object_set_data(G_OBJECT(button), "use", GINT_TO_POINTER(TRUE));
 	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(save_savedstatus_cb), edit);

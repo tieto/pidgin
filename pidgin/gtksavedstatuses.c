@@ -805,7 +805,7 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 	g_free(message);
 	g_free(unformatted);
 
-	/* If they clicked on "Save & Use" or "Use," then activate the status */
+	/* If they clicked on "Save and Use" or "Use," then activate the status */
 	if (button != dialog->save_button)
 		purple_savedstatus_activate(saved_status);
 
@@ -1215,8 +1215,8 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_editor_ok_cb), dialog);
 
-	/* Save & Use button */
-	button = pidgin_pixbuf_button_from_stock(_("Sa_ve & Use"), GTK_STOCK_OK,
+	/* Save and Use button */
+	button = pidgin_pixbuf_button_from_stock(_("Sa_ve and Use"), GTK_STOCK_OK,
 										   PIDGIN_BUTTON_HORIZONTAL);
 	dialog->saveanduse_button = GTK_BUTTON(button);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
