@@ -163,7 +163,7 @@ yahoo_get_account_text_table(PurpleAccount *account)
 {
 	GHashTable *table;
 	table = g_hash_table_new(g_str_hash, g_str_equal);
-	g_hash_table_insert(table, "login_label", (gpointer)_("Yahoo ID..."));
+	g_hash_table_insert(table, "login_label", (gpointer)_("Yahoo! ID..."));
 	return table;
 }
 
