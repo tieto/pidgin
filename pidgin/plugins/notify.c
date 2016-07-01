@@ -718,7 +718,7 @@ get_config_frame(PurplePlugin *plugin)
 	                 G_CALLBACK(type_toggle_cb), "type_im");
 
 	ref = toggle;
-	toggle = gtk_check_button_new_with_mnemonic(_("\t_Notify for System messages"));
+	toggle = gtk_check_button_new_with_mnemonic(_("\tS_ystem messages"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
 	                            purple_prefs_get_bool("/plugins/gtk/X11/notify/type_im_sys"));
@@ -746,7 +746,7 @@ get_config_frame(PurplePlugin *plugin)
 	g_signal_connect(G_OBJECT(ref), "toggled",
 	                 G_CALLBACK(pidgin_toggle_sensitive), toggle);
 
-	toggle = gtk_check_button_new_with_mnemonic(_("\tNotify for _System messages"));
+	toggle = gtk_check_button_new_with_mnemonic(_("\tS_ystem messages"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
 	                            purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_sys"));
