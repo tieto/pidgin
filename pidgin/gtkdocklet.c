@@ -589,8 +589,10 @@ docklet_status_submenu(void)
 
 	pidgin_separator(submenu);
 
-	pidgin_new_item_from_stock(submenu, _("New..."), NULL, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
-	pidgin_new_item_from_stock(submenu, _("Saved..."), NULL, G_CALLBACK(pidgin_status_window_show), NULL, 0, 0, NULL);
+	pidgin_new_menu_item(submenu, _("New..."), NULL,
+                        G_CALLBACK(show_custom_status_editor_cb), NULL);
+	pidgin_new_menu_item(submenu, _("Saved..."), NULL,
+                        G_CALLBACK(pidgin_status_window_show), NULL);
 
 	return menuitem;
 }
@@ -713,12 +715,15 @@ docklet_menu(void)
 
 	pidgin_separator(menu);
 
-	menuitem = pidgin_new_item_from_stock(menu, _("New _Message..."), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, G_CALLBACK(pidgin_dialogs_im), NULL, 0, 0, NULL);
+	menuitem = pidgin_new_menu_item(menu, _("New _Message..."),
+                        PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW,
+                        G_CALLBACK(pidgin_dialogs_im), NULL);
 	if (status == PURPLE_STATUS_OFFLINE)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
-	menuitem = pidgin_new_item_from_stock(menu, _("Join Chat..."), PIDGIN_STOCK_CHAT,
-			G_CALLBACK(pidgin_blist_joinchat_show), NULL, 0, 0, NULL);
+	menuitem = pidgin_new_menu_item(menu, _("Join Chat..."),
+                        PIDGIN_STOCK_CHAT, G_CALLBACK(pidgin_blist_joinchat_show),
+                        NULL);
 	if (status == PURPLE_STATUS_OFFLINE)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
@@ -727,9 +732,14 @@ docklet_menu(void)
 
 	pidgin_separator(menu);
 
-	pidgin_new_item_from_stock(menu, _("_Accounts"), NULL, G_CALLBACK(pidgin_accounts_window_show), NULL, 0, 0, NULL);
-	pidgin_new_item_from_stock(menu, _("Plu_gins"), PIDGIN_STOCK_TOOLBAR_PLUGINS, G_CALLBACK(pidgin_plugin_dialog_show), NULL, 0, 0, NULL);
-	pidgin_new_item_from_stock(menu, _("Pr_eferences"), GTK_STOCK_PREFERENCES, G_CALLBACK(pidgin_prefs_show), NULL, 0, 0, NULL);
+	pidgin_new_menu_item(menu, _("_Accounts"), NULL,
+                        G_CALLBACK(pidgin_accounts_window_show), NULL);
+	pidgin_new_menu_item(menu, _("Plu_gins"),
+                        PIDGIN_STOCK_TOOLBAR_PLUGINS,
+                        G_CALLBACK(pidgin_plugin_dialog_show), NULL);
+	pidgin_new_menu_item(menu, _("Pr_eferences"),
+                        GTK_STOCK_PREFERENCES,
+                        G_CALLBACK(pidgin_prefs_show), NULL);
 
 	pidgin_separator(menu);
 
@@ -745,7 +755,8 @@ docklet_menu(void)
 	/* add plugin actions */
 	docklet_plugin_actions(menu);
 
-	pidgin_new_item_from_stock(menu, _("_Quit"), GTK_STOCK_QUIT, G_CALLBACK(purple_core_quit), NULL, 0, 0, NULL);
+	pidgin_new_menu_item(menu, _("_Quit"), GTK_STOCK_QUIT,
+                        G_CALLBACK(purple_core_quit), NULL);
 
 #ifdef _WIN32
 	g_signal_connect(menu, "leave-notify-event", G_CALLBACK(docklet_menu_leave_enter), NULL);

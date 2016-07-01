@@ -310,13 +310,12 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 
 		box->icon_box_menu = gtk_menu_new();
 
-		pidgin_new_item_from_stock(box->icon_box_menu,
+		pidgin_new_menu_item(box->icon_box_menu,
 			_("Select Buddy Icon"), GTK_STOCK_ADD,
-			G_CALLBACK(choose_buddy_icon_cb), box, 0, 0, NULL);
+			G_CALLBACK(choose_buddy_icon_cb), box);
 
-		menu_item = pidgin_new_item_from_stock(box->icon_box_menu, _("Remove"), GTK_STOCK_REMOVE,
-						     G_CALLBACK(remove_buddy_icon_cb),
-						     box, 0, 0, NULL);
+		menu_item = pidgin_new_menu_item(box->icon_box_menu, _("Remove"), GTK_STOCK_REMOVE,
+                                G_CALLBACK(remove_buddy_icon_cb), box);
 		if (!(path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon"))
 				|| !*path)
 			gtk_widget_set_sensitive(menu_item, FALSE);

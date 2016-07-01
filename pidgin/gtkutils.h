@@ -236,17 +236,6 @@ void pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle);
 GtkWidget *pidgin_separator(GtkWidget *menu);
 
 /**
- * pidgin_new_item:
- * @menu: The menu to which to append the menu item.
- * @str:  The title to use for the newly created menu item.
- *
- * Creates a menu item.
- *
- * Returns: The newly created menu item.
- */
-GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str);
-
-/**
  * pidgin_new_check_item:
  * @menu:     The menu to which to append the check menu item.
  * @str:      The title to use for the newly created menu item.
@@ -262,9 +251,9 @@ GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
 		GCallback cb, gpointer data, gboolean checked);
 
 /**
- * pidgin_new_item_from_stock:
+ * pidgin_new_menu_item:
  * @menu:       The menu to which to append the menu item.
- * @str:        The title for the menu item.
+ * @mnemonic:   The title for the menu item.
  * @icon:       An icon to place to the left of the menu item,
  *                   or %NULL for no icon.
  * @cb:         A function to call when the menu item is activated.
@@ -277,10 +266,8 @@ GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
  *
  * Returns: The newly created menu item.
  */
-GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str,
-									const char *icon, GCallback cb,
-									gpointer data, guint accel_key,
-									guint accel_mods, char *mod);
+GtkWidget *pidgin_new_menu_item(GtkWidget *menu, const char *mnemonic,
+                const char *icon, GCallback cb, gpointer data);
 
 /**
  * pidgin_pixbuf_button_from_stock:

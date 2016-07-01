@@ -317,10 +317,10 @@ static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, PurpleRoomli
 	info.room = room;
 
 	menu = gtk_menu_new();
-	pidgin_new_item_from_stock(menu, _("_Join"), PIDGIN_STOCK_CHAT,
-		                         G_CALLBACK(do_join_cb), &info, 0, 0, NULL);
-	pidgin_new_item_from_stock(menu, _("_Add"), GTK_STOCK_ADD,
-		                         G_CALLBACK(do_add_room_cb), &info, 0, 0, NULL);
+	pidgin_new_menu_item(menu, _("_Join"), PIDGIN_STOCK_CHAT,
+                        G_CALLBACK(do_join_cb), &info);
+	pidgin_new_menu_item(menu, _("_Add"), GTK_STOCK_ADD,
+                        G_CALLBACK(do_add_room_cb), &info);
 
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3, event->time);

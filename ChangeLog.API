@@ -569,6 +569,8 @@ version 3.0.0 (??/??/????):
 		* FULL_CIRCLE_DEGREES renamed to PIDGIN_FULL_CIRCLE_DEGREES
 		* NUM_NICK_SEED_COLORS renamed to PIDGIN_NUM_NICK_SEED_COLORS
 		* PALETTE_NUM_COLORS renamed to PIDGIN_PALETTE_NUM_COLORS
+		* pidgin_new_item_from_stock renamed to pidgin_new_menu_item and
+		  removed the accel related parameters.
 		* pidgin_setup_screenname_autocomplete now takes a filter function and
 		  its data as final two arguments
 		* smiley_list renamed to PidginSmileyList

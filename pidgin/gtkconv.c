@@ -1659,8 +1659,10 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 	menu = gtk_menu_new();
 
 	if (!is_me) {
-		button = pidgin_new_item_from_stock(menu, _("IM"), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW,
-					G_CALLBACK(menu_chat_im_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
+                button = pidgin_new_menu_item(menu, _("IM"),
+                                PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW,
+                                G_CALLBACK(menu_chat_im_cb),
+                                PIDGIN_CONVERSATION(conv));
 
 		if (gc == NULL)
 			gtk_widget_set_sensitive(button, FALSE);
@@ -1672,9 +1674,9 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 		{
 			gboolean can_receive_file = TRUE;
 
-			button = pidgin_new_item_from_stock(menu, _("Send File"),
+			button = pidgin_new_menu_item(menu, _("Send File"),
 				PIDGIN_STOCK_TOOLBAR_SEND_FILE, G_CALLBACK(menu_chat_send_file_cb),
-				PIDGIN_CONVERSATION(conv), 0, 0, NULL);
+				PIDGIN_CONVERSATION(conv));
 
 			if (gc == NULL || protocol == NULL)
 				can_receive_file = FALSE;
@@ -1696,11 +1698,13 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 
 
 		if (purple_chat_conversation_is_ignored_user(chat, who))
-			button = pidgin_new_item_from_stock(menu, _("Un-Ignore"), PIDGIN_STOCK_IGNORE,
-							G_CALLBACK(ignore_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
+			button = pidgin_new_menu_item(menu, _("Un-Ignore"),
+                                        PIDGIN_STOCK_IGNORE, G_CALLBACK(ignore_cb),
+                                        PIDGIN_CONVERSATION(conv));
 		else
-			button = pidgin_new_item_from_stock(menu, _("Ignore"), PIDGIN_STOCK_IGNORE,
-							G_CALLBACK(ignore_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
+			button = pidgin_new_menu_item(menu, _("Ignore"),
+                                        PIDGIN_STOCK_IGNORE, G_CALLBACK(ignore_cb),
+                                        PIDGIN_CONVERSATION(conv));
 
 		if (gc == NULL)
 			gtk_widget_set_sensitive(button, FALSE);
@@ -1709,8 +1713,10 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 	}
 
 	if (protocol && PURPLE_PROTOCOL_IMPLEMENTS(protocol, SERVER_IFACE, get_info)) {
-		button = pidgin_new_item_from_stock(menu, _("Info"), PIDGIN_STOCK_TOOLBAR_USER_INFO,
-						G_CALLBACK(menu_chat_info_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
+		button = pidgin_new_menu_item(menu, _("Info"),
+                                PIDGIN_STOCK_TOOLBAR_USER_INFO,
+                                G_CALLBACK(menu_chat_info_cb),
+                                PIDGIN_CONVERSATION(conv));
 
 		if (gc == NULL)
 			gtk_widget_set_sensitive(button, FALSE);
@@ -1720,11 +1726,15 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 
 	if (!is_me && protocol && !(purple_protocol_get_options(protocol) & OPT_PROTO_UNIQUE_CHATNAME)) {
 		if ((buddy = purple_blist_find_buddy(account, who)) != NULL)
-			button = pidgin_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
-						G_CALLBACK(menu_chat_add_remove_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
+			button = pidgin_new_menu_item(menu, _("Remove"),
+                                        GTK_STOCK_REMOVE,
+                                        G_CALLBACK(menu_chat_add_remove_cb),
+                                        PIDGIN_CONVERSATION(conv));
 		else
-			button = pidgin_new_item_from_stock(menu, _("Add"), GTK_STOCK_ADD,
-						G_CALLBACK(menu_chat_add_remove_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
+			button = pidgin_new_menu_item(menu, _("Add"),
+                                        GTK_STOCK_ADD,
+                                        G_CALLBACK(menu_chat_add_remove_cb),
+                                        PIDGIN_CONVERSATION(conv));
 
 		if (gc == NULL)
 			gtk_widget_set_sensitive(button, FALSE);
@@ -1732,8 +1742,8 @@ create_chat_menu(PurpleChatConversation *chat, const char *who, PurpleConnection
 			g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
-	button = pidgin_new_item_from_stock(menu, _("Last Said"), GTK_STOCK_INDEX,
-						G_CALLBACK(menu_last_said_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
+	button = pidgin_new_menu_item(menu, _("Last Said"), GTK_STOCK_INDEX,
+                        G_CALLBACK(menu_last_said_cb), PIDGIN_CONVERSATION(conv));
 	g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	if (!get_mark_for_user(PIDGIN_CONVERSATION(conv), who))
 		gtk_widget_set_sensitive(button, FALSE);
@@ -2969,20 +2979,17 @@ icon_menu(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
 							gtkconv->u.im->icon_timer);
 	}
 
-	pidgin_new_item_from_stock(menu, _("Hide Icon"), NULL, G_CALLBACK(remove_icon),
-							 gtkconv, 0, 0, NULL);
+	pidgin_new_menu_item(menu, _("Hide Icon"), NULL,
+                        G_CALLBACK(remove_icon), gtkconv);
 
-	pidgin_new_item_from_stock(menu, _("Save Icon As..."), GTK_STOCK_SAVE_AS,
-							 G_CALLBACK(icon_menu_save_cb), gtkconv,
-							 0, 0, NULL);
+	pidgin_new_menu_item(menu, _("Save Icon As..."), GTK_STOCK_SAVE_AS,
+                        G_CALLBACK(icon_menu_save_cb), gtkconv);
 
-	pidgin_new_item_from_stock(menu, _("Set Custom Icon..."), NULL,
-							 G_CALLBACK(set_custom_icon_cb), gtkconv,
-							 0, 0, NULL);
+	pidgin_new_menu_item(menu, _("Set Custom Icon..."), NULL,
+                        G_CALLBACK(set_custom_icon_cb), gtkconv);
 
-	pidgin_new_item_from_stock(menu, _("Change Size"), NULL,
-							 G_CALLBACK(change_size_cb), gtkconv,
-							 0, 0, NULL);
+	pidgin_new_menu_item(menu, _("Change Size"), NULL,
+                        G_CALLBACK(change_size_cb), gtkconv);
 
 	/* Is there a custom icon for this person? */
 	conv = gtkconv->active_conv;
@@ -2993,9 +3000,9 @@ icon_menu(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
 		PurpleContact *contact = purple_buddy_get_contact(buddy);
 		if (contact && purple_buddy_icons_node_has_custom_icon((PurpleBlistNode*)contact))
 		{
-			pidgin_new_item_from_stock(menu, _("Remove Custom Icon"), NULL,
-			                           G_CALLBACK(remove_custom_icon_cb), gtkconv,
-			                           0, 0, NULL);
+			pidgin_new_menu_item(menu, _("Remove Custom Icon"),
+                                        NULL, G_CALLBACK(remove_custom_icon_cb),
+                                        gtkconv);
 		}
 	}
 
@@ -4912,9 +4919,8 @@ entry_popup_menu_cb(PidginWebView *webview, GtkMenu *menu, gpointer data)
 	g_return_if_fail(menu != NULL);
 	g_return_if_fail(gtkconv != NULL);
 
-	menuitem = pidgin_new_item_from_stock(NULL, _("_Send"), NULL,
-	                                      G_CALLBACK(send_cb), gtkconv,
-	                                      0, 0, NULL);
+	menuitem = pidgin_new_menu_item(NULL, _("_Send"), NULL,
+	                                      G_CALLBACK(send_cb), gtkconv);
 	is_empty = pidgin_webview_is_empty(webview);
 	if (is_empty)
 		gtk_widget_set_sensitive(menuitem, FALSE);

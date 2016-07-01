@@ -398,29 +398,6 @@ GtkWidget *pidgin_separator(GtkWidget *menu)
 	return menuitem;
 }
 
-GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str)
-{
-	GtkWidget *menuitem;
-	GtkWidget *label;
-
-	menuitem = gtk_menu_item_new();
-	if (menu)
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-	gtk_widget_show(menuitem);
-
-	label = gtk_label_new(str);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_label_set_pattern(GTK_LABEL(label), "_");
-	gtk_container_add(GTK_CONTAINER(menuitem), label);
-	gtk_widget_show(label);
-/* FIXME: Go back and fix this
-	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
-				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
-*/
-	pidgin_set_accessible_label(menuitem, GTK_LABEL(label));
-	return menuitem;
-}
-
 GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
 		GCallback cb, gpointer data, gboolean checked)
 {
@@ -506,43 +483,33 @@ pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
 }
 
 
-GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GCallback cb, gpointer data, guint accel_key, guint accel_mods, char *mod)
+GtkWidget *pidgin_new_menu_item(GtkWidget *menu, const char *mnemonic,
+                const char *icon, GCallback cb, gpointer data)
 {
 	GtkWidget *menuitem;
-	/*
-	GtkWidget *hbox;
+	GtkWidget *box;
 	GtkWidget *label;
-	*/
-	GtkWidget *image;
 
-	if (icon == NULL)
-		menuitem = gtk_menu_item_new_with_mnemonic(str);
-	else
-		menuitem = gtk_image_menu_item_new_with_mnemonic(str);
+        box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 
-	if (menu)
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+        menuitem = gtk_menu_item_new();
 
 	if (cb)
 		g_signal_connect(G_OBJECT(menuitem), "activate", cb, data);
 
-	if (icon != NULL) {
-		image = gtk_image_new_from_stock(icon, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-	}
-/* FIXME: this isn't right
-	if (mod) {
-		label = gtk_label_new(mod);
-		gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 2);
-		gtk_widget_show(label);
-	}
-*/
-/*
-	if (accel_key) {
-		gtk_widget_add_accelerator(menuitem, "activate", accel, accel_key,
-					   accel_mods, GTK_ACCEL_LOCKED);
-	}
-*/
+        if (icon) {
+                GtkWidget *image;
+                image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_MENU);
+                gtk_container_add(GTK_CONTAINER(box), image);
+        }
+
+        label = gtk_label_new_with_mnemonic(mnemonic);
+        gtk_container_add(GTK_CONTAINER(box), label);
+
+        gtk_container_add(GTK_CONTAINER(menuitem), box);
+
+	if (menu)
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	gtk_widget_show_all(menuitem);
 

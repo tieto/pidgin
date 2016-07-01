@@ -839,38 +839,37 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 
 	if (show_clipboard) {
 		/* Using connect_swapped means we don't need any wrapper functions */
-		cut = pidgin_new_item_from_stock(menu, _("Cu_t"), GTK_STOCK_CUT,
-		                                 NULL, NULL, 0, 0, NULL);
-		g_signal_connect_swapped(G_OBJECT(cut), "activate",
-		                         G_CALLBACK(webkit_web_view_cut_clipboard),
-		                         webview);
+		cut = pidgin_new_menu_item(menu, _("Cu_t"), GTK_STOCK_CUT,
+                                NULL, NULL);
+                g_signal_connect_swapped(G_OBJECT(cut), "activate",
+                                G_CALLBACK(webkit_web_view_cut_clipboard),
+                                webview);
 
-		copy = pidgin_new_item_from_stock(menu, _("_Copy"), GTK_STOCK_COPY,
-		                                  NULL, NULL, 0, 0, NULL);
-		g_signal_connect_swapped(G_OBJECT(copy), "activate",
-		                         G_CALLBACK(webkit_web_view_copy_clipboard),
-		                         webview);
+                copy = pidgin_new_menu_item(menu, _("_Copy"), GTK_STOCK_COPY,
+                                NULL, NULL);
+                g_signal_connect_swapped(G_OBJECT(copy), "activate",
+                                G_CALLBACK(webkit_web_view_copy_clipboard),
+                                webview);
 
-		paste = pidgin_new_item_from_stock(menu, _("_Paste"), GTK_STOCK_PASTE,
-		                                   NULL, NULL, 0, 0, NULL);
-		g_signal_connect_swapped(G_OBJECT(paste), "activate",
-		                         G_CALLBACK(webkit_web_view_paste_clipboard),
-		                         webview);
+                paste = pidgin_new_menu_item(menu, _("_Paste"), GTK_STOCK_PASTE,
+                                NULL, NULL);
+                g_signal_connect_swapped(G_OBJECT(paste), "activate",
+                                G_CALLBACK(webkit_web_view_paste_clipboard),
+                                webview);
 
-		delete = pidgin_new_item_from_stock(menu, _("_Delete"), GTK_STOCK_DELETE,
-		                                    NULL, NULL, 0, 0, NULL);
-		g_signal_connect_swapped(G_OBJECT(delete), "activate",
-		                         G_CALLBACK(webkit_web_view_delete_selection),
-		                         webview);
+                delete = pidgin_new_menu_item(menu, _("_Delete"), GTK_STOCK_DELETE,
+                                NULL, NULL);
+                g_signal_connect_swapped(G_OBJECT(delete), "activate",
+                                G_CALLBACK(webkit_web_view_delete_selection),
+                                webview);
 
 		pidgin_separator(menu);
 
-		select = pidgin_new_item_from_stock(menu, _("Select _All"),
-		                                    GTK_STOCK_SELECT_ALL,
-		                                    NULL, NULL, 0, 0, NULL);
-		g_signal_connect_swapped(G_OBJECT(select), "activate",
-		                         G_CALLBACK(webkit_web_view_select_all),
-		                         webview);
+                select = pidgin_new_menu_item(menu, _("Select _All"),
+                                GTK_STOCK_SELECT_ALL, NULL, NULL);
+                g_signal_connect_swapped(G_OBJECT(select), "activate",
+                                G_CALLBACK(webkit_web_view_select_all),
+                                webview);
 
 		gtk_widget_set_sensitive(cut,
 			webkit_web_view_can_cut_clipboard(webview));
@@ -898,8 +897,8 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 
 		pidgin_separator(menu);
 
-		inspect = pidgin_new_item_from_stock(menu, _("Inspect _Element"),
-			PIDGIN_STOCK_DEBUG, NULL, NULL, 0, 0, NULL);
+		inspect = pidgin_new_menu_item(menu, _("Inspect _Element"),
+			PIDGIN_STOCK_DEBUG, NULL, NULL);
 		g_signal_connect_data(G_OBJECT(inspect), "activate",
 		                      G_CALLBACK(webview_inspector_inspect_element),
 		                      data, (GClosureNotify)g_free, 0);
