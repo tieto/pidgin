@@ -5102,7 +5102,7 @@ generic_error_destroy_cb(GtkObject *dialog,
 		purple_account_clear_current_error(account);
 }
 
-#define SSL_FAQ_URI "http://d.pidgin.im/wiki/FAQssl"
+#define SSL_FAQ_URI "https://developer.pidgin.im/wiki/FAQssl"
 
 static void
 ssl_faq_clicked_cb(PidginMiniDialog *mini_dialog,
