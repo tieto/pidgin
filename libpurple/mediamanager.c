@@ -2315,9 +2315,9 @@ purple_media_manager_register_static_elements(PurpleMediaManager *manager)
 		g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
 			"id", "audiotestsrc",
 			/* Translators: This is a noun that refers to one
-			 * possible audio input device. The user can employ the
-			 * device to sanity check basic audio functionality
-			 * within the libpurple client. */
+			 * possible audio input device. The device can help the
+			 * user to check if her speakers or headphones have been
+			 * set up correctly for voice calling. */
 			"name", N_("Test Sound"),
 			"type", PURPLE_MEDIA_ELEMENT_AUDIO
 				| PURPLE_MEDIA_ELEMENT_SRC
@@ -2339,9 +2339,10 @@ purple_media_manager_register_static_elements(PurpleMediaManager *manager)
 		g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
 			"id", "videotestsrc",
 			/* Translators: This is a noun that refers to one
-			 * possible video input device. The user can employ the
-			 * device to sanity check basic video functionality
-			 * within the libpurple client. */
+			 * possible video input device. The device produces
+			 * a test "monoscope" image that can help the user check
+			 * the video output has been set up correctly without
+			 * needing a webcam connected to the computer. */
 			"name", N_("Test Pattern"),
 			"type", PURPLE_MEDIA_ELEMENT_VIDEO
 				| PURPLE_MEDIA_ELEMENT_SRC
