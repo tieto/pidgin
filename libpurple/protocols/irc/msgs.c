@@ -1467,7 +1467,7 @@ irc_auth_start_cyrus(struct irc_conn *irc)
 	secprops.min_ssf = 0;
 	secprops.security_flags = SASL_SEC_NOANONYMOUS;
 
-	if (!irc->gsc) {
+	if (!G_IS_TLS_CONNECTION(irc->conn)) {
 		gboolean plaintext;
 
 		secprops.max_ssf = -1;
