@@ -51,6 +51,7 @@ libpurple/dbus-server.h
 libpurple/http.c
 libpurple/keyring.c
 libpurple/log.c
+libpurple/mediamanager.c
 libpurple/media/backend-fs2.c
 libpurple/message.c
 libpurple/plugins.c
@@ -161,6 +162,7 @@ libpurple/protocols/oscar/family_icbm.c
 libpurple/protocols/oscar/family_locate.c
 libpurple/protocols/oscar/flap_connection.c
 libpurple/protocols/oscar/icq.c
+libpurple/protocols/oscar/kerberos.c
 libpurple/protocols/oscar/odc.c
 libpurple/protocols/oscar/oft.c
 libpurple/protocols/oscar/oscar.c
