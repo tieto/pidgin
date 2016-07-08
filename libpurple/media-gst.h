@@ -49,8 +49,9 @@
 typedef struct _PurpleMediaElementInfo PurpleMediaElementInfo;
 typedef struct _PurpleMediaElementInfoClass PurpleMediaElementInfoClass;
 
-typedef GstElement *(*PurpleMediaElementCreateCallback)(PurpleMedia *media,
-			const gchar *session_id, const gchar *participant);
+typedef GstElement *(*PurpleMediaElementCreateCallback)(
+		PurpleMediaElementInfo *info, PurpleMedia *media,
+		const gchar *session_id, const gchar *participant);
 
 /**
  * PurpleMediaElementType:
@@ -161,6 +162,17 @@ GstElement *purple_media_manager_get_pipeline(PurpleMediaManager *manager);
 GstElement *purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
+
+/**
+ * purple_media_manager_enumerate_elements:
+ * @manager: The media manager to use to obtain the element infos.
+ * @type: The type of element infos to get.
+ *
+ * Returns: A #GList of registered #PurpleMediaElementInfo instances that match
+ * @type.
+ */
+GList *purple_media_manager_enumerate_elements(PurpleMediaManager *manager,
+		PurpleMediaElementType type);
 
 PurpleMediaElementInfo *purple_media_manager_get_element_info(
 		PurpleMediaManager *manager, const gchar *name);
