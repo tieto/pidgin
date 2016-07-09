@@ -4087,7 +4087,7 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 	}
 
 	if(purple_debug_is_unsafe())
-		purple_debug_misc("util", "Request: '%s'\n", gfud->request);
+		purple_debug_misc("util", "Request: '%.*s'\n", (int) gfud->request_len, gfud->request);
 	else
 		purple_debug_misc("util", "request constructed\n");
 
