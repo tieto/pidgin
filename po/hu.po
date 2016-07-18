@@ -3,19 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Balázs Meskó <meskobalazs@gmail.com>, 2015
 # Gabor Kelemen <kelemeng at gnome dot hu>, 2014
 # kelemeng <kelemeng@ubuntu.com>, 2011
 # kelemeng <kelemeng@ubuntu.com>, 2011,2014
-# kelemeng <kelemeng@ubuntu.com>, 2014
+# kelemeng <kelemeng@ubuntu.com>, 2014-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Hungarian (http://www.transifex.com/projects/p/pidgin/"
-"language/hu/)\n"
+"POT-Creation-Date: 2016-06-15 23:14-0500\n"
+"PO-Revision-Date: 2016-06-06 22:30+0000\n"
+"Last-Translator: kelemeng <kelemeng@ubuntu.com>\n"
+"Language-Team: Hungarian (http://www.transifex.com/pidgin/pidgin/language/"
+"hu/)\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1492,6 +1493,7 @@ msgstr "Valaki beszél egy csevegésben"
 msgid "Someone says your name in a chat"
 msgstr "Valaki csevegés közben leírja az Ön nevét"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Értesítsen egy kenyérpirítóval ha:"
 
@@ -1504,6 +1506,7 @@ msgstr "SÜRGŐS állapot beállítása a terminálablakhoz."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Kenyérpirító bővítmény"
 
@@ -2253,6 +2256,32 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTOMATIKUS VÁLASZ>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+"\n"
+"\n"
+"A Farsight üzenete:"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+"Hiba a hívás előkészítésekor. Ez valószínűleg a GStreamer vagy Farsight "
+"telepítési hibáját jelzi."
+
+msgid "Network error."
+msgstr "Hálózati hiba."
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+"A kodekben való megállapodás meghiúsult. Ezt a problémát több GStreamer "
+"kodek telepítésével lehet megoldani."
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2264,6 +2293,9 @@ msgid ""
 msgstr ""
 "Nincs több kodek. A fs-codecs.conf fájlban megadott kodekbeállítások túl "
 "szigorúak."
+
+msgid "Could not connect to the remote party"
+msgstr "Nem lehet kapcsolódni a túloldali félhez"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Helyrehozhatatlan Farsight2 hiba történt."
@@ -2889,38 +2921,38 @@ msgid "Tests to see that most things are working."
 msgstr "Tesztek, hogy a legtöbb dolog működik-e."
 
 msgid "TLS/SSL Versions"
-msgstr ""
+msgstr "TLS/SSL verziók"
 
 msgid "Minimum Version"
-msgstr ""
+msgstr "Minimális verzió"
 
 msgid "Maximum Version"
-msgstr ""
+msgstr "Maximális verzió"
 
 msgid "SSL 2"
-msgstr ""
+msgstr "SSL 2"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "SSL 3"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "TLS 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "TLS 1.1"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "TLS 1.2"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "TLS 1.3"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
-msgstr ""
+msgstr "Nem támogatott az NSS < 3.14 esetén"
 
 msgid "Ciphers"
-msgstr ""
+msgstr "Titkosítók"
 
 #. *< type
 #. *< ui_requirement
@@ -2929,14 +2961,14 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "NSS Preferences"
-msgstr ""
+msgstr "NSS beállítások"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
-msgstr ""
+msgstr "Titkosítók és más beállítások az NSS SSL/TLS bővítményhez"
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5964,7 +5996,7 @@ msgstr "Nem sikerült a hitelesítés: %s"
 
 #, c-format
 msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
+msgstr "Az Ön MSN partnerlistája átmenetileg nem érhető el: %s"
 
 msgid "Handshaking"
 msgstr "Kézfogás"
@@ -10554,20 +10586,24 @@ msgstr ""
 "%s~ néven lett elmentve."
 
 msgid "Instant Messaging Client"
-msgstr ""
+msgstr "Azonnaliüzenet-küldő kliens"
 
 msgid ""
 "Pidgin is a chat program which lets you log in to accounts on multiple chat "
 "networks simultaneously."
 msgstr ""
+"A Pidgin egy csevegőprogram, ami lehetővé teszi egyszerre több "
+"csevegőhálózat fiókjaiba való belépést."
 
 msgid ""
 "This means that you can be chatting with friends on MSN, talking to a friend "
 "on Google Talk, and sitting in a Yahoo chat room all at the same time."
 msgstr ""
+"Ez azt jelenti, hogy egyidejűleg cseveghet ismerőseivel az MSN-en, Google "
+"Talkon és Yahoo csevegőszobában."
 
 msgid "The buddy list showing friends on different networks."
-msgstr ""
+msgstr "A partnerlista különböző hálózatokon elérhető ismerősökkel."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin üzenetküldő"
@@ -11309,11 +11345,11 @@ msgstr "Ál_név:"
 msgid "_Group:"
 msgstr "_Csoport:"
 
-msgid "Auto_join when account connects."
-msgstr "Automatikus _csatlakozás a fiók csatlakozásakor."
+msgid "Automatically _join when account connects"
+msgstr "Automatikus _csatlakozás a fiók csatlakozásakor"
 
-msgid "_Remain in chat after window is closed."
-msgstr "Csevegésben mara_dás az ablak bezárásakor."
+msgid "_Remain in chat after window is closed"
+msgstr "Csevegésben mara_dás az ablak bezárásakor"
 
 msgid "Please enter the name of the group to be added."
 msgstr "Adja meg a felvenni kívánt csoport nevét."
@@ -11351,6 +11387,9 @@ msgstr "Írja be a tanúsítványt birtokló gép nevét."
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL kiszolgálók"
+
+msgid "Supported debug options are: plugins, version"
+msgstr "A támogatott hibakeresési parancsok: plugins, version"
 
 msgid "Unknown command."
 msgstr "Ismeretlen parancs."
@@ -11794,6 +11833,9 @@ msgstr "Bengáli"
 msgid "Bengali-India"
 msgstr "Indiai bengáli"
 
+msgid "Breton"
+msgstr "Breton"
+
 msgid "Bodo"
 msgstr "Bodo"
 
@@ -11850,9 +11892,6 @@ msgstr "Perzsa"
 
 msgid "Finnish"
 msgstr "Finn"
-
-msgid "French"
-msgstr "Francia"
 
 msgid "Irish"
 msgstr "Ír"
@@ -11915,7 +11954,7 @@ msgid "Kurdish"
 msgstr "Kurd"
 
 msgid "Kurdish (Sorani)"
-msgstr ""
+msgstr "Kurd (Sorani)"
 
 msgid "Lithuanian"
 msgstr "Litván"
@@ -11931,6 +11970,9 @@ msgstr "Mari"
 
 msgid "Macedonian"
 msgstr "Macedón"
+
+msgid "Malay"
+msgstr "Maláj"
 
 msgid "Malayalam"
 msgstr "Malajálam"
@@ -12034,7 +12076,7 @@ msgstr "Üzbég"
 #. Translators: This is a person's name. For most languages we recommend
 #. not translating it.
 msgid "Akmal Khushvakov"
-msgstr ""
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "Vietnami"
@@ -12051,14 +12093,14 @@ msgstr "Hagyományos kínai"
 msgid "Amharic"
 msgstr "Amhara"
 
+msgid "French"
+msgstr "Francia"
+
 msgid "Armenian"
 msgstr "Örmény"
 
 msgid "Lao"
 msgstr "Lao"
-
-msgid "Malay"
-msgstr "Maláj"
 
 msgid "Turkish"
 msgstr "Török"
@@ -12750,6 +12792,9 @@ msgstr "Méd_ia"
 msgid "_Hangup"
 msgstr "_Lerakás"
 
+msgid "Media error"
+msgstr "Médiahiba"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s hang/videókapcsolatot szeretne indítani."
@@ -12760,6 +12805,42 @@ msgstr "%s videókapcsolatot szeretne indítani."
 
 msgid "Incoming Call"
 msgstr "Bejövő hívás"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr "ABC"
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr "DEF"
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr "GHI"
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr "JKL"
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr "MNO"
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr "PQRS"
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr "TUV"
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr "WXYZ"
 
 msgid "_Hold"
 msgstr "_Tartás"
@@ -14298,8 +14379,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Figyelmeztetés"
 
+msgid "\t_Notify for System messages"
+msgstr "\tÉrtesítés rendszerüzenetekről"
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Csak ha valaki kimondja az Ön felhasználónevét"
+
+msgid "\tNotify for _System messages"
+msgstr "\tÉrtesítés _rendszerüzenetekről"
 
 msgid "_Focused windows"
 msgstr "_Fókuszban lévő ablakok"
@@ -14331,6 +14418,8 @@ msgid "R_aise conversation window"
 msgstr "_Társalgási ablak előtérbe hozása"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_Társalgási ablak megjelenítése"
 
@@ -15102,12 +15191,11 @@ msgstr ""
 "jelenleg telepített verzió eltávolítása nélkül kerül telepítésre. "
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "A Pidgin egy kompatibilis GTK+ futtatókörnyezet meglétét igényli (úgy tűnik, "
-"ez nincs jelen).$\\rBiztos benne, hogy kihagyja a GTK+ futtatókörnyezet "
+"ez nincs telepítve).$\\rBiztos benne, hogy kihagyja a GTK+ futtatókörnyezet "
 "telepítését?"
 
 #. Installer Subsection Text

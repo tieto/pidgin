@@ -45,7 +45,7 @@ Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:U
 Recommends: gstreamer1.0-alsa | gstreamer1.0-pulseaudio,
  gstreamer1.0-libav, gstreamer1.0-plugins-base, gstreamer1.0-plugins-good
 Suggests: ${shlibs:Suggests}
-Description: graphical multi-protocol instant messaging client for X
+Description: graphical multi-protocol instant messaging client
  Pidgin is a graphical, modular instant messaging client capable of using
  multiple networks at once. Currently supported are:
  AIM/ICQ, Yahoo!, MSN, IRC, Jabber/XMPP/Google Talk, Napster, Zephyr, Gadu-Gadu,

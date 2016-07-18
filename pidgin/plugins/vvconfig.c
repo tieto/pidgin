@@ -371,6 +371,26 @@ create_video_src(PurpleMedia *media,
 	return ret;
 }
 
+static void
+videosink_disable_last_sample(GstElement *sink)
+{
+	GObjectClass *klass = G_OBJECT_GET_CLASS(sink);
+
+	if (g_object_class_find_property(klass, "enable-last-sample")) {
+		g_object_set(sink, "enable-last-sample", FALSE, NULL);
+	}
+}
+
+static void
+autovideosink_child_added_cb(GstChildProxy *child_proxy, GObject *object,
+#if GST_CHECK_VERSION(1,0,0)
+		gchar *name,
+#endif
+		gpointer user_data)
+{
+	videosink_disable_last_sample(GST_ELEMENT(object));
+}
+
 static GstElement *
 create_video_sink(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
@@ -388,6 +408,14 @@ create_video_sink(PurpleMedia *media,
 	ret = gst_element_factory_make(plugin, NULL);
 	if (device[0] != '\0')
 		g_object_set(G_OBJECT(ret), "device", device, NULL);
+
+	if (g_strcmp0(plugin, "autovideosink") == 0) {
+		g_signal_connect(ret, "child-added",
+			G_CALLBACK(autovideosink_child_added_cb), NULL);
+	} else {
+		videosink_disable_last_sample(ret);
+	}
+
 	return ret;
 }
 

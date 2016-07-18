@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Naoki Matsumoto (nekomatu) <nekomatu@gmail.com>, 2015
 # Yuki Shira <shirayuking@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Japanese (http://www.transifex.com/projects/p/pidgin/language/"
+"POT-Creation-Date: 2016-06-15 23:15-0500\n"
+"PO-Revision-Date: 2016-06-06 21:09+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Japanese (http://www.transifex.com/pidgin/pidgin/language/"
 "ja/)\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -1463,6 +1464,7 @@ msgstr "チャットで誰かがあなたを呼んだ時"
 msgid "Someone says your name in a chat"
 msgstr "チャットで誰かがあなたの名前を入力した時"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Notify with a toaster when"
 
@@ -1475,6 +1477,7 @@ msgstr "端末のウィンドウ属性が URGENT になった時"
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "\"トースター\" プラグイン"
 
@@ -1743,7 +1746,7 @@ msgid "SSL Certificate Error"
 msgstr "SSL 証明書エラー"
 
 msgid "Unable to validate certificate"
-msgstr "証明書を見所言うできません"
+msgstr "証明書を検証できません"
 
 #, c-format
 msgid ""
@@ -2210,12 +2213,34 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+msgid "Network error."
+msgstr ""
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
 
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
+msgstr ""
+
+msgid "Could not connect to the remote party"
 msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
@@ -11034,11 +11059,11 @@ msgstr "別名(_L):"
 msgid "_Group:"
 msgstr "グループ(_G):"
 
-msgid "Auto_join when account connects."
-msgstr "アカウントが接続されたら自動的に参加する(_J)"
+msgid "Automatically _join when account connects"
+msgstr ""
 
-msgid "_Remain in chat after window is closed."
-msgstr "ウィンドウを閉じた後もチャットに残る(_R)"
+msgid "_Remain in chat after window is closed"
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "追加するグループの名前を入力してください:"
@@ -11075,6 +11100,9 @@ msgstr ""
 
 #. Widget creation function
 msgid "SSL Servers"
+msgstr ""
+
+msgid "Supported debug options are: plugins, version"
 msgstr ""
 
 msgid "Unknown command."
@@ -11515,6 +11543,9 @@ msgstr "ベンガル語"
 msgid "Bengali-India"
 msgstr "ベンガル語 (インド)"
 
+msgid "Breton"
+msgstr ""
+
 msgid "Bodo"
 msgstr ""
 
@@ -11571,9 +11602,6 @@ msgstr "ペルシア語"
 
 msgid "Finnish"
 msgstr "フィンランド語"
-
-msgid "French"
-msgstr "フランス語"
 
 msgid "Irish"
 msgstr "アイルランド語"
@@ -11652,6 +11680,9 @@ msgstr "牧地マリ語"
 
 msgid "Macedonian"
 msgstr "マケドニア語"
+
+msgid "Malay"
+msgstr "マレー語"
 
 msgid "Malayalam"
 msgstr "マラヤラム語"
@@ -11772,14 +11803,14 @@ msgstr "繁体字中国語"
 msgid "Amharic"
 msgstr "アムハラ語"
 
+msgid "French"
+msgstr "フランス語"
+
 msgid "Armenian"
 msgstr "アルメニア語"
 
 msgid "Lao"
 msgstr "ラオ語"
-
-msgid "Malay"
-msgstr "マレー語"
 
 msgid "Turkish"
 msgstr "トルコ語"
@@ -12440,6 +12471,9 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
+msgid "Media error"
+msgstr ""
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr ""
@@ -12449,6 +12483,42 @@ msgid "%s wishes to start a video session with you."
 msgstr ""
 
 msgid "Incoming Call"
+msgstr ""
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
 msgstr ""
 
 msgid "_Hold"
@@ -13958,8 +14028,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "通知先"
 
+msgid "\t_Notify for System messages"
+msgstr ""
+
 msgid "\t_Only when someone says your username"
 msgstr "\t誰かがあなたのユーザ名を呼んだ時だけ(_O)"
+
+msgid "\tNotify for _System messages"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "フォーカスしたウィンドウ(_F)"
@@ -13991,6 +14067,8 @@ msgid "R_aise conversation window"
 msgstr "会話ウィンドウを前面に出す(_A)"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr ""
 
@@ -14740,9 +14818,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 
 #. Installer Subsection Text

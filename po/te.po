@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"POT-Creation-Date: 2016-06-15 23:24-0500\n"
 "PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Telugu (http://www.transifex.com/projects/p/pidgin/language/"
@@ -1463,6 +1463,7 @@ msgstr "చాట్‌లో ఎవరో మాట్లాడుతున్�
 msgid "Someone says your name in a chat"
 msgstr "చాట్‌లో ఎవరో మీ పేరు ప్రస్తావించారు"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "అప్పుడు టోస్టర్ తో తెలియజేయండి"
 
@@ -1475,6 +1476,7 @@ msgstr "టెర్మినల్ విండోకోసం URGENT ను �
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "టోస్టర్ ప్లగ్ ఇన్"
 
@@ -2186,6 +2188,27 @@ msgstr "<font color=\"red\"><b>ఫైలును రీడ్ చేయడం �
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <ఆటో రిప్లై>: %s\n"
 
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr "%s నుండి సందేశము"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+#, fuzzy
+msgid "Network error."
+msgstr "నెట్ వర్క్"
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
@@ -2196,6 +2219,10 @@ msgstr ""
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr "ఎటువంటి కోడెక్స్ మిగలలేదు. fs-codecs.conf నందలి మీ కోడెక్ అభీష్టాలు మరీ నిర్ధిష్టమైనవి."
+
+#, fuzzy
+msgid "Could not connect to the remote party"
+msgstr "సర్వర్‌కు అనుసంధానము కాలేదు"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "నాన్-రికవరబుల్ Farsight2 దోషము యెదురైంది."
@@ -10981,10 +11008,12 @@ msgstr "మారుపేరు (_l):"
 msgid "_Group:"
 msgstr "సమూహం(_G):"
 
-msgid "Auto_join when account connects."
+#, fuzzy
+msgid "Automatically _join when account connects"
 msgstr "ఖాతా అనుసంధానమైనప్పుడు స్వయంచాలకంగా జేర్చుము (_j)."
 
-msgid "_Remain in chat after window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed"
 msgstr "విండో మూయబడినతర్వాత చాట్‌నందే వుండుము (_R)."
 
 msgid "Please enter the name of the group to be added."
@@ -11023,6 +11052,10 @@ msgstr "ఈ ధృవీకరణపత్రము కొరకు హోస్
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL సేవికలు"
+
+#, fuzzy
+msgid "Supported debug options are: plugins, version"
+msgstr "మద్దతిచ్చు డీబగ్ ఐచ్చికాలు: ప్లగిన్స్ వర్షన్"
 
 msgid "Unknown command."
 msgstr "తెలియని ఆదేశము."
@@ -11462,6 +11495,9 @@ msgstr "బెంగాలి"
 msgid "Bengali-India"
 msgstr ""
 
+msgid "Breton"
+msgstr ""
+
 msgid "Bodo"
 msgstr ""
 
@@ -11518,9 +11554,6 @@ msgstr "పర్షియన్"
 
 msgid "Finnish"
 msgstr "ఫిన్నిష్"
-
-msgid "French"
-msgstr "ఫ్రెంచ్"
 
 msgid "Irish"
 msgstr "Irish"
@@ -11599,6 +11632,9 @@ msgstr ""
 
 msgid "Macedonian"
 msgstr "Macedonian"
+
+msgid "Malay"
+msgstr "మలయ"
 
 msgid "Malayalam"
 msgstr ""
@@ -11719,14 +11755,14 @@ msgstr "హణ్ (సాంప్రదాయ చైనీస్)"
 msgid "Amharic"
 msgstr "Amharic"
 
+msgid "French"
+msgstr "ఫ్రెంచ్"
+
 msgid "Armenian"
 msgstr "అర్మేనియన్"
 
 msgid "Lao"
 msgstr "లావో"
-
-msgid "Malay"
-msgstr "మలయ"
 
 msgid "Turkish"
 msgstr "టర్కిష్"
@@ -12384,6 +12420,10 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
+#, fuzzy
+msgid "Media error"
+msgstr "రీడ్ చేయడంలో పొరపాటు"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s మీతో ఆడియో/వీడియో సెషన్‌ను ప్రారంభించుటకు యిష్టపడుచున్నారు."
@@ -12394,6 +12434,42 @@ msgstr "%s మీతో వీడియో సెషన్‌ను ప్రా
 
 msgid "Incoming Call"
 msgstr "మీకువస్తున్న కాల్"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr ""
 
 msgid "_Hold"
 msgstr ""
@@ -13904,8 +13980,16 @@ msgstr ""
 msgid "Notify For"
 msgstr "కోసం సూచించండి"
 
+#, fuzzy
+msgid "\t_Notify for System messages"
+msgstr "సిస్టమ్ సందేశాలు"
+
 msgid "\t_Only when someone says your username"
 msgstr "\tమీ వినియోగదారి పేరును ఎవరైనా చెప్పినప్పుడు మాత్రమే (_O)"
+
+#, fuzzy
+msgid "\tNotify for _System messages"
+msgstr "సిస్టమ్ సందేశాలు"
 
 msgid "_Focused windows"
 msgstr "కేంద్రీకృత విండోలు  (_F)"
@@ -13937,6 +14021,8 @@ msgid "R_aise conversation window"
 msgstr "సంభాషణ విండోను లేవనెత్తు (_a)"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "ప్రస్తుత సంభాషణా విండో (_P)"
 
@@ -14685,9 +14771,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 
 #. Installer Subsection Text

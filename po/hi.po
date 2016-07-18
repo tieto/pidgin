@@ -3,16 +3,17 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Abhigyan sen <abhigyan008@gmail.com>, 2015
+# Rajesh Ranjan <rajesh672@gmail.com>, 2016
 # Rajesh Ranjan <rajeshkajha@yahoo.com>, 2010
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Hindi (http://www.transifex.com/projects/p/pidgin/language/"
-"hi/)\n"
+"POT-Creation-Date: 2016-06-15 23:14-0500\n"
+"PO-Revision-Date: 2016-06-06 21:09+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Hindi (http://www.transifex.com/pidgin/pidgin/language/hi/)\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -62,7 +63,7 @@ msgid "Error"
 msgstr "त्रुटि"
 
 msgid "Account was not modified"
-msgstr ""
+msgstr "खाता परिवर्तित नहीं किया गया"
 
 msgid "Account was not added"
 msgstr "खाता जोड़ा हुआ नहीं था"
@@ -72,11 +73,12 @@ msgstr "किसी खाता का उपयोक्तानाम ज�
 
 msgid ""
 "The account's protocol cannot be changed while it is connected to the server."
-msgstr ""
+msgstr "सर्वर से जुड़ा हुआ होने के समय खाते के नियम परिवर्तित नहीं किये जा सकते हे"
 
 msgid ""
 "The account's username cannot be changed while it is connected to the server."
 msgstr ""
+"सर्वर से जुड़ा हुआ होने के समय खाते के प्रयोक्ता का नाम परिवर्तित नहीं किया जा सकता हे"
 
 msgid "New mail notifications"
 msgstr "नयी डाक सूचना"
@@ -212,7 +214,7 @@ msgid "Alias (optional)"
 msgstr "उपनाम (वैकल्पिक)"
 
 msgid "Invite message (optional)"
-msgstr ""
+msgstr "आमंत्रण सन्देश (वैकल्पिक)"
 
 msgid "Add in group"
 msgstr "समूह में जोड़ें"
@@ -1458,6 +1460,7 @@ msgstr "किसी ने बात-चीत में बोला है"
 msgid "Someone says your name in a chat"
 msgstr "किसी ने बात-चीत में आपका नाम कहा है"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "टोस्टर के साथ सूचित करें जब"
 
@@ -1470,6 +1473,7 @@ msgstr "टर्मिनल विंडो के लिए अत्या�
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "टोस्टर प्लगिन"
 
@@ -1635,7 +1639,7 @@ msgid "This protocol does not support setting a public alias."
 msgstr ""
 
 msgid "This protocol does not support fetching the public alias."
-msgstr ""
+msgstr "This protocol does not support fetching the public alias."
 
 msgid "Unknown"
 msgstr "अज्ञात"
@@ -1771,7 +1775,7 @@ msgid "(self-signed)"
 msgstr ""
 
 msgid "View Issuer Certificate"
-msgstr ""
+msgstr "जारीकर्ता का प्रमाण पत्र देखे"
 
 #. show error to user
 msgid "Registration Error"
@@ -2203,6 +2207,25 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <स्वतः जवाब दीजिए>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+msgid "Network error."
+msgstr ""
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2212,6 +2235,9 @@ msgstr ""
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr "कोई कोडेक नहीं बचा. आपकी codec वरीयता fs-codecs.conf में काफी दृढ़ है."
+
+msgid "Could not connect to the remote party"
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "एक गैर प्राप्ति योग्य Farsight2 त्रुटि आई."
@@ -2824,10 +2850,10 @@ msgid "TLS/SSL Versions"
 msgstr ""
 
 msgid "Minimum Version"
-msgstr ""
+msgstr "न्युनतम संस्करण"
 
 msgid "Maximum Version"
-msgstr ""
+msgstr "अधिकतम संस्करण"
 
 msgid "SSL 2"
 msgstr ""
@@ -3114,19 +3140,19 @@ msgid "Please, enter your search criteria below"
 msgstr "कृपया अपने खोज मापदंड नीचे दीजिए"
 
 msgid "Show status to:"
-msgstr ""
+msgstr "स्थिति दिखाये :"
 
 msgid "All people"
-msgstr ""
+msgstr "सभी लोगो को"
 
 msgid "Only buddies"
-msgstr ""
+msgstr "केवल मित्रो को"
 
 msgid "Change status broadcasting"
 msgstr ""
 
 msgid "Please, select who can see your status"
-msgstr ""
+msgstr "कृपया चयन करे कौन आपकी स्थिति देख सकता हे"
 
 #, c-format
 msgid "Select a chat for buddy: %s"
@@ -4856,19 +4882,19 @@ msgid "Bored"
 msgstr "उबा हुआ"
 
 msgid "Brave"
-msgstr ""
+msgstr "बहादुर"
 
 msgid "Calm"
-msgstr ""
+msgstr "शांत"
 
 msgid "Cautious"
 msgstr ""
 
 msgid "Cold"
-msgstr ""
+msgstr "ठण्ड"
 
 msgid "Confident"
-msgstr ""
+msgstr "आत्मविश्वासी"
 
 msgid "Confused"
 msgstr ""
@@ -4883,13 +4909,13 @@ msgid "Cranky"
 msgstr ""
 
 msgid "Crazy"
-msgstr ""
+msgstr "पागल"
 
 msgid "Creative"
-msgstr ""
+msgstr "रचनात्मक"
 
 msgid "Curious"
-msgstr ""
+msgstr "जिज्ञासु"
 
 msgid "Dejected"
 msgstr ""
@@ -4898,7 +4924,7 @@ msgid "Depressed"
 msgstr ""
 
 msgid "Disappointed"
-msgstr ""
+msgstr "निराश"
 
 msgid "Disgusted"
 msgstr ""
@@ -4940,7 +4966,7 @@ msgid "Happy"
 msgstr "सुखी"
 
 msgid "Hopeful"
-msgstr ""
+msgstr "आशावान"
 
 msgid "Hot"
 msgstr "गर्म"
@@ -4952,10 +4978,10 @@ msgid "Humiliated"
 msgstr ""
 
 msgid "Hungry"
-msgstr ""
+msgstr "भूखा"
 
 msgid "Hurt"
-msgstr ""
+msgstr "चोटिल"
 
 msgid "Impressed"
 msgstr ""
@@ -4970,7 +4996,7 @@ msgid "Indignant"
 msgstr ""
 
 msgid "Interested"
-msgstr ""
+msgstr "रुचिकर"
 
 msgid "Intoxicated"
 msgstr ""
@@ -4982,16 +5008,16 @@ msgid "Jealous"
 msgstr "इर्ष्यालु"
 
 msgid "Lonely"
-msgstr ""
+msgstr "अकेला"
 
 msgid "Lost"
-msgstr ""
+msgstr "खोया"
 
 msgid "Lucky"
-msgstr ""
+msgstr "भाग्यशाली"
 
 msgid "Mean"
-msgstr ""
+msgstr "मतलबी"
 
 msgid "Moody"
 msgstr ""
@@ -5000,7 +5026,7 @@ msgid "Nervous"
 msgstr ""
 
 msgid "Neutral"
-msgstr ""
+msgstr "उदासीन"
 
 msgid "Offended"
 msgstr ""
@@ -5012,7 +5038,7 @@ msgid "Playful"
 msgstr ""
 
 msgid "Proud"
-msgstr ""
+msgstr "गर्व"
 
 msgid "Relaxed"
 msgstr ""
@@ -5042,7 +5068,7 @@ msgid "Shocked"
 msgstr ""
 
 msgid "Shy"
-msgstr ""
+msgstr "शर्मीला"
 
 msgid "Sick"
 msgstr "बीमार"
@@ -5058,28 +5084,28 @@ msgid "Stressed"
 msgstr ""
 
 msgid "Strong"
-msgstr ""
+msgstr "मजबूत"
 
 msgid "Surprised"
-msgstr ""
+msgstr "आश्चर्यचकित"
 
 msgid "Thankful"
-msgstr ""
+msgstr "आभारी"
 
 msgid "Thirsty"
-msgstr ""
+msgstr "प्यासा"
 
 msgid "Tired"
-msgstr ""
+msgstr "थका हुआ"
 
 msgid "Undefined"
 msgstr ""
 
 msgid "Weak"
-msgstr ""
+msgstr "कमजोर"
 
 msgid "Worried"
-msgstr ""
+msgstr "चिंतित"
 
 msgid "Set User Nickname"
 msgstr "उपयोक्ता उपनाम नियत करें"
@@ -5354,7 +5380,7 @@ msgid "Set friendly name for %s."
 msgstr "%s के लिए मित्रवत नाम सेट करें."
 
 msgid "Set Friendly Name"
-msgstr ""
+msgstr "मित्रवत नाम नियत करे"
 
 msgid "This is the name that other MSN buddies will see you as."
 msgstr "यही वह नाम है जिससे दूसरा MSN बड्डी आपको इस रूप में देखेगा."
@@ -5366,7 +5392,7 @@ msgid "This is the name that identifies this location"
 msgstr ""
 
 msgid "Other Locations"
-msgstr ""
+msgstr "अन्य जगह"
 
 msgid "You can sign out from other locations here"
 msgstr ""
@@ -5474,7 +5500,7 @@ msgid "Set Friendly Name..."
 msgstr "मित्रवत नाम नियत करें..."
 
 msgid "View Locations..."
-msgstr ""
+msgstr "स्थान देखे"
 
 msgid "Set Home Phone Number..."
 msgstr "घर का फोन नंबर नियत करें..."
@@ -5927,11 +5953,11 @@ msgstr "नाम प्रदर्शित करें"
 
 #. about me
 msgid "About Me"
-msgstr ""
+msgstr "मेरे बारे में"
 
 #. where I live
 msgid "Where I Live"
-msgstr ""
+msgstr "में यहाँ रहता हु"
 
 #. relationship status
 msgid "Relationship Status"
@@ -5943,7 +5969,7 @@ msgstr "मोबाइल नंबर"
 
 #. is searchable
 msgid "Can be searched"
-msgstr ""
+msgstr "ढूंढा जा सकता हे"
 
 #. is suggestable
 msgid "Can be suggested"
@@ -5994,7 +6020,7 @@ msgid "About"
 msgstr "के बारे में"
 
 msgid "Search for user"
-msgstr ""
+msgstr "प्रयोक्ता खोजें"
 
 msgid "Search for a MXit contact"
 msgstr ""
@@ -6137,7 +6163,7 @@ msgstr ""
 
 #. Display system message in chat window
 msgid "You have invited"
-msgstr ""
+msgstr "आपने आमंत्रित किया हें"
 
 msgid "Loading menu..."
 msgstr "मेन्यू लोड कर रहा है..."
@@ -6176,7 +6202,7 @@ msgid "Don't want to say"
 msgstr ""
 
 msgid "Single"
-msgstr ""
+msgstr "अविवाहित"
 
 msgid "In a relationship"
 msgstr ""
@@ -6185,13 +6211,13 @@ msgid "Engaged"
 msgstr ""
 
 msgid "Married"
-msgstr ""
+msgstr "विवाहित"
 
 msgid "It's complicated"
 msgstr ""
 
 msgid "Widowed"
-msgstr ""
+msgstr "विधवा"
 
 msgid "Separated"
 msgstr ""
@@ -6216,7 +6242,7 @@ msgid "UserId"
 msgstr ""
 
 msgid "Where I live"
-msgstr ""
+msgstr "में यहाँ रहता हु"
 
 #, c-format
 msgid "You have %i suggested friend."
@@ -11018,11 +11044,11 @@ msgstr "उपनाम (_l):"
 msgid "_Group:"
 msgstr "समूह (_G):"
 
-msgid "Auto_join when account connects."
-msgstr "जब खाता कनेक्ट होता है स्वतः शामिल होएँ (_j)"
+msgid "Automatically _join when account connects"
+msgstr ""
 
-msgid "_Remain in chat after window is closed."
-msgstr "विंडो बंद होने के बाद भी चैट में बने रहें (_R)"
+msgid "_Remain in chat after window is closed"
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "कृपया उस समूह का नाम भरें जिसे आप जोड़ना चाहते हैं."
@@ -11060,6 +11086,9 @@ msgstr "इस प्रमाणपत्र के लिए मेजबा�
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL सर्वर"
+
+msgid "Supported debug options are: plugins, version"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "अज्ञात कमाँड"
@@ -11499,6 +11528,9 @@ msgstr "बंगाली"
 msgid "Bengali-India"
 msgstr ""
 
+msgid "Breton"
+msgstr ""
+
 msgid "Bodo"
 msgstr ""
 
@@ -11555,9 +11587,6 @@ msgstr "फारसी"
 
 msgid "Finnish"
 msgstr "फिनिश"
-
-msgid "French"
-msgstr "फ्रेंच"
 
 msgid "Irish"
 msgstr "आइरिश"
@@ -11636,6 +11665,9 @@ msgstr ""
 
 msgid "Macedonian"
 msgstr "मकदूनियाई"
+
+msgid "Malay"
+msgstr "मलय"
 
 msgid "Malayalam"
 msgstr ""
@@ -11756,14 +11788,14 @@ msgstr "पारंपरिक चीनी"
 msgid "Amharic"
 msgstr "अम्हारिक"
 
+msgid "French"
+msgstr "फ्रेंच"
+
 msgid "Armenian"
 msgstr "आर्मेनियाई"
 
 msgid "Lao"
 msgstr "लाओ"
-
-msgid "Malay"
-msgstr "मलय"
 
 msgid "Turkish"
 msgstr "तुर्की"
@@ -12430,6 +12462,9 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
+msgid "Media error"
+msgstr ""
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s किसी ऑडियो/वीडियो सत्र को आपके साथ आरंभ करने की इच्छा रखता है."
@@ -12440,6 +12475,42 @@ msgstr "%s आपके साथ कोई वीडियो सत्र आ�
 
 msgid "Incoming Call"
 msgstr "इनकमिंग कॉल"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr ""
 
 msgid "_Hold"
 msgstr ""
@@ -13954,8 +14025,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "इसके लिए सूचित करें"
 
+msgid "\t_Notify for System messages"
+msgstr ""
+
 msgid "\t_Only when someone says your username"
 msgstr "\tकेवल तभी जब कोई आपका उपयोक्ता नाम कहे (_O)"
+
+msgid "\tNotify for _System messages"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "संकेंद्रित विंडोज (_F)"
@@ -13987,6 +14064,8 @@ msgid "R_aise conversation window"
 msgstr "वार्तालाप विंडो बढाएं (_a)"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "वर्तमान वार्तालाप विंडो (_P)"
 
@@ -14736,9 +14815,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 
 #. Installer Subsection Text

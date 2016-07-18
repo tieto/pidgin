@@ -44,7 +44,7 @@ gboolean splash_popup_enabled(struct MXitSession* session);
 /*
  * Save a new splash-screen.
  */
-void splash_update(struct MXitSession* session, const char* splashId, const char* data, int datalen, gboolean clickable);
+void splash_update(struct MXitSession* session, const char* splashId, const char* data, unsigned int datalen, gboolean clickable);
 
 /*
  * Remove the stored splash-screen (if it exists).

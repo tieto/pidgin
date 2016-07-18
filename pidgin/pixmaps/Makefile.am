@@ -101,6 +101,7 @@ EMBLEMS_16 = \
 		emblems/16/half-operator.png \
 		emblems/16/hiptop.png \
 		emblems/16/male.png \
+		emblems/16/mobile.png \
 		emblems/16/not-authorized.png \
 		emblems/16/operator.png \
 		emblems/16/secure.png \
