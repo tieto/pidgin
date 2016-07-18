@@ -6,7 +6,7 @@ Build-Depends: cdbs, debhelper (>= 7), hardening-wrapper, intltool, gconf2, vim-
  libtool, libwebkitgtk-3.0-dev, libjson-glib-dev,
  libgtk-3-dev, libxss-dev, libmeanwhile-dev, libenchant-dev,
  libnss3-dev (>= 3.11.7), tcl-dev, tk-dev, libgstreamer1.0-dev,
- libltdl3-dev, libperl-dev,
+ libltdl3-dev,
  libstartup-notification0-dev, libxml2-dev,
  libdbus-glib-1-dev, dbus, python (>= 2.4), libavahi-client-dev,
  libavahi-glib-dev, libxml-parser-perl, libncursesw5-dev, libsasl2-dev,
