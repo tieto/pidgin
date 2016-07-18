@@ -1209,6 +1209,32 @@ PurpleUtilFetchUrlData *purple_util_fetch_url_request_len_with_account(
 		PurpleUtilFetchUrlCallback callback, gpointer data);
 
 /**
+ * Fetches the data from a URL, and passes it to a callback function.
+ *
+ * @param account    The account for which the request is needed, or NULL.
+ * @param url        The URL.
+ * @param full       TRUE if this is the full URL, or FALSE if it's a
+ *                   partial URL.
+ * @param user_agent The user agent field to use, or NULL.
+ * @param http11     TRUE if HTTP/1.1 should be used to download the file.
+ * @param request    A HTTP request to send to the server instead of the
+ *                   standard GET
+ * @param request_len
+ *                   Then length of the request being sent
+ * @param include_headers
+ *                   If TRUE, include the HTTP headers in the response.
+ * @param max_len    The maximum number of bytes to retrieve, or a negative
+ *                   number to use the default max of 512 KiB.
+ * @param callback   The callback function.
+ * @param data       The user data to pass to the callback function.
+ * @deprecated       In 3.0.0, we'll rename this to "purple_util_fetch_url_request" and get rid of the old one
+ */
+PurpleUtilFetchUrlData *
+purple_util_fetch_url_request_data_len_with_account(PurpleAccount *account,
+		const char *url, gboolean full,	const char *user_agent, gboolean http11,
+		const char *request, gsize request_len, gboolean include_headers, gssize max_len,
+		PurpleUtilFetchUrlCallback callback, void *user_data);
+/**
  * Cancel a pending URL request started with either
  * purple_util_fetch_url_request() or purple_util_fetch_url().
  *

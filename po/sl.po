@@ -5,17 +5,17 @@
 # Translators:
 # Jure Cuhalev <gandalf@owca.info>, 2003
 # Jure Cuhalev <gandalf@owca.info>, 2003
-# Martin Srebotnjak <miles@filmsi.net>, 2006,2013-2014
+# Martin Srebotnjak <miles@filmsi.net>, 2006,2013-2016
 # Matjaž Horvat <matjaz@owca.info>, 2004
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Slovenian (http://www.transifex.com/projects/p/pidgin/"
-"language/sl/)\n"
+"POT-Creation-Date: 2016-06-15 23:17-0500\n"
+"PO-Revision-Date: 2016-06-07 07:13+0000\n"
+"Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
+"Language-Team: Slovenian (http://www.transifex.com/pidgin/pidgin/language/"
+"sl/)\n"
 "Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1500,6 +1500,7 @@ msgstr "Nekdo v sobi govori"
 msgid "Someone says your name in a chat"
 msgstr "Nekdo omeni vaše ime v sobi"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Obvesti z opekačem, ko"
 
@@ -1512,6 +1513,7 @@ msgstr "Nastavi NUJNO v konzoli."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Vtičnik Toaster"
 
@@ -1799,7 +1801,7 @@ msgid "Certificate Information"
 msgstr "Podatki o digitalnem potrdilu"
 
 msgid "Unable to find Issuer Certificate"
-msgstr ""
+msgstr "Potrdila izdajatelja ni mogoče najti"
 
 #. Make messages
 #, c-format
@@ -1813,6 +1815,14 @@ msgid ""
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
+"Splošno ime: %s\n"
+"\n"
+"Izdajatelj: %s\n"
+"\n"
+"Prstni odtis (SHA1): %s\n"
+"\n"
+"Datum aktivacije: %s\n"
+"Rok veljavnosti: %s\n"
 
 msgid "(self-signed)"
 msgstr "(samopodpisano)"
@@ -2251,6 +2261,32 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+"\n"
+"\n"
+"Sporočilo s Farsight:"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+"Napaka pri inicializaciji klica. To najverjetneje nakazuje na težavo pri "
+"namestitvi GStreamer ali Farsight."
+
+msgid "Network error."
+msgstr "Omrežna napaka."
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+"Pogajanje kodeka je spodletelo. Težavo lahko razrešite z namestitvijo "
+"dodatnih kodekov GStreamer."
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2261,6 +2297,9 @@ msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr ""
 "Ni preostalih kodekov. Vaše nastavitve kodekov v fs-codecs.conf so prestroge."
+
+msgid "Could not connect to the remote party"
+msgstr "Z oddaljeno stranko se ni mogoče povezati."
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Prišlo je do napake Farsight2, od katere si ni mogoče opomoči."
@@ -2886,38 +2925,38 @@ msgid "Tests to see that most things are working."
 msgstr "Preveri večino stvari, če delujejo."
 
 msgid "TLS/SSL Versions"
-msgstr ""
+msgstr "Različice TLS/SSL"
 
 msgid "Minimum Version"
-msgstr ""
+msgstr "Najnižja različica"
 
 msgid "Maximum Version"
-msgstr ""
+msgstr "Najvišja različica"
 
 msgid "SSL 2"
-msgstr ""
+msgstr "SSL 2"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "SSL 3"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "TLS 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "TLS 1.1"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "TLS 1.2"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "TLS 1.3"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
-msgstr ""
+msgstr "Ni podprto za NSS < 3.14"
 
 msgid "Ciphers"
-msgstr ""
+msgstr "Cifre"
 
 #. *< type
 #. *< ui_requirement
@@ -2926,14 +2965,14 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "NSS Preferences"
-msgstr ""
+msgstr "Nastavitve NSS"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
-msgstr ""
+msgstr "Prilagodite cifre in druge nastavitve za vstavek NSS SSL/TLS"
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5945,7 +5984,7 @@ msgstr "Ni možno overoviti: %s"
 
 #, c-format
 msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
+msgstr "Vaš seznam prijateljev MSN je trenutno nedostopen: %s"
 
 msgid "Handshaking"
 msgstr "Rokovanje"
@@ -10541,20 +10580,24 @@ msgstr ""
 "datoteka pa je bila preimenovana v %s~."
 
 msgid "Instant Messaging Client"
-msgstr ""
+msgstr "Odjemalec za klepet"
 
 msgid ""
 "Pidgin is a chat program which lets you log in to accounts on multiple chat "
 "networks simultaneously."
 msgstr ""
+"Pidgin je program za klepet, ki omogoča prijavo v račune na več omrežjih za "
+"klepet hkrati."
 
 msgid ""
 "This means that you can be chatting with friends on MSN, talking to a friend "
 "on Google Talk, and sitting in a Yahoo chat room all at the same time."
 msgstr ""
+"To pomeni, da lahko obenem klepetate s prijatelji na MSN, s prijateljem v "
+"Google Talk in v klepetalnici Yahoo."
 
 msgid "The buddy list showing friends on different networks."
-msgstr ""
+msgstr "Seznam prijateljev prikazuje prijatelje z različnih omrežij."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Spletni sel Pidgin"
@@ -11301,11 +11344,11 @@ msgstr "Psev_donim:"
 msgid "_Group:"
 msgstr "_Skupina:"
 
-msgid "Auto_join when account connects."
-msgstr "Samode_jno se pridruži, ko račun postane povezan."
+msgid "Automatically _join when account connects"
+msgstr "Samode_jno se pridruži, ko račun postane povezan"
 
-msgid "_Remain in chat after window is closed."
-msgstr "_Nadaljuj klepet, ko je okno zaprto."
+msgid "_Remain in chat after window is closed"
+msgstr "_Nadaljuj klepet, ko je okno zaprto"
 
 msgid "Please enter the name of the group to be added."
 msgstr "Prosimo vnesite ime skupine, ki jo želite dodati."
@@ -11343,6 +11386,9 @@ msgstr "Vnesite ime gostitelja za to digitalno potrdilo."
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Strežniki SSL"
+
+msgid "Supported debug options are: plugins, version"
+msgstr "Podprte možnosti razhroščevanja: plugins, version"
 
 msgid "Unknown command."
 msgstr "Neznan ukaz."
@@ -11787,6 +11833,9 @@ msgstr "bengalsko"
 msgid "Bengali-India"
 msgstr "bengalsko (Indija)"
 
+msgid "Breton"
+msgstr "bretonsko"
+
 msgid "Bodo"
 msgstr "bodojsko"
 
@@ -11843,9 +11892,6 @@ msgstr "perzijsko"
 
 msgid "Finnish"
 msgstr "finsko"
-
-msgid "French"
-msgstr "francosko"
 
 msgid "Irish"
 msgstr "irsko"
@@ -11908,7 +11954,7 @@ msgid "Kurdish"
 msgstr "kurdsko"
 
 msgid "Kurdish (Sorani)"
-msgstr ""
+msgstr "kurdsko (Sorani)"
 
 msgid "Lithuanian"
 msgstr "litvansko"
@@ -11924,6 +11970,9 @@ msgstr "dolnjemarijsko"
 
 msgid "Macedonian"
 msgstr "makedonsko"
+
+msgid "Malay"
+msgstr "malajsko"
 
 msgid "Malayalam"
 msgstr "malajalamsko"
@@ -12027,7 +12076,7 @@ msgstr "uzbeško"
 #. Translators: This is a person's name. For most languages we recommend
 #. not translating it.
 msgid "Akmal Khushvakov"
-msgstr ""
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "vietnamsko"
@@ -12044,14 +12093,14 @@ msgstr "tradicionalno kitajsko"
 msgid "Amharic"
 msgstr "amharsko"
 
+msgid "French"
+msgstr "francosko"
+
 msgid "Armenian"
 msgstr "armensko"
 
 msgid "Lao"
 msgstr "laoško"
-
-msgid "Malay"
-msgstr "malajsko"
 
 msgid "Turkish"
 msgstr "turško"
@@ -12744,6 +12793,9 @@ msgstr "_Mediji"
 msgid "_Hangup"
 msgstr "Odlo_ži"
 
+msgid "Media error"
+msgstr "Napaka medija"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s želi z vami začeti zvočno/video sejo."
@@ -12754,6 +12806,42 @@ msgstr "%s želi z vami začeti video sejo."
 
 msgid "Incoming Call"
 msgstr "Dohodni klic"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr "ABCČ"
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr "DEF"
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr "GHI"
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr "JKL"
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr "MNO"
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr "PQRSŠ"
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr "TUV"
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr "WXYZŽ"
 
 msgid "_Hold"
 msgstr "_Zadrži"
@@ -14286,8 +14374,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Obveščaj o"
 
+msgid "\t_Notify for System messages"
+msgstr "\t_Obveščaj o sistemskih sporočilih"
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Le ko nekdo omeni vaše uporabniško ime v sobi"
+
+msgid "\tNotify for _System messages"
+msgstr "\tObveščaj o _sistemskih sporočilih"
 
 msgid "_Focused windows"
 msgstr "Okna, ki imajo _pozornost"
@@ -14319,6 +14413,8 @@ msgid "R_aise conversation window"
 msgstr "Povzdigni pogovorna okn_a"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_Predstavi okno pogovora"
 
@@ -15084,11 +15180,10 @@ msgstr ""
 "nameščena brez odstranitve trenutno nameščene različice."
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"Pidgin potrebuje združljivo izvajalno okolje GTK+ (ki očitno ni na voljo).$"
+"Pidgin potrebuje združljivo izvajalno okolje GTK+ (ki očitno ni nameščeno).$"
 "\\rSte prepričani, da želite preskočiti nameščanje izvajalnega okolja GTK+?"
 
 #. Installer Subsection Text

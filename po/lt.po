@@ -3,18 +3,19 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Algimantas Margevičius <gymka@archlinux.lt>, 2012-2014
+# Algimantas Margevičius <gymka@archlinux.lt>, 2012-2014,2016
 # Algimantas Margevičius <margevicius.algimantas@gmail.com>, 2012
+# Moo, 2016
 # Richard Laager <rlaager@wiktel.com>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Lithuanian (http://www.transifex.com/projects/p/pidgin/"
-"language/lt/)\n"
+"POT-Creation-Date: 2016-06-15 23:15-0500\n"
+"PO-Revision-Date: 2016-06-10 17:50+0000\n"
+"Last-Translator: Algimantas Margevičius <gymka@archlinux.lt>\n"
+"Language-Team: Lithuanian (http://www.transifex.com/pidgin/pidgin/language/"
+"lt/)\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1499,6 +1500,7 @@ msgstr "Kas nors parašo į pokalbį"
 msgid "Someone says your name in a chat"
 msgstr "Kas nors pokalbyje pasako Jūsų vardą"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Informuoti iššokančiu langeliu, kai:"
 
@@ -1511,6 +1513,7 @@ msgstr "Nustatyti „URGENT“ požymį terminalo langui."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Iššokančių langelių papildinys"
 
@@ -2263,6 +2266,32 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTOMATINIS-ATSAKYMAS>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+"\n"
+"\n"
+"Pranešimas iš Farsight: "
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+"Klaida inicijuojant kvietimą. Greičiausiai tai reiškia jog GStreamer ar "
+"Farsight klaidą."
+
+msgid "Network error."
+msgstr "Tinklo klaida."
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+"Kodeko klaida. Klaidą greičiausiai galima išspręsti įdiegiant daugiau "
+"GStreamer kodekų."
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2273,6 +2302,9 @@ msgid ""
 msgstr ""
 "Neliko tinkamų kodekų.  Jūsų kodekų nuostatos fs-codecs.conf faile yra per "
 "griežtos."
+
+msgid "Could not connect to the remote party"
+msgstr "Nepavyko prisijungti prie nutolusios šalies "
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Įvyko nepataisoma „Farsight2“ klaida."
@@ -2892,38 +2924,38 @@ msgid "Tests to see that most things are working."
 msgstr "Patikrina, ar dauguma dalykų veikia"
 
 msgid "TLS/SSL Versions"
-msgstr ""
+msgstr "TLS/SSL Versijos"
 
 msgid "Minimum Version"
-msgstr ""
+msgstr "Minimali versija"
 
 msgid "Maximum Version"
-msgstr ""
+msgstr "Maksimali versija"
 
 msgid "SSL 2"
-msgstr ""
+msgstr "SSL 2"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "SSL 3"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "TLS 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "TLS 1.1"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "TLS 1.2"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "TLS 1.3"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
-msgstr ""
+msgstr "Nepalaikoma su NSS < 3.14"
 
 msgid "Ciphers"
-msgstr ""
+msgstr "Šifrai"
 
 #. *< type
 #. *< ui_requirement
@@ -2932,14 +2964,14 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "NSS Preferences"
-msgstr ""
+msgstr "NSS nuostatos"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
-msgstr ""
+msgstr "Konfigūruokite NSS SSL/TLS įskiepio šifrus ir kitus nustatymus"
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5955,7 +5987,7 @@ msgstr "Negalima patikrinti tapatybės: %s"
 
 #, c-format
 msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
+msgstr "Jūsų MSN draugų sąrašas laikinai neprieinamas: %s"
 
 msgid "Handshaking"
 msgstr "Pasisveikinimas"
@@ -10555,20 +10587,24 @@ msgstr ""
 "failas pervadintas į %s~."
 
 msgid "Instant Messaging Client"
-msgstr ""
+msgstr "Pokalbių klientas"
 
 msgid ""
 "Pidgin is a chat program which lets you log in to accounts on multiple chat "
 "networks simultaneously."
 msgstr ""
+"„Pidgin“ yra programa kuri suteikia galimybę vienu metu būti prijungus prie "
+"kelių pokalbių tinklų."
 
 msgid ""
 "This means that you can be chatting with friends on MSN, talking to a friend "
 "on Google Talk, and sitting in a Yahoo chat room all at the same time."
 msgstr ""
+"Tai reiškia jog galėsite kalbėti su draugais MSN tuo pačiu kalbėdami su "
+"draugais Google Talk, besėdėdami Yahoo pokalbių kambaryje."
 
 msgid "The buddy list showing friends on different networks."
-msgstr ""
+msgstr "Draugų sąrašas rodo draugus skirtinguose tinkluose."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin pokalbiai internete"
@@ -11309,11 +11345,11 @@ msgstr "A_lternatyvusis vardas:"
 msgid "_Group:"
 msgstr "_Grupė:"
 
-msgid "Auto_join when account connects."
-msgstr "Automatiškai prisi_jungti, kai paskyra aktyvuojama."
+msgid "Automatically _join when account connects"
+msgstr "Automatiškai prisi_jungti, kai paskyra prisijungia"
 
-msgid "_Remain in chat after window is closed."
-msgstr "_Pasilikti pokalbyje ir uždarius langą."
+msgid "_Remain in chat after window is closed"
+msgstr "_Pasilikti pokalbyje ir uždarius langą"
 
 msgid "Please enter the name of the group to be added."
 msgstr "Prašome įvesti pridedamos grupės pavadinimą."
@@ -11351,6 +11387,9 @@ msgstr "Įveskite mazgo, kuriam skirtas šis liudijimas, vardą"
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL serveriai"
+
+msgid "Supported debug options are: plugins, version"
+msgstr "Palaikomos derinimo parinktys: plugins version"
 
 msgid "Unknown command."
 msgstr "Nežinoma komanda."
@@ -11795,6 +11834,9 @@ msgstr "Bengalų kalba"
 msgid "Bengali-India"
 msgstr "Bengalų (Indija)"
 
+msgid "Breton"
+msgstr "Breton"
+
 msgid "Bodo"
 msgstr "Bodo"
 
@@ -11851,9 +11893,6 @@ msgstr "Persų kalba"
 
 msgid "Finnish"
 msgstr "Suomių kalba"
-
-msgid "French"
-msgstr "Prancūzų kalba"
 
 msgid "Irish"
 msgstr "Airių kalba"
@@ -11916,7 +11955,7 @@ msgid "Kurdish"
 msgstr "Kurdų kalba"
 
 msgid "Kurdish (Sorani)"
-msgstr ""
+msgstr "Kurdų (Sorani)"
 
 msgid "Lithuanian"
 msgstr "Lietuvių kalba"
@@ -11932,6 +11971,9 @@ msgstr "Meadow Mari"
 
 msgid "Macedonian"
 msgstr "Makedoniečių kalba"
+
+msgid "Malay"
+msgstr "Malajiečių"
 
 msgid "Malayalam"
 msgstr "Malajalių"
@@ -12035,7 +12077,7 @@ msgstr "Uzbekų"
 #. Translators: This is a person's name. For most languages we recommend
 #. not translating it.
 msgid "Akmal Khushvakov"
-msgstr ""
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "Vietnamiečių kalba"
@@ -12052,14 +12094,14 @@ msgstr "Tradicinė kinų kalba"
 msgid "Amharic"
 msgstr "Amharų kalba"
 
+msgid "French"
+msgstr "Prancūzų kalba"
+
 msgid "Armenian"
 msgstr "Armėnų kalba"
 
 msgid "Lao"
 msgstr "Laosiečių kalba"
-
-msgid "Malay"
-msgstr "Malajiečių"
 
 msgid "Turkish"
 msgstr "Turkų kalba"
@@ -12749,6 +12791,9 @@ msgstr "_Media"
 msgid "_Hangup"
 msgstr "_Padėti ragelį"
 
+msgid "Media error"
+msgstr "Media klaida"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s nori pradėti garso ir vaizdo pokalbį su jumis."
@@ -12759,6 +12804,42 @@ msgstr "%s nori pradėti vaizdo pokalbį su jumis."
 
 msgid "Incoming Call"
 msgstr "Įeinantis skambutis"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr "ABC"
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr "DEF"
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr "GHI"
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr "JKL"
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr "MNO"
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr "PQRS"
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr "TUV"
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr "WXYZ"
 
 msgid "_Hold"
 msgstr "_Sulaikyti"
@@ -14292,8 +14373,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Pranešti apie:"
 
+msgid "\t_Notify for System messages"
+msgstr "\t_Pranešimas sistemos žinutėms"
+
 msgid "\t_Only when someone says your username"
 msgstr "        tik kai kas n_ors pasako Jūsų naudotojo vardą"
+
+msgid "\tNotify for _System messages"
+msgstr "\tPranešimas _Sistemos žinutėms"
 
 msgid "_Focused windows"
 msgstr "_veikiamuosius langus"
@@ -14325,6 +14412,8 @@ msgid "R_aise conversation window"
 msgstr "P_akelti pokalbių langą"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_Pristatyti pokalbių langą"
 
@@ -15091,9 +15180,8 @@ msgstr ""
 "įdiegta neišdiegus senosios."
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "Pidgin reikalauja suderinamumo su GTK+ Runtime (kurio atrodo nėra).$\\rAr "
 "tikrai norite praleisti GTK+ Runtime diegimą?"

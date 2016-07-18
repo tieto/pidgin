@@ -3,16 +3,17 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# KNTRO <tskuhn@gmail.com>, 2015
 # KNTRO <tskuhn@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Spanish (Argentina) (http://www.transifex.com/projects/p/"
-"pidgin/language/es_AR/)\n"
+"POT-Creation-Date: 2016-06-15 23:17-0500\n"
+"PO-Revision-Date: 2016-06-06 21:08+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Spanish (Argentina) (http://www.transifex.com/pidgin/pidgin/"
+"language/es_AR/)\n"
 "Language: es_AR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -42,11 +43,11 @@ msgstr ""
 "%s\n"
 "Uso: %s [OPCIÓN]...\n"
 "\n"
-"  -c, --config=DIR    usar DIR para archivos de configuración\n"
-"  -d, --debug         imprimir mensajes de depuración a stderr\n"
-"  -h, --help          mostrar esta ayuda y salir\n"
-"  -n, --nologin       no entrar automáticamente\n"
-"  -v, --version       mostrar la versión actual y salir\n"
+"  -c, --config=DIR usar DIR para archivos de configuración\n"
+"  -d, --debug imprimir mensajes de depuración a stderr\n"
+"  -h, --help mostrar esta ayuda y salir\n"
+"  -n, --nologin no iniciar sesión automáticamente\n"
+"  -v, --version mostrar la versión actual y salir\n"
 
 #, c-format
 msgid ""
@@ -56,7 +57,7 @@ msgid ""
 msgstr ""
 "%s encontró errores migrando tu configuración de %s a %s. Por favor, revisá "
 "la migración y completala manualmente. Y, por favor, informá este error en "
-"http://developer.pidgin.im"
+"http://developer.pidgin.im."
 
 #. the user did not fill in the captcha
 msgid "Error"
@@ -93,7 +94,7 @@ msgid "There are no protocol plugins installed."
 msgstr "No hay plugins de protocolos instalados."
 
 msgid "(You probably forgot to 'make install'.)"
-msgstr "(Probablemente te olvidaste de \"instalar\".)"
+msgstr "(Probablemente te olvidaste de \"make install\".)"
 
 msgid "Modify Account"
 msgstr "Modificar cuenta"
@@ -129,7 +130,7 @@ msgstr "Guardar"
 
 #, c-format
 msgid "Are you sure you want to delete %s?"
-msgstr "¿Estás seguro que querés eliminar a %s?"
+msgstr "¿Estás seguro que querés eliminar %s?"
 
 msgid "Delete Account"
 msgstr "Eliminar cuenta"
@@ -154,17 +155,17 @@ msgstr "Modificar"
 
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
-msgstr "%s%s%s%s hizo a %s su amigo%s%s"
+msgstr "%s%s%s%s hizo a %s su contacto%s%s"
 
 msgid "Add buddy to your list?"
-msgstr "¿Agregar amigo a tu lista?"
+msgstr "¿Agregar contacto a tu lista?"
 
 #, c-format
 msgid "%s%s%s%s wants to add %s to his or her buddy list%s%s"
-msgstr "%s%s%s%s quiere agregar a %s a su lista de amigos%s%s"
+msgstr "%s%s%s%s quiere agregar a %s a su lista de contactos%s%s"
 
 msgid "Authorize buddy?"
-msgstr "¿Autorizar amigo?"
+msgstr "¿Autorizar contacto?"
 
 msgid "Authorize"
 msgstr "Autorizar"
@@ -190,13 +191,13 @@ msgid ""
 "Last Seen: %s ago"
 msgstr ""
 "\n"
-"Última comunicación: hace %s"
+"Última vez visto: hace %s"
 
 msgid "Default"
 msgstr "Predeterminado"
 
 msgid "You must provide a username for the buddy."
-msgstr "Tenés que proveer un nombre de usuario para este amigo."
+msgstr "Tenés que proveer un nombre de usuario para este contacto."
 
 msgid "You must provide a group."
 msgstr "Tenés que proveer un grupo."
@@ -208,7 +209,7 @@ msgid "The selected account is not online."
 msgstr "La cuenta seleccionada no está conectada."
 
 msgid "Error adding buddy"
-msgstr "Error al agregar amigo"
+msgstr "Error al agregar contacto"
 
 msgid "Username"
 msgstr "Nombre de usuario"
@@ -226,10 +227,10 @@ msgid "Account"
 msgstr "Cuenta"
 
 msgid "Add Buddy"
-msgstr "Agregar amigo"
+msgstr "Agregar contacto"
 
 msgid "Please enter buddy information."
-msgstr "Por favor, ingresá información del amigo."
+msgstr "Por favor, ingresá información del contacto."
 
 msgid "Chats"
 msgstr "Chats"
@@ -245,7 +246,7 @@ msgid "Group"
 msgstr "Grupo"
 
 msgid "Auto-join"
-msgstr "Ingreso automático"
+msgstr "Ingreso automático al grupo"
 
 msgid "Add Chat"
 msgstr "Agregar chat"
@@ -281,13 +282,13 @@ msgid "Information"
 msgstr "Información"
 
 msgid "Retrieving..."
-msgstr "Recuperando"
+msgstr "Recuperando…"
 
 msgid "Get Info"
 msgstr "Obtener información"
 
 msgid "Add Buddy Pounce"
-msgstr "Agregar notificación de amigo"
+msgstr "Agregar notificación de contacto"
 
 msgid "Send File"
 msgstr "Enviar archivo"
@@ -313,10 +314,11 @@ msgstr "Ingresá texto vacío para restablecer el nombre."
 
 msgid "Removing this contact will also remove all the buddies in the contact"
 msgstr ""
-"Al quitar este contacto también se quitarán todos los amigos en el mismo"
+"Al quitar este contacto también se quitarán todos los contactos en el mismo"
 
 msgid "Removing this group will also remove all the buddies in the group"
-msgstr "Al quitar este grupo también se quitarán todos los amigos en el mismo"
+msgstr ""
+"Al quitar este grupo también se quitarán todos los contactos en el mismo"
 
 #, c-format
 msgid "Are you sure you want to remove %s?"
@@ -331,13 +333,13 @@ msgstr "Quitar"
 
 #. Buddy List
 msgid "Buddy List"
-msgstr "Lista de amigos"
+msgstr "Lista de contactos"
 
 msgid "Place tagged"
 msgstr "Colocar etiquetado"
 
 msgid "Toggle Tag"
-msgstr "Interruptor de etiqueta"
+msgstr "Cambiar etiqueta"
 
 msgid "View Log"
 msgstr "Ver registro"
@@ -352,10 +354,10 @@ msgid "Idle"
 msgstr "Sin actividad"
 
 msgid "On Mobile"
-msgstr "Ambulante"
+msgstr "Con celular"
 
 msgid "New..."
-msgstr "Nuevo"
+msgstr "Nuevo…"
 
 msgid "Saved..."
 msgstr "Guardado"
@@ -370,7 +372,7 @@ msgid "Block"
 msgstr "Bloquear"
 
 msgid "Unblock"
-msgstr "Desbloquar"
+msgstr "Desbloquear"
 
 msgid ""
 "Please enter the username or alias of the person you would like to Block/"
@@ -390,20 +392,20 @@ msgstr "Nuevo mensaje instantáneo"
 
 msgid "Please enter the username or alias of the person you would like to IM."
 msgstr ""
-"Por favor, ingresá el nombre de usuario o alias de la persona que te "
+"Por favor, ingresá el nombre de usuario o alias de la persona a la que te "
 "gustaría enviarle un mensaje instantáneo."
 
 msgid "Channel"
 msgstr "Canal"
 
 msgid "Join a Chat"
-msgstr "Unirte al chat"
+msgstr "Ingresar a un chat"
 
 msgid "Please enter the name of the chat you want to join."
-msgstr "Por favor, ingresá el nombre del chat al cual te querés unir."
+msgstr "Por favor, ingresá el nombre del chat al cual querés ingresar."
 
 msgid "Join"
-msgstr "Unirse"
+msgstr "Ingresar"
 
 msgid ""
 "Please enter the username or alias of the person whose log you would like to "
@@ -417,16 +419,16 @@ msgid "Options"
 msgstr "Opciones"
 
 msgid "Send IM..."
-msgstr "Enviar mensaje instantáneo"
+msgstr "Enviar mensaje instantáneo…"
 
 msgid "Block/Unblock..."
 msgstr "Bloquear/desbloquear"
 
 msgid "Join Chat..."
-msgstr "Unirte al chat"
+msgstr "Ingresar al chat…"
 
 msgid "View Log..."
-msgstr "Ver registro"
+msgstr "Ver registro…"
 
 msgid "View All Logs"
 msgstr "Ver todos los registros"
@@ -438,7 +440,7 @@ msgid "Empty groups"
 msgstr "Grupos vacíos"
 
 msgid "Offline buddies"
-msgstr "Amigos desconectados"
+msgstr "Contactos desconectados"
 
 msgid "Sort"
 msgstr "Ordenar"
@@ -453,13 +455,13 @@ msgid "By Log Size"
 msgstr "Por tamaño de registro"
 
 msgid "Buddy"
-msgstr "Amigo"
+msgstr "Contacto"
 
 msgid "Chat"
 msgstr "Chat"
 
 msgid "Grouping"
-msgstr "Grupo"
+msgstr "Por grupo"
 
 msgid "Certificate Import"
 msgstr "Importación de certificado"
@@ -482,7 +484,7 @@ msgid "Certificate Import Error"
 msgstr "Error de importación de certificado"
 
 msgid "X.509 certificate import failed"
-msgstr "Falló la importación de certificado X.509"
+msgstr "Falló la importación del certificado X.509"
 
 msgid "Select a PEM certificate"
 msgstr "Seleccioná un certificado PEM"
@@ -499,10 +501,10 @@ msgid "Certificate Export Error"
 msgstr "Error de exportación de certificado"
 
 msgid "X.509 certificate export failed"
-msgstr "Falló la exportación de certificado X.509"
+msgstr "Falló la exportación del certificado X.509"
 
 msgid "PEM X.509 Certificate Export"
-msgstr "Exportación de certificado PEM X.509"
+msgstr "Exportación del certificado PEM X.509"
 
 #, c-format
 msgid "Certificate for %s"
@@ -528,7 +530,7 @@ msgid "Really delete certificate for %s?"
 msgstr "¿Estás seguro que querés eliminar el certificado para %s?"
 
 msgid "Confirm certificate delete"
-msgstr "Confirmar"
+msgstr "Confirmar eliminación de certificado"
 
 msgid "Certificate Manager"
 msgstr "Administrador de certificados"
@@ -586,7 +588,7 @@ msgid "That command doesn't work on this protocol."
 msgstr "Ese comando no funciona en este protocolo."
 
 msgid "Message was not sent, because you are not signed on."
-msgstr "No se envió el mensaje porque no entraste."
+msgstr "No se envió el mensaje porque no iniciaste sesión."
 
 #, c-format
 msgid "%s (%s -- %s)"
@@ -602,7 +604,7 @@ msgid ""
 "%s is typing..."
 msgstr ""
 "\n"
-"%s está escribiendo"
+"%s está escribiendo…"
 
 msgid "You have left this chat."
 msgstr "Dejaste este chat."
@@ -611,8 +613,8 @@ msgid ""
 "The account has disconnected and you are no longer in this chat. You will be "
 "automatically rejoined in the chat when the account reconnects."
 msgstr ""
-"Se desconectó esta cuenta y ya no estás más en este chat. Vas a unirte "
-"nuevamente al chat cuando la cuenta reconecte."
+"Se desconectó esta cuenta y ya no estás más en este chat. Vas a ingresar "
+"nuevamente al chat cuando la cuenta se reconecte."
 
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr ""
@@ -638,10 +640,10 @@ msgid "Show Timestamps"
 msgstr "Mostrar marcas de tiempo"
 
 msgid "Add Buddy Pounce..."
-msgstr "Agregar notificación de amigo"
+msgstr "Agregar notificación de contacto"
 
 msgid "Invite..."
-msgstr "Invitar"
+msgstr "Invitar…"
 
 msgid "Enable Logging"
 msgstr "Habilitar registro"
@@ -650,7 +652,7 @@ msgid "Enable Sounds"
 msgstr "Habilitar sonidos"
 
 msgid "You are not connected."
-msgstr "Estás conectado."
+msgstr "No estás conectado."
 
 msgid "<AUTO-REPLY> "
 msgstr "<AUTO-REPLY> "
@@ -696,7 +698,7 @@ msgstr ""
 
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr ""
-"me &lt;action&gt;: Envía una acción estilo IRC a un amigo o en el chat."
+"me &lt;action&gt;: Envía una acción estilo IRC a un contacto o en el chat."
 
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
@@ -718,7 +720,7 @@ msgid "plugins: Show the plugins window."
 msgstr "plugins: Muestra la ventana de plugins."
 
 msgid "buddylist: Show the buddylist."
-msgstr "buddylist: Muestra la lista de amigos."
+msgstr "buddylist: Muestra la lista de contactos."
 
 msgid "accounts: Show the accounts window."
 msgstr "accounts: Muestra la ventana de cuentas."
@@ -762,7 +764,7 @@ msgid "Filter:"
 msgstr "Filtro:"
 
 msgid "Pause"
-msgstr "Pausa"
+msgstr "Pausar"
 
 #, c-format
 msgid "File Transfers - %d%% of %d file"
@@ -851,7 +853,7 @@ msgid ""
 "log\" preference is enabled."
 msgstr ""
 "Los eventos de sistema sólo serán registrados si la opción \"Registrar todos "
-"los cambios de estado al registro de sistema\" está habilitado."
+"los cambios de estado al registro de sistema\" está habilitada."
 
 msgid ""
 "Instant messages will only be logged if the \"Log all instant messages\" "
@@ -863,11 +865,11 @@ msgstr ""
 msgid ""
 "Chats will only be logged if the \"Log all chats\" preference is enabled."
 msgstr ""
-"Los chats sólo serán registrados si la opción \"Todos los chats\" está "
-"habilitada."
+"Los chats sólo serán registrados si la opción \"Registrar todos los chats\" "
+"está habilitada."
 
 msgid "No logs were found"
-msgstr "No se encontraron registrados"
+msgstr "No se encontraron registros"
 
 msgid "Total log size:"
 msgstr "Tamaño total del registro:"
@@ -911,7 +913,7 @@ msgstr "Finalizó la llamada."
 
 #, c-format
 msgid "%s wishes to start an audio session with you."
-msgstr "%s desea comenzar una sesión de audio con vos."
+msgstr "%s quiere comenzar una sesión de audio con vos."
 
 #, c-format
 msgid "%s is trying to start an unsupported media session type with you."
@@ -922,7 +924,7 @@ msgid "You have rejected the call."
 msgstr "Rechazaste la llamada."
 
 msgid "call: Make an audio call."
-msgstr "call: Hacer una llamada."
+msgstr "Llamada: hacer una llamada."
 
 msgid "Emails"
 msgstr "Correos electrónicos"
@@ -950,7 +952,7 @@ msgid "Info for %s"
 msgstr "Info para %s"
 
 msgid "Buddy Information"
-msgstr "Información de amigo"
+msgstr "Información de contacto"
 
 msgid "Continue"
 msgstr "Continuar"
@@ -993,7 +995,7 @@ msgstr ""
 "Descripción: %s\n"
 "Autor: %s\n"
 "Sitio web: %s\n"
-"Nombre del archivo: %s\n"
+"Nombre de archivo: %s\n"
 
 msgid "Plugin need to be loaded before you can configure it."
 msgstr "El plugin necesita ser activado antes que puedas configurarlo."
@@ -1020,7 +1022,7 @@ msgid "You can (un)load plugins from the following list."
 msgstr "Podés (des)activar plugins desde la siguiente lista."
 
 msgid "Install Plugin..."
-msgstr "Instalar plugin"
+msgstr "Instalar plugin…"
 
 msgid "Configure Plugin"
 msgstr "Configurar plugin"
@@ -1034,13 +1036,13 @@ msgid "Preferences"
 msgstr "Configuración"
 
 msgid "Please enter a buddy to pounce."
-msgstr "Por favor, ingresá un amigo para notificar."
+msgstr "Por favor, ingresá un contacto para notificar."
 
 msgid "New Buddy Pounce"
-msgstr "Nueva notificación de amigo"
+msgstr "Nueva notificación de contacto"
 
 msgid "Edit Buddy Pounce"
-msgstr "Editar notificación de amigo"
+msgstr "Editar notificación de contacto"
 
 msgid "Pounce Who"
 msgstr "Notificar sobre quién"
@@ -1050,17 +1052,17 @@ msgid "Account:"
 msgstr "Cuenta:"
 
 msgid "Buddy name:"
-msgstr "Nombre del amigo:"
+msgstr "Nombre del contacto:"
 
 #. Create the "Pounce When Buddy..." frame.
 msgid "Pounce When Buddy..."
-msgstr "Notificar cuando el amigo"
+msgstr "Notificar cuando el contacto"
 
 msgid "Signs on"
-msgstr "Ingresa"
+msgstr "Inicia sesión"
 
 msgid "Signs off"
-msgstr "Sale"
+msgstr "Cierra sesión"
 
 msgid "Goes away"
 msgstr "Está ausente"
@@ -1118,14 +1120,14 @@ msgid "You do not have any accounts."
 msgstr "No tenés ninguna cuenta."
 
 msgid "You must create an account first before you can create a pounce."
-msgstr "Tenés que crear primero una cuenta antes de crear una notificación."
+msgstr "Primero tenés que crear una cuenta antes de crear una notificación."
 
 #, c-format
 msgid "Are you sure you want to delete the pounce on %s for %s?"
 msgstr "¿Estás seguro que querés eliminar esta notificación en %s para %s?"
 
 msgid "Buddy Pounces"
-msgstr "Notificaciones de amigo"
+msgstr "Notificaciones de contacto"
 
 #, c-format
 msgid "%s has started typing to you (%s)"
@@ -1137,11 +1139,11 @@ msgstr ""
 
 #, c-format
 msgid "%s has signed on (%s)"
-msgstr "Entró %s (%s)"
+msgstr "%s inició sesión en (%s)"
 
 #, c-format
 msgid "%s has returned from being idle (%s)"
-msgstr "%s dejó de estar inactivo (%s)"
+msgstr "%s dejó de estar inactivo/a (%s)"
 
 #, c-format
 msgid "%s has returned from being away (%s)"
@@ -1153,11 +1155,11 @@ msgstr "%s paró de escribirte (%s)"
 
 #, c-format
 msgid "%s has signed off (%s)"
-msgstr "Salió %s (%s)"
+msgstr "%s cerró sesión (%s)"
 
 #, c-format
 msgid "%s has become idle (%s)"
-msgstr "%s dejó de estar inactivo (%s)"
+msgstr "%s dejó de estar inactivo/a (%s)"
 
 #, c-format
 msgid "%s has gone away. (%s)"
@@ -1168,7 +1170,7 @@ msgid "%s has sent you a message. (%s)"
 msgstr "%s te envió un mensaje. (%s)"
 
 msgid "Unknown pounce event. Please report this!"
-msgstr "Evento desconocido de notificación. ¡Por favor, notificalo!"
+msgstr "Evento desconocido de notificación. ¡Por favor, informalo!"
 
 msgid "Based on keyboard use"
 msgstr "Basado en el uso del teclado"
@@ -1183,10 +1185,10 @@ msgid "Show Idle Time"
 msgstr "Mostrar tiempo de inactividad"
 
 msgid "Show Offline Buddies"
-msgstr "Mostrar amigos desconectados"
+msgstr "Mostrar contactos desconectados"
 
 msgid "Notify buddies when you are typing"
-msgstr "Informar a amigos cuando estás escribiendo"
+msgstr "Informar a los contactos cuando estás escribiendo"
 
 msgid "Log format"
 msgstr "Formato de registro"
@@ -1247,19 +1249,19 @@ msgid "Room List"
 msgstr "Lista de salas"
 
 msgid "Buddy logs in"
-msgstr "Entra un amigo"
+msgstr "Un contacto inicia sesión"
 
 msgid "Buddy logs out"
-msgstr "Sale un amigo"
+msgstr "Un contacto cierra sesión"
 
 msgid "Message received"
-msgstr "Mensaje recibido"
+msgstr "Se recibe un mensaje"
 
 msgid "Message received begins conversation"
-msgstr "Mensaje recibido comienza la conversación"
+msgstr "Se recibe un mensaje que comienza una conversación"
 
 msgid "Message sent"
-msgstr "Mensaje enviado"
+msgstr "Se envía un mensaje"
 
 msgid "Person enters chat"
 msgstr "Alguien entra al chat"
@@ -1334,10 +1336,10 @@ msgid "Always"
 msgstr "Siempre"
 
 msgid "Only when available"
-msgstr "Sólo cuando está disponible"
+msgstr "Sólo cuando estoy disponible"
 
 msgid "Only when not available"
-msgstr "Sólo cuando no está disponible"
+msgstr "Sólo cuando no estoy disponible"
 
 msgid "Volume(0-100):"
 msgstr "Volumen (000-100):"
@@ -1434,7 +1436,7 @@ msgid "Statuses"
 msgstr "Estados"
 
 msgid "Error loading the plugin."
-msgstr "Error al cargar el plugin."
+msgstr "Error al activar el plugin."
 
 msgid "Couldn't find X display"
 msgstr "No se pudo encontrar visualización X"
@@ -1458,15 +1460,15 @@ msgid ""
 "X, if possible."
 msgstr ""
 "Cuando el portapapeles gnt contiene cambio, los contenidos quedan "
-"disponibles para X, de ser posible."
+"disponibles para X, si es posible."
 
 #, c-format
 msgid "%s just signed on"
-msgstr "Recién ingresó %s"
+msgstr "Recién inició sesión %s"
 
 #, c-format
 msgid "%s just signed off"
-msgstr "Recién salió %s"
+msgstr "Recién cerró sesión %s"
 
 #, c-format
 msgid "%s sent you a message"
@@ -1481,7 +1483,7 @@ msgid "%s sent a message in %s"
 msgstr "%s envió un mensaje en %s"
 
 msgid "Buddy signs on/off"
-msgstr "Amigo entra/sale"
+msgstr "Contacto inicia/cierra sesión"
 
 msgid "You receive an IM"
 msgstr "Recibís un mensaje instantáneo"
@@ -1492,6 +1494,7 @@ msgstr "Alguien habla en un chat"
 msgid "Someone says your name in a chat"
 msgstr "Alguien te menciona en un chat"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Notificar con una tostadora cuando"
 
@@ -1504,6 +1507,7 @@ msgstr "Establecer URGENTE en la ventana terminal."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Plugin de tostadora"
 
@@ -2256,6 +2260,25 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+msgid "Network error."
+msgstr ""
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2267,6 +2290,9 @@ msgid ""
 msgstr ""
 "No quedan códecs. Tu configuración de códecs en fs-codecs.conf es demasiada "
 "estricta."
+
+msgid "Could not connect to the remote party"
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Ocurrió un error no recuperable de Farsight2."
@@ -10852,10 +10878,10 @@ msgstr ""
 msgid "_Group:"
 msgstr ""
 
-msgid "Auto_join when account connects."
+msgid "Automatically _join when account connects"
 msgstr ""
 
-msgid "_Remain in chat after window is closed."
+msgid "_Remain in chat after window is closed"
 msgstr ""
 
 msgid "Please enter the name of the group to be added."
@@ -10893,6 +10919,9 @@ msgstr ""
 
 #. Widget creation function
 msgid "SSL Servers"
+msgstr ""
+
+msgid "Supported debug options are: plugins, version"
 msgstr ""
 
 msgid "Unknown command."
@@ -11331,6 +11360,9 @@ msgstr ""
 msgid "Bengali-India"
 msgstr ""
 
+msgid "Breton"
+msgstr ""
+
 msgid "Bodo"
 msgstr ""
 
@@ -11386,9 +11418,6 @@ msgid "Persian"
 msgstr ""
 
 msgid "Finnish"
-msgstr ""
-
-msgid "French"
 msgstr ""
 
 msgid "Irish"
@@ -11467,6 +11496,9 @@ msgid "Meadow Mari"
 msgstr ""
 
 msgid "Macedonian"
+msgstr ""
+
+msgid "Malay"
 msgstr ""
 
 msgid "Malayalam"
@@ -11588,13 +11620,13 @@ msgstr ""
 msgid "Amharic"
 msgstr ""
 
+msgid "French"
+msgstr ""
+
 msgid "Armenian"
 msgstr ""
 
 msgid "Lao"
-msgstr ""
-
-msgid "Malay"
 msgstr ""
 
 msgid "Turkish"
@@ -12224,6 +12256,9 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
+msgid "Media error"
+msgstr ""
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr ""
@@ -12233,6 +12268,42 @@ msgid "%s wishes to start a video session with you."
 msgstr ""
 
 msgid "Incoming Call"
+msgstr ""
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
 msgstr ""
 
 msgid "_Hold"
@@ -13706,7 +13777,13 @@ msgstr ""
 msgid "Notify For"
 msgstr ""
 
+msgid "\t_Notify for System messages"
+msgstr ""
+
 msgid "\t_Only when someone says your username"
+msgstr ""
+
+msgid "\tNotify for _System messages"
 msgstr ""
 
 msgid "_Focused windows"
@@ -13739,6 +13816,8 @@ msgid "R_aise conversation window"
 msgstr ""
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr ""
 
@@ -14472,9 +14551,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 
 #. Installer Subsection Text

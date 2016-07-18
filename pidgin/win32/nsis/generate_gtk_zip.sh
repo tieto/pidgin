@@ -18,7 +18,7 @@ PIDGIN_VERSION=$( < $PIDGIN_BASE/VERSION )
 
 #This needs to be changed every time there is any sort of change.
 BUNDLE_VERSION=2.16.6.3
-BUNDLE_SHA1SUM=e1b1ec8d2159fa98b2a9f516dbfe745bf7a22169
+BUNDLE_SHA1SUM=071e95e32eb09361fcec1e62feb82bf80b41ec84
 ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION.zip"
 SRC_ZIP_FILE="$PIDGIN_BASE/pidgin/win32/nsis/gtk-runtime-$BUNDLE_VERSION-src.zip"
 

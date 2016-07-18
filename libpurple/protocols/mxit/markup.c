@@ -1083,7 +1083,6 @@ char* mxit_convert_markup_tx( const char* message, int* msgtype )
 	GList*				entry;
 	GList*				tagstack	= NULL;
 	char*				reply;
-	char				color[8];
 	int					len			= strlen ( message );
 	int					i;
 
@@ -1145,12 +1144,18 @@ char* mxit_convert_markup_tx( const char* message, int* msgtype )
 				}
 				else if ( purple_str_has_prefix( &message[i], "<font color=" ) ) {
 					/* font colour */
-					tag = g_new0( struct tag, 1 );
-					tag->type = MXIT_TAG_COLOR;
-					tagstack = g_list_append( tagstack, tag );
-					memset( color, 0x00, sizeof( color ) );
-					memcpy( color, &message[i + 13], 7 );
-					g_string_append( mx, color );
+					char color[8];
+
+					/* ensure we have the complete tag: <font color="#123456"> */
+					if ( i + 20 < len ) {
+						tag = g_new0( struct tag, 1 );
+						tag->type = MXIT_TAG_COLOR;
+						tagstack = g_list_append( tagstack, tag );
+
+						memset( color, 0x00, sizeof( color ) );
+						memcpy( color, &message[i + 13], 7 );
+						g_string_append( mx, color );
+					}
 				}
 				else if ( purple_str_has_prefix( &message[i], "</font>" ) ) {
 					/* end of font tag */

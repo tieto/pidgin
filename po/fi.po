@@ -3,16 +3,18 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Jiri Grönroos <jiri.gronroos@iki.fi>, 2014
+# Jaakko Helleranta <jaakko@helleranta.com>, 2016
+# Jiri Grönroos <jiri.gronroos@iki.fi>, 2014-2015
 # Mikaela Suomalainen <mikaela.suomalainen@outlook.com>, 2014
+# Kasvain <kasvain@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Finnish (http://www.transifex.com/projects/p/pidgin/language/"
+"POT-Creation-Date: 2016-06-15 23:14-0500\n"
+"PO-Revision-Date: 2016-06-06 21:09+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Finnish (http://www.transifex.com/pidgin/pidgin/language/"
 "fi/)\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
@@ -1491,6 +1493,7 @@ msgstr "Joku sanoo jotain ryhmäkeskustelussa"
 msgid "Someone says your name in a chat"
 msgstr "Joku sanoo nimesi ryhmäkeskustelussa"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Huomauta leivänpaahtimella kun"
 
@@ -1503,6 +1506,7 @@ msgstr "Aseta pääteikkuna tilaan \"kiireellinen\"."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Leivänpaahdin-liitännäinen"
 
@@ -2240,6 +2244,25 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTOMAATTIVASTAUS>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+msgid "Network error."
+msgstr "Verkkovirhe."
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2251,6 +2274,9 @@ msgid ""
 msgstr ""
 "Koodekkeja ei jäljellä valittavaksi. Tiedoston fs-codecs.conf "
 "koodekkiasetukset ovat liian tiukat."
+
+msgid "Could not connect to the remote party"
+msgstr "Vastapäähän yhdistäminen ei onnistunut"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Korjaamaton Farsight2-virhe."
@@ -2877,38 +2903,38 @@ msgid "Tests to see that most things are working."
 msgstr "Kokeilee että useimmat asiat toimivat."
 
 msgid "TLS/SSL Versions"
-msgstr ""
+msgstr "TLS/SSL-versiot"
 
 msgid "Minimum Version"
-msgstr ""
+msgstr "Vähimmäisversio"
 
 msgid "Maximum Version"
-msgstr ""
+msgstr "Enimmäisversio"
 
 msgid "SSL 2"
-msgstr ""
+msgstr "SSL 2"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "SSL 3"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "TLS 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "TLS 1.1"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "TLS 1.2"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "TLS 1.3"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
 msgstr ""
 
 msgid "Ciphers"
-msgstr ""
+msgstr "Salaukset"
 
 #. *< type
 #. *< ui_requirement
@@ -2917,7 +2943,7 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "NSS Preferences"
-msgstr ""
+msgstr "NSS-asetukset"
 
 #. *< name
 #. *< version
@@ -3266,7 +3292,7 @@ msgstr "Yhdistetään"
 
 #, c-format
 msgid "Unable to resolve hostname: %s"
-msgstr ""
+msgstr "Ei kyetty selvittämään palvelimen nimeä: %s"
 
 msgid "Chat error"
 msgstr "Keskusteluvirhe"
@@ -3952,10 +3978,10 @@ msgid "Unable to canonicalize password"
 msgstr ""
 
 msgid "Malicious challenge from server"
-msgstr ""
+msgstr "Vihamielinen tunnistushaaste palvelimelta"
 
 msgid "Unexpected response from server"
-msgstr ""
+msgstr "Odottamaton vastaus palvelimelta"
 
 msgid "The BOSH connection manager terminated your session."
 msgstr "BOSH-yhteyshallinta lopetti istunnon."
@@ -5024,7 +5050,7 @@ msgid "Hot"
 msgstr "Tulinen"
 
 msgid "Humbled"
-msgstr ""
+msgstr "Nöyrtynyt"
 
 msgid "Humiliated"
 msgstr "Nöyryytetty"
@@ -5039,7 +5065,7 @@ msgid "Impressed"
 msgstr "Vaikuttunut"
 
 msgid "In awe"
-msgstr ""
+msgstr "Pelkoa herättävä"
 
 msgid "In love"
 msgstr "Rakastunut"
@@ -5078,7 +5104,7 @@ msgid "Nervous"
 msgstr "Hermostunut"
 
 msgid "Neutral"
-msgstr ""
+msgstr "Neutraali"
 
 msgid "Offended"
 msgstr "Loukkaantunut"
@@ -5463,7 +5489,7 @@ msgstr ""
 #. or by never automatically adding the colon and requiring that
 #. callers add the colon themselves.
 msgid "You are not signed in from any other locations."
-msgstr ""
+msgstr "Et ole kirjautunut mistään muusta sijainnista."
 
 msgid "Allow multiple logins?"
 msgstr "Salli useat kirjautumiset?"
@@ -6050,10 +6076,10 @@ msgid "The PIN you entered is invalid."
 msgstr "Kirjoittamasi PIN on virheellinen."
 
 msgid "The PIN you entered has an invalid length [4-10]."
-msgstr ""
+msgstr "Kirjoittamasi PIN-koodi ei ole pituudeltaan kelvollinen [4-10]."
 
 msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
+msgstr "PIN on virheellinen. Se saa sisältää vain numeroita [0-9]."
 
 msgid "The two PINs you entered do not match."
 msgstr "Kirjoittamasi kaksi PIN-koodia eivät vastaa toisiaan."
@@ -6109,11 +6135,11 @@ msgstr "Vaihda PIN..."
 
 #. suggested friends
 msgid "Suggested friends..."
-msgstr ""
+msgstr "Ehdotetut tuttavat..."
 
 #. search for contacts
 msgid "Search for contacts..."
-msgstr ""
+msgstr "Etsi yhteystietoja..."
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6129,7 +6155,7 @@ msgstr ""
 
 #. file read error
 msgid "Unable to access the local file"
-msgstr ""
+msgstr "Paikallisen tiedoston käyttö epäonnistui"
 
 #. file write error
 msgid "Unable to save the file"
@@ -6150,14 +6176,14 @@ msgid "Connecting..."
 msgstr "Yhdistetään..."
 
 msgid "The Display Name you entered is too short."
-msgstr ""
+msgstr "Kirjoittamasi näyttönimi on liian lyhyt."
 
 msgid "The PIN you entered has an invalid length [7-10]."
-msgstr ""
+msgstr "Kirjoittamasi PIN on pituudeltaan virheellinen [7-10]."
 
 #. mxit login name
 msgid "MXit ID"
-msgstr ""
+msgstr "MXit ID"
 
 #. show the form to the user to complete
 msgid "Register New MXit Account"
@@ -6195,17 +6221,17 @@ msgid "Internal error. Please try again later."
 msgstr "Sisäinen virhe. Yritä myöhemmin uudelleen."
 
 msgid "You did not enter the security code"
-msgstr ""
+msgstr "Et kirjoittanut turvallisuuskoodia."
 
 msgid "Security Code"
-msgstr ""
+msgstr "Turvallisuuskoodi"
 
 #. ask for input (required)
 msgid "Enter Security Code"
-msgstr ""
+msgstr "Kirjoita turvallisuuskoodi"
 
 msgid "Your Country"
-msgstr ""
+msgstr "Maa"
 
 msgid "Your Language"
 msgstr "Kieli"
@@ -6221,7 +6247,7 @@ msgid "Retrieving User Information..."
 msgstr "Haetaan käyttäjän tietoja..."
 
 msgid "was kicked"
-msgstr ""
+msgstr "potkaistiin"
 
 msgid "You have been kicked from this MultiMX."
 msgstr ""
@@ -6231,7 +6257,7 @@ msgstr "_Huoneen nimi:"
 
 #. Display system message in chat window
 msgid "You have invited"
-msgstr ""
+msgstr "sinut on kutsuttu"
 
 msgid "Loading menu..."
 msgstr "Ladataan valikkoa..."
@@ -6253,7 +6279,7 @@ msgstr ""
 
 #. contact is in Deleted, Rejected or None state
 msgid "Re-Invite"
-msgstr ""
+msgstr "Kutsu uudelleen"
 
 #. Configuration options
 #. WAP server (reference: "libpurple/accountopt.h")
@@ -6294,7 +6320,7 @@ msgid "Divorced"
 msgstr "Eronnut"
 
 msgid "Last Online"
-msgstr ""
+msgstr "Viimeksi linjoilla"
 
 msgid "Invite Message"
 msgstr "Kutsuviesti"
@@ -6303,7 +6329,7 @@ msgid "No results"
 msgstr "Ei tuloksia"
 
 msgid "No contacts found."
-msgstr ""
+msgstr "Yhteystietoja ei löytynyt."
 
 #. define columns
 msgid "UserId"
@@ -7088,6 +7114,7 @@ msgid ""
 "You required encryption in your account settings, but one of the servers "
 "doesn't support it."
 msgstr ""
+"Vaadit salausta tilin asetuksissa, mutta yksi palvelimista ei tue sitä."
 
 #. Note to translators: The first %s is a URL, the second is an
 #. error message.
@@ -7096,7 +7123,7 @@ msgid "Error requesting %s: %s"
 msgstr "Virhe pyydettäessä %s: %s"
 
 msgid "The server returned an empty response"
-msgstr ""
+msgstr "Palvelin palautti tyhjän vastauksen"
 
 msgid ""
 "Server requested that you fill out a CAPTCHA in order to sign in, but this "
@@ -7139,18 +7166,18 @@ msgid "Cannot receive IM due to parental controls"
 msgstr ""
 
 msgid "Cannot send SMS without accepting terms"
-msgstr ""
+msgstr "Tekstiviestin lähetys ei onnistu ilman käyttöehtojen hyväksymistä"
 
 msgid "Cannot send SMS"
 msgstr "Tekstiviestin (SMS) lähetys ei onnistu"
 
 #. SMS_WITHOUT_DISCLAIMER is weird
 msgid "Cannot send SMS to this country"
-msgstr ""
+msgstr "Tekstiviestin lähetys tähän maahan ei onnistu"
 
 #. Undocumented
 msgid "Cannot send SMS to unknown country"
-msgstr ""
+msgstr "Tekstiviestin lähetys tuntemattomaan maahan ei onnistu"
 
 msgid "Bot accounts cannot initiate IMs"
 msgstr ""
@@ -10433,20 +10460,25 @@ msgstr ""
 "nimetty uudelleen nimelle %s~."
 
 msgid "Instant Messaging Client"
-msgstr ""
+msgstr "Pikaviestinsovellus"
 
 msgid ""
 "Pidgin is a chat program which lets you log in to accounts on multiple chat "
 "networks simultaneously."
 msgstr ""
+"Pidgin on pikaviestinsovellus, jolla voit kirjautua useisiin eri "
+"keskusteluverkkoihin samanaikaisesti."
 
 msgid ""
 "This means that you can be chatting with friends on MSN, talking to a friend "
 "on Google Talk, and sitting in a Yahoo chat room all at the same time."
 msgstr ""
+"Voit siis keskustella esimerkiksi Googlen ja Microsoftin palveluissa "
+"oleville kavereillesi ja olla samanaikaisesti osallisena Yahoo-"
+"keskusteluhuoneessa."
 
 msgid "The buddy list showing friends on different networks."
-msgstr ""
+msgstr "Kaveriluettelo esittää yhteystiedot eri verkoista."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin-pikaviestin"
@@ -10457,6 +10489,8 @@ msgstr "Pikaviestin"
 msgid ""
 "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
 msgstr ""
+"Keskustele pikaviestinverkoissa. Tuki muun muassa seuraaville palveluille: "
+"AIM, Google Talk, Jabber/XMPP, MSN, Yahoo jne."
 
 #. Build the login options frame.
 msgid "Login Options"
@@ -11185,11 +11219,11 @@ msgstr "_Lempinimi:"
 msgid "_Group:"
 msgstr "_Ryhmä:"
 
-msgid "Auto_join when account connects."
-msgstr "Liity automaattisesti kun käyttä_jätili pääsee linjoille."
+msgid "Automatically _join when account connects"
+msgstr ""
 
-msgid "_Remain in chat after window is closed."
-msgstr "Pysy _ryhmäkeskustelussa ikkunan sulkemisen jälkeen."
+msgid "_Remain in chat after window is closed"
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "Anna lisättävän ryhmän nimi."
@@ -11227,6 +11261,9 @@ msgstr "Kirjoita isäntänimi tälle varmenteelle."
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL-palvelimet"
+
+msgid "Supported debug options are: plugins, version"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "Tuntematon komento."
@@ -11655,7 +11692,7 @@ msgid "Assamese"
 msgstr ""
 
 msgid "Asturian"
-msgstr ""
+msgstr "asturia"
 
 msgid "Belarusian Latin"
 msgstr "valkovenäjä latinalainen"
@@ -11667,6 +11704,9 @@ msgid "Bengali"
 msgstr "bengali"
 
 msgid "Bengali-India"
+msgstr ""
+
+msgid "Breton"
 msgstr ""
 
 msgid "Bodo"
@@ -11725,9 +11765,6 @@ msgstr "persia"
 
 msgid "Finnish"
 msgstr "suomi"
-
-msgid "French"
-msgstr "ranska"
 
 msgid "Irish"
 msgstr "irlanti"
@@ -11806,6 +11843,9 @@ msgstr ""
 
 msgid "Macedonian"
 msgstr "makedonia"
+
+msgid "Malay"
+msgstr ""
 
 msgid "Malayalam"
 msgstr ""
@@ -11926,14 +11966,14 @@ msgstr "kiina (perinteinen)"
 msgid "Amharic"
 msgstr "amhara"
 
+msgid "French"
+msgstr "ranska"
+
 msgid "Armenian"
 msgstr "armenia"
 
 msgid "Lao"
 msgstr "lao"
-
-msgid "Malay"
-msgstr ""
 
 msgid "Turkish"
 msgstr "turkki"
@@ -12612,6 +12652,9 @@ msgstr "_Media"
 msgid "_Hangup"
 msgstr "_Katkaise"
 
+msgid "Media error"
+msgstr "Mediavirhe"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s haluaa aloittaa ääni/videoistunnon kanssasi."
@@ -12622,6 +12665,42 @@ msgstr "%s haluaa aloittaa videoistunnon kanssasi."
 
 msgid "Incoming Call"
 msgstr "Saapuva puhelu"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr "ABC"
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr "DEF"
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr "GHI"
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr "JKL"
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr "MNO"
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr "PQRS"
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr "TUV"
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr "WXYZ"
 
 msgid "_Hold"
 msgstr ""
@@ -13643,7 +13722,7 @@ msgid "Small"
 msgstr "Pienet"
 
 msgid "Smaller versions of the default smileys"
-msgstr ""
+msgstr "Pienemmät versiot oletushymiöistä"
 
 msgid "Response Probability:"
 msgstr "Vastaustodennäköisyys:"
@@ -14147,8 +14226,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Huomautus"
 
+msgid "\t_Notify for System messages"
+msgstr ""
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Vain kun joku sanoo käyttäjänimesi"
+
+msgid "\tNotify for _System messages"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "_Kohdistetuille ikkunoille"
@@ -14180,6 +14265,8 @@ msgid "R_aise conversation window"
 msgstr "N_osta keskusteluikkuna"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "E_sitä keskusteluikkuna"
 
@@ -14811,7 +14898,7 @@ msgid "_Start %s on Windows startup"
 msgstr "_Käynnistä %s Windowsin käynnistyessä"
 
 msgid "Allow multiple instances"
-msgstr ""
+msgstr "Salli useita instansseja"
 
 msgid "_Dockable Buddy List"
 msgstr "_Telakoi tuttavat-ikkuna ruudun reunaan"
@@ -14943,9 +15030,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 
 #. Installer Subsection Text

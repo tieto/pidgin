@@ -58,6 +58,8 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_account_is_status_active@Base 2.2.0
  purple_account_new@Base 2.2.0
  purple_account_notify_added@Base 2.2.0
+ purple_account_prefs_get_ui_ops@Base 2.11.0
+ purple_account_prefs_set_ui_ops@Base 2.11.0
  purple_account_register@Base 2.2.0
  purple_account_remove_buddies@Base 2.2.0
  purple_account_remove_buddy@Base 2.2.0
@@ -473,6 +475,7 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_prefs_get_string@Base 2.2.0
  purple_prefs_get_string_list@Base 2.2.0
  purple_prefs_get_type@Base 2.2.0
+ purple_prefs_get_ui_ops@Base 2.11.0
  purple_prefs_init@Base 2.2.0
  purple_prefs_load@Base 2.2.0
  purple_prefs_remove@Base 2.2.0
@@ -484,7 +487,9 @@ libpurple-client.so.0 libpurple0 #MINVER#
  purple_prefs_set_path_list@Base 2.2.0
  purple_prefs_set_string@Base 2.2.0
  purple_prefs_set_string_list@Base 2.2.0
+ purple_prefs_set_ui_ops@Base 2.11.0
  purple_prefs_trigger_callback@Base 2.2.0
+ purple_prefs_trigger_callback_object@Base 2.11.0
  purple_prefs_uninit@Base 2.2.0
  purple_prefs_update_old@Base 2.2.0
  purple_presence_add_status@Base 2.2.0
@@ -787,6 +792,7 @@ libpurple.so.0 libpurple0 #MINVER#
 * Build-Depends-Package: libpurple-dev
  PURPLE_DBUS_TYPE_PurpleAccount@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleAccountOption@Base 2.2.0
+ PURPLE_DBUS_TYPE_PurpleAccountPrefsUiOps@Base 2.11.0
  PURPLE_DBUS_TYPE_PurpleAccountUiOps@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleAccountUserSplit@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleAttentionType@Base 2.2.0
@@ -806,6 +812,8 @@ libpurple.so.0 libpurple0 #MINVER#
  PURPLE_DBUS_TYPE_PurpleCipherContext@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleCipherOps@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleCircBuffer@Base 2.2.0
+ PURPLE_DBUS_TYPE_PurpleCmd@Base 2.11.0
+ PURPLE_DBUS_TYPE_PurpleCommandsUiOps@Base 2.11.0
  PURPLE_DBUS_TYPE_PurpleConnection@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleConnectionErrorInfo@Base 2.3.0
  PURPLE_DBUS_TYPE_PurpleConnectionUiOps@Base 2.2.0
@@ -860,6 +868,8 @@ libpurple.so.0 libpurple0 #MINVER#
  PURPLE_DBUS_TYPE_PurplePluginProtocolInfo@Base 2.2.0
  PURPLE_DBUS_TYPE_PurplePluginUiInfo@Base 2.2.0
  PURPLE_DBUS_TYPE_PurplePounce@Base 2.2.0
+ PURPLE_DBUS_TYPE_PurplePrefCallbackData@Base 2.11.0
+ PURPLE_DBUS_TYPE_PurplePrefsUiOps@Base 2.11.0
  PURPLE_DBUS_TYPE_PurplePresence@Base 2.2.0
  PURPLE_DBUS_TYPE_PurplePrivacyUiOps@Base 2.2.0
  PURPLE_DBUS_TYPE_PurpleProxyConnectData@Base 2.2.0
@@ -991,6 +1001,8 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_account_option_set_list@Base 2.2.0
  purple_account_option_set_masked@Base 2.2.0
  purple_account_option_string_new@Base 2.2.0
+ purple_account_prefs_get_ui_ops@Base 2.11.0
+ purple_account_prefs_set_ui_ops@Base 2.11.0
  purple_account_register@Base 2.2.0
  purple_account_remove_buddies@Base 2.2.0
  purple_account_remove_buddy@Base 2.2.0
@@ -1269,12 +1281,15 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_circ_buffer_mark_read@Base 2.2.0
  purple_circ_buffer_new@Base 2.2.0
  purple_cmd_do_command@Base 2.2.0
+ purple_cmd_execute@Base 2.11.0
  purple_cmd_help@Base 2.2.0
  purple_cmd_list@Base 2.2.0
  purple_cmd_register@Base 2.2.0
  purple_cmd_unregister@Base 2.2.0
  purple_cmds_get_handle@Base 2.5.0
+ purple_cmds_get_ui_ops@Base 2.11.0
  purple_cmds_init@Base 2.5.0
+ purple_cmds_set_ui_ops@Base 2.11.0
  purple_cmds_uninit@Base 2.5.0
  purple_connection_destroy@Base 2.2.0
  purple_connection_error@Base 2.2.0
@@ -1974,6 +1989,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_prefs_get_string@Base 2.2.0
  purple_prefs_get_string_list@Base 2.2.0
  purple_prefs_get_type@Base 2.2.0
+ purple_prefs_get_ui_ops@Base 2.11.0
  purple_prefs_init@Base 2.2.0
  purple_prefs_load@Base 2.2.0
  purple_prefs_remove@Base 2.2.0
@@ -1986,7 +2002,9 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_prefs_set_path_list@Base 2.2.0
  purple_prefs_set_string@Base 2.2.0
  purple_prefs_set_string_list@Base 2.2.0
+ purple_prefs_set_ui_ops@Base 2.11.0
  purple_prefs_trigger_callback@Base 2.2.0
+ purple_prefs_trigger_callback_object@Base 2.11.0
  purple_prefs_uninit@Base 2.2.0
  purple_prefs_update_old@Base 2.2.0
  purple_presence_add_list@Base 2.2.0
@@ -2461,6 +2479,7 @@ libpurple.so.0 libpurple0 #MINVER#
  purple_util_chrreplace@Base 2.2.0
  purple_util_fetch_url_cancel@Base 2.2.0
  purple_util_fetch_url_request@Base 2.2.0
+ purple_util_fetch_url_request_data_len_with_account@Base 2.11.0
  purple_util_fetch_url_request_len@Base 2.5.0
  purple_util_fetch_url_request_len_with_account@Base 2.6.0
  purple_util_format_song_info@Base 2.4.0

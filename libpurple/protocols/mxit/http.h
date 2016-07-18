@@ -35,11 +35,11 @@ struct http_request
 	char*					host;
 	int						port;
 	char*					data;
-	int						datalen;
+	size_t					datalen;
 };
 
 
-void mxit_http_send_request( struct MXitSession* session, char* host, int port, const char* data, int datalen );
+void mxit_http_send_request( struct MXitSession* session, char* host, int port, gchar* header, const char* data, size_t datalen );
 
 
 
