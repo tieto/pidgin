@@ -1208,6 +1208,26 @@ pidgin_media_new_cb(PurpleMediaManager *manager, PurpleMedia *media,
 	return TRUE;
 }
 
+static void
+videosink_disable_last_sample(GstElement *sink)
+{
+	GObjectClass *klass = G_OBJECT_GET_CLASS(sink);
+
+	if (g_object_class_find_property(klass, "enable-last-sample")) {
+		g_object_set(sink, "enable-last-sample", FALSE, NULL);
+	}
+}
+
+static void
+autovideosink_child_added_cb (GstChildProxy *child_proxy, GObject *object,
+#if GST_CHECK_VERSION(1,0,0)
+		gchar *name,
+#endif
+		gpointer user_data)
+{
+	videosink_disable_last_sample(GST_ELEMENT(object));
+}
+
 static GstElement *
 create_default_video_src(PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
@@ -1260,6 +1280,9 @@ create_default_video_sink(PurpleMedia *media,
 	if (sink == NULL)
 		purple_debug_error("gtkmedia", "Unable to find a suitable "
 				"element for the default video sink.\n");
+	if (sink != NULL)
+		g_signal_connect(sink, "child-added",
+				G_CALLBACK(autovideosink_child_added_cb), NULL);
 	return sink;
 }
 

@@ -4,6 +4,14 @@ pidgin (3.0.0-1) UNRELEASED; urgency=medium
 
  -- Jakub Adam <jakub.adam@ktknet.cz>  Thu, 13 Mar 2014 22:18:09 +0100
 
+pidgin (2.11.0-1) unstable; urgency=high
+
+  * Update description (Closes: #561624)
+  * Imported Upstream version 2.11.0
+    * Fixes many security issues in MXit
+
+ -- Ari Pollak <ari@debian.org>  Sun, 19 Jun 2016 14:25:31 -0400
+
 pidgin (2.10.12-1) unstable; urgency=low
 
   [ Peter Spiess-Knafl ]
@@ -27,7 +35,7 @@ pidgin (2.10.11-1.1) unstable; urgency=medium
       + replace gstreamer0.10-ffmpeg with gstreamer1.0-libav
 
   [ Ari Pollak ]
-  * Add gstreamer0.10-pulseaudio as alternative to gstreamer0.10-alsa 
+  * Add gstreamer0.10-pulseaudio as alternative to gstreamer0.10-alsa
     in Recommends (Closes: #772116)
 
   [ Sebastian Dröge ]
@@ -349,7 +357,7 @@ pidgin (2.7.0-1) unstable; urgency=medium
 pidgin (2.6.6-2) unstable; urgency=low
 
   * debian/patches/oscar_login.patch:
-    - Fix login problems in AIM/ICQ (Closes: #571413) 
+    - Fix login problems in AIM/ICQ (Closes: #571413)
 
  -- Ari Pollak <ari@debian.org>  Thu, 25 Feb 2010 10:28:42 -0500
 
@@ -376,14 +384,14 @@ pidgin (2.6.5-1) unstable; urgency=low
   * New upstream release
   * debian/patches/CVE-2010-0013.patch:
     - Fix MSN local file disclosure vulnerability (Closes: #563206)
-      (CVE-2010-0013) 
+      (CVE-2010-0013)
 
  -- Ari Pollak <ari@debian.org>  Sat, 09 Jan 2010 14:13:53 -0500
 
 pidgin (2.6.4-1) unstable; urgency=low
 
   * New upstream release
-  * Convert to source format 3.0 (quilt), no patches necessary yet 
+  * Convert to source format 3.0 (quilt), no patches necessary yet
 
  -- Ari Pollak <ari@debian.org>  Sat, 21 Nov 2009 22:10:11 -0500
 
@@ -412,7 +420,7 @@ pidgin (2.6.1-2) unstable; urgency=low
 
 pidgin (2.6.1-1) experimental; urgency=low
 
-  * Put into experimental so we don't disturb 2.5.9's migration into testing 
+  * Put into experimental so we don't disturb 2.5.9's migration into testing
   * New upstream release (Closes: #542311)
     - Fixes hurd FTBFS (Closes: #530893)
     - Supports auto-join in XMPP (Closes: #462250)
@@ -595,7 +603,7 @@ pidgin (2.4.0-2) unstable; urgency=low
     - Add patch from upstream to prevent crash in Zephyr when reading
       accounts.xml file (Closes: #470947)
   * debian/patches/23_empty-edit.patch:
-    - Add patch from upstream to prevent an invisible edit box in 
+    - Add patch from upstream to prevent an invisible edit box in
       message windows (Closes: #471365)
   * debian/patches/24_debian-gconf.patch:
     - Fix an earlier screwup where we set /pidgin/browsers/command in
@@ -971,7 +979,7 @@ gaim (1:2.0.0+beta4-4) unstable; urgency=medium
       it to dbus.
       (Closes: #394555, #395520)
   * 07_delete-account-crash.patch:
-    - Add patch to fix crashies when deleting an Enabled account and then 
+    - Add patch to fix crashies when deleting an Enabled account and then
       either exiting or setting the status to Available.
 
  -- Ari Pollak <ari@debian.org>  Sat,  4 Nov 2006 11:01:15 -0500
@@ -1513,7 +1521,7 @@ gaim (1:1.1.0-2) experimental; urgency=low
 
   * debian/gaim-dev.install:
     - added development files
-  
+
   * debian/gaim-dev.manpages:
     - added debian/dh_gaim.1, generated in debian/rules
 
@@ -1560,7 +1568,7 @@ gaim (1:1.0.3-1) unstable; urgency=low
 gaim (1:1.0.2-1) unstable; urgency=high
 
   * New upstream version, fixes a security hole in MSN.
-  
+
   * debian/control:
     - Add bzip2 to build-deps since the included tarball is now in bz2 format
 
@@ -2188,7 +2196,7 @@ gaim (1:0.59.7-1) unstable; urgency=medium
      offline.                                           (closes: #175442)
   * Replaced invasive automatic config.{guess,sub} updating from
      debian/rules and replaced with much saner symlinking method.
-  * Murdered pallet of gaim-menu.xpm (for the Debian menu entry) 
+  * Murdered pallet of gaim-menu.xpm (for the Debian menu entry)
      according to the idotic menu policy, to shut lintian up.
   * This release is from the upstream 'gtk1-stable' branch. If you like
      Gtk2, or use GNOME 2 or KDE 3.1, please consider trying my Gaim CVS
@@ -2210,9 +2218,9 @@ gaim (1:0.59.7-1) unstable; urgency=medium
 
 gaim (1:0.59.6-1) unstable; urgency=low
 
-  * New upstream version. Fixes gigantic timestamp font in Jabber group 
+  * New upstream version. Fixes gigantic timestamp font in Jabber group
      chats.                                             (closes: #167153)
-  * Include patch from CVS to fix Yahoo! i18n issues (hopefully) and 
+  * Include patch from CVS to fix Yahoo! i18n issues (hopefully) and
      crashes due to protocol changes.          (closes: #160347, #166505)
 
  -- Robert McQueen <robot101@debian.org>  Sun, 24 Nov 2002 06:01:09 +0000
@@ -2230,7 +2238,7 @@ gaim (1:0.59.5-1) unstable; urgency=low
      contained most of the fixes that went into 0.59.4, I didn't bother
      packaging it. The only changes to 0.59.5 are to fix a crash in the
      Yahoo plugin due to a slight change in the protocol.
-  * Updated config.sub from 20020621 to 20020905 and config.guess from 
+  * Updated config.sub from 20020621 to 20020905 and config.guess from
      20020529 to 20020903.
 
  -- Robert McQueen <robot101@debian.org>  Fri, 25 Oct 2002 02:42:12 +0100
@@ -2389,9 +2397,9 @@ gaim (1:0.57-2) unstable; urgency=high
 
   * The 'Ahh... phew' release. One or two patches from CVS.
   * Fixes segfault DOS in TOC protocol code.            (closes: #144318)
-  * Returns iconaway.so to gaim-common, the gnome/non-gnome dependent 
+  * Returns iconaway.so to gaim-common, the gnome/non-gnome dependent
      code has been moved to the binary itself.
-  * High priority to reach woody with these fixes, and the fix in 0.57 
+  * High priority to reach woody with these fixes, and the fix in 0.57
      for Yahoo's new authorisation method.
 
  -- Robert McQueen <robot101@debian.org>  Sun, 28 Apr 2002 16:54:18 +0100
@@ -2401,7 +2409,7 @@ gaim (1:0.57-1) unstable; urgency=low
   * The 'You did WHAT with configure.ac?!?' release.
   * New upstream version. Adds an evil autoconf hack upstream, support
      for Yahoo's new authorisation method, new keyboard shortcuts,
-     hashed secure logins for Hotmail from your MSN account, and various 
+     hashed secure logins for Hotmail from your MSN account, and various
      translations and Jabber improvements.
 
  -- Robert McQueen <robot101@debian.org>  Fri, 26 Apr 2002 17:09:18 +0100
@@ -2411,7 +2419,7 @@ gaim (1:0.56-1) unstable; urgency=low
   * The 'Hola from Tenerife!' release.
   * New upstream version. Signal patch merged. Various bugfixes, and the
      much-awaited send history finally appears.
-  * Automatic update of config.sub from 20010420 to 20020307, and 
+  * Automatic update of config.sub from 20010420 to 20020307, and
      config.guess from 20010420 to 20020320.
 
  -- Robert McQueen <robot101@debian.org>  Sat, 13 Apr 2002 18:40:05 +0100
@@ -2443,7 +2451,7 @@ gaim (1:0.55-1) unstable; urgency=low
 
 gaim (1:0.54-6) unstable; urgency=low
 
-  * Updated gaimrc.c to recognise the option for the new Command sound 
+  * Updated gaimrc.c to recognise the option for the new Command sound
      method so it doesn't override it at loadup.        (closes: #139253)
 
  -- Robert McQueen <robot101@debian.org>  Thu, 21 Mar 2002 13:01:42 +0000
@@ -2513,7 +2521,7 @@ gaim (1:0.54-1) unstable; urgency=medium
      runtime configurable (unlike irc-extras), actually useful (unlike
      the one to arbitrarily change your idle time), and build against
      the latest Gaim.
-  * Include the licq2gaim.pl buddy list import script in the examples 
+  * Include the licq2gaim.pl buddy list import script in the examples
      dir in gaim-common.
 
  -- Robert McQueen <robot101@debian.org>  Sat, 16 Mar 2002 18:47:07 +0000
@@ -2525,7 +2533,7 @@ gaim (1:0.53-2) unstable; urgency=low
      - closing a conversation window when a buddy is typing doesn't
        cause a crash       [debian/patches/close-typing-buddy-crash.diff]
      - server-side buddy lists are disabled for ICQ over Oscar to avoid
-       mysterious bugs with authentication-required buddies not 
+       mysterious bugs with authentication-required buddies not
        appearing on-line             [debian/patches/no-ssi-for-icq.diff]
      - Gaim doesn't fork and uses gdk_beep() for console beeps
               [debian/patches/non-forked-gdk-beep.diff] (closes: #136165)
@@ -2567,7 +2575,7 @@ gaim (1:0.51-2) unstable; urgency=low
 
   * Fixed description of gaim-gnome to make it obvious that it is a
      panel applet.
-  * Made gaim-gnome depend on gnome-panel. It's unreasonable to request 
+  * Made gaim-gnome depend on gnome-panel. It's unreasonable to request
      that libpanel-applet0 does so, but gaim-gnome is useless without
      it.                                                (closes: #131233)
 
@@ -2876,7 +2884,7 @@ gaim (19990227-1) unstable; urgency=low
 
 gaim (19981231-1) unstable; urgency=low
 
-  * New upstream version. 
+  * New upstream version.
 
  -- Robert S. Edmonds <stu@novare.net>  Thu, 31 Dec 1998 14:06:14 -0500
 

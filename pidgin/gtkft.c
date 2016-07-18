@@ -504,7 +504,9 @@ open_button_cb(GtkButton *button, PidginXferDialog *dialog)
 	}
 	else
 	{
-		purple_notify_uri(NULL, filename);
+		gchar *uri = g_strdup_printf("file://%s", filename);
+		purple_notify_uri(NULL, uri);
+		g_free(uri);
 		return;
 	}
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"POT-Creation-Date: 2016-06-15 23:24-0500\n"
 "PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Irish (http://www.transifex.com/projects/p/pidgin/language/"
@@ -1498,6 +1498,7 @@ msgstr "Deir duine éigin rud éigin i gcomhrá"
 msgid "Someone says your name in a chat"
 msgstr "Deir duine éigin d'ainm i gcomhrá"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Cuir in iúl dom le tóstaer nuair"
 
@@ -1510,6 +1511,7 @@ msgstr "Socraigh \"URGENT\" i bhfuinneog an teirminéil."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Breiseán Toaster"
 
@@ -2255,6 +2257,27 @@ msgstr "<font color=\"red\"><b>Níorbh fhéidir an comhad a léamh: %s</b></font
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <UATH-FHREAGRA>: %s\n"
 
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr "Teachtaireacht ó %s"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+#, fuzzy
+msgid "Network error."
+msgstr "Líonra"
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
@@ -2267,6 +2290,10 @@ msgid ""
 msgstr ""
 "Níl aon codec-anna fágtha. Tá do chuid sainroghanna i fs-codecs.conf ró-"
 "dhocht."
+
+#, fuzzy
+msgid "Could not connect to the remote party"
+msgstr "Níl tú ceangailte leis an bhfreastalaí"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Tharla earráid dhocheartaithe in Farsight2."
@@ -11447,10 +11474,12 @@ msgstr "_Leasainm:"
 msgid "_Group:"
 msgstr "_Grúpa:"
 
-msgid "Auto_join when account connects."
+#, fuzzy
+msgid "Automatically _join when account connects"
 msgstr "Glac _páirt go huathoibríoch nuair a cheanglaíonn cuntas."
 
-msgid "_Remain in chat after window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed"
 msgstr "_Fan sa chomhrá tar éis go ndúntar an fhuinneog."
 
 msgid "Please enter the name of the group to be added."
@@ -11489,6 +11518,10 @@ msgstr "Cuir isteach an t-óstainm a bhaineann leis an teastas seo."
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Freastalaithe SSL"
+
+#, fuzzy
+msgid "Supported debug options are: plugins, version"
+msgstr "Roghanna dífhabhtaithe a dtacaítear leo: plugins version"
 
 msgid "Unknown command."
 msgstr "Ordú anaithnid."
@@ -11938,6 +11971,9 @@ msgstr "Beangáilis"
 msgid "Bengali-India"
 msgstr "Beangáilis-An India"
 
+msgid "Breton"
+msgstr ""
+
 msgid "Bodo"
 msgstr ""
 
@@ -11994,9 +12030,6 @@ msgstr "Peirsis"
 
 msgid "Finnish"
 msgstr "Fionlainnis"
-
-msgid "French"
-msgstr "Fraincis"
 
 msgid "Irish"
 msgstr "Gaeilge"
@@ -12075,6 +12108,9 @@ msgstr "Mairí Móinéir"
 
 msgid "Macedonian"
 msgstr "Macadóinis"
+
+msgid "Malay"
+msgstr "Malaeis"
 
 msgid "Malayalam"
 msgstr "Mailéalaimis"
@@ -12195,14 +12231,14 @@ msgstr "Sínis Traidisiúnta"
 msgid "Amharic"
 msgstr "Amáiris"
 
+msgid "French"
+msgstr "Fraincis"
+
 msgid "Armenian"
 msgstr "Airméinis"
 
 msgid "Lao"
 msgstr "Láóis"
-
-msgid "Malay"
-msgstr "Malaeis"
 
 msgid "Turkish"
 msgstr "Tuircis"
@@ -12906,6 +12942,10 @@ msgstr "_Meáin"
 msgid "_Hangup"
 msgstr "_Croch Suas"
 
+#, fuzzy
+msgid "Media error"
+msgstr "Earráid léimh"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "Ba mhaith le %s seisiún fuaime/físe a thosú leat."
@@ -12916,6 +12956,42 @@ msgstr "Ba mhaith le %s seisiún físe a thosú leat."
 
 msgid "Incoming Call"
 msgstr "Glao Isteach"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr ""
 
 msgid "_Hold"
 msgstr "_Cuir ar feitheamh"
@@ -14466,8 +14542,16 @@ msgstr ""
 msgid "Notify For"
 msgstr "Cuir in iúl dom"
 
+#, fuzzy
+msgid "\t_Notify for System messages"
+msgstr "Teachtaireachtaí Córais"
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Nuair a deir duine éigin d'ainm úsáideora amháin"
+
+#, fuzzy
+msgid "\tNotify for _System messages"
+msgstr "Teachtaireachtaí Córais"
 
 msgid "_Focused windows"
 msgstr "_Fuinneoga i bhfócas"
@@ -14499,6 +14583,8 @@ msgid "R_aise conversation window"
 msgstr "_Ardaigh fuinneog an chomhrá"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_Taispeáin fuinneog an chomhrá"
 
@@ -15268,10 +15354,10 @@ msgstr ""
 "Ní féidir an leagan de Pidgin atá ann faoi láthair a dhíshuiteáil. "
 "Suiteálfar an leagan nua gan an seanleagan a dhíshuiteáil."
 
+#, fuzzy
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "Teastaíonn leabharlann ama rite GTK+ ó Phidgin (agus níl a leithéid ann de "
 "réir cosúlachta).$\\rAn bhfuil tú cinnte nár mhaith leat an leabharlann ama "

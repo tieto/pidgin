@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"POT-Creation-Date: 2016-06-15 23:24-0500\n"
 "PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Burmese (Myanmar) (http://www.transifex.com/projects/p/pidgin/"
@@ -1463,6 +1463,7 @@ msgstr "စကားပြောခန်းတွင် လူတ​စ်ယ�
 msgid "Someone says your name in a chat"
 msgstr "တစုံတဦးသည် သင့်အမည်ကို စကားပြောခန်း၌ ​ပြောနေသည်"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Toaster ဖြင့် အသိပေးမည့် အချိန်"
 
@@ -1475,6 +1476,7 @@ msgstr "Terminal ၀င်းဒိုးအတွက် URGENT ကို သတ
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Toaster ပလပ်အင်"
 
@@ -2196,6 +2198,27 @@ msgstr "<font color=\"red\"><b>ဖတ်မရသော ဖိုင် - %s</b>
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <အလိုအလျောက်-အကြောင်းပြန်ကြားချက်> - %s\n"
 
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr "%s ထံမှ ပေးစာ"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+#, fuzzy
+msgid "Network error."
+msgstr "ကွန်ရက်"
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
@@ -2205,6 +2228,10 @@ msgstr ""
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr "codecs မကျန်ပါ။ fs-codecs.conf ရှိ သင့် ဦးစားပေးချက်များသည် စည်းကြပ်လွန်းသည်။ "
+
+#, fuzzy
+msgid "Could not connect to the remote party"
+msgstr "ဆာဗာကို ဆက်သွယ်မထားပါ"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "ပြန်လည်ပြင်ယူရန် မဖြစ်နိုင်သော Farsight2 ချို့ယွင်းမှု ဖြစ်ပေါ်ခဲ့သည်။"
@@ -10996,10 +11023,12 @@ msgstr "_L အမည်ကွဲ -"
 msgid "_Group:"
 msgstr "_G အုပ်စု -"
 
-msgid "Auto_join when account connects."
+#, fuzzy
+msgid "Automatically _join when account connects"
 msgstr "_J အကောင့် ဆက်သွယ်မိသည်နှင့် အလိုအလျောက် ၀င်ရောက်သည်။"
 
-msgid "_Remain in chat after window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed"
 msgstr "_R ဝင်းဒိုး ပိတ်သွားပြီးနောက် စကားပြောခန်း၌ ကျန်ရစ်ရန်။"
 
 msgid "Please enter the name of the group to be added."
@@ -11038,6 +11067,10 @@ msgstr "ဤအသိအမှတ်ပြုလွှာအတွက် host အ
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL ဆာဗာများ"
+
+#, fuzzy
+msgid "Supported debug options are: plugins, version"
+msgstr "ထောက်ပံ့ထားသော အမှားပြင်ဆင်မှု ရွေးစရာများမှာ - ပလပ်အင် ဗားရှင်း"
 
 msgid "Unknown command."
 msgstr "အမည်မသိ ညွှန်ကြားချက်။"
@@ -11476,6 +11509,9 @@ msgstr "ဘင်္ဂါလီ"
 msgid "Bengali-India"
 msgstr "ဘင်္ဂါလီ-အိန္ဒိယ"
 
+msgid "Breton"
+msgstr ""
+
 msgid "Bodo"
 msgstr ""
 
@@ -11532,9 +11568,6 @@ msgstr "ပါရှန်"
 
 msgid "Finnish"
 msgstr "ဖှင်နစ်ရှ်"
-
-msgid "French"
-msgstr "ပြင်သစ်"
 
 msgid "Irish"
 msgstr "အိုင်းရစ်"
@@ -11613,6 +11646,9 @@ msgstr "မယ်ဒို မာရီ"
 
 msgid "Macedonian"
 msgstr "မာစီဒိုနီယန်း"
+
+msgid "Malay"
+msgstr "မလေး"
 
 msgid "Malayalam"
 msgstr "မာလာယာလမ်"
@@ -11733,14 +11769,14 @@ msgstr "ရိုးရာ တရုတ်စာ"
 msgid "Amharic"
 msgstr "အမ်ဟာရစ်"
 
+msgid "French"
+msgstr "ပြင်သစ်"
+
 msgid "Armenian"
 msgstr "အာမေးနီးယန်း"
 
 msgid "Lao"
 msgstr "လော"
-
-msgid "Malay"
-msgstr "မလေး"
 
 msgid "Turkish"
 msgstr "တားရ်ကစ်ရှ်"
@@ -12409,6 +12445,10 @@ msgstr "_M မီဒီယာ"
 msgid "_Hangup"
 msgstr "_H ရပ်ထားသည်"
 
+#, fuzzy
+msgid "Media error"
+msgstr "ဖတ်ရှုခြင်း ချို့ယွင်းချက်"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s သည် သင့်နှင့်အတူ အသံ/ရုပ်သံ အစီအစဉ်ကို စတင်လုပ်ဆောင်ရန် အလိုရှိသည်။"
@@ -12419,6 +12459,42 @@ msgstr "%s သည် သင့်နှင့်အတူ ရုပ်သံ အ
 
 msgid "Incoming Call"
 msgstr "အဝင် ခေါ်ဆိုမှု"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr ""
 
 msgid "_Hold"
 msgstr "_H ခဏစောင့်ရန်"
@@ -13918,8 +13994,16 @@ msgstr "တေးဂီတ ပေးပို့သော ပလပ်အင်�
 msgid "Notify For"
 msgstr "အသိပေးရန်"
 
+#, fuzzy
+msgid "\t_Notify for System messages"
+msgstr "စက် ​ပေးစာများ"
+
 msgid "\t_Only when someone says your username"
 msgstr "_O \t တစ်ယောက်ယောက်သည် သင့်အမည်ကို ခေါ်သည့် အခါ၌သာ"
+
+#, fuzzy
+msgid "\tNotify for _System messages"
+msgstr "စက် ​ပေးစာများ"
 
 msgid "_Focused windows"
 msgstr "_F ဦးတည်နေသော ဝင်းဒိုးများ"
@@ -13951,6 +14035,8 @@ msgid "R_aise conversation window"
 msgstr "_A စကားပြောဆိုမှု ဝင်းဒိုးကို မြှင့်တင်ပါ"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_P လက်ရှိ စကားပြောဆိုမှု ဝင်းဒိုး"
 
@@ -14706,10 +14792,10 @@ msgstr ""
 "လက်ရှိ သွင်းထားသော Pidgin ဗားရှင်းကို ဖယ်ထုတ်၍ မရပါ။ လက်ရှိ သွင်းထားသော ဗားရှင်းကို မဖယ်ရှားပဲ "
 "ဗာရှင်းအသစ်ကို ထည့်သွင်းသွားမည်။"
 
+#, fuzzy
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "Pidgin သည် လိုက်ဖက်သော GTK+ Runtime (လောလောဆယ် ရှိနေသည့် ပုံမပေါ်ပါ) တစ်ခု လိုအပ်နေသည်။ .$\\r "
 "GTK+ Runtime ထည့်သွင်းမှုကို ကျော်သွားလိုသလား?"

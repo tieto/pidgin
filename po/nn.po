@@ -3,18 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Alexander Jansen <bornxlo@gmail.com>, 2015
+# Alexander Jansen <bornxlo@gmail.com>, 2015
 # Richard Laager <rlaager@wiktel.com>, 2014
-# Yngve Spjeld Landro <l10n@landro.net>, 2011-2013
+# Yngve Spjeld Landro <l10n@landro.net>, 2011-2013,2016
 # Yngve Spjeld Landro <l10n@landro.net>, 2012-2013
 # Yngve Spjeld Landro <l10n@landro.net>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-22 10:22-0800\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Norwegian Nynorsk (http://www.transifex.com/projects/p/pidgin/"
+"POT-Creation-Date: 2016-06-15 23:16-0500\n"
+"PO-Revision-Date: 2016-06-12 14:23+0000\n"
+"Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
+"Language-Team: Norwegian Nynorsk (http://www.transifex.com/pidgin/pidgin/"
 "language/nn/)\n"
 "Language: nn\n"
 "MIME-Version: 1.0\n"
@@ -1486,6 +1488,7 @@ msgstr "Nokon talar i eit praterom"
 msgid "Someone says your name in a chat"
 msgstr "Nokon seier namnet ditt i eit praterom"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Varsla med eit sprettoppvindauge når"
 
@@ -1498,6 +1501,7 @@ msgstr "Merk terminalvindauget som VIKTIG."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Programtillegg for sprettoppvindauge"
 
@@ -1785,7 +1789,7 @@ msgid "Certificate Information"
 msgstr "Sertifikatopplysningar"
 
 msgid "Unable to find Issuer Certificate"
-msgstr ""
+msgstr "Finn ikkje utferdarsertifikat"
 
 #. Make messages
 #, c-format
@@ -1799,12 +1803,20 @@ msgid ""
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
+"Namn: %s\n"
+"\n"
+"Utgitt av: %s\n"
+"\n"
+"Fingeravtrykk (SHA1): %s\n"
+"\n"
+"Aktiveringsdato: %s\n"
+"Utløpsdato: %s\n"
 
 msgid "(self-signed)"
-msgstr ""
+msgstr "(sjølvsignert)"
 
 msgid "View Issuer Certificate"
-msgstr ""
+msgstr "Sjå på utferdarsertifikat"
 
 #. show error to user
 msgid "Registration Error"
@@ -2239,6 +2251,32 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+"\n"
+"\n"
+"Melding frå Farsight: "
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+"Klarte ikkje å starta samtalen. Dette er sannsynlegvis grunna eit problem "
+"ved installasjonen av GStreamer eller Farsight. "
+
+msgid "Network error."
+msgstr "Nettverksfeil."
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+"Kodek-spørjinga feila. Problemet vert kanskje løyst ved å installera fleire "
+"GStreamer-kodekar."
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2250,6 +2288,9 @@ msgid ""
 msgstr ""
 "Ingen kodekar igjen. Kodek-innstillingane dine i fs-codecs.conf er for "
 "strenge."
+
+msgid "Could not connect to the remote party"
+msgstr "Klarte ikkje å kopla til fjerneininga"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Det oppstod ein uoppretteleg Farsight2-feil."
@@ -2867,38 +2908,38 @@ msgid "Tests to see that most things are working."
 msgstr "Testar om dei fleste tinga verkar som dei skal."
 
 msgid "TLS/SSL Versions"
-msgstr ""
+msgstr "TLS/SSL-utgåver"
 
 msgid "Minimum Version"
-msgstr ""
+msgstr "Minsteversjon"
 
 msgid "Maximum Version"
-msgstr ""
+msgstr "Største versjon"
 
 msgid "SSL 2"
-msgstr ""
+msgstr "SSL 2"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "SSL 3"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "TLS 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "TLS 1.1"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "TLS 1.2"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "TLS 1.3"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
-msgstr ""
+msgstr "Ikkje støtta i NSS < 3.14"
 
 msgid "Ciphers"
-msgstr ""
+msgstr "Krypteringsmetodar"
 
 #. *< type
 #. *< ui_requirement
@@ -2907,7 +2948,7 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "NSS Preferences"
-msgstr ""
+msgstr "NSS-val"
 
 #. *< name
 #. *< version
@@ -2915,6 +2956,8 @@ msgstr ""
 #. *  description
 msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
 msgstr ""
+"Konfigurer krypteringsmetodar og andre innstillingar for programtillegget "
+"NSS SSL/TLS"
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -5908,7 +5951,7 @@ msgstr "Klarte ikkje å autentisera: %s"
 
 #, c-format
 msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
+msgstr "MSN-vennen din er mellombels utilgjengeleg; %s"
 
 msgid "Handshaking"
 msgstr "Protokollsjekk"
@@ -10453,20 +10496,24 @@ msgstr ""
 "gamle fila har fått det nye namnet %s~."
 
 msgid "Instant Messaging Client"
-msgstr ""
+msgstr "Lynmeldingsklient"
 
 msgid ""
 "Pidgin is a chat program which lets you log in to accounts on multiple chat "
 "networks simultaneously."
 msgstr ""
+"Pidgin er eit prateprogram som let deg logge på konti frå fleire "
+"pratenettverk samstundes."
 
 msgid ""
 "This means that you can be chatting with friends on MSN, talking to a friend "
 "on Google Talk, and sitting in a Yahoo chat room all at the same time."
 msgstr ""
+"Dette tyder at du kan prate med venner på MSN, prate med ein venn i Google "
+"Talk, og sitte i eit Yahoo-praterom samstundes."
 
 msgid "The buddy list showing friends on different networks."
-msgstr ""
+msgstr "Vennelista viser venner på ulike nettverk."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internett meldingsklient"
@@ -11203,11 +11250,11 @@ msgstr "Kall_enamn:"
 msgid "_Group:"
 msgstr "_Gruppe:"
 
-msgid "Auto_join when account connects."
-msgstr "Bli automatisk _med når kontoen koplar seg til."
+msgid "Automatically _join when account connects"
+msgstr "Vert automatisk _med når kontoane koplar seg saman"
 
-msgid "_Remain in chat after window is closed."
-msgstr "_Hald fram i praten etter at vindauget er lukka."
+msgid "_Remain in chat after window is closed"
+msgstr "Vert _verande i samtalen etter at vindauget er lukka"
 
 msgid "Please enter the name of the group to be added."
 msgstr "Skriv inn namnet på gruppa du ønskjer å leggja til."
@@ -11245,6 +11292,9 @@ msgstr "Skriv inn vertsnamnet til dette sertifikatet."
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL-tenarar"
+
+msgid "Supported debug options are: plugins, version"
+msgstr "Dei støtta feilsøkingsvala er: plugins, version"
 
 msgid "Unknown command."
 msgstr "Ukjend kommando."
@@ -11687,8 +11737,11 @@ msgstr "Bengali"
 msgid "Bengali-India"
 msgstr "Bengali (India)"
 
+msgid "Breton"
+msgstr "Bretonsk"
+
 msgid "Bodo"
-msgstr ""
+msgstr "Bodo"
 
 msgid "Bosnian"
 msgstr "Bosnisk"
@@ -11730,7 +11783,7 @@ msgid "Spanish"
 msgstr "Spansk"
 
 msgid "Argentine Spanish"
-msgstr ""
+msgstr "Argentinsk spansk"
 
 msgid "Estonian"
 msgstr "Estisk"
@@ -11743,9 +11796,6 @@ msgstr "Persisk"
 
 msgid "Finnish"
 msgstr "Finsk"
-
-msgid "French"
-msgstr "Fransk"
 
 msgid "Irish"
 msgstr "Irsk"
@@ -11802,13 +11852,13 @@ msgid "Korean"
 msgstr "Koreansk"
 
 msgid "Kashmiri"
-msgstr ""
+msgstr "Kashmiri"
 
 msgid "Kurdish"
 msgstr "Kurdisk"
 
 msgid "Kurdish (Sorani)"
-msgstr ""
+msgstr "Kurdisk (Sorani)"
 
 msgid "Lithuanian"
 msgstr "Litauisk"
@@ -11824,6 +11874,9 @@ msgstr "Aust-marisk"
 
 msgid "Macedonian"
 msgstr "Makedonsk"
+
+msgid "Malay"
+msgstr "Malayisk"
 
 msgid "Malayalam"
 msgstr "Malayalam"
@@ -11877,7 +11930,7 @@ msgid "Russian"
 msgstr "Russisk"
 
 msgid "Sindhi"
-msgstr ""
+msgstr "Sindhi"
 
 msgid "Slovak"
 msgstr "Slovakisk"
@@ -11922,12 +11975,12 @@ msgid "Urdu"
 msgstr "Urdu"
 
 msgid "Uzbek"
-msgstr ""
+msgstr "Usbekisk"
 
 #. Translators: This is a person's name. For most languages we recommend
 #. not translating it.
 msgid "Akmal Khushvakov"
-msgstr ""
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "Vietnamesisk"
@@ -11944,14 +11997,14 @@ msgstr "Tradisjonell kinesisk"
 msgid "Amharic"
 msgstr "Amharisk"
 
+msgid "French"
+msgstr "Fransk"
+
 msgid "Armenian"
 msgstr "Armensk"
 
 msgid "Lao"
 msgstr "Lao"
-
-msgid "Malay"
-msgstr "Malayisk"
 
 msgid "Turkish"
 msgstr "Tyrkisk"
@@ -12642,6 +12695,9 @@ msgstr "_Media"
 msgid "_Hangup"
 msgstr "_Legg på"
 
+msgid "Media error"
+msgstr "Mediefeil"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s ønskjer å starta ei lyd-/biletøkt med deg."
@@ -12652,6 +12708,42 @@ msgstr "%s ønskjer å starta ei biletøkt med deg."
 
 msgid "Incoming Call"
 msgstr "Innkomande samtale"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr "ABC"
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr "DEF"
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr "GHI"
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr "JKL"
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr "MNO"
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr "PQRS"
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr "TUV"
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr "WXYZ"
 
 msgid "_Hold"
 msgstr "_Vent"
@@ -14177,8 +14269,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Nytt varsel for"
 
+msgid "\t_Notify for System messages"
+msgstr "\t_Systemmeldingar"
+
 msgid "\t_Only when someone says your username"
 msgstr "\tBerre når nokon seier brukarnamnet _ditt"
+
+msgid "\tNotify for _System messages"
+msgstr "\t_Systemmeldingar"
 
 msgid "_Focused windows"
 msgstr "_Fokuserte vindauge"
@@ -14210,6 +14308,8 @@ msgid "R_aise conversation window"
 msgstr "_Hev samtalevindauget"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "F_ramhev samtalevindauget"
 
@@ -14971,12 +15071,11 @@ msgstr ""
 "vil bli installert utan at den gamle blir fjerna."
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"Pidgin krev eit kompatibelt GTK+-kjøremiljø som no ikkje verkar vera til "
-"stades.$\\rEr du sikker på at du ikkje vil installera GTK+-kjøremiljøet?"
+"Pidgin krev ei høveleg utgåve av GTK+-køyremiljø. Det ser ikkje ut at ei "
+"slik ei er installert. $\\rEr du sikker på at ikkje vil installera ho?"
 
 #. Installer Subsection Text
 msgid "URI Handlers"

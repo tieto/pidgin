@@ -83,7 +83,7 @@ host_triplet = @host@
 @ENABLE_GNT_TRUE@bin_PROGRAMS = finch$(EXEEXT)
 subdir = finch
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(srcdir)/finch.pc.in getopt.c getopt1.c $(top_srcdir)/depcomp \
+	$(srcdir)/finch.pc.in getopt1.c getopt.c $(top_srcdir)/depcomp \
 	$(finchinclude_HEADERS)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \

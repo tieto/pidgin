@@ -82,8 +82,8 @@ build_triplet = @build@
 host_triplet = @host@
 @ENABLE_GTK_TRUE@bin_PROGRAMS = pidgin$(EXEEXT)
 subdir = pidgin
-DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am getopt.c \
-	getopt1.c $(top_srcdir)/depcomp \
+DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am getopt1.c \
+	getopt.c $(top_srcdir)/depcomp \
 	$(am__pidgininclude_HEADERS_DIST)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \

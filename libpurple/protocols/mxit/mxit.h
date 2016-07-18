@@ -142,9 +142,6 @@ struct MXitSession {
 	gint64				http_last_poll;				/* the last time a poll has been sent */
 	guint				http_handler;				/* HTTP connection handler */
 
-	/* other servers */
-	char				voip_server[HOST_NAME_MAX];	/* voice/video server */
-
 	/* client */
 	struct login_data*	logindata;
 	char*				encpwd;						/* encrypted password */
