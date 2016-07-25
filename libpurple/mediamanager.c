@@ -26,12 +26,9 @@
 #include "media.h"
 #include "mediamanager.h"
 
-#ifdef USE_GSTREAMER
+#ifdef USE_VV
 #include "marshallers.h"
 #include "media-gst.h"
-#endif
-
-#ifdef USE_VV
 #include <media/backend-fs2.h>
 
 #include <farstream/fs-element-added-notifier.h>
@@ -72,11 +69,9 @@ struct _PurpleMediaManagerPrivate
 	PurpleMediaElementInfo *audio_src;
 	PurpleMediaElementInfo *audio_sink;
 
-#ifdef USE_GSTREAMER
 #if GST_CHECK_VERSION(1, 4, 0)
 	GstDeviceMonitor *device_monitor;
 #endif /* GST_CHECK_VERSION(1, 4, 0) */
-#endif /* USE_GSTREAMER */
 
 #ifdef HAVE_MEDIA_APPLICATION
 	/* Application data streams */
@@ -119,10 +114,8 @@ static void purple_media_manager_finalize (GObject *object);
 #ifdef HAVE_MEDIA_APPLICATION
 static void free_appdata_info_locked (PurpleMediaAppDataInfo *info);
 #endif
-#ifdef USE_GSTREAMER
 static void purple_media_manager_init_device_monitor(PurpleMediaManager *manager);
 static void purple_media_manager_register_static_elements(PurpleMediaManager *manager);
-#endif
 
 static GObjectClass *parent_class = NULL;
 
@@ -213,9 +206,7 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 static void
 purple_media_manager_init (PurpleMediaManager *media)
 {
-#ifdef USE_GSTREAMER
 	GError *error;
-#endif /* USE_GSTREAMER */
 
 	media->priv = PURPLE_MEDIA_MANAGER_GET_PRIVATE(media);
 	media->priv->medias = NULL;
@@ -226,7 +217,6 @@ purple_media_manager_init (PurpleMediaManager *media)
 	media->priv->appdata_info = NULL;
 	g_mutex_init (&media->priv->appdata_mutex);
 #endif
-#ifdef USE_GSTREAMER
 	if (gst_init_check(NULL, NULL, &error)) {
 		purple_media_manager_register_static_elements(media);
 		purple_media_manager_init_device_monitor(media);
@@ -238,7 +228,6 @@ purple_media_manager_init (PurpleMediaManager *media)
 			g_error_free(error);
 		}
 	}
-#endif /* USE_GSTREAMER */
 
 	purple_prefs_add_none("/purple/media");
 	purple_prefs_add_none("/purple/media/audio");
@@ -272,14 +261,12 @@ purple_media_manager_finalize (GObject *media)
 			(GDestroyNotify) free_appdata_info_locked);
 	g_mutex_clear (&priv->appdata_mutex);
 #endif
-#ifdef USE_GSTREAMER
 #if GST_CHECK_VERSION(1, 4, 0)
 	if (priv->device_monitor) {
 		gst_device_monitor_stop(priv->device_monitor);
 		g_object_unref(priv->device_monitor);
 	}
 #endif /* GST_CHECK_VERSION(1, 4, 0) */
-#endif /* USE_GSTREAMER */
 
 	parent_class->finalize(media);
 }
@@ -332,11 +319,10 @@ pipeline_bus_call(GstBus *bus, GstMessage *msg, PurpleMediaManager *manager)
 }
 #endif
 
-#ifdef USE_GSTREAMER
+#ifdef USE_VV
 GstElement *
 purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 {
-#ifdef USE_VV
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
 
 	if (manager->priv->pipeline == NULL) {
@@ -392,11 +378,8 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 	}
 
 	return manager->priv->pipeline;
-#else
-	return NULL;
-#endif
 }
-#endif /* USE_GSTREAMER */
+#endif /* USE_VV */
 
 static PurpleMedia *
 create_media(PurpleMediaManager *manager,
@@ -713,14 +696,9 @@ nonunique_src_unlinked_cb(GstPad *pad, GstPad *peer, gpointer user_data)
 	gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(element)), element);
 }
 
-#endif
-
-#ifdef USE_GSTREAMER
-
 void
 purple_media_manager_set_video_caps(PurpleMediaManager *manager, GstCaps *caps)
 {
-#ifdef USE_VV
 	if (manager->priv->video_caps)
 		gst_caps_unref(manager->priv->video_caps);
 
@@ -741,21 +719,17 @@ purple_media_manager_set_video_caps(PurpleMediaManager *manager, GstCaps *caps)
 
 		g_free(id);
 	}
-#endif
 }
 
 GstCaps *
 purple_media_manager_get_video_caps(PurpleMediaManager *manager)
 {
-#ifdef USE_VV
 	if (manager->priv->video_caps == NULL)
 		manager->priv->video_caps = gst_caps_from_string("video/x-raw,"
 			"width=[250,352], height=[200,288], framerate=[1/1,20/1]");
 	return manager->priv->video_caps;
-#else
-	return NULL;
-#endif
 }
+#endif /* USE_VV */
 
 #ifdef HAVE_MEDIA_APPLICATION
 /*
@@ -1093,7 +1067,7 @@ create_recv_appsink(PurpleMediaElementInfo *element_info, PurpleMedia *media,
 	g_mutex_unlock (&manager->priv->appdata_mutex);
 	return appsink;
 }
-#endif
+#endif /* HAVE_MEDIA_APPLICATION */
 
 #ifdef USE_VV
 static PurpleMediaElementInfo *
@@ -1135,14 +1109,12 @@ get_recv_application_element_info ()
 
 	return info;
 }
-#endif	/* USE_VV */
 
 GstElement *
 purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant)
 {
-#ifdef USE_VV
 	GstElement *ret = NULL;
 	PurpleMediaElementInfo *info = NULL;
 	PurpleMediaElementType element_type;
@@ -1246,16 +1218,12 @@ purple_media_manager_get_element(PurpleMediaManager *manager,
 		purple_debug_error("media", "Error creating source or sink\n");
 
 	return ret;
-#else
-	return NULL;
-#endif
 }
 
 PurpleMediaElementInfo *
 purple_media_manager_get_element_info(PurpleMediaManager *manager,
 		const gchar *id)
 {
-#ifdef USE_VV
 	GList *iter;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
@@ -1272,7 +1240,6 @@ purple_media_manager_get_element_info(PurpleMediaManager *manager,
 		}
 		g_free(element_id);
 	}
-#endif
 
 	return NULL;
 }
@@ -1305,7 +1272,6 @@ gboolean
 purple_media_manager_register_element(PurpleMediaManager *manager,
 		PurpleMediaElementInfo *info)
 {
-#ifdef USE_VV
 	PurpleMediaElementInfo *info2;
 	gchar *id;
 	GQuark detail;
@@ -1333,16 +1299,12 @@ purple_media_manager_register_element(PurpleMediaManager *manager,
 	}
 
 	return TRUE;
-#else
-	return FALSE;
-#endif
 }
 
 gboolean
 purple_media_manager_unregister_element(PurpleMediaManager *manager,
 		const gchar *id)
 {
-#ifdef USE_VV
 	PurpleMediaElementInfo *info;
 	GQuark detail;
 
@@ -1377,16 +1339,12 @@ purple_media_manager_unregister_element(PurpleMediaManager *manager,
 	}
 
 	return TRUE;
-#else
-	return FALSE;
-#endif
 }
 
 gboolean
 purple_media_manager_set_active_element(PurpleMediaManager *manager,
 		PurpleMediaElementInfo *info)
 {
-#ifdef USE_VV
 	PurpleMediaElementInfo *info2;
 	PurpleMediaElementType type;
 	gboolean ret = FALSE;
@@ -1428,16 +1386,12 @@ purple_media_manager_set_active_element(PurpleMediaManager *manager,
 	}
 
 	return ret;
-#else
-	return FALSE;
-#endif
 }
 
 PurpleMediaElementInfo *
 purple_media_manager_get_active_element(PurpleMediaManager *manager,
 		PurpleMediaElementType type)
 {
-#ifdef USE_VV
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
 
 	if (type & PURPLE_MEDIA_ELEMENT_SRC) {
@@ -1456,13 +1410,10 @@ purple_media_manager_get_active_element(PurpleMediaManager *manager,
 			return get_recv_application_element_info ();
 
 	}
-#endif
 
 	return NULL;
 }
-#endif /* USE_GSTREAMER */
 
-#ifdef USE_VV
 static void
 window_id_cb(GstBus *bus, GstMessage *msg, PurpleMediaOutputWindow *ow)
 {
@@ -1930,7 +1881,7 @@ purple_media_manager_receive_application_data (
 #endif
 }
 
-#ifdef USE_GSTREAMER
+#ifdef USE_VV
 
 static void
 videosink_disable_last_sample(GstElement *sink)
@@ -2426,6 +2377,7 @@ purple_media_element_type_get_type()
 	}
 	return type;
 }
+#endif /* USE_VV */
 
 /*
  * PurpleMediaElementInfo
@@ -2585,18 +2537,10 @@ purple_media_element_info_class_init(PurpleMediaElementInfoClass *klass)
 
 G_DEFINE_TYPE(PurpleMediaElementInfo,
 		purple_media_element_info, G_TYPE_OBJECT);
-#else
-GType
-purple_media_element_info_get_type()
-{
-	return G_TYPE_NONE;
-}
-#endif
 
 gchar *
 purple_media_element_info_get_id(PurpleMediaElementInfo *info)
 {
-#ifdef USE_VV
 	gchar *id;
 
 #if GLIB_CHECK_VERSION(2, 37, 3)
@@ -2607,36 +2551,25 @@ purple_media_element_info_get_id(PurpleMediaElementInfo *info)
 	g_return_val_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(info), NULL);
 	g_object_get(info, "id", &id, NULL);
 	return id;
-#else
-	return NULL;
-#endif
 }
 
 gchar *
 purple_media_element_info_get_name(PurpleMediaElementInfo *info)
 {
-#ifdef USE_VV
 	gchar *name;
 	g_return_val_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(info), NULL);
 	g_object_get(info, "name", &name, NULL);
 	return name;
-#else
-	return NULL;
-#endif
 }
 
 PurpleMediaElementType
 purple_media_element_info_get_element_type(PurpleMediaElementInfo *info)
 {
-#ifdef USE_VV
 	PurpleMediaElementType type;
 	g_return_val_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(info),
 			PURPLE_MEDIA_ELEMENT_NONE);
 	g_object_get(info, "type", &type, NULL);
 	return type;
-#else
-	return PURPLE_MEDIA_ELEMENT_NONE;
-#endif
 }
 
 GstElement *
@@ -2644,16 +2577,11 @@ purple_media_element_info_call_create(PurpleMediaElementInfo *info,
 		PurpleMedia *media, const gchar *session_id,
 		const gchar *participant)
 {
-#ifdef USE_VV
 	PurpleMediaElementCreateCallback create;
 	g_return_val_if_fail(PURPLE_IS_MEDIA_ELEMENT_INFO(info), NULL);
 	g_object_get(info, "create-cb", &create, NULL);
 	if (create)
 		return create(info, media, session_id, participant);
-#endif
 	return NULL;
 }
-
-
-#endif /* USE_GSTREAMER */
-
+#endif /* USE_VV */

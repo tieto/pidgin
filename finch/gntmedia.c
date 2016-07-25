@@ -408,47 +408,6 @@ call_cmd_cb(PurpleConversation *conv, const char *cmd, char **args,
 	return PURPLE_CMD_RET_OK;
 }
 
-#ifndef USE_GSTREAMER
-
-static GstElement *
-create_default_audio_src(PurpleMediaElementInfo *info, PurpleMedia *media,
-		const gchar *session_id, const gchar *participant)
-{
-	GstElement *src;
-	src = gst_element_factory_make("gconfaudiosrc", NULL);
-	if (src == NULL)
-		src = gst_element_factory_make("autoaudiosrc", NULL);
-	if (src == NULL)
-		src = gst_element_factory_make("alsasrc", NULL);
-	if (src == NULL)
-		src = gst_element_factory_make("osssrc", NULL);
-	if (src == NULL)
-		src = gst_element_factory_make("dshowaudiosrc", NULL);
-	if (src == NULL) {
-		purple_debug_error("gntmedia", "Unable to find a suitable "
-				"element for the default audio source.\n");
-		return NULL;
-	}
-	gst_element_set_name(src, "finchdefaultaudiosrc");
-	return src;
-}
-
-static GstElement *
-create_default_audio_sink(PurpleMediaElementInfo *info, PurpleMedia *media,
-		const gchar *session_id, const gchar *participant)
-{
-	GstElement *sink;
-	sink = gst_element_factory_make("gconfaudiosink", NULL);
-	if (sink == NULL)
-		sink = gst_element_factory_make("autoaudiosink",NULL);
-	if (sink == NULL) {
-		purple_debug_error("gntmedia", "Unable to find a suitable "
-				"element for the default audio sink.\n");
-		return NULL;
-	}
-	return sink;
-}
-#endif /* USE_GSTREAMER */
 #endif  /* USE_VV */
 
 void finch_media_manager_init(void)
@@ -457,7 +416,6 @@ void finch_media_manager_init(void)
 	PurpleMediaManager *manager = purple_media_manager_get();
 	PurpleMediaElementInfo *audio_src;
 	PurpleMediaElementInfo *audio_sink;
-#ifdef USE_GSTREAMER
 	const char *pref;
 
 	pref = purple_prefs_get_string(
@@ -481,23 +439,6 @@ void finch_media_manager_init(void)
 		audio_sink = purple_media_manager_get_element_info(manager,
 				pref);
 	}
-#else
-	audio_src = g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
-			"id", "finchdefaultaudiosrc",
-			"name", "Finch Default Audio Source",
-			"type", PURPLE_MEDIA_ELEMENT_AUDIO
-					| PURPLE_MEDIA_ELEMENT_SRC
-					| PURPLE_MEDIA_ELEMENT_ONE_SRC
-					| PURPLE_MEDIA_ELEMENT_UNIQUE,
-			"create-cb", create_default_audio_src, NULL);
-	audio_sink = g_object_new(PURPLE_TYPE_MEDIA_ELEMENT_INFO,
-			"id", "finchdefaultaudiosink",
-			"name", "Finch Default Audio Sink",
-			"type", PURPLE_MEDIA_ELEMENT_AUDIO
-					| PURPLE_MEDIA_ELEMENT_SINK
-					| PURPLE_MEDIA_ELEMENT_ONE_SINK,
-			"create-cb", create_default_audio_sink, NULL);
-#endif /* USE_GSTREAMER */
 
 	g_signal_connect(G_OBJECT(manager), "init-media", G_CALLBACK(finch_new_media), NULL);
 	purple_cmd_register("call", "", PURPLE_CMD_P_DEFAULT,
