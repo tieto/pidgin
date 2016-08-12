@@ -29,7 +29,7 @@
 #ifdef USE_GSTREAMER
 #include "marshallers.h"
 #include "media-gst.h"
-#endif
+#endif /* USE_GSTREAMER */
 
 #ifdef USE_VV
 #include <media/backend-fs2.h>
@@ -39,6 +39,7 @@
 #ifdef HAVE_MEDIA_APPLICATION
 #include <gst/app/app.h>
 #endif
+#endif /* USE_VV */
 
 /** @copydoc _PurpleMediaOutputWindow */
 typedef struct _PurpleMediaOutputWindow PurpleMediaOutputWindow;
@@ -136,7 +137,6 @@ enum {
 	LAST_SIGNAL
 };
 static guint purple_media_manager_signals[LAST_SIGNAL] = {0};
-#endif
 
 GType
 purple_media_manager_get_type()
