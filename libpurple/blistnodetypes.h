@@ -39,19 +39,10 @@
 typedef struct _PurpleBuddy PurpleBuddy;
 typedef struct _PurpleBuddyClass PurpleBuddyClass;
 
-#define PURPLE_TYPE_CHAT             (purple_chat_get_type())
-#define PURPLE_CHAT(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CHAT, PurpleChat))
-#define PURPLE_CHAT_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CHAT, PurpleChatClass))
-#define PURPLE_IS_CHAT(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CHAT))
-#define PURPLE_IS_CHAT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CHAT))
-#define PURPLE_CHAT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CHAT, PurpleChatClass))
-
-typedef struct _PurpleChat PurpleChat;
-typedef struct _PurpleChatClass PurpleChatClass;
-
 #include "account.h"
 #include "blistnode.h"
 #include "buddyicon.h"
+#include "chat.h"
 #include "contact.h"
 #include "group.h"
 #include "media.h"
@@ -85,30 +76,6 @@ struct _PurpleBuddy {
  * The base class for all #PurpleBuddy's.
  */
 struct _PurpleBuddyClass {
-	PurpleBlistNodeClass node_class;
-
-	/*< private >*/
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
-};
-
-/**
- * PurpleChat:
- *
- * A chat on the buddy list.
- */
-struct _PurpleChat {
-	PurpleBlistNode node;
-};
-
-/**
- * PurpleChatClass:
- *
- * The base class for all #PurpleChat's.
- */
-struct _PurpleChatClass {
 	PurpleBlistNodeClass node_class;
 
 	/*< private >*/
@@ -362,90 +329,6 @@ const char *purple_buddy_get_local_alias(PurpleBuddy *buddy);
  * Returns:        The group or NULL if the buddy is not in a group
  */
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy);
-
-/**************************************************************************/
-/* Chat API                                                               */
-/**************************************************************************/
-
-/**
- * purple_chat_get_type:
- *
- * Returns: The #GType for the #PurpleChat object.
- */
-GType purple_chat_get_type(void);
-
-/**
- * purple_chat_new:
- * @account:    The account this chat will get added to
- * @alias:      The alias of the new chat
- * @components: The info the protocol needs to join the chat.  The
- *                   hash function should be g_str_hash() and the
- *                   equal function should be g_str_equal().
- *
- * Creates a new chat for the buddy list
- *
- * Returns:           A newly allocated chat
- */
-PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTable *components);
-
-/**
- * purple_chat_get_name:
- * @chat:   The chat whose name will be returned.
- *
- * Returns the correct name to display for a blist chat.
- *
- * Returns:       The alias (if set), or first component value.
- */
-const char *purple_chat_get_name(PurpleChat *chat);
-
-/**
- * purple_chat_get_name_only:
- * @chat:   The chat whose name will be returned.
- *
- * Returns the name of the chat
- *
- * Returns:       The first component value.
- */
-const char *purple_chat_get_name_only(PurpleChat *chat);
-
-/**
- * purple_chat_set_alias:
- * @chat:   The chat
- * @alias:  The alias
- *
- * Sets the alias for a blist chat.
- */
-void purple_chat_set_alias(PurpleChat *chat, const char *alias);
-
-/**
- * purple_chat_get_group:
- * @chat: The chat.
- *
- * Returns the group of which the chat is a member.
- *
- * Returns: The parent group, or %NULL if the chat is not in a group.
- */
-PurpleGroup *purple_chat_get_group(PurpleChat *chat);
-
-/**
- * purple_chat_get_account:
- * @chat:  The chat.
- *
- * Returns the account the chat belongs to.
- *
- * Returns:  The account the chat belongs to.
- */
-PurpleAccount *purple_chat_get_account(PurpleChat *chat);
-
-/**
- * purple_chat_get_components:
- * @chat:  The chat.
- *
- * Get a hashtable containing information about a chat.
- *
- * Returns: (transfer none):  The hashtable.
- */
-GHashTable *purple_chat_get_components(PurpleChat *chat);
 
 G_END_DECLS
 

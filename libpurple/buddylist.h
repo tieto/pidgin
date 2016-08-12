@@ -49,6 +49,8 @@ typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
 
 #define PURPLE_BLIST_DEFAULT_GROUP_NAME _("Buddies")
 
+#include "chat.h"
+
 /**************************************************************************/
 /* Data Structures                                                        */
 /**************************************************************************/

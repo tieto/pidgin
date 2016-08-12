@@ -43,6 +43,7 @@ purple_coresources = \
 	blistnodetypes.c \
 	buddylist.c \
 	buddyicon.c \
+	chat.c \
 	ciphers/aescipher.c \
 	ciphers/descipher.c \
 	ciphers/des3cipher.c \
@@ -140,6 +141,7 @@ purple_coreheaders = \
 	blistnodetypes.h \
 	buddylist.h \
 	buddyicon.h \
+	chat.h \
 	cipher.h \
 	circularbuffer.h \
 	cmds.h \
