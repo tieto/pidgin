@@ -61,6 +61,7 @@ purple_coresources = \
 	conversationtypes.c \
 	conversations.c \
 	core.c \
+	countingnode.c \
 	debug.c \
 	e2ee.c \
 	eventloop.c \
@@ -146,6 +147,7 @@ purple_coreheaders = \
 	conversationtypes.h \
 	conversations.h \
 	core.h \
+	countingnode.h \
 	dbus-maybe.h \
 	debug.h \
 	e2ee.h \

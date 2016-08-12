@@ -28,7 +28,7 @@
  * @title: Buddy, Chat, Contact and Group node Objects
  */
 
-#include "blistnode.h"
+#include "countingnode.h"
 
 #define PURPLE_TYPE_GROUP             (purple_group_get_type())
 #define PURPLE_GROUP(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_GROUP, PurpleGroup))
