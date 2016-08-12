@@ -57,6 +57,7 @@ purple_coresources = \
 	circularbuffer.c \
 	cmds.c \
 	connection.c \
+	contact.c \
 	conversation.c \
 	conversationtypes.c \
 	conversations.c \
@@ -143,6 +144,7 @@ purple_coreheaders = \
 	circularbuffer.h \
 	cmds.h \
 	connection.h \
+	contact.h \
 	conversation.h \
 	conversationtypes.h \
 	conversations.h \

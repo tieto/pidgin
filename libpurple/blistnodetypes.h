@@ -28,7 +28,6 @@
  * @title: Buddy, Chat, Contact and Group node Objects
  */
 
-#include "blistnode.h"
 
 #define PURPLE_TYPE_BUDDY             (purple_buddy_get_type())
 #define PURPLE_BUDDY(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_BUDDY, PurpleBuddy))
@@ -39,16 +38,6 @@
 
 typedef struct _PurpleBuddy PurpleBuddy;
 typedef struct _PurpleBuddyClass PurpleBuddyClass;
-
-#define PURPLE_TYPE_CONTACT             (purple_contact_get_type())
-#define PURPLE_CONTACT(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CONTACT, PurpleContact))
-#define PURPLE_CONTACT_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CONTACT, PurpleContactClass))
-#define PURPLE_IS_CONTACT(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CONTACT))
-#define PURPLE_IS_CONTACT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_CONTACT))
-#define PURPLE_CONTACT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CONTACT, PurpleContactClass))
-
-typedef struct _PurpleContact PurpleContact;
-typedef struct _PurpleContactClass PurpleContactClass;
 
 #define PURPLE_TYPE_CHAT             (purple_chat_get_type())
 #define PURPLE_CHAT(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CHAT, PurpleChat))
@@ -61,7 +50,9 @@ typedef struct _PurpleChat PurpleChat;
 typedef struct _PurpleChatClass PurpleChatClass;
 
 #include "account.h"
+#include "blistnode.h"
 #include "buddyicon.h"
+#include "contact.h"
 #include "group.h"
 #include "media.h"
 #include "presence.h"
@@ -95,33 +86,6 @@ struct _PurpleBuddy {
  */
 struct _PurpleBuddyClass {
 	PurpleBlistNodeClass node_class;
-
-	/*< private >*/
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
-};
-
-/**
- * PurpleContact:
- *
- * A contact on the buddy list.
- *
- * A contact is a counting node, which means it keeps track of the counts of
- * the buddies under this contact.
- */
-struct _PurpleContact {
-	PurpleCountingNode counting;
-};
-
-/**
- * PurpleContactClass:
- *
- * The base class for all #PurpleContact's.
- */
-struct _PurpleContactClass {
-	PurpleCountingNodeClass counting_class;
 
 	/*< private >*/
 	void (*_purple_reserved1)(void);
@@ -398,96 +362,6 @@ const char *purple_buddy_get_local_alias(PurpleBuddy *buddy);
  * Returns:        The group or NULL if the buddy is not in a group
  */
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy);
-
-/**************************************************************************/
-/* Contact API                                                            */
-/**************************************************************************/
-
-/**
- * purple_contact_get_type:
- *
- * Returns: The #GType for the #PurpleContact object.
- */
-GType purple_contact_get_type(void);
-
-/**
- * purple_contact_new:
- *
- * Creates a new contact
- *
- * Returns:       A new contact struct
- */
-PurpleContact *purple_contact_new(void);
-
-/**
- * purple_contact_get_group:
- * @contact:  The contact
- *
- * Gets the PurpleGroup from a PurpleContact
- *
- * Returns:         The group
- */
-PurpleGroup *purple_contact_get_group(const PurpleContact *contact);
-
-/**
- * purple_contact_get_priority_buddy:
- * @contact:  The contact
- *
- * Returns the highest priority buddy for a given contact.
- *
- * Returns: The highest priority buddy
- */
-PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
-
-/**
- * purple_contact_set_alias:
- * @contact:  The contact
- * @alias:    The alias
- *
- * Sets the alias for a contact.
- */
-void purple_contact_set_alias(PurpleContact *contact, const char *alias);
-
-/**
- * purple_contact_get_alias:
- * @contact:  The contact
- *
- * Gets the alias for a contact.
- *
- * Returns:  The alias, or NULL if it is not set.
- */
-const char *purple_contact_get_alias(PurpleContact *contact);
-
-/**
- * purple_contact_on_account:
- * @contact:  The contact to search through.
- * @account:  The account.
- *
- * Determines whether an account owns any buddies in a given contact
- *
- * Returns: TRUE if there are any buddies from account in the contact, or FALSE otherwise.
- */
-gboolean purple_contact_on_account(PurpleContact *contact, PurpleAccount *account);
-
-/**
- * purple_contact_invalidate_priority_buddy:
- * @contact:  The contact
- *
- * Invalidates the priority buddy so that the next call to
- * purple_contact_get_priority_buddy recomputes it.
- */
-void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
-
-/**
- * purple_contact_merge:
- * @source:  The contact to merge
- * @node:    The place to merge to (a buddy or contact)
- *
- * Merges two contacts
- *
- * All of the buddies from source will be moved to target
- */
-void purple_contact_merge(PurpleContact *source, PurpleBlistNode *node);
 
 /**************************************************************************/
 /* Chat API                                                               */
