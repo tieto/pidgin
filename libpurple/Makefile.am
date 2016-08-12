@@ -64,6 +64,7 @@ purple_coresources = \
 	debug.c \
 	e2ee.c \
 	eventloop.c \
+	group.c \
 	http.c \
 	idle.c \
 	image.c \
@@ -149,6 +150,7 @@ purple_coreheaders = \
 	debug.h \
 	e2ee.h \
 	eventloop.h \
+	group.h \
 	http.h \
 	idle.h \
 	image.h \
