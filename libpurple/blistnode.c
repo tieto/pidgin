@@ -22,7 +22,6 @@
  */
 #include "internal.h"
 #include "glibcompat.h"
-#include "blistnodetypes.h"
 
 #define PURPLE_BLIST_NODE_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BLIST_NODE, PurpleBlistNodePrivate))

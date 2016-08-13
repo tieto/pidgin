@@ -19,15 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _PURPLE_BLISTNODE_TYPES_H_
-#define _PURPLE_BLISTNODE_TYPES_H_
+#ifndef PURPLE_BUDDY_H
+#define PURPLE_BUDDY_H
+
 /**
  * SECTION:blistnodetypes
  * @section_id: libpurple-blistnodetypes
  * @short_description: <filename>blistnodetypes.h</filename>
  * @title: Buddy, Chat, Contact and Group node Objects
  */
-
 
 #define PURPLE_TYPE_BUDDY             (purple_buddy_get_type())
 #define PURPLE_BUDDY(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_BUDDY, PurpleBuddy))
@@ -332,4 +332,4 @@ PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy);
 
 G_END_DECLS
 
-#endif /* _PURPLE_BLISTNODE_TYPES_H_ */
+#endif /* PURPLE_BUDDY_H */

@@ -23,22 +23,13 @@
 #include "internal.h"
 #include "glibcompat.h"
 #include "dbus-maybe.h"
-#include "debug.h"
+#include "util.h"
 
 #define PURPLE_BUDDY_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_BUDDY, PurpleBuddyPrivate))
 
 typedef struct _PurpleBuddyPrivate      PurpleBuddyPrivate;
 
-#define PURPLE_CHAT_GET_PRIVATE(obj) \
-	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CHAT, PurpleChatPrivate))
-
-typedef struct _PurpleChatPrivate       PurpleChatPrivate;
-
-/**************************************************************************/
-/* Private data                                                           */
-/**************************************************************************/
-/* Private data for a buddy. */
 struct _PurpleBuddyPrivate {
 	char *name;                  /* The name of the buddy.                  */
 	char *local_alias;           /* The user-set alias of the buddy         */
@@ -55,35 +46,27 @@ struct _PurpleBuddyPrivate {
 	                                being constructed.                      */
 };
 
-/* Buddy property enums */
-enum
-{
-	BUDDY_PROP_0,
-	BUDDY_PROP_NAME,
-	BUDDY_PROP_LOCAL_ALIAS,
-	BUDDY_PROP_SERVER_ALIAS,
-	BUDDY_PROP_ICON,
-	BUDDY_PROP_ACCOUNT,
-	BUDDY_PROP_PRESENCE,
-	BUDDY_PROP_MEDIA_CAPS,
-	BUDDY_PROP_LAST
+enum {
+	PROP_0,
+	PROP_NAME,
+	PROP_LOCAL_ALIAS,
+	PROP_SERVER_ALIAS,
+	PROP_ICON,
+	PROP_ACCOUNT,
+	PROP_PRESENCE,
+	PROP_MEDIA_CAPS,
+	PROP_LAST
 };
 
-static PurpleBlistNode     *blistnode_parent_class;
+/******************************************************************************
+ * Globals
+ *****************************************************************************/
+static PurpleBlistNode *parent_class;
+static GParamSpec *properties[PROP_LAST];
 
-static GParamSpec *bd_properties[BUDDY_PROP_LAST];
-
-static gboolean
-purple_strings_are_different(const char *one, const char *two)
-{
-	return !((one && two && g_utf8_collate(one, two) == 0) ||
-			((one == NULL || *one == '\0') && (two == NULL || *two == '\0')));
-}
-
-/**************************************************************************/
-/* Buddy API                                                              */
-/**************************************************************************/
-
+/******************************************************************************
+ * API
+ *****************************************************************************/
 void
 purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon)
 {
@@ -98,7 +81,7 @@ purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon)
 		priv->icon = (icon != NULL ? purple_buddy_icon_ref(icon) : NULL);
 
 		g_object_notify_by_pspec(G_OBJECT(buddy),
-				bd_properties[BUDDY_PROP_ICON]);
+				properties[PROP_ICON]);
 	}
 
 	purple_signal_emit(purple_blist_get_handle(), "buddy-icon-changed", buddy);
@@ -140,7 +123,7 @@ purple_buddy_set_name(PurpleBuddy *buddy, const char *name)
 	g_free(priv->name);
 	priv->name = purple_utf8_strip_unprintables(name);
 
-	g_object_notify_by_pspec(G_OBJECT(buddy), bd_properties[BUDDY_PROP_NAME]);
+	g_object_notify_by_pspec(G_OBJECT(buddy), properties[PROP_NAME]);
 
 	if (ops) {
 		if (ops->save_node)
@@ -255,7 +238,7 @@ purple_buddy_set_local_alias(PurpleBuddy *buddy, const char *alias)
 	if ((alias != NULL) && (*alias != '\0'))
 		new_alias = purple_utf8_strip_unprintables(alias);
 
-	if (!purple_strings_are_different(priv->local_alias, new_alias)) {
+	if (!purple_strequal(priv->local_alias, new_alias)) {
 		g_free(new_alias);
 		return;
 	}
@@ -270,7 +253,7 @@ purple_buddy_set_local_alias(PurpleBuddy *buddy, const char *alias)
 	}
 
 	g_object_notify_by_pspec(G_OBJECT(buddy),
-			bd_properties[BUDDY_PROP_LOCAL_ALIAS]);
+			properties[PROP_LOCAL_ALIAS]);
 
 	if (ops && ops->save_node)
 		ops->save_node(PURPLE_BLIST_NODE(buddy));
@@ -311,7 +294,7 @@ purple_buddy_set_server_alias(PurpleBuddy *buddy, const char *alias)
 	if ((alias != NULL) && (*alias != '\0') && g_utf8_validate(alias, -1, NULL))
 		new_alias = purple_utf8_strip_unprintables(alias);
 
-	if (!purple_strings_are_different(priv->server_alias, new_alias)) {
+	if (!purple_strequal(priv->server_alias, new_alias)) {
 		g_free(new_alias);
 		return;
 	}
@@ -326,7 +309,7 @@ purple_buddy_set_server_alias(PurpleBuddy *buddy, const char *alias)
 	}
 
 	g_object_notify_by_pspec(G_OBJECT(buddy),
-			bd_properties[BUDDY_PROP_SERVER_ALIAS]);
+			properties[PROP_SERVER_ALIAS]);
 
 	if (ops) {
 		if (ops->save_node)
@@ -457,7 +440,7 @@ void purple_buddy_set_media_caps(PurpleBuddy *buddy, PurpleMediaCaps media_caps)
 	priv->media_caps = media_caps;
 
 	g_object_notify_by_pspec(G_OBJECT(buddy),
-			bd_properties[BUDDY_PROP_MEDIA_CAPS]);
+			properties[PROP_MEDIA_CAPS]);
 }
 
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
@@ -470,43 +453,41 @@ PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
 	return PURPLE_GROUP(PURPLE_BLIST_NODE(buddy)->parent->parent);
 }
 
-/**************************************************************************
- * GObject code for PurpleBuddy
- **************************************************************************/
-
-/* Set method for GObject properties */
+/******************************************************************************
+ * GObject Stuff
+ *****************************************************************************/
 static void
 purple_buddy_set_property(GObject *obj, guint param_id, const GValue *value,
-		GParamSpec *pspec)
+                          GParamSpec *pspec)
 {
 	PurpleBuddy *buddy = PURPLE_BUDDY(obj);
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
 
 	switch (param_id) {
-		case BUDDY_PROP_NAME:
+		case PROP_NAME:
 			if (priv->is_constructed)
 				purple_buddy_set_name(buddy, g_value_get_string(value));
 			else
 				priv->name =
 					purple_utf8_strip_unprintables(g_value_get_string(value));
 			break;
-		case BUDDY_PROP_LOCAL_ALIAS:
+		case PROP_LOCAL_ALIAS:
 			if (priv->is_constructed)
 				purple_buddy_set_local_alias(buddy, g_value_get_string(value));
 			else
 				priv->local_alias =
 					purple_utf8_strip_unprintables(g_value_get_string(value));
 			break;
-		case BUDDY_PROP_SERVER_ALIAS:
+		case PROP_SERVER_ALIAS:
 			purple_buddy_set_server_alias(buddy, g_value_get_string(value));
 			break;
-		case BUDDY_PROP_ICON:
+		case PROP_ICON:
 			purple_buddy_set_icon(buddy, g_value_get_pointer(value));
 			break;
-		case BUDDY_PROP_ACCOUNT:
+		case PROP_ACCOUNT:
 			priv->account = g_value_get_object(value);
 			break;
-		case BUDDY_PROP_MEDIA_CAPS:
+		case PROP_MEDIA_CAPS:
 			purple_buddy_set_media_caps(buddy, g_value_get_enum(value));
 			break;
 		default:
@@ -515,33 +496,32 @@ purple_buddy_set_property(GObject *obj, guint param_id, const GValue *value,
 	}
 }
 
-/* Get method for GObject properties */
 static void
 purple_buddy_get_property(GObject *obj, guint param_id, GValue *value,
-		GParamSpec *pspec)
+                          GParamSpec *pspec)
 {
 	PurpleBuddy *buddy = PURPLE_BUDDY(obj);
 
 	switch (param_id) {
-		case BUDDY_PROP_NAME:
+		case PROP_NAME:
 			g_value_set_string(value, purple_buddy_get_name(buddy));
 			break;
-		case BUDDY_PROP_LOCAL_ALIAS:
+		case PROP_LOCAL_ALIAS:
 			g_value_set_string(value, purple_buddy_get_local_alias(buddy));
 			break;
-		case BUDDY_PROP_SERVER_ALIAS:
+		case PROP_SERVER_ALIAS:
 			g_value_set_string(value, purple_buddy_get_server_alias(buddy));
 			break;
-		case BUDDY_PROP_ICON:
+		case PROP_ICON:
 			g_value_set_pointer(value, purple_buddy_get_icon(buddy));
 			break;
-		case BUDDY_PROP_ACCOUNT:
+		case PROP_ACCOUNT:
 			g_value_set_object(value, purple_buddy_get_account(buddy));
 			break;
-		case BUDDY_PROP_PRESENCE:
+		case PROP_PRESENCE:
 			g_value_set_object(value, purple_buddy_get_presence(buddy));
 			break;
-		case BUDDY_PROP_MEDIA_CAPS:
+		case PROP_MEDIA_CAPS:
 			g_value_set_enum(value, purple_buddy_get_media_caps(buddy));
 			break;
 		default:
@@ -550,22 +530,18 @@ purple_buddy_get_property(GObject *obj, guint param_id, GValue *value,
 	}
 }
 
-/* GObject initialization function */
 static void
-purple_buddy_init(GTypeInstance *instance, gpointer klass)
-{
+purple_buddy_init(GTypeInstance *instance, gpointer klass) {
 	PURPLE_DBUS_REGISTER_POINTER(PURPLE_BUDDY(instance), PurpleBuddy);
 }
 
-/* Called when done constructing */
 static void
-purple_buddy_constructed(GObject *object)
-{
+purple_buddy_constructed(GObject *object) {
 	PurpleBuddy *buddy = PURPLE_BUDDY(object);
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
-	G_OBJECT_CLASS(blistnode_parent_class)->constructed(object);
+	G_OBJECT_CLASS(parent_class)->constructed(object);
 
 	priv->presence = PURPLE_PRESENCE(purple_buddy_presence_new(buddy));
 	purple_presence_set_status_active(priv->presence, "offline", TRUE);
@@ -576,10 +552,8 @@ purple_buddy_constructed(GObject *object)
 	priv->is_constructed = TRUE;
 }
 
-/* GObject dispose function */
 static void
-purple_buddy_dispose(GObject *object)
-{
+purple_buddy_dispose(GObject *object) {
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(object);
 
 	if (priv->icon) {
@@ -592,13 +566,11 @@ purple_buddy_dispose(GObject *object)
 		priv->presence = NULL;
 	}
 
-	G_OBJECT_CLASS(blistnode_parent_class)->dispose(object);
+	G_OBJECT_CLASS(parent_class)->dispose(object);
 }
 
-/* GObject finalize function */
 static void
-purple_buddy_finalize(GObject *object)
-{
+purple_buddy_finalize(GObject *object) {
 	PurpleBuddy *buddy = PURPLE_BUDDY(object);
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
 	PurpleProtocol *protocol;
@@ -617,15 +589,13 @@ purple_buddy_finalize(GObject *object)
 
 	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
 
-	G_OBJECT_CLASS(blistnode_parent_class)->finalize(object);
+	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
-/* Class initializer function */
-static void purple_buddy_class_init(PurpleBuddyClass *klass)
-{
+static void purple_buddy_class_init(PurpleBuddyClass *klass) {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
-	blistnode_parent_class = g_type_class_peek_parent(klass);
+	parent_class = g_type_class_peek_parent(klass);
 
 	obj_class->dispose = purple_buddy_dispose;
 	obj_class->finalize = purple_buddy_finalize;
@@ -637,48 +607,66 @@ static void purple_buddy_class_init(PurpleBuddyClass *klass)
 
 	g_type_class_add_private(klass, sizeof(PurpleBuddyPrivate));
 
-	bd_properties[BUDDY_PROP_NAME] = g_param_spec_string("name", "Name",
-				"The name of the buddy.", NULL,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+	properties[PROP_NAME] = g_param_spec_string(
+		"name",
+		"Name",
+		"The name of the buddy.",
+		NULL,
+		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
+	);
 
-	bd_properties[BUDDY_PROP_LOCAL_ALIAS] = g_param_spec_string("local-alias",
-				"Local alias",
-				"Local alias of thee buddy.", NULL,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+	properties[PROP_LOCAL_ALIAS] = g_param_spec_string(
+		"local-alias",
+		"Local alias",
+		"Local alias of thee buddy.",
+		NULL,
+		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS
+	);
 
-	bd_properties[BUDDY_PROP_SERVER_ALIAS] = g_param_spec_string("server-alias",
-				"Server alias",
-				"Server-side alias of the buddy.", NULL,
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	properties[PROP_SERVER_ALIAS] = g_param_spec_string(
+		"server-alias",
+		"Server alias",
+		"Server-side alias of the buddy.",
+		NULL,
+		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+	);
 
-	bd_properties[BUDDY_PROP_ICON] = g_param_spec_pointer("icon", "Buddy icon",
-				"The icon for the buddy.",
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	properties[PROP_ICON] = g_param_spec_pointer(
+		"icon",
+		"Buddy icon",
+		"The icon for the buddy.",
+		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+	);
 
-	bd_properties[BUDDY_PROP_ACCOUNT] = g_param_spec_object("account",
-				"Account",
-				"The account for the buddy.", PURPLE_TYPE_ACCOUNT,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
-				G_PARAM_STATIC_STRINGS);
+	properties[PROP_ACCOUNT] = g_param_spec_object(
+		"account",
+		"Account",
+		"The account for the buddy.",
+		PURPLE_TYPE_ACCOUNT,
+		G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS
+	);
 
-	bd_properties[BUDDY_PROP_PRESENCE] = g_param_spec_object("presence",
-				"Presence",
-				"The status information for the buddy.", PURPLE_TYPE_PRESENCE,
-				G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	properties[PROP_PRESENCE] = g_param_spec_object(
+		"presence",
+		"Presence",
+		"The status information for the buddy.",
+		PURPLE_TYPE_PRESENCE,
+		G_PARAM_READABLE | G_PARAM_STATIC_STRINGS
+	);
 
-	bd_properties[BUDDY_PROP_MEDIA_CAPS] = g_param_spec_enum("media-caps",
-				"Media capabilities",
-				"The media capabilities of the buddy.",
-				PURPLE_MEDIA_TYPE_CAPS, PURPLE_MEDIA_CAPS_NONE,
-				G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	properties[PROP_MEDIA_CAPS] = g_param_spec_enum(
+		"media-caps",
+		"Media capabilities",
+		"The media capabilities of the buddy.",
+		PURPLE_MEDIA_TYPE_CAPS, PURPLE_MEDIA_CAPS_NONE,
+		G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS
+	);
 
-	g_object_class_install_properties(obj_class, BUDDY_PROP_LAST,
-				bd_properties);
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
 
 GType
-purple_buddy_get_type(void)
-{
+purple_buddy_get_type(void) {
 	static GType type = 0;
 
 	if(type == 0) {
