@@ -59,7 +59,6 @@ libpurple/plugins/autoaccept.c
 libpurple/plugins/buddynote.c
 libpurple/plugins/caesarcipher.c
 libpurple/plugins/caesarcipher_consumer.c
-libpurple/plugins/ciphertest.c
 libpurple/plugins/dbus-example.c
 libpurple/plugins/filectl.c
 libpurple/plugins/idle.c
