@@ -4972,6 +4972,8 @@ static gboolean pidgin_blist_select_notebook_page_cb(gpointer user_data)
 
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 
+	priv->select_notebook_page_timeout = 0;
+
 	/* this is far too ugly thanks to me not wanting to fix #3989 properly right now */
 	if (priv->error_scrollbook != NULL) {
 		errors = gtk_notebook_get_n_pages(GTK_NOTEBOOK(priv->error_scrollbook->notebook));
@@ -7303,8 +7305,8 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	                          data->chat_data.rq_data.sg, data->group_combo,
 	                          TRUE, NULL);
 
-	data->autojoin = gtk_check_button_new_with_mnemonic(_("Auto_join when account connects."));
-	data->persistent = gtk_check_button_new_with_mnemonic(_("_Remain in chat after window is closed."));
+	data->autojoin = gtk_check_button_new_with_mnemonic(_("Automatically _join when account connects"));
+	data->persistent = gtk_check_button_new_with_mnemonic(_("_Remain in chat after window is closed"));
 	gtk_box_pack_start(GTK_BOX(vbox), data->autojoin, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), data->persistent, FALSE, FALSE, 0);
 

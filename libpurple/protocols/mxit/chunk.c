@@ -151,11 +151,15 @@ static int add_utf8_string( char* chunkdata, const char* str )
  * Extract a single byte from the chunked data.
  *
  *  @param chunkdata		The chunked-data buffer
+ *  @param chunklen			The amount of data available in the buffer.
  *  @param value			The byte
  *  @return					The number of bytes extracted.
  */
-static int get_int8( const char* chunkdata, char* value )
+static int get_int8( const char* chunkdata, size_t chunklen, char* value )
 {
+	if ( chunklen < sizeof( char ) )
+		return 0;
+
 	*value = *chunkdata;
 
 	return sizeof( char );
@@ -165,36 +169,36 @@ static int get_int8( const char* chunkdata, char* value )
  * Extract a 16-bit value from the chunked data.
  *
  *  @param chunkdata		The chunked-data buffer
+ *  @param chunklen			The amount of data available in the buffer.
  *  @param value			The 16-bit value
  *  @return					The number of bytes extracted
  */
-static int get_int16( const char* chunkdata, short* value )
+static int get_int16( const char* chunkdata, size_t chunklen, unsigned short* value )
 {
-	gint16 value_v;
+	if ( chunklen < sizeof( short ) )
+		return 0;
 
-	memcpy(&value_v, chunkdata, sizeof(value_v));
+	*value = ntohs( *( (const short*) chunkdata ) );	/* host byte-order */
 
-	*value = ntohs(value_v); /* host byte-order */
-
-	return sizeof(value_v);
+	return sizeof( short );
 }
 
 /*------------------------------------------------------------------------
  * Extract a 32-bit value from the chunked data.
  *
  *  @param chunkdata		The chunked-data buffer
+ *  @param chunklen			The amount of data available in the buffer.
  *  @param value			The 32-bit value
  *  @return					The number of bytes extracted
  */
-static int get_int32( const char* chunkdata, int* value )
+static int get_int32( const char* chunkdata, size_t chunklen, unsigned int* value )
 {
-	gint32 value_v;
+	if ( chunklen < sizeof( int ) )
+		return 0;
 
-	memcpy(&value_v, chunkdata, sizeof(value_v));
+	*value = ntohl( *( (const int*) chunkdata ) );	/* host byte-order */
 
-	*value = ntohl(value_v); /* host byte-order */
-
-	return sizeof(value_v);
+	return sizeof( int );
 }
 
 #if	0
@@ -202,11 +206,15 @@ static int get_int32( const char* chunkdata, int* value )
  * Extract a 64-bit value from the chunked data.
  *
  *  @param chunkdata		The chunked-data buffer
+ *  @param chunklen			The amount of data available in the buffer.
  *  @param value			The 64-bit value
  *  @return					The number of bytes extracted
  */
-static int get_int64( const char* chunkdata, int64_t* value )
+static int get_int64( const char* chunkdata, size_t chunklen, int64_t* value )
 {
+	if ( chunklen < sizeof( int64_t ) )
+		return 0;
+
 	*value = SWAP_64( *( (const int64_t*) chunkdata ) );	/* host byte-order */
 
 	return sizeof( int64_t );
@@ -217,12 +225,16 @@ static int get_int64( const char* chunkdata, int64_t* value )
  * Copy a block of data from the chunked data.
  *
  *  @param chunkdata		The chunked-data buffer
+ *  @param chunklen			The amount of data available in the buffer.
  *  @param dest				Where to store the extract data
  *  @param datalen			The length of the data to extract
  *  @return					The number of bytes extracted
  */
-static int get_data( const char* chunkdata, char* dest, int datalen )
+static int get_data( const char* chunkdata, size_t chunklen, char* dest, size_t datalen )
 {
+	if ( chunklen < datalen )
+		return 0;
+
 	memcpy( dest, chunkdata, datalen );
 
 	return datalen;
@@ -232,20 +244,25 @@ static int get_data( const char* chunkdata, char* dest, int datalen )
  * Extract a UTF-8 encoded string from the chunked data.
  *
  *  @param chunkdata		The chunked-data buffer
+ *  @param chunklen			The amount of data available in the buffer.
  *  @param str				A pointer to extracted string.  Must be g_free()'d.
  *  @param maxstrlen		Maximum size of destination buffer.
  *  @return					The number of bytes consumed
  */
-static int get_utf8_string( const char* chunkdata, char* str, int maxstrlen )
+static int get_utf8_string( const char* chunkdata, size_t chunklen, char* str, size_t maxstrlen )
 {
-	int		pos = 0;
-	short	len;
-	int		skip = 0;
+	size_t			pos = 0;
+	unsigned short	len = 0;
+	size_t			skip = 0;
 
 	/* string length [2 bytes] */
-	pos += get_int16( &chunkdata[pos], &len );
+	pos += get_int16( &chunkdata[pos], chunklen - pos, &len );
 
-	if ( len > maxstrlen ) {
+	if ( ( len + pos ) > chunklen ) {
+		/* string length is longer than chunk size */
+		return 0;
+	}
+	else if ( len > maxstrlen ) {
 		/* possible buffer overflow */
 		purple_debug_error( MXIT_PLUGIN_ID, "Buffer overflow detected (get_utf8_string)\n" );
 		skip = len - maxstrlen;
@@ -253,7 +270,7 @@ static int get_utf8_string( const char* chunkdata, char* str, int maxstrlen )
 	}
 
 	/* string data */
-	pos += get_data( &chunkdata[pos], str, len );
+	pos += get_data( &chunkdata[pos], chunklen - pos, str, len );
 	str[len] = '\0';		/* terminate string */
 
 	return pos + skip;
@@ -271,9 +288,9 @@ static int get_utf8_string( const char* chunkdata, char* str, int maxstrlen )
  *  @param fileid			A unique ID that identifies this file
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_reject( char* chunkdata, const char* fileid )
+size_t mxit_chunk_create_reject( char* chunkdata, const char* fileid )
 {
-	int		pos		= 0;
+	size_t	pos		= 0;
 
 	/* file id [8 bytes] */
 	pos += add_data( &chunkdata[pos], fileid, MXIT_CHUNK_FILEID_LEN );
@@ -297,9 +314,9 @@ int mxit_chunk_create_reject( char* chunkdata, const char* fileid )
  *  @param offset			The start offset in the file
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_get( char* chunkdata, const char* fileid, int filesize, int offset )
+size_t mxit_chunk_create_get( char* chunkdata, const char* fileid, size_t filesize, size_t offset )
 {
-	int		pos		= 0;
+	size_t	pos		= 0;
 
 	/* file id [8 bytes] */
 	pos += add_data( &chunkdata[pos], fileid, MXIT_CHUNK_FILEID_LEN );
@@ -322,9 +339,9 @@ int mxit_chunk_create_get( char* chunkdata, const char* fileid, int filesize, in
  *  @param status			The status of the file transfer (see chunk.h)
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_received( char* chunkdata, const char* fileid, unsigned char status )
+size_t mxit_chunk_create_received( char* chunkdata, const char* fileid, unsigned char status )
 {
-	int		pos		= 0;
+	size_t	pos		= 0;
 
 	/* file id [8 bytes] */
 	pos += add_data( &chunkdata[pos], fileid, MXIT_CHUNK_FILEID_LEN );
@@ -346,9 +363,9 @@ int mxit_chunk_create_received( char* chunkdata, const char* fileid, unsigned ch
  *  @param datalen			The size of the file contents
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_senddirect( char* chunkdata, const char* username, const char* filename, const unsigned char* data, int datalen )
+size_t mxit_chunk_create_senddirect( char* chunkdata, const char* username, const char* filename, const unsigned char* data, size_t datalen )
 {
-	int			pos		= 0;
+	size_t		pos		= 0;
 	const char*	mime	= NULL;
 
 	/* data length [4 bytes] */
@@ -388,10 +405,10 @@ int mxit_chunk_create_senddirect( char* chunkdata, const char* username, const c
  *  @param datalen			The size of the avatar data
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_set_avatar( char* chunkdata, const unsigned char* data, int datalen )
+size_t mxit_chunk_create_set_avatar( char* chunkdata, const unsigned char* data, size_t datalen )
 {
 	char	fileid[MXIT_CHUNK_FILEID_LEN];
-	int			pos = 0;
+	size_t	pos = 0;
 
 	/* id [8 bytes] */
 	memset( &fileid, 0, sizeof( fileid ) );		/* set to 0 for file upload */
@@ -418,9 +435,9 @@ int mxit_chunk_create_set_avatar( char* chunkdata, const unsigned char* data, in
  *  @param avatarId			The Id of the avatar image (as string)
  *  @return					The number of bytes encoded in the buffer
  */
-int mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const char* avatarId )
+size_t mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const char* avatarId )
 {
-	int			pos = 0;
+	size_t	pos = 0;
 
 	/* number of avatars [4 bytes] */
 	pos += add_int32( &chunkdata[pos], 1 );
@@ -457,28 +474,31 @@ int mxit_chunk_create_get_avatar( char* chunkdata, const char* mxitId, const cha
  *  @param chunkdata		Chunked data buffer
  *  @param datalen			The length of the chunked data
  *  @param offer			Decoded offerfile information
+ *  @return					TRUE if successfully parsed, otherwise FALSE
  */
-void mxit_chunk_parse_offer( char* chunkdata, int datalen, struct offerfile_chunk* offer )
+gboolean mxit_chunk_parse_offer( char* chunkdata, size_t datalen, struct offerfile_chunk* offer )
 {
-	int			pos			= 0;
+	size_t pos = 0;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_offer (%i bytes)\n", datalen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_offer (%zu bytes)\n", datalen );
+
+	memset( offer, 0, sizeof( struct offerfile_chunk ) );
 
 	/* id [8 bytes] */
-	pos += get_data( &chunkdata[pos], offer->fileid, 8);
+	pos += get_data( &chunkdata[pos], datalen - pos, offer->fileid, 8);
 
 	/* from username [UTF-8] */
-	pos += get_utf8_string( &chunkdata[pos], offer->username, sizeof( offer->username ) );
+	pos += get_utf8_string( &chunkdata[pos], datalen - pos, offer->username, sizeof( offer->username ) );
 	mxit_strip_domain( offer->username );
 
 	/* file size [4 bytes] */
-	pos += get_int32( &chunkdata[pos], &(offer->filesize) );
+	pos += get_int32( &chunkdata[pos], datalen - pos, &(offer->filesize) );
 
 	/* filename [UTF-8] */
-	pos += get_utf8_string( &chunkdata[pos], offer->filename, sizeof( offer->filename ) );
+	pos += get_utf8_string( &chunkdata[pos], datalen - pos, offer->filename, sizeof( offer->filename ) );
 
 	/* mime type [UTF-8] */
-	pos += get_utf8_string( &chunkdata[pos], offer->mimetype, sizeof( offer->mimetype ) );
+	pos += get_utf8_string( &chunkdata[pos], datalen - pos, offer->mimetype, sizeof( offer->mimetype ) );
 
 	if (pos > datalen)
 		purple_debug_warning(MXIT_PLUGIN_ID, "pos > datalen");
@@ -494,6 +514,8 @@ void mxit_chunk_parse_offer( char* chunkdata, int datalen, struct offerfile_chun
 
 	/* flags [4 bytes] */
 	/* not used by libPurple */
+
+	return TRUE;
 }
 
 
@@ -503,27 +525,41 @@ void mxit_chunk_parse_offer( char* chunkdata, int datalen, struct offerfile_chun
  *  @param chunkdata		Chunked data buffer
  *  @param datalen			The length of the chunked data
  *  @param offer			Decoded getfile information
+ *  @return					TRUE if successfully parsed, otherwise FALSE
  */
-void mxit_chunk_parse_get( char* chunkdata, int datalen, struct getfile_chunk* getfile )
+gboolean mxit_chunk_parse_get( char* chunkdata, size_t datalen, struct getfile_chunk* getfile )
 {
-	int			pos			= 0;
+	size_t pos = 0;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_file (%i bytes)\n", datalen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_file (%zu bytes)\n", datalen );
+
+	memset( getfile, 0, sizeof( struct getfile_chunk ) );
+
+	/* ensure that the chunk size is atleast the minimum size for a "get file" chunk */
+	if ( datalen < 20 )
+		return FALSE;
 
 	/* id [8 bytes] */
-	pos += get_data( &chunkdata[pos], getfile->fileid, 8 );
+	pos += get_data( &chunkdata[pos], datalen - pos, getfile->fileid, 8 );
 
 	/* offset [4 bytes] */
-	pos += get_int32( &chunkdata[pos], &(getfile->offset) );
+	pos += get_int32( &chunkdata[pos], datalen - pos, &(getfile->offset) );
 
 	/* file length [4 bytes] */
-	pos += get_int32( &chunkdata[pos], &(getfile->length) );
+	pos += get_int32( &chunkdata[pos], datalen - pos, &(getfile->length) );
 
 	/* crc [4 bytes] */
-	pos += get_int32( &chunkdata[pos], &(getfile->crc) );
+	pos += get_int32( &chunkdata[pos], datalen - pos, &(getfile->crc) );
+
+	/* check length does not exceed chunked data length */
+	if ( getfile->length > datalen - pos )
+		return FALSE;
 
 	/* file data */
-	getfile->data = &chunkdata[pos];
+	if ( getfile->length > 0 )
+		getfile->data = &chunkdata[pos];
+
+	return TRUE;
 }
 
 
@@ -533,27 +569,37 @@ void mxit_chunk_parse_get( char* chunkdata, int datalen, struct getfile_chunk* g
  *  @param chunkdata		Chunked data buffer
  *  @param datalen			The length of the chunked data
  *  @param splash			Decoded splash image information
+ *  @return					TRUE if successfully parsed, otherwise FALSE
  */
-static void mxit_chunk_parse_splash( char* chunkdata, int datalen, struct splash_chunk* splash )
+gboolean mxit_chunk_parse_splash( char* chunkdata, size_t datalen, struct splash_chunk* splash )
 {
-	int			pos			= 0;
+	size_t pos = 0;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_splash (%i bytes)\n", datalen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_splash (%zu bytes)\n", datalen );
+
+	memset( splash, 0, sizeof( struct splash_chunk ) );
+
+	/* ensure that the chunk size is atleast the minimum size for a "splash screen" chunk */
+	if ( datalen < 6 )
+		return FALSE;
 
 	/* anchor [1 byte] */
-	pos += get_int8( &chunkdata[pos], &(splash->anchor) );
+	pos += get_int8( &chunkdata[pos], datalen - pos, &(splash->anchor) );
 
 	/* time to show [1 byte] */
-	pos += get_int8( &chunkdata[pos], &(splash->showtime) );
+	pos += get_int8( &chunkdata[pos], datalen - pos, &(splash->showtime) );
 
 	/* background color [4 bytes] */
-	pos += get_int32( &chunkdata[pos], &(splash->bgcolor) );
+	pos += get_int32( &chunkdata[pos], datalen - pos, &(splash->bgcolor) );
 
 	/* file data */
-	splash->data = &chunkdata[pos];
+	if ( pos < datalen )
+		splash->data = &chunkdata[pos];
 
 	/* data length */
 	splash->datalen = datalen - pos;
+
+	return TRUE;
 }
 
 
@@ -563,41 +609,51 @@ static void mxit_chunk_parse_splash( char* chunkdata, int datalen, struct splash
  *  @param chunkdata		Chunked data buffer
  *  @param datalen			The length of the chunked data
  *  @param offer			Decoded custom resource
+ *  @return					TRUE if successfully parsed, otherwise FALSE
  */
-void mxit_chunk_parse_cr( char* chunkdata, int datalen, struct cr_chunk* cr )
+gboolean mxit_chunk_parse_cr( char* chunkdata, size_t datalen, struct cr_chunk* cr )
 {
-	int			pos			= 0;
-	int			chunklen	= 0;
+	size_t			pos			= 0;
+	unsigned int	chunkslen	= 0;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_cr (%i bytes)\n", datalen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_cr (%zu bytes)\n", datalen );
+
+	memset( cr, 0, sizeof( struct cr_chunk ) );
 
 	/* id [UTF-8] */
-	pos += get_utf8_string( &chunkdata[pos], cr->id, sizeof( cr->id ) );
+	pos += get_utf8_string( &chunkdata[pos], datalen - pos, cr->id, sizeof( cr->id ) );
 
 	/* handle [UTF-8] */
-	pos += get_utf8_string( &chunkdata[pos], cr->handle, sizeof( cr->handle ) );
+	pos += get_utf8_string( &chunkdata[pos], datalen - pos, cr->handle, sizeof( cr->handle ) );
 
 	/* operation [1 byte] */
-	pos += get_int8( &chunkdata[pos], &(cr->operation) );
+	pos += get_int8( &chunkdata[pos], datalen - pos, &(cr->operation) );
 
-	/* chunk size [4 bytes] */
-	pos += get_int32( &chunkdata[pos], &chunklen );
+	/* total length of all the chunks that are included [4 bytes] */
+	pos += get_int32( &chunkdata[pos], datalen - pos, &chunkslen );
+
+	/* ensure the chunks size does not exceed the data size */
+	if ( pos + chunkslen > datalen )
+		return FALSE;
 
 	/* parse the resource chunks */
-	while ( chunklen > 0 ) {
-		gchar* chunk = &chunkdata[pos];
+	while ( chunkslen >= MXIT_CHUNK_HEADER_SIZE ) {
+		gchar*	chunk		= &chunkdata[pos];
+		guint32	chunksize	= chunk_length( chunk );
 
-		/* start of chunk data */
-		pos += MXIT_CHUNK_HEADER_SIZE;
+		/* check chunk size against length of received data */
+		if ( pos + MXIT_CHUNK_HEADER_SIZE + chunksize > datalen )
+			return FALSE;
 
 		switch ( chunk_type( chunk ) ) {
 			case CP_CHUNK_SPLASH :			/* splash image */
 				{
 					struct splash_chunk* splash = g_new0( struct splash_chunk, 1 );
 
-					mxit_chunk_parse_splash( &chunkdata[pos], chunk_length( chunk ), splash );
-
-					cr->resources = g_list_append( cr->resources, splash );
+					if ( mxit_chunk_parse_splash( chunk_data( chunk ), chunksize, splash ) )
+						cr->resources = g_list_append( cr->resources, splash );
+					else
+						g_free( splash );
 					break;
 				}
 			case CP_CHUNK_CLICK :			/* splash click */
@@ -612,9 +668,11 @@ void mxit_chunk_parse_cr( char* chunkdata, int datalen, struct cr_chunk* cr )
 		}
 
 		/* skip over data to next resource chunk */
-		pos += chunk_length( chunk );
-		chunklen -= ( MXIT_CHUNK_HEADER_SIZE + chunk_length( chunk ) );
+		pos += MXIT_CHUNK_HEADER_SIZE + chunksize;
+		chunkslen -= ( MXIT_CHUNK_HEADER_SIZE + chunksize );
 	}
+
+	return TRUE;
 }
 
 
@@ -624,31 +682,33 @@ void mxit_chunk_parse_cr( char* chunkdata, int datalen, struct cr_chunk* cr )
  *  @param chunkdata		Chunked data buffer
  *  @param datalen			The length of the chunked data
  *  @param sendfile			Decoded sendfile information
+ *  @return					TRUE if successfully parsed, otherwise FALSE
  */
-void mxit_chunk_parse_sendfile( char* chunkdata, int datalen, struct sendfile_chunk* sendfile )
+gboolean mxit_chunk_parse_sendfile( char* chunkdata, size_t datalen, struct sendfile_chunk* sendfile )
 {
-	int			pos		= 0;
-	short		entries	= 0;
+	size_t			pos		= 0;
+	unsigned short	entries	= 0;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_sendfile (%i bytes)\n", datalen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_sendfile (%zu bytes)\n", datalen );
+
+	memset( sendfile, 0, sizeof( struct sendfile_chunk ) );
 
 	/* number of entries [2 bytes] */
-	pos += get_int16( &chunkdata[pos], &entries );
+	pos += get_int16( &chunkdata[pos], datalen - pos, &entries );
 
 	if ( entries < 1 )		/* no data */
-		return;
+		return FALSE;
 
 	/* contactAddress [UTF-8 string] */
-	pos += get_utf8_string( &chunkdata[pos], sendfile->username, sizeof( sendfile->username ) );
+	pos += get_utf8_string( &chunkdata[pos], datalen - pos, sendfile->username, sizeof( sendfile->username ) );
 
 	/* status [4 bytes] */
-	pos += get_int32( &chunkdata[pos], &(sendfile->status) );
+	pos += get_int32( &chunkdata[pos], datalen - pos, &(sendfile->status) );
 
 	/* status message [UTF-8 string] */
-	pos += get_utf8_string( &chunkdata[pos], sendfile->statusmsg, sizeof( sendfile->statusmsg ) );
+	pos += get_utf8_string( &chunkdata[pos], datalen - pos, sendfile->statusmsg, sizeof( sendfile->statusmsg ) );
 
-	if (pos != datalen)
-		purple_debug_misc(MXIT_PLUGIN_ID, "pos != datalen");
+	return TRUE;
 }
 
 
@@ -658,44 +718,54 @@ void mxit_chunk_parse_sendfile( char* chunkdata, int datalen, struct sendfile_ch
  *  @param chunkdata		Chunked data buffer
  *  @param datalen			The length of the chunked data
  *  @param avatar			Decoded avatar information
+ *  @return					TRUE if successfully parsed, otherwise FALSE
  */
-void mxit_chunk_parse_get_avatar( char* chunkdata, int datalen, struct getavatar_chunk* avatar )
+gboolean mxit_chunk_parse_get_avatar( char* chunkdata, size_t datalen, struct getavatar_chunk* avatar )
 {
-	int			pos			= 0;
-	int			numfiles	= 0;
+	size_t			pos			= 0;
+	unsigned int	numfiles	= 0;
 
-	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_get_avatar (%i bytes)\n", datalen );
+	purple_debug_info( MXIT_PLUGIN_ID, "mxit_chunk_parse_get_avatar (%zu bytes)\n", datalen );
+
+	memset( avatar, 0, sizeof( struct getavatar_chunk ) );
 
 	/* number of files [4 bytes] */
-	pos += get_int32( &chunkdata[pos], &numfiles );
+	pos += get_int32( &chunkdata[pos], datalen - pos, &numfiles );
 
 	if ( numfiles < 1 )		/* no data */
-		return;
+		return FALSE;
 
 	/* mxitId [UTF-8 string] */
-	pos += get_utf8_string( &chunkdata[pos], avatar->mxitid, sizeof( avatar->mxitid ) );
+	pos += get_utf8_string( &chunkdata[pos], datalen - pos, avatar->mxitid, sizeof( avatar->mxitid ) );
 
 	/* avatar id [UTF-8 string] */
-	pos += get_utf8_string( &chunkdata[pos], avatar->avatarid, sizeof( avatar->avatarid ) );
+	pos += get_utf8_string( &chunkdata[pos], datalen - pos, avatar->avatarid, sizeof( avatar->avatarid ) );
 
 	/* format [UTF-8 string] */
-	pos += get_utf8_string( &chunkdata[pos], avatar->format, sizeof( avatar->format ) );
+	pos += get_utf8_string( &chunkdata[pos], datalen - pos, avatar->format, sizeof( avatar->format ) );
 
 	/* bit depth [1 byte] */
-	pos += get_int8( &chunkdata[pos], &(avatar->bitdepth) );
+	pos += get_int8( &chunkdata[pos], datalen - pos, &(avatar->bitdepth) );
 
 	/* crc [4 bytes] */
-	pos += get_int32( &chunkdata[pos], &(avatar->crc) );
+	pos += get_int32( &chunkdata[pos], datalen - pos, &(avatar->crc) );
 
 	/* width [4 bytes] */
-	pos += get_int32( &chunkdata[pos], &(avatar->width) );
+	pos += get_int32( &chunkdata[pos], datalen - pos, &(avatar->width) );
 
 	/* height [4 bytes] */
-	pos += get_int32( &chunkdata[pos], &(avatar->height) );
+	pos += get_int32( &chunkdata[pos], datalen - pos, &(avatar->height) );
 
 	/* file length [4 bytes] */
-	pos += get_int32( &chunkdata[pos], &(avatar->length) );
+	pos += get_int32( &chunkdata[pos], datalen - pos, &(avatar->length) );
+
+	/* check length does not exceed chunked data length */
+	if ( avatar->length > datalen - pos )
+		return FALSE;
 
 	/* file data */
-	avatar->data = &chunkdata[pos];
+	if ( avatar->length > 0 )
+		avatar->data = &chunkdata[pos];
+
+	return TRUE;
 }

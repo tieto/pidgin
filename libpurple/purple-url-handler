@@ -105,7 +105,7 @@ def goim(account, screenname, message=None):
 
 def gochat(account, params, message=None):
     connection = cpurple.PurpleAccountGetConnection(account)
-    purple.ServJoinChat(connection, params)
+    purple.PurpleServJoinChat(connection, params)
 
     if message != None:
     	for i in range(20):

@@ -360,7 +360,7 @@ void multimx_message_received(struct RXMsgData* mx, char* msg, int msglen, short
 		unsigned int i;
 
 		for (i = 1; i < strlen(msg); i++) {		/* search for end of nickname */
-			if (msg[i] == '>') {
+			if ((msg[i] == '>') && (msg[i+1] == '\n')) {
 				msg[i] = '\0';
 				g_free(mx->from);
 				mx->from = g_strdup(&msg[1]);

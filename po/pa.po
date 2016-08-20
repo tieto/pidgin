@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-01-21 08:25+0000\n"
+"POT-Creation-Date: 2016-06-15 23:24-0500\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Panjabi (Punjabi) (http://www.transifex.com/projects/p/pidgin/"
 "language/pa/)\n"
@@ -1459,6 +1459,7 @@ msgstr "ਇੱਕ ਗੱਲਬਾਤ ਵਿੱਚ ਕੋਈ ਬੋਲਿਆ ਹ�
 msgid "Someone says your name in a chat"
 msgstr "ਕਿਸੇ ਨੇ ਤੁਹਾਡਾ ਨਾਂ ਗੱਲਬਾਤ ਦੌਰਾਨ ਲਿਆ ਹੈ"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "ਇੱਕ ਟੋਸਟਰ ਨਾਲ ਨੋਟੀਫਾਈ ਕਰੋ, ਜਦੋਂ"
 
@@ -1471,6 +1472,7 @@ msgstr "ਟਰਮੀਨਲ ਵਿੰਡੋ ਲਈ *ਲਾਜ਼ਮੀ* ਸੈੱ
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "ਟੋਸਟਰ ਪਲੱਗਇਨ"
 
@@ -1638,7 +1640,6 @@ msgstr "ਇਹ ਪ੍ਰੋਟੋਕਾਲ ਪਬਲਿਕ ਉਪ-ਨਾਂ ਲ�
 msgid "Unknown"
 msgstr "ਅਣਜਾਣ"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "ਬੱਡੀ"
 
@@ -1743,26 +1744,31 @@ msgstr ""
 "ਸਰਟੀਫਿਕੇਟ ਨੂੰ \"%s\" ਵਲੋਂ ਦੇ ਤੌਰ ਉੱਤੇ ਪੇਸ਼ ਕੀਤਾ ਗਿਆ ਹੈ। ਇਸ ਦਾ ਮਤਲਬ ਇਹ ਹੋ ਸਕਦਾ ਹੈ ਕਿ ਤੁਸੀਂ ਉਸ "
 "ਸਰਵਿਸ ਨਾਲ ਨਹੀਂ ਜੁੜ ਰਹੇ, ਜੋ ਕਿ ਤੁਸੀਂ ਸੋਚ ਰਹੇ ਹੋ।"
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "ਸਰਟੀਫਿਕੇਟ ਜਾਣਕਾਰੀ"
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
-"ਆਮ ਨਾਂ: %s\n"
-"\n"
-"ਫਿੰਗਰਪਰਿੰਟ (SHA1): %s\n"
-"\n"
-"ਐਕਟਿਵ ਮਿਤੀ: %s\n"
-"ਮਿਆਦ: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "ਸਰਟੀਫਿਕੇਟ ਜਾਣਕਾਰੀ"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
+msgstr ""
 
 #. show error to user
 msgid "Registration Error"
@@ -1835,6 +1841,126 @@ msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
 msgstr "ਸੱਦਾ ਭੇਜਣ ਲਈ ਯੂਜ਼ਰ ਦਾ ਨਾਂ ਦਿਓ, ਚੋਣਵੇਂ ਰੂਪ ਵਿੱਚ ਸੱਦਾ ਸੁਨੇਹਾ ਵੀ ਦਿੱਤਾ ਜਾ ਸਕਦਾ ਹੈ।"
+
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"aim\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"aim\" URL ਹੈਂਡਲ ਕਰੇ।"
+
+msgid "The handler for \"aim\" URLs"
+msgstr "\"aim\" URL ਲਈ ਹੈਂਡਲਰ"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "\"aim\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
+
+msgid "Run the command in a terminal"
+msgstr "ਇੱਕ ਟਰਮੀਨਲ ਵਿੱਚ ਕਮਾਂਡ ਚਲਾਓ"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr "ਸਹੀਂ, ਜੇ ਕਮਾਂਡ ਨੂੰ ਇਸ ਟਾਈਪ ਦੇ URL ਨੂੰ ਹੈਂਡਲ ਕਰਨ ਲਈ ਟਰਮੀਨਲ ਤੋਂ ਚਲਾਉਣਾ ਹੈ।"
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"gg\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"gg\" URL ਹੈਂਡਲ ਕਰੇ।"
+
+msgid "The handler for \"gg\" URLs"
+msgstr "\"gg\" URL ਲਈ ਹੈਂਡਲਰ"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "\"gg\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"icq\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"icq\" URL ਹੈਂਡਲ ਕਰੇ।"
+
+msgid "The handler for \"icq\" URLs"
+msgstr "\"icq\" URL ਲਈ ਹੈਂਡਲਰ"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "\"icq\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"irc\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"irc\" URL ਹੈਂਡਲ ਕਰੇ।"
+
+msgid "The handler for \"irc\" URLs"
+msgstr "\"irc\" URL ਲਈ ਹੈਂਡਲਰ"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "\"irc\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"msnim\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"msnim\" URL ਹੈਂਡਲ ਕਰੇ।"
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "\"msnim\" URL ਲਈ ਹੈਂਡਲਰ"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "\"msnim\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"sip\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"sip\" URL ਹੈਂਡਲ ਕਰੇ।"
+
+msgid "The handler for \"sip\" URLs"
+msgstr "\"sip\" URL ਲਈ ਹੈਂਡਲਰ"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "\"sip\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"xmpp\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"xmpp\" URL ਹੈਂਡਲ ਕਰੇ।"
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "\"xmpp\" URL ਲਈ ਹੈਂਡਲਰ"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "\"xmpp\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"ymsgr\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"ymsgr\" URL ਹੈਂਡਲ ਕਰੇ।"
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "\"ymsgr\" URL ਲਈ ਹੈਂਡਲਰ"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "\"ymsgr\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2010,126 +2136,6 @@ msgstr "ਫਾਇਲ ਟਰਾਂਸਫਰ %s ਲਈ ਫੇਲ੍ਹ ਹੋਈ�
 msgid "File transfer from %s failed."
 msgstr "ਫਾਇਲ ਟਰਾਂਸਫਰ %s ਤੋਂ ਫੇਲ੍ਹ ਹੋਈ।"
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"aim\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"aim\" URL ਹੈਂਡਲ ਕਰੇ।"
-
-msgid "The handler for \"aim\" URLs"
-msgstr "\"aim\" URL ਲਈ ਹੈਂਡਲਰ"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "\"aim\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
-
-msgid "Run the command in a terminal"
-msgstr "ਇੱਕ ਟਰਮੀਨਲ ਵਿੱਚ ਕਮਾਂਡ ਚਲਾਓ"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr "ਸਹੀਂ, ਜੇ ਕਮਾਂਡ ਨੂੰ ਇਸ ਟਾਈਪ ਦੇ URL ਨੂੰ ਹੈਂਡਲ ਕਰਨ ਲਈ ਟਰਮੀਨਲ ਤੋਂ ਚਲਾਉਣਾ ਹੈ।"
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"gg\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"gg\" URL ਹੈਂਡਲ ਕਰੇ।"
-
-msgid "The handler for \"gg\" URLs"
-msgstr "\"gg\" URL ਲਈ ਹੈਂਡਲਰ"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "\"gg\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"icq\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"icq\" URL ਹੈਂਡਲ ਕਰੇ।"
-
-msgid "The handler for \"icq\" URLs"
-msgstr "\"icq\" URL ਲਈ ਹੈਂਡਲਰ"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "\"icq\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"irc\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"irc\" URL ਹੈਂਡਲ ਕਰੇ।"
-
-msgid "The handler for \"irc\" URLs"
-msgstr "\"irc\" URL ਲਈ ਹੈਂਡਲਰ"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "\"irc\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"msnim\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"msnim\" URL ਹੈਂਡਲ ਕਰੇ।"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" URL ਲਈ ਹੈਂਡਲਰ"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "\"msnim\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"sip\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"sip\" URL ਹੈਂਡਲ ਕਰੇ।"
-
-msgid "The handler for \"sip\" URLs"
-msgstr "\"sip\" URL ਲਈ ਹੈਂਡਲਰ"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "\"sip\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"xmpp\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"xmpp\" URL ਹੈਂਡਲ ਕਰੇ।"
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "\"xmpp\" URL ਲਈ ਹੈਂਡਲਰ"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "\"xmpp\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "ਕੀ ਦਿੱਤੀ ਕਮਾਂਡ \"ymsgr\" URL ਨੂੰ ਹੈਂਡਲ ਕਰੇ।"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr "ਸਹੀਂ, ਜੇ \"command\" ਕੀ ਵਿੱਚ ਦਿੱਤੀ ਕਮਾਂਡ \"ymsgr\" URL ਹੈਂਡਲ ਕਰੇ।"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" URL ਲਈ ਹੈਂਡਲਰ"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "\"ymsgr\" URL ਹੈਂਡਲ ਕਰਨ ਲਈ ਵਰਤਣ ਵਾਸਤੇ ਕਮਾਂਡ, ਜੇ ਯੋਗ ਕੀਤੀ ਹੈ ਤਾਂ।"
-
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">ਲਾਗਰ ਕੋਲ ਪੜਨ ਲਈ ਕੋਈ ਫੰਕਸ਼ਨ ਨਹੀਂ ਹੈ</font></b>"
 
@@ -2175,6 +2181,27 @@ msgstr "<font color=\"red\"><b>ਫਾਇਲ ਪੜੀ ਨਹੀਂ ਜਾ ਸਕ
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr "%s ਵਲੋਂ ਸੁਨੇਹਾ"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+#, fuzzy
+msgid "Network error."
+msgstr "ਨੈੱਟਵਰਕ"
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
@@ -2183,6 +2210,10 @@ msgstr "ਕੋਈ codecs ਨਹੀਂ ਲੱਭੇ। ਜੀਸਟਰੀਮਰ �
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr "ਕੋਈ ਕੋਡਸ ਨਹੀਂ ਬਚਿਆ। fs-codesc.conf ਵਿੱਚ ਤੁਹਾਡੀ ਕੋਡਸ ਪਸੰਦ ਬਹੁਤ ਸਖਤ ਹੈ।"
+
+#, fuzzy
+msgid "Could not connect to the remote party"
+msgstr "ਸਰਵਰ ਨਾਲ ਕੁਨੈਕਟ ਨਹੀਂ ਹੈ"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "ਨਾ-ਮੁੜ-ਪ੍ਰਾਪਤੀਯੋਗ Farsight2 ਗਲਤੀ ਆਈ ਹੈ।"
@@ -2790,6 +2821,56 @@ msgstr "ਸਧਾਰਨ ਪਲੱਗਇਨ"
 msgid "Tests to see that most things are working."
 msgstr "ਜਾਂਚ ਕਰੋ ਕਿ ਕੀ ਵਧੇਰੇ ਚੀਜਾਂ ਕੰਮ ਕਰਦੀਆਂ ਹਨ।"
 
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
+
 #. Scheme name
 msgid "X.509 Certificates"
 msgstr "X.509 ਸਰਟੀਫਿਕੇਟ"
@@ -3119,14 +3200,14 @@ msgstr "ਗੱਲਾਂ 'ਚ ਸ਼ਾਮਿਲ"
 msgid "Chat _name:"
 msgstr "ਗੱਲ ਨਾਂ(_n):"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "ਹੋਸਟ ਨਾਂ '%s' ਹੱਲ ਕਰਨ ਲਈ ਅਸਮਰੱਥ: %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "ਕੁਨੈਕਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr ""
 
 msgid "Chat error"
 msgstr "ਗੱਲ ਗਲਤੀ"
@@ -3334,13 +3415,11 @@ msgstr " <i>(ਪਛਾਣਿਆ)</i>"
 msgid "Nick"
 msgstr "ਨਾਂ"
 
-#, fuzzy
 msgid "Login name"
-msgstr "ਕੋਈ ਨਾਂ ਨਹੀਂ"
+msgstr ""
 
-#, fuzzy
 msgid "Host name"
-msgstr "ਹੋਸਟ ਨਾਂ"
+msgstr ""
 
 msgid "Currently on"
 msgstr "ਇਸ ਸਮੇਂ"
@@ -5746,9 +5825,9 @@ msgstr "MSN ਸਰਵਰ ਆਰਜ਼ੀ ਤੌਰ ਤੇ ਬੰਦ ਹੋ ਰ�
 msgid "Unable to authenticate: %s"
 msgstr "ਪ੍ਰਮਾਣਿਕਤਾ ਲਈ ਅਸਫਲ: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr "ਤੁਹਾਡਾ MSN ਬੱਡੀ ਆਰਜ਼ੀ ਤੌਰ ਉੱਤੇ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ। ਉਡੀਕ ਕਰਕੇ ਮੁੜ ਕੋਸ਼ਿਸ ਕਰੋ ਜੀ।"
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
+msgstr ""
 
 msgid "Handshaking"
 msgstr "ਹੈਂਡਸੇਕ"
@@ -9645,6 +9724,9 @@ msgstr "ਮੌਜੂਦਗੀ ਸੈਟਿੰਗ"
 msgid "Start Doodling"
 msgstr "ਘੁੱਗੂ ਘਾਂਘੜੇ ਸ਼ੁਰੂ"
 
+msgid "Activate which ID?"
+msgstr ""
+
 msgid "Select the ID you want to activate"
 msgstr "ID ਚੁਣੋ, ਜੋ ਤੁਸੀਂ ਸਰਗਰਮ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ"
 
@@ -10196,6 +10278,22 @@ msgid ""
 msgstr ""
 "ਤੁਹਾਡੀ %s ਪੜ੍ਹਨ ਦੌਰਾਨ ਗਲਤੀ ਆਈ ਹੈ। ਉਨ੍ਹਾਂ ਨੂੰ ਲੋਡ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ ਹੈ, ਅਤੇ ਪੁਰਾਣੀ ਫਾਇਲ ਦਾ "
 "ਨਾਂ %s~ ਬਦਲਿਆ ਗਿਆ ਹੈ।"
+
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
 
 msgid "Pidgin Internet Messenger"
 msgstr "ਪਿਡਗਿਨ ਇੰਟਰਨੈਟ ਮੈਸੰਜ਼ਰ"
@@ -10923,10 +11021,12 @@ msgstr "ਏਲੀਆਸ(_l):"
 msgid "_Group:"
 msgstr "ਗਰੁੱਪ(_G):"
 
-msgid "Auto_join when account connects."
+#, fuzzy
+msgid "Automatically _join when account connects"
 msgstr "ਜਦੋਂ ਅਕਾਊਂਟ ਕੁਨੈਕਟ ਹੋਵੇ ਤਾਂ ਆਟੋ-ਜੁਆਇੰਨ ਕਰੋ(_j)।"
 
-msgid "_Remain in chat after window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed"
 msgstr "ਜਦੋਂ ਵਿੰਡੋ ਬੰਦ ਕੀਤੀ ਜਾਵੇ ਤਾਂ ਗੱਲਬਾਤ ਵਿੱਚ ਰਹੋ(_R)|"
 
 msgid "Please enter the name of the group to be added."
@@ -10965,6 +11065,10 @@ msgstr "ਇਹ ਸਰਟੀਫਿਕੇਟ ਲਈ ਹੋਸਟ ਨਾਂ ਦਿ�
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL ਸਰਵਰ"
+
+#, fuzzy
+msgid "Supported debug options are: plugins, version"
+msgstr "ਸਹਿਯੋਗੀ ਡੀਬੱਗ ਚੋਣਾਂ ਹਨ: plugins version"
 
 msgid "Unknown command."
 msgstr "ਅਣਜਾਣ ਕਮਾਂਡ ਹੈ।"
@@ -11404,6 +11508,12 @@ msgstr "ਬੰਗਾਲੀ"
 msgid "Bengali-India"
 msgstr "ਬੰਗਾਲੀ-ਭਾਰਤੀ"
 
+msgid "Breton"
+msgstr ""
+
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "ਬੋਸਨੀਆਈ"
 
@@ -11443,6 +11553,9 @@ msgstr "ਇਸਪੀਰਨਟੋ"
 msgid "Spanish"
 msgstr "ਸਪੇਨੀ"
 
+msgid "Argentine Spanish"
+msgstr ""
+
 msgid "Estonian"
 msgstr "ਈਸਟੋਨੀਆਈ"
 
@@ -11454,9 +11567,6 @@ msgstr "ਫਾਰਸੀ"
 
 msgid "Finnish"
 msgstr "ਫੈਨਿਸ਼"
-
-msgid "French"
-msgstr "ਫਰੈਂਚ"
 
 msgid "Irish"
 msgstr "ਆਈਰਸ਼"
@@ -11482,9 +11592,6 @@ msgstr ""
 msgid "Hungarian"
 msgstr "ਹੰਗਰੀਆਈ"
 
-msgid "Armenian"
-msgstr "ਅਰਮੀਨੀਆਈ"
-
 msgid "Indonesian"
 msgstr "ਇੰਡੋਨੇਸ਼ੀਆਈ"
 
@@ -11500,6 +11607,9 @@ msgstr "ਜਾਰਜੀਆਈ"
 msgid "Ubuntu Georgian Translators"
 msgstr "ਉਬਤੂੰ ਜਾਰਜੀਆਈ ਅਨੁਵਾਦਕ"
 
+msgid "Kazakh"
+msgstr ""
+
 msgid "Khmer"
 msgstr "ਖਮੀਰ"
 
@@ -11512,14 +11622,20 @@ msgstr "ਕੰਨੜ ਅਨੁਵਾਦਕ ਟੀਮ"
 msgid "Korean"
 msgstr "ਕੋਰੀਆਈ"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "ਕੁਰਦ"
 
-msgid "Lao"
-msgstr "ਲਾਓ"
+msgid "Kurdish (Sorani)"
+msgstr ""
 
 msgid "Lithuanian"
 msgstr "ਲੀਥੂਵਨੀਆਈ"
+
+msgid "Latvian"
+msgstr ""
 
 msgid "Maithili"
 msgstr "ਮੈਥਲੀ"
@@ -11530,6 +11646,9 @@ msgstr ""
 msgid "Macedonian"
 msgstr "ਮੈਕਡੋਨੀਆਈ"
 
+msgid "Malay"
+msgstr "ਮਲਾਏ"
+
 msgid "Malayalam"
 msgstr "ਮਲਿਆਲਮ"
 
@@ -11538,9 +11657,6 @@ msgstr "ਮੰਗੋਲੀਆਈ"
 
 msgid "Marathi"
 msgstr "ਮਰਾਠੀ"
-
-msgid "Malay"
-msgstr "ਮਲਾਏ"
 
 msgid "Burmese"
 msgstr ""
@@ -11584,6 +11700,9 @@ msgstr "ਰੋਮਾਨੀਆਈ"
 msgid "Russian"
 msgstr "ਰੂਸੀ"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "ਸਲੋਵਾਕ"
 
@@ -11617,11 +11736,22 @@ msgstr "ਤੇਲਗੂ"
 msgid "Thai"
 msgstr "ਥਾਈ"
 
+msgid "Tatar"
+msgstr ""
+
 msgid "Ukranian"
 msgstr "ਯੂਕਰੇਨੀ"
 
 msgid "Urdu"
 msgstr "ਉਰਦੂ"
+
+msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "ਵੀਅਤਨਾਮੀ"
@@ -11637,6 +11767,15 @@ msgstr "ਮੂਲ ਚੀਨੀ"
 
 msgid "Amharic"
 msgstr "ਅਮਹਾਰਿਕ"
+
+msgid "French"
+msgstr "ਫਰੈਂਚ"
+
+msgid "Armenian"
+msgstr "ਅਰਮੀਨੀਆਈ"
+
+msgid "Lao"
+msgstr "ਲਾਓ"
 
 msgid "Turkish"
 msgstr "ਤੁਰਕ"
@@ -12296,6 +12435,10 @@ msgstr "ਮੀਡਿਆ(_M)"
 msgid "_Hangup"
 msgstr "ਹੈਂਗ ਅੱਪ(_H)"
 
+#, fuzzy
+msgid "Media error"
+msgstr "ਪੜ੍ਹਨ ਦੌਰਾਨ ਗਲਤੀ"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s ਤੁਹਾਡੇ ਨਾਲ ਆਡੀਓ/ਵੀਡਿਓ ਸ਼ੈਸ਼ਨ ਸ਼ੁਰੂ ਕਰਨਾ ਚਾਹੁੰਦਾ/ਚਾਹੁੰਦੀ ਹੈ।"
@@ -12306,6 +12449,42 @@ msgstr "%s ਤੁਹਾਡੇ ਨਾਲ ਵੀਡਿਓ ਸ਼ੈਸ਼ਨ ਸ�
 
 msgid "Incoming Call"
 msgstr "ਆ ਰਹੀ ਕਾਲ"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr ""
 
 msgid "_Hold"
 msgstr "ਰੋਕੋ(_H)"
@@ -13154,6 +13333,9 @@ msgstr "ਹਾਲਤ ਚੋਣਕਾਰ"
 msgid "Google Talk"
 msgstr "ਗੂਗਲ ਟਾਕ"
 
+msgid "Facebook (XMPP)"
+msgstr "ਫੇਸਬੁੱਕ (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "%s ਲੋਡ ਕਰਨ ਦੌਰਾਨ ਅੱਗੇ ਦਿੱਤੀ ਗਲਤੀ ਆਈ: %s"
@@ -13809,8 +13991,16 @@ msgstr ""
 msgid "Notify For"
 msgstr "ਸੂਚਨਾ ਦਿਓ"
 
+#, fuzzy
+msgid "\t_Notify for System messages"
+msgstr "ਸਿਸਟਮ ਸੁਨੇਹੇ"
+
 msgid "\t_Only when someone says your username"
 msgstr "\tਜਦੋਂ ਕੋਈ ਤੁਹਾਡਾ ਯੂਜ਼ਰ ਨਾਂ ਲਵੇ(_O)"
+
+#, fuzzy
+msgid "\tNotify for _System messages"
+msgstr "ਸਿਸਟਮ ਸੁਨੇਹੇ"
 
 msgid "_Focused windows"
 msgstr "ਫੋਕਸ ਹੋਈਆਂ ਵਿੰਡੋਜ਼(_F)"
@@ -13842,6 +14032,8 @@ msgid "R_aise conversation window"
 msgstr "ਗੱਲਬਾਤ ਵਿੰਡੋ ਉਭਾਰੋ(_a)"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "ਗੱਲਬਾਤ ਵਿੰਡੋ ਪੇਸ਼ ਕਰੋ(_P)"
 
@@ -14304,9 +14496,8 @@ msgstr ""
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "ਪ੍ਰਤੀ ਵਿੰਡੋ ਵਿੱਚ ਗੱਲਬਾਤਾਂ ਦੀ ਗਿਣਤੀ"
+msgstr ""
 
 #. Messaging menu integration
 msgid "Messaging Menu"
@@ -14591,10 +14782,10 @@ msgstr ""
 "ਪਿਡਗਿਨ ਦੇ ਮੌਜੂਦਾ ਇੰਸਟਾਲ ਵਰਜਨ ਨੂੰ ਹਟਾਉਣ ਲਈ ਅਸਮਰੱਥ ਹੈ। ਨਵਾਂ ਵਰਜਨ ਮੌਜੂਦਾ ਇੰਸਟਾਲ ਵਰਜਨ ਨੂੰ ਬਿਨਾਂ "
 "ਹਟਾਏ ਹੀ ਇੰਸਟਾਲ ਕੀਤਾ ਜਾਵੇਗਾ।"
 
+#, fuzzy
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "ਪਿਡਗਿਨ ਲਈ ਅਨੁਕੂਲ GTK+ ਰਨਟਾਈਮ ਚਾਹੀਦਾ ਹੈ (ਜੋ ਕਿ ਹਾਲੇ ਮੌਜੂਦ ਨਹੀਂ ਜਾਪਦਾ ਹੈ।)$\\rਕੀ ਤੁਸੀਂ GTK"
 "+ ਰਨਟਾਈਮ ਨੂੰ ਇੰਸਟਾਲ ਕਰਨ ਨੂੰ ਛੱਡਣਾ ਚਾਹੁੰਦੇ ਹੋ?"

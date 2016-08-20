@@ -473,10 +473,6 @@ void mxit_update_buddy_presence( struct MXitSession* session, const char* userna
 	contact->mood = mood;
 	contact->capabilities = flags;
 
-	/* validate mood */
-	if ( ( contact->mood < MXIT_MOOD_NONE ) || ( contact->mood > MXIT_MOOD_STRESSED ) )
-		contact->mood = MXIT_MOOD_NONE;
-
 	g_strlcpy( contact->customMood, customMood, sizeof( contact->customMood ) );
 	// TODO: Download custom mood frame.
 

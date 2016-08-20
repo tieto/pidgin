@@ -1634,7 +1634,7 @@ irc_msg_auth(struct irc_conn *irc, char *arg)
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	char *buf, *authinfo;
 	char *serverin = NULL;
-	unsigned serverinlen = 0;
+	gsize serverinlen = 0;
 	const gchar *c_out;
 	unsigned int clen;
 	int ret;
@@ -1644,10 +1644,8 @@ irc_msg_auth(struct irc_conn *irc, char *arg)
 	if (!arg)
 		return;
 
-	if (arg[0] != '+') {
-		serverin = arg;
-		serverinlen = strlen(serverin);
-	}
+	if (arg[0] != '+')
+		serverin = (char *)purple_base64_decode(arg, &serverinlen);
 
 	ret = sasl_client_step(irc->sasl_conn, serverin, serverinlen,
 		NULL, &c_out, &clen);
@@ -1661,7 +1659,7 @@ irc_msg_auth(struct irc_conn *irc, char *arg)
 		g_free(tmp);
 
 		irc_sasl_finish(irc);
-
+		g_free(serverin);
 		return;
 	}
 
@@ -1674,6 +1672,7 @@ irc_msg_auth(struct irc_conn *irc, char *arg)
 	irc_send(irc, buf);
 	g_free(buf);
 	g_free(authinfo);
+	g_free(serverin);
 }
 
 void

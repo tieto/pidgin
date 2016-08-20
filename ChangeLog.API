@@ -632,6 +632,24 @@ version 3.0.0 (??/??/????):
 		* _GntTreeColumnFlag
 		* _GntWidgetFlags
 
+version 2.11.0:
+	libpurple:
+		Added:
+		* account-status-changing signal (account signals)
+		* buddy-removed-from-group signal (blist signals)
+		* PurpleCommandsUiOps, to allow the UI to override the
+		  built-in handling of commands.
+		* PurplePrefsUiOps, to allow the UI to override the way global
+		  preferences are stored.
+		* PurpleAccountPrefsUiOps, to allow the UI to handle storage
+		  of account preferences.
+		* purple_media_set_encryption_parameters
+		* purple_media_set_decryption_parameters
+		* purple_xfer_write_file
+		* purple_xfer_read_file
+		* purple_media_set_send_rtcp_mux
+		* purple_media_backend_set_send_rtcp_mux
+
 version 2.10.12:
 	* No changes
 

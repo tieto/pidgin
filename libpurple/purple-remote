@@ -135,7 +135,7 @@ def execute(uri):
     elif command == "gochat":
         account = findaccount(accountname, protocol)
         connection = cpurple.PurpleAccountGetConnection(account)
-        return purple.ServJoinChat(connection, params)
+        return purple.PurpleServJoinChat(connection, params)
 
     elif command == "addbuddy":
         account = findaccount(accountname, protocol)

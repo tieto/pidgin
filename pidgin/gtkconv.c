@@ -6822,6 +6822,19 @@ pidgin_conv_write_conv(PurpleConversation *conv, PurpleMessage *pmsg)
 
 	/* Bi-Directional support - set timestamp direction using unicode characters */
 	is_rtl_message = purple_markup_is_rtl(message);
+
+	/* Handle plaintext messages with RTL text but no direction in the markup */
+	if (!is_rtl_message && pango_find_base_dir(message, -1) == PANGO_DIRECTION_RTL)
+	{
+		char *wrapped = g_strdup_printf("<SPAN style=\"direction:rtl;text-align:right;\">%s</SPAN>", displaying);
+
+		g_free(displaying);
+		displaying = wrapped;
+
+		length = strlen(displaying) + 1;
+		is_rtl_message = TRUE;
+	}
+
 	/* Enforce direction only if message is RTL - doesn't effect LTR users */
 	if (is_rtl_message)
 		str_embed_direction_chars(&mdate);
