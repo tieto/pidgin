@@ -29,9 +29,7 @@ MXITSOURCES = \
 	roster.c \
 	roster.h \
 	splashscreen.c \
-	splashscreen.h \
-	voicevideo.c \
-	voicevideo.h
+	splashscreen.h
 
 
 AM_CFLAGS = $(st)

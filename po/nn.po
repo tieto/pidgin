@@ -3,17 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Yngve Spjeld Landro <l10n@landro.net>, 2011-2012
+# Alexander Jansen <bornxlo@gmail.com>, 2015
+# Alexander Jansen <bornxlo@gmail.com>, 2015
+# Richard Laager <rlaager@wiktel.com>, 2014
+# Yngve Spjeld Landro <l10n@landro.net>, 2011-2013,2016
 # Yngve Spjeld Landro <l10n@landro.net>, 2012-2013
 # Yngve Spjeld Landro <l10n@landro.net>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-01-21 08:25+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Norwegian Nynorsk (http://www.transifex.com/projects/p/pidgin/"
+"POT-Creation-Date: 2016-06-15 23:16-0500\n"
+"PO-Revision-Date: 2016-06-12 14:23+0000\n"
+"Last-Translator: Yngve Spjeld Landro <l10n@landro.net>\n"
+"Language-Team: Norwegian Nynorsk (http://www.transifex.com/pidgin/pidgin/"
 "language/nn/)\n"
 "Language: nn\n"
 "MIME-Version: 1.0\n"
@@ -1485,6 +1488,7 @@ msgstr "Nokon talar i eit praterom"
 msgid "Someone says your name in a chat"
 msgstr "Nokon seier namnet ditt i eit praterom"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Varsla med eit sprettoppvindauge når"
 
@@ -1497,6 +1501,7 @@ msgstr "Merk terminalvindauget som VIKTIG."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Programtillegg for sprettoppvindauge"
 
@@ -1668,7 +1673,6 @@ msgstr "Protokollen kan ikkje nytta offentlege aliasar."
 msgid "Unknown"
 msgstr "Ukjend"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Venner"
 
@@ -1780,10 +1784,19 @@ msgstr ""
 "Sertifikatet seier at det er frå \"%s\" i staden for. Dette kan bety at du "
 "ikkje koplar deg til den tenesta du trur du gjer."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Sertifikatopplysningar"
+
+msgid "Unable to find Issuer Certificate"
+msgstr "Finn ikkje utferdarsertifikat"
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1792,14 +1805,18 @@ msgid ""
 msgstr ""
 "Namn: %s\n"
 "\n"
+"Utgitt av: %s\n"
+"\n"
 "Fingeravtrykk (SHA1): %s\n"
 "\n"
-"Teke i bruk: %s\n"
-"Utgår: %s\n"
+"Aktiveringsdato: %s\n"
+"Utløpsdato: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Sertifikatopplysningar"
+msgid "(self-signed)"
+msgstr "(sjølvsignert)"
+
+msgid "View Issuer Certificate"
+msgstr "Sjå på utferdarsertifikat"
 
 #. show error to user
 msgid "Registration Error"
@@ -1874,6 +1891,144 @@ msgid ""
 msgstr ""
 "Skriv inn namnet på brukaren du ønskjer å invitera. Du kan ta med ei valfri "
 "velkomstmelding."
+
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"aim\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"aim\"-adresser."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Handteraren av \"aim\"-adresser"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"aim\"-adresser (dersom teken i bruk)."
+
+msgid "Run the command in a terminal"
+msgstr "Kjør kommandoen i eit terminalvindauge"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Sann dersom kommandoen som skal handtera denne adressetypen bør kjørast i "
+"ein terminal."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"gg\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera \"gg"
+"\"-adresser."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Handteraren av \"gg\"-adresser"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"gg\"-adresser (dersom teken i bruk)."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"icq\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"icq\"-adresser."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Handteraren av \"icq\"-adresser"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"icq\"-adresser (dersom teken i bruk)."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"irc\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"irc\"-adresser."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Handteraren av \"irc\"-adresser"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"irc\"-adresser (dersom teken i bruk)."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"msnim\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"msnim\"-adresser."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Handteraren av \"msnim\"-adresser"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"msnim\"-adresser (dersom teken i bruk)."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"sip\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"sip\"-adresser."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Handteraren av \"sip\"-adresser"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"sip\"-adresser (dersom teken i bruk)."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"xmpp\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"xmpp\"-adresser."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Handteraren av \"xmpp\"-adresser"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"xmpp\"-adresser (dersom teken i bruk)."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"ymsgr\"-adresser"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
+"\"ymsgr\"-adresser."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Handteraren av \"ymsgr\"-adresser"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Kommandoen for å handtera \"ymsgr\"-adresser (dersom teken i bruk)."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2050,144 +2205,6 @@ msgstr "Filoverføringa til %s feila."
 msgid "File transfer from %s failed."
 msgstr "Filoverføringa frå %s feila."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"aim\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"aim\"-adresser."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Handteraren av \"aim\"-adresser"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"aim\"-adresser (dersom teken i bruk)."
-
-msgid "Run the command in a terminal"
-msgstr "Kjør kommandoen i eit terminalvindauge"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Sann dersom kommandoen som skal handtera denne adressetypen bør kjørast i "
-"ein terminal."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"gg\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera \"gg"
-"\"-adresser."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Handteraren av \"gg\"-adresser"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"gg\"-adresser (dersom teken i bruk)."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"icq\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"icq\"-adresser."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Handteraren av \"icq\"-adresser"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"icq\"-adresser (dersom teken i bruk)."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"irc\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"irc\"-adresser."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Handteraren av \"irc\"-adresser"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"irc\"-adresser (dersom teken i bruk)."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"msnim\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"msnim\"-adresser."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Handteraren av \"msnim\"-adresser"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"msnim\"-adresser (dersom teken i bruk)."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"sip\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"sip\"-adresser."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Handteraren av \"sip\"-adresser"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"sip\"-adresser (dersom teken i bruk)."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"xmpp\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"xmpp\"-adresser."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Handteraren av \"xmpp\"-adresser"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"xmpp\"-adresser (dersom teken i bruk)."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Kor vidt den spesifiserte kommandoen skal handtera \"ymsgr\"-adresser"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Sann dersom kommandoen spesifisert i \"kommando\"-nøkkelen skal handtera "
-"\"ymsgr\"-adresser."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Handteraren av \"ymsgr\"-adresser"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Kommandoen for å handtera \"ymsgr\"-adresser (dersom teken i bruk)."
-
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Loggaren har ingen lesefunksjon</font></b>"
 
@@ -2234,6 +2251,32 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+"\n"
+"\n"
+"Melding frå Farsight: "
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+"Klarte ikkje å starta samtalen. Dette er sannsynlegvis grunna eit problem "
+"ved installasjonen av GStreamer eller Farsight. "
+
+msgid "Network error."
+msgstr "Nettverksfeil."
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+"Kodek-spørjinga feila. Problemet vert kanskje løyst ved å installera fleire "
+"GStreamer-kodekar."
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2245,6 +2288,9 @@ msgid ""
 msgstr ""
 "Ingen kodekar igjen. Kodek-innstillingane dine i fs-codecs.conf er for "
 "strenge."
+
+msgid "Could not connect to the remote party"
+msgstr "Klarte ikkje å kopla til fjerneininga"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Det oppstod ein uoppretteleg Farsight2-feil."
@@ -2861,6 +2907,58 @@ msgstr "Enkelt programtillegg"
 msgid "Tests to see that most things are working."
 msgstr "Testar om dei fleste tinga verkar som dei skal."
 
+msgid "TLS/SSL Versions"
+msgstr "TLS/SSL-utgåver"
+
+msgid "Minimum Version"
+msgstr "Minsteversjon"
+
+msgid "Maximum Version"
+msgstr "Største versjon"
+
+msgid "SSL 2"
+msgstr "SSL 2"
+
+msgid "SSL 3"
+msgstr "SSL 3"
+
+msgid "TLS 1.0"
+msgstr "TLS 1.0"
+
+msgid "TLS 1.1"
+msgstr "TLS 1.1"
+
+msgid "TLS 1.2"
+msgstr "TLS 1.2"
+
+msgid "TLS 1.3"
+msgstr "TLS 1.3"
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr "Ikkje støtta i NSS < 3.14"
+
+msgid "Ciphers"
+msgstr "Krypteringsmetodar"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr "NSS-val"
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
+"Konfigurer krypteringsmetodar og andre innstillingar for programtillegget "
+"NSS SSL/TLS"
+
 #. Scheme name
 msgid "X.509 Certificates"
 msgstr "X.509-sertifikat"
@@ -3193,14 +3291,14 @@ msgstr "Legg til praterom"
 msgid "Chat _name:"
 msgstr "Prate_namn:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Klarer ikkje å finna tenarnamnet '%s': %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Koplar til"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr "Klarer ikkje å slå opp tenarnamnet: %s"
 
 msgid "Chat error"
 msgstr "Prateromsfeil"
@@ -3356,7 +3454,7 @@ msgid "Auto-detect incoming UTF-8"
 msgstr "Automatisk oppdaging av innkomande UTF-8"
 
 msgid "Ident name"
-msgstr ""
+msgstr "Ident-namn"
 
 msgid "Real name"
 msgstr "Eigentleg namn"
@@ -3408,11 +3506,9 @@ msgstr " <i>(identifisert)</i>"
 msgid "Nick"
 msgstr "Kallenamn"
 
-#, fuzzy
 msgid "Login name"
-msgstr "Ikkje noko namn"
+msgstr "Påloggingsnamn"
 
-#, fuzzy
 msgid "Host name"
 msgstr "Vertsnamn"
 
@@ -5853,10 +5949,9 @@ msgstr "MSN-tenarane vil vera mellombels nede"
 msgid "Unable to authenticate: %s"
 msgstr "Klarte ikkje å autentisera: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr ""
-"MSN-vennelista di er mellombels utilgjengeleg. Vent ei stund og prøv igjen."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
+msgstr "MSN-vennen din er mellombels utilgjengeleg; %s"
 
 msgid "Handshaking"
 msgstr "Protokollsjekk"
@@ -9837,6 +9932,9 @@ msgstr "Nærværsinnstillingar"
 msgid "Start Doodling"
 msgstr "Laga krusedullar"
 
+msgid "Activate which ID?"
+msgstr "Vel ID"
+
 msgid "Select the ID you want to activate"
 msgstr "Vel ID-en du vil ta i bruk"
 
@@ -10396,6 +10494,26 @@ msgid ""
 msgstr ""
 "Ein feil oppstod under lesinga av %s di. Fila er ikkje blitt lasta og den "
 "gamle fila har fått det nye namnet %s~."
+
+msgid "Instant Messaging Client"
+msgstr "Lynmeldingsklient"
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+"Pidgin er eit prateprogram som let deg logge på konti frå fleire "
+"pratenettverk samstundes."
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+"Dette tyder at du kan prate med venner på MSN, prate med ein venn i Google "
+"Talk, og sitte i eit Yahoo-praterom samstundes."
+
+msgid "The buddy list showing friends on different networks."
+msgstr "Vennelista viser venner på ulike nettverk."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin Internett meldingsklient"
@@ -11132,11 +11250,11 @@ msgstr "Kall_enamn:"
 msgid "_Group:"
 msgstr "_Gruppe:"
 
-msgid "Auto_join when account connects."
-msgstr "Bli automatisk _med når kontoen koplar seg til."
+msgid "Automatically _join when account connects"
+msgstr "Vert automatisk _med når kontoane koplar seg saman"
 
-msgid "_Remain in chat after window is closed."
-msgstr "_Hald fram i praten etter at vindauget er lukka."
+msgid "_Remain in chat after window is closed"
+msgstr "Vert _verande i samtalen etter at vindauget er lukka"
 
 msgid "Please enter the name of the group to be added."
 msgstr "Skriv inn namnet på gruppa du ønskjer å leggja til."
@@ -11174,6 +11292,9 @@ msgstr "Skriv inn vertsnamnet til dette sertifikatet."
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL-tenarar"
+
+msgid "Supported debug options are: plugins, version"
+msgstr "Dei støtta feilsøkingsvala er: plugins, version"
 
 msgid "Unknown command."
 msgstr "Ukjend kommando."
@@ -11602,7 +11723,7 @@ msgid "Assamese"
 msgstr "Assamesisk"
 
 msgid "Asturian"
-msgstr ""
+msgstr "Asturiansk"
 
 msgid "Belarusian Latin"
 msgstr "Kviterussisk latinsk"
@@ -11615,6 +11736,12 @@ msgstr "Bengali"
 
 msgid "Bengali-India"
 msgstr "Bengali (India)"
+
+msgid "Breton"
+msgstr "Bretonsk"
+
+msgid "Bodo"
+msgstr "Bodo"
 
 msgid "Bosnian"
 msgstr "Bosnisk"
@@ -11655,6 +11782,9 @@ msgstr "Esperanto"
 msgid "Spanish"
 msgstr "Spansk"
 
+msgid "Argentine Spanish"
+msgstr "Argentinsk spansk"
+
 msgid "Estonian"
 msgstr "Estisk"
 
@@ -11666,9 +11796,6 @@ msgstr "Persisk"
 
 msgid "Finnish"
 msgstr "Finsk"
-
-msgid "French"
-msgstr "Fransk"
 
 msgid "Irish"
 msgstr "Irsk"
@@ -11694,9 +11821,6 @@ msgstr "Kroatisk"
 msgid "Hungarian"
 msgstr "Ungarsk"
 
-msgid "Armenian"
-msgstr "Armensk"
-
 msgid "Indonesian"
 msgstr "Indonesisk"
 
@@ -11712,6 +11836,9 @@ msgstr "Georgisk"
 msgid "Ubuntu Georgian Translators"
 msgstr "Ubuntu georgisk-omsetjarar"
 
+msgid "Kazakh"
+msgstr "Kasakhisk"
+
 msgid "Khmer"
 msgstr "Khmer"
 
@@ -11724,14 +11851,20 @@ msgstr "Kannada-omsetjingsgruppa"
 msgid "Korean"
 msgstr "Koreansk"
 
+msgid "Kashmiri"
+msgstr "Kashmiri"
+
 msgid "Kurdish"
 msgstr "Kurdisk"
 
-msgid "Lao"
-msgstr "Lao"
+msgid "Kurdish (Sorani)"
+msgstr "Kurdisk (Sorani)"
 
 msgid "Lithuanian"
 msgstr "Litauisk"
+
+msgid "Latvian"
+msgstr "Latvisk"
 
 msgid "Maithili"
 msgstr "Maithili"
@@ -11742,6 +11875,9 @@ msgstr "Aust-marisk"
 msgid "Macedonian"
 msgstr "Makedonsk"
 
+msgid "Malay"
+msgstr "Malayisk"
+
 msgid "Malayalam"
 msgstr "Malayalam"
 
@@ -11750,9 +11886,6 @@ msgstr "Mongolsk"
 
 msgid "Marathi"
 msgstr "Marathi"
-
-msgid "Malay"
-msgstr "Malayisk"
 
 msgid "Burmese"
 msgstr "Burmesisk"
@@ -11796,6 +11929,9 @@ msgstr "Rumensk"
 msgid "Russian"
 msgstr "Russisk"
 
+msgid "Sindhi"
+msgstr "Sindhi"
+
 msgid "Slovak"
 msgstr "Slovakisk"
 
@@ -11809,7 +11945,7 @@ msgid "Serbian"
 msgstr "Serbisk"
 
 msgid "Serbian Latin"
-msgstr ""
+msgstr "Serbisk (latinsk alfabet)"
 
 msgid "Sinhala"
 msgstr "Singalesisk"
@@ -11829,11 +11965,22 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Thai"
 
+msgid "Tatar"
+msgstr "Tatarisk"
+
 msgid "Ukranian"
 msgstr "Ukrainsk"
 
 msgid "Urdu"
 msgstr "Urdu"
+
+msgid "Uzbek"
+msgstr "Usbekisk"
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "Vietnamesisk"
@@ -11849,6 +11996,15 @@ msgstr "Tradisjonell kinesisk"
 
 msgid "Amharic"
 msgstr "Amharisk"
+
+msgid "French"
+msgstr "Fransk"
+
+msgid "Armenian"
+msgstr "Armensk"
+
+msgid "Lao"
+msgstr "Lao"
 
 msgid "Turkish"
 msgstr "Tyrkisk"
@@ -12539,6 +12695,9 @@ msgstr "_Media"
 msgid "_Hangup"
 msgstr "_Legg på"
 
+msgid "Media error"
+msgstr "Mediefeil"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s ønskjer å starta ei lyd-/biletøkt med deg."
@@ -12549,6 +12708,42 @@ msgstr "%s ønskjer å starta ei biletøkt med deg."
 
 msgid "Incoming Call"
 msgstr "Innkomande samtale"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr "ABC"
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr "DEF"
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr "GHI"
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr "JKL"
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr "MNO"
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr "PQRS"
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr "TUV"
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr "WXYZ"
 
 msgid "_Hold"
 msgstr "_Vent"
@@ -12588,6 +12783,8 @@ msgstr "'Manuell' nettlesarkommando er vald, men ingen kommando er brukt."
 
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
 msgstr ""
+"Klarte ikkje å opna adressa: nettlesarkommandoen 'Manual' verkar vera "
+"ugyldig."
 
 msgid "No message"
 msgstr "Inga melding"
@@ -13400,6 +13597,9 @@ msgstr "Tilstandsveljar"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Følgjande feil oppstod ved lastinga av %s: %s"
@@ -14069,8 +14269,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Nytt varsel for"
 
+msgid "\t_Notify for System messages"
+msgstr "\t_Systemmeldingar"
+
 msgid "\t_Only when someone says your username"
 msgstr "\tBerre når nokon seier brukarnamnet _ditt"
+
+msgid "\tNotify for _System messages"
+msgstr "\t_Systemmeldingar"
 
 msgid "_Focused windows"
 msgstr "_Fokuserte vindauge"
@@ -14102,6 +14308,8 @@ msgid "R_aise conversation window"
 msgstr "_Hev samtalevindauget"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "F_ramhev samtalevindauget"
 
@@ -14555,34 +14763,33 @@ msgstr ""
 
 #. Alerts
 msgid "Chatroom alerts"
-msgstr ""
+msgstr "Prateromvarsel"
 
 msgid "Chatroom message alerts _only where someone says your username"
-msgstr ""
+msgstr "Varsel om prateromsmeldingar _berre om nokon nemner brukarnamnet ditt"
 
 #. Launcher integration
 msgid "Launcher Icon"
-msgstr ""
+msgstr "Oppstartsikon"
 
 msgid "_Disable launcher integration"
-msgstr ""
+msgstr "Slå _av samordninga med oppstartaren"
 
 msgid "Show number of unread _messages on launcher icon"
-msgstr ""
+msgstr "Syn talet på ulesne _meldingar på oppstartsikonet "
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "Tal på samtalar per vindauge"
+msgstr "Syn talet på ulesne _samtalar på oppstartsikonet "
 
 #. Messaging menu integration
 msgid "Messaging Menu"
-msgstr ""
+msgstr "Meldingstenestemeny"
 
 msgid "Show number of _unread messages for conversations in messaging menu"
-msgstr ""
+msgstr "Syn talet på _ulesne meldingar for samtalar i meldingstenestemenyen"
 
 msgid "Show _elapsed time for unread conversations in messaging menu"
-msgstr ""
+msgstr "Syn talet på _brukt tid for ulesne samtalar i meldingstenestemenyen"
 
 #. *< type
 #. *< ui_requirement
@@ -14591,17 +14798,17 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "Unity Integration"
-msgstr ""
+msgstr "Unity-samordning"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Provides integration with Unity."
-msgstr ""
+msgstr "Gjev samordning med Unity."
 
 #. *  description
 msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr ""
+msgstr "Gjev samordning med Unity sin meldingstenestemeny og oppstartar."
 
 msgid "Audio"
 msgstr "Lyd"
@@ -14864,12 +15071,11 @@ msgstr ""
 "vil bli installert utan at den gamle blir fjerna."
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"Pidgin krev eit kompatibelt GTK+-kjøremiljø som no ikkje verkar vera til "
-"stades.$\\rEr du sikker på at du ikkje vil installera GTK+-kjøremiljøet?"
+"Pidgin krev ei høveleg utgåve av GTK+-køyremiljø. Det ser ikkje ut at ei "
+"slik ei er installert. $\\rEr du sikker på at ikkje vil installera ho?"
 
 #. Installer Subsection Text
 msgid "URI Handlers"

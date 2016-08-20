@@ -2,21 +2,26 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# kelemeng <kelemeng@gnome.hu>, 2011.
+# Translators:
+# Balázs Meskó <meskobalazs@gmail.com>, 2015
+# Gabor Kelemen <kelemeng at gnome dot hu>, 2014
+# kelemeng <kelemeng@ubuntu.com>, 2011
+# kelemeng <kelemeng@ubuntu.com>, 2011,2014
+# kelemeng <kelemeng@ubuntu.com>, 2014-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2011-07-18 00:04+0000\n"
-"Last-Translator: kelemeng <kelemeng@gnome.hu>\n"
-"Language-Team: Hungarian (http://www.transifex.net/projects/p/pidgin/team/"
+"POT-Creation-Date: 2016-06-15 23:14-0500\n"
+"PO-Revision-Date: 2016-06-06 22:30+0000\n"
+"Last-Translator: kelemeng <kelemeng@ubuntu.com>\n"
+"Language-Team: Hungarian (http://www.transifex.com/pidgin/pidgin/language/"
 "hu/)\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -1488,6 +1493,7 @@ msgstr "Valaki beszél egy csevegésben"
 msgid "Someone says your name in a chat"
 msgstr "Valaki csevegés közben leírja az Ön nevét"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Értesítsen egy kenyérpirítóval ha:"
 
@@ -1500,6 +1506,7 @@ msgstr "SÜRGŐS állapot beállítása a terminálablakhoz."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Kenyérpirító bővítmény"
 
@@ -1671,7 +1678,6 @@ msgstr "Ez a protokoll nem támogatja a nyilvános álnév lekérését."
 msgid "Unknown"
 msgstr "Ismeretlen"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Partnerek"
 
@@ -1783,10 +1789,19 @@ msgstr ""
 "A tanúsítvány a következőtől származónak mondja magát: „%s”. Ez azt "
 "jelentheti, hogy a kívánttól eltérő szolgáltatáshoz kapcsolódik."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Tanúsítványinformációk"
+
+msgid "Unable to find Issuer Certificate"
+msgstr "Nem található a kibocsátó tanúsítványa"
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1795,14 +1810,18 @@ msgid ""
 msgstr ""
 "Közönséges név: %s\n"
 "\n"
+"Kibocsátó: %s\n"
+"\n"
 "Ujjlenyomat (SHA1): %s\n"
 "\n"
 "Aktiválás dátuma: %s\n"
 "Lejárat dátuma: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Tanúsítványinformációk"
+msgid "(self-signed)"
+msgstr "(önaláírt)"
+
+msgid "View Issuer Certificate"
+msgstr "Kibocsátói tanúsítvány megtekintése"
 
 #. show error to user
 msgid "Registration Error"
@@ -1877,6 +1896,144 @@ msgid ""
 msgstr ""
 "Adja meg annak a partnernek a nevét, akit meg szeretne hívni, egy "
 "tetszőleges meghívóüzenettel együtt."
+
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "A megadott parancs kezelje-e az „aim” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
+"„aim” URL címeket."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "„aim” URL címek kezelője"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Az „aim” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Run the command in a terminal"
+msgstr "Parancs futtatása terminálban"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Ha igazra van állítva, az ilyen típusú URL címeket kezelő parancsnak "
+"terminálban kell futnia."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "A megadott parancs kezelje-e a „gg” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli a „gg” "
+"URL címeket."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "„gg” URL címek kezelője"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "A „gg” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "A megadott parancs kezelje-e az „icq” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
+"„icq” URL címeket."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "„icq” URL címek kezelője"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Az „icq” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "A megadott parancs kezelje-e az „irc” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
+"„irc” URL címeket."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "„irc” URL címek kezelője"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Az „irc” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "A megadott parancs kezelje-e az „msnim” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
+"„msnim” URL címeket."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "„msnim” URL címek kezelője"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Az „msnim” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "A megadott parancs kezelje-e a „sip” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli a "
+"„sip” URL címeket."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "„sip” URL címek kezelője"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "A „sip” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "A megadott parancs kezelje-e az „xmpp” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
+"„xmpp” URL címeket."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "„xmpp” URL címek kezelője"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Az „xmpp” URL címek kezelésére használt parancs, ha engedélyezve van."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "A megadott parancs kezelje-e az „ymsgr” URL címeket"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
+"„ymsgr” URL címeket."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "„ymsgr” URL címek kezelője"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Az „ymsgr” URL címek kezelésére használt parancs, ha engedélyezve van."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2052,144 +2209,6 @@ msgstr "A fájlátvitel %s partnerhez félbeszakadt."
 msgid "File transfer from %s failed."
 msgstr "A fájlátvitel %s partnertől félbeszakadt."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "A megadott parancs kezelje-e az „aim” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
-"„aim” URL címeket."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "„aim” URL címek kezelője"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Az „aim” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Run the command in a terminal"
-msgstr "Parancs futtatása terminálban"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Ha igazra van állítva, az ilyen típusú URL címeket kezelő parancsnak "
-"terminálban kell futnia."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "A megadott parancs kezelje-e a „gg” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli a „gg” "
-"URL címeket."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "„gg” URL címek kezelője"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "A „gg” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "A megadott parancs kezelje-e az „icq” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
-"„icq” URL címeket."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "„icq” URL címek kezelője"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Az „icq” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "A megadott parancs kezelje-e az „irc” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
-"„irc” URL címeket."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "„irc” URL címek kezelője"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Az „irc” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "A megadott parancs kezelje-e az „msnim” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
-"„msnim” URL címeket."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "„msnim” URL címek kezelője"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Az „msnim” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "A megadott parancs kezelje-e a „sip” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli a "
-"„sip” URL címeket."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "„sip” URL címek kezelője"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "A „sip” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "A megadott parancs kezelje-e az „xmpp” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
-"„xmpp” URL címeket."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "„xmpp” URL címek kezelője"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Az „xmpp” URL címek kezelésére használt parancs, ha engedélyezve van."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "A megadott parancs kezelje-e az „ymsgr” URL címeket"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Ha igazra van állítva, a „command” kulcsban beállított parancs kezeli az "
-"„ymsgr” URL címeket."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "„ymsgr” URL címek kezelője"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Az „ymsgr” URL címek kezelésére használt parancs, ha engedélyezve van."
-
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
 "<b><font color=\"red\">A naplózónak nincsen olvasás funkciója</font></b>"
@@ -2237,6 +2256,32 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTOMATIKUS VÁLASZ>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+"\n"
+"\n"
+"A Farsight üzenete:"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+"Hiba a hívás előkészítésekor. Ez valószínűleg a GStreamer vagy Farsight "
+"telepítési hibáját jelzi."
+
+msgid "Network error."
+msgstr "Hálózati hiba."
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+"A kodekben való megállapodás meghiúsult. Ezt a problémát több GStreamer "
+"kodek telepítésével lehet megoldani."
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2249,12 +2294,14 @@ msgstr ""
 "Nincs több kodek. A fs-codecs.conf fájlban megadott kodekbeállítások túl "
 "szigorúak."
 
+msgid "Could not connect to the remote party"
+msgstr "Nem lehet kapcsolódni a túloldali félhez"
+
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Helyrehozhatatlan Farsight2 hiba történt."
 
-#, fuzzy
 msgid "A non-recoverable Farstream error has occurred."
-msgstr "Helyrehozhatatlan Farsight2 hiba történt."
+msgstr "Helyrehozhatatlan Farstream hiba történt."
 
 msgid "Error with your microphone"
 msgstr "Hiba történt a mikrofonnal"
@@ -2873,6 +2920,56 @@ msgstr "Egyszerű bővítmény"
 msgid "Tests to see that most things are working."
 msgstr "Tesztek, hogy a legtöbb dolog működik-e."
 
+msgid "TLS/SSL Versions"
+msgstr "TLS/SSL verziók"
+
+msgid "Minimum Version"
+msgstr "Minimális verzió"
+
+msgid "Maximum Version"
+msgstr "Maximális verzió"
+
+msgid "SSL 2"
+msgstr "SSL 2"
+
+msgid "SSL 3"
+msgstr "SSL 3"
+
+msgid "TLS 1.0"
+msgstr "TLS 1.0"
+
+msgid "TLS 1.1"
+msgstr "TLS 1.1"
+
+msgid "TLS 1.2"
+msgstr "TLS 1.2"
+
+msgid "TLS 1.3"
+msgstr "TLS 1.3"
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr "Nem támogatott az NSS < 3.14 esetén"
+
+msgid "Ciphers"
+msgstr "Titkosítók"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr "NSS beállítások"
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr "Titkosítók és más beállítások az NSS SSL/TLS bővítményhez"
+
 #. Scheme name
 msgid "X.509 Certificates"
 msgstr "X.509 tanúsítványok"
@@ -3207,14 +3304,14 @@ msgstr "Felvétel csevegéshez"
 msgid "Chat _name:"
 msgstr "Csevegés _neve:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Nem oldható fel a gépnév („%s”): %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Kapcsolódás"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr "Nem oldható fel a gépnév: %s"
 
 msgid "Chat error"
 msgstr "Csevegéshiba"
@@ -3369,9 +3466,8 @@ msgstr "Kódolások"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Bejövő UTF-8 automatikus felismerése"
 
-#, fuzzy
 msgid "Ident name"
-msgstr "Vezetéknév"
+msgstr "Azonosítási név"
 
 msgid "Real name"
 msgstr "Valódi név"
@@ -3383,13 +3479,12 @@ msgstr "Valódi név"
 msgid "Use SSL"
 msgstr "SSL használata"
 
-#, fuzzy
 msgid "Authenticate with SASL"
-msgstr "Hitelesítés"
+msgstr "Hitelesítés SASL használatával"
 
-#, fuzzy
 msgid "Allow plaintext SASL auth over unencrypted connection"
-msgstr "Egyszerű szöveges hitelesítés engedélyezése nem titkosított folyamokon"
+msgstr ""
+"Egyszerű szöveges SASL hitelesítés engedélyezése titkosítatlan kapcsolaton"
 
 msgid "Bad mode"
 msgstr "Rossz üzemmód"
@@ -3425,11 +3520,9 @@ msgstr " <i>(azonosítva)</i>"
 msgid "Nick"
 msgstr "Becenév"
 
-#, fuzzy
 msgid "Login name"
-msgstr "Névtelen"
+msgstr "Bejelentkezési név"
 
-#, fuzzy
 msgid "Host name"
 msgstr "Gépnév"
 
@@ -3462,7 +3555,7 @@ msgstr "%s témája: %s"
 
 #, c-format
 msgid "Topic for %s set by %s at %s on %s"
-msgstr ""
+msgstr "%s témáját %s beállította ekkor: %s ezen: %s"
 
 #, c-format
 msgid "Unknown message '%s'"
@@ -3578,32 +3671,32 @@ msgstr "A becenév vagy csatorna átmenetileg nem érhető el."
 msgid "Wallops from %s"
 msgstr "Ütések a következőtől: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to initialize SASL authentication: %s"
-msgstr "Nem lehet előkészíteni a SILC klienskapcsolatot"
+msgstr "A SASL hitelesítés előkészítése sikertelen: %s"
 
 msgid "SASL authentication failed: No worthy authentication mechanisms found."
 msgstr ""
+"A SASL hitelesítés sikertelen: nem található méltó hitelesítési mechanizmus."
 
-#, fuzzy, c-format
+#, c-format
 msgid "SASL authentication failed: %s"
-msgstr "A SASL hitelesítés meghiúsult"
+msgstr "A SASL hitelesítés sikertelen: %s"
 
 msgid ""
 "SASL authentication failed: Server does not support SASL authentication."
 msgstr ""
+"A SASL hitelesítés sikertelen: a kiszolgáló nem támogatja a SASL "
+"hitelesítést."
 
-#, fuzzy
 msgid "SASL authentication failed: Initializing SASL failed."
-msgstr "A SASL hitelesítés meghiúsult"
+msgstr "A SASL hitelesítés sikertelen: a SASL előkészítése sikertelen."
 
-#, fuzzy
 msgid "Incorrect Password"
-msgstr "Hibás jelszó"
+msgstr "Helytelen jelszó"
 
-#, fuzzy
 msgid "SASL authentication failed: No worthy mechanisms found"
-msgstr "A SASL hitelesítés meghiúsult"
+msgstr "A SASL hitelesítés sikertelen: nem található méltó mechanizmus"
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;elvégzendő művelet&gt;:  Egy művelet elvégzése."
@@ -4640,11 +4733,10 @@ msgstr ""
 "Nem indítható multimédiás kapcsolat a következőhöz: %s, a felhasználó nem "
 "érhető el"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to initiate media with %s: resource is not online"
 msgstr ""
-"Nem indítható multimédiás kapcsolat a következőhöz: %s, a felhasználó nem "
-"érhető el"
+"Nem kezdeményezhető médiakapcsolat ezzel: %s: az erőforrás nem érhető el"
 
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
@@ -4710,7 +4802,7 @@ msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;felhasználó&gt; [üzenet]:  Felhasználó meghívása a szobába."
 
 msgid "join: &lt;room[@server]&gt; [password]:  Join a chat."
-msgstr ""
+msgstr "join: &lt;szoba[@kiszolgáló]&gt; [jelszó]:  Csatlakozás csevegéshez."
 
 msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
 msgstr "kick &lt;felhasználó&gt; [ok]:  Felhasználó kirúgása a szobából."
@@ -5843,29 +5935,29 @@ msgstr "Az üzenet nem küldhető el, mivel ismeretlen kódolási hiba történt
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Az üzenet nem küldhető el, mivel ismeretlen hiba történt."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. Converting the encoding from "
 "%s to UTF-8 failed.)"
 msgstr ""
-"(Hiba történt az üzenet konvertálása közben. \t Ellenőrizze a „Kódolás” "
-"beállításait a Fiókszerkesztőben)"
+"%s (Hiba történt az üzenet fogadásakor. A kódolás átalakítása %s -> UTF-8 "
+"irányba sikertelen.)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was %s, but it "
 "was not valid UTF-8.)"
 msgstr ""
-"(Hiba történt ezen üzenet fogadásakor. Ön vagy %s eltérő kódolást választott "
-"ki, vagy %s hibás klienst használ.)"
+"%s (Hiba történt az üzenet fogadásakor. A kódolás %s volt, de nem érvényes "
+"UTF-8.)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was missing, but "
 "it was not valid UTF-8.)"
 msgstr ""
-"(Hiba történt az üzenet konvertálása közben. \t Ellenőrizze a „Kódolás” "
-"beállításait a Fiókszerkesztőben)"
+"%s (Hiba történt az üzenet fogadásakor. A kódolás hiányzott, de nem volt "
+"érvényes UTF-8.)"
 
 msgid "Writing error"
 msgstr "Írási hiba"
@@ -5902,11 +5994,9 @@ msgstr "Az MSN kiszolgálók átmenetileg leállnak"
 msgid "Unable to authenticate: %s"
 msgstr "Nem sikerült a hitelesítés: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr ""
-"Az Ön MSN partnerlistája átmenetileg nem érhető el. Kérem várjon, és "
-"próbálja újra később."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
+msgstr "Az Ön MSN partnerlistája átmenetileg nem érhető el: %s"
 
 msgid "Handshaking"
 msgstr "Kézfogás"
@@ -6011,16 +6101,15 @@ msgstr "Megjelenő név"
 
 #. about me
 msgid "About Me"
-msgstr ""
+msgstr "Rólam"
 
 #. where I live
 msgid "Where I Live"
-msgstr ""
+msgstr "Hol élek"
 
 #. relationship status
-#, fuzzy
 msgid "Relationship Status"
-msgstr "Állapot törlése"
+msgstr "Párkapcsolati állapot"
 
 #. mobile number
 msgid "Mobile Number"
@@ -6028,14 +6117,14 @@ msgstr "Mobiltelefonszám"
 
 #. is searchable
 msgid "Can be searched"
-msgstr ""
+msgstr "Kereshető"
 
 #. is suggestable
 msgid "Can be suggested"
-msgstr ""
+msgstr "Javasolható"
 
 msgid "Update your MXit Profile"
-msgstr ""
+msgstr "MXit profil frissítése"
 
 msgid "The PIN you entered is invalid."
 msgstr "A megadott PIN érvénytelen."
@@ -6051,7 +6140,7 @@ msgstr "A megadott két PIN nem egyezik."
 
 #. show error to user
 msgid "PIN Update Error"
-msgstr ""
+msgstr "PIN frissítési hiba"
 
 #. pin
 #. pin (required)
@@ -6064,10 +6153,10 @@ msgstr "PIN ellenőrzése"
 
 #. (reference: "libpurple/request.h")
 msgid "Change PIN"
-msgstr ""
+msgstr "PIN módosítása"
 
 msgid "Change MXit PIN"
-msgstr ""
+msgstr "MXit PIN módosítása"
 
 msgid "View Splash"
 msgstr "Indítókép megjelenítése"
@@ -6079,13 +6168,13 @@ msgid "About"
 msgstr "Névjegy"
 
 msgid "Search for user"
-msgstr ""
+msgstr "Felhasználó keresése"
 
 msgid "Search for a MXit contact"
-msgstr ""
+msgstr "MXit névjegy keresése"
 
 msgid "Type search information"
-msgstr ""
+msgstr "Írjon be keresési információkat"
 
 msgid "_Search"
 msgstr "_Keresés"
@@ -6096,15 +6185,15 @@ msgstr "Profil módosítása…"
 
 #. change PIN
 msgid "Change PIN..."
-msgstr ""
+msgstr "PIN-módosítás..."
 
 #. suggested friends
 msgid "Suggested friends..."
-msgstr ""
+msgstr "Javasolt ismerősök..."
 
 #. search for contacts
 msgid "Search for contacts..."
-msgstr ""
+msgstr "Partnerek keresése..."
 
 #. display splash-screen
 msgid "View Splash..."
@@ -6119,14 +6208,12 @@ msgid "The file you are trying to send is too large!"
 msgstr "A küldeni kívánt fájl túl nagy."
 
 #. file read error
-#, fuzzy
 msgid "Unable to access the local file"
-msgstr "A bővítmény nem tölthető be"
+msgstr "Nem érhető el a helyi fájl"
 
 #. file write error
-#, fuzzy
 msgid "Unable to save the file"
-msgstr "Nem lehet megnyitni a fájlt."
+msgstr "Nem menthető a fájl"
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6266,65 +6353,62 @@ msgid "Enable splash-screen popup"
 msgstr "Felugró indítókép engedélyezése"
 
 msgid "Don't want to say"
-msgstr ""
+msgstr "Nem mondom el"
 
 msgid "Single"
-msgstr ""
+msgstr "Egyedülálló"
 
 msgid "In a relationship"
-msgstr ""
+msgstr "Kapcsolatban"
 
 msgid "Engaged"
-msgstr ""
+msgstr "Eljegyezve"
 
-#, fuzzy
 msgid "Married"
-msgstr "Aggódó"
+msgstr "Házas"
 
-#, fuzzy
 msgid "It's complicated"
-msgstr "Részeg"
+msgstr "Bonyolult"
 
 msgid "Widowed"
-msgstr ""
+msgstr "Özvegy"
 
-#, fuzzy
 msgid "Separated"
-msgstr "Részleg"
+msgstr "Külön él"
 
 msgid "Divorced"
-msgstr ""
+msgstr "Elvált"
 
 msgid "Last Online"
 msgstr "Utoljára elérhető"
 
 msgid "Invite Message"
-msgstr ""
+msgstr "Meghívóüzenet"
 
 msgid "No results"
-msgstr ""
+msgstr "Nincs találat"
 
 msgid "No contacts found."
-msgstr ""
+msgstr "Nem találhatók partnerek"
 
 #. define columns
 msgid "UserId"
-msgstr ""
+msgstr "Felhasználói azonosító"
 
 msgid "Where I live"
-msgstr ""
+msgstr "Ahol élek"
 
 #, c-format
 msgid "You have %i suggested friend."
 msgid_plural "You have %i suggested friends."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%i javasolt ismerőse van."
+msgstr[1] "%i javasolt ismerőse van."
 
 #, c-format
 msgid "We found %i contact that matches your search."
 msgid_plural "We found %i contacts that match your search."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%i partner felel meg a keresésnek."
+msgstr[1] "%i partner felel meg a keresésnek."
 
 #. we must have lost the connection, so terminate it so that we can reconnect
 msgid "We have lost the connection to MXit. Please reconnect."
@@ -6353,7 +6437,7 @@ msgstr "Üzenethiba"
 
 #. could not be decrypted
 msgid "An encrypted message was received which could not be decrypted."
-msgstr ""
+msgstr "Titkosított üzenet érkezett, amely nem fejthető vissza."
 
 msgid "Cannot perform redirect using the specified protocol"
 msgstr "Nem végezhető átirányítás a megadott protokoll használatával"
@@ -8358,9 +8442,8 @@ msgstr "TESZT bejelentés küldése"
 msgid "Topic:"
 msgstr "Téma:"
 
-#, fuzzy
 msgid "A server is required to connect this account"
-msgstr "A kiszolgáló lezárta a kapcsolatot"
+msgstr "Egy kiszolgáló szükséges a fiókhoz csatlakozáshoz"
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -9935,6 +10018,9 @@ msgstr "Jelenlét beállításai"
 msgid "Start Doodling"
 msgstr "Firkálás megkezdése"
 
+msgid "Activate which ID?"
+msgstr "Mely azonosítót aktiválja?"
+
 msgid "Select the ID you want to activate"
 msgstr "Válassza ki az aktiválandó azonosítót"
 
@@ -10499,6 +10585,26 @@ msgstr ""
 "Hiba történt a(z) %s olvasásakor. Ez a fájl nem lett betöltve, a régi fájl "
 "%s~ néven lett elmentve."
 
+msgid "Instant Messaging Client"
+msgstr "Azonnaliüzenet-küldő kliens"
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+"A Pidgin egy csevegőprogram, ami lehetővé teszi egyszerre több "
+"csevegőhálózat fiókjaiba való belépést."
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+"Ez azt jelenti, hogy egyidejűleg cseveghet ismerőseivel az MSN-en, Google "
+"Talkon és Yahoo csevegőszobában."
+
+msgid "The buddy list showing friends on different networks."
+msgstr "A partnerlista különböző hálózatokon elérhető ismerősökkel."
+
 msgid "Pidgin Internet Messenger"
 msgstr "Pidgin üzenetküldő"
 
@@ -11025,7 +11131,7 @@ msgid "/Help/De_veloper Information"
 msgstr "/Súgó/_Fejlesztői információk"
 
 msgid "/Help/_Plugin Information"
-msgstr ""
+msgstr "/Súgó/Bő_vítményinformációk"
 
 msgid "/Help/_Translator Information"
 msgstr "/Súgó/F_ordítóinformációk"
@@ -11239,11 +11345,11 @@ msgstr "Ál_név:"
 msgid "_Group:"
 msgstr "_Csoport:"
 
-msgid "Auto_join when account connects."
-msgstr "Automatikus _csatlakozás a fiók csatlakozásakor."
+msgid "Automatically _join when account connects"
+msgstr "Automatikus _csatlakozás a fiók csatlakozásakor"
 
-msgid "_Remain in chat after window is closed."
-msgstr "Csevegésben mara_dás az ablak bezárásakor."
+msgid "_Remain in chat after window is closed"
+msgstr "Csevegésben mara_dás az ablak bezárásakor"
 
 msgid "Please enter the name of the group to be added."
 msgstr "Adja meg a felvenni kívánt csoport nevét."
@@ -11281,6 +11387,9 @@ msgstr "Írja be a tanúsítványt birtokló gép nevét."
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "SSL kiszolgálók"
+
+msgid "Supported debug options are: plugins, version"
+msgstr "A támogatott hibakeresési parancsok: plugins, version"
 
 msgid "Unknown command."
 msgstr "Ismeretlen parancs."
@@ -11558,7 +11667,6 @@ msgstr "Olvasatlan üzenetek"
 msgid "New Event"
 msgstr "Új esemény"
 
-#, fuzzy
 msgid ""
 "The account has disconnected and you are no longer in this chat. You will "
 "automatically rejoin the chat when the account reconnects."
@@ -11702,31 +11810,37 @@ msgid "Senior Contributor/QA"
 msgstr "Veterán közreműködő/QA"
 
 msgid "Afrikaans"
-msgstr "afrikaans"
+msgstr "Afrikaans"
 
 msgid "Arabic"
-msgstr "arab"
+msgstr "Arab"
 
 msgid "Assamese"
 msgstr "Asszámi"
 
 msgid "Asturian"
-msgstr ""
+msgstr "Asztúriai"
 
 msgid "Belarusian Latin"
 msgstr "Fehérorosz latin"
 
 msgid "Bulgarian"
-msgstr "bolgár"
+msgstr "Bolgár"
 
 msgid "Bengali"
-msgstr "bengáli"
+msgstr "Bengáli"
 
 msgid "Bengali-India"
 msgstr "Indiai bengáli"
 
+msgid "Breton"
+msgstr "Breton"
+
+msgid "Bodo"
+msgstr "Bodo"
+
 msgid "Bosnian"
-msgstr "bosnyák"
+msgstr "Bosnyák"
 
 msgid "Catalan"
 msgstr "Katalán"
@@ -11735,16 +11849,16 @@ msgid "Valencian-Catalan"
 msgstr "Valenciai katalán"
 
 msgid "Czech"
-msgstr "cseh"
+msgstr "Cseh"
 
 msgid "Danish"
-msgstr "dán"
+msgstr "Dán"
 
 msgid "German"
-msgstr "német"
+msgstr "Német"
 
 msgid "Dzongkha"
-msgstr "dzongkha"
+msgstr "Dzongkha"
 
 msgid "Greek"
 msgstr "Görög"
@@ -11759,88 +11873,94 @@ msgid "Canadian English"
 msgstr "Kanadai angol"
 
 msgid "Esperanto"
-msgstr "eszperantó"
+msgstr "Eszperantó"
 
 msgid "Spanish"
 msgstr "Spanyol"
 
+msgid "Argentine Spanish"
+msgstr "Argentin spanyol"
+
 msgid "Estonian"
-msgstr "észt"
+msgstr "Észt"
 
 msgid "Basque"
 msgstr "Baszk"
 
 msgid "Persian"
-msgstr "perzsa"
+msgstr "Perzsa"
 
 msgid "Finnish"
-msgstr "finn"
-
-msgid "French"
-msgstr "francia"
+msgstr "Finn"
 
 msgid "Irish"
 msgstr "Ír"
 
 msgid "Galician"
-msgstr "galíciai"
+msgstr "Galíciai"
 
 msgid "Gujarati"
-msgstr "gudzsaráti"
+msgstr "Gudzsarati"
 
 msgid "Gujarati Language Team"
 msgstr "Gudzsarati fordítócsapat"
 
 msgid "Hebrew"
-msgstr "héber"
+msgstr "Héber"
 
 msgid "Hindi"
-msgstr "hindi"
+msgstr "Hindi"
 
 msgid "Croatian"
-msgstr ""
+msgstr "Horvát"
 
 msgid "Hungarian"
-msgstr "magyar"
-
-msgid "Armenian"
-msgstr "Örmény"
+msgstr "Magyar"
 
 msgid "Indonesian"
-msgstr "indonéz"
+msgstr "Indonéz"
 
 msgid "Italian"
-msgstr "olasz"
+msgstr "Olasz"
 
 msgid "Japanese"
-msgstr "japán"
+msgstr "Japán"
 
 msgid "Georgian"
-msgstr "grúz"
+msgstr "Grúz"
 
 msgid "Ubuntu Georgian Translators"
 msgstr "Grúz Ubuntu fordítók"
+
+msgid "Kazakh"
+msgstr "Kazah"
 
 msgid "Khmer"
 msgstr "Khmer"
 
 msgid "Kannada"
-msgstr "kannada"
+msgstr "Kannada"
 
 msgid "Kannada Translation team"
 msgstr "Kannada fordítócsapat"
 
 msgid "Korean"
-msgstr "koreai"
+msgstr "Koreai"
+
+msgid "Kashmiri"
+msgstr "Kasmíri"
 
 msgid "Kurdish"
-msgstr "kurd"
+msgstr "Kurd"
 
-msgid "Lao"
-msgstr "lao"
+msgid "Kurdish (Sorani)"
+msgstr "Kurd (Sorani)"
 
 msgid "Lithuanian"
-msgstr "litván"
+msgstr "Litván"
+
+msgid "Latvian"
+msgstr "Lett"
 
 msgid "Maithili"
 msgstr "Maithili"
@@ -11849,7 +11969,10 @@ msgid "Meadow Mari"
 msgstr "Mari"
 
 msgid "Macedonian"
-msgstr "macedón"
+msgstr "Macedón"
+
+msgid "Malay"
+msgstr "Maláj"
 
 msgid "Malayalam"
 msgstr "Malajálam"
@@ -11860,17 +11983,14 @@ msgstr "Mongol"
 msgid "Marathi"
 msgstr "Maráthi"
 
-msgid "Malay"
-msgstr "Maláj"
-
 msgid "Burmese"
-msgstr ""
+msgstr "Burmai"
 
 msgid "Bokmål Norwegian"
 msgstr "Norvég Bokmål"
 
 msgid "Nepali"
-msgstr "nepáli"
+msgstr "Nepáli"
 
 msgid "Dutch, Flemish"
 msgstr "Holland, flamand"
@@ -11888,10 +12008,10 @@ msgid "Punjabi"
 msgstr "Pandzsábi"
 
 msgid "Polish"
-msgstr "lengyel"
+msgstr "Lengyel"
 
 msgid "Portuguese"
-msgstr "portugál"
+msgstr "Portugál"
 
 msgid "Portuguese-Brazil"
 msgstr "Brazil portugál"
@@ -11900,53 +12020,66 @@ msgid "Pashto"
 msgstr "Pastu"
 
 msgid "Romanian"
-msgstr "román"
+msgstr "Román"
 
 msgid "Russian"
-msgstr "orosz"
+msgstr "Orosz"
+
+msgid "Sindhi"
+msgstr "Szindhi"
 
 msgid "Slovak"
-msgstr "szlovák"
+msgstr "Szlovák"
 
 msgid "Slovenian"
-msgstr "szlovén"
+msgstr "Szlovák"
 
 msgid "Albanian"
-msgstr "albán"
+msgstr "Albán"
 
 msgid "Serbian"
-msgstr "szerb"
+msgstr "Szerb"
 
-#, fuzzy
 msgid "Serbian Latin"
-msgstr "Fehérorosz latin"
+msgstr "Szerb latin"
 
 msgid "Sinhala"
 msgstr "Szimhala"
 
 msgid "Swedish"
-msgstr "svéd"
+msgstr "Svéd"
 
 msgid "Swahili"
 msgstr "Szuahéli"
 
 msgid "Tamil"
-msgstr "tamil"
+msgstr "Tamil"
 
 msgid "Telugu"
-msgstr "telugu"
+msgstr "Telugu"
 
 msgid "Thai"
-msgstr "thai"
+msgstr "Thai"
+
+msgid "Tatar"
+msgstr "Tatár"
 
 msgid "Ukranian"
 msgstr "Ukrán"
 
 msgid "Urdu"
-msgstr "urdu"
+msgstr "Urdu"
+
+msgid "Uzbek"
+msgstr "Üzbég"
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
-msgstr "vietnami"
+msgstr "Vietnami"
 
 msgid "Simplified Chinese"
 msgstr "Egyszerűsített kínai"
@@ -11958,10 +12091,19 @@ msgid "Traditional Chinese"
 msgstr "Hagyományos kínai"
 
 msgid "Amharic"
-msgstr "amhara"
+msgstr "Amhara"
+
+msgid "French"
+msgstr "Francia"
+
+msgid "Armenian"
+msgstr "Örmény"
+
+msgid "Lao"
+msgstr "Lao"
 
 msgid "Turkish"
-msgstr "török"
+msgstr "Török"
 
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh és a Gnome-Vi csapat"
@@ -12052,10 +12194,10 @@ msgstr "%s fordítóinformációi"
 
 #, c-format
 msgid "%s Plugin Information"
-msgstr ""
+msgstr "%s Bővítményinformációk"
 
 msgid "Plugin Information"
-msgstr ""
+msgstr "Bővítményinformációk"
 
 msgid "_Name"
 msgstr "_Név"
@@ -12650,6 +12792,9 @@ msgstr "Méd_ia"
 msgid "_Hangup"
 msgstr "_Lerakás"
 
+msgid "Media error"
+msgstr "Médiahiba"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s hang/videókapcsolatot szeretne indítani."
@@ -12661,14 +12806,50 @@ msgstr "%s videókapcsolatot szeretne indítani."
 msgid "Incoming Call"
 msgstr "Bejövő hívás"
 
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr "ABC"
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr "DEF"
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr "GHI"
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr "JKL"
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr "MNO"
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr "PQRS"
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr "TUV"
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr "WXYZ"
+
 msgid "_Hold"
-msgstr ""
+msgstr "_Tartás"
 
 msgid "_Pause"
 msgstr "_Szünet"
 
 msgid "_Mute"
-msgstr ""
+msgstr "_Némítás"
 
 #, c-format
 msgid "%s has %d new message."
@@ -12697,9 +12878,9 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "A „Kézi” böngészőparancsot választotta, de nem adott meg parancsot."
 
-#, fuzzy
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
-msgstr "A(z) „%s” böngészőparancs érvénytelen."
+msgstr ""
+"Nem nyitható meg az URL: a „Kézi” böngészőparancs érvénytelennek tűnik."
 
 msgid "No message"
 msgstr "Nincs üzenet"
@@ -13018,10 +13199,10 @@ msgid "F_lash window when IMs are received"
 msgstr "_Villanjon az ablak új üzenetek fogadásakor"
 
 msgid "Resize incoming custom smileys"
-msgstr ""
+msgstr "Bejövő egyéni hangulatjelek átméretezése"
 
 msgid "Maximum size:"
-msgstr ""
+msgstr "Maximális méret:"
 
 msgid "Minimum input area height in lines:"
 msgstr "Beviteli terület minimális magassága sorokban:"
@@ -13093,7 +13274,7 @@ msgid "_UDP Port:"
 msgstr "_UDP port:"
 
 msgid "T_CP Port:"
-msgstr ""
+msgstr "T_CP port:"
 
 msgid "Use_rname:"
 msgstr "_Felhasználónév:"
@@ -13513,6 +13694,9 @@ msgstr "Állapotválasztó"
 
 msgid "Google Talk"
 msgstr "Google Talk"
+
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -14195,8 +14379,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Figyelmeztetés"
 
+msgid "\t_Notify for System messages"
+msgstr "\tÉrtesítés rendszerüzenetekről"
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Csak ha valaki kimondja az Ön felhasználónevét"
+
+msgid "\tNotify for _System messages"
+msgstr "\tÉrtesítés _rendszerüzenetekről"
 
 msgid "_Focused windows"
 msgstr "_Fókuszban lévő ablakok"
@@ -14228,6 +14418,8 @@ msgid "R_aise conversation window"
 msgstr "_Társalgási ablak előtérbe hozása"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_Társalgási ablak megjelenítése"
 
@@ -14685,39 +14877,38 @@ msgstr ""
 "naplóüzenetek időpecsét-formátumainak testreszabását."
 
 #. Alerts
-#, fuzzy
 msgid "Chatroom alerts"
-msgstr "Csevegőszoba matricái"
+msgstr "Csevegőszoba-figyelmeztetések"
 
-#, fuzzy
 msgid "Chatroom message alerts _only where someone says your username"
-msgstr "\t_Csak ha valaki kimondja az Ön felhasználónevét"
+msgstr ""
+"_Csevegőszobákból üzenetértesítés csak ahol valaki kimondja az Ön "
+"felhasználónevét"
 
 #. Launcher integration
-#, fuzzy
 msgid "Launcher Icon"
-msgstr "Ikon mentése"
+msgstr "Indítóikon"
 
 msgid "_Disable launcher integration"
-msgstr ""
+msgstr "In_dítóval való integráció kikapcsolása"
 
 msgid "Show number of unread _messages on launcher icon"
-msgstr ""
+msgstr "_Olvasatlan üzenetek számának megjelenítése az indítóikonon"
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "Társalgások száma ablakonként"
+msgstr "Ol_vasatlan társalgások számának megjelenítése az indítóikonon"
 
 #. Messaging menu integration
-#, fuzzy
 msgid "Messaging Menu"
-msgstr "Üzenet elküldve"
+msgstr "Üzenetmenü"
 
 msgid "Show number of _unread messages for conversations in messaging menu"
 msgstr ""
+"Társalgásokban olvasatlan ü_zenetek számának megjelenítése az üzenetmenüben"
 
 msgid "Show _elapsed time for unread conversations in messaging menu"
 msgstr ""
+"_Eltelt idő megjelenítése az olvasatlan társalgásokhoz az üzenetmenüben"
 
 #. *< type
 #. *< ui_requirement
@@ -14725,21 +14916,18 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#, fuzzy
 msgid "Unity Integration"
-msgstr "Evolution integráció"
+msgstr "Unity integráció"
 
 #. *< name
 #. *< version
 #. *  summary
-#, fuzzy
 msgid "Provides integration with Unity."
-msgstr "Integrációt biztosít az Evolutionnel."
+msgstr "Integráció a Unity környezettel."
 
 #. *  description
-#, fuzzy
 msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr "Integrációt biztosít az Evolutionnel."
+msgstr "Integrációt biztosít a Unity üzenetmenüjével és indítójával."
 
 msgid "Audio"
 msgstr "Hang"
@@ -15003,12 +15191,11 @@ msgstr ""
 "jelenleg telepített verzió eltávolítása nélkül kerül telepítésre. "
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "A Pidgin egy kompatibilis GTK+ futtatókörnyezet meglétét igényli (úgy tűnik, "
-"ez nincs jelen).$\\rBiztos benne, hogy kihagyja a GTK+ futtatókörnyezet "
+"ez nincs telepítve).$\\rBiztos benne, hogy kihagyja a GTK+ futtatókörnyezet "
 "telepítését?"
 
 #. Installer Subsection Text
@@ -15066,115 +15253,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nincs jogosultsága az alkalmazás eltávolításához."
-
-#~ msgid "Token Error"
-#~ msgstr "Jelsor hiba"
-
-#~ msgid "Unable to fetch the token.\n"
-#~ msgstr "Nem tölthető le a jelsor.\n"
-
-#~ msgid "You must fill in all registration fields"
-#~ msgstr "Az összes regisztrációs mezőt ki kell töltenie"
-
-#~ msgid "Passwords do not match"
-#~ msgstr "A jelszavak nem egyeznek"
-
-#~ msgid "Unable to register new account.  An unknown error occurred."
-#~ msgstr "Nem regisztrálható új fiók. Ismeretlen hiba történt."
-
-#~ msgid "New Gadu-Gadu Account Registered"
-#~ msgstr "Az új Gadu-Gadu fiók regisztrálva"
-
-#~ msgid "Registration completed successfully!"
-#~ msgstr "A regisztráció sikeresen befejeződött!"
-
-#~ msgid "Enter captcha text"
-#~ msgstr "Adja meg a captcha szövegét"
-
-#~ msgid "Captcha"
-#~ msgstr "Captcha"
-
-#~ msgid "Register New Gadu-Gadu Account"
-#~ msgstr "Új Gadu-Gadu fiók regisztrálása"
-
-#~ msgid "Please, fill in the following fields"
-#~ msgstr "Töltse ki az alábbi mezőket"
-
-#~ msgid "Fill in the fields."
-#~ msgstr "Töltse ki a mezőket."
-
-#~ msgid "Your current password is different from the one that you specified."
-#~ msgstr "A jelenlegi jelszava eltér a megadottól."
-
-#~ msgid "Unable to change password. Error occurred.\n"
-#~ msgstr "A jelszó nem változtatható meg. Hiba történt.\n"
-
-#~ msgid "Change password for the Gadu-Gadu account"
-#~ msgstr "A Gadu-Gadu fiók jelszavának módosítása"
-
-#~ msgid "Password was changed successfully!"
-#~ msgstr "A jelszó sikeresen megváltoztatva!"
-
-#~ msgid "Current password"
-#~ msgstr "Jelenlegi jelszó"
-
-#~ msgid "Password (retype)"
-#~ msgstr "Jelszó (megerősítés)"
-
-#~ msgid "Enter current token"
-#~ msgstr "Adja meg az aktuális jelsort"
-
-#~ msgid "Current token"
-#~ msgstr "Aktuális jelsor"
-
-#~ msgid "Please, enter your current password and your new password for UIN: "
-#~ msgstr "Adja meg a jelenlegi jelszavát és az új jelszót az UIM-hez: "
-
-#~ msgid "Change Gadu-Gadu Password"
-#~ msgstr "A Gadu-Gadu jelszó módosítása"
-
-#~ msgid "Buddy list downloaded"
-#~ msgstr "A partnerlista letöltve"
-
-#~ msgid "Your buddy list was downloaded from the server."
-#~ msgstr "A partnerlistája letöltve a kiszolgálóról."
-
-#~ msgid "Buddy list uploaded"
-#~ msgstr "A partnerlista feltöltve"
-
-#~ msgid "Your buddy list was stored on the server."
-#~ msgstr "A partnerlista tárolva a kiszolgálón."
-
-#~ msgid "Change password..."
-#~ msgstr "Jelszó módosítása…"
-
-#~ msgid "Upload buddylist to Server"
-#~ msgstr "Partnerlista feltöltése a kiszolgálóra"
-
-#~ msgid "Download buddylist from Server"
-#~ msgstr "Partnerlista letöltése a kiszolgálóról"
-
-#~ msgid "Delete buddylist from Server"
-#~ msgstr "Partnerlista törlése a kiszolgálóról"
-
-#~ msgid "Hidden Number"
-#~ msgstr "Rejtett szám"
-
-#~ msgid "No Sametime Community Server specified"
-#~ msgstr "Nincs megadva Sametime közösségi kiszolgáló"
-
-#~ msgid ""
-#~ "No host or IP address has been configured for the Meanwhile account %s. "
-#~ "Please enter one below to continue logging in."
-#~ msgstr ""
-#~ "Nincs gép vagy IP cím megadva a(z) %s Meanwhile fiókhoz. A bejelentkezés "
-#~ "folytatásához adjon meg egyet alább."
-
-#~ msgid "Meanwhile Connection Setup"
-#~ msgstr "Meanwhile kapcsolat beállítása"
-
-#~ msgid "No Sametime Community Server Specified"
-#~ msgstr "Nincs megadva Sametime közösségi kiszolgáló"
-
-#~ msgid "Connect"
-#~ msgstr "Kapcsolódás"

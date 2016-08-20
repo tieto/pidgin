@@ -24,7 +24,11 @@
 
 #include "buddy.h"
 #include "mdns_interface.h"
+#ifdef __APPLE_CC__
+#include <dns_sd.h>
+#else
 #include "dns_sd_proxy.h"
+#endif
 #include "mdns_common.h"
 #include "bonjour.h"
 

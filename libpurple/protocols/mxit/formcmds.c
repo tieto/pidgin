@@ -393,6 +393,9 @@ static void command_imagestrip(struct MXitSession* session, const char* from, GH
 	/* validator */
 	validator = g_hash_table_lookup(hash, "v");
 
+	if (!name || !validator)
+		return;
+
 	/* image data */
 	tmp = g_hash_table_lookup(hash, "dat");
 	if (tmp) {
@@ -428,13 +431,13 @@ static void command_imagestrip(struct MXitSession* session, const char* from, GH
 	}
 
 	tmp = g_hash_table_lookup(hash, "fw");
-	width = atoi(tmp);
+	width = (tmp ? atoi(tmp) : 0);
 
 	tmp = g_hash_table_lookup(hash, "fh");
-	height = atoi(tmp);
+	height = (tmp ? atoi(tmp) : 0);
 
 	tmp = g_hash_table_lookup(hash, "layer");
-	layer = atoi(tmp);
+	layer = (tmp ? atoi(tmp) : 0);
 
 	purple_debug_info(MXIT_PLUGIN_ID, "ImageStrip %s from %s: [w=%i h=%i l=%i validator=%s]\n", name, from, width, height, layer, validator);
 }
@@ -517,28 +520,39 @@ static void command_table(struct RXMsgData* mx, GHashTable* hash)
 	const char* tmp;
 	const char* name;
 	int mode;
-	int nr_columns = 0, nr_rows = 0;
+	unsigned int nr_columns = 0, nr_rows = 0;
 	gchar** coldata;
-	int i, j;
+	unsigned int i, j;
 
 	/* table name */
 	name = g_hash_table_lookup(hash, "nm");
+	if (!name)
+		return;
 
 	/* number of columns */
 	tmp = g_hash_table_lookup(hash, "col");
-	nr_columns = atoi(tmp);
+	nr_columns = (tmp ? atoi(tmp) : 0);
 
 	/* number of rows */
 	tmp = g_hash_table_lookup(hash, "row");
-	nr_rows = atoi(tmp);
+	nr_rows = (tmp ? atoi(tmp) : 0);
 
 	/* mode */
 	tmp = g_hash_table_lookup(hash, "mode");
-	mode = atoi(tmp);
+	mode = (tmp ? atoi(tmp) : 0);
 
 	/* table data */
 	tmp = g_hash_table_lookup(hash, "d");
+	if (!tmp)
+		tmp = "";
+
 	coldata = g_strsplit(tmp, "~", 0);			/* split into entries for each row & column */
+
+	if (g_strv_length(coldata) != (nr_rows * nr_columns)) {
+		purple_debug_info(MXIT_PLUGIN_ID, "Invalid table data: cols=%i rows=%i\n", nr_columns, nr_rows);
+		g_strfreev(coldata);
+		return;
+	}
 
 	purple_debug_info(MXIT_PLUGIN_ID, "Table %s from %s: [cols=%i rows=%i mode=%i]\n", name, mx->from, nr_columns, nr_rows, mode);
 
@@ -547,6 +561,8 @@ static void command_table(struct RXMsgData* mx, GHashTable* hash)
 			purple_debug_info(MXIT_PLUGIN_ID, " Row %i Column %i = %s\n", i, j, coldata[i*nr_columns + j]);
 		}
 	}
+
+	g_strfreev(coldata);
 }
 
 

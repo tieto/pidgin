@@ -457,12 +457,49 @@ get_WorkingAreaRectForWindow(HWND hwnd, RECT *workingAreaRc) {
 	return TRUE;
 }
 
+typedef HRESULT (WINAPI* DwmIsCompositionEnabledFunction)(BOOL*);
+typedef HRESULT (WINAPI* DwmGetWindowAttributeFunction)(HWND, DWORD, PVOID, DWORD);
+static HMODULE dwmapi_module = NULL;
+static DwmIsCompositionEnabledFunction DwmIsCompositionEnabled = NULL;
+static DwmGetWindowAttributeFunction DwmGetWindowAttribute = NULL;
+#ifndef DWMWA_EXTENDED_FRAME_BOUNDS
+#	define DWMWA_EXTENDED_FRAME_BOUNDS 9
+#endif
+
+static RECT
+get_actualWindowRect(HWND hwnd)
+{
+	RECT winR;
+
+	GetWindowRect(hwnd, &winR);
+
+	if (dwmapi_module == NULL) {
+		dwmapi_module = GetModuleHandleW(L"dwmapi.dll");
+		if (dwmapi_module != NULL) {
+			DwmIsCompositionEnabled = (DwmIsCompositionEnabledFunction) GetProcAddress(dwmapi_module, "DwmIsCompositionEnabled");
+			DwmGetWindowAttribute = (DwmGetWindowAttributeFunction) GetProcAddress(dwmapi_module, "DwmGetWindowAttribute");
+		}
+	}
+
+	if (DwmIsCompositionEnabled != NULL && DwmGetWindowAttribute != NULL) {
+		BOOL pfEnabled;
+		if (SUCCEEDED(DwmIsCompositionEnabled(&pfEnabled))) {
+			RECT tempR;
+			if (SUCCEEDED(DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &tempR, sizeof(tempR)))) {
+				winR = tempR;
+			}
+		}
+	}
+
+	return winR;
+}
+
 void winpidgin_ensure_onscreen(GtkWidget *win) {
 	RECT winR, wAR, intR;
 	HWND hwnd = GDK_WINDOW_HWND(gtk_widget_get_window(win));
 
 	g_return_if_fail(hwnd != NULL);
-	GetWindowRect(hwnd, &winR);
+	winR = get_actualWindowRect(hwnd);
 
 	purple_debug_info("win32placement",
 			"Window RECT: L:%ld R:%ld T:%ld B:%ld\n",

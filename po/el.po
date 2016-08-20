@@ -4,18 +4,18 @@
 #
 # Translators:
 # Panayotis Katsaloulis <panayotis@panayotis.com>, 2005
-# Panos Bouklis <panos@echidna-band.com>, 2012-2014
+# Panos Bouklis <panos@echidna-band.com>, 2012-2015
 # Richard Laager <rlaager@wiktel.com>, 2011
 # Ubuntu Greek Translators <ubuntu-gr@lists.ubuntu.com.>, 2005
+# Wasilis Mandratzis-Walz, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-02-02 11:20+0000\n"
-"Last-Translator: Panos Bouklis <panos@echidna-band.com>\n"
-"Language-Team: Greek (http://www.transifex.com/projects/p/pidgin/language/"
-"el/)\n"
+"POT-Creation-Date: 2016-06-15 23:14-0500\n"
+"PO-Revision-Date: 2016-06-06 21:09+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Greek (http://www.transifex.com/pidgin/pidgin/language/el/)\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1511,6 +1511,7 @@ msgstr "Κάποιος μιλάει σε μια συζήτηση"
 msgid "Someone says your name in a chat"
 msgstr "Κάποιος είπε το όνομά σας σε μια συζήτηση"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Ειδοποίηση σε στυλ τοστιέρας όταν"
 
@@ -1523,6 +1524,7 @@ msgstr "Ορισμός URGENT για το παράθυρο τερματικού.
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Πρόσθετο ειδοποήσεων σε στυλ τοστιέρας"
 
@@ -1698,7 +1700,6 @@ msgstr "Αυτό το πρωτόκολλο δεν υποστηρίζει τη λ
 msgid "Unknown"
 msgstr "Άγνωστο"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Φίλοι"
 
@@ -1812,10 +1813,19 @@ msgstr ""
 "Το πιστοποιητικό υποστηρίζει ότι είναι από \"%s\".  Αυτό μπορεί να σημαίνει "
 "ότι δεν είστε συνδεδεμένοι με την υπηρεσία που νομίζετε ότι είστε."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Πληροφορίες πιστοποιητικού"
+
+msgid "Unable to find Issuer Certificate"
+msgstr "Αδυναμία εύρεσης εκδότη του πιστοποιητικού"
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1824,14 +1834,18 @@ msgid ""
 msgstr ""
 "Σύνηθες όνομα: %s\n"
 "\n"
+"Εκδόθηκε από: %s\n"
+"\n"
 "Αποτύπωμα (SHA1): %s\n"
 "\n"
 "Ημερομηνία ενεργοποίησης: %s\n"
 "Ημερομηνία λήξης: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Πληροφορίες πιστοποιητικού"
+msgid "(self-signed)"
+msgstr "(αυτο-υπογεγραμμένα)"
+
+msgid "View Issuer Certificate"
+msgstr "Προβολή Εκδότη του πιστοποιητικού"
 
 #. show error to user
 msgid "Registration Error"
@@ -1906,6 +1920,160 @@ msgid ""
 msgstr ""
 "Παρακαλούμε εισάγετε το όνομα του χρήστη που επιθυμείτε να προσκαλέσετε, "
 "μαζί με ένα προαιρετικό μήνυμα πρόσκλησης."
+
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"aim\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"aim\" URLs."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Διαχειριστής των \"aim\" URLs"
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"aim\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Run the command in a terminal"
+msgstr "Εκτέλεση της εντολής σε τερματικό"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Ισχύει αν αν η εντολή που χρησιμοποιείται για να διαχειριστεί τα URL αυτού "
+"του τύπου πρέπει να τρέχει σε τερματικό."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"gg\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"gg\" URLs."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Διαχειριστής των \"gg\" URLs"
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"gg\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"icq\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"icq\" URLs."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Διαχειριστής των \"icq\" URLs"
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"icq\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"irc\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"irc\" URLs."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Διαχειριστής των \"irc\" URLs"
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"irc\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"msnim\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"msnim\" URLs."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Διαχειριστής των \"msnim\" URLs"
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"msnim\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"sip\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"sip\" URLs."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Διαχειριστής των \"sip\" URLs"
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"sip\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"xmpp\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"xmpp\" URLs."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Διαχειριστής των \"xmpp\" URLs"
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"xmpp\" URLs, αν είναι "
+"ενεργοποιημένα."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"ymsgr\" URLs"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
+"διαχειρίζεται τα \"ymsgr\" URLs."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Διαχειριστής των \"ymsgr\" URLs"
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr ""
+"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"ymsgr\" URLs, αν είναι "
+"ενεργοποιημένα."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2083,160 +2251,6 @@ msgstr "Η μεταφορά αρχείου σε %s απέτυχε."
 msgid "File transfer from %s failed."
 msgstr "Η μεταφορά αρχείου από %s απέτυχε."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"aim\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"aim\" URLs."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Διαχειριστής των \"aim\" URLs"
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"aim\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Run the command in a terminal"
-msgstr "Εκτέλεση της εντολής σε τερματικό"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Ισχύει αν αν η εντολή που χρησιμοποιείται για να διαχειριστεί τα URL αυτού "
-"του τύπου πρέπει να τρέχει σε τερματικό."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"gg\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"gg\" URLs."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Διαχειριστής των \"gg\" URLs"
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"gg\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"icq\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"icq\" URLs."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Διαχειριστής των \"icq\" URLs"
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"icq\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"irc\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"irc\" URLs."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Διαχειριστής των \"irc\" URLs"
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"irc\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"msnim\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"msnim\" URLs."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Διαχειριστής των \"msnim\" URLs"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"msnim\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"sip\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"sip\" URLs."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Διαχειριστής των \"sip\" URLs"
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"sip\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"xmpp\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"xmpp\" URLs."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Διαχειριστής των \"xmpp\" URLs"
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"xmpp\" URLs, αν είναι "
-"ενεργοποιημένα."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Αν η εντολή που έχει οριστεί πρέπει να διαχειρίζεται τα \"ymsgr\" URLs"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Ισχύει αν η εντολή που έχει καθοριστεί στο πλήκτρο \"εντολής\" πρέπει να "
-"διαχειρίζεται τα \"ymsgr\" URLs."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Διαχειριστής των \"ymsgr\" URLs"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Η εντολή που χρησιμοποιείται για τη διαχείριση των \"ymsgr\" URLs, αν είναι "
-"ενεργοποιημένα."
-
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
 "<b><font color=\"red\">Ο καταγραφέας δεν έχει λειτουργία ανάγνωσης</font></b>"
@@ -2286,6 +2300,32 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <ΑΥΤΟΜΑΤΗ-ΑΠΑΝΤΗΣΗ>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+"\n"
+"\n"
+"Μήνυμα από το Farsight: "
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+"Σφάλμα κατά την αρχικοποίηση της κλήσης. Αυτό δείχνει ένα πιθανό πρόβλημα "
+"στην εγκατάσταση του GStreamer ή του Farsight."
+
+msgid "Network error."
+msgstr "Σφάλμα δικτύου"
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+"Η διαπραγμάτευση κωδικοποίησης απέτυχε. Αυτό το πρόβλημα θα μπορούσε να "
+"λυθεί με την εγκατάσταση περισσότερων κωδικοποιήσεων Gstreamer."
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2297,6 +2337,9 @@ msgid ""
 msgstr ""
 "Δεν απέμεινε κανένας κωδικοποιητής. Οι επιλογές κωδικοποιητών στο fs-codecs."
 "conf είναι πολύ περιορισμένες."
+
+msgid "Could not connect to the remote party"
+msgstr "Αδυναμία σύνδεσης με την απομακρυσμένη πλευρά"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Ένα ανεπανόρθωτο σφάλμα Farsight2 συνέβη."
@@ -2931,6 +2974,58 @@ msgstr "Απλό πρόσθετο"
 msgid "Tests to see that most things are working."
 msgstr "Δοκιμάζει αν τα περισσότερα πράγματα δουλεύουν σωστά."
 
+msgid "TLS/SSL Versions"
+msgstr "Εκδόσεις TLS/SSL"
+
+msgid "Minimum Version"
+msgstr "Ελάχιστη έκδοση"
+
+msgid "Maximum Version"
+msgstr "Μέγιστη έκδοση"
+
+msgid "SSL 2"
+msgstr "SSL 2"
+
+msgid "SSL 3"
+msgstr "SSL 3"
+
+msgid "TLS 1.0"
+msgstr "TLS 1.0"
+
+msgid "TLS 1.1"
+msgstr "TLS 1.1"
+
+msgid "TLS 1.2"
+msgstr "TLS 1.2"
+
+msgid "TLS 1.3"
+msgstr "TLS 1.3"
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr "Δεν υποστηρίζεται για την NSS <3.14"
+
+msgid "Ciphers"
+msgstr "Κρυπτογραφήσεις"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr "NSS Προτιμήσεις"
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
+"Διαμόρφωση των αλγόριθμων κρυπτογράφησης και άλλων ρυθμίσεων για το NSS SSL/"
+"TLS plugin "
+
 #. Scheme name
 msgid "X.509 Certificates"
 msgstr "Πιστοποιητικά X.509"
@@ -3267,14 +3362,14 @@ msgstr "Προσθήκη στη συζήτηση"
 msgid "Chat _name:"
 msgstr "Όνομα _συζήτησης:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Αδυναμία ανάλυσης ονόματος υπολογιστή '%s': %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Γίνεται σύνδεση"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr "Αδυναμία ανάλυσης ονόματος υπολογιστή: %s"
 
 msgid "Chat error"
 msgstr "Σφάλμα συζήτησης"
@@ -3430,7 +3525,7 @@ msgid "Auto-detect incoming UTF-8"
 msgstr "Αυτόματος εντοπισμός εισερχόμενου UTF-8"
 
 msgid "Ident name"
-msgstr ""
+msgstr "Ονομα αναγνώρισης"
 
 msgid "Real name"
 msgstr "Πραγματικό όνομα"
@@ -3485,7 +3580,7 @@ msgid "Nick"
 msgstr "Ψευδώνυμο"
 
 msgid "Login name"
-msgstr ""
+msgstr "Όνομα εισόδου"
 
 msgid "Host name"
 msgstr "Όνομα κεντρικού υπολογιστή"
@@ -5970,11 +6065,9 @@ msgstr "Οι εξυπηρετητές του MSN κλείνουν προσωρι
 msgid "Unable to authenticate: %s"
 msgstr "Αδυναμία ταυτοποίησης: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr ""
-"Ο λίστα φίλων σας του MSN είναι προσωρινά μη διαθέσιμη. Παρακαλούμε "
-"περιμένετε και ξαναπροσπαθήστε."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
+msgstr "Η λίστα φίλων σας στο MSN είναι προσωρινά μη διαθέσιμη: %s"
 
 msgid "Handshaking"
 msgstr "Γίνεται χειραψία"
@@ -10038,6 +10131,9 @@ msgstr "Ρυθμίσεις παρουσίας"
 msgid "Start Doodling"
 msgstr "Ξεκίνα το Doodling"
 
+msgid "Activate which ID?"
+msgstr "Ενεργοποίηση ποιανού ID;"
+
 msgid "Select the ID you want to activate"
 msgstr "Επιλέξτε το ID που θέλετε να ενεργοποιήσετε"
 
@@ -10608,6 +10704,27 @@ msgid ""
 msgstr ""
 "Ένα σφάλμα συνέβη κατά την ανάγνωση του %s σας.  Δεν φορτώθηκε, και το παλιό "
 "αρχείο μετονομάστηκε σε %s~."
+
+msgid "Instant Messaging Client"
+msgstr "Πελάτης άμεσων μηνυμάτων "
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+"Το Pidgin είναι μια εφαρμογή συνομιλίας που σας επιτρέπει να συνδεθείτε σε "
+"λογαριασμούς σε πολλαπλά δίκτυα συνομιλίας ταυτόχρονα."
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+"Αυτό σημαίνει ότι μπορείτε να συνομιλείτε με τους φίλους σας στο MSN, "
+"μιλώντας με ένα φίλο στο Google Talk, και στο Yahoo chat room, όλα την ίδια "
+"στιγμή."
+
+msgid "The buddy list showing friends on different networks."
+msgstr "Η λίστα φίλων εμφανίζει φίλους σε διαφορετικά δίκτυα."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Αποστολέας μηνυμάτων διαδικτύου Pidgin"
@@ -11356,11 +11473,11 @@ msgstr "_Γνωστός ως:"
 msgid "_Group:"
 msgstr "_Ομάδα:"
 
-msgid "Auto_join when account connects."
-msgstr "Αυτόματη _συμμετοχή όταν ο λογαριασμός συνδέεται."
+msgid "Automatically _join when account connects"
+msgstr ""
 
-msgid "_Remain in chat after window is closed."
-msgstr "_Να μένει στη συζήτηση μετά το κλείσιμο του παραθύρου"
+msgid "_Remain in chat after window is closed"
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "Παρακαλούμε εισάγετε το όνομα της ομάδας που θα προστεθεί."
@@ -11398,6 +11515,9 @@ msgstr "Εισάγετε το όνομα του υπολογιστή για αυ
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Εξυπηρετητές SSL"
+
+msgid "Supported debug options are: plugins, version"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "Άγνωστη εντολή."
@@ -11843,6 +11963,12 @@ msgstr "Μπεγκάλι"
 msgid "Bengali-India"
 msgstr "Μπενγκάλι Ινδίας"
 
+msgid "Breton"
+msgstr "Βρετονικά"
+
+msgid "Bodo"
+msgstr "Μπόντο"
+
 msgid "Bosnian"
 msgstr "Βοσνιακά"
 
@@ -11882,6 +12008,9 @@ msgstr "Εσπεράντο"
 msgid "Spanish"
 msgstr "Ισπανικά"
 
+msgid "Argentine Spanish"
+msgstr "Ισπανικά Αργεντινής"
+
 msgid "Estonian"
 msgstr "Εσθονικά"
 
@@ -11893,9 +12022,6 @@ msgstr "Περσικά"
 
 msgid "Finnish"
 msgstr "Φινλανδικά"
-
-msgid "French"
-msgstr "Γαλλικά"
 
 msgid "Irish"
 msgstr "Ιρλανδικά"
@@ -11921,9 +12047,6 @@ msgstr "Κροατικά"
 msgid "Hungarian"
 msgstr "Ουγγρικά"
 
-msgid "Armenian"
-msgstr "Αρμενικά"
-
 msgid "Indonesian"
 msgstr "Ινδονησιανά"
 
@@ -11939,6 +12062,9 @@ msgstr "Γεωργιανά"
 msgid "Ubuntu Georgian Translators"
 msgstr "Γεωργιανοί μεταφραστές Ubuntu"
 
+msgid "Kazakh"
+msgstr "Καζακικά"
+
 msgid "Khmer"
 msgstr "Κχμερ"
 
@@ -11951,14 +12077,20 @@ msgstr "Ομάδα μετάφρασης Κανάντα"
 msgid "Korean"
 msgstr "Κορεάτικα"
 
+msgid "Kashmiri"
+msgstr "Κασμίρι"
+
 msgid "Kurdish"
 msgstr "Κουρδικά"
 
-msgid "Lao"
-msgstr "Λαοτινά"
+msgid "Kurdish (Sorani)"
+msgstr "Κουρδικά (Sorani)"
 
 msgid "Lithuanian"
 msgstr "Λιθουανικά"
+
+msgid "Latvian"
+msgstr "Λετονικά"
 
 msgid "Maithili"
 msgstr "Μαϊθιλί"
@@ -11969,6 +12101,9 @@ msgstr "Ανατολικά Μάρι"
 msgid "Macedonian"
 msgstr "Μακεδονικά (Σλαβικά)"
 
+msgid "Malay"
+msgstr "Μαλαισιακά"
+
 msgid "Malayalam"
 msgstr "Μαλαγιάλαμ"
 
@@ -11977,9 +12112,6 @@ msgstr "Μογγολικά"
 
 msgid "Marathi"
 msgstr "Μαράθι"
-
-msgid "Malay"
-msgstr "Μαλαισιακά"
 
 msgid "Burmese"
 msgstr "Βιρμανικά"
@@ -12023,6 +12155,9 @@ msgstr "Ρουμάνικα"
 msgid "Russian"
 msgstr "Ρώσικα"
 
+msgid "Sindhi"
+msgstr "Σίντι"
+
 msgid "Slovak"
 msgstr "Σλοβακικά"
 
@@ -12056,11 +12191,22 @@ msgstr "Τελούγκου"
 msgid "Thai"
 msgstr "Ταϊλανδικά"
 
+msgid "Tatar"
+msgstr "Ταταρική"
+
 msgid "Ukranian"
 msgstr "Ουκρανικά"
 
 msgid "Urdu"
 msgstr "Ούρντου"
+
+msgid "Uzbek"
+msgstr "Ουζμπεκική"
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "Βιετναμέζικα"
@@ -12076,6 +12222,15 @@ msgstr "Παραδοσιακά Κινέζικα"
 
 msgid "Amharic"
 msgstr "Αμχαρικά"
+
+msgid "French"
+msgstr "Γαλλικά"
+
+msgid "Armenian"
+msgstr "Αρμενικά"
+
+msgid "Lao"
+msgstr "Λαοτινά"
 
 msgid "Turkish"
 msgstr "Τούρκικα"
@@ -12780,6 +12935,9 @@ msgstr "_Πολυμέσα"
 msgid "_Hangup"
 msgstr "_Κλείσιμο"
 
+msgid "Media error"
+msgstr "Σφάλμα πολυμέσων"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s επιθυμεί να ξεκινήσει μία συνεδρία ήχου/βίντεο μαζί σας."
@@ -12790,6 +12948,42 @@ msgstr "%s επιθυμεί να ξεκινήσει μία συνεδρία βί
 
 msgid "Incoming Call"
 msgstr "Εισερχόμενη κλήση"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr "ΑΒΓ"
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr "ΔΕΖ"
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr "ΗΘΙ"
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr "ΚΛΜ"
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr "ΝΞΟ"
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr "ΠΡΣΤ"
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr "ΥΦΧ"
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr "ΨΩ"
 
 msgid "_Hold"
 msgstr "_Συγκράτηση"
@@ -13660,6 +13854,9 @@ msgstr "Επιλογέας κατάστασης"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Το ακόλουθο σφάλμα συνέβη κατά το φόρτωμα του %s: %s"
@@ -14352,8 +14549,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Ειδοποίηση για"
 
+msgid "\t_Notify for System messages"
+msgstr ""
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Μόνο όταν κάποιος αναφέρει το όνομα χρήστη σας"
+
+msgid "\tNotify for _System messages"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "_Εστιασμένα παράθυρα"
@@ -14385,6 +14588,8 @@ msgid "R_aise conversation window"
 msgstr "Α_νύψωση παραθύρου συνομιλίας"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_Παράθυρο τρέχουσας συνομιλίας"
 
@@ -15162,12 +15367,9 @@ msgstr ""
 "έκδοση θα εγκατασταθεί χωρίς να γίνει αφαίρεση της τρέχουσας έκδοσης."
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"Το Pidgin απαιτεί ένα συμβατό GTK+ Runtime (το οποίο δε φαίνεται να υπάρχει)."
-"$\\rΘέλετε σίγουρα να παραλείψετε την εγκατάσταση του GTK+ Runtime;"
 
 #. Installer Subsection Text
 msgid "URI Handlers"

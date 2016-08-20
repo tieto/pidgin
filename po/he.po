@@ -4,17 +4,16 @@
 #
 # Translators:
 # Richard Laager <rlaager@wiktel.com>, 2011
-# Shalom Craimer <s.transifex@craimer.org>, 2011-2013
+# Shalom Craimer <s.transifex2015@craimer.org>, 2011-2013
 # Yaron Shahrabani <sh.yaron@gmail.com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-01-21 08:25+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Hebrew (http://www.transifex.com/projects/p/pidgin/language/"
-"he/)\n"
+"POT-Creation-Date: 2016-06-15 23:14-0500\n"
+"PO-Revision-Date: 2016-06-06 21:09+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Hebrew (http://www.transifex.com/pidgin/pidgin/language/he/)\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1461,6 +1460,7 @@ msgstr "מישהו מדבר בשיחה"
 msgid "Someone says your name in a chat"
 msgstr "מישהו מזכיר את שמך בשיחה"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "התרעה עם טוסטר כאשר"
 
@@ -1473,6 +1473,7 @@ msgstr "קבע כדחוף בחלון הטרמינל"
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "תוסף טוסטר"
 
@@ -1639,7 +1640,6 @@ msgstr "פרוטוקול זה אינו תומך בשליפת שמות נוספי
 msgid "Unknown"
 msgstr "לא ידוע"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "אנשי קשר"
 
@@ -1745,26 +1745,31 @@ msgstr ""
 "התעודה טוענת שהיא באה בעצם מאת \"%s\". ייתכן וזה אומר שהשירות אליו התחברת "
 "אינו השירות שחשבת שהוא."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "פרטי התעודה"
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
-"שם משותף: %s\n"
-"\n"
-"טביעת-אצבע (SHA1): %s\n"
-"\n"
-"תאריך הפעלה: %s\n"
-"תאריך תפוגה: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "פרטי התעודה"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
+msgstr ""
 
 #. show error to user
 msgid "Registration Error"
@@ -1837,6 +1842,126 @@ msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
 msgstr "יש להזין את שם המשתמש שברצונך להזמין, יחד עם הודעת הזמנה אופציונלית."
+
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"aim\"."
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"aim\"."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "המטפל בכתובות \"aim\""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "הפקודה לטיפול בכתובות \"aim\", אם הופעלה."
+
+msgid "Run the command in a terminal"
+msgstr "הפעל את הפקודה בתוך טרמינל"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr "אמת אם הפקודה לטיפול בסוג זה של כתובת צריכה לרוץ בטרמינל."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"gg\"."
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"gg\"."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "המטפל בכתובות \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "הפקודה לטיפול בכתובות \"gg\", אם הופעלה."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"icq\"."
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"icq\"."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "המטפל בכתובות \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "הפקודה לטיפול בכתובות \"icq\", אם הופעלה."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"irc\"."
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"irc\"."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "המטפל בכתובות \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "הפקודה לטיפול בכתובות \"irc\", אם הופעלה."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"msnim\"."
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"msnim\"."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "המטפל בכתובות \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "הפקודה לטיפול בכתובות \"msnim\", אם הופעלה."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"sip\"."
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"aim\"."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "המטפל בכתובות \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "הפקודה לטיפול בכתובות \"sip\", אם הופעלה."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"xmpp\"."
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"xmpp\"."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "המטפל בכתובות \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "הפקודה לטיפול בכתובות \"xmpp\", אם הופעלה."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"ymsgr\"."
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"ymsgr\"."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "המטפל בכתובות \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "הפקודה לטיפול בכתובות \"ymsgr\", אם הופעלה."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2012,126 +2137,6 @@ msgstr "העברת הקובץ ל-%s נכשלה."
 msgid "File transfer from %s failed."
 msgstr "העברת הקובץ מ-%s נכשלה."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"aim\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"aim\"."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "המטפל בכתובות \"aim\""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "הפקודה לטיפול בכתובות \"aim\", אם הופעלה."
-
-msgid "Run the command in a terminal"
-msgstr "הפעל את הפקודה בתוך טרמינל"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr "אמת אם הפקודה לטיפול בסוג זה של כתובת צריכה לרוץ בטרמינל."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"gg\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"gg\"."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "המטפל בכתובות \"gg\""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "הפקודה לטיפול בכתובות \"gg\", אם הופעלה."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"icq\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"icq\"."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "המטפל בכתובות \"icq\""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "הפקודה לטיפול בכתובות \"icq\", אם הופעלה."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"irc\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"irc\"."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "המטפל בכתובות \"irc\""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "הפקודה לטיפול בכתובות \"irc\", אם הופעלה."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"msnim\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"msnim\"."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "המטפל בכתובות \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "הפקודה לטיפול בכתובות \"msnim\", אם הופעלה."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"sip\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"aim\"."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "המטפל בכתובות \"sip\""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "הפקודה לטיפול בכתובות \"sip\", אם הופעלה."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"xmpp\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"xmpp\"."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "המטפל בכתובות \"xmpp\""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "הפקודה לטיפול בכתובות \"xmpp\", אם הופעלה."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "האם הפקודה שצויינה צריכה לטפל בכתובות \"ymsgr\"."
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr "אמת אם הפקודה שהוגדרת לכפתור \"פקודה\" צריך לטפל בכתובות \"ymsgr\"."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "המטפל בכתובות \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "הפקודה לטיפול בכתובות \"ymsgr\", אם הופעלה."
-
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">לתוכנת הרישום אין פונקצית קריאה</font></b>"
 
@@ -2178,6 +2183,25 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <מענה-אוטומטי>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+msgid "Network error."
+msgstr ""
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2186,6 +2210,9 @@ msgstr ""
 msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr "לא נותרו דוחסים. ההגדרות שלך בקובץ fs-codecs.conf נוקשות מדי."
+
+msgid "Could not connect to the remote party"
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "אירעה שגיאה שלא ניתן להתאושש ממנה ב-Farsight2."
@@ -2796,6 +2823,56 @@ msgstr "תוסף פשוט"
 msgid "Tests to see that most things are working."
 msgstr "בודק אם רוב הדברים עובדים"
 
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
+
 #. Scheme name
 msgid "X.509 Certificates"
 msgstr "תעודות X.509"
@@ -3127,14 +3204,14 @@ msgstr "הוסף לשיחה"
 msgid "Chat _name:"
 msgstr "שם _צ'אט:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "לא ניתן לתרגם לכתובת את שם השרת '%s': %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "מתחבר"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr ""
 
 msgid "Chat error"
 msgstr "שגיאה בצ'אט"
@@ -3342,13 +3419,11 @@ msgstr " <i>(מזוהה)</i>"
 msgid "Nick"
 msgstr "כינוי"
 
-#, fuzzy
 msgid "Login name"
-msgstr "ללא שם"
+msgstr ""
 
-#, fuzzy
 msgid "Host name"
-msgstr "שם שרת"
+msgstr ""
 
 msgid "Currently on"
 msgstr "כרגע ב-"
@@ -5745,9 +5820,9 @@ msgstr "שרתי ה-MSN זמנית מפסיקים לפעול."
 msgid "Unable to authenticate: %s"
 msgstr "לא ניתן לאמת: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr "רשימת אנשי הקשר שלך ב-MSN אינה זמינה כרגע. יש לנסות שנית מאוחר יותר."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
+msgstr ""
 
 msgid "Handshaking"
 msgstr "יוזם תקשורת"
@@ -9636,6 +9711,9 @@ msgstr "אפשרויות נוכחות"
 msgid "Start Doodling"
 msgstr "התחל לקשקש"
 
+msgid "Activate which ID?"
+msgstr ""
+
 msgid "Select the ID you want to activate"
 msgstr "יש לבחור את המזהה ברצונך להפעיל"
 
@@ -10182,6 +10260,22 @@ msgid ""
 "the old file has been renamed to %s~."
 msgstr ""
 "חלה שגיאה בעת קריאת ה-%s שלך. הקובץ לא נטען, ושם ההובץ הישן שונה ל-%s~."
+
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
 
 msgid "Pidgin Internet Messenger"
 msgstr "פידג'ין למסרים באינטרנט"
@@ -10911,11 +11005,11 @@ msgstr "שם:"
 msgid "_Group:"
 msgstr "_קבוצה:"
 
-msgid "Auto_join when account connects."
-msgstr "הצט_רף אוטומטית כשהחשבון נעשה מקוון."
+msgid "Automatically _join when account connects"
+msgstr ""
 
-msgid "_Remain in chat after window is closed."
-msgstr "הש_אר בצ'אט אחרי שהחלון נסגר."
+msgid "_Remain in chat after window is closed"
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "יש להזין את שם הקבוצה החדשה."
@@ -10953,6 +11047,9 @@ msgstr "יש להקליד את שם השרת שעבורו נועדה תעודה 
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "שרתי SSL"
+
+msgid "Supported debug options are: plugins, version"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "פקודה לא מוכרת."
@@ -11394,6 +11491,12 @@ msgstr "בנגאלית"
 msgid "Bengali-India"
 msgstr "בנגאלית-הודו"
 
+msgid "Breton"
+msgstr ""
+
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "בוסנית"
 
@@ -11433,6 +11536,9 @@ msgstr "אספרנט"
 msgid "Spanish"
 msgstr "ספרדית"
 
+msgid "Argentine Spanish"
+msgstr ""
+
 msgid "Estonian"
 msgstr "אסטונית"
 
@@ -11444,9 +11550,6 @@ msgstr "פרסית"
 
 msgid "Finnish"
 msgstr "פינית"
-
-msgid "French"
-msgstr "צרפתית"
 
 msgid "Irish"
 msgstr "אירית"
@@ -11472,9 +11575,6 @@ msgstr "קרואטית"
 msgid "Hungarian"
 msgstr "הונגרית"
 
-msgid "Armenian"
-msgstr "ארמנית"
-
 msgid "Indonesian"
 msgstr "אינדונזית"
 
@@ -11490,6 +11590,9 @@ msgstr "גאורגנית (גרוזינית)"
 msgid "Ubuntu Georgian Translators"
 msgstr "מתרגמי הגרוזינית של אובונטו"
 
+msgid "Kazakh"
+msgstr ""
+
 msgid "Khmer"
 msgstr "קמבודית"
 
@@ -11502,14 +11605,20 @@ msgstr "קבוצת התרגום לקאנאדית"
 msgid "Korean"
 msgstr "קוריאנית"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "כורדית"
 
-msgid "Lao"
-msgstr "לאית"
+msgid "Kurdish (Sorani)"
+msgstr ""
 
 msgid "Lithuanian"
 msgstr "ליטואנית"
+
+msgid "Latvian"
+msgstr ""
 
 msgid "Maithili"
 msgstr "מאת'ילי"
@@ -11520,6 +11629,9 @@ msgstr "Meadow Mari"
 msgid "Macedonian"
 msgstr "מקדונית"
 
+msgid "Malay"
+msgstr "מאלאית"
+
 msgid "Malayalam"
 msgstr "מלאיאלאם"
 
@@ -11528,9 +11640,6 @@ msgstr "מונגולית"
 
 msgid "Marathi"
 msgstr "מרטהי"
-
-msgid "Malay"
-msgstr "מאלאית"
 
 msgid "Burmese"
 msgstr "בורמית"
@@ -11574,6 +11683,9 @@ msgstr "רומנית"
 msgid "Russian"
 msgstr "רוסית"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "סלובקית"
 
@@ -11607,11 +11719,22 @@ msgstr "טלוגו"
 msgid "Thai"
 msgstr "תאלנדית"
 
+msgid "Tatar"
+msgstr ""
+
 msgid "Ukranian"
 msgstr "אוקראינית"
 
 msgid "Urdu"
 msgstr "אורדו"
+
+msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "ויאטנמית"
@@ -11627,6 +11750,15 @@ msgstr "סינית מסורתית"
 
 msgid "Amharic"
 msgstr "אמהרית"
+
+msgid "French"
+msgstr "צרפתית"
+
+msgid "Armenian"
+msgstr "ארמנית"
+
+msgid "Lao"
+msgstr "לאית"
 
 msgid "Turkish"
 msgstr "תורכית"
@@ -12297,6 +12429,9 @@ msgstr "_מדיה"
 msgid "_Hangup"
 msgstr "הת_נתק"
 
+msgid "Media error"
+msgstr ""
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "נתקבלה בקשה מאת %s להתחיל התקשרות קול/וידאו איתך."
@@ -12307,6 +12442,42 @@ msgstr "נתקבלה בקשה מאת %s להתחיל התקשרות וידאו �
 
 msgid "Incoming Call"
 msgstr "שיחה נכנסת"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr ""
 
 msgid "_Hold"
 msgstr "המת_ן"
@@ -13154,6 +13325,9 @@ msgstr "קלט בחירת מצב"
 msgid "Google Talk"
 msgstr "גוגל טאק"
 
+msgid "Facebook (XMPP)"
+msgstr "פייסבוק (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "ארעה השגיאה להלן בעת ניסיון טעינת %s: %s"
@@ -13810,8 +13984,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "התרעה על"
 
+msgid "\t_Notify for System messages"
+msgstr ""
+
 msgid "\t_Only when someone says your username"
 msgstr "\tרק כאשר מישהו מזכיר את שם המשתמש שלך"
+
+msgid "\tNotify for _System messages"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "חלונות פעילים"
@@ -13843,6 +14023,8 @@ msgid "R_aise conversation window"
 msgstr "הצ_ג חלונות שיחה מעל אחרים"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "חלון שיחה _נוכחי"
 
@@ -14307,9 +14489,8 @@ msgstr ""
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "מספר שיחות בכל חלון"
+msgstr ""
 
 #. Messaging menu integration
 msgid "Messaging Menu"
@@ -14596,12 +14777,9 @@ msgstr ""
 "הגרסא המותקנת."
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"לפידג'ין נחוצה סביבת הרצה של GTK+ (אשר ככל הנראה אינה מותקנת).$\\rהאם ברצונך "
-"לדלג על שלב התקנת GTK+?"
 
 #. Installer Subsection Text
 msgid "URI Handlers"

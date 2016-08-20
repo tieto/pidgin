@@ -103,12 +103,96 @@ version 3.0.0 (??/??/????):
 	* A single jabber plugin provides XMPP, GTalk and Facebook protocols.
 	* A single yahoo plugin provides both Yahoo and Yahoo JAPAN protocols.
 
-version 2.10.12 (MM/DD/YY):
+
+version 2.11.0 (06/21/16):
+	General:
+	* 2.10.12 was accidentally released with new additions to the API and
+	  should have been released as 2.11.0.  Unfortunately, we did not catch
+	  the mistake until after 2.10.12 was released, but we're fixing it now.
+	  See ChangeLog.API for more information.
+	* Include the Mozilla certificate bundle. This fixes connecting to servers
+	  with certificates from Let's Encrypt.
+	* Remove all 1024-bit CAs
+
+	libpurple:
+	* media: fix an issue with ximagesink displaying only a corner cut-out of
+	  a larger webcam video (Jakub Adam)
+	* mediamanager: update output window destruction so that it reflects recent
+	  changes in the media pipeline structure (Jakub Adam)
+	* Ported Instantbird's CommandUiOps to libpurple (Dequis)
+
+	Pidgin:
+	* Fixed #14962
+	* Fixed alignment of incoming right-to-left messages in protocols that
+	  don't support rich text
+	* Fix a potential crash while exiting pidgin
+
+	AIM:
+	* Add support for the newer kerberos-based authentication of AIM 8.x
+
+	Windows-Specific Changes:
+	* Use getaddrinfo for DNS to enable IPv6 (#1075)
+	* Updates to dependencies:
+		* NSS 3.24 and NSPR 4.12.
+
+	Bonjour
+	* Fixed building on Mac OSX (Patrick Cloke) (#16883)
+
+	ICQ:
+	* Stop truncating passwords to 8 characters like old ICQ clients did.
+	  (#16692). If you actually needed this, truncate your password
+	  manually by pressing backspace a few times.
+
+	IRC:
+	* Base64-decode SASL messages before passing to libsasl (#16268)
+
+	MXit
+	* Fixed a buffer overflow.  Discovered by Yves Younan of Cisco Talos.
+	  (TALOS-CAN-0120)
+	* Fixed a remote out-of-bounds read.  Discovered by Yves Younan of Cisco
+	  Talos.  (TALOS-CAN-0140)
+	* Fixed a remote out-of-band read.  Discovered by Yves Younan of Cisco
+	  Talos.  (TALOS-CAN-0138, TALOS-CAN-0135)
+	* Fixed an invalid read.  Discovered by Yves Younan of Cisco Talos
+	  (TALOS-CAN-0118)
+	* Fixed a remote buffer overflow vulnerability.  Discovered by Yves
+	  Younan of Cisco Talos.  (TALOS-CAN-0119)
+	* Fixed an out-of-bounds read discovered by Yves Younan of Cisco Talos.
+	  (TALOS-CAN-0123)
+	* Fixed a directory traversal issue.  Discovered by Yves Younan of Cisco
+	  Talos (TALOS-CAN-0128)
+	* Fixed a remote denial of service vulnerability that could result in
+	  a null pointer dereference.  Discovered by Yves Younan of Cisco Talos.
+	  (TALOS-CAN-0133)
+	* Fixed a remote denial of service that could result in an out-of-bounds
+	  read.  Discovered by Yves Younan of Cisco Talos (TALOS-CAN-0134)
+	* Fixed multiple remote buffer overflows.  Discovered by Yves Younan of
+	  Cisco Talos.  (TALOS-CAN-0136)
+	* Fixed a remote NULL pointer dereference.  Discovered by Yves Younan of
+	  Cisco Talos (TALOS-CAN-0137)
+	* Fixed a remote code execution issue discovered by Yves Younan of Cisco
+	  Talos.  (TALOS-CAN-0142)
+	* Fixed a remote denial of service vulnerability in contact mood
+	  handling.  Discovered by Yves Younan of Cisco Talos (TALOS-CAN-0141)
+	* Fixed a remote out-of-bounds write vulnerability.  Discovered by Yves
+	  Younan of Cisco Talos. (TALOS-CAN-0139)
+	* Fix a remote out-of-bounds read.  Discovered by Yves Younan of Cisco
+	  Talos.  (TALOS-CAN-0143)
+
+version 2.10.12 (12/31/15):
+	General:
+	* purple-url-handler now works with Python 3.x (Daniël van Eeden)
+	* Fixed an issue where transient startup statuses could be deleted
+	  (Jakub Adam) (#16762)
+
+	Pidgin:
+	* The shout smile now matches the default theme (Steve Vaught)
+
 	Windows-Specific Changes:
 	* Updates to dependencies:
 		* Cyrus SASL 2.1.26
 		* libxml2 2.9.2
-		* NSS 3.17.3 and NSPR 4.10.7
+		* NSS 3.20.1 and NSPR 4.10.10
 		* Perl 5.20.1
 		* SILC 1.1.12
 	* Remove support for Tcl plugins

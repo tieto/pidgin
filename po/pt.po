@@ -3,16 +3,19 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# kongshaolong <de2a9293@opayq.com>, 2013
+# Bruno Queiros <bqueiros@gmail.com>, 2015
+# Gonçalo Silva <de2a9293@opayq.com>, 2013
+# Gonçalo Silva <de2a9293@opayq.com>, 2013
+# Paulo Ribeiro <paulo@diffraction.pt>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-01-22 10:55+0000\n"
-"Last-Translator: Paulo Ribeiro <paulo@diffraction.pt>\n"
-"Language-Team: Portuguese (http://www.transifex.com/projects/p/pidgin/"
-"language/pt/)\n"
+"POT-Creation-Date: 2016-06-15 23:16-0500\n"
+"PO-Revision-Date: 2016-06-06 21:09+0000\n"
+"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"Language-Team: Portuguese (http://www.transifex.com/pidgin/pidgin/language/"
+"pt/)\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1486,6 +1489,7 @@ msgstr "Alguém fala num chat"
 msgid "Someone says your name in a chat"
 msgstr "Alguém diz o seu nome num chat"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Notificar com mensagem do tipo \"torradeira\" quando"
 
@@ -1498,6 +1502,7 @@ msgstr "Definir URGENT na janela do terminal."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Plugin Toaster"
 
@@ -1668,7 +1673,6 @@ msgstr "Este protocolo não suporta a obtenção da alcunha pública."
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Contactos"
 
@@ -1780,10 +1784,19 @@ msgstr ""
 "Em vez disso o certificado afirma ser de \"%s\". Isto pode querer dizer que "
 "não se está a ligar ao serviço que pensa."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Informação de Certificado"
+
+msgid "Unable to find Issuer Certificate"
+msgstr "Não foi possível encontrar o Certificado Emissor"
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1792,14 +1805,18 @@ msgid ""
 msgstr ""
 "Nome comum: %s\n"
 "\n"
-"Impressão digital (SHA1): %s\n"
+"Emitidor Por: %s\n"
 "\n"
-"Data de activação: %s\n"
-"Data de expiração: %s\n"
+"Fingerprint (SHA1): %s\n"
+"\n"
+"Data de Activação: %s\n"
+"Data de Expiração: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Informação de Certificado"
+msgid "(self-signed)"
+msgstr "(auto-assinado)"
+
+msgid "View Issuer Certificate"
+msgstr "Ver Certificado Emissor"
 
 #. show error to user
 msgid "Registration Error"
@@ -1874,6 +1891,144 @@ msgid ""
 msgstr ""
 "Por favor introduza o nome do utilizador que gostaria de convidar, e uma "
 "mensagem de convite opcional."
+
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "O comando especificado deve ser associado a URLs \"aim\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
+"a URLs \"aim\"."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Handler para URLs \"aim\""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Comando usado para tratar URLs \"aim\", caso esteja activo."
+
+msgid "Run the command in a terminal"
+msgstr "Correr o comando numa linha de comandos"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Verdadeiro se o comando usado para tratar este tipo de URL deve correr num "
+"terminal."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "O comando especificado deve ser associado a URLs \"gg\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
+"a URLs \"gg\"."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Handler para URLs \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Comando usado para tratar URLs \"gg\", caso esteja activo."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "O comando especificado deve ser associado a URLs \"icq\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
+"a URLs \"icq\"."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Handler para URLs \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Comando usado para tratar URLs \"icq\", caso esteja activo."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "O comando especificado deve ser associado a URLs \"irc\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
+"a URLs \"irc\"."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Handler para URLs \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Comando usado para tratar URLs \"irc\", caso esteja activo."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "O comando especificado deve ser associado a URLs \"msnim\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
+"a URLs \"msnim\"."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Handler para URLs \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Comando usado para tratar URLs \"msnim\", caso esteja activo."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "O comando especificado deve ser associado a URLs \"sip\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
+"a URLs \"sip\"."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Handler para URLs \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Comando usado para tratar URLs \"sip\", caso esteja activo."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "O comando especificado deve ser associado a URLs \"xmpp\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
+"a URLs \"xmpp\"."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Handler para URLs \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Comando usado para tratar URLs \"xmpp\", caso esteja activo."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "O comando especificado deve ser associado a URLs \"ymsgr\""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
+"a URLs \"ymsgr\"."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Handler para URLs \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Comando usado para tratar URLs \"ymsgr\", caso esteja activo."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2050,144 +2205,6 @@ msgstr "Transferência de ficheiro para %s falhou."
 msgid "File transfer from %s failed."
 msgstr "Transferência de ficheiro de %s falhou."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "O comando especificado deve ser associado a URLs \"aim\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
-"a URLs \"aim\"."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Handler para URLs \"aim\""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Comando usado para tratar URLs \"aim\", caso esteja activo."
-
-msgid "Run the command in a terminal"
-msgstr "Correr o comando numa linha de comandos"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Verdadeiro se o comando usado para tratar este tipo de URL deve correr num "
-"terminal."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "O comando especificado deve ser associado a URLs \"gg\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
-"a URLs \"gg\"."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Handler para URLs \"gg\""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Comando usado para tratar URLs \"gg\", caso esteja activo."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "O comando especificado deve ser associado a URLs \"icq\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
-"a URLs \"icq\"."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Handler para URLs \"icq\""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Comando usado para tratar URLs \"icq\", caso esteja activo."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "O comando especificado deve ser associado a URLs \"irc\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
-"a URLs \"irc\"."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Handler para URLs \"irc\""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Comando usado para tratar URLs \"irc\", caso esteja activo."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "O comando especificado deve ser associado a URLs \"msnim\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
-"a URLs \"msnim\"."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Handler para URLs \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Comando usado para tratar URLs \"msnim\", caso esteja activo."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "O comando especificado deve ser associado a URLs \"sip\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
-"a URLs \"sip\"."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Handler para URLs \"sip\""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Comando usado para tratar URLs \"sip\", caso esteja activo."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "O comando especificado deve ser associado a URLs \"xmpp\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
-"a URLs \"xmpp\"."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Handler para URLs \"xmpp\""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Comando usado para tratar URLs \"xmpp\", caso esteja activo."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "O comando especificado deve ser associado a URLs \"ymsgr\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Verdadeiro se o comando especificado na chave \"command\" deve ser associado "
-"a URLs \"ymsgr\"."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Handler para URLs \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Comando usado para tratar URLs \"ymsgr\", caso esteja activo."
-
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
 "<b><font color=\"red\">O \"logger\" não tem função de leitura</font></b>"
@@ -2236,6 +2253,32 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <RESPOSTA-AUTOMATICA>: %s\n"
 
 msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr ""
+"\n"
+"\n"
+"Mensagem de Farsight: "
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+"Erro ao inicializar a chamada. Isto provavelmente denota um problema na "
+"instalação do GStreamer ou Farsight."
+
+msgid "Network error."
+msgstr "Erro de rede."
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+"A negociação do codec falhou. Este problema pode ser resolvido pela "
+"instalação de mais codecs GStreamer."
+
+msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
 msgstr ""
@@ -2247,6 +2290,9 @@ msgid ""
 msgstr ""
 "Nenhum codec encontrado. As suas preferências de codecs em fs-codecs.conf "
 "são demasiado rígidas."
+
+msgid "Could not connect to the remote party"
+msgstr "Não foi possível ligar ao lado remoto"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Ocorreu um erro Farsight2 não recuperável."
@@ -2874,6 +2920,56 @@ msgstr "Plugin trivial"
 msgid "Tests to see that most things are working."
 msgstr "Verifica se a maioria das coisas está a funcionar."
 
+msgid "TLS/SSL Versions"
+msgstr "Versões TLS/SSL"
+
+msgid "Minimum Version"
+msgstr "Versão Mínima"
+
+msgid "Maximum Version"
+msgstr "Versão Máxima"
+
+msgid "SSL 2"
+msgstr "SSL 2"
+
+msgid "SSL 3"
+msgstr "SSL 3"
+
+msgid "TLS 1.0"
+msgstr "TLS 1.0"
+
+msgid "TLS 1.1"
+msgstr "TLS 1.1"
+
+msgid "TLS 1.2"
+msgstr "TLS 1.2"
+
+msgid "TLS 1.3"
+msgstr "TLS 1.3"
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr "Não Suportado para NSS < 3.14"
+
+msgid "Ciphers"
+msgstr "Cifras"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr "Preferências NSS"
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr "Configurar Cifras e outras Configurações para o Plugin NSS SSL/TLS"
+
 #. Scheme name
 msgid "X.509 Certificates"
 msgstr "Certificados X.509"
@@ -3208,14 +3304,14 @@ msgstr "Adicionar ao chat"
 msgid "Chat _name:"
 msgstr "_nome de chat:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Não foi possível resolver o hostname '%s': %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Ligando"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr "Impossível resolver hostname: %s"
 
 msgid "Chat error"
 msgstr "Erro de chat"
@@ -3424,13 +3520,11 @@ msgstr " <i>(identificado)</i>"
 msgid "Nick"
 msgstr "Nome"
 
-#, fuzzy
 msgid "Login name"
-msgstr "Sem nome"
+msgstr "Nome de login"
 
-#, fuzzy
 msgid "Host name"
-msgstr "Hostname"
+msgstr "Nome do host"
 
 msgid "Currently on"
 msgstr "Actualmente em"
@@ -5907,11 +6001,9 @@ msgstr "Os servidores MSN vão ficar offline temporariamente"
 msgid "Unable to authenticate: %s"
 msgstr "Incapaz de autenticar: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr ""
-"A sua lista de contactos MSN está temporariamente indisponível. Por favor "
-"espere e tente novamente."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
+msgstr "A sua lista de contactos do MSN está temporáriamente indisponível: %s"
 
 msgid "Handshaking"
 msgstr "Bacalhauzada"
@@ -6214,7 +6306,7 @@ msgid "Your Country"
 msgstr "País"
 
 msgid "Your Language"
-msgstr "O Seu Idioma"
+msgstr "A Sua Língua"
 
 #. display the form to the user and wait for his/her input
 msgid "MXit Authorization"
@@ -9921,6 +10013,9 @@ msgstr "Definições de Presença"
 msgid "Start Doodling"
 msgstr "Começar a Doodlar"
 
+msgid "Activate which ID?"
+msgstr "Activar qual ID?"
+
 msgid "Select the ID you want to activate"
 msgstr "Seleccione o ID que quer activar"
 
@@ -10479,6 +10574,26 @@ msgid ""
 msgstr ""
 "Foi encontrado um erro ao ler o seu %s. O ficheiro não foi carregado, e o "
 "ficheiro antigo foi renomeado para %s~."
+
+msgid "Instant Messaging Client"
+msgstr "Cliente de Mensagens Instântaneas"
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+"Pidgin é um programa de chat que lhe permite entrar em várias contas em "
+"múltiplas redes de chat simultâneamente."
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+"Isto significa que pode conversar com amigos no MSN, falar com um amigo no "
+"Google Talk, e estar numa chat room da Yahoo tudo ao mesmo tempo."
+
+msgid "The buddy list showing friends on different networks."
+msgstr "A lista de amigos mostrando amigos em diferentes redes."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Mensageiro de Internet Pidgin"
@@ -11115,7 +11230,7 @@ msgid "%s disabled"
 msgstr "%s desactivado"
 
 msgid "Reconnect"
-msgstr "Re-ligar"
+msgstr "Ligar de novo"
 
 msgid "Re-enable"
 msgstr "Re-activar"
@@ -11217,11 +11332,11 @@ msgstr "A_lcunha:"
 msgid "_Group:"
 msgstr "_Grupo:"
 
-msgid "Auto_join when account connects."
-msgstr "Entrar automaticamente quando a conta se ligar."
+msgid "Automatically _join when account connects"
+msgstr ""
 
-msgid "_Remain in chat after window is closed."
-msgstr "_Continuar no chat depois da janela ser fechada."
+msgid "_Remain in chat after window is closed"
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "Por favor introduza o nome do grupo a ser criado."
@@ -11259,6 +11374,9 @@ msgstr "Introduza o hostname para este certificado."
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Servidores SSL"
+
+msgid "Supported debug options are: plugins, version"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "Comando desconhecido."
@@ -11686,7 +11804,7 @@ msgid "Assamese"
 msgstr "Assamês"
 
 msgid "Asturian"
-msgstr ""
+msgstr "Asturiano"
 
 msgid "Belarusian Latin"
 msgstr "Latim Bielorrusso"
@@ -11699,6 +11817,12 @@ msgstr "Bengali"
 
 msgid "Bengali-India"
 msgstr "Bengali-Índia"
+
+msgid "Breton"
+msgstr "Bretão"
+
+msgid "Bodo"
+msgstr "Bodo"
 
 msgid "Bosnian"
 msgstr "Bósnio"
@@ -11739,6 +11863,9 @@ msgstr "Esperanto"
 msgid "Spanish"
 msgstr "Espanhol"
 
+msgid "Argentine Spanish"
+msgstr "Espanhol Argentino"
+
 msgid "Estonian"
 msgstr "Estoniano"
 
@@ -11750,9 +11877,6 @@ msgstr "Persa"
 
 msgid "Finnish"
 msgstr "Finlandês"
-
-msgid "French"
-msgstr "Francês"
 
 msgid "Irish"
 msgstr "Irlandês"
@@ -11778,9 +11902,6 @@ msgstr "Croata"
 msgid "Hungarian"
 msgstr "Húngaro"
 
-msgid "Armenian"
-msgstr "Arménio"
-
 msgid "Indonesian"
 msgstr "Indonésio"
 
@@ -11796,6 +11917,9 @@ msgstr "Georgiano"
 msgid "Ubuntu Georgian Translators"
 msgstr "Tradutores do Ubuntu Georgianos"
 
+msgid "Kazakh"
+msgstr "Cazaque"
+
 msgid "Khmer"
 msgstr "Khmer"
 
@@ -11808,14 +11932,20 @@ msgstr "Equipa de Tradução Kannada"
 msgid "Korean"
 msgstr "Coreano"
 
+msgid "Kashmiri"
+msgstr "Caxemira"
+
 msgid "Kurdish"
 msgstr "Curdo"
 
-msgid "Lao"
-msgstr "Laosiano"
+msgid "Kurdish (Sorani)"
+msgstr "Kurdish (Sorani)"
 
 msgid "Lithuanian"
 msgstr "Lituano"
+
+msgid "Latvian"
+msgstr "Letão"
 
 msgid "Maithili"
 msgstr "Maithili"
@@ -11826,6 +11956,9 @@ msgstr "Meadow Mari"
 msgid "Macedonian"
 msgstr "Macedónio"
 
+msgid "Malay"
+msgstr "Malaio"
+
 msgid "Malayalam"
 msgstr "Malayalam"
 
@@ -11834,9 +11967,6 @@ msgstr "Mongol"
 
 msgid "Marathi"
 msgstr "Marati"
-
-msgid "Malay"
-msgstr "Malaio"
 
 msgid "Burmese"
 msgstr "Birmanês"
@@ -11880,6 +12010,9 @@ msgstr "Romeno"
 msgid "Russian"
 msgstr "Russo"
 
+msgid "Sindhi"
+msgstr "Sindi"
+
 msgid "Slovak"
 msgstr "Eslovaco"
 
@@ -11913,11 +12046,22 @@ msgstr "Telegu"
 msgid "Thai"
 msgstr "Tailandês"
 
+msgid "Tatar"
+msgstr "Tártaro"
+
 msgid "Ukranian"
 msgstr "Ucraniano"
 
 msgid "Urdu"
 msgstr "Urdu"
+
+msgid "Uzbek"
+msgstr "Uzbeque"
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "Vietnamita"
@@ -11933,6 +12077,15 @@ msgstr "Chinês Tradicional"
 
 msgid "Amharic"
 msgstr "Amhárico"
+
+msgid "French"
+msgstr "Francês"
+
+msgid "Armenian"
+msgstr "Arménio"
+
+msgid "Lao"
+msgstr "Laosiano"
 
 msgid "Turkish"
 msgstr "Turco"
@@ -12622,6 +12775,9 @@ msgstr "_Média"
 msgid "_Hangup"
 msgstr "_Desligar"
 
+msgid "Media error"
+msgstr "Erro de média"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s deseja iniciar uma sessão de áudio/vídeo consigo."
@@ -12632,6 +12788,42 @@ msgstr "%s deseja iniciar uma sessão de vídeo consigo."
 
 msgid "Incoming Call"
 msgstr "Chamada Recebida"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr "ABC"
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr "DEF"
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr "GHI"
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr "JKL"
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr "MNO"
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr "PQRS"
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr "TUV"
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr "WXYZ"
 
 msgid "_Hold"
 msgstr "Em _Espera"
@@ -13489,6 +13681,9 @@ msgstr "Selector de Estado"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Ocorreu o erro seguinte ao carregar %s: %s"
@@ -14173,8 +14368,14 @@ msgstr ""
 msgid "Notify For"
 msgstr "Notificar para"
 
+msgid "\t_Notify for System messages"
+msgstr ""
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Apenas quando alguém diz o seu nome de utilizador"
+
+msgid "\tNotify for _System messages"
+msgstr ""
 
 msgid "_Focused windows"
 msgstr "Janelas com _Foco"
@@ -14206,6 +14407,8 @@ msgid "R_aise conversation window"
 msgstr "Mostr_ar janela de conversa"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "A_presentar janela de conversação"
 
@@ -14680,9 +14883,8 @@ msgstr "_Desactivar integração com o iniciador"
 msgid "Show number of unread _messages on launcher icon"
 msgstr "Mostrar número de _mensagens por ler no ícone do iniciador"
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "Mostrar número de _conversas por ler no ícone do iniciador"
+msgstr "Mostrar número de co_nversas por ler no ícone do iniciador"
 
 #. Messaging menu integration
 msgid "Messaging Menu"
@@ -14976,12 +15178,9 @@ msgstr ""
 "nova versão irá ser instalada sem remover a versão actualmente instalada."
 
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"O Pidgin necessita dum runtime GTK+ compatível (que ainda não parece estar "
-"instalado).$\\rTem a certeza que quer saltar a instalação do runtime GTK+?"
 
 #. Installer Subsection Text
 msgid "URI Handlers"

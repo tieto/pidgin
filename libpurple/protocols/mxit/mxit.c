@@ -37,7 +37,6 @@
 #include	"filexfer.h"
 #include	"actions.h"
 #include	"multimx.h"
-#include	"voicevideo.h"
 
 
 #ifdef	MXIT_LINK_CLICK
@@ -828,14 +827,6 @@ mxit_protocol_chat_iface_init( PurpleProtocolChatIface *chat_iface )
 
 
 static void
-mxit_protocol_media_iface_init( PurpleProtocolMediaIface *media_iface )
-{
-	media_iface->initiate_session = mxit_media_initiate;
-	media_iface->get_caps         = mxit_media_caps;
-}
-
-
-static void
 mxit_protocol_xfer_iface_init( PurpleProtocolXferIface *xfer_iface )
 {
 	xfer_iface->can_receive = mxit_xfer_enabled;	/* [filexfer.c] */
@@ -858,9 +849,6 @@ PURPLE_DEFINE_TYPE_EXTENDED(
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_CHAT_IFACE,
 	                                   mxit_protocol_chat_iface_init )
-
-	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_MEDIA_IFACE,
-	                                   mxit_protocol_media_iface_init )
 
 	PURPLE_IMPLEMENT_INTERFACE_STATIC( PURPLE_TYPE_PROTOCOL_XFER_IFACE,
 	                                   mxit_protocol_xfer_iface_init )

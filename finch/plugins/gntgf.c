@@ -303,6 +303,7 @@ config_frame(void)
 	gnt_box_set_fill(GNT_BOX(window), TRUE);
 
 	gnt_box_add_widget(GNT_BOX(window),
+			/* Translators: "toaster" here means "pop-up". */
 			gnt_label_new(_("Notify with a toaster when")));
 
 	tree = gnt_tree_new();

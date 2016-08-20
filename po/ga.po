@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2014-01-21 08:25+0000\n"
+"POT-Creation-Date: 2016-06-15 23:24-0500\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Irish (http://www.transifex.com/projects/p/pidgin/language/"
 "ga/)\n"
@@ -1498,6 +1498,7 @@ msgstr "Deir duine éigin rud éigin i gcomhrá"
 msgid "Someone says your name in a chat"
 msgstr "Deir duine éigin d'ainm i gcomhrá"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Cuir in iúl dom le tóstaer nuair"
 
@@ -1510,6 +1511,7 @@ msgstr "Socraigh \"URGENT\" i bhfuinneog an teirminéil."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Breiseán Toaster"
 
@@ -1681,7 +1683,6 @@ msgstr "Ní féidir an leasainm poiblí a fháil leis an bprótacal seo."
 msgid "Unknown"
 msgstr "Anaithnid"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Cairde"
 
@@ -1795,26 +1796,31 @@ msgstr ""
 "Deir an teastas gur tháinig sé ó \"%s\". Seans nach bhfuil tú ag ceangal "
 "leis an tseirbhís a cheap tú."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Eolas faoin Teastas"
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
-"Gnáthainm: %s\n"
-"\n"
-"Méarlorg (SHA1): %s\n"
-"\n"
-"Dáta tosaithe: %s\n"
-"Dáta éaga: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Eolas faoin Teastas"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
+msgstr ""
 
 #. show error to user
 msgid "Registration Error"
@@ -1889,6 +1895,144 @@ msgid ""
 msgstr ""
 "Cuir isteach ainm an úsáideora ar mhaith leat cuireadh a thabhairt dó/di, "
 "chomh maith le teachtaireacht más mian leat."
+
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"aim\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"aim\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"aim\""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"aim\" a láimhseáil."
+
+msgid "Run the command in a terminal"
+msgstr "Cuir an t-ordú i bhfeidhm i dteirminéal"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Fíor más mian leat URLanna den chineál seo a láimhseáil le hordú i "
+"dteirminéal."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"gg\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"gg\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"gg\" a láimhseáil."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"icq\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"icq\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"icq\" a láimhseáil."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"irc\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"irc\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"irc\" a láimhseáil."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"msnim\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"msnim\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"msnim\" a láimhseáil."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"sip\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"sip\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"sip\" a láimhseáil."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"xmpp\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"xmpp\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"xmpp\" a láimhseáil."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Ar chóir don ordú sonraithe URLanna \"ymsgr\" a láimhseáil"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Fíor más mian leat URLanna \"ymsgr\" a láimhseáil leis an ordú sa réimse "
+"\"command\"."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "An láimhseálaí le haghaidh URLanna \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "An t-ordú chun URLanna \"ymsgr\" a láimhseáil."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2066,144 +2210,6 @@ msgstr "Theip ar aistriú comhaid go %s."
 msgid "File transfer from %s failed."
 msgstr "Theip ar aistriú comhaid ó %s."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"aim\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"aim\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"aim\""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"aim\" a láimhseáil."
-
-msgid "Run the command in a terminal"
-msgstr "Cuir an t-ordú i bhfeidhm i dteirminéal"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Fíor más mian leat URLanna den chineál seo a láimhseáil le hordú i "
-"dteirminéal."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"gg\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"gg\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"gg\""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"gg\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"icq\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"icq\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"icq\""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"icq\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"irc\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"irc\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"irc\""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"irc\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"msnim\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"msnim\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"msnim\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"sip\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"sip\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"sip\""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"sip\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"xmpp\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"xmpp\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"xmpp\""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"xmpp\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"ymsgr\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"ymsgr\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"ymsgr\" a láimhseáil."
-
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Ní féidir leis an logálaí léamh</font></b>"
 
@@ -2251,6 +2257,27 @@ msgstr "<font color=\"red\"><b>Níorbh fhéidir an comhad a léamh: %s</b></font
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <UATH-FHREAGRA>: %s\n"
 
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr "Teachtaireacht ó %s"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+#, fuzzy
+msgid "Network error."
+msgstr "Líonra"
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
@@ -2263,6 +2290,10 @@ msgid ""
 msgstr ""
 "Níl aon codec-anna fágtha. Tá do chuid sainroghanna i fs-codecs.conf ró-"
 "dhocht."
+
+#, fuzzy
+msgid "Could not connect to the remote party"
+msgstr "Níl tú ceangailte leis an bhfreastalaí"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Tharla earráid dhocheartaithe in Farsight2."
@@ -2894,6 +2925,56 @@ msgstr "Breiseán Simplí"
 msgid "Tests to see that most things are working."
 msgstr "Féach an bhfuil rudaí ag feidhmiú mar is ceart."
 
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
+
 #. Scheme name
 msgid "X.509 Certificates"
 msgstr "Teastais X.509"
@@ -3229,14 +3310,14 @@ msgstr "Cuir le comhrá"
 msgid "Chat _name:"
 msgstr "Ai_nm an chomhrá:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Ní féidir óstainm '%s' a réiteach: %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Ceangal"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr ""
 
 msgid "Chat error"
 msgstr "Earráid i gcomhrá"
@@ -3445,13 +3526,11 @@ msgstr " <i>(aitheanta)</i>"
 msgid "Nick"
 msgstr "Leasainm"
 
-#, fuzzy
 msgid "Login name"
-msgstr "Gan ainm"
+msgstr ""
 
-#, fuzzy
 msgid "Host name"
-msgstr "Óstainm"
+msgstr ""
 
 msgid "Currently on"
 msgstr "Anseo faoi láthair"
@@ -5947,11 +6026,9 @@ msgstr "Tá na freastalaithe MSN ag dul as líne ar feadh tamaill"
 msgid "Unable to authenticate: %s"
 msgstr "Ní féidir fíordheimhniú: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Níl do liosta cairde MSN ar fáil faoi láthair. Fan nóiméad agus déan "
-"iarracht eile."
 
 msgid "Handshaking"
 msgstr "Croitheadh láimhe"
@@ -8753,9 +8830,9 @@ msgid ""
 "You cannot receive buddy notifications until you import his/her public key.  "
 "You can use the Get Public Key command to get the public key."
 msgstr ""
-"Ní féidir leat fógraí carad a fháil go dtí go n-iompórtálfaidh tú a (h)"
-"eochair phoiblí. Is féidir an t-ordú 'Faigh Eochair Phoiblí' a úsáid chun an "
-"eochair a fháil."
+"Ní féidir leat fógraí carad a fháil go dtí go n-iompórtálfaidh tú a "
+"(h)eochair phoiblí. Is féidir an t-ordú 'Faigh Eochair Phoiblí' a úsáid chun "
+"an eochair a fháil."
 
 #. Open file selector to select the public key.
 msgid "Open..."
@@ -10051,6 +10128,9 @@ msgstr "Socruithe Láithreachta"
 msgid "Start Doodling"
 msgstr "Tosaigh Scriobláil"
 
+msgid "Activate which ID?"
+msgstr ""
+
 msgid "Select the ID you want to activate"
 msgstr "Roghnaigh an t-aitheantas ba mhaith leat cur i bhfeidhm"
 
@@ -10628,6 +10708,22 @@ msgid ""
 msgstr ""
 "Tharla earráid agus do %s á léamh. Níor luchtaíodh an comhad, agus tugadh "
 "ainm nua ar an seanchomhad: %s~."
+
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
 
 msgid "Pidgin Internet Messenger"
 msgstr "Teachtaire Idirlín Pidgin"
@@ -11378,10 +11474,12 @@ msgstr "_Leasainm:"
 msgid "_Group:"
 msgstr "_Grúpa:"
 
-msgid "Auto_join when account connects."
+#, fuzzy
+msgid "Automatically _join when account connects"
 msgstr "Glac _páirt go huathoibríoch nuair a cheanglaíonn cuntas."
 
-msgid "_Remain in chat after window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed"
 msgstr "_Fan sa chomhrá tar éis go ndúntar an fhuinneog."
 
 msgid "Please enter the name of the group to be added."
@@ -11420,6 +11518,10 @@ msgstr "Cuir isteach an t-óstainm a bhaineann leis an teastas seo."
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Freastalaithe SSL"
+
+#, fuzzy
+msgid "Supported debug options are: plugins, version"
+msgstr "Roghanna dífhabhtaithe a dtacaítear leo: plugins version"
 
 msgid "Unknown command."
 msgstr "Ordú anaithnid."
@@ -11869,6 +11971,12 @@ msgstr "Beangáilis"
 msgid "Bengali-India"
 msgstr "Beangáilis-An India"
 
+msgid "Breton"
+msgstr ""
+
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "Boisnis"
 
@@ -11908,6 +12016,9 @@ msgstr "Esperanto"
 msgid "Spanish"
 msgstr "Spáinnis"
 
+msgid "Argentine Spanish"
+msgstr ""
+
 msgid "Estonian"
 msgstr "Eastóinis"
 
@@ -11919,9 +12030,6 @@ msgstr "Peirsis"
 
 msgid "Finnish"
 msgstr "Fionlainnis"
-
-msgid "French"
-msgstr "Fraincis"
 
 msgid "Irish"
 msgstr "Gaeilge"
@@ -11947,9 +12055,6 @@ msgstr "Cróitis"
 msgid "Hungarian"
 msgstr "Ungáiris"
 
-msgid "Armenian"
-msgstr "Airméinis"
-
 msgid "Indonesian"
 msgstr "Indinéisis"
 
@@ -11965,6 +12070,9 @@ msgstr "Seoirsis"
 msgid "Ubuntu Georgian Translators"
 msgstr "Aistritheoirí Seoirsise Ubuntu"
 
+msgid "Kazakh"
+msgstr ""
+
 msgid "Khmer"
 msgstr "Ciméiris"
 
@@ -11977,14 +12085,20 @@ msgstr "Foireann Aistriúcháin Cannadaise"
 msgid "Korean"
 msgstr "Cóiréis"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "Coirdis"
 
-msgid "Lao"
-msgstr "Láóis"
+msgid "Kurdish (Sorani)"
+msgstr ""
 
 msgid "Lithuanian"
 msgstr "Liotuáinis"
+
+msgid "Latvian"
+msgstr ""
 
 msgid "Maithili"
 msgstr "Maitilis"
@@ -11995,6 +12109,9 @@ msgstr "Mairí Móinéir"
 msgid "Macedonian"
 msgstr "Macadóinis"
 
+msgid "Malay"
+msgstr "Malaeis"
+
 msgid "Malayalam"
 msgstr "Mailéalaimis"
 
@@ -12003,9 +12120,6 @@ msgstr "Mongóilis"
 
 msgid "Marathi"
 msgstr "Maraitis"
-
-msgid "Malay"
-msgstr "Malaeis"
 
 msgid "Burmese"
 msgstr "Burmais"
@@ -12049,6 +12163,9 @@ msgstr "Rómáinis"
 msgid "Russian"
 msgstr "Rúisis"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "Slóvaicis"
 
@@ -12082,11 +12199,22 @@ msgstr "Teileagúis"
 msgid "Thai"
 msgstr "Téalainnis"
 
+msgid "Tatar"
+msgstr ""
+
 msgid "Ukranian"
 msgstr "Úcráinis"
 
 msgid "Urdu"
 msgstr "Urdais"
+
+msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vítneaimis"
@@ -12102,6 +12230,15 @@ msgstr "Sínis Traidisiúnta"
 
 msgid "Amharic"
 msgstr "Amáiris"
+
+msgid "French"
+msgstr "Fraincis"
+
+msgid "Armenian"
+msgstr "Airméinis"
+
+msgid "Lao"
+msgstr "Láóis"
 
 msgid "Turkish"
 msgstr "Tuircis"
@@ -12805,6 +12942,10 @@ msgstr "_Meáin"
 msgid "_Hangup"
 msgstr "_Croch Suas"
 
+#, fuzzy
+msgid "Media error"
+msgstr "Earráid léimh"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "Ba mhaith le %s seisiún fuaime/físe a thosú leat."
@@ -12815,6 +12956,42 @@ msgstr "Ba mhaith le %s seisiún físe a thosú leat."
 
 msgid "Incoming Call"
 msgstr "Glao Isteach"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr ""
 
 msgid "_Hold"
 msgstr "_Cuir ar feitheamh"
@@ -13681,6 +13858,9 @@ msgstr "Roghnóir Stádais"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Tharla an earráid seo agus %s á luchtú: %s"
@@ -14362,8 +14542,16 @@ msgstr ""
 msgid "Notify For"
 msgstr "Cuir in iúl dom"
 
+#, fuzzy
+msgid "\t_Notify for System messages"
+msgstr "Teachtaireachtaí Córais"
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Nuair a deir duine éigin d'ainm úsáideora amháin"
+
+#, fuzzy
+msgid "\tNotify for _System messages"
+msgstr "Teachtaireachtaí Córais"
 
 msgid "_Focused windows"
 msgstr "_Fuinneoga i bhfócas"
@@ -14395,6 +14583,8 @@ msgid "R_aise conversation window"
 msgstr "_Ardaigh fuinneog an chomhrá"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_Taispeáin fuinneog an chomhrá"
 
@@ -14870,9 +15060,8 @@ msgstr ""
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "Líon na gcomhráite san fhuinneog"
+msgstr ""
 
 #. Messaging menu integration
 msgid "Messaging Menu"
@@ -15165,10 +15354,10 @@ msgstr ""
 "Ní féidir an leagan de Pidgin atá ann faoi láthair a dhíshuiteáil. "
 "Suiteálfar an leagan nua gan an seanleagan a dhíshuiteáil."
 
+#, fuzzy
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "Teastaíonn leabharlann ama rite GTK+ ó Phidgin (agus níl a leithéid ann de "
 "réir cosúlachta).$\\rAn bhfuil tú cinnte nár mhaith leat an leabharlann ama "
