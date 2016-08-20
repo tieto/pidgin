@@ -26,7 +26,7 @@ static PurpleCommandsUiOps *cmds_ui_ops = NULL;
 static GList *cmds = NULL;
 static guint next_id = 1;
 
-struct _PurpleCmd {
+typedef struct _PurpleCmd {
 	PurpleCmdId id;
 	gchar *cmd;
 	gchar *args;
@@ -36,7 +36,7 @@ struct _PurpleCmd {
 	PurpleCmdFunc func;
 	gchar *help;
 	void *data;
-};
+} PurpleCmd;
 
 
 static gint cmds_compare_func(const PurpleCmd *a, const PurpleCmd *b)
@@ -78,7 +78,7 @@ PurpleCmdId purple_cmd_register(const gchar *cmd, const gchar *args,
 
 	ops = purple_cmds_get_ui_ops();
 	if (ops && ops->register_command)
-		ops->register_command(cmd, p, f, prpl_id, helpstr, c);
+		ops->register_command(cmd, p, f, protocol_id, helpstr, c->id);
 
 	purple_signal_emit(purple_cmds_get_handle(), "cmd-added", cmd, p, f);
 
@@ -105,7 +105,7 @@ void purple_cmd_unregister(PurpleCmdId id)
 		if (c->id == id) {
 			PurpleCommandsUiOps *ops = purple_cmds_get_ui_ops();
 			if (ops && ops->unregister_command)
-				ops->unregister_command(c->cmd, c->prpl_id);
+				ops->unregister_command(c->cmd, c->protocol_id);
 
 			cmds = g_list_remove(cmds, c);
 			purple_signal_emit(purple_cmds_get_handle(), "cmd-removed", c->cmd);
@@ -302,19 +302,33 @@ PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmd
 
 }
 
-gboolean purple_cmd_execute(PurpleCmd *c, PurpleConversation *conv,
+gboolean purple_cmd_execute(PurpleCmdId id, PurpleConversation *conv,
 			    const gchar *cmdline)
 {
+	PurpleCmd *cmd = NULL;
+	PurpleCmdRet ret = PURPLE_CMD_RET_CONTINUE;
+	GList *l = NULL;
 	gchar *err = NULL;
 	gchar **args = NULL;
-	PurpleCmdRet ret = PURPLE_CMD_RET_CONTINUE;
 
-	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-		if (!(c->flags & PURPLE_CMD_FLAG_IM))
+	for(l = cmds; l; l = l->next) {
+		cmd = (PurpleCmd*)l->data;
+
+		if(cmd->id == id) {
+			break;
+		}
+		cmd = NULL;
+	}
+	if(cmd == NULL) {
+		return FALSE;
+	}
+
+	if (PURPLE_IS_IM_CONVERSATION(conv)) {
+		if (!(cmd->flags & PURPLE_CMD_FLAG_IM))
 			return FALSE;
 	}
-	else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-		if (!(c->flags & PURPLE_CMD_FLAG_CHAT))
+	else if (PURPLE_IS_CHAT_CONVERSATION(conv)) {
+		if (!(cmd->flags & PURPLE_CMD_FLAG_CHAT))
 			return FALSE;
 	}
 	else
@@ -323,12 +337,12 @@ gboolean purple_cmd_execute(PurpleCmd *c, PurpleConversation *conv,
 	/* XXX: Don't worry much about the markup version of the command
 	   line, there's not a single use case... */
 	/* this checks the allow bad args flag for us */
-	if (!purple_cmd_parse_args(c, cmdline, cmdline, &args)) {
+	if (!purple_cmd_parse_args(cmd, cmdline, cmdline, &args)) {
 		g_strfreev(args);
 		return FALSE;
 	}
 
-	ret = c->func(conv, c->cmd, args, &err, c->data);
+	ret = cmd->func(conv, cmd->cmd, args, &err, cmd->data);
 
 	g_free(err);
 	g_strfreev(args);

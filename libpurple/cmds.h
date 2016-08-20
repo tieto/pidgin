@@ -131,7 +131,7 @@ typedef struct
 	/* @see purple_cmd_register for the argument values. */
 	void (*register_command)(const gchar *name, PurpleCmdPriority priority,
 				 PurpleCmdFlag flags, const gchar *prpl_id,
-				 const gchar *help, PurpleCmd *cmd);
+				 const gchar *help, PurpleCmdId id);
 
 	/** Should be implemented if register_command is implemented.
 	 *  name and prpl_id will have the same value that were used
@@ -259,7 +259,7 @@ PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmd
  *            in plain text (no HTML entities).
  * @return TRUE if the command handled the @a cmdline, FALSE otherwise.
  */
-gboolean purple_cmd_execute(PurpleCmd *c, PurpleConversation *conv,
+gboolean purple_cmd_execute(PurpleCmdId id, PurpleConversation *conv,
 			    const gchar *cmdline);
 
 /**
@@ -303,6 +303,23 @@ GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd);
  * Returns: The handle
  */
 gpointer purple_cmds_get_handle(void);
+
+/**
+ * Sets the UI operations structure to be used when registering and
+ * unregistering commands.  The UI operations need only be set if the
+ * UI wants to handle the commands itself; otherwise, leave it as NULL.
+ *
+ * @param ops The UI operations structure.
+ */
+void purple_cmds_set_ui_ops(PurpleCommandsUiOps *ops);
+
+/**
+ * Returns the UI operations structure to be used when registering and
+ * unregistering commands.
+ *
+ * @return The UI operations structure.
+ */
+PurpleCommandsUiOps *purple_cmds_get_ui_ops(void);
 
 /**
  * purple_cmds_init:
