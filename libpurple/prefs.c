@@ -35,6 +35,17 @@
 #include "debug.h"
 #include "util.h"
 
+static PurplePrefsUiOps *prefs_ui_ops = NULL;
+
+struct _PurplePrefCallbackData {
+	PurplePrefCallback func;
+	gpointer data;
+	guint id;
+	void *handle;
+	void *ui_data;
+	char *name;
+};
+
 struct pref_cb {
 	PurplePrefCallback func;
 	gpointer data;
