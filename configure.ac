@@ -2241,6 +2241,7 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/win32/pidgin_dll_rc.rc
 		   pidgin/win32/pidgin_exe_rc.rc
 		   libpurple/data/gconf/Makefile
+		   libpurple/data/purple-url-handler.desktop.in
 		   libpurple/data/purple-3.pc
 		   libpurple/data/purple-3-uninstalled.pc
 		   libpurple/example/Makefile

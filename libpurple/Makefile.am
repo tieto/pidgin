@@ -17,6 +17,7 @@ EXTRA_DIST = \
 		Makefile.mingw \
 		data/purple-3.pc.in \
 		data/purple-3-uninstalled.pc.in \
+		data/purple-url-handler.desktop.in \
 		win32/global.mak \
 		win32/libc_interface.c \
 		win32/libc_interface.h \
@@ -418,6 +419,21 @@ mediainclude_HEADERS = \
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = data/purple-3.pc
+
+if INSTALL_I18N
+DESKTOP_FILE=data/purple-url-handler.desktop
+
+appsdir = $(datadir)/applications
+apps_in_files = data/purple-url-handler.desktop.in
+apps_DATA = $(apps_in_files:.desktop.in=.desktop)
+
+# silenced INTLTOOL_DESKTOP_RULE
+%.desktop: %.desktop.in $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po/*.po)
+	$(AM_V_GEN) LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(top_builddir)/po/.intltool-merge-cache $(top_srcdir)/po $< $@ > /dev/null
+
+@INTLTOOL_XML_RULE@
+
+endif # INSTALL_I18N
 
 libpurple_la_DEPENDENCIES = \
 	$(STATIC_LINK_LIBS) $(LIBPURPLE_WIN32RES)
