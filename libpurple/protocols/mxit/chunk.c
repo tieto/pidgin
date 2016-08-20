@@ -180,11 +180,7 @@ static int get_int16( const char* chunkdata, size_t chunklen, unsigned short* va
 
 	*value = ntohs( *( (const short*) chunkdata ) );	/* host byte-order */
 
-	memcpy(&value_v, chunkdata, sizeof(value_v));
-
-	*value = ntohs(value_v); /* host byte-order */
-
-	return sizeof(value_v);
+	return sizeof( short );
 }
 
 /*------------------------------------------------------------------------
@@ -202,11 +198,7 @@ static int get_int32( const char* chunkdata, size_t chunklen, unsigned int* valu
 
 	*value = ntohl( *( (const int*) chunkdata ) );	/* host byte-order */
 
-	memcpy(&value_v, chunkdata, sizeof(value_v));
-
-	*value = ntohl(value_v); /* host byte-order */
-
-	return sizeof(value_v);
+	return sizeof( int );
 }
 
 #if	0
