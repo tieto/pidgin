@@ -35,6 +35,10 @@
 #include <farstream/fs-utils.h>
 #include <gst/gststructure.h>
 
+#if !GST_CHECK_VERSION(1,0,0)
+#define gst_registry_get() gst_registry_get_default()
+#endif
+
 /** @copydoc _PurpleMediaBackendFs2Class */
 typedef struct _PurpleMediaBackendFs2Class PurpleMediaBackendFs2Class;
 /** @copydoc _PurpleMediaBackendFs2Private */

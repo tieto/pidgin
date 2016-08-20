@@ -357,7 +357,7 @@ void mxit_xfer_tx( PurpleConnection* gc, const char* who, const char* filename )
  *  @param filesize		The size of the file being offered
  *  @param fileid		A unique ID that identifies this file
  */
-void mxit_xfer_rx_offer( struct MXitSession* session, const char* username, const char* filename, int filesize, const char* fileid )
+void mxit_xfer_rx_offer( struct MXitSession* session, const char* username, const char* filename, unsigned int filesize, const char* fileid )
 {
 	PurpleXfer*			xfer	= NULL;
 	struct mxitxfer*	mx		= NULL;
@@ -373,7 +373,7 @@ void mxit_xfer_rx_offer( struct MXitSession* session, const char* username, cons
 		purple_xfer_set_protocol_data( xfer, mx );
 
 		purple_xfer_set_filename( xfer, filename );
-		if( filesize > 0 )
+		if ( filesize > 0 )
 			purple_xfer_set_size( xfer, filesize );
 
 		/* register file transfer callback functions */
@@ -429,7 +429,7 @@ static PurpleXfer* find_mxit_xfer( struct MXitSession* session, const char* file
  *  @param data			The file data
  *  @param datalen		The size of the data
  */
-void mxit_xfer_rx_file( struct MXitSession* session, const char* fileid, const char* data, int datalen )
+void mxit_xfer_rx_file( struct MXitSession* session, const char* fileid, const char* data, unsigned int datalen )
 {
 	PurpleXfer*			xfer	= NULL;
 

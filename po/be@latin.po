@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
 "PO-Revision-Date: 2008-03-29 21:08+0200\n"
 "Last-Translator: YOUR NAME <E-MAIL@ADDRESS>\n"
 "Language-Team: Belarusian Latin <be-latin.open-tran.eu>\n"
@@ -1675,7 +1675,6 @@ msgstr "Hety pratakoł nie padtrymvaje pakojaŭ dla hutarki."
 msgid "Unknown"
 msgstr "Nieviadomy"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Siabry"
 
@@ -1790,10 +1789,20 @@ msgstr ""
 "Sertyfikat, jaki padaŭ \"%s\", nasamreč naležyć \"%s\". Heta moža značyć, "
 "što ty spałučajeśsia nia z toj słužbaju, ź jakoj dumaješ."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Źviestki ab sertyfikacie"
+
+#, fuzzy
+msgid "Unable to find Issuer Certificate"
+msgstr "Niemahčyma aŭtaryzavacca: %s"
+
 #. Make messages
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1807,9 +1816,12 @@ msgstr ""
 "Data aktyvizacyi: %s\n"
 "Data zakančeńnia terminu: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Źviestki ab sertyfikacie"
+msgid "(self-signed)"
+msgstr ""
+
+#, fuzzy
+msgid "View Issuer Certificate"
+msgstr "_Pakažy sertyfikat..."
 
 #. show error to user
 msgid "Registration Error"
@@ -1885,6 +1897,144 @@ msgid ""
 msgstr ""
 "Akreśl nazvu karystalnika, jakoha ty chočaš zaprasić, razam ź "
 "nieabaviazkovym tekstam zaprašeńnia."
+
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Ci adčyniać spasyłki \"aim\" akreślenym zahadam"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"aim\"."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Adčynieńnie spasyłak \"aim\""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"aim\", kali ŭklučanyja."
+
+msgid "Run the command in a terminal"
+msgstr "Vykanaj zahad u terminale"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Praŭda, kali zahad dziela adčynieńnia spasyłak hetaha typu pavinny "
+"vykonvacca ŭ terminale."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Ci adčyniać spasyłki \"gg\" akreślenym zahadam"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"gg\"."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Adčynieńnie spasyłak \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"gg\", kali ŭklučanyja."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Ci adčyniać spasyłki \"icq\" akreślenym zahadam"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"icq\"."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Adčynieńnie spasyłak \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"icq\", kali ŭklučanyja."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Ci adčyniać spasyłki \"irc\" akreślenym zahadam"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"irc\"."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Adčynieńnie spasyłak \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"irc\", kali ŭklučanyja."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Ci adčyniać spasyłki \"msnim\" akreślenym zahadam"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"msnim\"."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Adčynieńnie spasyłak \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"msnim\", kali ŭklučanyja."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Ci adčyniać spasyłki \"sip\" akreślenym zahadam"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"sip\"."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Adčynieńnie spasyłak \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"sip\", kali ŭklučanyja."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Ci adčyniać spasyłki \"xmpp\" akreślenym zahadam"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"xmpp\"."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Adčynieńnie spasyłak \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"xmpp\", kali ŭklučanyja."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Ci adčyniać spasyłki \"ymsgr\" akreślenym zahadam"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
+"spasyłki \"ymsgr\"."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Adčynieńnie spasyłak \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr "Zahad dziela adčynieńnia spasyłak \"ymsgr\", kali ŭklučanyja."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2062,144 +2212,6 @@ msgstr "Pamyłka pieradačy fajłu dla %s."
 #, c-format
 msgid "File transfer from %s failed."
 msgstr "Pamyłka pieradačy fajłu ad %s."
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Ci adčyniać spasyłki \"aim\" akreślenym zahadam"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"aim\"."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Adčynieńnie spasyłak \"aim\""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"aim\", kali ŭklučanyja."
-
-msgid "Run the command in a terminal"
-msgstr "Vykanaj zahad u terminale"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Praŭda, kali zahad dziela adčynieńnia spasyłak hetaha typu pavinny "
-"vykonvacca ŭ terminale."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Ci adčyniać spasyłki \"gg\" akreślenym zahadam"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"gg\"."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Adčynieńnie spasyłak \"gg\""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"gg\", kali ŭklučanyja."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Ci adčyniać spasyłki \"icq\" akreślenym zahadam"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"icq\"."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Adčynieńnie spasyłak \"icq\""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"icq\", kali ŭklučanyja."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Ci adčyniać spasyłki \"irc\" akreślenym zahadam"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"irc\"."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Adčynieńnie spasyłak \"irc\""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"irc\", kali ŭklučanyja."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Ci adčyniać spasyłki \"msnim\" akreślenym zahadam"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"msnim\"."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Adčynieńnie spasyłak \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"msnim\", kali ŭklučanyja."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Ci adčyniać spasyłki \"sip\" akreślenym zahadam"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"sip\"."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Adčynieńnie spasyłak \"sip\""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"sip\", kali ŭklučanyja."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Ci adčyniać spasyłki \"xmpp\" akreślenym zahadam"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"xmpp\"."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Adčynieńnie spasyłak \"xmpp\""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"xmpp\", kali ŭklučanyja."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Ci adčyniać spasyłki \"ymsgr\" akreślenym zahadam"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Praŭda, kali zahad, akreśleny dla kluča \"command\", pavinny adčyniać "
-"spasyłki \"ymsgr\"."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Adčynieńnie spasyłak \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Zahad dziela adčynieńnia spasyłak \"ymsgr\", kali ŭklučanyja."
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Časapiśnik nia maje funkcyi čytańnia</font></b>"
@@ -2882,6 +2894,60 @@ msgstr "Prosty plugin"
 msgid "Tests to see that most things are working."
 msgstr "Testy, kab pravieryć pracu bolšaści rečaŭ."
 
+msgid "TLS/SSL Versions"
+msgstr ""
+
+#, fuzzy
+msgid "Minimum Version"
+msgstr "Versija klijenta"
+
+#, fuzzy
+msgid "Maximum Version"
+msgstr "Maksymalny termin adkazu:"
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+#, fuzzy
+msgid "Ciphers"
+msgstr "Šyfar"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#, fuzzy
+msgid "NSS Preferences"
+msgstr "Nałady"
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
+
 #. Scheme name
 msgid "X.509 Certificates"
 msgstr "Sertyfikaty X.509"
@@ -3223,14 +3289,14 @@ msgstr "Dadaj da hutarki"
 msgid "Chat _name:"
 msgstr "Nazva _hutarki:"
 
-#, fuzzy, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Niemahčyma spałučycca z serveram."
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Spałučeńnie"
+
+#, fuzzy, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr "Niemahčyma spałučycca z serveram."
 
 msgid "Chat error"
 msgstr "Pamyłka hutarki"
@@ -6038,8 +6104,8 @@ msgstr "Servery MSN časova vyklučajucca."
 msgid "Unable to authenticate: %s"
 msgstr "Niemahčyma aŭtaryzavacca: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, fuzzy, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
 "Tvoj śpis siabroŭ MSN časova niedastupny. Kali łaska, pačakaj i paŭtary znoŭ."
 
@@ -10203,6 +10269,9 @@ msgstr "Nałady prysutnaści"
 msgid "Start Doodling"
 msgstr "Pačni durnotu"
 
+msgid "Activate which ID?"
+msgstr "Jaki ID aktyvizavać?"
+
 msgid "Select the ID you want to activate"
 msgstr ""
 
@@ -10781,6 +10850,24 @@ msgid ""
 msgstr ""
 "Pry čytańni tvajho %s adbyłasia pamyłka. Jany nie byli zahružanyja, a stary "
 "fajł pieranazvany ŭ %s~."
+
+#, fuzzy
+msgid "Instant Messaging Client"
+msgstr "Chutkaja kamunikacyja"
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+#, fuzzy
+msgid "The buddy list showing friends on different networks."
+msgstr "Siabry %s niama ŭ sietcy"
 
 msgid "Pidgin Internet Messenger"
 msgstr "Internet-kamunikatar Pidgin"
@@ -12061,6 +12148,9 @@ msgstr "Benhalskaja"
 msgid "Bengali-India"
 msgstr "Benhalskaja"
 
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "Baśnijskaja"
 
@@ -12099,6 +12189,9 @@ msgstr "Esperanta"
 
 msgid "Spanish"
 msgstr "Hišpanskaja"
+
+msgid "Argentine Spanish"
+msgstr ""
 
 msgid "Estonian"
 msgstr "Estonskaja"
@@ -12140,10 +12233,6 @@ msgstr ""
 msgid "Hungarian"
 msgstr "Vuhorskaja"
 
-#, fuzzy
-msgid "Armenian"
-msgstr "Rumynskaja"
-
 msgid "Indonesian"
 msgstr "Indanezijskaja"
 
@@ -12159,6 +12248,9 @@ msgstr "Hruzinskaja"
 msgid "Ubuntu Georgian Translators"
 msgstr "Hruzinskija pierakładčyki Ubuntu"
 
+msgid "Kazakh"
+msgstr ""
+
 #, fuzzy
 msgid "Khmer"
 msgstr "Inšaje"
@@ -12172,14 +12264,21 @@ msgstr "Kamanda pierakładčykaŭ na Kannada"
 msgid "Korean"
 msgstr "Karejskaja"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "Kurdzkaja"
 
-msgid "Lao"
-msgstr "Laoskaja"
+#, fuzzy
+msgid "Kurdish (Sorani)"
+msgstr "Kurdzkaja"
 
 msgid "Lithuanian"
 msgstr "Litoŭskaja"
+
+msgid "Latvian"
+msgstr ""
 
 #, fuzzy
 msgid "Maithili"
@@ -12203,10 +12302,6 @@ msgstr "Makiedonskaja"
 #, fuzzy
 msgid "Marathi"
 msgstr "Gujarati"
-
-#, fuzzy
-msgid "Malay"
-msgstr "Mužčynski"
 
 msgid "Burmese"
 msgstr ""
@@ -12251,6 +12346,9 @@ msgstr "Rumynskaja"
 msgid "Russian"
 msgstr "Rasiejskaja"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "Słavackaja"
 
@@ -12285,12 +12383,23 @@ msgstr "Telugu"
 msgid "Thai"
 msgstr "Tajskaja"
 
+msgid "Tatar"
+msgstr ""
+
 #, fuzzy
 msgid "Ukranian"
 msgstr "Rumynskaja"
 
 msgid "Urdu"
 msgstr "Urdu"
+
+msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "Vijetnamskaja"
@@ -12306,6 +12415,17 @@ msgstr "Tradycyjnaja kitajskaja"
 
 msgid "Amharic"
 msgstr "Amharskaja"
+
+#, fuzzy
+msgid "Armenian"
+msgstr "Rumynskaja"
+
+msgid "Lao"
+msgstr "Laoskaja"
+
+#, fuzzy
+msgid "Malay"
+msgstr "Mužčynski"
 
 msgid "Turkish"
 msgstr "Tureckaja"
@@ -13934,6 +14054,9 @@ msgstr "Vybar statusu"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr ""
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Pry zahruzcy %s adbyłasia nastupnaja pamyłka: %s"
@@ -15528,6 +15651,10 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 
+#, fuzzy
+#~ msgid "Unable to resolve hostname '%s': %s"
+#~ msgstr "Niemahčyma spałučycca z serveram."
+
 #~ msgid "Token Error"
 #~ msgstr "Pamyłka znaku"
 
@@ -16958,9 +17085,6 @@ msgstr ""
 
 #~ msgid "Conversation Window Hiding"
 #~ msgstr "Chavańnie vakna razmovy"
-
-#~ msgid "Activate which ID?"
-#~ msgstr "Jaki ID aktyvizavać?"
 
 #~ msgid "Cursor Color"
 #~ msgstr "Koler kursora"

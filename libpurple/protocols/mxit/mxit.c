@@ -37,7 +37,6 @@
 #include	"filexfer.h"
 #include	"actions.h"
 #include	"multimx.h"
-#include	"voicevideo.h"
 
 
 #ifdef	MXIT_LINK_CLICK

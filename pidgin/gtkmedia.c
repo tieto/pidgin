@@ -1379,6 +1379,9 @@ create_default_video_sink(PurpleMediaElementInfo *info, PurpleMedia *media,
 	if (sink == NULL)
 		purple_debug_error("gtkmedia", "Unable to find a suitable "
 				"element for the default video sink.\n");
+	if (sink != NULL)
+		g_signal_connect(sink, "child-added",
+				G_CALLBACK(autovideosink_child_added_cb), NULL);
 	return sink;
 }
 

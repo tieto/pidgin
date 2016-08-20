@@ -9,7 +9,6 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = winprefs
 DEFINES := $(subst -DWIN32_LEAN_AND_MEAN,,$(DEFINES))
-DEFINES += -DWINVER=0x500
 
 ##
 ## INCLUDE PATHS

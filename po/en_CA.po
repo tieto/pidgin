@@ -1,26 +1,23 @@
-# Canadian English translation of Pidgin
-# Copyright (C) 2004-2005 Adam Weinberger and the Pidgin project
-# Copyright (C) 2011 Elliott Sales de Andrade and the Pidgin project
-# This file is distributed under the same licence as the Pidgin package.
-# Adam Weinberger <adamw@gnome.org>, 2004, 2005.
-# Elliott Sales de Andrade <qulogic@pidgin.im> 2011.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 #
-#
+# Translators:
+# Adam Weinberger <adamw@gnome.org>, 2004-2005
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2011-05-05 02:50-0400\n"
-"Last-Translator: Elliott Sales de Andrade <qulogic@pidgin.im>\n"
-"Language-Team: Canadian English <adamw@gnome.org>\n"
-"Language: Canadian English\n"
+"POT-Creation-Date: 2014-11-22 10:22-0800\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"Language-Team: English (Canada) (http://www.transifex.com/projects/p/pidgin/"
+"language/en_CA/)\n"
+"Language: en_CA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Language: en_CA\n"
-"X-Source-Language: C\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -615,6 +612,7 @@ msgstr ""
 msgid "List of %d user:\n"
 msgid_plural "List of %d users:\n"
 msgstr[0] ""
+msgstr[1] ""
 
 msgid "Supported debug options are: plugins version"
 msgstr ""
@@ -715,6 +713,7 @@ msgstr ""
 msgid "File Transfers - %d%% of %d file"
 msgid_plural "File Transfers - %d%% of %d files"
 msgstr[0] ""
+msgstr[1] ""
 
 #. Create the window.
 msgid "File Transfers"
@@ -879,6 +878,7 @@ msgstr ""
 msgid "%s (%s) has %d new message."
 msgid_plural "%s (%s) has %d new messages."
 msgstr[0] ""
+msgstr[1] ""
 
 msgid "New Mail"
 msgstr ""
@@ -1589,7 +1589,6 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr ""
 
@@ -1689,10 +1688,19 @@ msgid ""
 "are not connecting to the service you believe you are."
 msgstr ""
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr ""
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
@@ -1700,8 +1708,10 @@ msgid ""
 "Expiration date: %s\n"
 msgstr ""
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
 msgstr ""
 
 #. show error to user
@@ -1774,6 +1784,126 @@ msgstr ""
 msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
+msgstr ""
+
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"aim\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr ""
+
+msgid "Run the command in a terminal"
+msgstr ""
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"gg\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr ""
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"icq\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr ""
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"irc\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr ""
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"msnim\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"sip\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr ""
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr ""
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr ""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
 msgstr ""
 
 #, c-format
@@ -1935,126 +2065,6 @@ msgstr ""
 
 #, c-format
 msgid "File transfer from %s failed."
-msgstr ""
-
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-
-msgid "The handler for \"aim\" URLs"
-msgstr ""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr ""
-
-msgid "Run the command in a terminal"
-msgstr ""
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-
-msgid "The handler for \"gg\" URLs"
-msgstr ""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr ""
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-
-msgid "The handler for \"icq\" URLs"
-msgstr ""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-
-msgid "The handler for \"irc\" URLs"
-msgstr ""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-
-msgid "The handler for \"msnim\" URLs"
-msgstr ""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-
-msgid "The handler for \"sip\" URLs"
-msgstr ""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr ""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr ""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
 msgstr ""
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
@@ -2690,6 +2700,56 @@ msgstr ""
 msgid "Tests to see that most things are working."
 msgstr ""
 
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
+
 #. Scheme name
 msgid "X.509 Certificates"
 msgstr ""
@@ -3015,13 +3075,13 @@ msgstr ""
 msgid "Chat _name:"
 msgstr ""
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr ""
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
+msgstr ""
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
 msgstr ""
 
 msgid "Chat error"
@@ -5500,6 +5560,7 @@ msgid_plural ""
 "After the maintenance has been completed, you will be able to successfully "
 "sign in."
 msgstr[0] ""
+msgstr[1] ""
 
 msgid ""
 "Message was not sent because the system is unavailable. This normally "
@@ -5564,8 +5625,8 @@ msgstr ""
 msgid "Unable to authenticate: %s"
 msgstr ""
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
 
 msgid "Handshaking"
@@ -6155,6 +6216,7 @@ msgid_plural ""
 "%d buddies were added or updated from the server (including buddies already "
 "on the server-side list)"
 msgstr[0] ""
+msgstr[1] ""
 
 msgid "Add contacts from server"
 msgstr ""
@@ -7119,11 +7181,13 @@ msgstr ""
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid ""
@@ -7131,6 +7195,7 @@ msgid ""
 msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid ""
@@ -7138,17 +7203,20 @@ msgid ""
 msgid_plural ""
 "You missed %hu messages from %s because his/her warning level is too high."
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid "You missed %hu message from %s because your warning level is too high."
 msgid_plural ""
 "You missed %hu messages from %s because your warning level is too high."
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
+msgstr[1] ""
 
 msgid "Your AIM connection may be lost."
 msgstr ""
@@ -7170,6 +7238,7 @@ msgstr ""
 msgid "The following username is associated with %s"
 msgid_plural "The following usernames are associated with %s"
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid "No results found for email address %s"
@@ -7251,6 +7320,7 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
+msgstr[1] ""
 
 msgid "Profile too long."
 msgstr ""
@@ -7263,6 +7333,7 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
+msgstr[1] ""
 
 msgid "Away message too long."
 msgstr ""
@@ -9281,6 +9352,9 @@ msgstr ""
 msgid "Start Doodling"
 msgstr ""
 
+msgid "Activate which ID?"
+msgstr ""
+
 msgid "Select the ID you want to activate"
 msgstr ""
 
@@ -9711,31 +9785,37 @@ msgstr ""
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid "%s, %d hour"
 msgid_plural "%s, %d hours"
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid "%s, %d minute"
 msgid_plural "%s, %d minutes"
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid "Could not open %s: Redirected too many times"
@@ -9803,6 +9883,22 @@ msgstr ""
 msgid ""
 "An error was encountered reading your %s.  The file has not been loaded, and "
 "the old file has been renamed to %s~."
+msgstr ""
+
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
 msgstr ""
 
 msgid "Pidgin Internet Messenger"
@@ -10070,6 +10166,7 @@ msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
 "You currently have %d contacts named %s. Would you like to merge them?"
 msgstr[0] ""
+msgstr[1] ""
 
 msgid ""
 "Merging these contacts will cause them to share a single entry on the buddy "
@@ -10395,6 +10492,7 @@ msgstr ""
 msgid "%d unread message from %s\n"
 msgid_plural "%d unread messages from %s\n"
 msgstr[0] ""
+msgstr[1] ""
 
 msgid "Manually"
 msgstr ""
@@ -10430,6 +10528,7 @@ msgid "%d account was disabled because you signed on from another location:"
 msgid_plural ""
 "%d accounts were disabled because you signed on from another location:"
 msgstr[0] ""
+msgstr[1] ""
 
 msgid "<b>Username:</b>"
 msgstr ""
@@ -10806,6 +10905,7 @@ msgstr ""
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] ""
+msgstr[1] ""
 
 msgid "Stopped Typing"
 msgstr ""
@@ -10983,6 +11083,9 @@ msgstr ""
 msgid "Bengali-India"
 msgstr ""
 
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr ""
 
@@ -11020,6 +11123,9 @@ msgid "Esperanto"
 msgstr ""
 
 msgid "Spanish"
+msgstr ""
+
+msgid "Argentine Spanish"
 msgstr ""
 
 msgid "Estonian"
@@ -11061,9 +11167,6 @@ msgstr ""
 msgid "Hungarian"
 msgstr ""
 
-msgid "Armenian"
-msgstr ""
-
 msgid "Indonesian"
 msgstr ""
 
@@ -11079,6 +11182,9 @@ msgstr ""
 msgid "Ubuntu Georgian Translators"
 msgstr ""
 
+msgid "Kazakh"
+msgstr ""
+
 msgid "Khmer"
 msgstr ""
 
@@ -11091,13 +11197,19 @@ msgstr ""
 msgid "Korean"
 msgstr ""
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr ""
 
-msgid "Lao"
+msgid "Kurdish (Sorani)"
 msgstr ""
 
 msgid "Lithuanian"
+msgstr ""
+
+msgid "Latvian"
 msgstr ""
 
 msgid "Maithili"
@@ -11116,9 +11228,6 @@ msgid "Mongolian"
 msgstr ""
 
 msgid "Marathi"
-msgstr ""
-
-msgid "Malay"
 msgstr ""
 
 msgid "Burmese"
@@ -11163,6 +11272,9 @@ msgstr ""
 msgid "Russian"
 msgstr ""
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr ""
 
@@ -11196,10 +11308,21 @@ msgstr ""
 msgid "Thai"
 msgstr ""
 
+msgid "Tatar"
+msgstr ""
+
 msgid "Ukranian"
 msgstr ""
 
 msgid "Urdu"
+msgstr ""
+
+msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
 msgstr ""
 
 msgid "Vietnamese"
@@ -11215,6 +11338,15 @@ msgid "Traditional Chinese"
 msgstr ""
 
 msgid "Amharic"
+msgstr ""
+
+msgid "Armenian"
+msgstr ""
+
+msgid "Lao"
+msgstr ""
+
+msgid "Malay"
 msgstr ""
 
 msgid "Turkish"
@@ -11340,6 +11472,7 @@ msgid_plural ""
 "You are about to remove the contact containing %s and %d other buddies from "
 "your buddy list.  Do you want to continue?"
 msgstr[0] ""
+msgstr[1] ""
 
 msgid "Remove Contact"
 msgstr ""
@@ -11868,11 +12001,13 @@ msgstr ""
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid "<b>%d new email.</b>"
 msgid_plural "<b>%d new emails.</b>"
 msgstr[0] ""
+msgstr[1] ""
 
 #, c-format
 msgid "The browser command \"%s\" is invalid."
@@ -12687,6 +12822,9 @@ msgid "Status Selector"
 msgstr ""
 
 msgid "Google Talk"
+msgstr ""
+
+msgid "Facebook (XMPP)"
 msgstr ""
 
 #, c-format

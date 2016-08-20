@@ -1,18 +1,17 @@
-# Ukrainian translation to Pidgin.
-# Copyright (C) 2004 Free Software Foundation, Inc.
-# This file is distributed under the same license as the Pidgin package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 #
-# Maxim V. Dziumanenko <mvd@mylinux.com.ua>, 2004-2005.
-# Oleksandr Kovalenko <alx.kovalenko@gmail.com>, 2009-2011.
-#
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-02 10:38-0800\n"
-"PO-Revision-Date: 2011-08-11 10:21+0300\n"
-"Last-Translator: Oleksandr Kovalenko <alx.kovalenko@gmail.com>\n"
-"Language-Team: Ukrainian <uk@li.org>\n"
+"POT-Creation-Date: 2016-06-15 23:24-0500\n"
+"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"Language-Team: Ukrainian (http://www.transifex.com/projects/p/pidgin/"
+"language/uk/)\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1495,6 +1494,7 @@ msgstr "Хтось говорить у балачці"
 msgid "Someone says your name in a chat"
 msgstr "Хтось сказав ваше ім'я у балачці"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Notify with a toaster when"
 msgstr "Сповіщати виринаючим повідомленням коли"
 
@@ -1507,6 +1507,7 @@ msgstr "Встановити URGENT для вікна терміналу."
 msgid "GntGf"
 msgstr "GntGf"
 
+#. Translators: "toaster" here means "pop-up".
 msgid "Toaster plugin"
 msgstr "Додаток Toaster"
 
@@ -1678,7 +1679,6 @@ msgstr "Цей протокол не підтримує отримання за�
 msgid "Unknown"
 msgstr "Невідомо"
 
-#. Changing this string?  Look in add_purple_buddy_to_groups
 msgid "Buddies"
 msgstr "Користувачі"
 
@@ -1791,26 +1791,31 @@ msgstr ""
 "Замість цього сертифікат стверджує, що він від \"%s\". Це може означати, що "
 "ви не з'єдані з послугою, хоча вважаєте, що це так."
 
+#. TODO: Find what the handle ought to be
+msgid "Certificate Information"
+msgstr "Відомості про сертифікат"
+
+msgid "Unable to find Issuer Certificate"
+msgstr ""
+
 #. Make messages
 #, c-format
 msgid ""
 "Common name: %s\n"
+"\n"
+"Issued By: %s\n"
 "\n"
 "Fingerprint (SHA1): %s\n"
 "\n"
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
-"Загальна назва: %s\n"
-"\n"
-"Відбиток (SHA1): %s\n"
-"\n"
-"Дата початку дії: %s\n"
-"Дійсний до: %s\n"
 
-#. TODO: Find what the handle ought to be
-msgid "Certificate Information"
-msgstr "Відомості про сертифікат"
+msgid "(self-signed)"
+msgstr ""
+
+msgid "View Issuer Certificate"
+msgstr ""
 
 #. show error to user
 msgid "Registration Error"
@@ -1885,6 +1890,150 @@ msgid ""
 msgstr ""
 "Введіть ім'я користувача, якого ви бажаєте запросити, та введіть "
 "необов'язковий текст запрошення."
+
+msgid "Whether the specified command should handle \"aim\" URLs"
+msgstr "Чи визначена команда має оброблювати \"aim\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"aim\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"aim\" URL-"
+"посилання."
+
+msgid "The handler for \"aim\" URLs"
+msgstr "Обробник URL-посилань \"aim\""
+
+msgid "The command used to handle \"aim\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"aim\" URL-адрес, якщо увімкнено."
+
+msgid "Run the command in a terminal"
+msgstr "Запустити команду в терміналі"
+
+msgid ""
+"True if the command used to handle this type of URL should be run in a "
+"terminal."
+msgstr ""
+"Так, якщо команда, що використовується для обробки цього типу URL-посилань, "
+"має бути запущена у терміналі."
+
+msgid "Whether the specified command should handle \"gg\" URLs"
+msgstr "Чи визначена команда має оброблювати \"gg\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"gg\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"gg\" URL-посилання."
+
+msgid "The handler for \"gg\" URLs"
+msgstr "Обробник URL-посилань \"gg\""
+
+msgid "The command used to handle \"gg\" URLs, if enabled."
+msgstr "Команда використовується для обробки \"gg\" URL-адрес, якщо увімкнено."
+
+msgid "Whether the specified command should handle \"icq\" URLs"
+msgstr "Чи визначена команда має оброблювати \"icq\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"icq\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"icq\" URL-"
+"посилання."
+
+msgid "The handler for \"icq\" URLs"
+msgstr "Обробник URL-посилань \"icq\""
+
+msgid "The command used to handle \"icq\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"icq\" URL-адрес, якщо увімкнено."
+
+msgid "Whether the specified command should handle \"irc\" URLs"
+msgstr "Чи визначена команда має оброблювати \"irc\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"irc\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"irc\" URL-"
+"посилання."
+
+msgid "The handler for \"irc\" URLs"
+msgstr "Обробник URL-посилань \"irc\""
+
+msgid "The command used to handle \"irc\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"irc\" URL-адрес, якщо увімкнено."
+
+msgid "Whether the specified command should handle \"msnim\" URLs"
+msgstr "Чи визначена команда має оброблювати \"msnim\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"msnim\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"msnim\" URL-"
+"посилання."
+
+msgid "The handler for \"msnim\" URLs"
+msgstr "Обробник URL-посилань \"msnim\""
+
+msgid "The command used to handle \"msnim\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"msnim\" URL-адрес, якщо увімкнено."
+
+msgid "Whether the specified command should handle \"sip\" URLs"
+msgstr "Чи визначена команда має оброблювати \"sip\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"sip\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"sip\" URL-"
+"посилання."
+
+msgid "The handler for \"sip\" URLs"
+msgstr "Обробник URL-посилань \"sip\""
+
+msgid "The command used to handle \"sip\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"sip\" URL-адрес, якщо увімкнено."
+
+msgid "Whether the specified command should handle \"xmpp\" URLs"
+msgstr "Чи визначена команда має оброблювати \"xmpp\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"xmpp\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"xmpp\" URL-"
+"посилання."
+
+msgid "The handler for \"xmpp\" URLs"
+msgstr "Обробник URL-посилань \"xmpp\""
+
+msgid "The command used to handle \"xmpp\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"xmpp\" URL-адрес, якщо увімкнено."
+
+msgid "Whether the specified command should handle \"ymsgr\" URLs"
+msgstr "Чи визначена команда має оброблювати \"ymsgr\" URL-посилання"
+
+msgid ""
+"True if the command specified in the \"command\" key should handle \"ymsgr\" "
+"URLs."
+msgstr ""
+"Так, якщо команда визначена у \"command\" має обробляти \"ymsgr\" URL-"
+"посилання."
+
+msgid "The handler for \"ymsgr\" URLs"
+msgstr "Обробник URL-посилань \"ymsgr\""
+
+msgid "The command used to handle \"ymsgr\" URLs, if enabled."
+msgstr ""
+"Команда використовується для обробки \"ymsgr\" URL-адрес, якщо увімкнено."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2060,150 +2209,6 @@ msgstr "Невдале передавання файлу до '%s'."
 msgid "File transfer from %s failed."
 msgstr "Невдале передавання файлу від %s."
 
-msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Чи визначена команда має оброблювати \"aim\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"aim\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"aim\" URL-"
-"посилання."
-
-msgid "The handler for \"aim\" URLs"
-msgstr "Обробник URL-посилань \"aim\""
-
-msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"aim\" URL-адрес, якщо увімкнено."
-
-msgid "Run the command in a terminal"
-msgstr "Запустити команду в терміналі"
-
-msgid ""
-"True if the command used to handle this type of URL should be run in a "
-"terminal."
-msgstr ""
-"Так, якщо команда, що використовується для обробки цього типу URL-посилань, "
-"має бути запущена у терміналі."
-
-msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Чи визначена команда має оброблювати \"gg\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"gg\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"gg\" URL-посилання."
-
-msgid "The handler for \"gg\" URLs"
-msgstr "Обробник URL-посилань \"gg\""
-
-msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Команда використовується для обробки \"gg\" URL-адрес, якщо увімкнено."
-
-msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Чи визначена команда має оброблювати \"icq\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"icq\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"icq\" URL-"
-"посилання."
-
-msgid "The handler for \"icq\" URLs"
-msgstr "Обробник URL-посилань \"icq\""
-
-msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"icq\" URL-адрес, якщо увімкнено."
-
-msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Чи визначена команда має оброблювати \"irc\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"irc\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"irc\" URL-"
-"посилання."
-
-msgid "The handler for \"irc\" URLs"
-msgstr "Обробник URL-посилань \"irc\""
-
-msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"irc\" URL-адрес, якщо увімкнено."
-
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Чи визначена команда має оброблювати \"msnim\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"msnim\" URL-"
-"посилання."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Обробник URL-посилань \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"msnim\" URL-адрес, якщо увімкнено."
-
-msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Чи визначена команда має оброблювати \"sip\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"sip\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"sip\" URL-"
-"посилання."
-
-msgid "The handler for \"sip\" URLs"
-msgstr "Обробник URL-посилань \"sip\""
-
-msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"sip\" URL-адрес, якщо увімкнено."
-
-msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Чи визначена команда має оброблювати \"xmpp\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"xmpp\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"xmpp\" URL-"
-"посилання."
-
-msgid "The handler for \"xmpp\" URLs"
-msgstr "Обробник URL-посилань \"xmpp\""
-
-msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"xmpp\" URL-адрес, якщо увімкнено."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Чи визначена команда має оброблювати \"ymsgr\" URL-посилання"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Так, якщо команда визначена у \"command\" має обробляти \"ymsgr\" URL-"
-"посилання."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Обробник URL-посилань \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Команда використовується для обробки \"ymsgr\" URL-адрес, якщо увімкнено."
-
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr ""
 "<b><font color=\"red\">У послузі ведення журналу відсутня функція читання</"
@@ -2251,6 +2256,27 @@ msgstr "<font color=\"red\"><b>Не вдається прочитати файл
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <АВТО-ВІДПОВІДЬ>: %s\n"
 
+#, fuzzy
+msgid ""
+"\n"
+"\n"
+"Message from Farsight: "
+msgstr "Повідомлення від %s"
+
+msgid ""
+"Error initializing the call. This probably denotes problem in installation "
+"of GStreamer or Farsight."
+msgstr ""
+
+#, fuzzy
+msgid "Network error."
+msgstr "Мережа"
+
+msgid ""
+"Codec negotiation failed. This problem might be resolved by installing more "
+"GStreamer codecs."
+msgstr ""
+
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
 "packages."
@@ -2264,12 +2290,15 @@ msgstr ""
 "Не залишилось жодного кодеку. Налаштування кодеків у fs-codecs.conf занадто "
 "суворі."
 
+#, fuzzy
+msgid "Could not connect to the remote party"
+msgstr "Немає з'єднання з сервером"
+
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Сталася невиправна помилка Farsight2."
 
-#, fuzzy
 msgid "A non-recoverable Farstream error has occurred."
-msgstr "Сталася невиправна помилка Farsight2."
+msgstr ""
 
 msgid "Error with your microphone"
 msgstr "Помилка мікрофона"
@@ -2885,6 +2914,56 @@ msgstr "Простий додаток"
 msgid "Tests to see that most things are working."
 msgstr "Перевіряє, чи усе працює."
 
+msgid "TLS/SSL Versions"
+msgstr ""
+
+msgid "Minimum Version"
+msgstr ""
+
+msgid "Maximum Version"
+msgstr ""
+
+msgid "SSL 2"
+msgstr ""
+
+msgid "SSL 3"
+msgstr ""
+
+msgid "TLS 1.0"
+msgstr ""
+
+msgid "TLS 1.1"
+msgstr ""
+
+msgid "TLS 1.2"
+msgstr ""
+
+msgid "TLS 1.3"
+msgstr ""
+
+#. TODO: look into how to do this for older versions?
+msgid "Not Supported for NSS < 3.14"
+msgstr ""
+
+msgid "Ciphers"
+msgstr ""
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "NSS Preferences"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
+msgstr ""
+
 #. Scheme name
 msgid "X.509 Certificates"
 msgstr "Сертифікати X.509"
@@ -3218,14 +3297,14 @@ msgstr "Додати до балачки"
 msgid "Chat _name:"
 msgstr "_Прізвисько:"
 
-#, c-format
-msgid "Unable to resolve hostname '%s': %s"
-msgstr "Не вдається визначити назву вузла '%s': %s"
-
 #. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "З'єднання"
+
+#, c-format
+msgid "Unable to resolve hostname: %s"
+msgstr ""
 
 msgid "Chat error"
 msgstr "Помилка балачки"
@@ -3380,9 +3459,8 @@ msgstr "Кодування"
 msgid "Auto-detect incoming UTF-8"
 msgstr "Автоматично виявляти вхідні повідомлення з UTF-8"
 
-#, fuzzy
 msgid "Ident name"
-msgstr "Прізвище"
+msgstr ""
 
 msgid "Real name"
 msgstr "Справжнє ім'я"
@@ -3394,13 +3472,11 @@ msgstr "Справжнє ім'я"
 msgid "Use SSL"
 msgstr "Використовувати SSL"
 
-#, fuzzy
 msgid "Authenticate with SASL"
-msgstr "Автентифікація"
+msgstr ""
 
-#, fuzzy
 msgid "Allow plaintext SASL auth over unencrypted connection"
-msgstr "Дозволити автентифікацію звичайним текстом через нешифровані потоки"
+msgstr ""
 
 msgid "Bad mode"
 msgstr "Неправильний режим"
@@ -3436,13 +3512,11 @@ msgstr " <i>(ідентифікований)</i>"
 msgid "Nick"
 msgstr "Прізвисько"
 
-#, fuzzy
 msgid "Login name"
-msgstr "Немає імені"
+msgstr ""
 
-#, fuzzy
 msgid "Host name"
-msgstr "Назва вузла"
+msgstr ""
 
 msgid "Currently on"
 msgstr "Наразі на"
@@ -3589,32 +3663,29 @@ msgstr "Прізвисько або канал тимчасово недосту
 msgid "Wallops from %s"
 msgstr "Голос від %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to initialize SASL authentication: %s"
-msgstr "Не вдалося ініціалізувати з'єднання клієнта SILC"
+msgstr ""
 
 msgid "SASL authentication failed: No worthy authentication mechanisms found."
 msgstr ""
 
-#, fuzzy, c-format
+#, c-format
 msgid "SASL authentication failed: %s"
-msgstr "Помилка автентифікації SASL"
+msgstr ""
 
 msgid ""
 "SASL authentication failed: Server does not support SASL authentication."
 msgstr ""
 
-#, fuzzy
 msgid "SASL authentication failed: Initializing SASL failed."
-msgstr "Помилка автентифікації SASL"
+msgstr ""
 
-#, fuzzy
 msgid "Incorrect Password"
-msgstr "Неправильний пароль"
+msgstr ""
 
-#, fuzzy
 msgid "SASL authentication failed: No worthy mechanisms found"
-msgstr "Помилка автентифікації SASL"
+msgstr ""
 
 msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;дія для виконання&gt;:  Виконати дію."
@@ -4639,9 +4710,9 @@ msgstr "Не вдалося розпочати сеанс медіа з %s: не
 msgid "Unable to initiate media with %s: user is not online"
 msgstr "Не вдалося розпочати сеанс медіа з %s: користувач не в мережі"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to initiate media with %s: resource is not online"
-msgstr "Не вдалося розпочати сеанс медіа з %s: користувач не в мережі"
+msgstr ""
 
 #, c-format
 msgid "Unable to initiate media with %s: not subscribed to user presence"
@@ -5843,29 +5914,23 @@ msgstr ""
 msgid "Message was not sent because an unknown error occurred."
 msgstr "Повідомлення не надіслано, тому що трапилась невідома помилка."
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. Converting the encoding from "
 "%s to UTF-8 failed.)"
 msgstr ""
-"(Помилка перетворення повідомлення. Перевірте параметр \"Кодування\" у "
-"редакторі облікових записів)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was %s, but it "
 "was not valid UTF-8.)"
 msgstr ""
-"(Сталася помилка отримання цього повідомлення. Або ви та %s обрали різні "
-"кодування, або %s користується клієнтом з помилками.)"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s (There was an error receiving this message. The charset was missing, but "
 "it was not valid UTF-8.)"
 msgstr ""
-"(Помилка перетворення повідомлення. Перевірте параметр \"Кодування\" у "
-"редакторі облікових записів)"
 
 msgid "Writing error"
 msgstr "Помилка запису"
@@ -5901,11 +5966,9 @@ msgstr "Сервери MSN тимчасово вимикаються"
 msgid "Unable to authenticate: %s"
 msgstr "Не вдається пройти автентифікацію: %s"
 
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+#, c-format
+msgid "Your MSN buddy list is temporarily unavailable: %s"
 msgstr ""
-"Перелік контактів MSN тимчасово недоступний. Зачекайте, та пізніше спробуйте "
-"ще раз."
 
 msgid "Handshaking"
 msgstr "Встановлення з'єднання"
@@ -6017,9 +6080,8 @@ msgid "Where I Live"
 msgstr "Де я живу"
 
 #. relationship status
-#, fuzzy
 msgid "Relationship Status"
-msgstr "Видалити стан"
+msgstr ""
 
 #. mobile number
 msgid "Mobile Number"
@@ -6118,14 +6180,12 @@ msgid "The file you are trying to send is too large!"
 msgstr "Файл, який ви намагаєтесь надіслати, занадто великий!"
 
 #. file read error
-#, fuzzy
 msgid "Unable to access the local file"
-msgstr "Не вдається завантажити додаток"
+msgstr ""
 
 #. file write error
-#, fuzzy
 msgid "Unable to save the file"
-msgstr "Не вдається відкрити файл."
+msgstr ""
 
 msgid ""
 "Unable to connect to the MXit HTTP server. Please check your server settings."
@@ -6273,20 +6333,17 @@ msgstr ""
 msgid "Engaged"
 msgstr ""
 
-#, fuzzy
 msgid "Married"
-msgstr "Занепокоєний"
+msgstr ""
 
-#, fuzzy
 msgid "It's complicated"
-msgstr "П'яний"
+msgstr ""
 
 msgid "Widowed"
 msgstr ""
 
-#, fuzzy
 msgid "Separated"
-msgstr "Департамент"
+msgstr ""
 
 msgid "Divorced"
 msgstr ""
@@ -8381,9 +8438,8 @@ msgstr "Надіслати оголошення TEST"
 msgid "Topic:"
 msgstr "Тема:"
 
-#, fuzzy
 msgid "A server is required to connect this account"
-msgstr "Сервер закрив з'єднання"
+msgstr ""
 
 #, c-format
 msgid "Unknown (0x%04x)<br>"
@@ -9544,7 +9600,6 @@ msgstr ""
 "%s\n"
 "\n"
 
-# TODO: закінчити переклад
 #, c-format
 msgid ""
 "Public Key Babbleprint:\n"
@@ -9940,6 +9995,9 @@ msgstr "Налаштування присутності"
 
 msgid "Start Doodling"
 msgstr "Розпочати балачку"
+
+msgid "Activate which ID?"
+msgstr ""
 
 msgid "Select the ID you want to activate"
 msgstr "Виберіть ID, який хочете активувати"
@@ -10512,6 +10570,22 @@ msgid ""
 msgstr ""
 "Сталася помилка під час читання %s. Файл не завантажений, а назва старого "
 "змінена на %s~."
+
+msgid "Instant Messaging Client"
+msgstr ""
+
+msgid ""
+"Pidgin is a chat program which lets you log in to accounts on multiple chat "
+"networks simultaneously."
+msgstr ""
+
+msgid ""
+"This means that you can be chatting with friends on MSN, talking to a friend "
+"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+msgstr ""
+
+msgid "The buddy list showing friends on different networks."
+msgstr ""
 
 msgid "Pidgin Internet Messenger"
 msgstr "Клієнт обміну миттєвими повідомленнями Pidgin"
@@ -11257,10 +11331,12 @@ msgstr "Прізвисько:"
 msgid "_Group:"
 msgstr "_Група:"
 
-msgid "Auto_join when account connects."
+#, fuzzy
+msgid "Automatically _join when account connects"
 msgstr "Автоматично _приєднатися, коли обліковий запис з'єднається."
 
-msgid "_Remain in chat after window is closed."
+#, fuzzy
+msgid "_Remain in chat after window is closed"
 msgstr "_Залишатися в балачці після того, як вікно закрите."
 
 msgid "Please enter the name of the group to be added."
@@ -11299,6 +11375,10 @@ msgstr "Напишіть назву вузла, якому належить це
 #. Widget creation function
 msgid "SSL Servers"
 msgstr "Сервери SSL"
+
+#, fuzzy
+msgid "Supported debug options are: plugins, version"
+msgstr "Підтримуються параметри зневадження: plugins version"
 
 msgid "Unknown command."
 msgstr "Невідома команда."
@@ -11577,13 +11657,10 @@ msgstr "Непрочитані повідомлення"
 msgid "New Event"
 msgstr "Нова подія"
 
-#, fuzzy
 msgid ""
 "The account has disconnected and you are no longer in this chat. You will "
 "automatically rejoin the chat when the account reconnects."
 msgstr ""
-"Обліковий запис від'єднаний і ви вже не у балачці. Ви приєднаєтесь до неї "
-"автоматично, коли обліковий запис перез'єднається."
 
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Очищає всі прокрутки розмов."
@@ -11744,6 +11821,12 @@ msgstr "Бенгальська"
 msgid "Bengali-India"
 msgstr "Бенгальська Індія"
 
+msgid "Breton"
+msgstr ""
+
+msgid "Bodo"
+msgstr ""
+
 msgid "Bosnian"
 msgstr "Боснійська"
 
@@ -11783,6 +11866,9 @@ msgstr "Есперанто"
 msgid "Spanish"
 msgstr "Іспанська"
 
+msgid "Argentine Spanish"
+msgstr ""
+
 msgid "Estonian"
 msgstr "Естонська"
 
@@ -11794,9 +11880,6 @@ msgstr "Перська"
 
 msgid "Finnish"
 msgstr "Фінська"
-
-msgid "French"
-msgstr "Французька"
 
 msgid "Irish"
 msgstr "Ірландська"
@@ -11822,9 +11905,6 @@ msgstr "Хорватська"
 msgid "Hungarian"
 msgstr "Угорська"
 
-msgid "Armenian"
-msgstr "Вірменська"
-
 msgid "Indonesian"
 msgstr "Індонезійська"
 
@@ -11840,6 +11920,9 @@ msgstr "Грузинська"
 msgid "Ubuntu Georgian Translators"
 msgstr "Перекладачі Ubuntu грузинською"
 
+msgid "Kazakh"
+msgstr ""
+
 msgid "Khmer"
 msgstr "Кхмерська"
 
@@ -11852,14 +11935,20 @@ msgstr "Канадська команда перекладачів"
 msgid "Korean"
 msgstr "Корейська"
 
+msgid "Kashmiri"
+msgstr ""
+
 msgid "Kurdish"
 msgstr "Курдська"
 
-msgid "Lao"
-msgstr "Лао"
+msgid "Kurdish (Sorani)"
+msgstr ""
 
 msgid "Lithuanian"
 msgstr "Литовська"
+
+msgid "Latvian"
+msgstr ""
 
 msgid "Maithili"
 msgstr "Майтхілі"
@@ -11870,6 +11959,9 @@ msgstr "Луговомарійська"
 msgid "Macedonian"
 msgstr "Македонська"
 
+msgid "Malay"
+msgstr "Малайська"
+
 msgid "Malayalam"
 msgstr "Малаялам"
 
@@ -11878,9 +11970,6 @@ msgstr "Монгольська"
 
 msgid "Marathi"
 msgstr "Мараті"
-
-msgid "Malay"
-msgstr "Малайська"
 
 msgid "Burmese"
 msgstr ""
@@ -11924,6 +12013,9 @@ msgstr "Румунська"
 msgid "Russian"
 msgstr "Російська"
 
+msgid "Sindhi"
+msgstr ""
+
 msgid "Slovak"
 msgstr "Словацька"
 
@@ -11936,9 +12028,8 @@ msgstr "Албанська"
 msgid "Serbian"
 msgstr "Сербська"
 
-#, fuzzy
 msgid "Serbian Latin"
-msgstr "Білоруська (латиниця)"
+msgstr ""
 
 msgid "Sinhala"
 msgstr "Сингалійська"
@@ -11958,11 +12049,22 @@ msgstr "Телугу"
 msgid "Thai"
 msgstr "Тайська"
 
+msgid "Tatar"
+msgstr ""
+
 msgid "Ukranian"
 msgstr "Українська"
 
 msgid "Urdu"
 msgstr "Урду"
+
+msgid "Uzbek"
+msgstr ""
+
+#. Translators: This is a person's name. For most languages we recommend
+#. not translating it.
+msgid "Akmal Khushvakov"
+msgstr ""
 
 msgid "Vietnamese"
 msgstr "В'єтнамська"
@@ -11978,6 +12080,15 @@ msgstr "Китайська традиційна"
 
 msgid "Amharic"
 msgstr "Амхарська"
+
+msgid "French"
+msgstr "Французька"
+
+msgid "Armenian"
+msgstr "Вірменська"
+
+msgid "Lao"
+msgstr "Лао"
 
 msgid "Turkish"
 msgstr "Турецька"
@@ -12665,6 +12776,10 @@ msgstr "_Медіа"
 msgid "_Hangup"
 msgstr "_Завершити"
 
+#, fuzzy
+msgid "Media error"
+msgstr "Помилка читання"
+
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
 msgstr "%s бажає розпочати з вами аудіо та відеосеанс."
@@ -12675,6 +12790,42 @@ msgstr "%s бажає розпочати з вами відеосеанс."
 
 msgid "Incoming Call"
 msgstr "Вхідний виклик"
+
+#. Translators note: These are the letters on the keys of a numeric
+#. keypad; translate according to the tables in §7 of ETSI ES 202 130:
+#. http://webapp.etsi.org/WorkProgram/Report_WorkItem.asp?WKI_ID=11730
+#.
+#. Letters on the '2' key of a numeric keypad
+msgid "ABC"
+msgstr ""
+
+#. Letters on the '3' key of a numeric keypad
+msgid "DEF"
+msgstr ""
+
+#. Letters on the '4' key of a numeric keypad
+msgid "GHI"
+msgstr ""
+
+#. Letters on the '5' key of a numeric keypad
+msgid "JKL"
+msgstr ""
+
+#. Letters on the '6' key of a numeric keypad
+msgid "MNO"
+msgstr ""
+
+#. Letters on the '7' key of a numeric keypad
+msgid "PQRS"
+msgstr ""
+
+#. Letters on the '8' key of a numeric keypad
+msgid "TUV"
+msgstr ""
+
+#. Letters on the '9' key of a numeric keypad
+msgid "WXYZ"
+msgstr ""
 
 msgid "_Hold"
 msgstr ""
@@ -12714,9 +12865,8 @@ msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Було вибрано переглядач тенет \"інший\", але команду не було задано."
 
-#, fuzzy
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
-msgstr "Команда переглядача тенет \"%s\" неправильна."
+msgstr ""
 
 msgid "No message"
 msgstr "Немає повідомлень"
@@ -13529,6 +13679,9 @@ msgstr "Вибирач стану"
 msgid "Google Talk"
 msgstr "Google Talk"
 
+msgid "Facebook (XMPP)"
+msgstr "Facebook (XMPP)"
+
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Трапилась помилка при завантаженні %s: %s"
@@ -14202,8 +14355,16 @@ msgstr ""
 msgid "Notify For"
 msgstr "Сповіщати про"
 
+#, fuzzy
+msgid "\t_Notify for System messages"
+msgstr "Системні повідомлення"
+
 msgid "\t_Only when someone says your username"
 msgstr "\t_Тільки коли хтось говорить ваше ім'я"
+
+#, fuzzy
+msgid "\tNotify for _System messages"
+msgstr "Системні повідомлення"
 
 msgid "_Focused windows"
 msgstr "Вікна з _фокусом"
@@ -14235,6 +14396,8 @@ msgid "R_aise conversation window"
 msgstr "_Розгорнути вікно розмови"
 
 #. Present conversation method button
+#. Translators: "Present" as used here is a verb. The plugin presents
+#. * the window to the user.
 msgid "_Present conversation window"
 msgstr "_Показати вікно розмови"
 
@@ -14691,18 +14854,15 @@ msgstr ""
 "повідомлень журналу."
 
 #. Alerts
-#, fuzzy
 msgid "Chatroom alerts"
-msgstr "Емблеми кімнат балачок"
+msgstr ""
 
-#, fuzzy
 msgid "Chatroom message alerts _only where someone says your username"
-msgstr "\t_Тільки коли хтось говорить ваше ім'я"
+msgstr ""
 
 #. Launcher integration
-#, fuzzy
 msgid "Launcher Icon"
-msgstr "Збереження значка"
+msgstr ""
 
 msgid "_Disable launcher integration"
 msgstr ""
@@ -14710,14 +14870,12 @@ msgstr ""
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
 
-#, fuzzy
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr "Кількість розмов на вікно"
+msgstr ""
 
 #. Messaging menu integration
-#, fuzzy
 msgid "Messaging Menu"
-msgstr "Повідомлення відправлено"
+msgstr ""
 
 msgid "Show number of _unread messages for conversations in messaging menu"
 msgstr ""
@@ -14731,21 +14889,18 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#, fuzzy
 msgid "Unity Integration"
-msgstr "Інтеграція з Evolution"
+msgstr ""
 
 #. *< name
 #. *< version
 #. *  summary
-#, fuzzy
 msgid "Provides integration with Unity."
-msgstr "Забезпечує інтеграцію з Evolution."
+msgstr ""
 
 #. *  description
-#, fuzzy
 msgid "Provides integration with Unity's messaging menu and launcher."
-msgstr "Забезпечує інтеграцію з Evolution."
+msgstr ""
 
 msgid "Audio"
 msgstr "Аудіо"
@@ -15005,10 +15160,10 @@ msgstr ""
 "Неможливо видалити версію Pidgin, що зараз встановлена. Нова версія буде "
 "встановлена без видалення поточної."
 
+#, fuzzy
 msgid ""
-"Pidgin requires a compatible GTK+ Runtime (which doesn't appear to be "
-"already present).$\\rAre you sure you want to skip installing the GTK+ "
-"Runtime?"
+"Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
+"installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
 "Pidgin потребує сумісну бібліотеку GTK+ (яка, схоже, ще не встановлена).$"
 "\\rВИ впевнені, що хочете пропустити встановлення бібліотеки GTK+?"
@@ -15067,116 +15222,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Ви не маєте права на видалення цієї програми."
-
-#~ msgid "Token Error"
-#~ msgstr "Помилка символу"
-
-#~ msgid "Unable to fetch the token.\n"
-#~ msgstr "Не вдається отримати символ.\n"
-
-#~ msgid "You must fill in all registration fields"
-#~ msgstr "Ви маєте заповнити всі реєстраційні поля"
-
-#~ msgid "Passwords do not match"
-#~ msgstr "Паролі не збігаються"
-
-#~ msgid "Unable to register new account.  An unknown error occurred."
-#~ msgstr ""
-#~ "Не вдається зареєструвати новий обліковий запис. Сталася невідома помилка."
-
-#~ msgid "New Gadu-Gadu Account Registered"
-#~ msgstr "Зареєстрований новий обліковий запис Gadu-Gadu"
-
-#~ msgid "Registration completed successfully!"
-#~ msgstr "Реєстрація успішно завершена!"
-
-#~ msgid "Enter captcha text"
-#~ msgstr "Введіть текст captcha"
-
-#~ msgid "Captcha"
-#~ msgstr "Captcha"
-
-#~ msgid "Register New Gadu-Gadu Account"
-#~ msgstr "Зареєструвати новий обліковий запис Gadu-Gadu"
-
-#~ msgid "Please, fill in the following fields"
-#~ msgstr "Заповніть ці поля"
-
-#~ msgid "Fill in the fields."
-#~ msgstr "Заповніть поля."
-
-#~ msgid "Your current password is different from the one that you specified."
-#~ msgstr "Ваш поточний пароль і той, який ви ввели відрізняються."
-
-#~ msgid "Unable to change password. Error occurred.\n"
-#~ msgstr "Не вдалося змінити пароль. Сталася помилка.\n"
-
-#~ msgid "Change password for the Gadu-Gadu account"
-#~ msgstr "Змінити пароль для облікового запису Gadu-Gadu"
-
-#~ msgid "Password was changed successfully!"
-#~ msgstr "Пароль був успішно змінений!"
-
-#~ msgid "Current password"
-#~ msgstr "Поточний пароль"
-
-#~ msgid "Password (retype)"
-#~ msgstr "Пароль (ще раз)"
-
-#~ msgid "Enter current token"
-#~ msgstr "Введіть поточний символ"
-
-#~ msgid "Current token"
-#~ msgstr "Поточний символ"
-
-#~ msgid "Please, enter your current password and your new password for UIN: "
-#~ msgstr "Введіть ваш поточний пароль та новий пароль для UIN: "
-
-#~ msgid "Change Gadu-Gadu Password"
-#~ msgstr "Замінити пароль Gadu-Gadu"
-
-#~ msgid "Buddy list downloaded"
-#~ msgstr "Перелік контактів звантажений"
-
-#~ msgid "Your buddy list was downloaded from the server."
-#~ msgstr "Перелік контактів звантажений з сервера."
-
-#~ msgid "Buddy list uploaded"
-#~ msgstr "Перелік контактів оновлений"
-
-#~ msgid "Your buddy list was stored on the server."
-#~ msgstr "Ваш перелік контактів був збережений на сервері."
-
-#~ msgid "Change password..."
-#~ msgstr "Змінити пароль..."
-
-#~ msgid "Upload buddylist to Server"
-#~ msgstr "Вивантажити перелік контактів до сервера"
-
-#~ msgid "Download buddylist from Server"
-#~ msgstr "Звантажити перелік контактів з сервера"
-
-#~ msgid "Delete buddylist from Server"
-#~ msgstr "Видалити перелік контактів з сервера"
-
-#~ msgid "Hidden Number"
-#~ msgstr "Схований номер"
-
-#~ msgid "No Sametime Community Server specified"
-#~ msgstr "Не визначено жодного серверу Sametime Community"
-
-#~ msgid ""
-#~ "No host or IP address has been configured for the Meanwhile account %s. "
-#~ "Please enter one below to continue logging in."
-#~ msgstr ""
-#~ "Ні вузол, ні адреса IP не були налаштовані для облікового запису "
-#~ "Meanwhile %s. Введіть якійсь, щоб налаштувати вхід."
-
-#~ msgid "Meanwhile Connection Setup"
-#~ msgstr "Встановлення з'єднання Meanwhile"
-
-#~ msgid "No Sametime Community Server Specified"
-#~ msgstr "Не визначено жодного серверу Sametime Community"
-
-#~ msgid "Connect"
-#~ msgstr "З'єднатися"

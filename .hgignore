@@ -7,6 +7,7 @@ pidgin-*
 syntax: regexp
 (.*/)?TAGS$
 (.*/)?\.svn
+.*.swp
 .*/?.*\.pc$
 .*/?Makefile(\.in)?$
 .*/?Makefile\.am\.mingw$
@@ -149,6 +150,8 @@ po/stamp-it
 stamp-h1
 test-driver
 win32-install-dir(\.release)?
+share/ca-certs/cacert.pem
+share/ca-certs/certdata.txt
 
 subinclude:libpurple/protocols/jabber/tests/.hgignore
 subinclude:libpurple/protocols/oscar/tests/.hgignore

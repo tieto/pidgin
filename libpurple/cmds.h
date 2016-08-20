@@ -119,6 +119,31 @@ typedef enum {
 	PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS = 0x08
 } PurpleCmdFlag;
 
+/**
+ * Command UI operations;  UIs should implement this if they want to handle
+ * commands themselves, rather than relying on the core.
+ *
+ * @see @ref ui-ops
+ */
+typedef struct
+{
+	/** If implemented, the UI is responsible for handling commands. */
+	/* @see purple_cmd_register for the argument values. */
+	void (*register_command)(const gchar *name, PurpleCmdPriority priority,
+				 PurpleCmdFlag flags, const gchar *prpl_id,
+				 const gchar *help, PurpleCmd *cmd);
+
+	/** Should be implemented if register_command is implemented.
+	 *  name and prpl_id will have the same value that were used
+	 *  for the register_command call.
+	 */
+	void (*unregister_command)(const gchar *name, const gchar *prpl_id);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+} PurpleCommandsUiOps;
 
 G_BEGIN_DECLS
 
@@ -219,6 +244,23 @@ void purple_cmd_unregister(PurpleCmdId id);
  */
 PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmdline,
                                   const gchar *markup, gchar **errormsg);
+
+/**
+ * Execute a specific command.
+ *
+ * The UI calls this to execute a command, after parsing the
+ * command name.
+ *
+ * @param c The command to execute.
+ * @param conv The conversation the command was typed in.
+ * @param cmdline The command the user typed (only the arguments).
+ *            The caller should remove the prefix and the command name.
+ *            It should not contain any formatting, and should be
+ *            in plain text (no HTML entities).
+ * @return TRUE if the command handled the @a cmdline, FALSE otherwise.
+ */
+gboolean purple_cmd_execute(PurpleCmd *c, PurpleConversation *conv,
+			    const gchar *cmdline);
 
 /**
  * purple_cmd_list:

@@ -1978,6 +1978,11 @@ purple_blist_init(void)
 						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
 						 PURPLE_TYPE_BUDDY);
 
+	purple_signal_register(handle, "buddy-removed-from-group",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_BLIST_BUDDY));
+
 	purple_signal_register(handle, "buddy-icon-changed",
 						 purple_marshal_VOID__POINTER, G_TYPE_NONE, 1,
 						 PURPLE_TYPE_BUDDY);
