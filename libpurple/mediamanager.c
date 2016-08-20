@@ -36,6 +36,7 @@
 #ifdef HAVE_MEDIA_APPLICATION
 #include <gst/app/app.h>
 #endif
+#endif /* USE_VV */
 
 /** @copydoc _PurpleMediaOutputWindow */
 typedef struct _PurpleMediaOutputWindow PurpleMediaOutputWindow;
@@ -129,7 +130,6 @@ enum {
 	LAST_SIGNAL
 };
 static guint purple_media_manager_signals[LAST_SIGNAL] = {0};
-#endif
 
 GType
 purple_media_manager_get_type()
