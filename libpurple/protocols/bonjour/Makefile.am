@@ -1,7 +1,5 @@
 EXTRA_DIST = \
 	mdns_avahi.c \
-	mdns_win32.c \
-	mdns_dns_sd.c \
 	dns_sd_proxy.c \
 	dns_sd_proxy.h \
 	Makefile.mingw
@@ -25,12 +23,9 @@ BONJOURSOURCES = \
 	bonjour_ft.h 
 
 if IS_WIN32
-BONJOURSOURCES += \
-	dns_sd_proxy.c \
-	mdns_win32.c
+BONJOURSOURCES += dns_sd_proxy.c
 else
-BONJOURSOURCES += \
-	mdns_avahi.c
+BONJOURSOURCES += mdns_avahi.c
 endif
 
 AM_CFLAGS = $(st)
