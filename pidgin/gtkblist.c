@@ -4972,7 +4972,7 @@ static gboolean pidgin_blist_select_notebook_page_cb(gpointer user_data)
 
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 
-	priv->select_page_timeout = 0;
+	priv->select_notebook_page_timeout = 0;
 
 	/* this is far too ugly thanks to me not wanting to fix #3989 properly right now */
 	if (priv->error_scrollbook != NULL) {
