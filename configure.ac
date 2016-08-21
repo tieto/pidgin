@@ -251,7 +251,6 @@ FINCH_PLUGINDIR="\$(libdir)/finch-$PURPLE_MAJOR_VERSION"
 AC_SUBST([FINCH_PLUGINDIR])
 
 dnl Checks for library functions.
-AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(strdup strstr atexit setlocale)
 dnl Checks for getopt in standard library
 AC_CHECK_FUNCS(getopt_long,,
