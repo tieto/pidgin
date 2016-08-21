@@ -438,9 +438,6 @@
 /* Use voice and video */
 /* #define USE_VV 1 */
 
-/* 'va_lists' cannot be copied as values */
-/* #define VA_COPY_AS_ARRAY 1 */
-
 /* Version number of package */
 #define VERSION "@VERSION@"
 #define DISPLAY_VERSION "@DISPLAY_VERSION@"

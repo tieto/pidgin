@@ -2130,30 +2130,6 @@ if test $ac_cv_struct_tm_gmtoff = yes; then
         AC_DEFINE(HAVE_TM_GMTOFF, 1, [Define if you have a tm_gmtoff member in struct tm])
 fi
 
-AC_CACHE_CHECK([whether va_lists can be copied by value], ac_cv_va_val_copy,[
-	AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdarg.h>
-#include <stdlib.h>
-	void f (int i, ...) {
-	va_list args1, args2;
-	va_start (args1, i);
-	args2 = args1;
-	if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
-	  exit (1);
-	va_end (args1); va_end (args2);
-	}
-	int main() {
-	  f (0, 42);
-	  return 0;
-	}]])],
-	[ac_cv_va_val_copy=yes],
-	[ac_cv_va_val_copy=no],
-	[ac_cv_va_val_copy=yes])
-])
-
-if test "x$ac_cv_va_val_copy" = "xno"; then
-	AC_DEFINE(VA_COPY_AS_ARRAY, 1, ['va_lists' cannot be copied as values])
-fi
-
 dnl #######################################################################
 dnl # Disable pixmap installation
 dnl #######################################################################
