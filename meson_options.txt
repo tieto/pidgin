@@ -1,0 +1,140 @@
+# Should be removed when meson gains this option built-in.
+option('sysconfdir', type : 'string',
+       description : 'directory for installing read-only data files')
+
+option('win32-dirs', type : 'string', value : 'classic',
+       description : 'use win32 "classic" (Program Files-like) or "fhs" (unix-like) directory structure (default: "classic")')
+
+option('nls', type : 'boolean', value : true,
+       description : 'enable installation of translation files')
+
+option('extraversion', type : 'string',
+	   description : 'extra version number to be displayed in Help->About and --help (for packagers)')
+
+option('missing-dependencies', type : 'boolean', value : false,
+       description : 'skip missing dependencies instead of aborting configuration')
+
+option('x', type : 'boolean', value : true)
+
+option('gtkui', type : 'boolean', value : true,
+       description : 'compile with GTK+ user interface')
+option('consoleui', type : 'boolean', value : true,
+       description : 'compile with console user interface')
+
+option('screensaver', type : 'boolean', value : true,
+       description : 'compile with X screensaver extension (used to detect idleness)')
+
+option('sm', type : 'boolean', value : true,
+       description : 'compile with X session management support')
+
+option('startup-notification', type : 'boolean', value : true,
+       description : 'compile with startup notification support')
+
+option('enchant', type : 'boolean', value : true,
+       description : 'compile with Enchange spell checking support')
+
+option('gevolution', type : 'boolean', value : false,
+       description : 'compile with the Evolution plugin')
+
+option('cap', type : 'boolean', value : false,
+       description : 'compile with Contact Availability Prediction plugin')
+
+option('gestures', type : 'boolean', value : true,
+       description : 'compile with the gestures plugin')
+
+option('gcr', type : 'boolean', value : false,
+       description : 'compile with GCR certificate widgets')
+
+option('ncurses-headers', type : 'string',
+       description : 'compile finch against the ncurses includes in DIR')
+
+option('gstreamer', type : 'boolean', value : true,
+       description : 'compile with GStreamer audio support')
+
+option('gstreamer-video', type : 'boolean', value : true,
+       description : 'compile with GStreamer 1.0 Video Overlay support')
+
+option('farstream', type : 'boolean', value : true,
+       description : 'compile with farstream support')
+
+option('vv', type : 'boolean', value : true,
+       description : 'compile with voice and video support')
+
+option('idn', type : 'boolean', value : true,
+       description : 'compile with IDN support')
+
+option('meanwhile', type : 'boolean', value : true,
+       description : 'compile with meanwhile')
+
+option('avahi', type : 'boolean', value : true,
+       description : 'compile with avahi (required for Bonjour support)')
+option('avahi-client-includes', type : 'string',
+       description : 'compile the Bonjour plugin against the Avahi Client includes in DIR')
+option('avahi-client-libs', type : 'string',
+       description : 'compile the Bonjour plugin against the Avahi Client libs in DIR')
+
+option('silc-includes', type : 'string',
+       description : 'compile the SILC plugin against includes in DIR')
+option('silc-libs', type : 'string',
+       description : 'compile the SILC plugin against the SILC libs in DIR')
+
+option('distrib', type : 'boolean', value : false)
+
+option('static-prpls', type : 'string',
+       description : 'Link to certain protocols statically')
+
+option('dynamic-prpls', type : 'string', value: 'all',
+       description : 'specify which protocols to build dynamically')
+
+option('plugins', type : 'boolean', value : true,
+       description : 'compile with plugin support')
+
+option('krb4', type : 'boolean', value : false,
+       description : 'compile Zephyr plugin with Kerberos 4 support')
+
+option('zephyr', type : 'boolean', value : false,
+       description : 'compile Zephyr plugin against external libzephyr')
+
+option('fortify', type : 'boolean', value : true,
+       description : 'compile with FORTIFY_SOURCE support')
+
+option('glib-errors-trace', type : 'boolean', value : false,
+       description : 'print backtraces for glib errors')
+
+option('dbus', type : 'boolean', value : true,
+       description : 'enable D-Bus support')
+
+option('unity-integration', type : 'boolean', value : false,
+       description : 'compile with support for unity integration plugin')
+
+option('gnome-keyring', type : 'boolean', value : true,
+       description : 'enable GNOME Keyring support')
+
+option('kwallet', type : 'boolean', value : true,
+       description : 'enable KWallet support')
+option('kwallet-includes', type : 'string',
+       description : 'compile the KWallet plugin against includes in DIR')
+option('kwallet-libs', type : 'string',
+       description : 'compile the KWallet plugin against the KWallet libs in DIR')
+
+option('dbus-services', type : 'string',
+       description : 'where the D-Bus services directory is located')
+
+option('system-ssl-certs', type : 'string',
+       description : 'directory containing system-wide SSL CA certificates')
+option('gnutls', type : 'boolean', value : true,
+       description : 'attempt to use GnuTLS for SSL support')
+option('nss', type : 'boolean', value : true,
+       description : 'attempt to use Mozilla libnss for SSL support')
+
+option('cyrus-sasl', type : 'boolean', value : false,
+       description : 'enable Cyrus SASL support for XMPP/IRC')
+
+option('pixmaps-install', type : 'boolean', value : true,
+       description : 'enable installation of pixmap files - Pidgin still needs them!')
+
+option('trayicon-compat', type : 'boolean', value : false,
+       description : 'install tray icons in location compatible with older releases of hicolor-icon-theme')
+
+option('debug', type : 'boolean', value : false,
+       description : 'compile with debugging support')
