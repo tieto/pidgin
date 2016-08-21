@@ -2119,16 +2119,10 @@ AC_CHECK_HEADERS(sys/sysctl.h, [], [],
 AC_CHECK_HEADERS(sys/socket.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
-AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
-        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-                #include <time.h>
-        ]], [[
-                struct tm tm;
-                tm.tm_gmtoff = 1;
-        ]])], [ac_cv_struct_tm_gmtoff=yes], [ac_cv_struct_tm_gmtoff=no]))
-if test $ac_cv_struct_tm_gmtoff = yes; then
-        AC_DEFINE(HAVE_TM_GMTOFF, 1, [Define if you have a tm_gmtoff member in struct tm])
-fi
+AC_CHECK_MEMBER([struct tm.tm_gmtoff],
+	[AC_DEFINE(HAVE_TM_GMTOFF, 1, [Define if you have a tm_gmtoff member in struct tm])],
+	[],
+	[[#include <time.h>]])
 
 dnl #######################################################################
 dnl # Disable pixmap installation
