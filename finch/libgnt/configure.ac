@@ -69,7 +69,7 @@ dnl AC_CYGWIN
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(arpa/nameser_compat.h fcntl.h sys/time.h unistd.h locale.h signal.h stdint.h regex.h)
+AC_CHECK_HEADERS(fcntl.h unistd.h locale.h signal.h stdint.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -91,9 +91,6 @@ AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
 AC_MSG_CHECKING(for the %z format string in strftime())
 AC_TRY_RUN([
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
 #include <time.h>
 #include <stdio.h>
 

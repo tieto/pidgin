@@ -166,7 +166,7 @@ AC_SUBST(FINCH_LIBS)
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(arpa/nameser_compat.h fcntl.h sys/time.h unistd.h locale.h stdint.h)
+AC_CHECK_HEADERS(fcntl.h unistd.h locale.h stdint.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -378,9 +378,6 @@ int main(int argc, char *argv[])
 
 AC_MSG_CHECKING([for the %z format string in strftime()])
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
 #include <time.h>
 #include <stdio.h>
 
@@ -2116,7 +2113,7 @@ AC_CHECK_FUNCS(gethostid lrand48 timegm)
 AC_CHECK_FUNCS(memcpy memmove random strchr strerror vprintf)
 AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
-AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
+AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
 
 # sys/sysctl.h on OpenBSD 4.2 requires sys/param.h

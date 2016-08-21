@@ -40,9 +40,6 @@
 /* Define if you have the external 'altzone' variable. */
 /* #undef HAVE_ALTZONE */
 
-/* Define to 1 if you have the <arpa/nameser_compat.h> header file. */
-/* #undef HAVE_ARPA_NAMESER_COMPAT_H */
-
 /* Define to 1 if you have the `atexit' function. */
 #define HAVE_ATEXIT 1
 
@@ -311,9 +308,6 @@
 
 /* Define to 1 if you have the <sys/sysctl.h> header file. */
 /* #define HAVE_SYS_SYSCTL_H 1 */
-
-/* Define to 1 if you have the <sys/time.h> header file. */
-/* #undef HAVE_SYS_TIME_H */
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
