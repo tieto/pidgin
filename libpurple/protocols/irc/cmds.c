@@ -422,18 +422,29 @@ int irc_cmd_ping(struct irc_conn *irc, const char *cmd, const char *target, cons
 
 int irc_cmd_privmsg(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
+	int max_privmsg_arg_len;
 	const char *cur, *end;
+	gchar *salvaged;
 	char *msg, *buf;
 
 	if (!args || !args[0] || !args[1])
 		return 0;
 
-	cur = args[1];
-	end = args[1];
+	max_privmsg_arg_len = IRC_MAX_MSG_SIZE - strlen(args[0]) - 64;
+	salvaged = purple_utf8_salvage(args[1]);
+	cur = salvaged;
+	end = salvaged;
 	while (*end && *cur) {
 		end = strchr(cur, '\n');
 		if (!end)
 			end = cur + strlen(cur);
+		if (end - cur > max_privmsg_arg_len) {
+			/* this call is used to find the last valid character position in the first
+			 * max_privmsg_arg_len bytes of the utf-8 message
+			 */
+			g_utf8_validate(cur, max_privmsg_arg_len, &end);
+		}
+
 		msg = g_strndup(cur, end - cur);
 
 		if(!strcmp(cmd, "notice"))
@@ -444,8 +455,13 @@ int irc_cmd_privmsg(struct irc_conn *irc, const char *cmd, const char *target, c
 		irc_send(irc, buf);
 		g_free(msg);
 		g_free(buf);
-		cur = end + 1;
+		cur = end;
+		if(*cur == '\n') {
+			cur++;
+		}
 	}
+
+	g_free(salvaged);
 
 	return 0;
 }
