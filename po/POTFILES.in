@@ -80,7 +80,6 @@ libpurple/protocols.c
 libpurple/protocols/bonjour/bonjour.c
 libpurple/protocols/bonjour/bonjour.h
 libpurple/protocols/bonjour/jabber.c
-libpurple/protocols/bonjour/mdns_win32.c
 libpurple/protocols/facebook/api.c
 libpurple/protocols/facebook/facebook.c
 libpurple/protocols/facebook/http.c
