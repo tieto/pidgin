@@ -954,7 +954,6 @@ AC_ARG_ENABLE(gstreamer,
 if test x"$enable_gst" != "xno"; then
 	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0], [
 	   AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
-	   with_gstreamer="1.0"
 	   AC_SUBST(GSTREAMER_CFLAGS)
 	   AC_SUBST(GSTREAMER_LIBS)
    ], [
@@ -2284,7 +2283,6 @@ echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo
 echo Build with GStreamer support.. : $enable_gst
-echo Build for GStreamer version... : $with_gstreamer
 echo Build with D-Bus support...... : $enable_dbus
 echo Build with voice and video.... : $enable_vv
 if test "x$enable_dbus" = "xyes" ; then
