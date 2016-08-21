@@ -582,18 +582,12 @@ running configure.
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
 
-	GTK_PC_MODULE="gtk+-3.0"
-	GTK_VERSION="3"
-	AC_SUBST(GTK_PC_MODULE)
-	AC_SUBST(GTK_VERSION)
-
 	dnl We only really need Pango >= 1.4 for decent RTL support
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
 	WEBKIT_VERSION=1.3.7
-	WEBKIT_PC_MODULE="webkitgtk-3.0"
-	PKG_CHECK_MODULES(WEBKIT, [$WEBKIT_PC_MODULE >= $WEBKIT_VERSION], , [
+	PKG_CHECK_MODULES(WEBKIT, ["webkitgtk-3.0" >= $WEBKIT_VERSION], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 You must have WebKit for GTK+3 $WEBKIT_VERSION or newer development headers
@@ -602,7 +596,6 @@ installed to compile Pidgin.  If you want to build only Finch then specify
 ])])
 	AC_SUBST(WEBKIT_CFLAGS)
 	AC_SUBST(WEBKIT_LIBS)
-	AC_SUBST(WEBKIT_PC_MODULE)
 
 	dnl #######################################################################
 	dnl # Check if we should compile with enchant support
