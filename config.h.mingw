@@ -470,9 +470,6 @@
 /* Define for large files, on AIX-style hosts. */
 /* #undef _LARGE_FILES */
 
-/* Define to empty if `const' does not conform to ANSI C. */
-/* #undef const */
-
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */
 

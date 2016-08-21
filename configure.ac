@@ -169,7 +169,6 @@ AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(fcntl.h unistd.h locale.h stdint.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
 AC_CHECK_SIZEOF(time_t, ,[
 #include <stdio.h>
 #include <time.h>])
