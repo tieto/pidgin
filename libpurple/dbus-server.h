@@ -29,6 +29,8 @@
  * @see_also: <link linkend="chapter-signals-dbus-server">D-Bus Server signals</link>
  */
 
+#include <glib.h>
+
 #include "dbus-purple.h"
 
 G_BEGIN_DECLS
