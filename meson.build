@@ -1743,6 +1743,10 @@ if kerberos
 #	AC_CHECK_FUNCS(krb_get_err_text krb_log)
 #	LIBS='$orig_LIBS'
 #	LDFLAGS='$orig_LDFLAGS'
+	krb4 = declare_dependency()
+endif
+if not kerberos
+	krb4 = declare_dependency()
 endif
 
 #######################################################################
@@ -1775,6 +1779,10 @@ if zephyr
 #	orig_LIBS='$LIBS'
 #	LIBS='$orig_LIBS'
 #	LDFLAGS='$orig_LDFLAGS'
+	ext_zephyr = declare_dependency()
+endif
+if not zephyr
+	ext_zephyr = declare_dependency()
 endif
 
 #AC_MSG_CHECKING(for me pot o' gold)
