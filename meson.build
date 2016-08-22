@@ -1692,13 +1692,16 @@ if enable_cyrus_sasl
 	if compiler.has_function('sasl_client_init', args : '-lsasl2')
 		USE_CYRUS_SASL = true
 		conf.set('HAVE_CYRUS_SASL', true)
-		SASL_LIBS = '-lsasl2'
+		sasl = declare_dependency(link_args : '-lsasl2')
 	else
 		USE_CYRUS_SASL = false
 		error('Cyrus SASL library not found')
 	endif
 else
 	USE_CYRUS_SASL = false
+endif
+if not USE_CYRUS_SASL
+	sasl = declare_dependency()
 endif
 
 #######################################################################

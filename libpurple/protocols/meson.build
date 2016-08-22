@@ -1,7 +1,7 @@
 subdir('bonjour')
 subdir('facebook')
 subdir('gg')
-#subdir('irc')
+subdir('irc')
 #subdir('jabber')
 #subdir('msn')
 #subdir('mxit')
