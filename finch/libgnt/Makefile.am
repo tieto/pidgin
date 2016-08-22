@@ -1,4 +1,4 @@
-EXTRA_DIST=genmarshal
+EXTRA_DIST=gntmarshal
 
 SUBDIRS = . wms
 pkgconfigdir = $(libdir)/pkgconfig
@@ -72,12 +72,12 @@ CLEANFILES = \
 	gntmarshal.h \
 	gntmarshal.c
 
-gntmarshal.c: $(srcdir)/genmarshal gntmarshal.h
+gntmarshal.c: $(srcdir)/gntmarshal gntmarshal.h
 	$(AM_V_GEN)echo "#include \"gntmarshal.h\"" > $@
-	$(AM_V_at)glib-genmarshal --prefix=gnt_closure_marshal --body $(srcdir)/genmarshal >> $@
+	$(AM_V_at)glib-genmarshal --prefix=gnt_closure_marshal --body $(srcdir)/gntmarshal >> $@
 
-gntmarshal.h: $(srcdir)/genmarshal
-	$(AM_V_GEN)glib-genmarshal --prefix=gnt_closure_marshal --header $(srcdir)/genmarshal > $@
+gntmarshal.h: $(srcdir)/gntmarshal
+	$(AM_V_GEN)glib-genmarshal --prefix=gnt_closure_marshal --header $(srcdir)/gntmarshal > $@
 
 libgnt_laincludedir=$(includedir)/gnt
 libgnt_lainclude_HEADERS = \
