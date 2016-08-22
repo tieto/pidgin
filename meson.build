@@ -66,13 +66,12 @@ gnt_version = '@0@.@1@.@2@'.format(gnt_major_version,
 gnt_display_version = '@0@@1@'.format(gnt_version,
                                       gnt_version_suffix)
 
-cdefs = [
-    ['VERSION', '"' + purple_display_version + '"'],
-    ['HAVE_CONFIG_H', '1']
-]
 
+add_global_arguments('-DHAVE_CONFIG_H=1', language : 'c')
 conf = configuration_data()
 version_conf = configuration_data()
+
+conf.set('VERSION', '"@0@"'.format(purple_display_version))
 
 version_conf.set('PURPLE_MAJOR_VERSION', purple_major_version)
 version_conf.set('PURPLE_MINOR_VERSION', purple_minor_version)
@@ -101,14 +100,14 @@ sedpath = find_program('sed')
 xxdpath = find_program('xxd')
 
 # Storing configure arguments
-# cdefs += [['CONFIG_ARGS', ac_configure_args]]
+# conf.set('CONFIG_ARGS', ac_configure_args)
 
 # Checks for programs.
 compiler = meson.get_compiler('c')
 #cxx_compiler = meson.get_compiler('cpp')
 
 if compiler.has_function('alloca')  # FIXME: Probably not enough.
-	cdefs += [['HAVE_ALLOCA_H']]
+	conf.set('HAVE_ALLOCA_H', true)
 else
 	error('alloca could not be found')
 endif
@@ -126,10 +125,8 @@ if host_machine.system() == 'windows'
 	WINDRES = generator(find_program('windres'),
 	                    output : '@BASENAME@.o',
 	                    arguments : ['-i', '@INPUT@', '-o', '@OUTPUT@'])
-	cdefs += [
-	    ['IS_WIN32_CROSS_COMPILED', 1],
-	    ['WIN32_LEAN_AND_MEAN', 1]
-	]
+	conf.set('IS_WIN32_CROSS_COMPILED', true)
+	conf.set('WIN32_LEAN_AND_MEAN', true)
 else
 	is_win32 = false
 	is_not_win32 = true
@@ -174,16 +171,14 @@ if stdc
 #'''
 #	stdc = stdc and compiler.compiles(code, name : 'string.h declares memory functions')
 endif
-if stdc
-	cdefs += [['STDC_HEADERS']]
-endif
+conf.set('STDC_HEADERS', stdc)
 # AC_HEADER_SYS_WAIT:
-if compiler.has_header('sys/wait.h')
-	cdefs += [['HAVE_SYS_WAIT_H']]
-endif
+conf.set('HAVE_SYS_WAIT_H', compiler.has_header('sys/wait.h'))
 
 foreach h : ['fcntl.h', 'unistd.h', 'locale.h', 'stdint.h']
-	if not compiler.has_header(h)
+	if compiler.has_header(h)
+		conf.set('HAVE_' + h.to_upper().underscorify(), true)
+	else
 		error(h + ' is required.')
 	endif
 endforeach
@@ -194,25 +189,21 @@ time_t_size = compiler.sizeof('time_t',
 #include <stdio.h>
 #include <time.h>
 ''')
-cdefs += [['SIZEOF_TIME_T', '@0@'.format(time_t_size)]]
+conf.set('SIZEOF_TIME_T', time_t_size)
 
 #AC_C_BIGENDIAN
 
-if is_win32 and get_option('win32-dirs') == 'fhs'
-    cdefs += [['USE_WIN32_FHS', '1']]
-endif
+conf.set('USE_WIN32_FHS',
+         is_win32 and get_option('win32-dirs') == 'fhs')
 
 # Check for directories
 if is_win32
 	if get_option('win32-dirs') == 'fhs'
-		AS_AC_EXPAND(win32_fhs_bindir, bindir)
-		cdefs += [
-		    ['WIN32_FHS_BINDIR', get_option('bindir')],
-		    ['WIN32_FHS_LIBDIR', get_option('libdir')],
-		    ['WIN32_FHS_DATADIR', get_option('datadir')],
-		    ['WIN32_FHS_SYSCONFDIR', get_option('sysconfdir')],
-		    ['WIN32_FHS_LOCALEDIR', get_option('localedir')],
-		]
+		conf.set('WIN32_FHS_BINDIR', get_option('bindir'))
+		conf.set('WIN32_FHS_LIBDIR', get_option('libdir'))
+		conf.set('WIN32_FHS_DATADIR', get_option('datadir'))
+		conf.set('WIN32_FHS_SYSCONFDIR', get_option('sysconfdir'))
+		conf.set('WIN32_FHS_LOCALEDIR', get_option('localedir'))
 
 		purple_libdir = 'wpurple_lib_dir("purple-@0@")'.format(purple_major_version)
 		pidgin_libdir = 'wpurple_lib_dir("pidgin-@0@")'.format(purple_major_version)
@@ -236,28 +227,25 @@ else
 	pidgin_libdir = '"@0@/pidgin-@1@"'.format(common_libdir, purple_major_version)
 	finch_libdir = '"@0@/finch-@1@"'.format(common_libdir, purple_major_version)
 endif
-cdefs += [
-    ['PURPLE_DATADIR', purple_datadir],
-    ['PURPLE_LIBDIR', purple_libdir],
-    ['PIDGIN_LIBDIR', pidgin_libdir],
-    ['FINCH_LIBDIR', finch_libdir],
-    ['PURPLE_SYSCONFDIR', purple_sysconfdir],
-    ['PURPLE_LOCALEDIR', purple_localedir],
-]
+conf.set('PURPLE_DATADIR', purple_datadir)
+conf.set('PURPLE_LIBDIR', purple_libdir)
+conf.set('PIDGIN_LIBDIR', pidgin_libdir)
+conf.set('FINCH_LIBDIR', finch_libdir)
+conf.set('PURPLE_SYSCONFDIR', purple_sysconfdir)
+conf.set('PURPLE_LOCALEDIR', purple_localedir)
 
 # FIXME:
 PURPLE_PLUGINDIR = '\$(libdir)/purple-$PURPLE_MAJOR_VERSION'
-conf.set('PURPLE_PLUGINDIR', PURPLE_PLUGINDIR)
+conf.set('PURPLE_PLUGINDIR', '"@0@"'.format(PURPLE_PLUGINDIR))
 PIDGIN_PLUGINDIR = '\$(libdir)/pidgin-$PURPLE_MAJOR_VERSION'
-conf.set('PIDGIN_PLUGINDIR', PIDGIN_PLUGINDIR)
+conf.set('PIDGIN_PLUGINDIR', '"@0@"'.format(PIDGIN_PLUGINDIR))
 FINCH_PLUGINDIR = '\$(libdir)/finch-$PURPLE_MAJOR_VERSION'
-conf.set('FINCH_PLUGINDIR', FINCH_PLUGINDIR)
+conf.set('FINCH_PLUGINDIR', '"@0@"'.format(FINCH_PLUGINDIR))
 
 # Checks for library functions.
 foreach func : ['strdup', 'strstr', 'atexit', 'setlocale']
-	if compiler.has_function(func)
-		cdefs += [['HAVE_' + func.to_upper()]]
-	endif
+	conf.set('HAVE_' + func.to_upper(),
+	         compiler.has_function(func))
 endforeach
 # Checks for getopt in standard library
 if compiler.has_function('getopt_long')
@@ -275,16 +263,14 @@ if is_win32
 	endif
 endif
 if compiler.has_function('__res_query', args : '-lresolv')
-	cdefs += [['HAVE_LIBRESOLV']]
+	conf.set('HAVE_LIBRESOLV', true)
 endif
 if compiler.has_function('gethostent', args : '-lnsl')
-	cdefs += [['HAVE_LIBNSL']]
+	conf.set('HAVE_LIBNSL', true)
 endif
 if is_win32
-	cdefs += [
-	    ['HAVE_GETADDRINFO'],
-	    ['HAVE_INET_NTOP']
-	]
+	conf.set('HAVE_GETADDRINFO', true)
+	conf.set('HAVE_INET_NTOP', true)
 else
 	if not compiler.has_function('socket')
 		if not compiler.has_function('socket', args : '-lsocket')
@@ -294,19 +280,19 @@ else
 	# If all goes well, by this point the previous two checks will have
 	# pulled in -lsocket and -lnsl if we need them.
 	if compiler.has_function('getaddrinfo')
-		cdefs += [['HAVE_GETADDRINFO']]
+		conf.set('HAVE_GETADDRINFO', true)
 	else
 		if compiler.has_function('getaddrinfo', args : '-lsocket -lnsl')
-			cdefs += [['HAVE_GETADDRINFO']]
+			conf.set('HAVE_GETADDRINFO', true)
 			# FIXME: LIBS += declare_dependency(link_with : ['socket', 'nsl'])
 		endif
 	endif
 	if compiler.has_function('inet_ntop')
-		cdefs += [['HAVE_INET_NTOP']]
+		conf.set('HAVE_INET_NTOP', true)
 	endif
 endif
 if compiler.has_function('getifaddrs')
-	cdefs += [['HAVE_GETIFADDRS']]
+	conf.set('HAVE_GETIFADDRS', true)
 endif
 # Check for socklen_t (in Unix98)
 code = '''
@@ -332,9 +318,9 @@ int accept(int, struct sockaddr *, size_t *);
 int main() {}
 '''
 	if compiler.compiles(code, name : 'socklen_t is size_t')
-        cdefs += [['socklen_t', 'size_t']]
+        conf.set('socklen_t', 'size_t')
 	else
-        cdefs += [['socklen_t', 'int']]
+        conf.set('socklen_t', 'int')
 	endif
 endif
 
@@ -347,7 +333,7 @@ if compiler.has_member('struct sockaddr', 'sa_len',
 #  include <sys/socket.h>
 #endif
 ''')
-	cdefs += [['HAVE_STRUCT_SOCKADDR_SA_LEN']]
+	conf.set('HAVE_STRUCT_SOCKADDR_SA_LEN', true)
 endif
 
 # Check for v6-only sockets
@@ -360,7 +346,7 @@ code = '''
 void main() {IPV6_V6ONLY;};
 '''
 if compiler.compiles(code)
-	cdefs += [['HAVE_IPV6_V6ONLY']]
+	conf.set('HAVE_IPV6_V6ONLY', true)
 endif
 
 # to prevent the g_stat()/g_unlink() crash,
@@ -393,9 +379,7 @@ int main(int argc, char *argv[])
 }
 '''
 result = compiler.run(code, name : 'fileno()')
-if result.returncode() == 0
-	cdefs += [['HAVE_FILENO']]
-endif
+conf.set('HAVE_FILENO', result.returncode() == 0)
 
 code = '''
 #include <time.h>
@@ -420,19 +404,17 @@ int main()
 }
 '''
 result = compiler.run(code, name : 'the %z format string in strftime()')
-if result.returncode() == 0
-	cdefs += [['HAVE_STRFTIME_Z_FORMAT']]
-endif
+conf.set('HAVE_STRFTIME_Z_FORMAT', result.returncode() == 0)
 
 # before gettexting, in case iconv matters
 if host_machine.system() == 'darwin'
 	if compiler.has_function('res_query', args : '-lresolv')
-		cdefs += [['HAVE_LIBRESOLV']]
+		conf.set('HAVE_LIBRESOLV', true)
 	endif
 
 	if compiler.has_header('CoreFoundation/CoreFoundation.h')
 		if compiler.has_header('IOKit/IOKitLib.h')
-			cdefs += [['HAVE_IOKIT']]
+			conf.set('HAVE_IOKIT', true)
 			# FIXME: LIBS="$LIBS -framework IOKit -framework CoreFoundation"
 		endif
 	endif
@@ -475,6 +457,7 @@ if get_option('extraversion') != ''
 else
 	DISPLAY_VERSION = meson.project_version()
 endif
+conf.set('DISPLAY_VERSION', '"@0@"'.format(DISPLAY_VERSION))
 
 force_deps = not get_option('missing-dependencies')
 
@@ -515,7 +498,7 @@ if get_option('gtkui')
 	# We only really need Pango >= 1.4 for decent RTL support
 	pango = dependency('pango', version : '>= 1.4.0')
 	if pango.found()
-		cdefs += [['HAVE_PANGO14']]
+		conf.set('HAVE_PANGO14', true)
 	endif
 
 	webkit = dependency('webkitgtk-3.0', version : '>= 1.3.7')
@@ -531,7 +514,7 @@ if get_option('gtkui')
 		enchant = dependency('enchant', required : force_deps)
 		use_enchant = enchant.found()
 		if use_enchant
-			cdefs += [['USE_ENCHANT', '1']]
+			conf.set('USE_ENCHANT', true)
 #			AC_SUBST(ENCHANT_CFLAGS)
 #			AC_SUBST(ENCHANT_LIBS)
 		endif
@@ -543,7 +526,7 @@ if get_option('gtkui')
 	if with_x
 		x11 = dependency('x11')
 		if x11.found()
-			cdefs += [['HAVE_X11']]
+			conf.set('HAVE_X11', true)
 		else
 			if x_incpath_add != '' and x_libpath_add != ''
 #				X11_LIBS='$x_libpath_add'
@@ -591,7 +574,7 @@ Use -Dx=false if you do not need X11 support.
 #			LIBS='$old_LIBS'
 
 			if enable_screensaver
-				cdefs += [['USE_SCREENSAVER', '1']]
+				conf.set('USE_SCREENSAVER', true)
 #				AC_SUBST(XSS_LIBS)
 			else
 				if force_deps
@@ -625,7 +608,7 @@ this is required for detecting idle time by mouse and keyboard usage.
 			endif
 
 			if enable_sm
-				cdefs += [['USE_SM', '1']]
+				conf.set('USE_SM', true)
 #				AC_SUBST(SM_LIBS)
 			else
 				if force_deps
@@ -661,7 +644,7 @@ Use -Dsm=false if you do not need session management support.
 			)
 		endforeach
 		if enable_gevolution
-			cdeps += [['HAVE_EVOLUTION_ADDRESSBOOK']]
+			conf.set('HAVE_EVOLUTION_ADDRESSBOOK', true)
 #			AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
 #			AC_SUBST(EVOLUTION_ADDRESSBOOK_LIBS)
 		endif
@@ -681,7 +664,7 @@ Use -Dsm=false if you do not need session management support.
 	if enable_gcr
 		GCR = dependency('gcr-3', required : force_deps)
 		if GCR.found()
-			cdefs += [['ENABLE_GCR', '1']]
+			conf.set('ENABLE_GCR', true)
 		else
 			enable_gcr = false
 		endif
@@ -791,7 +774,7 @@ if enable_consoleui
 		else
 			enable_consoleui = false
 		endif
-		cdefs += [['NO_WIDECHAR', '1']]
+		conf.set('NO_WIDECHAR', true)
 		if NCURSES_HEADERS != ''
 			GNT_CFLAGS = '-I' + NCURSES_HEADERS
 		endif
@@ -810,9 +793,7 @@ endif
 #AC_SUBST(GNT_CFLAGS)
 ENABLE_GNT = enable_consoleui
 
-if compiler.has_function('wcwidth')
-	cdefs += [['HAVE_WCWIDTH']]
-endif
+#conf.set('HAVE_WCWIDTH', compiler.has_function('wcwidth'))
 
 #######################################################################
 # Check for LibXML2 (required)
@@ -850,7 +831,7 @@ enable_gst = get_option('gstreamer')
 if enable_gst
 	gstreamer = dependency('gstreamer-1.0', required : force_deps)
 	if gstreamer.found()
-		cdefs += [['USE_GSTREAMER', '1']]
+		conf.set('USE_GSTREAMER', true)
 	else
 		enable_gst = false
 	endif
@@ -864,7 +845,7 @@ if enable_gstvideo
 	gstreamer_video = dependency('gstreamer-video-1.0',
 	                             required : false)
 	if gstreamer_video.found()
-		cdefs += [['USE_GSTVIDEO', '1']]
+		conf.set('USE_GSTVIDEO', true)
 	else
 		enable_gstvideo = false
 	endif
@@ -886,7 +867,7 @@ endif
 #######################################################################
 if get_option('vv')
 	if enable_gst and enable_gstvideo and enable_farstream
-		cdefs += [['USE_VV', '1']]
+		conf.set('USE_VV', true)
 		enable_vv = true
 	else
 		if force_deps
@@ -908,10 +889,8 @@ if enable_vv
 	gstreamer_app = dependency('gstreamer-app-1.0',
 	                           required : false)
 	if gstreamer_app.found()
-		cdefs += [
-		    ['USE_GSTAPP', '1'],
-		    ['HAVE_MEDIA_APPLICATION']
-		]
+		conf.set('USE_GSTAPP', true)
+		conf.set('HAVE_MEDIA_APPLICATION', true)
 	endif
 endif
 
@@ -921,9 +900,7 @@ endif
 
 if get_option('idn')
 	idn = dependency('libidn', version : '>= 0.0.0', required : force_deps)
-	if idn.found()
-		cdefs += [['USE_IDN', '1']]
-	endif
+	conf.set('USE_IDN', idn.found())
 endif
 
 #######################################################################
@@ -1031,7 +1008,7 @@ endif
 #AC_SUBST(SILC_CFLAGS)
 # SILC Toolkit >= 1.0.1 has a new MIME API
 #if test 'x$silcclient' = 'xyes'; then
-#	AC_DEFINE(HAVE_SILCMIME_H, 1, [Define if we have silcmime.h])
+#	conf.set('HAVE_SILCMIME_H', true)
 #fi
 
 #######################################################################
@@ -1060,7 +1037,7 @@ endif
 
 HAVE_LIBGADU = have_libgadu
 if have_libgadu
-	cdefs += [['HAVE_LIBGADU']]
+	conf.set('HAVE_LIBGADU', true)
 else
 	gg_have_gnutls_csxst = compiler.has_function('gnutls_certificate_set_x509_system_trust', args : '-lgnutls')
 
@@ -1074,17 +1051,16 @@ else
 	endif
 
 	if gg_have_gnutls_csxst
-		cdefs += [['HAVE_GNUTLS_CERTIFICATE_SET_X509_SYSTEM_TRUST']]
+		conf.set('HAVE_GNUTLS_CERTIFICATE_SET_X509_SYSTEM_TRUST', true)
 	endif
 	if gg_gnutls_sts != ''
-		cdefs += [['GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE', gg_gnutls_sts]]
+		conf.set('GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE',
+                 '"@0@"'.format(gg_gnutls_sts))
 	endif
 
 	# redundant - only here to stay compatible with libgadu upstream
 	GNUTLS_2_10 = dependency('gnutls', version : '>= 2.10.0', required : false)
-	if GNUTLS_2_10.found()
-		cdefs += [['HAVE_GNUTLS_2_10']]
-	endif
+	conf.set('HAVE_GNUTLS_2_10', GNUTLS_2_10.found())
 endif
 
 #AC_SUBST(LIBGADU_LIBS)
@@ -1147,10 +1123,12 @@ STATIC_SIMPLE = STATIC_PRPLS.contains('simple')
 STATIC_YAHOO = STATIC_PRPLS.contains('yahoo')
 STATIC_ZEPHYR = STATIC_PRPLS.contains('zephyr')
 #AC_SUBST(STATIC_LINK_LIBS)
-add_global_arguments('-DSTATIC_PROTO_LOAD=' + ' '.join(extern_load) + ' static void static_proto_load(void) { ' + ' '.join(load_proto) + ' }',
-                     language : 'c')
-add_global_arguments('-DSTATIC_PROTO_UNLOAD=' + ' '.join(extern_unload) + ' static void static_proto_unload(void) { ' + ' '.join(unload_proto) + ' }',
-                     language : 'c')
+conf.set('STATIC_PROTO_LOAD',
+         ' '.join(extern_load) +
+         ' static void static_proto_load(void) { ' + ' '.join(load_proto) + ' }')
+conf.set('STATIC_PROTO_UNLOAD',
+         ' '.join(extern_unload) +
+         ' static void static_proto_unload(void) { ' + ' '.join(unload_proto) + ' }')
 
 if DYNAMIC_PRPLS == 'all'
 	DYNAMIC_PRPLS = 'bonjour facebook gg irc jabber msn mxit novell oscar sametime silc simple yahoo zephyr'
@@ -1185,12 +1163,10 @@ dynamic_simple = DYNAMIC_PRPLS.contains('simple')
 dynamic_yahoo = DYNAMIC_PRPLS.contains('yahoo')
 dynamic_zephyr = DYNAMIC_PRPLS.contains('zephyr')
 
-if compiler.has_header('sys/utsname.h')
-	cdefs += [['HAVE_SYS_UTSNAME_H']]
-endif
-if compiler.has_function('uname')
-	cdefs += [['HAVE_UNAME']]
-endif
+conf.set('HAVE_SYS_UTSNAME_H',
+         compiler.has_header('sys/utsname.h'))
+conf.set('HAVE_UNAME',
+         compiler.has_function('uname'))
 
 
 DEBUG_CFLAGS = '-DPURPLE_DISABLE_DEPRECATED -DPIDGIN_DISABLE_DEPRECATED -DFINCH_DISABLE_DEPRECATED -DGNT_DISABLE_DEPRECATED'
@@ -1279,7 +1255,7 @@ if get_option('glib-errors-trace')
 	if have_clang
 		error('--enable-glib-errors-trace doesn\'t work with clang')
 	endif
-	cdefs += [['ENABLE_GLIBTRACE', '1']]
+	conf.set('ENABLE_GLIBTRACE', true)
 #	CFLAGS='$CFLAGS -rdynamic'
 endif
 
@@ -1345,7 +1321,7 @@ enable_gnome_keyring = get_option('gnome-keyring') and is_not_win32
 if enable_gnome_keyring
 	gnome_keyring = dependency('gnome-keyring-1', required : force_deps)
 	if gnome_keyring.found()
-		cdefs += [['HAVE_GNOMEKEYRING']]
+		conf.set('HAVE_GNOMEKEYRING', true)
 	else
 		enable_gnome_keyring = false
 	endif
@@ -1483,7 +1459,7 @@ endif
 
 if enable_introspection
 	gnome = import('gnome')
-	cdefs += [['ENABLE_INTROSPECTION', '1']]
+	conf.set('ENABLE_INTROSPECTION', true)
 endif
 
 #######################################################################
@@ -1547,7 +1523,7 @@ if enable_dbus
 		endif
 	endif
 #	AC_MSG_RESULT([$DBUS_SERVICES_DIR])
-	cdefs += [['HAVE_DBUS']]
+	conf.set('HAVE_DBUS', true)
 endif
 #AC_SUBST(DBUS_SERVICES_DIR)
 
@@ -1596,7 +1572,8 @@ if ssl_certificates_dir != ''
 endif
 #AC_SUBST(SSL_CERTIFICATES_DIR)
 if SSL_CERTIFICATES_DIR != ''
-	cdefs += [['SSL_CERTIFICATES_DIR', SSL_CERTIFICATES_DIR]]
+	conf.set('SSL_CERTIFICATES_DIR',
+	         '"@0@"'.format(SSL_CERTIFICATES_DIR))
 endif
 INSTALL_SSL_CERTIFICATES = SSL_CERTIFICATES_DIR == ''
 
@@ -1621,7 +1598,7 @@ if enable_gnutls
 	gnutls = dependency('gnutls', version : '>= 2.10', required : false)
 	have_gnutls = gnutls.found()
 	if have_gnutls
-		cdefs += [['HAVE_GNUTLS']]
+		conf.set('HAVE_GNUTLS', true)
 		msg_gnutls = 'GnuTLS'
 	endif
 endif
@@ -1646,7 +1623,7 @@ if enable_nss
 	endif
 
 	if have_nss
-		cdefs += [['HAVE_NSS']]
+		conf.set('HAVE_NSS', true)
 		msg_nss = 'Mozilla NSS'
 	else
 		error('No SSL/TLS library available')
@@ -1684,7 +1661,7 @@ endif
 
 #if test '$ac_cv_cygwin' = yes ; then
 #	LDADD='$LDADD -static'
-#	cdefs += [['DEBUG', '1']]
+#	conf.set('DEBUG', true)
 #endif
 
 #AC_SUBST(DEBUG_CPPFLAGS)
@@ -1693,22 +1670,20 @@ endif
 #AC_SUBST(LIBS)
 
 if get_option('plugins')
-	cdefs += [['PURPLE_PLUGINS', '1']]
+	conf.set('PURPLE_PLUGINS', 1)
 	PLUGINS = true
 	PLUGINS_DEFINE = '#define PURPLE_PLUGINS 1'
 else
 	PLUGINS = false
 	PLUGINS_DEFINE = '#undef PURPLE_PLUGINS'
 endif
-conf.set('PLUGINS_DEFINE', PLUGINS_DEFINE)
 
 #######################################################################
 # Check for Cyrus-SASL (for xmpp/irc)
 #######################################################################
 foreach func : ['snprintf', 'connect']
-	if compiler.has_function(func)
-		cdefs += [['HAVE_' + func.to_upper()]]
-	endif
+	conf.set('HAVE_' + func.to_upper(),
+	         compiler.has_function(func))
 endforeach
 #AC_SUBST(SASL_LIBS)
 SASL_LIBS = ''
@@ -1716,7 +1691,7 @@ enable_cyrus_sasl = get_option('cyrus-sasl')
 if enable_cyrus_sasl
 	if compiler.has_function('sasl_client_init', args : '-lsasl2')
 		USE_CYRUS_SASL = true
-		cdefs += [['HAVE_CYRUS_SASL']]
+		conf.set('HAVE_CYRUS_SASL', true)
 		SASL_LIBS = '-lsasl2'
 	else
 		USE_CYRUS_SASL = false
@@ -1729,7 +1704,7 @@ endif
 #######################################################################
 # Check for Kerberos (for Zephyr)
 #######################################################################
-cdefs += [['ZEPHYR_INT32', 'long']]
+conf.set('ZEPHYR_INT32', 'long')
 #AC_SUBST(KRB4_CFLAGS)
 #AC_SUBST(KRB4_LDFLAGS)
 #AC_SUBST(KRB4_LIBS)
@@ -1746,7 +1721,7 @@ if kerberos
 	elif run_command('test', '-d', '/usr/include/kerberosIV').returncode() == 0
 #		KRB4_CFLAGS='-I/usr/include/kerberosIV'
 	endif
-	cdefs += [['ZEPHYR_USES_KERBEROS', '1']]
+	conf.set('ZEPHYR_USES_KERBEROS', true)
 
 #	orig_LDFLAGS='$LDFLAGS'
 #	LDFLAGS='$LDFLAGS $KRB4_LDFLAGS'
@@ -1784,7 +1759,7 @@ if zephyr
 #	elif test -d /usr/local/include/zephyr ; then
 #		ZEPHYR_CFLAGS='-I/usr/local/include'
 #	fi
-	cdefs += [['LIBZEPHYR_EXT', '1']]
+	conf.set('LIBZEPHYR_EXT', true)
 	EXTERNAL_LIBZEPHYR = zephyr
 #	orig_LDFLAGS='$LDFLAGS'
 #	LDFLAGS='$LDFLAGS $ZEPHYR_LDFLAGS'
@@ -1800,21 +1775,18 @@ endif
 #AC_MSG_CHECKING(for me pot o' gold)
 #AC_MSG_RESULT(no)
 foreach func : 'gethostid lrand48 timegm memcpy memmove random strchr strerror vprintf'.split()
-	if compiler.has_function(func)
-		cdefs += [['HAVE_' + func.to_upper()]]
-	endif
+	conf.set('HAVE_' + func.to_upper(),
+	         compiler.has_function(func))
 endforeach
 foreach header : 'malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h sys/select.h sys/uio.h sys/utsname.h sys/wait.h termios.h'.split()
-	if compiler.has_header(header)
-		cdefs += [['HAVE_' + header.to_upper().underscorify()]]
-	endif
+	conf.set('HAVE_' + header.to_upper().underscorify(),
+	         compiler.has_header(header))
 endforeach
 
 # sys/sysctl.h on OpenBSD 4.2 requires sys/param.h
 # sys/sysctl.h on FreeBSD requires sys/types.h
-if compiler.has_header('sys/param.h')
-	cdefs += [['HAVE_SYS_PARAM_H']]
-endif
+conf.set('HAVE_SYS_PARAM_H',
+         compiler.has_header('sys/param.h'))
 #AC_CHECK_HEADERS(sys/sysctl.h, [], [],
 #	[[
 #		#include <sys/types.h>
@@ -1823,14 +1795,13 @@ endif
 #		#endif
 #	]])
 #
-if compiler.has_header('sys/socket.h')
-	cdefs += [['HAVE_SYS_SOCKET_H']]
-endif
+conf.set('HAVE_SYS_SOCKET_H',
+         compiler.has_header('sys/socket.h'))
 #AC_VAR_TIMEZONE_EXTERNALS
 
-if compiler.has_member('struct tm', 'tm_gmtoff', prefix : '#include<time.h>')
-	cdefs += [['HAVE_TM_GMTOFF']]
-endif
+conf.set('HAVE_TM_GMTOFF',
+         compiler.has_member('struct tm', 'tm_gmtoff',
+                             prefix : '#include<time.h>'))
 
 #######################################################################
 # Disable pixmap installation
@@ -1858,16 +1829,9 @@ ENABLE_TRAYCOMPAT = get_option('trayicon-compat')
 ENABLE_GTK_DOC = false
 
 enable_debug = get_option('debug')
-if enable_debug
-	cdefs += [['DEBUG', '1']]
-endif
+conf.set('DEBUG', enable_debug)
 
 PURPLE_AVAILABLE = true
-
-foreach def : cdefs
-	add_global_arguments('-D@0@'.format('='.join(def)),
-	                     language : 'c')
-endforeach
 
 # So that config.h may be found.
 toplevel_inc = include_directories('.')
