@@ -279,7 +279,7 @@ purple_h = configure_file(input : 'purple.h.in',
                           install_dir : get_option('includedir') + '/libpurple')
 version_h = configure_file(input : 'version.h.in',
                            output : 'version.h',
-                           configuration : conf,
+                           configuration : version_conf,
                            install : true,
                            install_dir : get_option('includedir') + '/libpurple')
 
@@ -418,9 +418,10 @@ dbus_sources = []
 
 endif
 
+libpurple_inc = include_directories('.')
 libpurple = library('purple',
                     purple_coresources + purple_builtsources + dbus_sources + purple_builtheaders,
-                    include_directories : include_directories('.'),
+                    include_directories : [toplevel_inc, libpurple_inc],
                     install : true,
                     soversion : purple_lt_current,
                     version : PURPLE_LT_VERSION_INFO,
