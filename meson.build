@@ -235,11 +235,11 @@ conf.set('PURPLE_SYSCONFDIR', purple_sysconfdir)
 conf.set('PURPLE_LOCALEDIR', purple_localedir)
 
 # FIXME:
-PURPLE_PLUGINDIR = '\$(libdir)/purple-$PURPLE_MAJOR_VERSION'
+PURPLE_PLUGINDIR = '@0@/purple-@1@'.format(get_option('libdir'), purple_major_version)
 conf.set('PURPLE_PLUGINDIR', '"@0@"'.format(PURPLE_PLUGINDIR))
-PIDGIN_PLUGINDIR = '\$(libdir)/pidgin-$PURPLE_MAJOR_VERSION'
+PIDGIN_PLUGINDIR = '@0@/pidgin-@1@'.format(get_option('libdir'), purple_major_version)
 conf.set('PIDGIN_PLUGINDIR', '"@0@"'.format(PIDGIN_PLUGINDIR))
-FINCH_PLUGINDIR = '\$(libdir)/finch-$PURPLE_MAJOR_VERSION'
+FINCH_PLUGINDIR = '@0@/finch-@1@'.format(get_option('libdir'), purple_major_version)
 conf.set('FINCH_PLUGINDIR', '"@0@"'.format(FINCH_PLUGINDIR))
 
 # Checks for library functions.

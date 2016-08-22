@@ -2,7 +2,6 @@ if USE_GCONFTOOL
 #	subdir('data/gconf')
 endif
 
-#subdir('plugins')
 #subdir('protocols')
 
 purple_coresources = [
@@ -546,3 +545,4 @@ endif
 
 subdir('tests')
 subdir('example')
+subdir('plugins')
