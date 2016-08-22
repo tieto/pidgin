@@ -71,6 +71,7 @@ add_global_arguments('-DHAVE_CONFIG_H=1', language : 'c')
 conf = configuration_data()
 version_conf = configuration_data()
 
+conf.set('PACKAGE', '"@0@"'.format(meson.project_name()))
 conf.set('VERSION', '"@0@"'.format(purple_display_version))
 
 version_conf.set('PURPLE_MAJOR_VERSION', purple_major_version)
