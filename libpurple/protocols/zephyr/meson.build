@@ -74,15 +74,11 @@ endif
 
 if STATIC_ZEPHYR
 	zephyr_prpl = static_library('zephyr', ZEPHYRSOURCES,
-	    include_directories : [toplevel_inc, libpurple_inc],
 	    c_args : ['-Dlint', '-DPURPLE_STATIC_PRPL'],
-	    link_with : libpurple,
-	    dependencies : [extdep, gplugin, glib])
+	    dependencies : [extdep, libpurple_dep, glib])
 elif DYNAMIC_ZEPHYR
 	zephyr_prpl = shared_library('zephyr', ZEPHYRSOURCES,
-	    include_directories : [toplevel_inc, libpurple_inc],
 	    c_args : '-Dlint',
-	    link_with : libpurple,
-	    dependencies : [extdep, gplugin, glib],
+	    dependencies : [extdep, libpurple_dep, glib],
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 endif

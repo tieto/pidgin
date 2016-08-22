@@ -9,14 +9,10 @@ IRCSOURCES = [
 
 if STATIC_IRC
 	irc_prpl = static_library('irc', IRCSOURCES,
-	    include_directories : [toplevel_inc, libpurple_inc],
 	    c_args : '-DPURPLE_STATIC_PRPL',
-	    link_with : libpurple,
-	    dependencies : [sasl, gplugin, glib, gio])
+	    dependencies : [sasl, libpurple_dep, glib, gio])
 elif DYNAMIC_IRC
 	irc_prpl = shared_library('irc', IRCSOURCES,
-	    include_directories : [toplevel_inc, libpurple_inc],
-	    link_with : libpurple,
-	    dependencies : [sasl, gplugin, glib, gio],
+	    dependencies : [sasl, libpurple_dep, glib, gio],
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 endif

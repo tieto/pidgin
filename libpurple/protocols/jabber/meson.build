@@ -101,15 +101,11 @@ endif
 
 if STATIC_JABBER
 	jabber_prpl = static_library('jabber', JABBERSOURCES,
-	    include_directories : [toplevel_inc, libpurple_inc],
 	    c_args : '-DPURPLE_STATIC_PRPL',
-	    link_with : libpurple,
-	    dependencies : [gstreamer, idn, libxml, sasl, gplugin, glib, gio, math])
+	    dependencies : [gstreamer, idn, libxml, sasl, libpurple_dep, glib, gio, math])
 elif DYNAMIC_JABBER
 	jabber_prpl = shared_library('jabber', JABBERSOURCES,
-	    include_directories : [toplevel_inc, libpurple_inc],
-	    link_with : libpurple,
-	    dependencies : [gstreamer, idn, libxml, sasl, gplugin, glib, gio, math],
+	    dependencies : [gstreamer, idn, libxml, sasl, libpurple_dep, glib, gio, math],
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 endif
 

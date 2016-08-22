@@ -109,14 +109,10 @@ endif
 
 if STATIC_GG
 	gg_prpl = static_library('gg', GGSOURCES,
-	    include_directories : [toplevel_inc, libpurple_inc],
 	    c_args : '-DPURPLE_STATIC_PRPL',
-	    link_with : libpurple,
-	    dependencies : [intgg, libgadu, json, gplugin, glib])
+	    dependencies : [intgg, libgadu, json, libpurple_dep, glib])
 elif DYNAMIC_GG
 	gg_prpl = shared_library('gg', GGSOURCES,
-	    include_directories : [toplevel_inc, libpurple_inc],
-	    link_with : libpurple,
-	    dependencies : [intgg, libgadu, json, gplugin, glib],
+	    dependencies : [intgg, libgadu, json, libpurple_dep, glib],
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 endif

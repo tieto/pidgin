@@ -428,6 +428,10 @@ libpurple = library('purple',
                          farstream, gstreamer, gstreamer_video,
                          gstreamer_app, idn, json, gnutls,
                          nss, zlib, math])
+libpurple_dep = declare_dependency(
+    include_directories : [toplevel_inc, libpurple_inc],
+    link_with : libpurple,
+    dependencies : [gplugin, glib])
 
 if ENABLE_DBUS
 
@@ -459,25 +463,6 @@ configure_file(input : 'data/purple-3.pc.in',
                configuration : conf,
                install : true,
                install_dir : get_option('libdir') + '/pkgconfig')
-
-#AM_CPPFLAGS = \
-#	$(GLIB_CFLAGS) \
-#	$(GPLUGIN_CFLAGS) \
-#	$(DEBUG_CFLAGS) \
-#	$(DBUS_CFLAGS) \
-#	$(LIBXML_CFLAGS) \
-#	$(FARSTREAM_CFLAGS) \
-#	$(GSTREAMER_CFLAGS) \
-#	$(GSTVIDEO_CFLAGS) \
-#	$(GSTAPP_CFLAGS) \
-#	$(GSTINTERFACES_CFLAGS) \
-#	$(IDN_CFLAGS) \
-#	$(NETWORKMANAGER_CFLAGS) \
-#	$(JSON_CFLAGS) \
-#	$(GNUTLS_CFLAGS) \
-#	$(NSS_CFLAGS) \
-#	$(ZLIB_CFLAGS) \
-#	$(INTROSPECTION_CFLAGS)
 
 #-include $(INTROSPECTION_MAKEFILE)
 #INTROSPECTION_GIRS =

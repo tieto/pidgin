@@ -29,14 +29,10 @@ MXITSOURCES = [
 
 if STATIC_MXIT
 	mxit_prpl = static_library('mxit', MXITSOURCES,
-	    include_directories : [toplevel_inc, libpurple_inc],
 	    c_args : '-DPURPLE_STATIC_PRPL',
-	    link_with : libpurple,
-	    dependencies : [gplugin, glib])
+	    dependencies : [libpurple_dep])
 elif DYNAMIC_MXIT
 	mxit_prpl = shared_library('mxit', MXITSOURCES,
-	    include_directories : [toplevel_inc, libpurple_inc],
-	    link_with : libpurple,
-	    dependencies : [gplugin, glib],
+	    dependencies : [libpurple_dep],
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 endif

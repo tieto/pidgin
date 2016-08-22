@@ -71,14 +71,10 @@ MSNSOURCES = [
 
 if STATIC_MSN
 	msn_prpl = static_library('msn', MSNSOURCES,
-	    include_directories : [toplevel_inc, libpurple_inc],
 	    c_args : '-DPURPLE_STATIC_PRPL',
-	    link_with : libpurple,
-	    dependencies : [gplugin, glib])
+	    dependencies : [libpurple_dep, glib])
 elif DYNAMIC_MSN
 	msn_prpl = shared_library('msn', MSNSOURCES,
-	    include_directories : [toplevel_inc, libpurple_inc],
-	    link_with : libpurple,
-	    dependencies : [gplugin, glib],
+	    dependencies : [libpurple_dep, glib],
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 endif
