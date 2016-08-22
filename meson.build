@@ -909,7 +909,7 @@ endif
 # Check for Meanwhile headers (for Sametime)
 #######################################################################
 if get_option('meanwhile')
-	MEANWHILE = dependency('meanwhile', version : '>= 1.0.0 < 2.0.0', required : force_deps)
+	meanwhile = dependency('meanwhile', version : '>= 1.0.0 < 2.0.0', required : force_deps)
 endif
 #AC_SUBST(MEANWHILE_CFLAGS)
 #AC_SUBST(MEANWHILE_LIBS)
