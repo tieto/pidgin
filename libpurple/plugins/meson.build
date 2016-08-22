@@ -104,7 +104,7 @@ if PLUGINS
 	    dependencies : [gplugin, glib],
 	    name_prefix : '')
 
-	simple = library('simple', 'simple.c',
+	simple = library('simple-plugin', 'simple.c',
 	    include_directories : [toplevel_inc, libpurple_inc],
 	    link_with : libpurple,
 	    dependencies : [gplugin, glib],
