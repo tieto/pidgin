@@ -220,9 +220,9 @@ static char *jabber_prep_resource(char *input) {
 static gboolean
 jabber_process_starttls(JabberStream *js, PurpleXmlNode *packet)
 {
+#if 0
 	PurpleXmlNode *starttls;
 
-#if 0
 	PurpleAccount *account;
 
 	account = purple_connection_get_account(js->gc);

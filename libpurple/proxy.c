@@ -60,18 +60,6 @@ struct _PurpleProxyConnectData {
 	GCancellable *cancellable;
 };
 
-static const char * const socks5errors[] = {
-	"succeeded\n",
-	"general SOCKS server failure\n",
-	"connection not allowed by ruleset\n",
-	"Network unreachable\n",
-	"Host unreachable\n",
-	"Connection refused\n",
-	"TTL expired\n",
-	"Command not supported\n",
-	"Address type not supported\n"
-};
-
 static PurpleProxyInfo *global_proxy_info = NULL;
 
 static GSList *handles = NULL;

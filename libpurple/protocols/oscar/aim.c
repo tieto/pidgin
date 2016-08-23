@@ -31,8 +31,6 @@
 static void
 aim_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleAccountOption *option;
-
 	protocol->id   = "prpl-aim";
 	protocol->name = "AIM";
 

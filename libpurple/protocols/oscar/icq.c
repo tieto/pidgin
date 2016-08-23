@@ -47,13 +47,10 @@ icq_get_max_message_size(PurpleConversation *conv)
 static void
 icq_protocol_init(PurpleProtocol *protocol)
 {
-	PurpleAccountOption *option;
-
 	protocol->id   = "prpl-icq";
 	protocol->name = "ICQ";
 
 	oscar_init_account_options(protocol, TRUE);
-
 }
 
 static void

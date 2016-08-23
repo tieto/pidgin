@@ -2113,22 +2113,6 @@ static void mxit_parse_cmd_msgevent( struct MXitSession* session, struct record*
 
 
 /*------------------------------------------------------------------------
- * Return the length of a multimedia chunk
- *
- * @return		The actual chunk data length in bytes
- */
-static int get_chunk_len( const char* chunkdata )
-{
-	guint32 size_val;
-
-	/* we skip the first byte (type field) */
-	memcpy(&size_val, &chunkdata[1], sizeof(size_val));
-
-	return ntohl(size_val);
-}
-
-
-/*------------------------------------------------------------------------
  * Process a received multimedia packet.
  *
  *  @param session		The MXit session object
