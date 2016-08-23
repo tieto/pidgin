@@ -1969,8 +1969,6 @@ if test "x$enable_nss" != "xno"; then
 	if test "x$have_nss" = "xyes"; then
 		AC_DEFINE(HAVE_NSS, 1, [Define if you have Mozilla NSS])
 		msg_nss="Mozilla NSS"
-	else
-		AC_MSG_ERROR([No SSL/TLS library available])
 	fi
 fi
 
