@@ -58,13 +58,21 @@ libtoolize="libtoolize"
 case $(uname -s) in
 	Darwin*)
 		libtoolize="glibtoolize"
-		if [ -d /usr/local/opt/gettext ] ; then
-			PATH=/usr/local/opt/gettext/bin:$PATH
-			DEFAULT_ACLOCAL_FLAGS="${DEFAULT_ACLOCAL_FLAGS} -I /usr/local/opt/gettext/share/aclocal"
-		fi
-		if [ -d /usr/local/opt/gobject-introspection ] ; then
-			PATH=/usr/local/opt/gobject-introspection/bin:$PATH
-			DEFAULT_ACLOCAL_FLAGS="${DEFAULT_ACLOCAL_FLAGS} -I /usr/local/opt/gobject-introspection/share/aclocal"
+
+		BREW=$(which brew)
+
+		if [ -n ${BREW} ] ; then
+			GETTEXT_PREFIX=$(${BREW} --prefix gettext 2>/dev/null)
+			if [ -n ${GETTEXT_PREFIX} ] ; then
+				PATH=${GETTEXT_PREFIX}/bin:$PATH
+				DEFAULT_ACLOCAL_FLAGS="${DEFAULT_ACLOCAL_FLAGS} -I ${GETTEXT_PREFIX}/share/aclocal"
+			fi
+
+			GI_PREFIX=$(${BREW} --prefix gobject-introspection)
+			if [ -n ${GI_PREFIX} ] ; then
+				PATH=${GI_PREFIX}/bin:$PATH
+				DEFAULT_ACLOCAL_FLAGS="${DEFAULT_ACLOCAL_FLAGS} -I ${GI_PREFIX}/share/aclocal"
+			fi
 		fi
 		;;
 	*)
