@@ -2408,7 +2408,7 @@ proxy_page(void)
 {
 	GtkWidget *ret = NULL, *vbox = NULL, *hbox = NULL;
 	GtkWidget *grid = NULL, *entry = NULL, *proxy_button = NULL;
-	GtkLabel *label = NULL;
+	GtkWidget *label = NULL;
 	GtkWidget *prefs_proxy_frame = NULL;
 	PurpleProxyInfo *proxy_info;
 
@@ -2421,10 +2421,10 @@ proxy_page(void)
 		gchar *path = NULL;
 
 		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
-		label = GTK_LABEL(gtk_label_new(_("Proxy preferences "
-			"are configured in GNOME preferences")));
+		label = gtk_label_new(_("Proxy preferences are configured in "
+				"GNOME preferences"));
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
@@ -2442,10 +2442,11 @@ proxy_page(void)
 		}
 
 		if (path == NULL) {
-			label = GTK_LABEL(gtk_label_new(NULL));
-			gtk_label_set_markup(label, _("<b>Proxy configuration "
-				"program was not found.</b>"));
-			gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(label), FALSE, FALSE, 0);
+			label = gtk_label_new(NULL);
+			gtk_label_set_markup(GTK_LABEL(label),
+					_("<b>Proxy configuration program was "
+					"not found.</b>"));
+			gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 		} else {
 			proxy_button = gtk_button_new_with_mnemonic(_("Configure _Proxy"));
 			g_signal_connect(G_OBJECT(proxy_button), "clicked",
@@ -2489,14 +2490,14 @@ proxy_page(void)
 		gtk_grid_set_row_spacing(GTK_GRID(grid), 10);
 		gtk_container_add(GTK_CONTAINER(prefs_proxy_subframe), grid);
 
-		label = GTK_LABEL(gtk_label_new_with_mnemonic(_("_Host:")));
+		label = gtk_label_new_with_mnemonic(_("_Host:"));
 		gtk_widget_set_halign(label, GTK_ALIGN_END);
 		gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
-		gtk_grid_attach_full(GTK_GRID(grid), GTK_WIDGET(label), 0, 0, 1, 1,
-			GTK_FILL, 0, 0, 0);
+		gtk_grid_attach_full(GTK_GRID(grid), label, 0, 0, 1, 1,
+				GTK_FILL, 0, 0, 0);
 
 		entry = gtk_entry_new();
-		gtk_label_set_mnemonic_widget(label, entry);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 		gtk_grid_attach_full(GTK_GRID(grid), entry, 1, 0, 1, 1,
 			GTK_FILL, 0, 0, 0);
 		g_signal_connect(G_OBJECT(entry), "changed",
@@ -2509,16 +2510,16 @@ proxy_page(void)
 		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 		gtk_box_set_homogeneous(GTK_BOX(hbox), TRUE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-		pidgin_set_accessible_label(entry, label);
+		pidgin_set_accessible_label(entry, GTK_LABEL(label));
 
-		label = GTK_LABEL(gtk_label_new_with_mnemonic(_("P_ort:")));
+		label = gtk_label_new_with_mnemonic(_("P_ort:"));
 		gtk_widget_set_halign(label, GTK_ALIGN_END);
 		gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
-		gtk_grid_attach_full(GTK_GRID(grid), GTK_WIDGET(label), 2, 0, 1, 1,
-			GTK_FILL, 0, 0, 0);
+		gtk_grid_attach_full(GTK_GRID(grid), label, 2, 0, 1, 1,
+				GTK_FILL, 0, 0, 0);
 
 		entry = gtk_spin_button_new_with_range(0, 65535, 1);
-		gtk_label_set_mnemonic_widget(label, entry);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 		gtk_grid_attach_full(GTK_GRID(grid), entry, 3, 0, 1, 1,
 			GTK_FILL, 0, 0, 0);
 		g_signal_connect(G_OBJECT(entry), "changed",
@@ -2528,16 +2529,16 @@ proxy_page(void)
 			gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry),
 				purple_proxy_info_get_port(proxy_info));
 		}
-		pidgin_set_accessible_label(entry, label);
+		pidgin_set_accessible_label(entry, GTK_LABEL(label));
 
-		label = GTK_LABEL(gtk_label_new_with_mnemonic(_("User_name:")));
+		label = gtk_label_new_with_mnemonic(_("User_name:"));
 		gtk_widget_set_halign(label, GTK_ALIGN_END);
 		gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
-		gtk_grid_attach_full(GTK_GRID(grid), GTK_WIDGET(label), 0, 1, 1, 1,
-			GTK_FILL, 0, 0, 0);
+		gtk_grid_attach_full(GTK_GRID(grid), label, 0, 1, 1, 1,
+				GTK_FILL, 0, 0, 0);
 
 		entry = gtk_entry_new();
-		gtk_label_set_mnemonic_widget(label, entry);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 		gtk_grid_attach_full(GTK_GRID(grid), entry, 1, 1, 1, 1,
 			GTK_FILL, 0, 0, 0);
 		g_signal_connect(G_OBJECT(entry), "changed",
@@ -2550,16 +2551,16 @@ proxy_page(void)
 		hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 		gtk_box_set_homogeneous(GTK_BOX(hbox), TRUE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-		pidgin_set_accessible_label(entry, label);
+		pidgin_set_accessible_label(entry, GTK_LABEL(label));
 
-		label = GTK_LABEL(gtk_label_new_with_mnemonic(_("Pa_ssword:")));
+		label = gtk_label_new_with_mnemonic(_("Pa_ssword:"));
 		gtk_widget_set_halign(label, GTK_ALIGN_END);
 		gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
-		gtk_grid_attach_full(GTK_GRID(grid), GTK_WIDGET(label), 2, 1, 1, 1,
-			GTK_FILL, 0, 0, 0);
+		gtk_grid_attach_full(GTK_GRID(grid), label, 2, 1, 1, 1,
+				GTK_FILL, 0, 0, 0);
 
 		entry = gtk_entry_new();
-		gtk_label_set_mnemonic_widget(label, entry);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 		gtk_grid_attach_full(GTK_GRID(grid), entry, 3, 1, 1, 1,
 			GTK_FILL, 0, 0, 0);
 		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
@@ -2569,7 +2570,7 @@ proxy_page(void)
 		if (proxy_info != NULL && purple_proxy_info_get_password(proxy_info) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry),
 					   purple_proxy_info_get_password(proxy_info));
-		pidgin_set_accessible_label(entry, label);
+		pidgin_set_accessible_label(entry, GTK_LABEL(label));
 
 		proxy_changed_cb("/purple/proxy/type", PURPLE_PREF_STRING,
 			purple_prefs_get_string("/purple/proxy/type"),
