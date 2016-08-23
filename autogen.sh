@@ -52,10 +52,28 @@ ARGS_FILE="autogen.args"
 export CFLAGS
 export LDFLAGS
 
+DEFAULT_ACLOCAL_FLAGS="-I m4macros"
+
 libtoolize="libtoolize"
 case $(uname -s) in
 	Darwin*)
 		libtoolize="glibtoolize"
+
+		BREW=$(which brew)
+
+		if [ -n ${BREW} ] ; then
+			GETTEXT_PREFIX=$(${BREW} --prefix gettext 2>/dev/null)
+			if [ -n ${GETTEXT_PREFIX} ] ; then
+				PATH=${GETTEXT_PREFIX}/bin:$PATH
+				DEFAULT_ACLOCAL_FLAGS="${DEFAULT_ACLOCAL_FLAGS} -I ${GETTEXT_PREFIX}/share/aclocal"
+			fi
+
+			GI_PREFIX=$(${BREW} --prefix gobject-introspection)
+			if [ -n ${GI_PREFIX} ] ; then
+				PATH=${GI_PREFIX}/bin:$PATH
+				DEFAULT_ACLOCAL_FLAGS="${DEFAULT_ACLOCAL_FLAGS} -I ${GI_PREFIX}/share/aclocal"
+			fi
+		fi
 		;;
 	*)
 esac
@@ -180,7 +198,7 @@ run_or_die ${INTLTOOLIZE} ${INTLTOOLIZE_FLAGS:-"-c -f --automake"}
 run_or_die ${SED} -i -e "s:'\^\$\$lang\$\$':\^\$\$lang\$\$:g" po/Makefile.in.in
 # glib-gettextize doesn't seems to use AM_V_GEN macro
 ${SED} -i -e "s:\\tfile=\`echo:\\t@echo -e \"  GEN\\\\t\$\@\"; file=\`echo:g" po/Makefile.in.in
-run_or_die ${ACLOCAL} ${ACLOCAL_FLAGS:-"-I m4macros"}
+run_or_die ${ACLOCAL} ${ACLOCAL_FLAGS:-"${DEFAULT_ACLOCAL_FLAGS}"}
 run_or_die ${AUTOHEADER} ${AUTOHEADER_FLAGS}
 check_gtkdoc
 run_or_die ${AUTOMAKE} ${AUTOMAKE_FLAGS:-"-a -c --gnu"}
