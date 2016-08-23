@@ -254,8 +254,7 @@ purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
 	gsc->connect_cb      = func;
 	gsc->error_cb        = error_func;
 	gsc->fd              = fd;
-    if(host)
-        gsc->host            = g_strdup(host);
+	gsc->host            = g_strdup(host);
 	gsc->cancellable     = g_cancellable_new();
 
 	if (!tls_connect(gsc)) {
