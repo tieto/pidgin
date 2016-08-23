@@ -692,19 +692,16 @@ ENABLE_GCR = enable_gcr
 #######################################################################
 # Check for ncurses and other things used by the console UI
 #######################################################################
-GNT_LIBS = ''
-GNT_CFLAGS = ''
+ncurses_inc = []
+ncurses_libs = []
 enable_consoleui = get_option('consoleui')
 force_finch = enable_consoleui
 if enable_consoleui
-	if compiler.has_function('initscr', args : '-lncursesw')
-		GNT_LIBS = '-lncursesw'
-	else
-		enable_consoleui = false
-	endif
-	if compiler.has_function('update_panels', args : '-lpanelw')
-		GNT_LIBS += ' -lpanelw'
-	else
+	ncurses_libs = [
+		compiler.find_library('ncursesw', required : false),
+		compiler.find_library('panelw', required : false)
+	]
+	if not ncurses_libs[0].found() or not ncurses_libs[1].found()
 		enable_consoleui = false
 	endif
 
@@ -723,65 +720,42 @@ if enable_consoleui
 		found_ncurses_h = false
 		# FIXME: Define NCURSES_HEADERS option somewhere.
 #		foreach location : NCURSES_HEADERS + ncurses_sys_dirs
-#			f = location + '/ncurses.h'
-#			orig_CFLAGS='$CFLAGS'
-#			orig_CPPFLAGS='$CPPFLAGS'
-#			CFLAGS='$CFLAGS -I$location'
-#			CPPFLAGS='$CPPFLAGS -I$location'
-#			AC_CHECK_HEADER($f,[
-#				AC_MSG_CHECKING([if $f supports wide characters])
-#				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#					#define _XOPEN_SOURCE_EXTENDED
-#					#include <$f>
-#				]], [[
-#					#ifndef get_wch
-#					# error get_wch not found!
-#					#endif
-#				]])], [
-#					dir=$location
-#					if test x'$dir' != x'.' ; then
-#						GNT_CFLAGS='-I$dir/'
-#					else
-#						GNT_CFLAGS=''
-#					fi
-#
-#					found_ncurses_h=yes
-#					CFLAGS='$orig_CFLAGS'
-#					CPPFLAGS='$orig_CPPFLAGS'
-#					AC_MSG_RESULT([yes])
-#					break
-#				], [
-#					CFLAGS='$orig_CFLAGS'
-#					CPPFLAGS='$orig_CPPFLAGS'
-#					AC_MSG_RESULT([no])
-#				])
-#			])
-#		endforeach
+		foreach location : ncurses_sys_dirs
+			f = location + '/ncurses.h'
+			if not found_ncurses_h
+				if compiler.has_header_symbol(f, 'get_wch',
+				                              prefix : '#define _XOPEN_SOURCE_EXTENDED')
+					if location != '.'
+						ncurses_inc += [include_directories(location)]
+					endif
+					found_ncurses_h = true
+				endif
+			endif
+		endforeach
 
 		if not found_ncurses_h
-			GNT_LIBS = ''
-			GNT_CFLAGS = ''
+			ncurses_inc = []
+			ncurses_libs = []
 			enable_consoleui = false
 		endif
 	else
 		# ncursesw was not found. Look for plain old ncurses
-		enable_consoleui = true
-		if compiler.has_function('initscr', args : '-lncurses')
-			GNT_LIBS = '-lncurses'
-		else
-			enable_consoleui = false
-		endif
-		if compiler.has_function('update_panels', args : '-lpanel')
-			GNT_LIBS += ' -lpanel'
-		else
-			enable_consoleui = false
-		endif
+		ncurses_libs = [
+			compiler.find_library('ncurses', required : false),
+			compiler.find_library('panel', required : false)
+		]
+		enable_consoleui = ncurses_libs[0].found() and ncurses_libs[1].found()
 		conf.set('NO_WIDECHAR', true)
-		if NCURSES_HEADERS != ''
-			GNT_CFLAGS = '-I' + NCURSES_HEADERS
-		endif
+		# FIXME: Define NCURSES_HEADERS option somewhere.
+#		if NCURSES_HEADERS != ''
+#			ncurses_inc = [include_directories(NCURSES_HEADERS)]
+#		endif
 	endif
 endif
+ncurses = declare_dependency(
+    include_directories : ncurses_inc,
+    dependencies : ncurses_libs
+)
 
 if force_finch and not enable_consoleui
 	error('''
@@ -1898,7 +1872,7 @@ subdir('libpurple')
 subdir('share/sounds')
 subdir('share/ca-certs')
 #subdir('finch')
-#subdir('finch/libgnt')
+subdir('finch/libgnt')
 #subdir('finch/libgnt/wms')
 #subdir('finch/plugins')
 
