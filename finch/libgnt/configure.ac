@@ -86,9 +86,6 @@ dnl to prevent the g_stat()/g_unlink() crash,
 dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
 AC_SYS_LARGEFILE
 
-dnl FreeBSD doesn't have libdl, dlopen is provided by libc
-AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
-
 AC_MSG_CHECKING(for the %z format string in strftime())
 AC_TRY_RUN([
 #include <time.h>
