@@ -1,3 +1,4 @@
+libpurple/data/purple-url-handler.desktop.in.in
 libpurple/plugins/mono/loader/mono.c
 libpurple/plugins/perl/common/Account.c
 libpurple/plugins/perl/common/AccountOpts.c

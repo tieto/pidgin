@@ -78,6 +78,8 @@ libpurple/dbus-types.[ch]
 libpurple/enums.[ch]
 libpurple/example/nullclient
 libpurple/data/gconf/purple.schemas$
+libpurple/data/purple-url-handler.desktop$
+libpurple/data/purple-url-handler.desktop.in$
 libpurple/marshallers.[ch]
 libpurple/plugins/dbus-example-bindings.c
 libpurple/plugins/perl/common/Makefile.PL$
