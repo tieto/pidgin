@@ -78,7 +78,7 @@ libgnt = library('gnt',
 libgnt_dep = declare_dependency(
     include_directories : [toplevel_inc, libgnt_inc],
     link_with : libgnt,
-    dependencies : [glib])
+    dependencies : [ncurses, glib])
 
 configure_file(input : 'gnt.pc.in',
                output : 'gnt.pc',

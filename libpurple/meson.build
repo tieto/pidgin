@@ -423,7 +423,7 @@ libpurple = library('purple',
                     soversion : purple_lt_current,
                     version : PURPLE_LT_VERSION_INFO,
                     dependencies : # static_link_libs
-                        [dbus, dbus_glib, dnsapi, glib, gplugin, libxml, #networkmanager,
+                        [dbus, dbus_glib, dnsapi, glib, gio, gplugin, libxml, #networkmanager,
                          #intllibs,
                          farstream, gstreamer, gstreamer_video,
                          gstreamer_app, idn, json, gnutls,
@@ -431,7 +431,7 @@ libpurple = library('purple',
 libpurple_dep = declare_dependency(
     include_directories : [toplevel_inc, libpurple_inc],
     link_with : libpurple,
-    dependencies : [gplugin, glib])
+    dependencies : [gstreamer, gplugin, glib, gio])
 
 if ENABLE_DBUS
 

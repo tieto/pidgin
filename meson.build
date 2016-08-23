@@ -98,6 +98,11 @@ GNT_LT_VERSION_INFO = '@0@.@1@.@2@'.format(gnt_lt_current,
                                            gnt_minor_version)
 version_conf.set('GNT_LT_VERSION_INFO', GNT_LT_VERSION_INFO)
 
+package_revision = vcs_tag(
+    input : 'package_revision.h.in',
+    output : 'package_revision.h',
+    fallback : meson.project_version())
+
 sedpath = find_program('sed')
 xxdpath = find_program('xxd')
 
@@ -1871,8 +1876,8 @@ subdir('libpurple')
 #subdir('libpurple/tests')
 subdir('share/sounds')
 subdir('share/ca-certs')
-#subdir('finch')
-subdir('finch/libgnt')
+subdir('finch')
+#subdir('finch/libgnt')
 #subdir('finch/libgnt/wms')
 #subdir('finch/plugins')
 
