@@ -40,9 +40,6 @@
 /* Define if you have the external 'altzone' variable. */
 /* #undef HAVE_ALTZONE */
 
-/* Define to 1 if you have the <arpa/nameser_compat.h> header file. */
-/* #undef HAVE_ARPA_NAMESER_COMPAT_H */
-
 /* Define to 1 if you have the `atexit' function. */
 #define HAVE_ATEXIT 1
 
@@ -261,9 +258,6 @@
 /* Define to 1 if you have the `strerror' function. */
 #define HAVE_STRERROR 1
 
-/* Define to 1 if you have the `strftime' function. */
-#define HAVE_STRFTIME 1
-
 /* Define to 1 if you have a strftime() that supports the %z format string. */
 /* #undef HAVE_STRFTIME_Z_FORMAT */
 
@@ -311,9 +305,6 @@
 
 /* Define to 1 if you have the <sys/sysctl.h> header file. */
 /* #define HAVE_SYS_SYSCTL_H 1 */
-
-/* Define to 1 if you have the <sys/time.h> header file. */
-/* #undef HAVE_SYS_TIME_H */
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
@@ -405,9 +396,6 @@
 /* Define if plugins are enabled. */
 #define PURPLE_PLUGINS 1
 
-/* Define as the return type of signal handlers (`int' or `void'). */
-#define RETSIGTYPE void
-
 /* The size of `time_t', as computed by sizeof. */
 #define SIZEOF_TIME_T 4
 
@@ -426,9 +414,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
-
-/* Define to 1 if your <sys/time.h> declares `struct tm'. */
-/* #undef TM_IN_SYS_TIME */
 
 /* Use GStreamer for playing sounds */
 /* It's defined in global.mak. */
@@ -453,9 +438,6 @@
 /* Use voice and video */
 /* #define USE_VV 1 */
 
-/* 'va_lists' cannot be copied as values */
-/* #define VA_COPY_AS_ARRAY 1 */
-
 /* Version number of package */
 #define VERSION "@VERSION@"
 #define DISPLAY_VERSION "@DISPLAY_VERSION@"
@@ -478,9 +460,6 @@
 
 /* Define for large files, on AIX-style hosts. */
 /* #undef _LARGE_FILES */
-
-/* Define to empty if `const' does not conform to ANSI C. */
-/* #undef const */
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */

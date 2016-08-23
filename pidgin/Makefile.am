@@ -271,7 +271,7 @@ if HAVE_INTROSPECTION
 introspection_sources = $(libpidgininclude_HEADERS)
 
 Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpidgin.la
-Pidgin_3_0_gir_INCLUDES = GObject-2.0 Gtk-$(GTK_VERSION).0 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)
+Pidgin_3_0_gir_INCLUDES = GObject-2.0 Gtk-3.0 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)
 Pidgin_3_0_gir_CFLAGS = \
 	$(INCLUDES) \
 	-DDATADIR=\"$(datadir)\" \

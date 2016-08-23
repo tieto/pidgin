@@ -101,12 +101,6 @@
 #include <langinfo.h>
 #endif
 
-#ifdef PURPLE_PLUGINS
-# ifdef HAVE_DLFCN_H
-#  include <dlfcn.h>
-# endif
-#endif
-
 #ifndef _WIN32
 # include <netinet/in.h>
 # include <sys/socket.h>

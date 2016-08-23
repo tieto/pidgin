@@ -1,4 +1,7 @@
 from __future__ import print_function
+
+import argparse
+import fileinput
 import re
 import string
 import sys
@@ -126,7 +129,7 @@ class Parameter:
     fromtokens = staticmethod(fromtokens)
 
 class Binding:
-    def __init__(self, functiontext, paramtexts):
+    def __init__(self, functiontext, paramtexts, output=None):
         self.function = Parameter.fromtokens(functiontext.split())
 
         if self.function.name in excluded:
@@ -138,15 +141,15 @@ class Binding:
 
         self.call = "%s(%s)" % (self.function.name,
                                 ", ".join(param.name for param in self.params))
-        
-    
+
+        self.output = output
+
     def process(self):
         for param in self.params:
             self.processinput(param.type, param.name)
 
         self.processoutput(self.function.type, "RESULT")
         self.flush()
-        
 
     def processinput(self, type, name):
         const = False
@@ -233,8 +236,9 @@ class Binding:
     
 
 class ClientBinding (Binding):
-    def __init__(self, functiontext, paramtexts, knowntypes, headersonly):
-        Binding.__init__(self, functiontext, paramtexts)
+    def __init__(self, functiontext, paramtexts, knowntypes, headersonly,
+                 **kwargs):
+        Binding.__init__(self, functiontext, paramtexts, **kwargs)
         self.knowntypes = knowntypes
         self.headersonly = headersonly
         self.paramshdr = []
@@ -248,37 +252,41 @@ class ClientBinding (Binding):
         if (paramslist == "") :
             paramslist = "void"
         print("%s %s(%s)" % (self.functiontype, self.function.name,
-                             paramslist), end=' ')
+                             paramslist),
+              end=' ',
+              file=self.output)
 
         if self.headersonly:
-            print(";")
+            print(";", file=self.output)
             return
 
-        print("{")
+        print("{", file=self.output)
 
         for decl in self.decls:
-            print(decl)
+            print(decl, file=self.output)
 
-        print('dbus_g_proxy_call(purple_proxy, "%s", NULL,' % ctopascal(self.function.name))
+        print('dbus_g_proxy_call(purple_proxy, "%s", NULL,' % (
+                ctopascal(self.function.name), ),
+              file=self.output)
         
         for type_name in self.inputparams:
-            print("\t%s, %s, " % type_name, end=' ')
-        print("G_TYPE_INVALID,")
+            print("\t%s, %s, " % type_name, end=' ', file=self.output)
+        print("G_TYPE_INVALID,", file=self.output)
 
         for type_name in self.outputparams:
-            print("\t%s, &%s, " % type_name, end=' ')
-        print("G_TYPE_INVALID);")
+            print("\t%s, &%s, " % type_name, end=' ', file=self.output)
+        print("G_TYPE_INVALID);", file=self.output)
         
         for code in self.returncode:
-            print(code)
+            print(code, file=self.output)
 
-        print("}\n")
-        
+        print("}\n", file=self.output)
 
     def definepurplestructure(self, type):
         if (self.headersonly) and (type[0] not in self.knowntypes):
-            print("struct _%s;" % type[0])
-            print("typedef struct _%s %s;" % (type[0], type[0]))
+            print("struct _%s;" % type[0], file=self.output)
+            print("typedef struct _%s %s;" % (type[0], type[0]),
+                  file=self.output)
             self.knowntypes.append(type[0])
 
     def inputsimple(self, type, name, us):
@@ -353,8 +361,8 @@ class ClientBinding (Binding):
         raise myexception
 
 class ServerBinding (Binding):
-    def __init__(self, functiontext, paramtexts):
-        Binding.__init__(self, functiontext, paramtexts)
+    def __init__(self, functiontext, paramtexts, **kwargs):
+        Binding.__init__(self, functiontext, paramtexts, **kwargs)
         self.dparams = ""
         self.cparams = []
         self.cdecls  = []
@@ -364,40 +372,43 @@ class ServerBinding (Binding):
         self.argfunc = "dbus_message_get_args"
 
     def flush(self):
-        print("static DBusMessage*")
+        print("static DBusMessage*", file=self.output)
         print("%s_DBUS(DBusMessage *message_DBUS, DBusError *error_DBUS) {" % \
-              self.function.name)
+              self.function.name,
+              file=self.output)
         
-        print("\tDBusMessage *reply_DBUS;")
+        print("\tDBusMessage *reply_DBUS;", file=self.output)
 
         for decl in self.cdecls:
-            print(decl)
+            print(decl, file=self.output)
 
-        print("\t%s(message_DBUS, error_DBUS," % self.argfunc,end=' ')
+        print("\t%s(message_DBUS, error_DBUS," % self.argfunc, end=' ',
+              file=self.output)
         for param in self.cparams:
-            print("DBUS_TYPE_%s, &%s," % param, end=' ')
-        print("DBUS_TYPE_INVALID);")
+            print("DBUS_TYPE_%s, &%s," % param, end=' ', file=self.output)
+        print("DBUS_TYPE_INVALID);", file=self.output)
 
-        print("\tCHECK_ERROR(error_DBUS);")
+        print("\tCHECK_ERROR(error_DBUS);", file=self.output)
 
         for code in self.ccode:
-            print(code)
+            print(code, file=self.output)
 
-        print("\treply_DBUS = dbus_message_new_method_return (message_DBUS);")
+        print("\treply_DBUS = dbus_message_new_method_return (message_DBUS);",
+              file=self.output)
 
-        print("\tdbus_message_append_args(reply_DBUS,", end=' ')
+        print("\tdbus_message_append_args(reply_DBUS,", end=' ',
+              file=self.output)
         for param in self.cparamsout:
             if type(param) is str:
-                print("%s," % param, end=' ')
+                print("%s," % param, end=' ', file=self.output)
             else:
-                print("DBUS_TYPE_%s, &%s," % param, end=' ')
-        print("DBUS_TYPE_INVALID);")
+                print("DBUS_TYPE_%s, &%s," % param, end=' ', file=self.output)
+        print("DBUS_TYPE_INVALID);", file=self.output)
 
         for code in self.ccodeout:
-            print(code)
+            print(code, file=self.output)
 
-        print("\treturn reply_DBUS;\n}\n")
-
+        print("\treturn reply_DBUS;\n}\n", file=self.output)
 
     def addstring(self, *items):
         for item in items:
@@ -541,16 +552,16 @@ class ServerBinding (Binding):
 class BindingSet:
     regexp = r"^(\w[^()]*)\(([^()]*)\)\s*;\s*$";
 
-    def __init__(self, inputfile, fprefix):
+    def __init__(self, inputfile, fprefix, output=None):
         self.inputiter = iter(inputfile)
         self.functionregexp = \
              re.compile("^%s(\w[^()]*)\(([^()]*)\)\s*;\s*$" % fprefix)    
         self.typeregexp = re.compile("^\w+\s*\*?\s*$")
+        self.output = output
 
-
-                
     def process(self):
-        print("/* Generated by %s.  Do not edit! */" % sys.argv[0])
+        print("/* Generated by %s.  Do not edit! */" % sys.argv[0],
+              file=self.output)
 
         for line in self.inputiter:
             words = line.split()
@@ -596,37 +607,43 @@ class BindingSet:
 
         self.flush()
 
+
 class ServerBindingSet (BindingSet):
-    def __init__(self, inputfile, fprefix):
-        BindingSet.__init__(self, inputfile, fprefix)
+    def __init__(self, inputfile, fprefix, **kwargs):
+        BindingSet.__init__(self, inputfile, fprefix, **kwargs)
         self.functions = []
 
 
     def processfunction(self, functiontext, paramtexts):
-        binding = ServerBinding(functiontext, paramtexts)
+        binding = ServerBinding(functiontext, paramtexts, output=self.output)
         binding.process()
         self.functions.append((binding.function.name, binding.dparams))
         
     def flush(self):
-        print("static PurpleDBusBinding bindings_DBUS[] = { ")
+        print("static PurpleDBusBinding bindings_DBUS[] = { ",
+              file=self.output)
         for function, params in self.functions:
             print('{"%s", "%s", %s_DBUS},' % \
-                  (ctopascal(function), params, function))
+                  (ctopascal(function), params, function), file=self.output)
 
-        print("{NULL, NULL, NULL}")
-        print("};")
+        print("{NULL, NULL, NULL}", file=self.output)
+        print("};", file=self.output)
 
-        print("#define PURPLE_DBUS_REGISTER_BINDINGS(handle) purple_dbus_register_bindings(handle, bindings_DBUS)")
-        
+        print("#define PURPLE_DBUS_REGISTER_BINDINGS(handle) "
+              "purple_dbus_register_bindings(handle, bindings_DBUS)",
+              file=self.output)
+
+
 class ClientBindingSet (BindingSet):
-    def __init__(self, inputfile, fprefix, headersonly):
-        BindingSet.__init__(self, inputfile, fprefix)
+    def __init__(self, inputfile, fprefix, headersonly, **kwargs):
+        BindingSet.__init__(self, inputfile, fprefix, **kwargs)
         self.functions = []
         self.knowntypes = []
         self.headersonly = headersonly
 
     def processfunction(self, functiontext, paramtexts):
-        binding = ClientBinding(functiontext, paramtexts, self.knowntypes, self.headersonly)
+        binding = ClientBinding(functiontext, paramtexts, self.knowntypes,
+                                self.headersonly, output=self.output)
         binding.process()
 
     def flush(self):
@@ -634,31 +651,35 @@ class ClientBindingSet (BindingSet):
 
 # Main program
 
-options = {}
+parser = argparse.ArgumentParser()
+parser.add_argument('input', nargs='*',
+                    help='Input files (or stdin if not specified)')
+parser.add_argument('-o', '--output',
+                    help='Output to file instead of stdout')
+parser.add_argument('-a', '--append', action='store_true',
+                    help='Append to file instead of overwriting it')
+parser.add_argument('-e', '--export-only', action='store_true',
+                    help='Prefix functions for export')
+parser.add_argument('-c', '--client', action='store_true',
+                    help='Produce client bindings instead of server bindings')
+parser.add_argument('-H', '--headers', action='store_true',
+                    help='Produce headers only')
+args = parser.parse_args()
 
-for arg in sys.argv[1:]:
-    if arg[0:2] == "--":
-        mylist = arg[2:].split("=",1)
-        command = mylist[0]
-        if len(mylist) > 1:
-            options[command] = mylist[1]
-        else:
-            options[command] = None
-
-if "export-only" in options:
+if args.export_only:
     fprefix = "DBUS_EXPORT\s+"
 else:
     fprefix = ""
 
-#sys.stderr.write("%s: Functions not exported:\n" % sys.argv[0])
-
-if "client" in options:
-    bindings = ClientBindingSet(sys.stdin, fprefix,
-                                "headers" in options)
+myinput = fileinput.input(args.input)
+if args.output is not None:
+    output = open(args.output, 'a' if args.append else 'w')
 else:
-    bindings = ServerBindingSet(sys.stdin, fprefix)
+    output = None
+
+if args.client:
+    bindings = ClientBindingSet(myinput, fprefix, args.headers, output=output)
+else:
+    bindings = ServerBindingSet(myinput, fprefix, output=output)
+
 bindings.process()
-
-
-
-

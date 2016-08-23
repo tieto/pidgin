@@ -166,11 +166,9 @@ AC_SUBST(FINCH_LIBS)
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(arpa/nameser_compat.h fcntl.h sys/time.h unistd.h locale.h stdint.h)
+AC_CHECK_HEADERS(fcntl.h unistd.h locale.h stdint.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
-AC_STRUCT_TM
 AC_CHECK_SIZEOF(time_t, ,[
 #include <stdio.h>
 #include <time.h>])
@@ -253,8 +251,6 @@ FINCH_PLUGINDIR="\$(libdir)/finch-$PURPLE_MAJOR_VERSION"
 AC_SUBST([FINCH_PLUGINDIR])
 
 dnl Checks for library functions.
-AC_TYPE_SIGNAL
-AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(strdup strstr atexit setlocale)
 dnl Checks for getopt in standard library
 AC_CHECK_FUNCS(getopt_long,,
@@ -379,9 +375,6 @@ int main(int argc, char *argv[])
 
 AC_MSG_CHECKING([for the %z format string in strftime()])
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
 #include <time.h>
 #include <stdio.h>
 
@@ -589,18 +582,12 @@ running configure.
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
 
-	GTK_PC_MODULE="gtk+-3.0"
-	GTK_VERSION="3"
-	AC_SUBST(GTK_PC_MODULE)
-	AC_SUBST(GTK_VERSION)
-
 	dnl We only really need Pango >= 1.4 for decent RTL support
 	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
 	WEBKIT_VERSION=1.3.7
-	WEBKIT_PC_MODULE="webkitgtk-3.0"
-	PKG_CHECK_MODULES(WEBKIT, [$WEBKIT_PC_MODULE >= $WEBKIT_VERSION], , [
+	PKG_CHECK_MODULES(WEBKIT, ["webkitgtk-3.0" >= $WEBKIT_VERSION], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 You must have WebKit for GTK+3 $WEBKIT_VERSION or newer development headers
@@ -609,7 +596,6 @@ installed to compile Pidgin.  If you want to build only Finch then specify
 ])])
 	AC_SUBST(WEBKIT_CFLAGS)
 	AC_SUBST(WEBKIT_LIBS)
-	AC_SUBST(WEBKIT_PC_MODULE)
 
 	dnl #######################################################################
 	dnl # Check if we should compile with enchant support
@@ -968,7 +954,6 @@ AC_ARG_ENABLE(gstreamer,
 if test x"$enable_gst" != "xno"; then
 	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0], [
 	   AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
-	   with_gstreamer="1.0"
 	   AC_SUBST(GSTREAMER_CFLAGS)
 	   AC_SUBST(GSTREAMER_LIBS)
    ], [
@@ -2115,7 +2100,7 @@ AC_CHECK_FUNCS(gethostid lrand48 timegm)
 AC_CHECK_FUNCS(memcpy memmove random strchr strerror vprintf)
 AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
-AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
+AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
 
 # sys/sysctl.h on OpenBSD 4.2 requires sys/param.h
@@ -2132,40 +2117,10 @@ AC_CHECK_HEADERS(sys/sysctl.h, [], [],
 AC_CHECK_HEADERS(sys/socket.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
-AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
-        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-                #include <time.h>
-        ]], [[
-                struct tm tm;
-                tm.tm_gmtoff = 1;
-        ]])], [ac_cv_struct_tm_gmtoff=yes], [ac_cv_struct_tm_gmtoff=no]))
-if test $ac_cv_struct_tm_gmtoff = yes; then
-        AC_DEFINE(HAVE_TM_GMTOFF, 1, [Define if you have a tm_gmtoff member in struct tm])
-fi
-
-AC_CACHE_CHECK([whether va_lists can be copied by value], ac_cv_va_val_copy,[
-	AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdarg.h>
-#include <stdlib.h>
-	void f (int i, ...) {
-	va_list args1, args2;
-	va_start (args1, i);
-	args2 = args1;
-	if (va_arg (args2, int) != 42 || va_arg (args1, int) != 42)
-	  exit (1);
-	va_end (args1); va_end (args2);
-	}
-	int main() {
-	  f (0, 42);
-	  return 0;
-	}]])],
-	[ac_cv_va_val_copy=yes],
-	[ac_cv_va_val_copy=no],
-	[ac_cv_va_val_copy=yes])
-])
-
-if test "x$ac_cv_va_val_copy" = "xno"; then
-	AC_DEFINE(VA_COPY_AS_ARRAY, 1, ['va_lists' cannot be copied as values])
-fi
+AC_CHECK_MEMBER([struct tm.tm_gmtoff],
+	[AC_DEFINE(HAVE_TM_GMTOFF, 1, [Define if you have a tm_gmtoff member in struct tm])],
+	[],
+	[[#include <time.h>]])
 
 dnl #######################################################################
 dnl # Disable pixmap installation
@@ -2297,7 +2252,6 @@ echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo
 echo Build with GStreamer support.. : $enable_gst
-echo Build for GStreamer version... : $with_gstreamer
 echo Build with D-Bus support...... : $enable_dbus
 echo Build with voice and video.... : $enable_vv
 if test "x$enable_dbus" = "xyes" ; then
