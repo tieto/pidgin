@@ -1333,8 +1333,8 @@ xep_iq_parse(PurpleXmlNode *packet, PurpleBuddy *pb)
 	if(check_if_blocked(pb))
 		return;
 
-		account = purple_buddy_get_account(pb);
-		gc = purple_account_get_connection(account);
+	account = purple_buddy_get_account(pb);
+	gc = purple_account_get_connection(account);
 
 	if (purple_xmlnode_get_child(packet, "si") != NULL || purple_xmlnode_get_child(packet, "error") != NULL)
 		xep_si_parse(gc, packet, pb);

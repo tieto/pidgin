@@ -254,12 +254,12 @@ Code_t Z_ReadWait()
 			  (struct sockaddr *)&from, &from_len);
 
     if (packet_len < 0)
-	return (errno);
+      return (errno);
 
     if (!packet_len)
-	return (ZERR_EOF);
+      return (ZERR_EOF);
 
-	packet[packet_len] = '\0';
+    packet[packet_len] = '\0';
 
     /* Ignore obviously non-Zephyr packets. */
     zvlen = sizeof(ZVERSIONHDR) - 1;
