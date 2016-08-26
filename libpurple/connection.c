@@ -39,6 +39,8 @@
 #include "signals.h"
 #include "util.h"
 
+G_DEFINE_QUARK(purple-connection-error-quark, purple_connection_error);
+
 #define KEEPALIVE_INTERVAL 30
 
 #define PURPLE_CONNECTION_GET_PRIVATE(obj) \
@@ -572,6 +574,8 @@ purple_connection_g_error(PurpleConnection *pc, const GError *error)
 		}
 	} else if (error->domain == G_IO_ERROR) {
 		reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
+	} else if (error->domain == PURPLE_CONNECTION_ERROR) {
+		reason = error->code;
 	} else {
 		reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 	}

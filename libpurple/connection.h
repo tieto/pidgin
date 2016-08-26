@@ -29,6 +29,8 @@
  * @see_also: <link linkend="chapter-signals-connection">Connection signals</link>
  */
 
+#include <glib.h>
+
 #define PURPLE_TYPE_CONNECTION             (purple_connection_get_type())
 #define PURPLE_CONNECTION(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CONNECTION, PurpleConnection))
 #define PURPLE_CONNECTION_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CONNECTION, PurpleConnectionClass))
@@ -98,6 +100,16 @@ typedef enum
 	PURPLE_CONNECTION_CONNECTED,
 	PURPLE_CONNECTION_CONNECTING
 } PurpleConnectionState;
+
+#define PURPLE_CONNECTION_ERROR purple_connection_error_quark()
+
+/**
+ * purple_connection_error_quark:
+ *
+ * Error domain for Purple connection errors. Errors in this domain will be
+ * from the #PurpleConnectionError enum.
+ */
+GQuark purple_connection_error_quark(void);
 
 /**
  * PurpleConnectionError:
