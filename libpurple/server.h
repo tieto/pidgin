@@ -30,6 +30,7 @@
 
 #include "accounts.h"
 #include "conversations.h"
+#include "group.h"
 #include "message.h"
 #include "protocols.h"
 
