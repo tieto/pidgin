@@ -22,7 +22,9 @@
  */
 
 #include "internal.h"
+#include "proxy.h"
 #include "purple-gio.h"
+#include "tls-certificate.h"
 
 typedef struct {
 	GIOStream *stream;
@@ -103,5 +105,30 @@ purple_gio_graceful_close(GIOStream *stream,
 		/* Has pending operations. Do so asynchronously */
 		g_idle_add(graceful_close_cb, data);
 	}
+}
+
+GSocketClient *
+purple_gio_socket_client_new(PurpleAccount *account, GError **error)
+{
+	GProxyResolver *resolver;
+	GSocketClient *client;
+
+	resolver = purple_proxy_get_proxy_resolver(account);
+
+	if (resolver == NULL) {
+		g_set_error_literal(error, PURPLE_CONNECTION_ERROR,
+				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+				_("Invalid proxy settings"));
+		return NULL;
+	}
+
+	client = g_socket_client_new();
+	g_socket_client_set_proxy_resolver(client, resolver);
+	g_object_unref(resolver);
+
+	/* Attach purple's tls certificate handler in case tls is used */
+	purple_tls_certificate_attach_to_socket_client(client);
+
+	return client;
 }
 

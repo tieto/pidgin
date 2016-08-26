@@ -35,6 +35,8 @@
  * gracefully.
  */
 
+#include "account.h"
+
 #include <gio/gio.h>
 
 G_BEGIN_DECLS
@@ -53,6 +55,21 @@ G_BEGIN_DECLS
 void
 purple_gio_graceful_close(GIOStream *stream,
 		GInputStream *input, GOutputStream *output);
+
+/**
+ * purple_gio_socket_client_new:
+ * @account: The #PurpleAccount to use for this connection
+ * @error: Return location for a GError, or NULL
+ *
+ * A helper function to simplify creating a #GSocketClient. It's intended
+ * to be used in protocol plugins.
+ *
+ * Returns: A new #GSocketClient with the appropriate
+ * GProxyResolver, based on the #PurpleAccount settings and
+ * TLS Certificate handling, or NULL if an error occurred.
+ */
+GSocketClient *
+purple_gio_socket_client_new(PurpleAccount *account, GError **error);
 
 G_END_DECLS
 
