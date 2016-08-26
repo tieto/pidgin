@@ -23,10 +23,10 @@
 #define PURPLE_BUDDY_H
 
 /**
- * SECTION:blistnodetypes
- * @section_id: libpurple-blistnodetypes
- * @short_description: <filename>blistnodetypes.h</filename>
- * @title: Buddy, Chat, Contact and Group node Objects
+ * SECTION:buddy
+ * @section_id: libpurple-buddy
+ * @short_description: <filename>buddy.h</filename>
+ * @title: Buddy Object
  */
 
 #define PURPLE_TYPE_BUDDY             (purple_buddy_get_type())

@@ -23,10 +23,10 @@
 #define PURPLE_CHAT_H
 
 /**
- * SECTION:blistnodetypes
- * @section_id: libpurple-blistnodetypes
- * @short_description: <filename>blistnodetypes.h</filename>
- * @title: Buddy, Chat, Contact and Group node Objects
+ * SECTION:chat
+ * @section_id: libpurple-chat
+ * @short_description: <filename>chat.h</filename>
+ * @title: Chat Object
  */
 
 #define PURPLE_TYPE_CHAT             (purple_chat_get_type())

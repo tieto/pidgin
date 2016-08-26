@@ -22,10 +22,10 @@
 #ifndef PURPLE_COUNTING_NODE_H
 #define PURPLE_COUNTING_NODE_H
 /**
- * SECTION:blistnode
- * @section_id: libpurple-blistnode
- * @short_description: <filename>blistnode.h</filename>
- * @title: Buddy List Node and Counting Node types
+ * SECTION:countingnode
+ * @section_id: libpurple-countingnode
+ * @short_description: <filename>countingnode.h</filename>
+ * @title: CountingNode Object
  */
 
 #include <glib.h>

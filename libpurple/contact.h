@@ -22,10 +22,10 @@
 #ifndef PURPLE_CONTACT_H
 #define PURPLE_CONTACT_H
 /**
- * SECTION:blistnodetypes
- * @section_id: libpurple-blistnodetypes
- * @short_description: <filename>blistnodetypes.h</filename>
- * @title: Buddy, Chat, Contact and Group node Objects
+ * SECTION:contact.h
+ * @section_id: libpurple-contact
+ * @short_description: <filename>contact.h</filename>
+ * @title: Contact Object
  */
 
 #define PURPLE_TYPE_CONTACT             (purple_contact_get_type())
