@@ -32,6 +32,7 @@
 #include "notify.h"
 #include "protocol.h"
 #include "plugins.h"
+#include "purple-gio.h"
 #include "tls-certificate.h"
 #include "util.h"
 #include "version.h"
@@ -460,21 +461,16 @@ static void irc_close(PurpleConnection *gc)
 		g_clear_object(&irc->cancellable);
 	}
 
+	if (irc->conn != NULL) {
+		purple_gio_graceful_close(G_IO_STREAM(irc->conn),
+				G_INPUT_STREAM(irc->input),
+				G_OUTPUT_STREAM(irc->output));
+	}
+
 	g_clear_object(&irc->input);
 	g_clear_object(&irc->output);
+	g_clear_object(&irc->conn);
 
-	if (irc->conn != NULL) {
-		GError *error = NULL;
-
-		if (!g_io_stream_close(G_IO_STREAM(irc->conn), NULL, &error)) {
-			purple_debug_warning("irc",
-					"Error closing connection: %s",
-					error->message);
-			g_clear_error(&error);
-		}
-
-		g_clear_object(&irc->conn);
-	}
 	if (irc->timer)
 		purple_timeout_remove(irc->timer);
 	g_hash_table_destroy(irc->cmds);
