@@ -510,8 +510,6 @@ purple_connection_ssl_error (PurpleConnection *gc,
  * purple_connection_g_error
  * @gc: Connection the error is associated with
  * @error: Error information
- * @description: Extra string which further explains the error.
- *               Substitutes a "%s" with the GError message.
  *
  * Closes a connection similar to purple_connection_error(), but
  * takes a GError which is then converted to purple error codes.
@@ -524,8 +522,7 @@ purple_connection_ssl_error (PurpleConnection *gc,
  */
 void
 purple_connection_g_error(PurpleConnection *pc,
-                          const GError *error,
-                          const gchar *description);
+                          const GError *error);
 
 /**
  * purple_connection_error_is_fatal:

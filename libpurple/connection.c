@@ -543,11 +543,9 @@ purple_connection_ssl_error (PurpleConnection *gc,
 }
 
 void
-purple_connection_g_error(PurpleConnection *pc, const GError *error,
-		const gchar *description)
+purple_connection_g_error(PurpleConnection *pc, const GError *error)
 {
 	PurpleConnectionError reason;
-	gchar *tmp;
 
 	if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
 		/* Not a connection error. Ignore. */
@@ -578,9 +576,7 @@ purple_connection_g_error(PurpleConnection *pc, const GError *error,
 		reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 	}
 
-	tmp = g_strdup_printf(description, error->message);
-	purple_connection_error(pc, reason, tmp);
-	g_free(tmp);
+	purple_connection_error(pc, reason, error->message);
 }
 
 gboolean
