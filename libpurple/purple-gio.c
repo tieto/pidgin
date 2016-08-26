@@ -113,12 +113,9 @@ purple_gio_socket_client_new(PurpleAccount *account, GError **error)
 	GProxyResolver *resolver;
 	GSocketClient *client;
 
-	resolver = purple_proxy_get_proxy_resolver(account);
+	resolver = purple_proxy_get_proxy_resolver(account, error);
 
 	if (resolver == NULL) {
-		g_set_error_literal(error, PURPLE_CONNECTION_ERROR,
-				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-				_("Invalid proxy settings"));
 		return NULL;
 	}
 

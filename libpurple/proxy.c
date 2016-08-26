@@ -1027,7 +1027,7 @@ purple_proxy_connect_cancel_with_handle(void *handle)
 }
 
 GProxyResolver *
-purple_proxy_get_proxy_resolver(PurpleAccount *account)
+purple_proxy_get_proxy_resolver(PurpleAccount *account, GError **error)
 {
 	PurpleProxyInfo *info = purple_proxy_get_setup(account);
 	const gchar *protocol;
@@ -1062,8 +1062,9 @@ purple_proxy_get_proxy_resolver(PurpleAccount *account)
 			break;
 
 		default:
-			purple_debug_error("proxy",
-					"Invalid Proxy type (%d) specified.\n",
+			g_set_error(error, PURPLE_CONNECTION_ERROR,
+					PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+					_("Invalid Proxy type (%d) specified"),
 					purple_proxy_info_get_proxy_type(info));
 			return NULL;
 	}
@@ -1071,12 +1072,11 @@ purple_proxy_get_proxy_resolver(PurpleAccount *account)
 
 	if (purple_proxy_info_get_host(info) == NULL ||
 			purple_proxy_info_get_port(info) <= 0) {
-		purple_notify_error(NULL, NULL,
-				_("Invalid proxy settings"),
+		g_set_error_literal(error, PURPLE_CONNECTION_ERROR,
+				PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 				_("Either the host name or port number "
 				"specified for your given proxy type is "
-				"invalid."),
-				purple_request_cpar_from_account( account));
+				"invalid."));
 		return NULL;
 	}
 
