@@ -26,11 +26,13 @@
 #include "media.h"
 #include "mediamanager.h"
 
-#ifdef USE_VV
+#ifdef USE_GSTREAMER
 #include "marshallers.h"
 #include "media-gst.h"
 #include <media/backend-fs2.h>
+#endif /* USE_GSTREAMER */
 
+#ifdef USE_VV
 #include <farstream/fs-element-added-notifier.h>
 #include <gst/video/videooverlay.h>
 #ifdef HAVE_MEDIA_APPLICATION
