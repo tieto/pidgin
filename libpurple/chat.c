@@ -23,7 +23,7 @@
 #include "internal.h"
 #include "chat.h"
 #include "dbus-maybe.h"
-#include "utils.h"
+#include "util.h"
 
 #define PURPLE_CHAT_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_CHAT, PurpleChatPrivate))
