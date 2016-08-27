@@ -292,9 +292,10 @@ static void irc_login(PurpleAccount *account)
 		PURPLE_CONNECTION_FLAG_NO_IMAGES);
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
-		purple_connection_error (gc,
+		purple_connection_take_error(gc, g_error_new_literal(
+			PURPLE_CONNECTION_ERROR,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-			_("IRC nick and server may not contain whitespace"));
+			_("IRC nick and server may not contain whitespace")));
 		return;
 	}
 
@@ -592,9 +593,10 @@ irc_read_input_cb(GObject *source, GAsyncResult *res, gpointer data)
 		purple_connection_take_error(gc, error);
 		return;
 	} else if (line == NULL) {
-		purple_connection_error (gc,
+		purple_connection_take_error(gc, g_error_new_literal(
+			PURPLE_CONNECTION_ERROR,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Server closed the connection"));
+			_("Server closed the connection")));
 		return;
 	}
 
