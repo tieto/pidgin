@@ -33,7 +33,6 @@
 #include "protocol.h"
 #include "plugins.h"
 #include "purple-gio.h"
-#include "tls-certificate.h"
 #include "util.h"
 #include "version.h"
 
@@ -286,7 +285,7 @@ static void irc_login(PurpleAccount *account)
 	char **userparts;
 	const char *username = purple_account_get_username(account);
 	GSocketClient *client;
-	GProxyResolver *resolver;
+	GError *error = NULL;
 
 	gc = purple_account_get_connection(account);
 	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_NO_NEWLINES |
@@ -318,23 +317,16 @@ static void irc_login(PurpleAccount *account)
 
 	purple_connection_update_progress(gc, _("Connecting"), 1, 2);
 
-	if ((resolver = purple_proxy_get_proxy_resolver(account)) == NULL) {
-		/* Invalid proxy settings */
-		purple_connection_error (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Unable to connect"));
+	client = purple_gio_socket_client_new(account, &error);
+
+	if (client == NULL) {
+		purple_connection_take_error(gc, error);
 		return;
 	}
 
-	client = g_socket_client_new();
-	g_socket_client_set_proxy_resolver(client, resolver);
-	g_object_unref(resolver);
-
 	/* Optionally use TLS if it's set in the account settings */
-	if (purple_account_get_bool(account, "ssl", FALSE)) {
-		g_socket_client_set_tls(client, TRUE);
-		purple_tls_certificate_attach_to_socket_client(client);
-	}
+	g_socket_client_set_tls(client,
+			purple_account_get_bool(account, "ssl", FALSE));
 
 	g_socket_client_connect_to_host_async(client, irc->server,
 			purple_account_get_int(account, "port",
