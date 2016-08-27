@@ -34,6 +34,7 @@
 #include "ntlm.h"
 #include "prefs.h"
 #include "proxy.h"
+#include "purple-gio.h"
 #include "util.h"
 
 #include <gio/gio.h>
@@ -759,8 +760,8 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 				   PurpleProxyConnectFunction connect_cb, gpointer data)
 {
 	PurpleProxyConnectData *connect_data;
-	GProxyResolver *resolver;
 	GSocketClient *client;
+	GError *error = NULL;
 
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >  0,    NULL);
@@ -775,19 +776,20 @@ purple_proxy_connect(void *handle, PurpleAccount *account,
 	connect_data->port = port;
 	connect_data->gpi = purple_proxy_get_setup(account);
 
-	resolver = purple_proxy_get_proxy_resolver(account);
+	client = purple_gio_socket_client_new(account, &error);
 
-	if (resolver == NULL) {
-		/* purple_proxy_get_proxy_resolver already has debug output */
+	if (client == NULL) {
+		/* Assume it's a proxy error */
+		purple_notify_error(NULL, NULL, _("Invalid proxy settings"),
+			error->message,
+			purple_request_cpar_from_account(account));
+		g_clear_error(&error);
+
 		purple_proxy_connect_data_destroy(connect_data);
 		return NULL;
 	}
 
 	connect_data->cancellable = g_cancellable_new();
-
-	client = g_socket_client_new();
-	g_socket_client_set_proxy_resolver(client, resolver);
-	g_object_unref(resolver);
 
 	purple_debug_info("proxy", "Attempting connection to %s:%u\n",
 			host, port);
@@ -951,8 +953,8 @@ purple_proxy_connect_socks5_account(void *handle, PurpleAccount *account,
 						  gpointer data)
 {
 	PurpleProxyConnectData *connect_data;
-	GProxyResolver *resolver;
 	GSocketClient *client;
+	GError *error = NULL;
 
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >= 0,    NULL);
@@ -967,22 +969,20 @@ purple_proxy_connect_socks5_account(void *handle, PurpleAccount *account,
 	connect_data->port = port;
 	connect_data->gpi = gpi;
 
-	/* If there is an account proxy, use it to connect to the desired SOCKS5
-	 * proxy.
-	 */
-	resolver = purple_proxy_get_proxy_resolver(account);
+	client = purple_gio_socket_client_new(account, &error);
 
-	if (resolver == NULL) {
-		/* purple_proxy_get_proxy_resolver already has debug output */
+	if (client == NULL) {
+		/* Assume it's a proxy error */
+		purple_notify_error(NULL, NULL, _("Invalid proxy settings"),
+			error->message,
+			purple_request_cpar_from_account(account));
+		g_clear_error(&error);
+
 		purple_proxy_connect_data_destroy(connect_data);
 		return NULL;
 	}
 
 	connect_data->cancellable = g_cancellable_new();
-
-	client = g_socket_client_new();
-	g_socket_client_set_proxy_resolver(client, resolver);
-	g_object_unref(resolver);
 
 	purple_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using SOCKS5\n",
