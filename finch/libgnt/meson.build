@@ -1,12 +1,14 @@
-gntmarshal_h = glib_genmarshal_h.process('gntmarshal',
-    extra_args : ['--prefix=gnt_closure_marshal'],
-    install : true,
+marshallers = gnome.genmarshal('gntmarshal',
+    sources : 'gntmarshal',
+    prefix : 'gnt_closure_marshal',
+    install_header : true,
     install_dir : get_option('includedir') + '/gnt')
-gntmarshal_c = glib_genmarshal_c.process('gntmarshal',
-    extra_args : ['--prefix=gnt_closure_marshal'])
+gntmarshal_c = marshallers[0]
+gntmarshal_h = marshallers[1]
 
 libgnt_SOURCES = [
 	gntmarshal_c,
+	gntmarshal_h,
 	'gntwidget.c',
 	'gntbindable.c',
 	'gntbox.c',
@@ -20,7 +22,6 @@ libgnt_SOURCES = [
 	'gntkeys.c',
 	'gntlabel.c',
 	'gntline.c',
-	gntmarshal_h,
 	'gntmenu.c',
 	'gntmenuitem.c',
 	'gntmenuitemcheck.c',

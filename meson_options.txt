@@ -1,7 +1,3 @@
-# Should be removed when meson gains this option built-in.
-option('sysconfdir', type : 'string',
-       description : 'directory for installing read-only data files')
-
 option('win32-dirs', type : 'string', value : 'classic',
        description : 'use win32 "classic" (Program Files-like) or "fhs" (unix-like) directory structure (default: "classic")')
 

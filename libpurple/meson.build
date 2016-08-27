@@ -233,41 +233,20 @@ purple_enumheaders = [
 ]
 
 
-# A hack to redirect stuff until glib-genmarshal and glib-mkenums are
-# supported natively.
-redirector = find_program(meson.source_root() + '/redirect')
+marshallers = gnome.genmarshal('marshallers',
+    sources : 'marshallers.list',
+    prefix : 'purple_smarshal')
+marshallers_c = marshallers[0]
+marshallers_h = marshallers[1]
 
-glib_genmarshal_h = generator(redirector,
-                              output : '@BASENAME@.h',
-                              arguments : ['@OUTPUT@',
-                                           GLIB_GENMARSHAL.path()[0],
-                                           '@EXTRA_ARGS@',
-                                           '--header', '@INPUT@'])
-glib_genmarshal_c = generator(redirector,
-                              output : '@BASENAME@.c',
-                              arguments : ['@OUTPUT@',
-                                           GLIB_GENMARSHAL.path()[0],
-                                           '@EXTRA_ARGS@',
-                                           '--header', '--body', '@INPUT@'])
-
-marshallers_h = glib_genmarshal_h.process('marshallers.list',
-                                          extra_args : ['--prefix=purple_smarshal'])
-marshallers_c = glib_genmarshal_c.process('marshallers.list',
-                                          extra_args : ['--prefix=purple_smarshal'])
-
-enums_h = custom_target('enums_h',
-                        input : ['enums.h.in'] + purple_enumheaders,
-                        output : 'enums.h',
-                        command : [redirector, '@OUTPUT@', GLIB_MKENUMS,
-                                   '--template', '@INPUT0@', '@INPUT@'],
-                        install : true,
-                        install_dir : get_option('includedir') + '/libpurple')
-enums_c = custom_target('enums_c',
-                        input : ['enums.c.in'] + purple_enumheaders,
-                        output : 'enums.c',
-                        command : [redirector, '@OUTPUT@', GLIB_MKENUMS,
-                                   '--template', '@INPUT0@', '@INPUT@'])
-
+enums_h = gnome.mkenums('enums.h',
+    sources : purple_enumheaders,
+    template : 'enums.h.in',
+    install : true,
+    install_dir : get_option('includedir') + '/libpurple')
+enums_c = gnome.mkenums('enums.c',
+    sources : purple_enumheaders,
+    template : 'enums.c.in')
 
 purple_h = configure_file(input : 'purple.h.in',
                           output : 'purple.h',
@@ -288,7 +267,7 @@ purple_builtsources = [
 purple_builtheaders = [
 	purple_h,
 	version_h,
-#	enums_h,  # FIXME: Custom targets don't work as dependencies.
+	enums_h,  # FIXME: Custom targets don't work as dependencies.
 	marshallers_h
 ]
 
