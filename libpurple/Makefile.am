@@ -93,6 +93,7 @@ purple_coresources = \
 	proxy.c \
 	protocol.c \
 	protocols.c \
+	purple-gio.c \
 	purple-socket.c \
 	queuedoutputstream.c \
 	request.c \
@@ -173,6 +174,7 @@ purple_coreheaders = \
 	proxy.h \
 	protocol.h \
 	protocols.h \
+	purple-gio.h \
 	purple-socket.h \
 	queuedoutputstream.h \
 	request.h \
