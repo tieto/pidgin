@@ -579,6 +579,13 @@ purple_connection_g_error(PurpleConnection *pc, const GError *error)
 	purple_connection_error(pc, reason, error->message);
 }
 
+void
+purple_connection_take_error(PurpleConnection *pc, GError *error)
+{
+	purple_connection_g_error(pc, error);
+	g_error_free(error);
+}
+
 gboolean
 purple_connection_error_is_fatal (PurpleConnectionError reason)
 {

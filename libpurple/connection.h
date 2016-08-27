@@ -524,6 +524,21 @@ void
 purple_connection_g_error(PurpleConnection *pc,
                           const GError *error);
 
+/*
+ * purple_connection_take_error
+ * @gc: Connection the error is associated with
+ * @error: (transfer full): Error information
+ *
+ * Closes a connection similar to purple_connection_error(), but
+ * takes a GError which is then converted to purple error codes.
+ *
+ * This function is equivalent to purple_connection_g_error(),
+ * except that it takes ownership of the GError.
+ */
+void
+purple_connection_take_error(PurpleConnection *pc,
+                             GError *error);
+
 /**
  * purple_connection_error_is_fatal:
  *
