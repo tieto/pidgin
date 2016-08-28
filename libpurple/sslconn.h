@@ -68,7 +68,6 @@ typedef void (*PurpleSslErrorFunction)(PurpleSslConnection *, PurpleSslErrorType
  * @connect_data:    Data related to the underlying TCP connection
  * @private_data:    Internal connection data managed by the SSL backend
  *                   (GnuTLS/LibNSS/whatever)
- * @verifier:        Verifier to use in authenticating the peer
  */
 struct _PurpleSslConnection
 {

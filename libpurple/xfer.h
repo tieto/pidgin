@@ -94,6 +94,7 @@ typedef enum
 
 /**
  * PurpleXferUiOps:
+ * @new_xfer: UI op to initialize a new transfer
  * @ui_write: UI op to write data received from the protocol. The UI must deal
  *            with the entire buffer and return size, or it is treated as an
  *            error.

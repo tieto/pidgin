@@ -53,11 +53,6 @@ struct _PurpleContact {
 	PurpleCountingNode counting;
 };
 
-/**
- * PurpleContactClass:
- *
- * The base class for all #PurpleContact's.
- */
 struct _PurpleContactClass {
 	PurpleCountingNodeClass counting_class;
 

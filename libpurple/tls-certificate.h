@@ -106,7 +106,7 @@ purple_tls_certificate_distrust(const gchar *id, GError **error);
  * Connects the Purple TLS certificate subsystem to @conn so it will accept
  * certificates trusted by purple_tls_certificate_trust() and friends.
  *
- * Returns: (transfer: none) (type GObject.Object): @conn, similar to
+ * Returns: (transfer none) (type GObject.Object): @conn, similar to
  *          g_object_connect()
  */
 gpointer
@@ -120,7 +120,7 @@ purple_tls_certificate_attach_to_tls_connection(GTlsConnection *conn);
  * connections it creates will accept certificates trusted by
  * purple_tls_certificate_trust() and friends.
  *
- * Returns: (transfer: none) (type GObject.Object): @client, similar to
+ * Returns: (transfer none) (type GObject.Object): @client, similar to
  *          g_object_connect()
  */
 gpointer

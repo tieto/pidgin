@@ -66,11 +66,6 @@ struct _PurpleBlistNode {
 	gpointer ui_data;
 };
 
-/**
- * PurpleBlistNodeClass:
- *
- * The base class for all #PurpleBlistNode's.
- */
 struct _PurpleBlistNodeClass {
 	GObjectClass gparent_class;
 

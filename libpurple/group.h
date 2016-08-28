@@ -63,11 +63,6 @@ struct _PurpleGroup {
 	PurpleCountingNode counting;
 };
 
-/**
- * PurpleGroupClass:
- *
- * The base class for all #PurpleGroup's.
- */
 struct _PurpleGroupClass {
 	PurpleCountingNodeClass counting_class;
 

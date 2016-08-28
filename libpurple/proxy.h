@@ -309,6 +309,7 @@ PurpleProxyConnectData *purple_proxy_connect_socks5_account(void *handle,
 
 /**
  * purple_proxy_connect_cancel:
+ * @connect_data: The #PurpleProxyConnectData to cancel.
  *
  * Cancel an in-progress connection attempt.  This should be called
  * by the protocol if the user disables an account while it is still

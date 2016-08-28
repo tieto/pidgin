@@ -70,11 +70,6 @@ struct _PurpleBuddyList {
 	gpointer ui_data;
 };
 
-/**
- * PurpleBuddyListClass:
- *
- * The base class for all #PurpleBuddyList's.
- */
 struct _PurpleBuddyListClass {
 	GObjectClass gparent_class;
 

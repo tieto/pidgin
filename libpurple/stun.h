@@ -36,7 +36,10 @@ typedef struct _PurpleStunNatDiscovery PurpleStunNatDiscovery;
 
 /**
  * PurpleStunStatus:
- * @PURPLE_STUN_STATUS_UNKNOWN: no STUN server reachable
+ * @PURPLE_STUN_STATUS_UNDISCOVERED: No request has been published
+ * @PURPLE_STUN_STATUS_UNKNOWN: No STUN server reachable
+ * @PURPLE_STUN_STATUS_DISCOVERING: The request has been sent to the server
+ * @PURPLE_STUN_STATUS_DISCOVERED: The server has responded
  */
 typedef enum {
 	PURPLE_STUN_STATUS_UNDISCOVERED = -1,

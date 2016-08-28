@@ -350,7 +350,7 @@ void purple_serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 
 /**
  * purple_serv_send_file:
- * @g:      The connection on which the message was received.
+ * @gc:     The connection on which the message was received.
  * @who:    The name of the user to who send the file.
  * @file:   The filename to send.
  *
