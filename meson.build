@@ -111,7 +111,6 @@ xxdpath = find_program('xxd')
 
 # Checks for programs.
 compiler = meson.get_compiler('c')
-#cxx_compiler = meson.get_compiler('cpp')
 
 if compiler.has_function('alloca')  # FIXME: Probably not enough.
 	conf.set('HAVE_ALLOCA_H', true)
@@ -126,30 +125,24 @@ SUNCC = compiler.compiles('void main() {__SUNPRO_C;};')
 if host_machine.system() == 'windows'
 	is_win32 = true
 	is_not_win32 = false
-	LIBS += [declare_dependency(link_with : 'ws2_32')]
+	# FIXME: Need to add ws2_32 to some target.
+	ws2_32 = declare_dependency(link_with : 'ws2_32')
 	dnsapi = declare_dependency(link_with : 'dnsapi')
-	PLUGIN_LDFLAGS = '-avoid-version -no-undefined'
 	WINDRES = generator(find_program('windres'),
-	                    output : '@BASENAME@.o',
-	                    arguments : ['-i', '@INPUT@', '-o', '@OUTPUT@'])
+	    output : '@BASENAME@.o',
+	    arguments : ['-i', '@INPUT@', '-o', '@OUTPUT@'])
 	conf.set('IS_WIN32_CROSS_COMPILED', true)
 	conf.set('WIN32_LEAN_AND_MEAN', true)
 else
 	is_win32 = false
 	is_not_win32 = true
+	ws2_32 = declare_dependency()
 	dnsapi = declare_dependency()
-	PLUGIN_LDFLAGS = '-avoid-version'
 	if not compiler.has_header('signal.h')
 		error('signal.h is required.')
 	endif
 endif
 IS_WIN32 = is_win32
-#AC_SUBST([PLUGIN_LDFLAGS])
-
-# Define *_LIBS
-PURPLE_LIBS='\$(top_builddir)/libpurple/libpurple.la \$(GLIB_LIBS)'
-PIDGIN_LIBS='\$(top_builddir)/pidgin/libpidgin.la \$(GTK_LIBS)'
-FINCH_LIBS='\$(top_builddir)/finch/libfinch.la \$(top_builddir)/finch/libgnt/libgnt.la \$(GLIB_LIBS)'
 
 # Checks for header files.
 # AC_HEADER_STDC:
@@ -192,25 +185,27 @@ endforeach
 
 # Checks for typedefs, structures, and compiler characteristics.
 time_t_size = compiler.sizeof('time_t',
-                              prefix : '''
+    prefix : '''
 #include <stdio.h>
 #include <time.h>
 ''')
 conf.set('SIZEOF_TIME_T', time_t_size)
 
-#AC_C_BIGENDIAN
+conf.set('WORDS_BIGENDIAN', host_machine.endian() != 'little')
 
 conf.set('USE_WIN32_FHS',
-         is_win32 and get_option('win32-dirs') == 'fhs')
+    is_win32 and get_option('win32-dirs') == 'fhs')
 
 # Check for directories
 if is_win32
 	if get_option('win32-dirs') == 'fhs'
-		conf.set('WIN32_FHS_BINDIR', get_option('bindir'))
-		conf.set('WIN32_FHS_LIBDIR', get_option('libdir'))
-		conf.set('WIN32_FHS_DATADIR', get_option('datadir'))
-		conf.set('WIN32_FHS_SYSCONFDIR', get_option('sysconfdir'))
-		conf.set('WIN32_FHS_LOCALEDIR', get_option('localedir'))
+		foreach dir : ['bin', 'lib', 'data', 'sysconf', 'locale']
+			path = get_option(dir + 'dir')
+			if not path.startswith('/')
+				path = get_option('prefix') + '/' + path
+			endif
+			conf.set('WIN32_FHS_@0@DIR'.format(dir.to_upper()), path)
+		endforeach
 
 		purple_libdir = 'wpurple_lib_dir("purple-@0@")'.format(purple_major_version)
 		pidgin_libdir = 'wpurple_lib_dir("pidgin-@0@")'.format(purple_major_version)
@@ -225,11 +220,18 @@ if is_win32
 	purple_sysconfdir = 'wpurple_sysconf_dir()'
 	purple_localedir = 'wpurple_locale_dir()'
 else
-	purple_datadir = '"@0@"'.format(get_option('datadir'))
-	purple_sysconfdir = '"@0@"'.format(get_option('sysconfdir'))
-	purple_localedir = '"@0@"'.format(get_option('localedir'))
+	foreach dir : ['data', 'sysconf', 'locale']
+		path = get_option(dir + 'dir')
+		if not path.startswith('/')
+			path = get_option('prefix') + '/' + path
+		endif
+		set_variable('purple_@0@dir'.format(dir), '"@0@"'.format(path))
+	endforeach
 
 	common_libdir = get_option('libdir')
+	if not common_libdir.startswith('/')
+		common_libdir = get_option('prefix') + '/' + common_libdir
+	endif
 	purple_libdir = '"@0@/purple-@1@"'.format(common_libdir, purple_major_version)
 	pidgin_libdir = '"@0@/pidgin-@1@"'.format(common_libdir, purple_major_version)
 	finch_libdir = '"@0@/finch-@1@"'.format(common_libdir, purple_major_version)
@@ -241,18 +243,21 @@ conf.set('FINCH_LIBDIR', finch_libdir)
 conf.set('PURPLE_SYSCONFDIR', purple_sysconfdir)
 conf.set('PURPLE_LOCALEDIR', purple_localedir)
 
-# FIXME:
-PURPLE_PLUGINDIR = '@0@/purple-@1@'.format(get_option('libdir'), purple_major_version)
+abslibdir = get_option('libdir')
+if not abslibdir.startswith('/')
+	abslibdir = get_option('prefix') + '/' + abslibdir
+endif
+PURPLE_PLUGINDIR = '@0@/purple-@1@'.format(abslibdir, purple_major_version)
 conf.set('PURPLE_PLUGINDIR', '"@0@"'.format(PURPLE_PLUGINDIR))
-PIDGIN_PLUGINDIR = '@0@/pidgin-@1@'.format(get_option('libdir'), purple_major_version)
+PIDGIN_PLUGINDIR = '@0@/pidgin-@1@'.format(abslibdir, purple_major_version)
 conf.set('PIDGIN_PLUGINDIR', '"@0@"'.format(PIDGIN_PLUGINDIR))
-FINCH_PLUGINDIR = '@0@/finch-@1@'.format(get_option('libdir'), purple_major_version)
+FINCH_PLUGINDIR = '@0@/finch-@1@'.format(abslibdir, purple_major_version)
 conf.set('FINCH_PLUGINDIR', '"@0@"'.format(FINCH_PLUGINDIR))
 
 # Checks for library functions.
 foreach func : ['strdup', 'strstr', 'atexit', 'setlocale']
 	conf.set('HAVE_' + func.to_upper(),
-	         compiler.has_function(func))
+	    compiler.has_function(func))
 endforeach
 # Checks for getopt in standard library
 if compiler.has_function('getopt_long')
@@ -294,67 +299,45 @@ else
 			# FIXME: LIBS += declare_dependency(link_with : ['socket', 'nsl'])
 		endif
 	endif
-	if compiler.has_function('inet_ntop')
-		conf.set('HAVE_INET_NTOP', true)
-	endif
+	conf.set('HAVE_INET_NTOP',
+	    compiler.has_function('inet_ntop'))
 endif
-if compiler.has_function('getifaddrs')
-	conf.set('HAVE_GETIFADDRS', true)
-endif
-# Check for socklen_t (in Unix98)
-code = '''
-#include <sys/types.h>
-#ifdef _WIN32
-#  include <ws2tcpip.h>
-#else
-#  include <sys/socket.h>
-#endif
-socklen_t x;
+conf.set('HAVE_GETIFADDRS',
+    compiler.has_function('getifaddrs'))
 
-int main() {}
-'''
-if not compiler.compiles(code, name : 'socklen_t')
+# Check for socklen_t (in Unix98)
+if is_win32
+	socket_header = 'ws2tcpip.h'
+else
+	socket_header = 'sys/socket.h'
+endif
+if not compiler.has_header_symbol(socket_header, 'socklen_t')
 	code = '''
 #include <sys/types.h>
-#ifdef _WIN32
-#  include <ws2tcpip.h>
-#else
-#  include <sys/socket.h>
-#endif
+#include <@0@>
 int accept(int, struct sockaddr *, size_t *);
 int main() {}
-'''
+'''.format(socket_header)
 	if compiler.compiles(code, name : 'socklen_t is size_t')
-        conf.set('socklen_t', 'size_t')
+		conf.set('socklen_t', 'size_t')
 	else
-        conf.set('socklen_t', 'int')
+		conf.set('socklen_t', 'int')
 	endif
 endif
 
 # Some systems do not have sa_len field for struct sockaddr.
-if compiler.has_member('struct sockaddr', 'sa_len',
-                       prefix : '''
-#ifdef _WIN32
-#  include <ws2tcpip.h>
-#else
-#  include <sys/socket.h>
-#endif
-''')
-	conf.set('HAVE_STRUCT_SOCKADDR_SA_LEN', true)
-endif
+conf.set('HAVE_STRUCT_SOCKADDR_SA_LEN',
+    compiler.has_member('struct sockaddr', 'sa_len',
+        prefix : '#include <@0@>'.format(socket_header)))
 
 # Check for v6-only sockets
-code = '''
-#ifdef _WIN32
-#  include <ws2tcpip.h>
-#else
-#  include <netinet/in.h>
-#endif
-void main() {IPV6_V6ONLY;};
-'''
-if compiler.compiles(code)
-	conf.set('HAVE_IPV6_V6ONLY', true)
+if is_win32
+	header = 'ws2tcpip.h'
+else
+	header = 'netinet/in.h'
 endif
+conf.set('HAVE_IPV6_V6ONLY',
+    compiler.has_header_symbol(header, 'IPV6_V6ONLY'))
 
 # to prevent the g_stat()/g_unlink() crash,
 # (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
@@ -450,13 +433,9 @@ glib = dependency('glib-2.0', version : '>= 2.23.0')
 gio = dependency('gio-2.0')
 gobject = dependency('gobject-2.0')
 gthread = dependency('gthread-2.0')
-# glib = all of the above
 
 GLIB_GENMARSHAL = find_program('glib-genmarshal')
 GLIB_MKENUMS = find_program('glib-mkenums')
-
-GTESTER = find_program('gtester')
-#GLIB_TESTS
 
 if get_option('extraversion') != ''
 	DISPLAY_VERSION = '@0@-@1@'.format(meson.project_version(),
@@ -729,7 +708,7 @@ if enable_consoleui
 			f = location + '/ncurses.h'
 			if not found_ncurses_h
 				if compiler.has_header_symbol(f, 'get_wch',
-				                              prefix : '#define _XOPEN_SOURCE_EXTENDED')
+				       prefix : '#define _XOPEN_SOURCE_EXTENDED')
 					if location != '.'
 						ncurses_inc += [include_directories(location)]
 					endif
@@ -780,9 +759,8 @@ ENABLE_GNT = enable_consoleui
 # Check for LibXML2 (required)
 #######################################################################
 libxml = dependency('libxml-2.0', version : '>= 2.6.0')
-libxml_okay = dependency('libxml-2.0', version : '>= 2.6.18', required : false)
-if not libxml_okay.found()
-message('Versions of libxml2 < 2.6.18 may contain bugs that could cause XMPP messages to be discarded.')
+if libxml.version().version_compare('<2.6.18')
+	message('Versions of libxml2 < 2.6.18 may contain bugs that could cause XMPP messages to be discarded.')
 endif
 
 #######################################################################
@@ -952,6 +930,7 @@ endif
 SILC_CFLAGS = ''
 SILC_LIBS = ''
 have_silc = false
+silcclient = false
 if get_option('silc-includes') != '' or get_option('silc-libs') != ''
 	silc_manual_check = true
 else
@@ -988,9 +967,9 @@ endif
 #AC_SUBST(SILC_LIBS)
 #AC_SUBST(SILC_CFLAGS)
 # SILC Toolkit >= 1.0.1 has a new MIME API
-#if test 'x$silcclient' = 'xyes'; then
-#	conf.set('HAVE_SILCMIME_H', true)
-#fi
+if silcclient
+	conf.set('HAVE_SILCMIME_H', true)
+endif
 
 #######################################################################
 # Check for Gadu-Gadu protocol library (libgadu)
@@ -1036,7 +1015,7 @@ else
 	endif
 	if gg_gnutls_sts != ''
 		conf.set('GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE',
-                 '"@0@"'.format(gg_gnutls_sts))
+		         '"@0@"'.format(gg_gnutls_sts))
 	endif
 
 	# redundant - only here to stay compatible with libgadu upstream
@@ -1047,47 +1026,54 @@ endif
 #AC_SUBST(LIBGADU_LIBS)
 #AC_SUBST(LIBGADU_CFLAGS)
 
+DEFAULT_PRPLS = ['bonjour', 'facebook', 'gg', 'irc', 'jabber', 'msn', 'mxit',
+                 'novell', 'oscar', 'sametime', 'silc', 'simple', 'yahoo',
+                 'zephyr']
+ALL_PRPLS = DEFAULT_PRPLS + ['null']
 
 DISTRIB = get_option('distrib')
-DYNAMIC_PRPLS = ' '.join(get_option('dynamic-prpls').split(','))
-STATIC_PRPLS = ' '.join(get_option('static-prpls').split(','))
-if STATIC_PRPLS != '' and DYNAMIC_PRPLS == 'all'
-	DYNAMIC_PRPLS = ''
+dynamic_list = get_option('dynamic-prpls').split(',')
+static_list = get_option('static-prpls').split(',')
+if (static_list != [''] and static_list != []) and dynamic_list == ['all']
+	dynamic_list = []
 endif
 
-if STATIC_PRPLS == 'all'
-	STATIC_PRPLS = 'bonjour facebook gg irc jabber msn mxit novell oscar sametime silc simple yahoo zephyr'
+if static_list == ['all']
+	static_list = DEFAULT_PRPLS
 endif
-#if not have_meanwhile
-#	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
-#fi
-if not avahiincludes or not avahilibs
-#	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
-endif
-if not silcincludes or not silcclient
-#	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
-endif
-if is_win32
-#	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/zephyr//'`
-endif
-#AC_SUBST(STATIC_PRPLS)
+STATIC_PRPLS = []
+foreach prpl : static_list
+	if prpl == ''
+		# The list was empty; do nothing.
+	elif prpl == 'sametime' and not meanwhile.found()
+		# Do nothing
+	elif prpl == 'bonjour' and (not avahiincludes or not avahilibs)
+		# Do nothing
+	elif prpl == 'silc' and (not silcincludes or not silcclient)
+		# Do nothing
+	elif prpl == 'zephyr' and is_win32
+		# Do nothing
+	else
+		STATIC_PRPLS += [prpl]
+	endif
+endforeach
 STATIC_LINK_LIBS = []
 extern_load = []
 load_proto = []
 extern_unload = []
 unload_proto = []
-foreach i : STATIC_PRPLS.split()
+foreach prpl : STATIC_PRPLS
 	# Ugly special case for 'libsilcpurple.la':
-	if i == 'silc'
-		STATIC_LINK_LIBS.append('\$(top_builddir)/libpurple/protocols/@1@/lib@1@purple.la'.format(meson.build_root(), i))
+	if prpl == 'silc'
+		STATIC_LINK_LIBS.append('\$(top_builddir)/libpurple/protocols/@1@/lib@1@purple.la'.format(meson.build_root(), prpl))
 	else
 		# FIXME: Shouldn't be libtool:
-		STATIC_LINK_LIBS.append('\$(top_builddir)/libpurple/protocols/@1@/lib@1@.la'.format(meson.build_root(), i))
+		STATIC_LINK_LIBS.append('\$(top_builddir)/libpurple/protocols/@1@/lib@1@.la'.format(meson.build_root(), prpl))
 	endif
-	extern_load.append('extern gboolean @0@_plugin_load();'.format(i))
-	load_proto.append('@0@_plugin_load();'.format(i))
-	extern_unload.append('extern gboolean @0@_plugin_unload();'.format(i))
-	unload_proto.append('@0@_plugin_unload();'.format(i))
+	extern_load.append('extern gboolean @0@_plugin_load();'.format(prpl))
+	load_proto.append('@0@_plugin_load();'.format(prpl))
+	extern_unload.append('extern gboolean @0@_plugin_unload();'.format(prpl))
+	unload_proto.append('@0@_plugin_unload();'.format(prpl))
 endforeach
 STATIC_BONJOUR = STATIC_PRPLS.contains('bonjour')
 STATIC_FACEBOOK = STATIC_PRPLS.contains('facebook')
@@ -1098,35 +1084,37 @@ STATIC_MSN = STATIC_PRPLS.contains('msn')
 STATIC_MXIT = STATIC_PRPLS.contains('mxit')
 STATIC_NOVELL = STATIC_PRPLS.contains('novell')
 STATIC_OSCAR = STATIC_PRPLS.contains('oscar') or STATIC_PRPLS.contains('aim') or STATIC_PRPLS.contains('icq')
-STATIC_SAMETIME = STATIC_PRPLS.contains('sametime') and have_meanwhile
+STATIC_SAMETIME = STATIC_PRPLS.contains('sametime') and meanwhile.found()
 STATIC_SILC = STATIC_PRPLS.contains('silc') and have_silc
 STATIC_SIMPLE = STATIC_PRPLS.contains('simple')
 STATIC_YAHOO = STATIC_PRPLS.contains('yahoo')
 STATIC_ZEPHYR = STATIC_PRPLS.contains('zephyr')
-#AC_SUBST(STATIC_LINK_LIBS)
 conf.set('STATIC_PROTO_LOAD',
-         ' '.join(extern_load) +
-         ' static void static_proto_load(void) { ' + ' '.join(load_proto) + ' }')
+    ' '.join(extern_load) +
+    ' static void static_proto_load(void) { ' + ' '.join(load_proto) + ' }')
 conf.set('STATIC_PROTO_UNLOAD',
-         ' '.join(extern_unload) +
-         ' static void static_proto_unload(void) { ' + ' '.join(unload_proto) + ' }')
+    ' '.join(extern_unload) +
+    ' static void static_proto_unload(void) { ' + ' '.join(unload_proto) + ' }')
 
-if DYNAMIC_PRPLS == 'all'
-	DYNAMIC_PRPLS = 'bonjour facebook gg irc jabber msn mxit novell oscar sametime silc simple yahoo zephyr'
+if dynamic_list == ['all']
+	dynamic_list = DEFAULT_PRPLS
 endif
-#if not have_meanwhile
-#	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
-#endif
-if not avahiincludes or not avahilibs
-#	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
-endif
-if not silcincludes or not silcclient
-#	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
-endif
-if is_win32
-#	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/zephyr//'`
-endif
-#AC_SUBST(DYNAMIC_PRPLS)
+DYNAMIC_PRPLS = []
+foreach prpl : dynamic_list
+	if prpl == ''
+		# The list was empty; do nothing.
+	elif prpl == 'sametime' and not meanwhile.found()
+		# Do nothing.
+	elif prpl == 'bonjour' and (not avahiincludes or not avahilibs)
+		# Do nothing.
+	elif prpl == 'silc' and (not silcincludes or not silcclient)
+		# Do nothing.
+	elif prpl == 'zephyr' and is_win32
+		# Do nothing.
+	else
+		DYNAMIC_PRPLS += [prpl]
+	endif
+endforeach
 
 DYNAMIC_BONJOUR = DYNAMIC_PRPLS.contains('bonjour')
 DYNAMIC_FACEBOOK = DYNAMIC_PRPLS.contains('facebook')
@@ -1145,9 +1133,9 @@ DYNAMIC_YAHOO = DYNAMIC_PRPLS.contains('yahoo')
 DYNAMIC_ZEPHYR = DYNAMIC_PRPLS.contains('zephyr')
 
 conf.set('HAVE_SYS_UTSNAME_H',
-         compiler.has_header('sys/utsname.h'))
+    compiler.has_header('sys/utsname.h'))
 conf.set('HAVE_UNAME',
-         compiler.has_function('uname'))
+    compiler.has_function('uname'))
 
 
 DEBUG_CFLAGS = '-DPURPLE_DISABLE_DEPRECATED -DPIDGIN_DISABLE_DEPRECATED -DFINCH_DISABLE_DEPRECATED -DGNT_DISABLE_DEPRECATED'
@@ -1181,17 +1169,9 @@ if compiler.get_id() == 'gcc'
 			'-Wpointer-arith',
 			'-Wfloat-equal',
 			'-Wundef']
-#		orig_CFLAGS='$CFLAGS'
-#		CFLAGS='$CFLAGS $newflag'
-#		AC_MSG_CHECKING(for $newflag option to gcc)
-#		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])], [
-#			AC_MSG_RESULT(yes)
-#			CFLAGS='$orig_CFLAGS'
-#			DEBUG_CFLAGS='$DEBUG_CFLAGS $newflag'
-#		], [
-#			AC_MSG_RESULT(no)
-#			CFLAGS='$orig_CFLAGS'
-#		])
+		if compiler.has_argument(newflag)
+			add_global_arguments(newflag, language : 'c')
+		endif
 	endforeach
 
 	if get_option('fortify')
@@ -1220,24 +1200,19 @@ endif
 #DEBUG_CPPFLAGS=`echo '$DEBUG_CFLAGS' | $sedpath 's/-Wdeclaration-after-statement//' | $sedpath 's/-Wmissing-prototypes//' | $sedpath 's/-Waggregate-return//'`
 #
 if SUNCC
-#        CFLAGS='$CFLAGS -features=extensions'
+	add_global_arguments('-features=extensions', language : 'c')
 endif
-#AC_SUBST(CFLAGS)
 
 pidginpath = find_program('pidgin')
 
 have_clang = compiler.get_id() == 'clang'
-
-if have_clang
-#	GLIB_LIBS=`echo $GLIB_LIBS | $sedpath 's/-pthread/-lpthread/'`
-endif
 
 if get_option('glib-errors-trace')
 	if have_clang
 		error('--enable-glib-errors-trace doesn\'t work with clang')
 	endif
 	conf.set('ENABLE_GLIBTRACE', true)
-#	CFLAGS='$CFLAGS -rdynamic'
+	add_global_arguments('-rdynamic', language : 'c')
 endif
 
 #######################################################################
@@ -1318,36 +1293,11 @@ enable_kwallet = get_option('kwallet') and is_not_win32
 
 if enable_kwallet
 	# Ensure C++ compiler works
-#	AC_CHECK_PROG(CXXTEST, [$CXX], [$CXX])
-#	if test 'x$CXXTEST' = 'x'; then
-#		enable_kwallet = false
-#		if test 'x$force_deps' = 'xyes'; then
-#			AC_MSG_ERROR([
-#A C++ compiler was not found.
-#Use -Dkwallet=false if you do not need KWallet support.
-#])
-#		fi
-#	fi
-endif
+	add_languages('cpp')
+	cxx_compiler = meson.get_compiler('cpp')
 
-#AC_LANG_PUSH([C++])
-#CPPFLAGS_save='$CPPFLAGS'
-#LIBS_save='$LIBS'
-
-if enable_kwallet
-#	PKG_CHECK_MODULES(QT4, [QtCore], [
-#		AC_SUBST(QT4_CFLAGS)
-#		AC_SUBST(QT4_LIBS)
-#	], [
-#		AC_MSG_RESULT(no)
-#		enable_kwallet = false
-#		if test 'x$force_deps' = 'xyes'; then
-#			AC_MSG_ERROR([
-#Qt4 development headers not found.
-#Use -Dkwallet=false if you do not need KWallet support.
-#])
-#		fi
-#	])
+	qt4 = dependency('qt4', modules : 'Core', required : force_deps)
+	enable_kwallet = qt4.found()
 endif
 
 if enable_kwallet
@@ -1518,19 +1468,9 @@ ENABLE_DBUS = enable_dbus
 
 # Check for Python headers (currently useful only for libgnt)
 # (Thanks to XChat)
-#if test 'x$enable_consoleui' = 'xyes' -a ! -z '$PYTHON' -a x'$PYTHON' != x'no' ; then
-#	AC_MSG_CHECKING(for Python compile flags)
-#	if test -f ${PYTHON}-config; then
-#		PY_CFLAGS=`${PYTHON}-config --includes`
-#		PY_LIBS=`${PYTHON}-config --libs`
-#		AC_DEFINE(USE_PYTHON, [1], [Define if python headers are available.])
-#		AC_MSG_RESULT(ok)
-#	else
-#		AC_MSG_RESULT([Cannot find ${PYTHON}-config])
-#		PY_CFLAGS=''
-#		PY_LIBS=''
-#	endif
-#endif
+if enable_consoleui
+	python_dep = dependency('python')
+endif
 #AC_SUBST(PY_CFLAGS)
 #AC_SUBST(PY_LIBS)
 
@@ -1554,7 +1494,7 @@ endif
 #AC_SUBST(SSL_CERTIFICATES_DIR)
 if SSL_CERTIFICATES_DIR != ''
 	conf.set('SSL_CERTIFICATES_DIR',
-	         '"@0@"'.format(SSL_CERTIFICATES_DIR))
+	    '"@0@"'.format(SSL_CERTIFICATES_DIR))
 endif
 INSTALL_SSL_CERTIFICATES = SSL_CERTIFICATES_DIR == ''
 
@@ -1606,8 +1546,6 @@ if enable_nss
 	if have_nss
 		conf.set('HAVE_NSS', true)
 		msg_nss = 'Mozilla NSS'
-	else
-		error('No SSL/TLS library available')
 	endif
 endif
 
@@ -1664,7 +1602,7 @@ endif
 #######################################################################
 foreach func : ['snprintf', 'connect']
 	conf.set('HAVE_' + func.to_upper(),
-	         compiler.has_function(func))
+	    compiler.has_function(func))
 endforeach
 #AC_SUBST(SASL_LIBS)
 SASL_LIBS = ''
@@ -1768,32 +1706,34 @@ endif
 #AC_MSG_RESULT(no)
 foreach func : 'gethostid lrand48 timegm memcpy memmove random strchr strerror vprintf'.split()
 	conf.set('HAVE_' + func.to_upper(),
-	         compiler.has_function(func))
+	    compiler.has_function(func))
 endforeach
 foreach header : 'malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h sys/select.h sys/uio.h sys/utsname.h sys/wait.h termios.h'.split()
 	conf.set('HAVE_' + header.to_upper().underscorify(),
-	         compiler.has_header(header))
+	    compiler.has_header(header))
 endforeach
 
 # sys/sysctl.h on OpenBSD 4.2 requires sys/param.h
 # sys/sysctl.h on FreeBSD requires sys/types.h
-conf.set('HAVE_SYS_PARAM_H',
-         compiler.has_header('sys/param.h'))
-#AC_CHECK_HEADERS(sys/sysctl.h, [], [],
-#	[[
-#		#include <sys/types.h>
-#		#ifdef HAVE_PARAM_H
-#		# include <sys/param.h>
-#		#endif
-#	]])
-#
+have_sys_param_h = compiler.has_header('sys/param.h')
+conf.set('HAVE_SYS_PARAM_H', have_sys_param_h)
+prefix = '''
+#include <sys/types.h>
+'''
+if have_sys_param_h
+	prefix += '''
+#include <sys/param.h>
+'''
+endif
+conf.set('HAVE_SYS_SYSCTL_H',
+    compiler.has_header('sys/sysctl.h', prefix : prefix))
 conf.set('HAVE_SYS_SOCKET_H',
-         compiler.has_header('sys/socket.h'))
+    compiler.has_header('sys/socket.h'))
 #AC_VAR_TIMEZONE_EXTERNALS
 
 conf.set('HAVE_TM_GMTOFF',
-         compiler.has_member('struct tm', 'tm_gmtoff',
-                             prefix : '#include<time.h>'))
+    compiler.has_member('struct tm', 'tm_gmtoff',
+        prefix : '#include<time.h>'))
 
 #######################################################################
 # Disable pixmap installation
@@ -1903,7 +1843,7 @@ subdir('finch')
 #		   po/Makefile.in
 #		  ])
 configure_file(output : 'config.h',
-               configuration : conf)
+    configuration : conf)
 
 message('')
 message('pidgin ' + purple_display_version)
@@ -1914,8 +1854,8 @@ message('Build console UI.............. : ' + enable_consoleui.to_string())
 message('Build for X11................. : ' + with_x.to_string())
 message('')
 message('Enable Gestures............... : ' + enable_gestures.to_string())
-message('Protocols to build dynamically : ' + DYNAMIC_PRPLS)
-message('Protocols to link statically.. : ' + STATIC_PRPLS)
+message('Protocols to build dynamically : @0@'.format(DYNAMIC_PRPLS))
+message('Protocols to link statically.. : @0@'.format(STATIC_PRPLS))
 message('')
 message('Build with GStreamer support.. : ' + enable_gst.to_string())
 message('Build with D-Bus support...... : ' + enable_dbus.to_string())
@@ -1960,7 +1900,11 @@ message('')
 message('Print debugging messages...... : ' + enable_debug.to_string())
 message('Generate documentation........ : ' + ENABLE_GTK_DOC.to_string())
 message('')
-message('Pidgin will be installed in @0@.'.format(get_option('bindir')))
+bindir = get_option('bindir')
+if not bindir.startswith('/')
+	bindir = get_option('prefix') + '/' + bindir
+endif
+message('Pidgin will be installed in @0@.'.format(bindir))
 if pidginpath.found()
 	message('Warning: You have an old copy of Pidgin at @0@.'.format(pidginpath.path()))
 endif

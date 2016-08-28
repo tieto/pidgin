@@ -1,4 +1,4 @@
-option('win32-dirs', type : 'string', value : 'classic',
+option('win32-dirs', type : 'combo', choices : ['classic', 'fhs'], value : 'classic',
        description : 'use win32 "classic" (Program Files-like) or "fhs" (unix-like) directory structure (default: "classic")')
 
 option('nls', type : 'boolean', value : true,
