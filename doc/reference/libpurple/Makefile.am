@@ -70,6 +70,7 @@ IGNORE_HFILES=\
 	plugins \
 	protocols \
 	tests \
+	tests.h \
 	win32 \
 	backend-fs2.h \
 	dbus-define-api.h \
