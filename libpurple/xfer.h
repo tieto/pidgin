@@ -94,7 +94,15 @@ typedef enum
 
 /**
  * PurpleXferUiOps:
- * @new_xfer: UI op to initialize a new transfer
+ * @new_xfer: UI op that's called after a new transfer is created.
+ * @destroy: UI op that's called when a transfer is being destroyed.
+ * @add_xfer: UI op that's called when a transfer should be added to the UI.
+ * @update_progress: UI op that's called when a transfer's progress has been
+ *                   updated.
+ * @cancel_local: UI op that's called when a transfer has been canceled on the
+ *                local end.
+ * @cancel_remote: UI op that's called when a transfer has been canceled on
+ *                 the remote end.
  * @ui_write: UI op to write data received from the protocol. The UI must deal
  *            with the entire buffer and return size, or it is treated as an
  *            error.
