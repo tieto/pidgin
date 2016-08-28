@@ -46,6 +46,8 @@
 
 #define IRC_INITIAL_BUFSIZE 1024
 
+#define IRC_MAX_MSG_SIZE 512
+
 #define IRC_NAMES_FLAG "irc-namelist"
 
 
