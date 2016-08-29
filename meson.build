@@ -510,28 +510,30 @@ Use -Dx=false if you do not need X11 support.
 	#######################################################################
 	if enable_screensaver
 		if with_x
-#			old_LIBS='$LIBS'
-#			LIBS='$LIBS $GTK_LIBS $x_libpath_add'
-#			XSS_LIBS=''
-#			XSS_HEADERS=''
-#			AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS='$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_EXTRA_LIBS'],[],[-lX11 -lXext -lm])
-#			AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS='$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_LIBS $X_EXTRA_LIBS -lXss'],[],[-lX11 -lXext -lm])
-#			if test 'x$XSS_LIBS' != 'x'; then
-#				oldCPPFLAGS='$CPPFLAGS'
-#				CPPFLAGS='$CPPFLAGS $x_incpath_add'
-#				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#					#include <X11/Xlib.h>
-#					#include <X11/extensions/scrnsaver.h>
-#					]], [[]])], [], [enable_screensaver=no])
-#				CPPFLAGS='$oldCPPFLAGS'
-#			else
-#				enable_screensaver=no
-#			endif
-#			LIBS='$old_LIBS'
+			# FIXME: Neither of these obey x_incpath_add or x_libpath_add.
+			xss_headers = []
+			xss_libs = []
+			if compiler.has_function('XScreenSaverRegister',
+			    args : ['-lXext', '-lX11', '-lXext', '-lm'])
+				xss_libs = ['-lXext', '-lX11', '-lXext', '-lm']
+			elif compiler.has_function('XScreenSaverRegister',
+			    args : ['-lXss', '-lX11', '-lXext', '-lm'])
+				xss_libs = ['-lXss', '-lX11', '-lXext', '-lm']
+			endif
+			if xss_libs != []
+				if not compiler.has_header('X11/extensions/scrnsaver.h',
+				    prefix : '#include <X11/Xlib.h>')
+					enable_screensaver = false
+				endif
+			else
+				enable_screensaver = false
+			endif
 
 			if enable_screensaver
 				conf.set('USE_SCREENSAVER', true)
-#				AC_SUBST(XSS_LIBS)
+				xss = declare_dependency(
+				    link_args : xss_libs
+				)
 			else
 				if force_deps
 					error('''
@@ -552,20 +554,20 @@ this is required for detecting idle time by mouse and keyboard usage.
 	if enable_sm
 		if with_x
 			enable_sm = false
-			found_sm_lib = compiler.has_function('SmcSaveYourselfDone', args : '-lSM')
+			# FIXME: Neither of these obey x_incpath_add or x_libpath_add.
+			found_sm_lib = compiler.has_function('SmcSaveYourselfDone',
+			    args : '-lSM')
 			if found_sm_lib
-#				oldCPPFLAGS='$CPPFLAGS'
-#				CPPFLAGS='$CPPFLAGS $x_incpath_add'
 				if compiler.has_header('X11/SM/SMlib.h')
-#					SM_LIBS='$x_libpath_add -lSM -lICE'
+					sm = declare_dependency(
+					    link_args : ['-lSM', '-lICE']
+					)
 					enable_sm = true
 				endif
-#				CPPFLAGS='$oldCPPFLAGS'
 			endif
 
 			if enable_sm
 				conf.set('USE_SM', true)
-#				AC_SUBST(SM_LIBS)
 			else
 				if force_deps
 					error('''
@@ -577,6 +579,9 @@ Use -Dsm=false if you do not need session management support.
 		else
 			error('X support is required to build with X session management support')
 		endif
+	endif
+	if not enable_sm
+		sm = declare_dependency()
 	endif
 
 	#######################################################################
@@ -1745,20 +1750,6 @@ toplevel_inc = include_directories('.')
 #subdir('doc/reference/protocols')
 #subdir('doc/reference/protocols/facebook')
 #subdir('doc/reference/pidgin')
-#subdir('pidgin')
-subdir('pidgin/pixmaps')
-#subdir('pidgin/pixmaps/emotes/default/24')
-#subdir('pidgin/pixmaps/emotes/small/16')
-#subdir('pidgin/plugins')
-#subdir('pidgin/plugins/cap')
-#subdir('pidgin/plugins/disco')
-#subdir('pidgin/plugins/gestures')
-#subdir('pidgin/plugins/gevolution')
-#subdir('pidgin/plugins/musicmessaging')
-#subdir('pidgin/plugins/ticker')
-#subdir('pidgin/plugins/win32/transparency')
-#subdir('pidgin/plugins/win32/winprefs')
-#subdir('pidgin/themes')
 #subdir('libpurple/data/gconf')
 #subdir('libpurple/example')
 #subdir('libpurple/plugins')
@@ -1790,6 +1781,17 @@ subdir('finch')
 #subdir('finch/libgnt')
 #subdir('finch/libgnt/wms')
 #subdir('finch/plugins')
+subdir('pidgin')
+#subdir('pidgin/plugins')
+#subdir('pidgin/plugins/cap')
+#subdir('pidgin/plugins/disco')
+#subdir('pidgin/plugins/gestures')
+#subdir('pidgin/plugins/gevolution')
+#subdir('pidgin/plugins/musicmessaging')
+#subdir('pidgin/plugins/ticker')
+#subdir('pidgin/plugins/win32/transparency')
+#subdir('pidgin/plugins/win32/winprefs')
+#subdir('pidgin/themes')
 
 #		   doc/pidgin.1
 #		   doc/finch.1
