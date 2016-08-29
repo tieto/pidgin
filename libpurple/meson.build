@@ -334,28 +334,32 @@ purple_build_coreheaders += purple_builtheaders
 # We should probably make this better
 dbus_signals = purple_coresources + ['protocols/irc/irc.c', 'protocols/jabber/jabber.c']
 
+dbus_analyze_functions = files('dbus-analyze-functions.py')[0]
+dbus_analyze_signals = files('dbus-analyze-signals.py')[0]
+dbus_analyze_types = files('dbus-analyze-types.py')[0]
+
 dbus_types_c = custom_target('dbus_types_c',
                              input : purple_build_coreheaders,
                              output : 'dbus-types.c',
-                             command : [python, meson.current_source_dir() + '/dbus-analyze-types.py', '-o', '@OUTPUT@',
+                             command : [python, dbus_analyze_types, '-o', '@OUTPUT@',
                                         '--pattern=PURPLE_DBUS_DEFINE_TYPE(%s)', '@INPUT@'])
 
 dbus_types_h = custom_target('dbus_types_h',
                              input : purple_build_coreheaders,
                              output : 'dbus-types.h',
-                             command : [python, meson.current_source_dir() + '/dbus-analyze-types.py', '-o', '@OUTPUT@',
+                             command : [python, dbus_analyze_types, '-o', '@OUTPUT@',
                                         '--pattern=PURPLE_DBUS_DECLARE_TYPE(%s)', '@INPUT@'])
 
 dbus_bindings_c = custom_target('dbus_bindings_c',
                                 input : dbus_exported,
                                 output : 'dbus-bindings.c',
-                                command : [python, meson.current_source_dir() + '/dbus-analyze-functions.py', '-o', '@OUTPUT@',
+                                command : [python, dbus_analyze_functions, '-o', '@OUTPUT@',
                                            '@INPUT@'])
 
 dbus_signals_c = custom_target('dbus_signals_c',
                                input : dbus_signals,
                                output : 'dbus-signals.c',
-                               command : [python, meson.current_source_dir() + '/dbus-analyze-signals.py', '-o', '@OUTPUT@',
+                               command : [python, dbus_analyze_signals, '-o', '@OUTPUT@',
                                           '@INPUT@'])
 
 # Automatic?

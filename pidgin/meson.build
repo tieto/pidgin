@@ -157,15 +157,16 @@ if ENABLE_GTK
 	install_headers(libpidgin_headers, subdir : 'pidgin')
 
 	libpidgin_inc = include_directories('.')
-	libpidgin = static_library('pidgin',
+	# TODO: This doesn't quite match autotools' version.
+	libpidgin = shared_library('pidgin',
 	    libpidgin_SOURCES,
 	    include_directories : [toplevel_inc],
 	    soversion : purple_lt_current,
-	    dependencies : [gtk, webkit, enchant, dbus, libpurple_dep, glib])
+	    dependencies : [gtk, gstreamer_video, webkit, enchant, dbus, x11, sm, xss, libpurple_dep, glib, math])
 	libpidgin_dep = declare_dependency(
 	    include_directories : [toplevel_inc, libpidgin_inc],
 	    link_with : libpidgin,
-	    dependencies : [gtk, gstreamer_video, dbus, x11, sm, xss, libpurple_dep, glib, math])
+	    dependencies : [webkit, gtk, glib, math])
 #	libpidgin_la_LDFLAGS = -export-dynamic \
 #	libpidgin_la_LIBADD = \
 #		@LIBOBJS@ \
@@ -283,6 +284,6 @@ if ENABLE_GTK
 	endif
 
 	subdir('pixmaps')
-#	subdir('plugins')
+	subdir('plugins')
 	subdir('themes')
 endif  # ENABLE_GTK
