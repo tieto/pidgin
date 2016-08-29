@@ -138,44 +138,14 @@ else
 	is_not_win32 = true
 	ws2_32 = declare_dependency()
 	dnsapi = declare_dependency()
-	if not compiler.has_header('signal.h')
-		error('signal.h is required.')
-	endif
 endif
 IS_WIN32 = is_win32
 
 # Checks for header files.
-# AC_HEADER_STDC:
-stdc = true
-foreach h : ['stdlib.h', 'stdarg.h', 'string.h', 'float.h']
-	if not compiler.has_header(h)
-		stdc = false
-	endif
-endforeach
-if stdc
-	code = '''#include <string.h>
-void func() { memchr("Compile me.\n", 'C', 2); }
-'''
-	stdc = stdc and compiler.compiles(code, name : 'string.h declares mem* functions')
-endif
-if stdc
-	code = '''#include <stdlib.h>
-void func() { free(NULL); }
-'''
-	stdc = stdc and compiler.compiles(code, name : 'stdlib.h declares free and malloc family')
-endif
-if stdc
-	# 'ctype.h' macros work on characters with the high bit set
-#	code = '''#include <ctype.h>
-#
-#'''
-#	stdc = stdc and compiler.compiles(code, name : 'string.h declares memory functions')
-endif
-conf.set('STDC_HEADERS', stdc)
 # AC_HEADER_SYS_WAIT:
 conf.set('HAVE_SYS_WAIT_H', compiler.has_header('sys/wait.h'))
 
-foreach h : ['fcntl.h', 'unistd.h', 'locale.h', 'stdint.h']
+foreach h : ['fcntl.h', 'unistd.h', 'stdint.h']
 	if compiler.has_header(h)
 		conf.set('HAVE_' + h.to_upper().underscorify(), true)
 	else
@@ -255,7 +225,7 @@ FINCH_PLUGINDIR = '@0@/finch-@1@'.format(abslibdir, purple_major_version)
 conf.set('FINCH_PLUGINDIR', '"@0@"'.format(FINCH_PLUGINDIR))
 
 # Checks for library functions.
-foreach func : ['strdup', 'strstr', 'atexit', 'setlocale']
+foreach func : ['strdup']
 	conf.set('HAVE_' + func.to_upper(),
 	    compiler.has_function(func))
 endforeach
@@ -1704,11 +1674,11 @@ endif
 
 #AC_MSG_CHECKING(for me pot o' gold)
 #AC_MSG_RESULT(no)
-foreach func : 'gethostid lrand48 timegm memcpy memmove random strchr strerror vprintf'.split()
+foreach func : ['gethostid', 'timegm']
 	conf.set('HAVE_' + func.to_upper(),
 	    compiler.has_function(func))
 endforeach
-foreach header : 'malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h sys/select.h sys/uio.h sys/utsname.h sys/wait.h termios.h'.split()
+foreach header : 'paths.h sgtty.h sys/cdefs.h sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h sys/select.h sys/uio.h sys/utsname.h sys/wait.h termios.h'.split()
 	conf.set('HAVE_' + header.to_upper().underscorify(),
 	    compiler.has_header(header))
 endforeach
