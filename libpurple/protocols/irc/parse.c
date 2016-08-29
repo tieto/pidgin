@@ -702,14 +702,15 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 		return;
 	} else if (!strncmp(input, "ERROR ", 6)) {
 		if (g_utf8_validate(input, -1, NULL)) {
-			char *tmp = g_strdup_printf("%s\n%s", _("Disconnected."), input);
-			purple_connection_error (gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
-			g_free(tmp);
-		} else
-			purple_connection_error (gc,
+			purple_connection_take_error(gc, g_error_new(
+				PURPLE_CONNECTION_ERROR,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Disconnected."));
+				"%s\n%s", _("Disconnected."), input));
+		} else
+			purple_connection_take_error(gc, g_error_new_literal(
+				PURPLE_CONNECTION_ERROR,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Disconnected.")));
 		return;
 #ifdef HAVE_CYRUS_SASL
 	} else if (!strncmp(input, "AUTHENTICATE ", 13)) {
