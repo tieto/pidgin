@@ -147,9 +147,6 @@
 /* Define to 1 if you have the `socket' library (-lsocket). */
 /* #undef HAVE_LIBSOCKET */
 
-/* Define to 1 if you have the `lrand48' function. */
-/* #define HAVE_LRAND48 1 */
-
 /* Define to 1 if you have the <malloc.h> header file. */
 #define HAVE_MALLOC_H 1
 
@@ -197,9 +194,6 @@
 
 /* Define to 1 if you have the <prio.h> header file. */
 /* #undef HAVE_PRIO_H */
-
-/* Define to 1 if you have the `random' function. */
-/* #define HAVE_RANDOM 1 */
 
 /* Define to 1 if you have the <sgtty.h> header file. */
 /* #define HAVE_SGTTY_H 1 */

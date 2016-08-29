@@ -2087,8 +2087,7 @@ fi
 
 AC_MSG_CHECKING(for me pot o' gold)
 AC_MSG_RESULT(no)
-AC_CHECK_FUNCS(gethostid lrand48 timegm)
-AC_CHECK_FUNCS(random)
+AC_CHECK_FUNCS(gethostid timegm)
 AC_CHECK_HEADERS(paths.h sgtty.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
 AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/wait.h)
