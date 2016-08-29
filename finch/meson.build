@@ -57,7 +57,8 @@ if ENABLE_GNT
 	install_headers(libfinch_headers, subdir : 'finch')
 
 	libfinch_inc = include_directories('.')
-	libfinch = static_library('finch',
+	# TODO: This doesn't quite match autotools' version.
+	libfinch = shared_library('finch',
 	    libfinch_SOURCES,
 	    c_args : '-DSTANDALONE',
 	    include_directories : [toplevel_inc],
@@ -162,4 +163,4 @@ if ENABLE_GNT
 	endif
 endif  # ENABLE_GNT
 
-#subdir('plugins')
+subdir('plugins')
