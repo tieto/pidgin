@@ -149,7 +149,6 @@ case "$host" in
 		is_win32="no"
 		is_not_win32="yes"
 		PLUGIN_LDFLAGS="-avoid-version"
-		AC_CHECK_HEADERS(signal.h)
 		;;
 esac
 AM_CONDITIONAL(IS_WIN32, test "x$is_win32" = "xyes")
@@ -164,9 +163,8 @@ AC_SUBST(PIDGIN_LIBS)
 AC_SUBST(FINCH_LIBS)
 
 dnl Checks for header files.
-AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h unistd.h locale.h stdint.h)
+AC_CHECK_HEADERS(fcntl.h unistd.h stdint.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_SIZEOF(time_t, ,[
