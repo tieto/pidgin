@@ -28,11 +28,6 @@
 
 #include <stdlib.h>
 
-#ifndef HAVE_STRERROR
-extern char *sys_errlist[];
-# define strerror(x) (sys_errlist[(x)])
-#endif
-
 /* Strings. */
 #include <string.h>
 

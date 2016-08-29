@@ -471,10 +471,8 @@ int pidgin_start(int argc, char *argv[])
 	textdomain(PACKAGE);
 #endif
 
-#ifdef HAVE_SETLOCALE
 	/* Locale initialization is not complete here.  See gtk_init_check() */
 	setlocale(LC_ALL, "");
-#endif
 
 #ifndef DEBUG
 		/* We translate this here in case the crash breaks gettext. */

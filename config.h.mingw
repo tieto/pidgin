@@ -40,9 +40,6 @@
 /* Define if you have the external 'altzone' variable. */
 /* #undef HAVE_ALTZONE */
 
-/* Define to 1 if you have the `atexit' function. */
-#define HAVE_ATEXIT 1
-
 /* Define to 1 if you have the `bind_textdomain_codeset' function. */
 /* #undef HAVE_BIND_TEXTDOMAIN_CODESET */
 
@@ -159,15 +156,6 @@
 /* Define if we have support for application media type. */
 /* #undef HAVE_MEDIA_APPLICATION */
 
-/* Define to 1 if you have the `memcpy' function. */
-#define HAVE_MEMCPY 1
-
-/* Define to 1 if you have the `memmove' function. */
-#define HAVE_MEMMOVE 1
-
-/* Define to 1 if you have the <memory.h> header file. */
-#define HAVE_MEMORY_H 1
-
 /* Define to 1 if you have the `mono_jit_init' function. */
 /* #undef HAVE_MONO_JIT_INIT */
 
@@ -213,9 +201,6 @@
 /* Define to 1 if you have the `random' function. */
 /* #define HAVE_RANDOM 1 */
 
-/* Define to 1 if you have the `setlocale' function. */
-#define HAVE_SETLOCALE 1
-
 /* Define to 1 if you have the <sgtty.h> header file. */
 /* #define HAVE_SGTTY_H 1 */
 
@@ -237,23 +222,14 @@
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
 
-/* Define to 1 if you have the `strchr' function. */
-#define HAVE_STRCHR 1
-
 /* Define to 1 if you have the `strdup' function. */
 #define HAVE_STRDUP 1
-
-/* Define to 1 if you have the `strerror' function. */
-#define HAVE_STRERROR 1
 
 /* Define to 1 if you have a strftime() that supports the %z format string. */
 /* #undef HAVE_STRFTIME_Z_FORMAT */
 
 /* Define to 1 if you have the <strings.h> header file. */
 #define HAVE_STRINGS_H 1
-
-/* Define to 1 if you have the `strstr' function. */
-#define HAVE_STRSTR 1
 
 /* Define if struct sockaddr has an sa_len member */
 /* #undef HAVE_STRUCT_SOCKADDR_SA_LEN */
@@ -331,9 +307,6 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 /*#define HAVE_UNISTD_H 1*/
-
-/* Define to 1 if you have the `vprintf' function. */
-#define HAVE_VPRINTF 1
 
 /* Define to 1 if you have X11 */
 /* #define HAVE_X11 1 */

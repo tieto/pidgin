@@ -946,11 +946,7 @@ void Z_debug_stderr (format, args, closure)
      va_list args;
      void *closure;
 {
-#ifdef HAVE_VPRINTF
     vfprintf (stderr, format, args);
-#else
-    _doprnt (format, args, stderr);
-#endif
     putc ('\n', stderr);
 }
 

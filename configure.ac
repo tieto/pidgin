@@ -249,7 +249,7 @@ FINCH_PLUGINDIR="\$(libdir)/finch-$PURPLE_MAJOR_VERSION"
 AC_SUBST([FINCH_PLUGINDIR])
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS(strdup strstr atexit setlocale)
+AC_CHECK_FUNCS(strdup)
 dnl Checks for getopt in standard library
 AC_CHECK_FUNCS(getopt_long,,
 [
@@ -2088,8 +2088,8 @@ fi
 AC_MSG_CHECKING(for me pot o' gold)
 AC_MSG_RESULT(no)
 AC_CHECK_FUNCS(gethostid lrand48 timegm)
-AC_CHECK_FUNCS(memcpy memmove random strchr strerror vprintf)
-AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
+AC_CHECK_FUNCS(random)
+AC_CHECK_HEADERS(paths.h sgtty.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
 AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
