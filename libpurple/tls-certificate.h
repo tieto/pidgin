@@ -45,7 +45,7 @@
  * purple_tls_certificate_trust() and friends. These IDs can then be passed
  * to purple_certificate_path() or used directly, if desired.
  *
- * Returns: (element-type utf8): The #GList of IDs described above
+ * Returns: (transfer full) (element-type utf8): #GList of IDs described above
  *          Free with purple_certificate_free_ids()
  */
 GList *
@@ -53,7 +53,8 @@ purple_tls_certificate_list_ids(void);
 
 /**
  * purple_tls_certificate_free_ids:
- * @ids: List of ids retrieved from purple_certificate_list_ids()
+ * @ids: (transfer full) (element-type utf8): List of ids retrieved from
+ *       purple_certificate_list_ids()
  *
  * Frees the list of IDs returned from purple_certificate_list_ids().
  */
@@ -66,6 +67,8 @@ purple_tls_certificate_free_ids(GList *ids);
  * @error: A GError location to store the error occurring, or NULL to ignore
  *
  * Loads the certificate referenced by ID into a #GTlsCertificate object.
+ *
+ * Returns: (transfer full): #GTlsCertificate loaded from ID
  */
 GTlsCertificate *
 purple_tls_certificate_new_from_id(const gchar *id, GError **error);
@@ -106,7 +109,7 @@ purple_tls_certificate_distrust(const gchar *id, GError **error);
  * Connects the Purple TLS certificate subsystem to @conn so it will accept
  * certificates trusted by purple_tls_certificate_trust() and friends.
  *
- * Returns: (transfer: none) (type GObject.Object): @conn, similar to
+ * Returns: (transfer none) (type GObject.Object): @conn, similar to
  *          g_object_connect()
  */
 gpointer
@@ -120,7 +123,7 @@ purple_tls_certificate_attach_to_tls_connection(GTlsConnection *conn);
  * connections it creates will accept certificates trusted by
  * purple_tls_certificate_trust() and friends.
  *
- * Returns: (transfer: none) (type GObject.Object): @client, similar to
+ * Returns: (transfer none) (type GObject.Object): @client, similar to
  *          g_object_connect()
  */
 gpointer
