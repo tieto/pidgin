@@ -44,8 +44,8 @@ G_BEGIN_DECLS
 /**
  * purple_gio_graceful_close:
  * @stream: A #GIOStream to close
- * @input: (optional): A #GInputStream which wraps @stream's input stream
- * @output: (optional): A #GOutputStream which wraps @stream's output stream
+ * @input: (nullable): A #GInputStream which wraps @stream's input stream
+ * @output: (nullable): A #GOutputStream which wraps @stream's output stream
  *
  * Closes @input, @output, @stream. If there are pending operations, it
  * asynchronously waits for the operations to finish before closing the
@@ -64,7 +64,7 @@ purple_gio_graceful_close(GIOStream *stream,
  * A helper function to simplify creating a #GSocketClient. It's intended
  * to be used in protocol plugins.
  *
- * Returns: A new #GSocketClient with the appropriate
+ * Returns: (transfer full): A new #GSocketClient with the appropriate
  * GProxyResolver, based on the #PurpleAccount settings and
  * TLS Certificate handling, or NULL if an error occurred.
  */

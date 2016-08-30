@@ -503,7 +503,7 @@ introspection_sources = \
 	$(addprefix media/, $(purple_mediaheaders))
 
 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpurple.la
-Purple_3_0_gir_INCLUDES = GObject-2.0
+Purple_3_0_gir_INCLUDES = Gio-2.0 GObject-2.0
 if PLUGINS
 Purple_3_0_gir_INCLUDES += GPlugin-0.0
 endif
