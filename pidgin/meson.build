@@ -238,49 +238,18 @@ if ENABLE_GTK
 
 	endif # INSTALL_I18N
 
-#	-include $(INTROSPECTION_MAKEFILE)
-#	INTROSPECTION_GIRS =
-#	INTROSPECTION_SCANNER_ARGS = --warn-all --add-include-path=$(top_builddir)/libpurple --add-include-path=$(prefix)/share/gir-1.0
-#	INTROSPECTION_COMPILER_ARGS = --includedir=$(top_builddir)/libpurple --includedir=$(prefix)/share/gir-1.0
-
 	if enable_introspection
-#		introspection_sources = $(libpidgininclude_HEADERS)
+		introspection_sources = libpidgin_headers
 
-#		Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpidgin.la
-#		Pidgin_3_0_gir_INCLUDES = GObject-2.0 Gtk-3.0 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION)
-#		Pidgin_3_0_gir_CFLAGS = \
-#			$(INCLUDES) \
-#			-DDATADIR=\"$(datadir)\" \
-#			-DLIBDIR=\"$(libdir)/pidgin/\" \
-#			-DLOCALEDIR=\"$(datadir)/locale\" \
-#			-DSYSCONFDIR=\"$(sysconfdir)\" \
-#			-I$(top_builddir)/libpurple \
-#			-I$(top_srcdir)/libpurple/ \
-#			-I$(top_builddir) \
-#			-I$(top_srcdir) \
-#			$(GLIB_CFLAGS) \
-#			$(GPLUGIN_CFLAGS) \
-#			$(GCR_CFLAGS) \
-#			$(GSTREAMER_CFLAGS) \
-#			$(GSTVIDEO_CFLAGS) \
-#			$(GSTINTERFACES_CFLAGS) \
-#			$(GTK_CFLAGS) \
-#			$(X11_CFLAGS) \
-#			$(DBUS_CFLAGS) \
-#			$(GTKSPELL_CFLAGS) \
-#			$(LIBXML_CFLAGS) \
-#			$(WEBKIT_CFLAGS) \
-#			$(INTROSPECTION_CFLAGS)
-#
-#		Pidgin_3_0_gir_LIBS = $(builddir)/libpidgin.la
-#		Pidgin_3_0_gir_FILES = $(introspection_sources)
-#		INTROSPECTION_GIRS += Pidgin-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
-
-#		girdir = $(prefix)/share/gir-1.0 $(INTROSPECTION_GIRDIR)
-#		gir_DATA = $(INTROSPECTION_GIRS)
-
-#		typelibdir = $(prefix)/share/gir-1.0 $(INTROSPECTION_TYPELIBDIR)
-#		typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+		gnome.generate_gir(libpidgin,
+		    sources : introspection_sources,
+		    includes : ['GObject-2.0', 'Gtk-3.0', libpurple_gir[0]],
+		    namespace : 'Pidgin',
+		    symbol_prefix : 'pidgin_',
+		    identifier_prefix : 'Pidgin',
+		    nsversion : '@0@.@1@'.format(purple_major_version,
+		                                 purple_minor_version),
+		    install : true)
 	endif
 
 	subdir('pixmaps')

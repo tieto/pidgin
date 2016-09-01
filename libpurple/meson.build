@@ -457,66 +457,28 @@ configure_file(input : 'data/purple-3.pc.in',
                install : true,
                install_dir : get_option('libdir') + '/pkgconfig')
 
-#-include $(INTROSPECTION_MAKEFILE)
-#INTROSPECTION_GIRS =
-#INTROSPECTION_SCANNER_ARGS = --add-include-path=$(prefix)/share/gir-1.0 --warn-all
-#INTROSPECTION_COMPILER_ARGS = --includedir=$(prefix)/share/gir-1.0
-
 if enable_introspection
-	gnome = import('gnome')
-
 	introspection_sources = (purple_coreheaders + purple_builtheaders +
 	                         dbus_headers + purple_cipherheaders +
 	                         purple_mediaheaders)
 
-#	Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpurple.la
-#	Purple_3_0_gir_INCLUDES = GObject-2.0
+	Purple_gir_includes = ['GObject-2.0']
 	if PLUGINS
-#		Purple_3_0_gir_INCLUDES += GPlugin-0.0
+		Purple_gir_includes += ['GPlugin-0.0']
 	endif
 	if ENABLE_DBUS
-#		Purple_3_0_gir_INCLUDES += DBus-1.0 DBusGLib-1.0
+		Purple_gir_includes += ['DBus-1.0', 'DBusGLib-1.0']
 	endif
 
-#	gnome.generate_gir(libpurple,
-#	                   namespace : 'Purple',
-#	                   nsversion : '3.0',  # FIXME: Or major.minor?
-#	                   sources : introspection_sources,
-#	                   dependencies : [gplugin],
-#	                   install : true)
-
-#Purple_3_0_gir_CFLAGS = \
-#	-I$(srcdir) \
-#	$(INCLUDES) \
-#	-DDATADIR=\"$(datadir)\" \
-#	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)/\" \
-#	-DLOCALEDIR=\"$(datadir)/locale\" \
-#	-DSYSCONFDIR=\"$(sysconfdir)\" \
-#	$(GLIB_CFLAGS) \
-#	$(GPLUGIN_CFLAGS) \
-#	$(DBUS_CFLAGS) \
-#	$(LIBXML_CFLAGS) \
-#	$(FARSTREAM_CFLAGS) \
-#	$(GSTREAMER_CFLAGS) \
-#	$(GSTVIDEO_CFLAGS) \
-#	$(GSTINTERFACES_CFLAGS) \
-#	$(IDN_CFLAGS) \
-#	$(NETWORKMANAGER_CFLAGS) \
-#	$(JSON_CFLAGS) \
-#	$(GNUTLS_CFLAGS) \
-#	$(NSS_CFLAGS) \
-#	$(ZLIB_CFLAGS) \
-#	$(INTROSPECTION_CFLAGS)
-
-#	Purple_3_0_gir_LIBS = $(builddir)/libpurple.la
-#	Purple_3_0_gir_FILES = $(introspection_sources)
-#	INTROSPECTION_GIRS += Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
-
-#	girdir = $(prefix)/share/gir-1.0 $(INTROSPECTION_GIRDIR)
-#	gir_DATA = $(INTROSPECTION_GIRS)
-
-#	typelibdir = $(prefix)/share/gir-1.0 $(INTROSPECTION_TYPELIBDIR)
-#	typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+	libpurple_gir = gnome.generate_gir(libpurple,
+	    sources : introspection_sources,
+	    includes : Purple_gir_includes,
+	    namespace : 'Purple',
+	    symbol_prefix : 'purple_',
+	    identifier_prefix : 'Purple',
+	    nsversion : '@0@.@1@'.format(purple_major_version,
+	                                 purple_minor_version),
+	    install : true)
 endif
 
 subdir('tests')

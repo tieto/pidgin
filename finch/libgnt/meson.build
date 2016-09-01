@@ -92,39 +92,15 @@ if IS_WIN32
 	LIBGNT_WIN32RES = WINDRES.process('libgnt_winres.rc')
 endif
 
-#-include $(INTROSPECTION_MAKEFILE)
-#INTROSPECTION_GIRS =
-#INTROSPECTION_SCANNER_ARGS = \
-#	--add-include-path=$(prefix)/share/gir-1.0 \
-#	--warn-all
-#INTROSPECTION_COMPILER_ARGS = --includedir=$(prefix)/share/gir-1.0
-
 if enable_introspection
-#introspection_sources = $(libgnt_lainclude_HEADERS)
-
-#Gnt-$(GNT_MAJOR_VERSION).$(GNT_MINOR_VERSION).gir: $(builddir)/libgnt.la
-#Gnt_2_9_gir_INCLUDES = GObject-2.0
-#Gnt_2_9_gir_CFLAGS = \
-#	$(INCLUDES) \
-#	$(GLIB_CFLAGS) \
-#	$(GNT_CFLAGS) \
-#	$(LIBXML_CFLAGS) \
-#	$(INTROSPECTION_CFLAGS) \
-#	$(PY_CFLAGS)
-
-#Gnt_2_9_gir_LIBS = $(builddir)/libgnt.la
-#Gnt_2_9_gir_FILES = $(introspection_sources)
-#INTROSPECTION_GIRS += Gnt-$(GNT_MAJOR_VERSION).$(GNT_MINOR_VERSION).gir
-
-#girdir = \
-#	$(prefix)/share/gir-1.0 \
-#	$(INTROSPECTION_GIRDIR)
-#gir_DATA = $(INTROSPECTION_GIRS)
-
-#typelibdir = \
-#	$(prefix)/share/gir-1.0 \
-#	$(INTROSPECTION_TYPELIBDIR)
-#typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+	libgnt_gir = gnome.generate_gir(libgnt,
+	    sources : libgnt_headers,
+	    includes : 'GObject-2.0',
+	    namespace : 'Gnt',
+	    symbol_prefix : 'gnt_',
+	    identifier_prefix : 'Gnt',
+	    nsversion : '@0@.@1@'.format(gnt_major_version, gnt_minor_version),
+	    install : true)
 endif
 
 subdir('wms')
