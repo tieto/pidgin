@@ -64,7 +64,8 @@ if ENABLE_GNT
 	    include_directories : [toplevel_inc],
 	    soversion : purple_lt_current,
 	    version : PURPLE_LT_VERSION_INFO,
-	    dependencies : [libpurple_dep, libgnt_dep, glib])
+	    dependencies : [libpurple_dep, libgnt_dep, glib],
+	    install : true)
 	libfinch_dep = declare_dependency(
 	    include_directories : [toplevel_inc, libfinch_inc],
 	    link_with : libfinch,
@@ -73,7 +74,8 @@ if ENABLE_GNT
 	finch = executable('finch',
 	    finch_SOURCES,
 	    c_args : '-DSTANDALONE',
-	    dependencies : [libpurple_dep, libgnt_dep, libfinch_dep])
+	    dependencies : [libpurple_dep, libgnt_dep, libfinch_dep],
+	    install : true)
 
 	configure_file(input : 'finch.pc.in',
 	               output : 'finch.pc',

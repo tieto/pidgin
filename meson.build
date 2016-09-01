@@ -394,6 +394,8 @@ INSTALL_I18N = get_option('nls')
 
 if INSTALL_I18N
 	subdir('po')
+
+	intltool_merge = find_program('intltool-merge')
 endif
 
 # #######################################################################
@@ -1743,7 +1745,7 @@ PURPLE_AVAILABLE = true
 # So that config.h may be found.
 toplevel_inc = include_directories('.')
 
-#subdir('doc')
+subdir('doc')
 #subdir('doc/reference')
 #subdir('doc/reference/finch')
 #subdir('doc/reference/libpurple')

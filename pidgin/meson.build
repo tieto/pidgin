@@ -162,7 +162,9 @@ if ENABLE_GTK
 	    libpidgin_SOURCES,
 	    include_directories : [toplevel_inc],
 	    soversion : purple_lt_current,
-	    dependencies : [gtk, gstreamer_video, webkit, enchant, dbus, x11, sm, xss, libpurple_dep, glib, math])
+	    version : PURPLE_LT_VERSION_INFO,
+	    dependencies : [gtk, gstreamer_video, webkit, enchant, dbus, x11, sm, xss, libpurple_dep, glib, math],
+	    install : true)
 	libpidgin_dep = declare_dependency(
 	    include_directories : [toplevel_inc, libpidgin_inc],
 	    link_with : libpidgin,
@@ -190,7 +192,8 @@ if ENABLE_GTK
 	pidgin = executable('pidgin',
 	    pidgin_SOURCES,
 	    link_args : '-export-dynamic',
-	    dependencies : [libpurple_dep, libpidgin_dep])
+	    dependencies : [libpurple_dep, libpidgin_dep],
+	    install : true)
 
 	if IS_WIN32
 #		libpidgin_la_LIBADD += -lwinmm
@@ -220,23 +223,29 @@ if ENABLE_GTK
 	               install_dir : get_option('libdir') + '/pkgconfig')
 
 	if INSTALL_I18N
-		DESKTOP_FILE = 'data/pidgin.desktop'
+		DESKTOP_FILE = 'pidgin.desktop'
+		desktop_file_in = configure_file(
+		    input : 'data/' + DESKTOP_FILE + '.in.in',
+		    output : DESKTOP_FILE + '.in',
+		    configuration : conf)
+		desktop_file = custom_target(DESKTOP_FILE,
+		    input : desktop_file_in,
+		    output : DESKTOP_FILE,
+		    command : [intltool_merge, '--desktop-style', '-u',
+		               '-c', '@BUILD_DIR@/po/.intltool-merge-cache',
+		               meson.source_root() + '/po', '@INPUT@', '@OUTPUT@'],
+		    install : true,
+		    install_dir : get_option('datadir') + '/applications')
 
-#		appsdir = $(datadir)/applications
-#		apps_in_files = data/pidgin.desktop.in
-#		apps_DATA = $(apps_in_files:.desktop.in=.desktop)
-
-		# silenced INTLTOOL_DESKTOP_RULE
-#		%.desktop: %.desktop.in $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po/*.po)
-#			$(AM_V_GEN) LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(top_builddir)/po/.intltool-merge-cache $(top_srcdir)/po $< $@ > /dev/null
-
-#		appdatadir = $(datarootdir)/appdata
-#		appdata_DATA = $(appdata_in_files:.xml.in=.xml)
-#		appdata_in_files = data/pidgin.appdata.xml.in
-
-#		@INTLTOOL_XML_RULE@
-
-	endif # INSTALL_I18N
+		appdata = custom_target('pidgin.appdata.xml',
+		    input : 'data/pidgin.appdata.xml.in',
+		    output : 'pidgin.appdata.xml',
+			command : [intltool_merge, '--xml-style', '-u',
+		               '-c', '@BUILD_DIR@/po/.intltool-merge-cache',
+		               meson.source_root() + '/po', '@INPUT@', '@OUTPUT@'],
+		    install : true,
+		    install_dir : get_option('datadir') + '/appdata')
+	endif  # INSTALL_I18N
 
 	if enable_introspection
 		introspection_sources = libpidgin_headers

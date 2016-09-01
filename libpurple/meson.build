@@ -245,7 +245,9 @@ purple_enumheaders = [
 
 marshallers = gnome.genmarshal('marshallers',
     sources : 'marshallers.list',
-    prefix : 'purple_smarshal')
+    prefix : 'purple_smarshal',
+    install_header : true,
+    install_dir : get_option('includedir') + '/libpurple')
 marshallers_c = marshallers[0]
 marshallers_h = marshallers[1]
 
@@ -277,7 +279,7 @@ purple_builtsources = [
 purple_builtheaders = [
 	purple_h,
 	version_h,
-	enums_h,  # FIXME: Custom targets don't work as dependencies.
+	enums_h,
 	marshallers_h
 ]
 
@@ -362,45 +364,49 @@ dbus_signals_c = custom_target('dbus_signals_c',
                                command : [python, dbus_analyze_signals, '-o', '@OUTPUT@',
                                           '@INPUT@'])
 
-# Automatic?
-#dbus-server.$(OBJEXT): dbus-bindings.c dbus-signals.c dbus-types.c dbus-types.h
-#dbus-server.lo: dbus-bindings.c dbus-signals.c dbus-types.c dbus-types.h
-#$(libpurple_la_OBJECTS): dbus-types.h
-
 
 # libpurple-client
 
 purple_client_bindings_c = custom_target('purple_client_bindings_c',
                                          input : dbus_exported,
                                          output : 'purple-client-bindings.c',
-                                         command : [python, meson.current_source_dir() + '/dbus-analyze-functions.py',
+                                         command : [python, dbus_analyze_functions,
                                                     '--client', '-o', '@OUTPUT@', '@INPUT@'])
 
-#purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(addprefix ciphers/, $(purple_cipherheaders)) $(addprefix media/, $(purple_mediaheaders)) $(purple_builtheaders) $(dbus_exported)
-#	$(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim -o $@ $(purple_build_coreheaders)
-#	$(PYTHON) $(srcdir)/dbus-analyze-functions.py --client --headers --append -o $@ $(dbus_exported)
-#FIXME: Don't know how to run multiple commands like this.
-#purple_client_bindings_h = custom_target('purple_client_bindings_h',
-#                                         input : [purple_build_coreheaders, dbus_exported],
-#                                         output : 'purple-client-bindings.h',
-#                                         command : [
-#                                             python, meson.current_source_dir() + '/dbus-analyze-types.py',
-#                                              '--keyword=enum', '--verbatim', '-o', '@OUTPUT@', '@INPUT0@', '&&',
-#                                             python, meson.current_source_dir() + '/dbus-analyze-functions.py',
-#                                              '--client', '--headers', '--append', '-o', '@OUTPUT@', '@INPUT1@']
-#                                         )
+purple_client_bindings_h1 = custom_target('purple_client_bindings_h1',
+    input : purple_build_coreheaders,
+    output : 'purple-client-bindings1.h',
+    command : [
+        python, dbus_analyze_types,
+         '--keyword=enum', '--verbatim', '-o', '@OUTPUT@', '@INPUT@'
+    ]
+)
 
-# Automatic?
-#$(libpurple_client_la_OBJECTS): purple-client-bindings.h purple-client-bindings.c
+purple_client_bindings_h2 = custom_target('purple_client_bindings_h2',
+    input : dbus_exported,
+    output : 'purple-client-bindings2.h',
+    command : [
+        python, dbus_analyze_functions,
+         '--client', '--headers', '-o', '@OUTPUT@', '@INPUT@'
+    ]
+)
 
-#libpurple_client = library('purple-client', 'purple-client.c',
-#                           soversion : purple_lt_current,
-#                           version : PURPLE_LT_VERSION_INFO,
-#                           dependencies : [dbus, dbus_glib])
+purple_client_bindings_h = custom_target('purple_client_bindings_h',
+    input : [purple_client_bindings_h1, purple_client_bindings_h2],
+    output : 'purple-client-bindings.h',
+    capture : true,
+    command : ['cat', '@INPUT@'])
+
+libpurple_client = library('purple-client', 'purple-client.c',
+    soversion : purple_lt_current,
+    version : PURPLE_LT_VERSION_INFO,
+    dependencies : [dbus, dbus_glib],
+    install : true)
 
 # scripts
 
-#bin_SCRIPTS = purple-remote purple-send purple-send-async purple-url-handler
+install_data(['purple-remote', 'purple-send', 'purple-send-async', 'purple-url-handler'],
+    install_dir : get_option('bindir'))
 
 else
 
@@ -430,17 +436,13 @@ if ENABLE_DBUS
 
 # purple-client-example
 
-#purple_client_example = executable('purple-client-example',
-#                                   'purple-client-example.c',
-#                                   link_with : [libpurple_client, libpurple],
-#                                   dependencies : [dbus, dbus_glib, glib])
+purple_client_example = executable('purple-client-example',
+    'purple-client-example.c',
+    link_with : [libpurple_client, libpurple],
+    dependencies : [dbus, dbus_glib, glib],
+    install : true)
 
 endif
-
-#noinst_HEADERS= \
-#	internal.h \
-#	media/backend-fs2.h \
-#	valgrind.h
 
 install_headers(purple_coreheaders + dbus_headers,
                 subdir : 'libpurple')
@@ -456,6 +458,22 @@ configure_file(input : 'data/purple-3.pc.in',
                configuration : conf,
                install : true,
                install_dir : get_option('libdir') + '/pkgconfig')
+
+if INSTALL_I18N
+	DESKTOP_FILE = 'purple-url-handler.desktop'
+	desktop_file_in = configure_file(
+	    input : 'data/' + DESKTOP_FILE + '.in.in',
+	    output : DESKTOP_FILE + '.in',
+	    configuration : conf)
+	desktop_file = custom_target(DESKTOP_FILE,
+	    input : desktop_file_in,
+	    output : DESKTOP_FILE,
+	    command : [intltool_merge, '--desktop-style', '-u',
+	               '-c', '@BUILD_DIR@/po/.intltool-merge-cache',
+	               meson.source_root() + '/po', '@INPUT@', '@OUTPUT@'],
+	    install : true,
+	    install_dir : get_option('datadir') + '/applications')
+endif  # INSTALL_I18N
 
 if enable_introspection
 	introspection_sources = (purple_coreheaders + purple_builtheaders +
