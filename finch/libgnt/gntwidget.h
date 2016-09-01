@@ -116,20 +116,20 @@ struct _GntWidgetClass
 {
 	GntBindableClass parent;
 
-	void (*map)(GntWidget *obj);
-	void (*show)(GntWidget *obj);		/* This will call draw() and take focus (if it can take focus) */
-	void (*destroy)(GntWidget *obj);
-	void (*draw)(GntWidget *obj);		/* This will draw the widget */
-	void (*hide)(GntWidget *obj);
+	void (*map)(GntWidget *widget);
+	void (*show)(GntWidget *widget);		/* This will call draw() and take focus (if it can take focus) */
+	void (*destroy)(GntWidget *widget);
+	void (*draw)(GntWidget *widget);		/* This will draw the widget */
+	void (*hide)(GntWidget *widget);
 	void (*expose)(GntWidget *widget, int x, int y, int width, int height);
 	void (*gained_focus)(GntWidget *widget);
 	void (*lost_focus)(GntWidget *widget);
 
 	void (*size_request)(GntWidget *widget);
-	gboolean (*confirm_size)(GntWidget *widget, int x, int y);
+	gboolean (*confirm_size)(GntWidget *widget, int width, int height);
 	void (*size_changed)(GntWidget *widget, int w, int h);
 	void (*set_position)(GntWidget *widget, int x, int y);
-	gboolean (*key_pressed)(GntWidget *widget, const char *key);
+	gboolean (*key_pressed)(GntWidget *widget, const char *keys);
 	void (*activate)(GntWidget *widget);
 	gboolean (*clicked)(GntWidget *widget, GntMouseEvent event, int x, int y);
 

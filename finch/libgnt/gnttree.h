@@ -44,8 +44,8 @@
 
 #define GNT_TYPE_TREE_ROW			(gnt_tree_row_get_type())
 
-typedef guint (*GntTreeHashFunc)(gconstpointer);
-typedef gboolean (*GntTreeHashEqualityFunc)(gconstpointer, gconstpointer);
+typedef guint (*GntTreeHashFunc)(gconstpointer key);
+typedef gboolean (*GntTreeHashEqualityFunc)(gconstpointer a, gconstpointer b);
 
 typedef struct _GntTree			GntTree;
 typedef struct _GntTreePriv		GntTreePriv;

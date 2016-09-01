@@ -66,7 +66,7 @@ struct _GntSliderClass
 {
 	GntWidgetClass parent;
 
-	void (*changed)(GntSlider *slider, int);
+	void (*changed)(GntSlider *slider, int value);
 
 	/*< private >*/
 	void (*gnt_reserved1)(void);

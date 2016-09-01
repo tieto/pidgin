@@ -141,7 +141,7 @@ struct _GntWMClass
 	GntBindableClass parent;
 
 	/* This is called when a new window is shown */
-	void (*new_window)(GntWM *wm, GntWidget *win);
+	void (*new_window)(GntWM *wm, GntWidget *widget);
 
 	void (*decorate_window)(GntWM *wm, GntWidget *win);
 	/* This is called when a window is being closed */

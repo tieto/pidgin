@@ -133,7 +133,7 @@ void gnt_box_add_widget(GntBox *box, GntWidget *widget);
  *
  * Since: 2.8.0
  */
-void gnt_box_add_widget_in_front(GntBox *b, GntWidget *widget);
+void gnt_box_add_widget_in_front(GntBox *box, GntWidget *widget);
 
 /**
  * gnt_box_set_title:

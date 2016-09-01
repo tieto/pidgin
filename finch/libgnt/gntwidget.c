@@ -302,15 +302,15 @@ void gnt_widget_set_take_focus(GntWidget *widget, gboolean can)
 }
 
 void
-gnt_widget_destroy(GntWidget *obj)
+gnt_widget_destroy(GntWidget *widget)
 {
-	g_return_if_fail(GNT_IS_WIDGET(obj));
+	g_return_if_fail(GNT_IS_WIDGET(widget));
 
-	if(!(GNT_WIDGET_FLAGS(obj) & GNT_WIDGET_DESTROYING)) {
-		GNT_WIDGET_SET_FLAGS(obj, GNT_WIDGET_DESTROYING);
-		gnt_widget_hide(obj);
-		delwin(obj->window);
-		g_object_run_dispose(G_OBJECT(obj));
+	if(!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_DESTROYING)) {
+		GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_DESTROYING);
+		gnt_widget_hide(widget);
+		delwin(widget->window);
+		g_object_run_dispose(G_OBJECT(widget));
 	}
 	GNTDEBUG;
 }
