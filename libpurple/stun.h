@@ -76,7 +76,7 @@ typedef enum {
  * @type: The #PurpleStunNatType
  * @publicip: The public ip
  * @servername: The name of the stun server
- * @lookup_time: The time when the lookup occurred.
+ * @lookup_time: The time when the lookup occurred
  *
  * A data type representing a STUN lookup.
  */
@@ -103,7 +103,7 @@ G_BEGIN_DECLS
  * and NULL is returned.
  *
  * Returns: a #PurpleStunNatDiscovery which includes the public IP and the type
- *         of NAT or NULL is discovery would block
+ *          of NAT or NULL if discovery would block
  */
 PurpleStunNatDiscovery *purple_stun_discover(PurpleStunCallback cb);
 

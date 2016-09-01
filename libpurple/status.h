@@ -69,6 +69,7 @@ typedef struct _PurpleMood {
 
 /**
  * PurpleStatusPrimitive:
+ *
  * @PURPLE_STATUS_UNSET: The status is not set
  * @PURPLE_STATUS_OFFLINE: The status is offline
  * @PURPLE_STATUS_AVAILABLE: The status is available

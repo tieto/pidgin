@@ -32,7 +32,7 @@
  * PurpleSslErrorType:
  * @PURPLE_SSL_HANDSHAKE_FAILED: The handshake failed
  * @PURPLE_SSL_CONNECT_FAILED: The connection failed
- * @PURPLE_SSL_CERTIFICATE_INVALID: The certificated is invalid.
+ * @PURPLE_SSL_CERTIFICATE_INVALID: The certificated is invalid
  *
  * Possible SSL errors.
  */
@@ -69,7 +69,7 @@ typedef void (*PurpleSslErrorFunction)(PurpleSslConnection *, PurpleSslErrorType
  * @inpa:            Glib event source ID; used to refer to the received data
  *                   callback in the glib eventloop
  * @connect_data:    Data related to the underlying TCP connection
- * @conn:            The under lying #GTlsCOnnection
+ * @conn:            The underlying #GTlsConnection
  * @cancellable:     A cancellable to call when cancelled
  * @private_data:    Internal connection data managed by the SSL backend
  *                   (GnuTLS/LibNSS/whatever)
