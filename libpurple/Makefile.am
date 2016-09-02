@@ -30,11 +30,7 @@ EXTRA_DIST = \
 		win32/giowin32.c \
 		win32/win32dep.h
 
-if USE_GCONFTOOL
-GCONF_DIR=data/gconf
-endif
-
-SUBDIRS = $(GCONF_DIR) . plugins protocols tests example
+SUBDIRS = . plugins protocols tests example
 
 purple_coresources = \
 	account.c \
