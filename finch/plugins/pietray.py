@@ -140,18 +140,20 @@ def popup_menu(icon, button, tm, none):
 
 
 def get_status_message():
+    status_names = {
+        1: 'Offline',
+        2: 'Available',
+        4: 'Invisible',
+        5: 'Away',
+    }
+
     status = purple.PurpleSavedstatusGetCurrent()
     msg = purple.PurpleSavedstatusGetMessage(status)
     if msg and len(msg) > 0:
         text = msg + " "
     else:
         text = ""
-    text = text + "(" + {
-        2: "Available",
-        5: "Away",
-        4: "Invisible",
-        1: "Offline"
-    }[purple.PurpleSavedstatusGetType(status)] + ")"
+    text += "(" + status_names[purple.PurpleSavedstatusGetType(status)] + ")"
     return text
 
 

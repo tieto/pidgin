@@ -68,7 +68,7 @@ for line in myinput:
             if match is not None:
                 print(toprint(match.group(1), line), file=args.output)
                 break
-            if line[0] not in [" ", "\t", "{", "\n"]:
+            if line[0] not in " \t{\n":
                 if args.verbatim:
                     print(line, file=args.output)
                 break

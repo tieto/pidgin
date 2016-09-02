@@ -105,9 +105,6 @@ class MyException(Exception):
     pass
 
 
-myexception = MyException()
-
-
 def ctopascal(name):
     newname = ""
     for word in name.split("_"):
@@ -122,12 +119,12 @@ class Parameter(object):
 
     def fromtokens(tokens, parameternumber=-1):
         if len(tokens) == 0:
-            raise myexception
+            raise MyException()
         if len(tokens) == 1 or tokens[-1] == pointer:
             if parameternumber >= 0:
                 return Parameter(tokens, "param%i" % (parameternumber, ))
             else:
-                raise myexception
+                raise MyException()
         else:
             return Parameter(tokens[:-1], tokens[-1])
 
@@ -139,7 +136,7 @@ class Binding(object):
         self.function = Parameter.fromtokens(functiontext.split())
 
         if self.function.name in excluded:
-            raise myexception
+            raise MyException()
 
         self.params = []
         for i in range(len(paramtexts)):
@@ -182,7 +179,7 @@ class Binding(object):
                 if const:
                     return self.inputstring(type, name, unsigned)
                 else:
-                    raise myexception
+                    raise MyException()
 
             elif type[0] == "GHashTable":
                 return self.inputhash(type, name)
@@ -199,7 +196,7 @@ class Binding(object):
             else:
                 return self.inputpointer(type, name)
 
-        raise myexception
+        raise MyException()
 
     def processoutput(self, type, name):
         const = False
@@ -238,7 +235,7 @@ class Binding(object):
         if type[0] == "gconstpointer":
             return self.outputgetdata(type, name)
 
-        raise myexception
+        raise MyException()
 
 
 class ClientBinding(Binding):
@@ -367,10 +364,10 @@ class ClientBinding(Binding):
     # Special case for *_get_data functions, don't need client bindings,
     #  but do need the name so it doesn't crash
     def inputgetdata(self, type, name):
-        raise myexception
+        raise MyException()
 
     def outputgetdata(self, type, name):
-        raise myexception
+        raise MyException()
 
 
 class ServerBinding(Binding):

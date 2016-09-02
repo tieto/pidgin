@@ -223,8 +223,6 @@ def irc(uri):
         for modifier in target.split(",")[1:]:
             modifiers[modifier] = True
 
-    isnick = True if "isnick" in modifiers else False
-
     paramstring = match.group(5)
     params = {}
     if paramstring:
@@ -240,7 +238,7 @@ def irc(uri):
     account = findaccount(protocol, matcher=correct_server)
 
     if target != "":
-        if isnick:
+        if "isnick" in modifiers:
             goim(account, unquote_plus(target.split(",")[0]),
                  params.get("msg"))
         else:
