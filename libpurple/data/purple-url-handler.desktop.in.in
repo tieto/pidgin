@@ -10,5 +10,5 @@ Terminal=false
 NoDisplay=true
 Type=Application
 Categories=Network;InstantMessaging;RemoteAccess;ConsoleOnly;
-MimeType=x-scheme-handler/xmpp;
+MimeType=x-scheme-handler/aim;x-scheme-handler/gg;x-scheme-handler/icq;x-scheme-handler/irc;x-scheme-handler/msnim;x-scheme-handler/sip;x-scheme-handler/xmpp;x-scheme-handler/ymsgr
 @USES_MM_CHAT_SECTION@
