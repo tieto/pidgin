@@ -8,6 +8,8 @@
 # Note that all function names are resolved dynamically, no
 # purple-specific library is needed.
 
+from __future__ import absolute_import, division, print_function
+
 import dbus
 import dbus.glib
 import dbus.decorators
@@ -77,8 +79,9 @@ bus.add_signal_receiver(buddysignedon,
                         dbus_interface = "im.pidgin.purple.PurpleInterface",
                         signal_name = "BuddySignedOn")
 
-print "This is a simple purple notification server."
-print "It shows notifications when your buddy signs on or you get an IM message."
+print("This is a simple purple notification server.")
+print("It shows notifications when your buddy signs on or you get an "
+      "IM message.")
 
 loop = gobject.MainLoop()
 loop.run()

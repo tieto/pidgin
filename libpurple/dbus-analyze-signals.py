@@ -5,7 +5,7 @@
 #   <signal name="Changed">
 #       <arg name="new_value" type="b"/>
 #   </signal>
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import argparse
 import fileinput
