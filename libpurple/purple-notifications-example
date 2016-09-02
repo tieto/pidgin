@@ -10,18 +10,21 @@
 
 from __future__ import absolute_import, division, print_function
 
+import os
+
 import dbus
 import dbus.glib
 import dbus.decorators
 import gobject
-import os
+
 
 def ensureimconversation(conversation, account, name):
     if conversation != 0:
         return conversation
     else:
-        # 1 = PURPLE_CONV_IM 
+        # 1 = PURPLE_CONV_IM
         return purple.PurpleConversationNew(1, account, name)
+
 
 def receivedimmsg(account, name, message, conversation, flags):
     buddy = purple.PurpleFindBuddy(account, name)
@@ -43,14 +46,14 @@ def receivedimmsg(account, name, message, conversation, flags):
         window = purple.PurpleConversationGetWindow(conversation)
         purple.PurpleConvWindowRaise(window)
 
-    if code == 103:                     # close 
+    if code == 103:                     # close
         purple.PurpleConversationDestroy(conversation)
 
     if code == 104:                     # abuse
         im = purple.PurpleConversationGetImData(conversation)
         purple.PurpleConvImSend(im, "Go away you f...")
-                                 
-        
+
+
 def buddysignedon(buddyid):
     alias = purple.PurpleBuddyGetAlias(buddyid)
     text = "%s is online" % alias
@@ -65,19 +68,20 @@ def buddysignedon(buddyid):
         name = purple.PurpleBuddyGetName(buddyid)
         account = purple.PurpleBuddyGetAccount(buddyid)
         purple.PurpleConversationNew(1, account, name)
-    
+
 
 bus = dbus.SessionBus()
-obj = bus.get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+obj = bus.get_object("im.pidgin.purple.PurpleService",
+                     "/im/pidgin/purple/PurpleObject")
 purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
 bus.add_signal_receiver(receivedimmsg,
-                        dbus_interface = "im.pidgin.purple.PurpleInterface",
-                        signal_name = "ReceivedImMsg")
+                        dbus_interface="im.pidgin.purple.PurpleInterface",
+                        signal_name="ReceivedImMsg")
 
 bus.add_signal_receiver(buddysignedon,
-                        dbus_interface = "im.pidgin.purple.PurpleInterface",
-                        signal_name = "BuddySignedOn")
+                        dbus_interface="im.pidgin.purple.PurpleInterface",
+                        signal_name="BuddySignedOn")
 
 print("This is a simple purple notification server.")
 print("It shows notifications when your buddy signs on or you get an "
@@ -85,5 +89,3 @@ print("It shows notifications when your buddy signs on or you get an "
 
 loop = gobject.MainLoop()
 loop.run()
-
-

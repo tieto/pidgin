@@ -16,23 +16,25 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+# You should have received a copy of the GNU General Public License along with
+# this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
 #
 
 from __future__ import absolute_import, division, print_function
 
 import dbus
 
+
 bus = dbus.SessionBus()
-obj = bus.get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+obj = bus.get_object("im.pidgin.purple.PurpleService",
+                     "/im/pidgin/purple/PurpleObject")
 purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
 node = purple.PurpleBlistGetRoot()
 while node != 0:
-	if purple.PurpleBlistNodeIsBuddy(node):
-		icon = purple.PurpleBuddyGetIcon(node)
-		if icon != 0:
-			print(purple.PurpleBuddyGetAlias(node))
-	node = purple.PurpleBlistNodeNext(node, 0)
+    if purple.PurpleBlistNodeIsBuddy(node):
+        icon = purple.PurpleBuddyGetIcon(node)
+        if icon != 0:
+            print(purple.PurpleBuddyGetAlias(node))
+    node = purple.PurpleBlistNodeNext(node, 0)
