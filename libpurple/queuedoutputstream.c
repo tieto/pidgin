@@ -26,6 +26,7 @@
 
 struct _PurpleQueuedOutputStreamPrivate {
 	GAsyncQueue *queue;
+	GBytes *next;
 };
 
 GObjectClass *parent_class = NULL;
@@ -99,26 +100,32 @@ purple_queued_output_stream_dispose(GObject *object)
 	G_OBJECT_CLASS(parent_class)->dispose(object);
 
 	g_clear_pointer(&stream->priv->queue, g_async_queue_unref);
+	g_clear_pointer(&stream->priv->next, g_bytes_unref);
 }
 
 static gboolean
 purple_queued_output_stream_flush(GOutputStream *stream,
 		GCancellable *cancellable, GError **error)
 {
+	PurpleQueuedOutputStreamPrivate *priv;
 	GOutputStream *base_stream;
-	GAsyncQueue *queue;
 	GBytes *bytes;
 	const void *buffer;
 	gsize count;
 	gsize bytes_written = 0;
 	gboolean ret = TRUE;
 
+	priv = PURPLE_QUEUED_OUTPUT_STREAM(stream)->priv;
 	base_stream = g_filter_output_stream_get_base_stream(
 			G_FILTER_OUTPUT_STREAM(stream));
-	queue = PURPLE_QUEUED_OUTPUT_STREAM(stream)->priv->queue;
 
 	do {
-		bytes = g_async_queue_try_pop(queue);
+		if (priv->next != NULL) {
+			bytes = priv->next;
+			priv->next = NULL;
+		} else {
+			bytes = g_async_queue_try_pop(priv->queue);
+		}
 
 		if (bytes == NULL) {
 			break;
@@ -140,7 +147,7 @@ purple_queued_output_stream_flush(GOutputStream *stream,
 				queue_bytes = g_bytes_ref(bytes);
 			}
 
-			g_async_queue_push_front(queue, queue_bytes);
+			priv->next = queue_bytes;
 		}
 
 		g_bytes_unref(bytes);
