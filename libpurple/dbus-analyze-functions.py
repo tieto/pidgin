@@ -273,11 +273,11 @@ class ClientBinding(Binding):
               file=self.output)
 
         for type_name in self.inputparams:
-            print("\t%s, %s, " % (type_name, ), end=' ', file=self.output)
+            print("\t%s, %s, " % type_name, end=' ', file=self.output)
         print("G_TYPE_INVALID,", file=self.output)
 
         for type_name in self.outputparams:
-            print("\t%s, &%s, " % (type_name, ), end=' ', file=self.output)
+            print("\t%s, &%s, " % type_name, end=' ', file=self.output)
         print("G_TYPE_INVALID);", file=self.output)
 
         for code in self.returncode:
@@ -395,7 +395,7 @@ class ServerBinding(Binding):
         print("\t%s(message_DBUS, error_DBUS," % (self.argfunc, ), end=' ',
               file=self.output)
         for param in self.cparams:
-            print("DBUS_TYPE_%s, &%s," % (param, ), end=' ', file=self.output)
+            print("DBUS_TYPE_%s, &%s," % param, end=' ', file=self.output)
         print("DBUS_TYPE_INVALID);", file=self.output)
 
         print("\tCHECK_ERROR(error_DBUS);", file=self.output)
@@ -412,8 +412,7 @@ class ServerBinding(Binding):
             if type(param) is str:
                 print("%s," % (param, ), end=' ', file=self.output)
             else:
-                print("DBUS_TYPE_%s, &%s," % (param, ), end=' ',
-                      file=self.output)
+                print("DBUS_TYPE_%s, &%s," % param, end=' ', file=self.output)
         print("DBUS_TYPE_INVALID);", file=self.output)
 
         for code in self.ccodeout:
