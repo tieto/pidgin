@@ -414,13 +414,14 @@ void finch_media_manager_init(void)
 {
 #ifdef USE_VV
 	PurpleMediaManager *manager = purple_media_manager_get();
-	PurpleMediaElementInfo *audio_src;
-	PurpleMediaElementInfo *audio_sink;
+	PurpleMediaElementInfo *audio_src = NULL;
+	PurpleMediaElementInfo *audio_sink = NULL;
 	const char *pref;
 
 	pref = purple_prefs_get_string(
 			FINCH_PREFS_ROOT "/vvconfig/audio/src/device");
-	audio_src = purple_media_manager_get_element_info(manager, pref);
+	if (pref)
+		audio_src = purple_media_manager_get_element_info(manager, pref);
 	if (!audio_src) {
 		pref = "autoaudiosrc";
 		purple_prefs_set_string(
@@ -431,7 +432,8 @@ void finch_media_manager_init(void)
 
 	pref = purple_prefs_get_string(
 			FINCH_PREFS_ROOT "/vvconfig/audio/sink/device");
-	audio_sink = purple_media_manager_get_element_info(manager, pref);
+	if (pref)
+		audio_sink = purple_media_manager_get_element_info(manager, pref);
 	if (!audio_sink) {
 		pref = "autoaudiosink";
 		purple_prefs_set_string(

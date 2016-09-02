@@ -1201,15 +1201,16 @@ pidgin_medias_init(void)
 {
 #ifdef USE_VV
 	PurpleMediaManager *manager = purple_media_manager_get();
-	PurpleMediaElementInfo *video_src;
-	PurpleMediaElementInfo *video_sink;
-	PurpleMediaElementInfo *audio_src;
-	PurpleMediaElementInfo *audio_sink;
+	PurpleMediaElementInfo *video_src = NULL;
+	PurpleMediaElementInfo *video_sink = NULL;
+	PurpleMediaElementInfo *audio_src = NULL;
+	PurpleMediaElementInfo *audio_sink = NULL;
 	const char *pref;
 
 	pref = purple_prefs_get_string(
 			PIDGIN_PREFS_ROOT "/vvconfig/video/src/device");
-	video_src = purple_media_manager_get_element_info(manager, pref);
+	if (pref)
+		video_src = purple_media_manager_get_element_info(manager, pref);
 	if (!video_src) {
 		pref = "autovideosrc";
 		purple_prefs_set_string(
@@ -1220,7 +1221,8 @@ pidgin_medias_init(void)
 
 	pref = purple_prefs_get_string(
 			PIDGIN_PREFS_ROOT "/vvconfig/video/sink/device");
-	video_sink = purple_media_manager_get_element_info(manager, pref);
+	if (pref)
+		video_sink = purple_media_manager_get_element_info(manager, pref);
 	if (!video_sink) {
 		pref = "autovideosink";
 		purple_prefs_set_string(
@@ -1231,7 +1233,8 @@ pidgin_medias_init(void)
 
 	pref = purple_prefs_get_string(
 			PIDGIN_PREFS_ROOT "/vvconfig/audio/src/device");
-	audio_src = purple_media_manager_get_element_info(manager, pref);
+	if (pref)
+		audio_src = purple_media_manager_get_element_info(manager, pref);
 	if (!audio_src) {
 		pref = "autoaudiosrc";
 		purple_prefs_set_string(
@@ -1242,7 +1245,8 @@ pidgin_medias_init(void)
 
 	pref = purple_prefs_get_string(
 			PIDGIN_PREFS_ROOT "/vvconfig/audio/sink/device");
-	audio_sink = purple_media_manager_get_element_info(manager, pref);
+	if (pref)
+		audio_sink = purple_media_manager_get_element_info(manager, pref);
 	if (!audio_sink) {
 		pref = "autoaudiosink";
 		purple_prefs_set_string(
