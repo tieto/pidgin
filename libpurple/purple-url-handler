@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
+from __future__ import absolute_import, division, print_function
+
 import dbus
 import re
 import sys
@@ -20,14 +22,14 @@ except dbus.DBusException as e:
         sys.exit(1)
 purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
-class CheckedObject:
+class CheckedObject(object):
     def __init__(self, obj):
         self.obj = obj
 
     def __getattr__(self, attr):
         return CheckedAttribute(self, attr)
 
-class CheckedAttribute:
+class CheckedAttribute(object):
     def __init__(self, cobj, attr):
         self.cobj = cobj
         self.attr = attr
@@ -332,7 +334,7 @@ def main(argv=sys.argv):
         else:
             print("Unknown protocol: %s" % type)
     except dbus.DBusException as e:
-        print("Error: %s" % e.message)
+        print("Error: %s" % (str(e), ))
         sys.exit(1)
 
 if __name__ == "__main__":

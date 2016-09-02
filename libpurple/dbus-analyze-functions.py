@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 import re
 import string
 import sys
@@ -97,7 +97,7 @@ def ctopascal(name):
         newname += word.capitalize()
     return newname
 
-class Parameter:
+class Parameter(object):
     def __init__(self, type, name):
         self.name = name
         self.type = type
@@ -115,7 +115,7 @@ class Parameter:
                     
     fromtokens = staticmethod(fromtokens)
 
-class Binding:
+class Binding(object):
     def __init__(self, functiontext, paramtexts):
         self.function = Parameter.fromtokens(functiontext.split())
 
@@ -528,7 +528,7 @@ class ServerBinding (Binding):
                                % (name, "len"))
         self.addouttype("ay", name)
 
-class BindingSet:
+class BindingSet(object):
     regexp = r"^(\w[^()]*)\(([^()]*)\)\s*;\s*$";
 
     def __init__(self, inputfile, fprefix):
