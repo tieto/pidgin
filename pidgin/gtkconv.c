@@ -4940,7 +4940,7 @@ entry_popup_menu_cb(PidginWebView *webview, GtkMenu *menu, gpointer data)
 static gboolean
 resize_webview_cb(PidginConversation *gtkconv)
 {
-	WebKitWebView *webview;
+	PidginWebView *webview;
 	gint min_lines;
 	gint max_height;
 	gint min_height;

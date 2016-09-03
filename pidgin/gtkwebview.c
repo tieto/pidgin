@@ -2270,7 +2270,7 @@ pidgin_webview_get_DOM_CSS_style(PidginWebView *webview)
 	WebKitDOMElement *dom_element;
 	WebKitDOMDOMWindow *dom_window;
 
-	document = webkit_web_view_get_dom_document(webview);
+	document = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(webview));
 	dom_window = webkit_dom_document_get_default_view(document);
 
 	dom_element = webkit_dom_document_get_document_element(document);
