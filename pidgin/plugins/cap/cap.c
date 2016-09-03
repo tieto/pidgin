@@ -756,42 +756,33 @@ static CapPrefsUI * create_cap_prefs_ui() {
 	gtk_label_set_alignment(GTK_LABEL(ui->threshold_minutes_label), 0, 0.5);
 
 	/* Layout threshold/last-seen/response-timeout input items */
-	ui->table_layout = gtk_table_new(3, 3, FALSE);
-	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->threshold_label, 0, 1, 0, 1,
-		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions) (0), 0, 0);
+	ui->table_layout = gtk_grid_new();
+	gtk_grid_attach(GTK_GRID(ui->table_layout), ui->threshold_label, 0, 0, 1, 1);
+	gtk_widget_set_hexpand(ui->threshold_label, TRUE);
 
-	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->threshold_input, 1, 2, 0, 1,
-		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions) (0), 0, 0);
+	gtk_grid_attach(GTK_GRID(ui->table_layout), ui->threshold_input, 1, 0, 1, 1);
+	gtk_widget_set_hexpand(ui->threshold_input, TRUE);
 
-	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->threshold_minutes_label, 2, 3, 0, 1,
-		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions) (0), 0, 0);
+	gtk_grid_attach(GTK_GRID(ui->table_layout), ui->threshold_minutes_label, 2, 0, 1, 1);
+	gtk_widget_set_hexpand(ui->threshold_minutes_label, TRUE);
 
-	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->msg_difference_label, 0, 1, 1, 2,
-		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions) (0), 0, 0);
+	gtk_grid_attach(GTK_GRID(ui->table_layout), ui->msg_difference_label, 0, 1, 1, 1);
+	gtk_widget_set_hexpand(ui->msg_difference_label, TRUE);
 
-	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->msg_difference_input, 1, 2, 1, 2,
-		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions) (0), 0, 0);
+	gtk_grid_attach(GTK_GRID(ui->table_layout), ui->msg_difference_input, 1, 1, 1, 1);
+	gtk_widget_set_hexpand(ui->msg_difference_input, TRUE);
 
-	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->msg_difference_minutes_label, 2, 3, 1, 2,
-		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions) (0), 0, 0);
+	gtk_grid_attach(GTK_GRID(ui->table_layout), ui->msg_difference_minutes_label, 2, 1, 1, 1);
+	gtk_widget_set_hexpand(ui->msg_difference_minutes_label, TRUE);
 
-	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->last_seen_label, 0, 1, 2,3,
-		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions) (0), 0, 0);
+	gtk_grid_attach(GTK_GRID(ui->table_layout), ui->last_seen_label, 0, 2, 1, 1);
+	gtk_widget_set_hexpand(ui->last_seen_label, TRUE);
 
-	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->last_seen_input, 1, 2, 2, 3,
-		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions) (0), 0, 0);
+	gtk_grid_attach(GTK_GRID(ui->table_layout), ui->last_seen_input, 1, 2, 1, 1);
+	gtk_widget_set_hexpand(ui->last_seen_input, TRUE);
 
-	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->last_seen_minutes_label, 2, 3, 2, 3,
-		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-		(GtkAttachOptions) (0), 0, 0);
+	gtk_grid_attach(GTK_GRID(ui->table_layout), ui->last_seen_minutes_label, 2, 2, 1, 1);
+	gtk_widget_set_hexpand(ui->last_seen_minutes_label, TRUE);
 
 
 	/* Config window - lay it out */

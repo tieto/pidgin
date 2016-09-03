@@ -856,10 +856,13 @@ static GtkWidget *
 pidgin_media_add_dtmf_widget(PidginMedia *gtkmedia,
 		PurpleMediaSessionType type, const gchar *_sid)
 {
-	GtkWidget *grid = gtk_table_new(4, 3, TRUE);
+	GtkWidget *grid = gtk_grid_new();
 	GtkWidget *button;
 	gint index = 0;
 	GtkWindow *win = &gtkmedia->parent;
+
+	gtk_grid_set_row_homogeneous(GTK_GRID(grid), TRUE);
+	gtk_grid_set_column_homogeneous(GTK_GRID(grid), TRUE);
 
 	/* Add buttons */
 	for (index = 0; phone_labels[index].subtext != NULL; index++) {
@@ -871,10 +874,9 @@ pidgin_media_add_dtmf_widget(PidginMedia *gtkmedia,
 				GINT_TO_POINTER(phone_labels[index].chr));
 		g_object_set_data_full(G_OBJECT(button), "session-id",
 				g_strdup(_sid), g_free);
-		gtk_table_attach(GTK_TABLE(grid), button, index % 3,
-				index % 3 + 1, index / 3, index / 3 + 1,
-				GTK_FILL | GTK_EXPAND, GTK_FILL | GTK_EXPAND,
-				2, 2);
+		gtk_grid_attach(GTK_GRID(grid), button,
+				index % 3, index / 3, 1, 1);
+		g_object_set(button, "expand", TRUE, "margin", 2, NULL);
 	}
 
 	g_signal_connect(G_OBJECT(win), "key-press-event",
