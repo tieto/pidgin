@@ -10453,7 +10453,7 @@ pidgin_conv_tab_pack(PidginConvWindow *win, PidginConversation *gtkconv)
 {
 	gboolean tabs_side = FALSE;
 	gint angle = 0;
-	GtkWidget *first, *third, *ebox;
+	GtkWidget *first, *third, *ebox, *parent;
 
 	if (purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_LEFT ||
 	    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_RIGHT)
@@ -10512,22 +10512,29 @@ pidgin_conv_tab_pack(PidginConvWindow *win, PidginConversation *gtkconv)
 	g_signal_connect(G_OBJECT(ebox), "enter-notify-event",
 			G_CALLBACK(gtkconv_tab_set_tip), gtkconv);
 
-	if (gtk_widget_get_parent(gtkconv->tab_label) == NULL) {
-		/* Pack if it's a new widget */
-		gtk_box_pack_start(GTK_BOX(gtkconv->tabby), first,              FALSE, FALSE, 0);
-		gtk_box_pack_start(GTK_BOX(gtkconv->tabby), gtkconv->tab_label, TRUE,  TRUE,  0);
-		gtk_box_pack_start(GTK_BOX(gtkconv->tabby), third,              FALSE, FALSE, 0);
+	parent = gtk_widget_get_parent(gtkconv->tab_label);
+	if (parent != NULL) {
+		/* reparent old widgets on preference changes */
+		g_object_ref(first);
+		g_object_ref(gtkconv->tab_label);
+		g_object_ref(third);
+		gtk_container_remove(GTK_CONTAINER(parent), first);
+		gtk_container_remove(GTK_CONTAINER(parent), gtkconv->tab_label);
+		gtk_container_remove(GTK_CONTAINER(parent), third);
+	}
 
+	gtk_box_pack_start(GTK_BOX(gtkconv->tabby), first,              FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkconv->tabby), gtkconv->tab_label, TRUE,  TRUE,  0);
+	gtk_box_pack_start(GTK_BOX(gtkconv->tabby), third,              FALSE, FALSE, 0);
+
+	if (parent == NULL) {
 		/* Add this pane to the conversation's notebook. */
 		gtk_notebook_append_page(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, ebox);
 	} else {
 		/* reparent old widgets on preference changes */
-		gtk_widget_reparent(first,              gtkconv->tabby);
-		gtk_widget_reparent(gtkconv->tab_label, gtkconv->tabby);
-		gtk_widget_reparent(third,              gtkconv->tabby);
-		gtk_box_set_child_packing(GTK_BOX(gtkconv->tabby), first,              FALSE, FALSE, 0, GTK_PACK_START);
-		gtk_box_set_child_packing(GTK_BOX(gtkconv->tabby), gtkconv->tab_label, TRUE,  TRUE,  0, GTK_PACK_START);
-		gtk_box_set_child_packing(GTK_BOX(gtkconv->tabby), third,              FALSE, FALSE, 0, GTK_PACK_START);
+		g_object_unref(first);
+		g_object_unref(gtkconv->tab_label);
+		g_object_unref(third);
 
 		/* Reset the tabs label to the new version */
 		gtk_notebook_set_tab_label(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, ebox);
