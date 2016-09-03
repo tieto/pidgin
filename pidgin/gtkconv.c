@@ -973,7 +973,7 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
 		/* Setup the grid we're going to use to lay stuff out. */
-		grid = gtk_grid_table_new(2, 2);
+		grid = gtk_grid_new();
 		gtk_grid_set_row_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE);
 		gtk_grid_set_column_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE);
 		gtk_container_set_border_width(GTK_CONTAINER(grid), PIDGIN_HIG_BORDER);
@@ -982,28 +982,34 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		/* Now the Buddy label */
 		label = gtk_label_new(NULL);
 		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Buddy:"));
+		gtk_widget_set_hexpand(label, TRUE);
+		gtk_widget_set_vexpand(label, TRUE);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_grid_attach_defaults(GTK_GRID(grid), label, 0, 0, 1, 1);
+		gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
 
 		/* Now the Buddy drop-down entry field. */
 		info->entry = gtk_entry_new();
 		pidgin_setup_screenname_autocomplete(info->entry, NULL, chat_invite_filter,
 				purple_conversation_get_account(PURPLE_CONVERSATION(chat)));
-		gtk_grid_attach_defaults(GTK_GRID(grid), info->entry, 1, 0, 1, 1);
+		gtk_widget_set_hexpand(info->entry, TRUE);
+		gtk_widget_set_vexpand(info->entry, TRUE);
+		gtk_grid_attach(GTK_GRID(grid), info->entry, 1, 0, 1, 1);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->entry);
 
 		/* Now the label for "Message" */
 		label = gtk_label_new(NULL);
 		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Message:"));
+		gtk_widget_set_hexpand(label, TRUE);
+		gtk_widget_set_vexpand(label, TRUE);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_grid_attach_defaults(GTK_GRID(grid), label, 0, 1, 1, 1);
-
+		gtk_grid_attach(GTK_GRID(grid), label, 0, 1, 1, 1);
 
 		/* And finally, the Message entry field. */
 		info->message = gtk_entry_new();
 		gtk_entry_set_activates_default(GTK_ENTRY(info->message), TRUE);
-
-		gtk_grid_attach_defaults(GTK_GRID(grid), info->message, 1, 1, 1, 1);
+		gtk_widget_set_hexpand(info->message, TRUE);
+		gtk_widget_set_vexpand(info->message, TRUE);
+		gtk_grid_attach(GTK_GRID(grid), info->message, 1, 1, 1, 1);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->message);
 
 		/* Connect the signals. */

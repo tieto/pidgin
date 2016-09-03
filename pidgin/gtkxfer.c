@@ -664,7 +664,7 @@ make_info_grid(PidginXferDialog *dialog)
 	};
 
 	/* Setup the initial grid */
-	dialog->grid = grid = gtk_grid_table_new(G_N_ELEMENTS(labels) + 1, 2);
+	dialog->grid = grid = gtk_grid_new();
 	gtk_grid_set_row_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE);
 	gtk_grid_set_column_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE);
 
@@ -680,22 +680,25 @@ make_info_grid(PidginXferDialog *dialog)
 		gtk_label_set_markup(GTK_LABEL(label), buf);
 		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_RIGHT);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_grid_attach_full(GTK_GRID(grid), label, 0, i, 1, 1,
-			GTK_FILL, 0, 0, 0);
+		gtk_grid_attach(GTK_GRID(grid), label, 0, i, 1, 1);
+		gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
+
 		gtk_widget_show(label);
 
 		*labels[i].val_label = label = gtk_label_new(NULL);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_grid_attach_full(GTK_GRID(grid), label, 1, i, 1, 1,
-			GTK_FILL | GTK_EXPAND, 0, 0, 0);
+		gtk_grid_attach(GTK_GRID(grid), label, 1, i, 1, 1);
+		gtk_widget_set_hexpand(label, TRUE);
+		gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
+
 		gtk_widget_show(label);
 	}
 
 	/* Setup the progress bar */
 	dialog->progress = gtk_progress_bar_new();
-	gtk_grid_attach_full(GTK_GRID(grid), dialog->progress,
-		0, G_N_ELEMENTS(labels), 2, 1,
-		GTK_FILL, GTK_FILL, 0, 0);
+	gtk_grid_attach(GTK_GRID(grid), dialog->progress,
+		0, G_N_ELEMENTS(labels), 2, 1);
+
 	gtk_widget_show(dialog->progress);
 
 	return grid;

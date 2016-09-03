@@ -2247,10 +2247,7 @@ pidgin_request_fields(const char *title, const char *primary,
 #endif
 		}
 
-		if (compact)
-			grid = gtk_grid_table_new(rows, cols);
-		else
-			grid = gtk_grid_table_new(rows, 2 * cols);
+		grid = gtk_grid_new();
 		gtk_grid_set_row_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE);
 		gtk_grid_set_column_spacing(GTK_GRID(grid), PIDGIN_HIG_BOX_SPACE);
 
@@ -2310,6 +2307,8 @@ pidgin_request_fields(const char *title, const char *primary,
 					gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), text ? text : field_label);
 					g_free(text);
 
+					gtk_widget_set_hexpand(label, TRUE);
+					gtk_widget_set_vexpand(label, TRUE);
 					gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 
 					gtk_size_group_add_widget(sg, label);
@@ -2324,7 +2323,7 @@ pidgin_request_fields(const char *title, const char *primary,
 							row_num++;
 #endif
 
-						gtk_grid_attach_defaults(GTK_GRID(grid), label,
+						gtk_grid_attach(GTK_GRID(grid), label,
 							0, row_num, 2 * cols, 1);
 
 						row_num++;
@@ -2334,7 +2333,7 @@ pidgin_request_fields(const char *title, const char *primary,
 					}
 					else
 					{
-						gtk_grid_attach_defaults(GTK_GRID(grid), label,
+						gtk_grid_attach(GTK_GRID(grid), label,
 							col_offset, row_num, 1, 1);
 					}
 
@@ -2373,44 +2372,34 @@ pidgin_request_fields(const char *title, const char *primary,
 				if (label)
 					gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
 
+				gtk_widget_set_hexpand(widget, TRUE);
+				gtk_widget_set_vexpand(widget, TRUE);
+				gtk_widget_set_margin_left(widget, 5);
+				gtk_widget_set_margin_right(widget, 5);
+
 				if (type == PURPLE_REQUEST_FIELD_STRING &&
 					purple_request_field_string_is_multiline(field))
 				{
-					gtk_grid_attach_full(GTK_GRID(grid), widget,
-						0, row_num, 2 * cols, 1,
-						GTK_FILL | GTK_EXPAND,
-						GTK_FILL | GTK_EXPAND,
-						5, 0);
+					gtk_grid_attach(GTK_GRID(grid), widget,
+						0, row_num, 2 * cols, 1);
 				}
 				else if (type == PURPLE_REQUEST_FIELD_LIST)
 				{
-					gtk_grid_attach_full(GTK_GRID(grid), widget,
-						0, row_num, 2 * cols, 1,
-						GTK_FILL | GTK_EXPAND,
-						GTK_FILL | GTK_EXPAND,
-						5, 0);
+					gtk_grid_attach(GTK_GRID(grid), widget,
+						0, row_num, 2 * cols, 1);
 				}
 				else if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
 				{
-					gtk_grid_attach_full(GTK_GRID(grid), widget,
-						col_offset, row_num, 1, 1,
-						GTK_FILL | GTK_EXPAND,
-						GTK_FILL | GTK_EXPAND,
-						5, 0);
+					gtk_grid_attach(GTK_GRID(grid), widget,
+						col_offset, row_num, 1, 1);
 				}
 				else if (compact) {
 					row_num++;
-					gtk_grid_attach_full(GTK_GRID(grid), widget,
-						0, row_num, 2 * cols, 1,
-						GTK_FILL | GTK_EXPAND,
-						GTK_FILL | GTK_EXPAND,
-						5, 0);
+					gtk_grid_attach(GTK_GRID(grid), widget,
+						0, row_num, 2 * cols, 1);
 				} else {
-					gtk_grid_attach_full(GTK_GRID(grid), widget,
-						1, row_num, 2 * cols - 1, 1,
-						GTK_FILL | GTK_EXPAND,
-						GTK_FILL | GTK_EXPAND,
-						5, 0);
+					gtk_grid_attach(GTK_GRID(grid), widget,
+						1, row_num, 2 * cols - 1, 1);
 				}
 
 				gtk_widget_show(widget);
