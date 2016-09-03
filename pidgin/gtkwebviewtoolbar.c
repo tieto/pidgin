@@ -246,25 +246,6 @@ destroy_toolbar_font(PidginWebViewToolbar *toolbar)
 }
 
 static void
-realize_toolbar_font(GtkWidget *widget, PidginWebViewToolbar *toolbar)
-{
-#if !GTK_CHECK_VERSION(3,2,0)
-	PidginWebViewToolbarPriv *priv = PIDGIN_WEBVIEWTOOLBAR_GET_PRIVATE(toolbar);
-	GtkFontSelection *sel;
-
-	sel = GTK_FONT_SELECTION(
-		gtk_font_selection_dialog_get_font_selection(GTK_FONT_SELECTION_DIALOG(priv->font_dialog)));
-	gtk_widget_hide(gtk_widget_get_parent(
-		gtk_font_selection_get_size_entry(sel)));
-	gtk_widget_show_all(gtk_font_selection_get_family_list(sel));
-	gtk_widget_show(gtk_widget_get_parent(
-		gtk_font_selection_get_family_list(sel)));
-	gtk_widget_show(gtk_widget_get_parent(gtk_widget_get_parent(
-		gtk_font_selection_get_family_list(sel))));
-#endif
-}
-
-static void
 apply_font(GtkDialog *dialog, gint response, PidginWebViewToolbar *toolbar)
 {
 	/* this could be expanded to include font size, weight, etc.
@@ -321,8 +302,6 @@ toggle_font(GtkAction *font, PidginWebViewToolbar *toolbar)
 
 			g_signal_connect(G_OBJECT(priv->font_dialog), "response",
 			                 G_CALLBACK(apply_font), toolbar);
-			g_signal_connect_after(G_OBJECT(priv->font_dialog), "realize",
-			                       G_CALLBACK(realize_toolbar_font), toolbar);
 		}
 
 		gtk_window_present(GTK_WINDOW(priv->font_dialog));

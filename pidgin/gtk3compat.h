@@ -54,50 +54,7 @@ gtk_label_set_alignment(GtkLabel *label, gfloat xalign, gfloat yalign)
 #endif /* 3.16.0 */
 
 
-#if !GTK_CHECK_VERSION(3,4,0)
-
-#define gtk_color_chooser_dialog_new(title, parent) \
-	gtk_color_selection_dialog_new(title)
-#define GTK_COLOR_CHOOSER(widget) (GTK_WIDGET(widget))
-
-static inline void
-gtk_color_chooser_set_use_alpha(GtkWidget *widget, gboolean use_alpha)
-{
-	if (GTK_IS_COLOR_BUTTON(widget)) {
-		gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(widget),
-			use_alpha);
-	}
-}
-
-static inline void
-pidgin_color_chooser_set_rgb(GtkWidget *widget, const GdkColor *color)
-{
-	if (GTK_IS_COLOR_SELECTION_DIALOG(widget)) {
-		GtkWidget *colorsel;
-
-		colorsel = gtk_color_selection_dialog_get_color_selection(
-			GTK_COLOR_SELECTION_DIALOG(widget));
-		gtk_color_selection_set_current_color(
-			GTK_COLOR_SELECTION(colorsel), color);
-	} else
-		gtk_color_button_set_color(GTK_COLOR_BUTTON(widget), color);
-}
-
-static inline void
-pidgin_color_chooser_get_rgb(GtkWidget *widget, GdkColor *color)
-{
-	if (GTK_IS_COLOR_SELECTION_DIALOG(widget)) {
-		GtkWidget *colorsel;
-
-		colorsel = gtk_color_selection_dialog_get_color_selection(
-			GTK_COLOR_SELECTION_DIALOG(widget));
-		gtk_color_selection_get_current_color(
-			GTK_COLOR_SELECTION(colorsel), color);
-	} else
-		gtk_color_button_get_color(GTK_COLOR_BUTTON(widget), color);
-}
-
-#else /* 3.4.0 */
+#if GTK_CHECK_VERSION(3,4,0)
 
 static inline void
 pidgin_color_chooser_set_rgb(GtkColorChooser *chooser, const GdkColor *rgb)
@@ -124,21 +81,6 @@ pidgin_color_chooser_get_rgb(GtkColorChooser *chooser, GdkColor *rgb)
 }
 
 #endif /* 3.4.0 and gtk_color_chooser_ */
-
-
-#if !GTK_CHECK_VERSION(3,2,0)
-
-#define GTK_FONT_CHOOSER GTK_FONT_SELECTION_DIALOG
-#define gtk_font_chooser_get_font gtk_font_selection_dialog_get_font_name
-#define gtk_font_chooser_set_font gtk_font_selection_dialog_set_font_name
-
-static inline GtkWidget * gtk_font_chooser_dialog_new(const gchar *title,
-	GtkWindow *parent)
-{
-	return gtk_font_selection_dialog_new(title);
-}
-
-#endif /* 3.2.0 */
 
 #endif /* _PIDGINGTK3COMPAT_H_ */
 

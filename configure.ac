@@ -572,7 +572,7 @@ dnl #######################################################################
 dnl Check Pidgin dependencies
 dnl #######################################################################
 if test "x$enable_gtkui" = "xyes" ; then
-	PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], , [
+	PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.4.2], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 You must have GTK+ 3.0.0 or newer development headers installed to compile
