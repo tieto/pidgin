@@ -7641,7 +7641,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 
 		gtk_widget_set_name(gtkconv->tab_label, style);
 		gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
-		gtk_widget_set_state(gtkconv->tab_label, GTK_STATE_ACTIVE);
+		gtk_widget_set_state_flags(gtkconv->tab_label, GTK_STATE_FLAG_ACTIVE, TRUE);
 
 		if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT ||
 				gtkconv->unseen_state == PIDGIN_UNSEEN_NICK ||
