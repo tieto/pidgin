@@ -385,6 +385,8 @@ static const GtkTargetEntry dnd_targets[] = {
 static void
 setup_icon_box(PidginStatusBox *status_box)
 {
+	GdkDisplay *display;
+
 	if (status_box->icon_box != NULL)
 		return;
 
@@ -417,8 +419,9 @@ setup_icon_box(PidginStatusBox *status_box)
 			g_object_unref(img);
 	}
 
-	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
-	status_box->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
+	display = gtk_widget_get_display(status_box->icon_box);
+	status_box->hand_cursor = gdk_cursor_new_for_display(display, GDK_HAND2);
+	status_box->arrow_cursor = gdk_cursor_new_for_display(display, GDK_LEFT_PTR);
 
 	/* Set up DND */
 	gtk_drag_dest_set(status_box->icon_box,

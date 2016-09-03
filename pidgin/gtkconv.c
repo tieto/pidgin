@@ -9234,8 +9234,10 @@ notebook_init_grab(PidginConvWindow *gtkwin, GtkWidget *widget, GdkEvent *event)
 		gtkwin->drag_leave_signal = 0;
 	}
 
-	if (cursor == NULL)
-		cursor = gdk_cursor_new(GDK_FLEUR);
+	if (cursor == NULL) {
+		GdkDisplay *display = gtk_widget_get_display(gtkwin->notebook);
+		cursor = gdk_cursor_new_for_display(display, GDK_FLEUR);
+	}
 
 	/* Grab the pointer */
 	gtk_grab_add(gtkwin->notebook);

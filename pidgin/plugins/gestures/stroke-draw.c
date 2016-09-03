@@ -154,8 +154,10 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 
       record_stroke_segment (widget);
 
-	  if (cursor == NULL)
-		  cursor = gdk_cursor_new(GDK_PENCIL);
+	  if (cursor == NULL) {
+		  GdkDisplay *display = gtk_widget_get_display(widget);
+		  cursor = gdk_cursor_new_for_display(display, GDK_PENCIL);
+	  }
 
       gdk_device_grab(gdk_event_get_device(event),
                       gtk_widget_get_window(widget), GDK_OWNERSHIP_WINDOW,

@@ -229,7 +229,8 @@ close_button_left_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label
 {
 	static GdkCursor *ptr = NULL;
 	if (ptr == NULL) {
-		ptr = gdk_cursor_new(GDK_LEFT_PTR);
+		GdkDisplay *display = gtk_widget_get_display(widget);
+		ptr = gdk_cursor_new_for_display(display, GDK_LEFT_PTR);
 	}
 
 	gtk_label_set_markup(label, "×");
@@ -242,7 +243,8 @@ close_button_entered_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *la
 {
 	static GdkCursor *hand = NULL;
 	if (hand == NULL) {
-		hand = gdk_cursor_new(GDK_HAND2);
+		GdkDisplay *display = gtk_widget_get_display(widget);
+		hand = gdk_cursor_new_for_display(display, GDK_HAND2);
 	}
 
 	gtk_label_set_markup(label, "<u>×</u>");

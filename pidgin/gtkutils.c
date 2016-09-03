@@ -2146,13 +2146,15 @@ pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *
 
 void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 {
+	GdkDisplay *display;
 	GdkCursor *cursor;
 
 	g_return_if_fail(widget != NULL);
 	if (gtk_widget_get_window(widget) == NULL)
 		return;
 
-	cursor = gdk_cursor_new(cursor_type);
+	display = gtk_widget_get_display(widget);
+	cursor = gdk_cursor_new_for_display(display, cursor_type);
 	gdk_window_set_cursor(gtk_widget_get_window(widget), cursor);
 
 	g_object_unref(cursor);

@@ -5073,8 +5073,10 @@ headline_response_cb(GtkInfoBar *infobar, int resp, PidginBuddyList *gtkblist)
 static void
 headline_realize_cb(GtkWidget *widget, gpointer data)
 {
-	GdkCursor *hand_cursor = gdk_cursor_new(GDK_HAND2);
-	gdk_window_set_cursor(gtk_widget_get_window(widget), hand_cursor);
+	GdkWindow *window = gtk_widget_get_window(widget);
+	GdkDisplay *display = gdk_window_get_display(window);
+	GdkCursor *hand_cursor = gdk_cursor_new_for_display(display, GDK_HAND2);
+	gdk_window_set_cursor(window, hand_cursor);
 	g_object_unref(hand_cursor);
 }
 

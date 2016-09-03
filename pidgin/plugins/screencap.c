@@ -340,6 +340,7 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 	int width, height;
 	cairo_t *cr;
 	cairo_surface_t *surface;
+	GdkDisplay *display;
 	GdkCursor *draw_cursor;
 
 	is_shooting = TRUE;
@@ -352,7 +353,8 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 	g_signal_connect(G_OBJECT(draw_window), "destroy",
 		G_CALLBACK(scrncap_draw_window_close), NULL);
 
-	draw_cursor = gdk_cursor_new(GDK_PENCIL);
+	display = gtk_widget_get_display(current_window);
+	draw_cursor = gdk_cursor_new_for_display(display, GDK_PENCIL);
 	g_object_set_data_full(G_OBJECT(draw_window), "draw-cursor",
 		draw_cursor, g_object_unref);
 
@@ -544,15 +546,17 @@ static void
 scrncap_crop_window_realize(GtkWidget *crop_window, gpointer _unused)
 {
 	GdkWindow *gdkwindow;
+	GdkDisplay *display;
 	GdkCursor *cursor;
 
 	gdkwindow = gtk_widget_get_window(GTK_WIDGET(crop_window));
+	display = gdk_window_get_display(gdkwindow);
 
 	gdk_window_set_events(gdkwindow, gdk_window_get_events(gdkwindow) |
 		GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK |
 		GDK_BUTTON_MOTION_MASK);
 
-	cursor = gdk_cursor_new(GDK_CROSSHAIR);
+	cursor = gdk_cursor_new_for_display(display, GDK_CROSSHAIR);
 	gdk_window_set_cursor(gdkwindow, cursor);
 	g_object_unref(cursor);
 }
