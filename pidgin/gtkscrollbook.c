@@ -51,7 +51,7 @@ pidgin_scroll_book_get_type (void)
 			NULL  /* value_table */
 		};
 
-		scroll_book_type = g_type_register_static(GTK_TYPE_VBOX,
+		scroll_book_type = g_type_register_static(GTK_TYPE_BOX,
 							 "PidginScrollBook",
 							 &scroll_book_info,
 							 0);
@@ -255,6 +255,8 @@ pidgin_scroll_book_init (PidginScrollBook *scroll_book)
 {
 	GtkWidget *eb;
 	GtkWidget *close_button;
+
+	gtk_orientable_set_orientation(GTK_ORIENTABLE(scroll_book), GTK_ORIENTATION_VERTICAL);
 
 	scroll_book->hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 

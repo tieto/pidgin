@@ -46,13 +46,13 @@ typedef struct _PidginWebViewToolbar PidginWebViewToolbar;
 typedef struct _PidginWebViewToolbarClass PidginWebViewToolbarClass;
 
 struct _PidginWebViewToolbar {
-	GtkHBox box;
+	GtkBox box;
 
 	GtkWidget *webview;
 };
 
 struct _PidginWebViewToolbarClass {
-	GtkHBoxClass parent_class;
+	GtkBoxClass parent_class;
 };
 
 G_BEGIN_DECLS

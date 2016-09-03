@@ -101,7 +101,7 @@ typedef struct _PidginWebViewToolbarPriv {
  * Globals
  *****************************************************************************/
 
-static GtkHBoxClass *parent_class = NULL;
+static GtkBoxClass *parent_class = NULL;
 
 /******************************************************************************
  * Prototypes
@@ -1337,7 +1337,7 @@ pidgin_webviewtoolbar_class_init(gpointer _class, gpointer class_data)
 	PidginWebViewToolbarClass *class = _class;
 	GObjectClass *gobject_class = _class;
 
-	parent_class = g_type_class_ref(GTK_TYPE_HBOX);
+	parent_class = g_type_class_ref(GTK_TYPE_BOX);
 	gobject_class->finalize = pidgin_webviewtoolbar_finalize;
 
 	g_type_class_add_private(class, sizeof(PidginWebViewToolbarPriv));
@@ -1621,7 +1621,7 @@ pidgin_webviewtoolbar_get_type(void)
 			NULL
 		};
 
-		webviewtoolbar_type = g_type_register_static(GTK_TYPE_HBOX,
+		webviewtoolbar_type = g_type_register_static(GTK_TYPE_BOX,
 				"PidginWebViewToolbar", &webviewtoolbar_info, 0);
 	}
 

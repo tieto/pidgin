@@ -730,7 +730,7 @@ static void write_stats_on_unload(gpointer key, gpointer value, gpointer user_da
 static CapPrefsUI * create_cap_prefs_ui() {
 	CapPrefsUI *ui = g_malloc(sizeof(CapPrefsUI));
 
-	ui->ret = gtk_vbox_new(FALSE, 18);
+	ui->ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ui->ret), 10);
 	ui->cap_vbox = pidgin_make_frame(ui->ret, _("Statistics Configuration"));
 

@@ -320,7 +320,7 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 
 #if 0
 	/* Now the left side of the hbox */
-	vbox2 = gtk_vbox_new(FALSE, 12);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 0);
 	gtk_widget_show(vbox2);
 

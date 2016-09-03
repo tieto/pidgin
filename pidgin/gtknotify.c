@@ -524,7 +524,7 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 			GTK_DIALOG(cont))), image, FALSE, TRUE, 0);
 		gtk_box_reorder_child(GTK_BOX(gtk_dialog_get_action_area(
 			GTK_DIALOG(cont))), image, 0);
-	} else if (GTK_IS_HBOX(cont)) {
+	} else if (GTK_IS_BOX(cont)) {
 		gtk_widget_set_halign(image, GTK_ALIGN_START);
 		gtk_widget_set_valign(image, GTK_ALIGN_START);
 		gtk_box_pack_end(GTK_BOX(cont), image, FALSE, TRUE, 0);

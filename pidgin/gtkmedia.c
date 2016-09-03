@@ -782,7 +782,8 @@ phone_create_button(const gchar *text_hi, const gchar *text_lo)
 	else
 		text_hi_local = "";
 
-	grid = gtk_vbox_new(TRUE, 0);
+	grid = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	gtk_box_set_homogeneous(GTK_BOX(grid), TRUE);
 
 	button = gtk_button_new();
 	label_hi = gtk_label_new(text_hi_local);

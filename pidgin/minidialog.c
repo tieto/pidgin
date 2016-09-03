@@ -62,7 +62,7 @@ pidgin_mini_dialog_get_type (void)
 			(GInstanceInitFunc) pidgin_mini_dialog_init,
 			NULL,
 		};
-		g_define_type_id = g_type_register_static (GTK_TYPE_VBOX,
+		g_define_type_id = g_type_register_static(GTK_TYPE_BOX,
 			"PidginMiniDialog", &g_define_type_info, 0);
 	}
 	return g_define_type_id;
@@ -453,6 +453,8 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 
 	PidginMiniDialogPrivate *priv = g_new0(PidginMiniDialogPrivate, 1);
 	self->priv = priv;
+
+	gtk_orientable_set_orientation(GTK_ORIENTABLE(self), GTK_ORIENTATION_VERTICAL);
 
 	gtk_container_set_border_width(GTK_CONTAINER(self), PIDGIN_HIG_BOX_SPACE);
 

@@ -111,7 +111,7 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 	                       image, FALSE, TRUE, 0);
 		gtk_box_reorder_child(GTK_BOX(gtk_dialog_get_action_area(GTK_DIALOG(cont))),
 	                          image, 0);
-	} else if (GTK_IS_HBOX(cont)) {
+	} else if (GTK_IS_BOX(cont)) {
 		gtk_widget_set_halign(image, GTK_ALIGN_START);
 		gtk_widget_set_valign(image, GTK_ALIGN_START);
 		gtk_box_pack_end(GTK_BOX(cont), image, FALSE, TRUE, 0);
@@ -1682,12 +1682,11 @@ datasheet_button_check_sens(GtkWidget *button, gpointer _sheet_widget)
 static void
 datasheet_selection_changed(GtkWidget *sheet_widget)
 {
-	GtkVBox *buttons_box;
+	gpointer buttons_box;
 
 	g_return_if_fail(sheet_widget != NULL);
 
-	buttons_box = GTK_VBOX(g_object_get_data(G_OBJECT(sheet_widget),
-		"buttons"));
+	buttons_box = g_object_get_data(G_OBJECT(sheet_widget), "buttons");
 	gtk_container_foreach(GTK_CONTAINER(buttons_box),
 		datasheet_button_check_sens, sheet_widget);
 }
@@ -1844,12 +1843,12 @@ create_datasheet_field(PurpleRequestField *field, GtkSizeGroup *buttons_sg)
 	GtkWidget *scrollable;
 	GtkCellRenderer *renderer_image = NULL, *renderer_text = NULL;
 	GtkTreeViewColumn *id_column;
-	GtkHBox *main_box;
-	GtkVBox *buttons_box;
+	GtkWidget *main_box;
+	GtkWidget *buttons_box;
 	const GList *it;
 
 	sheet = purple_request_field_datasheet_get_sheet(field);
-	main_box = GTK_HBOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
+	main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
 	col_count = purple_request_datasheet_get_column_count(sheet);
 
@@ -1915,14 +1914,14 @@ create_datasheet_field(PurpleRequestField *field, GtkSizeGroup *buttons_sg)
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1);
 	gtk_widget_show(GTK_WIDGET(view));
 
-	buttons_box = GTK_VBOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER));
-	gtk_size_group_add_widget(buttons_sg, GTK_WIDGET(buttons_box));
+	buttons_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BORDER);
+	gtk_size_group_add_widget(buttons_sg, buttons_box);
 
 	gtk_box_pack_start(GTK_BOX(main_box), scrollable, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(main_box), GTK_WIDGET(buttons_box),
+	gtk_box_pack_start(GTK_BOX(main_box), buttons_box,
 		FALSE, FALSE, 0);
 	gtk_widget_show(scrollable);
-	gtk_widget_show(GTK_WIDGET(buttons_box));
+	gtk_widget_show(buttons_box);
 
 	it = purple_request_datasheet_get_actions(sheet);
 	for (; it != NULL; it = g_list_next(it)) {
@@ -1957,7 +1956,7 @@ create_datasheet_field(PurpleRequestField *field, GtkSizeGroup *buttons_sg)
 	g_signal_connect(G_OBJECT(sel), "changed",
 		G_CALLBACK(datasheet_selection_changed_cb), main_box);
 
-	return GTK_WIDGET(main_box);
+	return main_box;
 }
 
 static void *
