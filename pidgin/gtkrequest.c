@@ -2379,8 +2379,13 @@ pidgin_request_fields(const char *title, const char *primary,
 
 				gtk_widget_set_hexpand(widget, TRUE);
 				gtk_widget_set_vexpand(widget, TRUE);
+#if GTK_CHECK_VERSION(3,12,0)
+				gtk_widget_set_margin_start(widget, 5);
+				gtk_widget_set_margin_end(widget, 5);
+#else
 				gtk_widget_set_margin_left(widget, 5);
 				gtk_widget_set_margin_right(widget, 5);
+#endif
 
 				if (type == PURPLE_REQUEST_FIELD_STRING &&
 					purple_request_field_string_is_multiline(field))
