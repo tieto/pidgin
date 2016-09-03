@@ -1182,6 +1182,7 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 							gpointer data)
 {
 	GtkWidget *widget;
+	GtkStyleContext *context;
 	GtkRequisition requisition;
 	GdkScreen *screen;
 	GdkRectangle monitor;
@@ -1197,8 +1198,10 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 
 	widget     = GTK_WIDGET(menu);
 	screen     = gtk_widget_get_screen(widget);
-	xthickness = gtk_widget_get_style(widget)->xthickness;
-	ythickness = gtk_widget_get_style(widget)->ythickness;
+	context    = gtk_widget_get_style_context(widget);
+	gtk_style_context_get(context, gtk_style_context_get_state(context),
+	                      "xthickness", &xthickness,
+	                      "ythickness", &ythickness, NULL);
 	rtl        = (gtk_widget_get_direction(widget) == GTK_TEXT_DIR_RTL);
 
 	/*
@@ -1336,8 +1339,12 @@ pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
 	GtkTreePath *path;
 	GtkTreeViewColumn *col;
 	GdkRectangle rect;
-	gint ythickness = gtk_widget_get_style(GTK_WIDGET(menu))->ythickness;
+	GtkStyleContext *context;
+	gint ythickness;
 
+	context = gtk_widget_get_style_context(GTK_WIDGET(menu));
+	gtk_style_context_get(context, gtk_style_context_get_state(context),
+	                      "ythickness", &ythickness, NULL);
 	gdk_window_get_origin (gtk_widget_get_window(widget), x, y);
 	gtk_tree_view_get_cursor (tv, &path, &col);
 	gtk_tree_view_get_cell_area (tv, path, col, &rect);
@@ -2793,19 +2800,25 @@ void pidgin_gdk_pixbuf_make_round(GdkPixbuf *pixbuf) {
 
 const char *pidgin_get_dim_grey_string(GtkWidget *widget) {
 	static char dim_grey_string[8] = "";
-	GtkStyle *style;
+	GtkStyleContext *context;
+	GdkRGBA fg, bg;
 
 	if (!widget)
 		return "dim grey";
 
-	style = gtk_widget_get_style(widget);
-	if (!style)
+	context = gtk_widget_get_style_context(widget);
+	if (!context)
 		return "dim grey";
 
+	gtk_style_context_get_color(context, gtk_style_context_get_state(context),
+	                            &fg);
+	gtk_style_context_get_background_color(context,
+	                                       gtk_style_context_get_state(context),
+	                                       &bg);
 	snprintf(dim_grey_string, sizeof(dim_grey_string), "#%02x%02x%02x",
-	style->text_aa[GTK_STATE_NORMAL].red >> 8,
-	style->text_aa[GTK_STATE_NORMAL].green >> 8,
-	style->text_aa[GTK_STATE_NORMAL].blue >> 8);
+		 (unsigned int)((fg.red + bg.red) * 0.5 * 255),
+		 (unsigned int)((fg.green + bg.green) * 0.5 * 255),
+		 (unsigned int)((fg.blue + bg.blue) * 0.5 * 255));
 	return dim_grey_string;
 }
 
