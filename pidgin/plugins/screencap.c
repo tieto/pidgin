@@ -634,7 +634,15 @@ scrncap_do_screenshot_cb(gpointer _webview)
 		"or press Escape button to cancel"));
 	gtk_label_set_markup(GTK_LABEL(hint), hint_msg);
 	g_free(hint_msg);
-	gtk_misc_set_padding(GTK_MISC(hint), 10, 7);
+#if GTK_CHECK_VERSION(3,12,0)
+	gtk_widget_set_margin_start(hint, 10);
+	gtk_widget_set_margin_end(hint, 10);
+#else
+	gtk_widget_set_margin_left(hint, 10);
+	gtk_widget_set_margin_right(hint, 10);
+#endif
+	gtk_widget_set_margin_top(hint, 7);
+	gtk_widget_set_margin_bottom(hint, 7);
 	hint_box = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(hint_box), hint);
 	gtk_widget_get_preferred_size(hint, NULL, &hint_size);
