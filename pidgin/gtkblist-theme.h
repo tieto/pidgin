@@ -103,7 +103,7 @@ GType pidgin_theme_font_get_type(void);
  *
  * Returns: A newly created PidginThemeFont
  */
-PidginThemeFont * pidgin_theme_font_new(const gchar *face, GdkColor *color);
+PidginThemeFont *pidgin_theme_font_new(const gchar *face, GdkRGBA *color);
 
 /**
  * pidgin_theme_font_free:
@@ -129,7 +129,7 @@ void pidgin_theme_font_set_font_face(PidginThemeFont *font, const gchar *face);
  *
  * Set the color of a PidginThemeFont.
  */
-void pidgin_theme_font_set_color(PidginThemeFont *font, const GdkColor *color);
+void pidgin_theme_font_set_color(PidginThemeFont *font, const GdkRGBA *color);
 
 /**
  * pidgin_theme_font_get_font_face:
@@ -145,11 +145,11 @@ const gchar * pidgin_theme_font_get_font_face(PidginThemeFont *font);
  * pidgin_theme_font_get_color:
  * @font:  The PidginThemeFont
  *
- * Get the color of a PidginThemeFont as a GdkColor object.
+ * Get the color of a PidginThemeFont as a GdkRGBA object.
  *
  * Returns: The color, or NULL if none is set.
  */
-const GdkColor * pidgin_theme_font_get_color(PidginThemeFont *font);
+const GdkRGBA *pidgin_theme_font_get_color(PidginThemeFont *font);
 
 /**
  * pidgin_theme_font_get_color_describe:
@@ -189,7 +189,7 @@ GType pidgin_blist_layout_get_type(void);
  *
  * Returns: A gdk color.
  */
- GdkColor *pidgin_blist_theme_get_background_color(PidginBlistTheme *theme);
+GdkRGBA *pidgin_blist_theme_get_background_color(PidginBlistTheme *theme);
 
 /**
  * pidgin_blist_theme_get_opacity:
@@ -220,7 +220,7 @@ PidginBlistLayout *pidgin_blist_theme_get_layout(PidginBlistTheme *theme);
  *
  * Returns: A gdk color.
  */
-GdkColor *pidgin_blist_theme_get_expanded_background_color(PidginBlistTheme *theme);
+GdkRGBA *pidgin_blist_theme_get_expanded_background_color(PidginBlistTheme *theme);
 
 /**
  * pidgin_blist_theme_get_expanded_text_info:
@@ -240,7 +240,7 @@ PidginThemeFont *pidgin_blist_theme_get_expanded_text_info(PidginBlistTheme *the
  *
  * Returns: A gdk color.
  */
-GdkColor *pidgin_blist_theme_get_collapsed_background_color(PidginBlistTheme *theme);
+GdkRGBA *pidgin_blist_theme_get_collapsed_background_color(PidginBlistTheme *theme);
 
 /**
  * pidgin_blist_theme_get_collapsed_text_info:
@@ -260,7 +260,7 @@ PidginThemeFont *pidgin_blist_theme_get_collapsed_text_info(PidginBlistTheme *th
  *
  * Returns: A gdkcolor for contacts and chats.
  */
-GdkColor *pidgin_blist_theme_get_contact_color(PidginBlistTheme *theme);
+GdkRGBA *pidgin_blist_theme_get_contact_color(PidginBlistTheme *theme);
 
 /**
  * pidgin_blist_theme_get_contact_text_info:
@@ -352,7 +352,7 @@ PidginThemeFont *pidgin_blist_theme_get_status_text_info(PidginBlistTheme *theme
  *
  * Sets the background color to be used for this buddy list theme.
  */
-void pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, const GdkColor *color);
+void pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, const GdkRGBA *color);
 
 /**
  * pidgin_blist_theme_set_opacity:
@@ -379,7 +379,7 @@ void pidgin_blist_theme_set_layout(PidginBlistTheme *theme, const PidginBlistLay
  *
  * Sets the background color to be used for expanded groups.
  */
-void pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, const GdkColor *color);
+void pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, const GdkRGBA *color);
 
 /**
  * pidgin_blist_theme_set_expanded_text_info:
@@ -397,7 +397,7 @@ void pidgin_blist_theme_set_expanded_text_info(PidginBlistTheme *theme, const Pi
  *
  * Sets the background color to be used for collapsed groups.
  */
-void pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, const GdkColor *color);
+void pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, const GdkRGBA *color);
 
 /**
  * pidgin_blist_theme_set_collapsed_text_info:
@@ -415,7 +415,7 @@ void pidgin_blist_theme_set_collapsed_text_info(PidginBlistTheme *theme, const P
  *
  * Sets the background color to be used for contacts and chats.
  */
-void pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, const GdkColor *color);
+void pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, const GdkRGBA *color);
 
 /**
  * pidgin_blist_theme_set_contact_text_info:

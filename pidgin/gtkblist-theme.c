@@ -35,18 +35,18 @@
 typedef struct {
 	/* Buddy list */
 	gdouble opacity;
-	GdkColor *bgcolor;
+	GdkRGBA *bgcolor;
 	PidginBlistLayout *layout;
 
 	/* groups */
-	GdkColor *expanded_color;
+	GdkRGBA *expanded_color;
 	PidginThemeFont *expanded;
 
-	GdkColor *collapsed_color;
+	GdkRGBA *collapsed_color;
 	PidginThemeFont *collapsed;
 
 	/* buddy */
-	GdkColor *contact_color;
+	GdkRGBA *contact_color;
 
 	PidginThemeFont *contact;
 
@@ -65,7 +65,7 @@ struct _PidginThemeFont
 {
 	gchar *font;
 	gchar color[10];
-	GdkColor *gdkcolor;
+	GdkRGBA *gdkcolor;
 };
 
 /******************************************************************************
@@ -105,7 +105,7 @@ static GParamSpec *properties[PROP_LAST];
  *****************************************************************************/
 
 PidginThemeFont *
-pidgin_theme_font_new(const gchar *face, GdkColor *color)
+pidgin_theme_font_new(const gchar *face, GdkRGBA *color)
 {
 	PidginThemeFont *font = g_new0(PidginThemeFont, 1);
 	font->font = g_strdup(face);
@@ -120,7 +120,7 @@ pidgin_theme_font_free(PidginThemeFont *pair)
 	if (pair != NULL) {
 		g_free(pair->font);
 		if (pair->gdkcolor)
-			gdk_color_free(pair->gdkcolor);
+			gdk_rgba_free(pair->gdkcolor);
 		g_free(pair);
 	}
 }
@@ -137,7 +137,7 @@ copy_font_and_color(const PidginThemeFont *pair)
 	copy->font  = g_strdup(pair->font);
 	strncpy(copy->color, pair->color, sizeof(copy->color) - 1);
 	if (pair->gdkcolor)
-		copy->gdkcolor = pair->gdkcolor ? gdk_color_copy(pair->gdkcolor) : NULL;
+		copy->gdkcolor = pair->gdkcolor ? gdk_rgba_copy(pair->gdkcolor) : NULL;
 	return copy;
 }
 
@@ -152,17 +152,20 @@ pidgin_theme_font_set_font_face(PidginThemeFont *font, const gchar *face)
 }
 
 void
-pidgin_theme_font_set_color(PidginThemeFont *font, const GdkColor *color)
+pidgin_theme_font_set_color(PidginThemeFont *font, const GdkRGBA *color)
 {
 	g_return_if_fail(font);
 
 	if (font->gdkcolor)
-		gdk_color_free(font->gdkcolor);
+		gdk_rgba_free(font->gdkcolor);
 
-	font->gdkcolor = color ? gdk_color_copy(color) : NULL;
+	font->gdkcolor = color ? gdk_rgba_copy(color) : NULL;
 	if (color)
 		g_snprintf(font->color, sizeof(font->color),
-				"#%02x%02x%02x", color->red >> 8, color->green >> 8, color->blue >> 8);
+				"#%02x%02x%02x",
+				(unsigned int)(color->red * 255),
+				(unsigned int)(color->green * 255),
+				(unsigned int)(color->blue * 255));
 	else
 		font->color[0] = '\0';
 }
@@ -174,7 +177,7 @@ pidgin_theme_font_get_font_face(PidginThemeFont *font)
 	return font->font;
 }
 
-const GdkColor *
+const GdkRGBA *
 pidgin_theme_font_get_color(PidginThemeFont *font)
 {
 	g_return_val_if_fail(font, NULL);
@@ -323,20 +326,20 @@ pidgin_blist_theme_finalize(GObject *obj)
 
 	/* Buddy List */
 	if (priv->bgcolor)
-		gdk_color_free(priv->bgcolor);
+		gdk_rgba_free(priv->bgcolor);
 	g_free(priv->layout);
 
 	/* Group */
 	if (priv->expanded_color)
-		gdk_color_free(priv->expanded_color);
+		gdk_rgba_free(priv->expanded_color);
 	pidgin_theme_font_free(priv->expanded);
 	if (priv->collapsed_color)
-		gdk_color_free(priv->collapsed_color);
+		gdk_rgba_free(priv->collapsed_color);
 	pidgin_theme_font_free(priv->collapsed);
 
 	/* Buddy */
 	if (priv->contact_color)
-		gdk_color_free(priv->contact_color);
+		gdk_rgba_free(priv->contact_color);
 	pidgin_theme_font_free(priv->contact);
 	pidgin_theme_font_free(priv->online);
 	pidgin_theme_font_free(priv->away);
@@ -372,7 +375,7 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 	properties[PROP_BACKGROUND_COLOR] = g_param_spec_boxed("background-color",
 			"Background Color",
 			"The background color for the buddy list",
-			GDK_TYPE_COLOR, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+			GDK_TYPE_RGBA, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 	properties[PROP_OPACITY] = g_param_spec_double("opacity", "Opacity",
 			"The opacity of the buddy list",
@@ -386,7 +389,7 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 	properties[PROP_EXPANDED_COLOR] = g_param_spec_boxed("expanded-color",
 			"Expanded Background Color",
 			"The background color of an expanded group",
-			GDK_TYPE_COLOR, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+			GDK_TYPE_RGBA, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 	properties[PROP_EXPANDED_TEXT] = g_param_spec_pointer("expanded-text",
 			"Expanded Text",
@@ -396,7 +399,7 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 	properties[PROP_COLLAPSED_COLOR] = g_param_spec_boxed("collapsed-color",
 			"Collapsed Background Color",
 			"The background color of a collapsed group",
-			GDK_TYPE_COLOR, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+			GDK_TYPE_RGBA, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 	properties[PROP_COLLAPSED_TEXT] = g_param_spec_pointer("collapsed-text",
 			"Collapsed Text",
@@ -407,7 +410,7 @@ pidgin_blist_theme_class_init(PidginBlistThemeClass *klass)
 	properties[PROP_CONTACT_COLOR] = g_param_spec_boxed("contact-color",
 			"Contact/Chat Background Color",
 			"The background color of a contact or chat",
-			GDK_TYPE_COLOR, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+			GDK_TYPE_RGBA, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
 	properties[PROP_CONTACT] = g_param_spec_pointer("contact",
 			"Contact Text",
@@ -530,7 +533,7 @@ pidgin_blist_layout_get_type(void)
 
 /* get methods */
 
-GdkColor *
+GdkRGBA *
 pidgin_blist_theme_get_background_color(PidginBlistTheme *theme)
 {
 	PidginBlistThemePrivate *priv;
@@ -566,7 +569,7 @@ pidgin_blist_theme_get_layout(PidginBlistTheme *theme)
 	return priv->layout;
 }
 
-GdkColor *
+GdkRGBA *
 pidgin_blist_theme_get_expanded_background_color(PidginBlistTheme *theme)
 {
 	PidginBlistThemePrivate *priv;
@@ -590,7 +593,7 @@ pidgin_blist_theme_get_expanded_text_info(PidginBlistTheme *theme)
 	return priv->expanded;
 }
 
-GdkColor *
+GdkRGBA *
 pidgin_blist_theme_get_collapsed_background_color(PidginBlistTheme *theme)
 {
 	PidginBlistThemePrivate *priv;
@@ -614,7 +617,7 @@ pidgin_blist_theme_get_collapsed_text_info(PidginBlistTheme *theme)
 	return priv->collapsed;
 }
 
-GdkColor *
+GdkRGBA *
 pidgin_blist_theme_get_contact_color(PidginBlistTheme *theme)
 {
 	PidginBlistThemePrivate *priv;
@@ -724,7 +727,7 @@ pidgin_blist_theme_get_status_text_info(PidginBlistTheme *theme)
 
 /* Set Methods */
 void
-pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, const GdkColor *color)
+pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, const GdkRGBA *color)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -733,8 +736,8 @@ pidgin_blist_theme_set_background_color(PidginBlistTheme *theme, const GdkColor 
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(theme);
 
 	if (priv->bgcolor)
-		gdk_color_free(priv->bgcolor);
-	priv->bgcolor = color ? gdk_color_copy(color) : NULL;
+		gdk_rgba_free(priv->bgcolor);
+	priv->bgcolor = color ? gdk_rgba_copy(color) : NULL;
 
 	g_object_notify_by_pspec(G_OBJECT(theme), properties[PROP_BACKGROUND_COLOR]);
 }
@@ -769,7 +772,7 @@ pidgin_blist_theme_set_layout(PidginBlistTheme *theme, const PidginBlistLayout *
 }
 
 void
-pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, const GdkColor *color)
+pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, const GdkRGBA *color)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -778,8 +781,8 @@ pidgin_blist_theme_set_expanded_background_color(PidginBlistTheme *theme, const 
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(theme);
 
 	if (priv->expanded_color)
-		gdk_color_free(priv->expanded_color);
-	priv->expanded_color = color ? gdk_color_copy(color) : NULL;
+		gdk_rgba_free(priv->expanded_color);
+	priv->expanded_color = color ? gdk_rgba_copy(color) : NULL;
 
 	g_object_notify_by_pspec(G_OBJECT(theme), properties[PROP_EXPANDED_COLOR]);
 }
@@ -800,7 +803,7 @@ pidgin_blist_theme_set_expanded_text_info(PidginBlistTheme *theme, const PidginT
 }
 
 void
-pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, const GdkColor *color)
+pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, const GdkRGBA *color)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -809,8 +812,8 @@ pidgin_blist_theme_set_collapsed_background_color(PidginBlistTheme *theme, const
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(theme);
 
 	if (priv->collapsed_color)
-		gdk_color_free(priv->collapsed_color);
-	priv->collapsed_color = color ? gdk_color_copy(color) : NULL;
+		gdk_rgba_free(priv->collapsed_color);
+	priv->collapsed_color = color ? gdk_rgba_copy(color) : NULL;
 
 	g_object_notify_by_pspec(G_OBJECT(theme), properties[PROP_COLLAPSED_COLOR]);
 }
@@ -831,7 +834,7 @@ pidgin_blist_theme_set_collapsed_text_info(PidginBlistTheme *theme, const Pidgin
 }
 
 void
-pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, const GdkColor *color)
+pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, const GdkRGBA *color)
 {
 	PidginBlistThemePrivate *priv;
 
@@ -840,8 +843,8 @@ pidgin_blist_theme_set_contact_color(PidginBlistTheme *theme, const GdkColor *co
 	priv = PIDGIN_BLIST_THEME_GET_PRIVATE(theme);
 
 	if (priv->contact_color)
-		gdk_color_free(priv->contact_color);
-	priv->contact_color = color ? gdk_color_copy(color) : NULL;
+		gdk_rgba_free(priv->contact_color);
+	priv->contact_color = color ? gdk_rgba_copy(color) : NULL;
 
 	g_object_notify_by_pspec(G_OBJECT(theme), properties[PROP_CONTACT_COLOR]);
 }

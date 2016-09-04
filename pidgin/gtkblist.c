@@ -5617,7 +5617,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 					    "visible", GROUP_EXPANDER_VISIBLE_COLUMN,
 					    "expander-visible", GROUP_EXPANDER_COLUMN,
 					    "sensitive", GROUP_EXPANDER_COLUMN,
-					    "cell-background-gdk", BGCOLOR_COLUMN,
+					    "cell-background-rgba", BGCOLOR_COLUMN,
 					    NULL);
 
 	/* contact */
@@ -5627,7 +5627,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 					    "visible", CONTACT_EXPANDER_VISIBLE_COLUMN,
 					    "expander-visible", CONTACT_EXPANDER_COLUMN,
 					    "sensitive", CONTACT_EXPANDER_COLUMN,
-					    "cell-background-gdk", BGCOLOR_COLUMN,
+					    "cell-background-rgba", BGCOLOR_COLUMN,
 					    NULL);
 
 	for (i = 0; i < 5; i++) {
@@ -5639,7 +5639,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			gtk_tree_view_column_set_attributes(column, rend,
 							    "pixbuf", STATUS_ICON_COLUMN,
 							    "visible", STATUS_ICON_VISIBLE_COLUMN,
-							    "cell-background-gdk", BGCOLOR_COLUMN,
+							    "cell-background-rgba", BGCOLOR_COLUMN,
 							    NULL);
 			g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
 
@@ -5648,7 +5648,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			gtkblist->text_rend = rend = gtk_cell_renderer_text_new();
 			gtk_tree_view_column_pack_start(column, rend, TRUE);
 			gtk_tree_view_column_set_attributes(column, rend,
-							    "cell-background-gdk", BGCOLOR_COLUMN,
+							    "cell-background-rgba", BGCOLOR_COLUMN,
 							    "markup", NAME_COLUMN,
 							    NULL);
 			g_signal_connect(G_OBJECT(rend), "editing-started", G_CALLBACK(gtk_blist_renderer_editing_started_cb), NULL);
@@ -5664,7 +5664,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			gtk_tree_view_column_set_attributes(column, rend,
 							    "markup", IDLE_COLUMN,
 							    "visible", IDLE_VISIBLE_COLUMN,
-							    "cell-background-gdk", BGCOLOR_COLUMN,
+							    "cell-background-rgba", BGCOLOR_COLUMN,
 							    NULL);
 		} else if (emblem == i) {
 			/* emblem */
@@ -5672,7 +5672,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			g_object_set(rend, "xalign", 1.0, "yalign", 0.5, "ypad", 0, "xpad", 3, NULL);
 			gtk_tree_view_column_pack_start(column, rend, FALSE);
 			gtk_tree_view_column_set_attributes(column, rend, "pixbuf", EMBLEM_COLUMN,
-									  "cell-background-gdk", BGCOLOR_COLUMN,
+									  "cell-background-rgba", BGCOLOR_COLUMN,
 									  "visible", EMBLEM_VISIBLE_COLUMN, NULL);
 
 		} else if (protocol_icon == i) {
@@ -5682,7 +5682,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			gtk_tree_view_column_set_attributes(column, rend,
 							   "pixbuf", PROTOCOL_ICON_COLUMN,
 							   "visible", PROTOCOL_ICON_VISIBLE_COLUMN,
-							   "cell-background-gdk", BGCOLOR_COLUMN,
+							   "cell-background-rgba", BGCOLOR_COLUMN,
 							  NULL);
 			g_object_set(rend, "xalign", 0.0, "xpad", 3, "ypad", 0, NULL);
 
@@ -5692,7 +5692,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 			gtk_tree_view_column_pack_start(column, rend, FALSE);
 			gtk_tree_view_column_set_attributes(column, rend, "pixbuf", BUDDY_ICON_COLUMN,
-							    "cell-background-gdk", BGCOLOR_COLUMN,
+							    "cell-background-rgba", BGCOLOR_COLUMN,
 							    "visible", BUDDY_ICON_VISIBLE_COLUMN,
 							    NULL);
 		}
@@ -5924,7 +5924,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 						 GDK_TYPE_PIXBUF, /* Buddy icon */
 						 G_TYPE_BOOLEAN,  /* Buddy icon visible */
 						 G_TYPE_POINTER,  /* Node */
-						 GDK_TYPE_COLOR,  /* bgcolor */
+						 GDK_TYPE_RGBA,   /* bgcolor */
 						 G_TYPE_BOOLEAN,  /* Group expander */
 						 G_TYPE_BOOLEAN,  /* Group expander visible */
 						 G_TYPE_BOOLEAN,  /* Contact expander */
@@ -6403,7 +6403,7 @@ static void pidgin_blist_update_group(PurpleBuddyList *list,
 		GtkTreeIter iter;
 		GtkTreePath *path;
 		gboolean expanded;
-		GdkColor *bgcolor = NULL;
+		GdkRGBA *bgcolor = NULL;
 		GdkPixbuf *avatar = NULL;
 		PidginBlistTheme *theme = NULL;
 
@@ -6510,7 +6510,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 {
 	PurplePresence *presence = purple_buddy_get_presence(buddy);
 	GdkPixbuf *status, *avatar, *emblem, *protocol_icon;
-	GdkColor *color = NULL;
+	GdkRGBA *color = NULL;
 	char *mark;
 	char *idle = NULL;
 	gboolean expanded = ((struct _pidgin_blist_node *)purple_blist_node_get_ui_data(node->parent))->contact_expanded;
@@ -6655,7 +6655,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 			GdkPixbuf *status;
 			gchar *mark, *tmp;
 			const gchar *fg_color, *font;
-			GdkColor *color = NULL;
+			GdkRGBA *color = NULL;
 			PidginBlistTheme *theme;
 			PidginThemeFont *pair;
 			gboolean selected = (gtkblist->selected_node == cnode);
@@ -6767,7 +6767,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		PidginBlistNode *ui;
 		PurpleConversation *conv;
 		gboolean hidden = FALSE;
-		GdkColor *bgcolor = NULL;
+		GdkRGBA *bgcolor = NULL;
 		PidginThemeFont *pair;
 		PidginBlistTheme *theme;
 		gboolean selected = (gtkblist->selected_node == node);

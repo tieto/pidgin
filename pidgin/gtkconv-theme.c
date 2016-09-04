@@ -763,16 +763,15 @@ pidgin_conversation_theme_get_nick_colors(PidginConvTheme *theme)
 	{
 		char *file = g_build_filename(dir, "Contents", "Resources", "Incoming", "SenderColors.txt", NULL);
 		char *contents;
-		priv->nick_colors = g_array_new(FALSE, FALSE, sizeof(GdkColor));
+		priv->nick_colors = g_array_new(FALSE, FALSE, sizeof(GdkRGBA));
 		if (g_file_get_contents(file, &contents, NULL, NULL)) {
 			int i;
 			gchar ** color_strings = g_strsplit_set(contents, "\r\n:", -1);
 
 			for(i=0; color_strings[i]; i++)
 			{
-				GdkColor color;
-				if(gdk_color_parse(color_strings[i], &color))
-				{
+				GdkRGBA color;
+				if (gdk_rgba_parse(&color, color_strings[i])) {
 					g_array_append_val(priv->nick_colors, color);
 				}
 			}

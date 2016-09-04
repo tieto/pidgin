@@ -53,7 +53,7 @@ static gint crop_x, crop_y, crop_w, crop_h;
 static gint draw_origin_x, draw_origin_y;
 static gboolean draw_active;
 
-static GdkColor brush_color = {0, 65535, 0, 0};
+static GdkRGBA brush_color = {1, 0, 0, 1};
 static gint line_width = 2;
 
 /******************************************************************************
@@ -322,14 +322,10 @@ scrncap_draw_color_selected(GtkColorButton *button, cairo_t *cr)
 {
 	gchar *color_str;
 
-	pidgin_color_chooser_get_rgb(GTK_COLOR_CHOOSER(button), &brush_color);
+	gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(button), &brush_color);
+	gdk_cairo_set_source_rgba(cr, &brush_color);
 
-	cairo_set_source_rgb(cr,
-		brush_color.red / 65535.0,
-		brush_color.green / 65535.0,
-		brush_color.blue / 65535.0);
-
-	color_str = gdk_color_to_string(&brush_color);
+	color_str = gdk_rgba_to_string(&brush_color);
 	purple_prefs_set_string("/plugins/gtk/screencap/brush_color", color_str);
 	g_free(color_str);
 }
@@ -403,7 +399,7 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 		GTK_DIALOG(draw_window))), scroll_area);
 
 	color_button = gtk_color_button_new();
-	pidgin_color_chooser_set_rgb(GTK_COLOR_CHOOSER(color_button),
+	gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(color_button),
 		&brush_color);
 	g_signal_connect(G_OBJECT(color_button), "color-set",
 		G_CALLBACK(scrncap_draw_color_selected), cr);
@@ -940,7 +936,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 
 	color_str = purple_prefs_get_string("/plugins/gtk/screencap/brush_color");
 	if (color_str && color_str[0])
-		gdk_color_parse(color_str, &brush_color);
+		gdk_rgba_parse(&brush_color, color_str);
 
 	purple_signal_connect(pidgin_conversations_get_handle(),
 		"conversation-displayed", plugin,
