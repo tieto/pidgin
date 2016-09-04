@@ -112,7 +112,8 @@ pidgin_widget_decorate_account(GtkWidget *cont, PurpleAccount *account)
 		gtk_box_reorder_child(GTK_BOX(gtk_dialog_get_action_area(GTK_DIALOG(cont))),
 	                          image, 0);
 	} else if (GTK_IS_HBOX(cont)) {
-		gtk_misc_set_alignment(GTK_MISC(image), 0, 0);
+		gtk_widget_set_halign(image, GTK_ALIGN_START);
+		gtk_widget_set_valign(image, GTK_ALIGN_START);
 		gtk_box_pack_end(GTK_BOX(cont), image, FALSE, TRUE, 0);
 	}
 	gtk_widget_show(image);
@@ -566,7 +567,8 @@ pidgin_request_input(const char *title, const char *primary,
 
 	/* Dialog icon. */
 	img = pidgin_request_dialog_icon(PURPLE_REQUEST_INPUT, cpar);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	gtk_widget_set_halign(img, GTK_ALIGN_START);
+	gtk_widget_set_valign(img, GTK_ALIGN_START);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	pidgin_request_add_help(GTK_DIALOG(dialog), cpar);
@@ -593,7 +595,7 @@ pidgin_request_input(const char *title, const char *primary,
 
 	gtk_label_set_markup(label, label_text);
 	gtk_label_set_line_wrap(label, TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_label_set_alignment(label, 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(label), FALSE, FALSE, 0);
 
 	g_free(label_text);
@@ -723,7 +725,8 @@ pidgin_request_choice(const char *title, const char *primary,
 
 	/* Dialog icon. */
 	img = pidgin_request_dialog_icon(PURPLE_REQUEST_CHOICE, cpar);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	gtk_widget_set_halign(img, GTK_ALIGN_START);
+	gtk_widget_set_valign(img, GTK_ALIGN_START);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	pidgin_widget_decorate_account(hbox, purple_request_cpar_get_account(cpar));
@@ -749,7 +752,7 @@ pidgin_request_choice(const char *title, const char *primary,
 
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
 	g_free(label_text);
@@ -845,7 +848,8 @@ pidgin_request_action(const char *title, const char *primary,
 	                  hbox);
 
 	img = pidgin_request_dialog_icon(PURPLE_REQUEST_ACTION, cpar);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	gtk_widget_set_halign(img, GTK_ALIGN_START);
+	gtk_widget_set_valign(img, GTK_ALIGN_START);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	/* Vertical box */
@@ -872,7 +876,7 @@ pidgin_request_action(const char *title, const char *primary,
 
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
 	gtk_label_set_selectable(GTK_LABEL(label), TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
@@ -954,7 +958,8 @@ pidgin_request_wait(const char *title, const char *primary,
 		GTK_DIALOG(dialog))), hbox);
 
 	img = pidgin_request_dialog_icon(PURPLE_REQUEST_WAIT, cpar);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	gtk_widget_set_halign(img, GTK_ALIGN_START);
+	gtk_widget_set_valign(img, GTK_ALIGN_START);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	/* Cancel button */
@@ -986,7 +991,7 @@ pidgin_request_wait(const char *title, const char *primary,
 
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
 	gtk_label_set_selectable(GTK_LABEL(label), FALSE);
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
@@ -1554,7 +1559,7 @@ create_certificate_field(PurpleRequestField *field)
 	cert_label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(cert_label), escaped);
 	gtk_label_set_line_wrap(GTK_LABEL(cert_label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(cert_label), 0, 0);
+	gtk_label_set_alignment(GTK_LABEL(cert_label), 0, 0);
 
 	g_free(str);
 	g_free(escaped);
@@ -2016,7 +2021,8 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	/* Dialog icon. */
 	img = pidgin_request_dialog_icon(PURPLE_REQUEST_FIELDS, cpar);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	gtk_widget_set_halign(img, GTK_ALIGN_START);
+	gtk_widget_set_valign(img, GTK_ALIGN_START);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_widget_show(img);
 
@@ -2067,7 +2073,7 @@ pidgin_request_fields(const char *title, const char *primary,
 
 		gtk_label_set_markup(GTK_LABEL(label), label_text);
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 		gtk_widget_show(label);
 		g_free(label_text);
@@ -2148,7 +2154,7 @@ pidgin_request_fields(const char *title, const char *primary,
 		gtk_label_set_markup(GTK_LABEL(label), secondary_esc);
 		g_free(secondary_esc);
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), label, (notebook == NULL),
 			(notebook == NULL), 0);
 		gtk_widget_show(label);
@@ -2309,7 +2315,7 @@ pidgin_request_fields(const char *title, const char *primary,
 
 					gtk_widget_set_hexpand(label, TRUE);
 					gtk_widget_set_vexpand(label, TRUE);
-					gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+					gtk_label_set_alignment(GTK_LABEL(label), 0, 0.5);
 
 					gtk_size_group_add_widget(sg, label);
 

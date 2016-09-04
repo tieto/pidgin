@@ -602,7 +602,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>", title);
 
 	gtk_label_set_markup(lv->label, text);
-	gtk_misc_set_alignment(GTK_MISC(lv->label), 0, 0);
+	gtk_label_set_alignment(GTK_LABEL(lv->label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(title_box), GTK_WIDGET(lv->label), FALSE, FALSE, 0);
 	g_free(text);
 
@@ -644,7 +644,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 		size_label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(size_label), text);
 		/*		gtk_paned_add1(GTK_PANED(pane), size_label); */
-		gtk_misc_set_alignment(GTK_MISC(size_label), 0, 0);
+		gtk_label_set_alignment(GTK_LABEL(size_label), 0, 0);
 		gtk_box_pack_end(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(lv->window))),
 		                 size_label, FALSE, FALSE, 0);
 		g_free(sz_txt);

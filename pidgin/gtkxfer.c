@@ -679,14 +679,14 @@ make_info_grid(PidginXferDialog *dialog)
 		*labels[i].desc_label = label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), buf);
 		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_RIGHT);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_label_set_alignment(GTK_LABEL(label), 0, 0.5);
 		gtk_grid_attach(GTK_GRID(grid), label, 0, i, 1, 1);
 		gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
 
 		gtk_widget_show(label);
 
 		*labels[i].val_label = label = gtk_label_new(NULL);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_label_set_alignment(GTK_LABEL(label), 0, 0.5);
 		gtk_grid_attach(GTK_GRID(grid), label, 1, i, 1, 1);
 		gtk_widget_set_hexpand(label, TRUE);
 		gtk_widget_set_valign(label, GTK_ALIGN_CENTER);

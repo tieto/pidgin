@@ -246,7 +246,7 @@ mini_dialog_add_button(PidginMiniDialog *self,
 	g_signal_connect(G_OBJECT(button), "destroy",
 		(GCallback) mini_dialog_button_destroy_cb, callback_data);
 
-	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
+	gtk_label_set_alignment(GTK_LABEL(label), 0.5, 0.5);
 	gtk_container_add(GTK_CONTAINER(button), label);
 
 	gtk_box_pack_end(GTK_BOX(priv->buttons), button, FALSE, FALSE,
@@ -459,19 +459,20 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 	priv->title_box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, PIDGIN_HIG_BOX_SPACE));
 
 	priv->icon = GTK_IMAGE(gtk_image_new());
-	gtk_misc_set_alignment(GTK_MISC(priv->icon), 0, 0);
+	gtk_widget_set_halign(GTK_WIDGET(priv->icon), GTK_ALIGN_START);
+	gtk_widget_set_valign(GTK_WIDGET(priv->icon), GTK_ALIGN_START);
 
 	priv->title = GTK_LABEL(gtk_label_new(NULL));
 	gtk_label_set_line_wrap(priv->title, TRUE);
 	gtk_label_set_selectable(priv->title, TRUE);
-	gtk_misc_set_alignment(GTK_MISC(priv->title), 0, 0);
+	gtk_label_set_alignment(priv->title, 0, 0);
 
 	gtk_box_pack_start(priv->title_box, GTK_WIDGET(priv->icon), FALSE, FALSE, 0);
 	gtk_box_pack_start(priv->title_box, GTK_WIDGET(priv->title), TRUE, TRUE, 0);
 
 	priv->desc = GTK_LABEL(gtk_label_new(NULL));
 	gtk_label_set_line_wrap(priv->desc, TRUE);
-	gtk_misc_set_alignment(GTK_MISC(priv->desc), 0, 0);
+	gtk_label_set_alignment(priv->desc, 0, 0);
 	gtk_label_set_selectable(priv->desc, TRUE);
 	/* make calling show_all() on the minidialog not affect desc even though
 	 * it's packed inside it.

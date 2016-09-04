@@ -893,7 +893,7 @@ create_details()
 	GtkWidget *label, *view, *website_button;
 
 	plugin_name = GTK_LABEL(gtk_label_new(NULL));
-	gtk_misc_set_alignment(GTK_MISC(plugin_name), 0, 0);
+	gtk_label_set_alignment(plugin_name, 0, 0);
 	gtk_label_set_line_wrap(plugin_name, FALSE);
 	gtk_label_set_selectable(plugin_name, TRUE);
 	gtk_box_pack_start(vbox, GTK_WIDGET(plugin_name), FALSE, FALSE, 0);
@@ -908,19 +908,19 @@ create_details()
 	gtk_box_pack_start(vbox, view, TRUE, TRUE, 0);
 
 	plugin_error = GTK_LABEL(gtk_label_new(NULL));
-	gtk_misc_set_alignment(GTK_MISC(plugin_error), 0, 0);
+	gtk_label_set_alignment(plugin_error, 0, 0);
 	gtk_label_set_line_wrap(plugin_error, FALSE);
 	gtk_label_set_selectable(plugin_error, TRUE);
 	gtk_box_pack_start(vbox, GTK_WIDGET(plugin_error), FALSE, FALSE, 0);
 
 	plugin_authors = GTK_LABEL(gtk_label_new(NULL));
 	gtk_label_set_line_wrap(plugin_authors, FALSE);
-	gtk_misc_set_alignment(GTK_MISC(plugin_authors), 0, 0);
+	gtk_label_set_alignment(plugin_authors, 0, 0);
 	gtk_label_set_selectable(plugin_authors, TRUE);
 	pidgin_add_widget_to_vbox(vbox, "", sg,
 		GTK_WIDGET(plugin_authors), TRUE, &label);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Written by:</b>"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
 
 	website_button = gtk_event_box_new();
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(website_button), FALSE);
@@ -928,7 +928,7 @@ create_details()
 	plugin_website = GTK_LABEL(gtk_label_new(NULL));
 	g_object_set(G_OBJECT(plugin_website),
 		"ellipsize", PANGO_ELLIPSIZE_MIDDLE, NULL);
-	gtk_misc_set_alignment(GTK_MISC(plugin_website), 0, 0);
+	gtk_label_set_alignment(plugin_website, 0, 0);
 	gtk_container_add(GTK_CONTAINER(website_button),
 		GTK_WIDGET(plugin_website));
 	g_signal_connect(website_button, "button-release-event",
@@ -940,16 +940,16 @@ create_details()
 
 	pidgin_add_widget_to_vbox(vbox, "", sg, website_button, TRUE, &label);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Web site:</b>"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_label_set_alignment(GTK_LABEL(label), 0, 0.5);
 
 	plugin_filename = GTK_LABEL(gtk_label_new(NULL));
 	gtk_label_set_line_wrap(plugin_filename, FALSE);
-	gtk_misc_set_alignment(GTK_MISC(plugin_filename), 0, 0);
+	gtk_label_set_alignment(plugin_filename, 0, 0);
 	gtk_label_set_selectable(plugin_filename, TRUE);
 	pidgin_add_widget_to_vbox(vbox, "", sg,
 		GTK_WIDGET(plugin_filename), TRUE, &label);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Filename:</b>"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
 
 	g_object_unref(sg);
 

@@ -736,24 +736,24 @@ static CapPrefsUI * create_cap_prefs_ui() {
 
 	/* msg_difference spinner */
 	ui->msg_difference_label = gtk_label_new(_("Maximum response timeout:"));
-	gtk_misc_set_alignment(GTK_MISC(ui->msg_difference_label), 0, 0.5);
+	gtk_label_set_alignment(GTK_LABEL(ui->msg_difference_label), 0, 0.5);
 	ui->msg_difference_input = gtk_spin_button_new_with_range(1, 1440, 1);
 	ui->msg_difference_minutes_label = gtk_label_new(_("minutes"));
-	gtk_misc_set_alignment(GTK_MISC(ui->msg_difference_minutes_label), 0, 0.5);
+	gtk_label_set_alignment(GTK_LABEL(ui->msg_difference_minutes_label), 0, 0.5);
 
 	/* last_seen spinner */
 	ui->last_seen_label = gtk_label_new(_("Maximum last-seen difference:"));
-	gtk_misc_set_alignment(GTK_MISC(ui->last_seen_label), 0, 0.5);
+	gtk_label_set_alignment(GTK_LABEL(ui->last_seen_label), 0, 0.5);
 	ui->last_seen_input = gtk_spin_button_new_with_range(1, 1440, 1);
 	ui->last_seen_minutes_label = gtk_label_new(_("minutes"));
-	gtk_misc_set_alignment(GTK_MISC(ui->last_seen_minutes_label), 0, 0.5);
+	gtk_label_set_alignment(GTK_LABEL(ui->last_seen_minutes_label), 0, 0.5);
 
 	/* threshold spinner */
 	ui->threshold_label = gtk_label_new(_("Threshold:"));
-	gtk_misc_set_alignment(GTK_MISC(ui->threshold_label), 0, 0.5);
+	gtk_label_set_alignment(GTK_LABEL(ui->threshold_label), 0, 0.5);
 	ui->threshold_input = gtk_spin_button_new_with_range(1, 1440, 1);
 	ui->threshold_minutes_label = gtk_label_new(_("minutes"));
-	gtk_misc_set_alignment(GTK_MISC(ui->threshold_minutes_label), 0, 0.5);
+	gtk_label_set_alignment(GTK_LABEL(ui->threshold_minutes_label), 0, 0.5);
 
 	/* Layout threshold/last-seen/response-timeout input items */
 	ui->table_layout = gtk_table_new(3, 3, FALSE);

@@ -34,6 +34,26 @@
 #include <gtk/gtk.h>
 #include <math.h>
 
+#if GTK_CHECK_VERSION(3,16,0)
+
+static inline void
+gtk_label_set_alignment(GtkLabel *label, gfloat xalign, gfloat yalign)
+{
+	gtk_label_set_xalign(label, xalign);
+	gtk_label_set_yalign(label, yalign);
+}
+
+#else /* 3.16.0 */
+
+static inline void
+gtk_label_set_alignment(GtkLabel *label, gfloat xalign, gfloat yalign)
+{
+	gtk_misc_set_alignment(GTK_MISC(label), xalign, yalign);
+}
+
+#endif /* 3.16.0 */
+
+
 #if !GTK_CHECK_VERSION(3,4,0)
 
 #define gtk_color_chooser_dialog_new(title, parent) \
