@@ -240,7 +240,7 @@ pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
 	PidginCellRendererExpander *cellexpander = (PidginCellRendererExpander *) cell;
 	gboolean set;
 	gint width, height;
-	GtkStateType state;
+	GtkStateFlags state;
 	gint xpad;
 	gint ypad;
 	gboolean is_expanded;
@@ -257,26 +257,26 @@ pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
 	height = cell_area->height;
 
 	if (!gtk_widget_get_sensitive(widget))
-		state = GTK_STATE_INSENSITIVE;
+		state = GTK_STATE_FLAG_INSENSITIVE;
 	else if (flags & GTK_CELL_RENDERER_PRELIT)
-		state = GTK_STATE_PRELIGHT;
+		state = GTK_STATE_FLAG_PRELIGHT;
 	else if (gtk_widget_has_focus(widget) && flags & GTK_CELL_RENDERER_SELECTED)
-		state = GTK_STATE_ACTIVE;
+		state = GTK_STATE_FLAG_ACTIVE;
 	else
-		state = GTK_STATE_NORMAL;
+		state = GTK_STATE_FLAG_NORMAL;
 
 	width -= xpad*2;
 	height -= ypad*2;
 
 	if (is_expanded)
-		state |= GTK_STATE_ACTIVE;
+		state |= GTK_STATE_FLAG_CHECKED;
 	else
-		state &= ~GTK_STATE_ACTIVE;
+		state &= ~GTK_STATE_FLAG_CHECKED;
 
 	context = gtk_widget_get_style_context(widget);
 	gtk_style_context_add_class(context, GTK_STYLE_CLASS_VIEW);
 	gtk_style_context_add_class(context, GTK_STYLE_CLASS_EXPANDER);
-	gtk_style_context_set_state(context, (GtkStateFlags)state);
+	gtk_style_context_set_state(context, state);
 	gtk_render_expander(context, cr,
 	                    cell_area->x + xpad, cell_area->y + ypad,
 	                    width, height);
