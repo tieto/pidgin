@@ -391,8 +391,13 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 	g_signal_connect(G_OBJECT(drawing_area), "leave-notify-event",
 		G_CALLBACK(scrncap_drawing_area_leave), draw_cursor);
 
+#if GTK_CHECK_VERSION(3,14,0)
+	box = drawing_area;
+	g_object_set(drawing_area, "xalign", 0.5, "yalign", 0.5, NULL);
+#else
 	box = gtk_alignment_new(0.5, 0.5, 0, 0);
 	gtk_container_add(GTK_CONTAINER(box), drawing_area);
+#endif
 	scroll_area = pidgin_make_scrollable(box,
 		GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC,
 		GTK_SHADOW_NONE, -1, -1);

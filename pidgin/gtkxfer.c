@@ -711,7 +711,9 @@ pidgin_xfer_dialog_new(void)
 	GtkWidget *window;
 	GtkWidget *vbox;
 	GtkWidget *expander;
+#if !GTK_CHECK_VERSION(3,14,0)
 	GtkWidget *alignment;
+#endif
 	GtkWidget *grid;
 	GtkWidget *checkbox;
 	GtkWidget *bbox;
@@ -765,6 +767,15 @@ pidgin_xfer_dialog_new(void)
 
 	gtk_widget_set_sensitive(expander, FALSE);
 
+#if GTK_CHECK_VERSION(3,14,0)
+	/* The grid of information. */
+	grid = make_info_grid(dialog);
+	gtk_container_add(GTK_CONTAINER(expander), grid);
+	gtk_widget_show(grid);
+
+	/* Small indent make grid fall under GtkExpander's label */
+	gtk_widget_set_margin_start(grid, 20);
+#else
 	/* Small indent make grid fall under GtkExpander's label */
 	alignment = gtk_alignment_new(1, 0, 1, 1);
 	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 20, 0);
@@ -775,6 +786,7 @@ pidgin_xfer_dialog_new(void)
 	grid = make_info_grid(dialog);
 	gtk_container_add(GTK_CONTAINER(alignment), grid);
 	gtk_widget_show(grid);
+#endif
 
 	bbox = pidgin_dialog_get_action_area(GTK_DIALOG(window));
 
