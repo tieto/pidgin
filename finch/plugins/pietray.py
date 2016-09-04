@@ -22,7 +22,7 @@ from __future__ import absolute_import, division, print_function
 import os  # to get the pkg-config output
 
 import pygtk
-pygtk.require("2.0")
+pygtk.require("2.0")  # noqa
 import gtk
 import dbus
 import dbus.glib
