@@ -1706,7 +1706,11 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	status_box->hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
 	status_box->cell_view = gtk_cell_view_new();
 	status_box->vsep = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
-	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
+#if GTK_CHECK_VERSION(3,14,0)
+	status_box->arrow = gtk_image_new_from_icon_name("pan-down-symbolic", GTK_ICON_SIZE_BUTTON);
+#else
+	status_box->arrow = gtk_arrow_new(GTK_ARROW_DOWN, GTK_SHADOW_NONE);
+#endif
 
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
 					       G_TYPE_STRING, G_TYPE_POINTER, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN);
