@@ -203,8 +203,8 @@ static void update_typing_icon(PidginConversation *gtkconv);
 static void update_typing_message(PidginConversation *gtkconv, const char *message);
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
 static GArray* generate_nick_colors(guint numcolors, GdkRGBA background);
-gfloat luminance(GdkRGBA color);
-static gboolean color_is_visible(GdkRGBA foreground, GdkRGBA background, gfloat min_contrast_ratio);
+gdouble luminance(GdkRGBA color);
+static gboolean color_is_visible(GdkRGBA foreground, GdkRGBA background, gdouble min_contrast_ratio);
 static GtkTextTag *get_buddy_tag(PurpleChatConversation *chat, const char *who, PurpleMessageFlags flag, gboolean create);
 static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields);
 static void focus_out_from_menubar(GtkWidget *wid, PidginConvWindow *win);
@@ -5907,7 +5907,7 @@ static void set_typing_font(GtkWidget *widget, GtkStyle *style, PidginConversati
 		font_desc = pango_font_description_from_string(string);
 		g_free(string);
 		if (color == NULL) {
-			GdkRGBA def = {0x8888/65535.0f, 0x8888/65535.0f, 0x8888/65535.0f, 1.0};
+			GdkRGBA def = {0x8888/65535.0, 0x8888/65535.0, 0x8888/65535.0, 1.0};
 			color = gdk_rgba_copy(&def);
 		}
 	}
@@ -6072,9 +6072,9 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		/* FIXME: No matter how I ask the GtkStyleContext, it always gives me
 		 * back black instead of the _actual_ background colour. */
 		color = gtk_widget_get_style(gtkconv->webview)->base[GTK_STATE_NORMAL];
-		rgba.red = color.red / 65535.0f;
-		rgba.green = color.green / 65535.0f;
-		rgba.blue = color.blue / 65535.0f;
+		rgba.red = color.red / 65535.0;
+		rgba.green = color.green / 65535.0;
+		rgba.blue = color.blue / 65535.0;
 		generated_nick_colors = generate_nick_colors(NICK_COLOR_GENERATE_COUNT, rgba);
 	}
 
@@ -11161,12 +11161,12 @@ pidgin_conv_is_hidden(PidginConversation *gtkconv)
 }
 
 
-gfloat luminance(GdkRGBA color)
+gdouble luminance(GdkRGBA color)
 {
-	gfloat r, g, b;
-	gfloat rr, gg, bb;
-	gfloat cutoff = 0.03928, scale = 12.92;
-	gfloat a = 0.055, d = 1.055, p = 2.2;
+	gdouble r, g, b;
+	gdouble rr, gg, bb;
+	gdouble cutoff = 0.03928, scale = 12.92;
+	gdouble a = 0.055, d = 1.055, p = 2.2;
 
 	rr = color.red;
 	gg = color.green;
@@ -11181,11 +11181,11 @@ gfloat luminance(GdkRGBA color)
 
 /* Algorithm from https://www.w3.org/TR/2008/REC-WCAG20-20081211/relative-luminance.xml */
 static gboolean
-color_is_visible(GdkRGBA foreground, GdkRGBA background, gfloat min_contrast_ratio)
+color_is_visible(GdkRGBA foreground, GdkRGBA background, gdouble min_contrast_ratio)
 {
-	gfloat lfg, lbg, lmin, lmax;
-	gfloat luminosity_ratio;
-	gfloat nr, dr;
+	gdouble lfg, lbg, lmin, lmax;
+	gdouble luminosity_ratio;
+	gdouble nr, dr;
 
 	lfg = luminance(foreground); 
 	lbg = luminance(background);
@@ -11247,7 +11247,7 @@ generate_nick_colors(guint numcolors, GdkRGBA background)
 	 */
 	while(i < numcolors && time(NULL) < breakout_time)
 	{
-		GdkRGBA color = {rand() % 65536 / 65535.f, rand() % 65536 / 65535.f, rand() % 65536 / 65535.f, 1};
+		GdkRGBA color = {rand() % 65536 / 65535.0, rand() % 65536 / 65535.0, rand() % 65536 / 65535.0, 1};
 
 		if (color_is_visible(color, background,     MIN_LUMINANCE_CONTRAST_RATIO) &&
 			color_is_visible(color, nick_highlight, MIN_LUMINANCE_CONTRAST_RATIO) &&
