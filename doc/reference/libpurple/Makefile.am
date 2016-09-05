@@ -66,7 +66,6 @@ EXTRA_HFILES = \
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h private_code
 IGNORE_HFILES=\
 	example \
-	gconf \
 	plugins \
 	protocols \
 	tests \
