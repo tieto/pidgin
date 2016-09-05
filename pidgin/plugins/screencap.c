@@ -393,7 +393,10 @@ scrncap_draw_window(PidginWebView *webview, GdkPixbuf *screen)
 
 #if GTK_CHECK_VERSION(3,14,0)
 	box = drawing_area;
-	g_object_set(drawing_area, "xalign", 0.5, "yalign", 0.5, NULL);
+	g_object_set(drawing_area,
+		"halign", GTK_ALIGN_CENTER,
+		"valign", GTK_ALIGN_CENTER,
+		NULL);
 #else
 	box = gtk_alignment_new(0.5, 0.5, 0, 0);
 	gtk_container_add(GTK_CONTAINER(box), drawing_area);
