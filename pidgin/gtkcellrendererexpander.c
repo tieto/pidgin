@@ -268,10 +268,17 @@ pidgin_cell_renderer_expander_render(GtkCellRenderer *cell,
 	width -= xpad*2;
 	height -= ypad*2;
 
+#if GTK_CHECK_VERSION(3,14,0)
 	if (is_expanded)
 		state |= GTK_STATE_FLAG_CHECKED;
 	else
 		state &= ~GTK_STATE_FLAG_CHECKED;
+#else
+	if (is_expanded)
+		state |= GTK_STATE_FLAG_ACTIVE;
+	else
+		state &= ~GTK_STATE_FLAG_ACTIVE;
+#endif
 
 	context = gtk_widget_get_style_context(widget);
 	gtk_style_context_add_class(context, GTK_STYLE_CLASS_VIEW);
