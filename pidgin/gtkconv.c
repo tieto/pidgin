@@ -10485,17 +10485,6 @@ pidgin_conv_tab_pack(PidginConvWindow *win, PidginConversation *gtkconv)
 
 	gtk_label_set_angle(GTK_LABEL(gtkconv->tab_label), angle);
 
-#if 0
-	gtk_label_set_xalign(GTK_LABEL(gtkconv->tab_label), 0.0);
-#if GTK_CHECK_VERSION(3,12,0)
-	gtk_widget_set_margin_start(gtkconv->tab_label, 4);
-	gtk_widget_set_margin_end(gtkconv->tab_label, 4);
-#else
-	gtk_widget_set_margin_left(gtkconv->tab_label, 4);
-	gtk_widget_set_margin_right(gtkconv->tab_label, 4);
-#endif
-#endif
-
 	if (angle)
 		gtkconv->tabby = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
 	else
