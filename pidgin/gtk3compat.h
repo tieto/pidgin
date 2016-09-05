@@ -33,21 +33,18 @@
 
 #include <gtk/gtk.h>
 
-#if GTK_CHECK_VERSION(3,16,0)
+#if !GTK_CHECK_VERSION(3,16,0)
 
 static inline void
-gtk_label_set_alignment(GtkLabel *label, gfloat xalign, gfloat yalign)
+gtk_label_set_xalign(GtkLabel *label, gfloat xalign)
 {
-	gtk_label_set_xalign(label, xalign);
-	gtk_label_set_yalign(label, yalign);
+	g_object_set(label, "xalign", xalign, NULL);
 }
 
-#else /* 3.16.0 */
-
 static inline void
-gtk_label_set_alignment(GtkLabel *label, gfloat xalign, gfloat yalign)
+gtk_label_set_yalign(GtkLabel *label, gfloat yalign)
 {
-	gtk_misc_set_alignment(GTK_MISC(label), xalign, yalign);
+	g_object_set(label, "yalign", yalign, NULL);
 }
 
 #endif /* 3.16.0 */

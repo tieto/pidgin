@@ -787,10 +787,8 @@ phone_create_button(const gchar *text_hi, const gchar *text_lo)
 
 	button = gtk_button_new();
 	label_hi = gtk_label_new(text_hi_local);
-	gtk_label_set_alignment(GTK_LABEL(label_hi), 0.5, 0.5);
 	gtk_box_pack_end(GTK_BOX(grid), label_hi, FALSE, TRUE, 0);
 	label_lo = gtk_label_new(text_lo);
-	gtk_label_set_alignment(GTK_LABEL(label_lo), 0.5, 0.5);
 	gtk_label_set_use_markup(GTK_LABEL(label_lo), TRUE);
 	gtk_box_pack_end(GTK_BOX(grid), label_lo, FALSE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(button), grid);

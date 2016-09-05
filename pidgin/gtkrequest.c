@@ -595,7 +595,8 @@ pidgin_request_input(const char *title, const char *primary,
 
 	gtk_label_set_markup(label, label_text);
 	gtk_label_set_line_wrap(label, TRUE);
-	gtk_label_set_alignment(label, 0, 0);
+	gtk_label_set_xalign(label, 0);
+	gtk_label_set_yalign(label, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(label), FALSE, FALSE, 0);
 
 	g_free(label_text);
@@ -752,7 +753,8 @@ pidgin_request_choice(const char *title, const char *primary,
 
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
+	gtk_label_set_yalign(GTK_LABEL(label), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
 	g_free(label_text);
@@ -876,7 +878,8 @@ pidgin_request_action(const char *title, const char *primary,
 
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
+	gtk_label_set_yalign(GTK_LABEL(label), 0);
 	gtk_label_set_selectable(GTK_LABEL(label), TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
@@ -991,7 +994,8 @@ pidgin_request_wait(const char *title, const char *primary,
 
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
+	gtk_label_set_yalign(GTK_LABEL(label), 0);
 	gtk_label_set_selectable(GTK_LABEL(label), FALSE);
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
@@ -1559,7 +1563,8 @@ create_certificate_field(PurpleRequestField *field)
 	cert_label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(cert_label), escaped);
 	gtk_label_set_line_wrap(GTK_LABEL(cert_label), TRUE);
-	gtk_label_set_alignment(GTK_LABEL(cert_label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(cert_label), 0);
+	gtk_label_set_yalign(GTK_LABEL(cert_label), 0);
 
 	g_free(str);
 	g_free(escaped);
@@ -2072,7 +2077,8 @@ pidgin_request_fields(const char *title, const char *primary,
 
 		gtk_label_set_markup(GTK_LABEL(label), label_text);
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-		gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
+		gtk_label_set_xalign(GTK_LABEL(label), 0);
+		gtk_label_set_yalign(GTK_LABEL(label), 0);
 		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 		gtk_widget_show(label);
 		g_free(label_text);
@@ -2153,7 +2159,8 @@ pidgin_request_fields(const char *title, const char *primary,
 		gtk_label_set_markup(GTK_LABEL(label), secondary_esc);
 		g_free(secondary_esc);
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-		gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
+		gtk_label_set_xalign(GTK_LABEL(label), 0);
+		gtk_label_set_yalign(GTK_LABEL(label), 0);
 		gtk_box_pack_start(GTK_BOX(vbox), label, (notebook == NULL),
 			(notebook == NULL), 0);
 		gtk_widget_show(label);
@@ -2314,7 +2321,7 @@ pidgin_request_fields(const char *title, const char *primary,
 
 					gtk_widget_set_hexpand(label, TRUE);
 					gtk_widget_set_vexpand(label, TRUE);
-					gtk_label_set_alignment(GTK_LABEL(label), 0, 0.5);
+					gtk_label_set_xalign(GTK_LABEL(label), 0);
 
 					gtk_size_group_add_widget(sg, label);
 

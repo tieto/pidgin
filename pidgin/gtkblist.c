@@ -1011,7 +1011,8 @@ make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
 
 	gtk_widget_set_size_request(label, 400, -1);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
+	gtk_label_set_yalign(GTK_LABEL(label), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -5377,7 +5378,8 @@ create_account_label(PurpleAccount *account)
 	markup = g_strdup_printf("<span size=\"smaller\">%s</span>", username);
 	gtk_label_set_markup(GTK_LABEL(label), markup);
 	g_free(markup);
-	gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
+	gtk_label_set_yalign(GTK_LABEL(label), 0);
 	g_object_set(G_OBJECT(label), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	description = purple_account_get_current_error(account)->description;
 	if (description != NULL && *description != '\0')
@@ -5557,14 +5559,14 @@ kiosk_page()
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Username:</b>"));
-	gtk_label_set_alignment(GTK_LABEL(label), 0.0, 0.5);
+	gtk_label_set_xalign(GTK_LABEL(label), 0.0);
 	gtk_box_pack_start(GTK_BOX(ret), label, FALSE, FALSE, 0);
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(ret), entry, FALSE, FALSE, 0);
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Password:</b>"));
-	gtk_label_set_alignment(GTK_LABEL(label), 0.0, 0.5);
+	gtk_label_set_xalign(GTK_LABEL(label), 0.0);
 	gtk_box_pack_start(GTK_BOX(ret), label, FALSE, FALSE, 0);
 	entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
@@ -5871,7 +5873,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	g_free(tmp);
 	label = gtk_label_new(NULL);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_label_set_alignment(GTK_LABEL(label), 0.5, 0.2);
+	gtk_label_set_yalign(GTK_LABEL(label), 0.2);
 	gtk_label_set_markup(GTK_LABEL(label), pretty);
 	g_free(pretty);
 	gtk_notebook_append_page(GTK_NOTEBOOK(gtkblist->notebook),label, NULL);

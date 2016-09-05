@@ -2298,7 +2298,6 @@ create_accounts_list(AccountsWindow *dialog)
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_widget_show(label);
 
-	gtk_label_set_alignment(GTK_LABEL(label), 0.5, 0.5);
 	gtk_notebook_append_page(GTK_NOTEBOOK(accounts_window->notebook), label, NULL);
 
 	/* Create the list model. */

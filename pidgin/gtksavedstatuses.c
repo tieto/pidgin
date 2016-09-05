@@ -1418,7 +1418,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("_Status:"));
-	gtk_label_set_alignment(GTK_LABEL(label), 0, 0.5);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, label);
 
@@ -1452,7 +1452,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("_Message:"));
-	gtk_label_set_alignment(GTK_LABEL(label), 0, 0.5);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, label);
 

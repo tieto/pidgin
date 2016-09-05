@@ -384,7 +384,7 @@ get_config_frame(PurplePlugin *plugin)
 	/* Label */
 	label = gtk_label_new(_("Select all accounts that buddies should be "
 							"auto-added to."));
-	gtk_label_set_alignment(GTK_LABEL(label), 0, 0.5);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 

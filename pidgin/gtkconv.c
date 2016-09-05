@@ -965,7 +965,8 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 								"message."));
 		gtk_widget_set_size_request(label, 350, -1);
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-		gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
+		gtk_label_set_xalign(GTK_LABEL(label), 0);
+		gtk_label_set_yalign(GTK_LABEL(label), 0);
 		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 		/* hbox for the grid, and to give it some spacing on the left. */
@@ -984,7 +985,8 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Buddy:"));
 		gtk_widget_set_hexpand(label, TRUE);
 		gtk_widget_set_vexpand(label, TRUE);
-		gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
+		gtk_label_set_xalign(GTK_LABEL(label), 0);
+		gtk_label_set_yalign(GTK_LABEL(label), 0);
 		gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
 
 		/* Now the Buddy drop-down entry field. */
@@ -1001,7 +1003,8 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Message:"));
 		gtk_widget_set_hexpand(label, TRUE);
 		gtk_widget_set_vexpand(label, TRUE);
-		gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
+		gtk_label_set_xalign(GTK_LABEL(label), 0);
+		gtk_label_set_yalign(GTK_LABEL(label), 0);
 		gtk_grid_attach(GTK_GRID(grid), label, 0, 1, 1, 1);
 
 		/* And finally, the Message entry field. */
@@ -9109,7 +9112,8 @@ build_warn_close_dialog(PidginConvWindow *gtkwin)
 	label = gtk_label_new(_("You have unread messages. Are you sure you want to close the window?"));
 	gtk_widget_set_size_request(label, 350, -1);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
+	gtk_label_set_yalign(GTK_LABEL(label), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 	/* Connect the signals. */
@@ -10419,7 +10423,8 @@ pidgin_conv_window_add_gtkconv(PidginConvWindow *win, PidginConversation *gtkcon
 
 	gtk_box_pack_start(GTK_BOX(gtkconv->menu_tabby), gtkconv->menu_label, TRUE, TRUE, 0);
 	gtk_widget_show(gtkconv->menu_label);
-	gtk_label_set_alignment(GTK_LABEL(gtkconv->menu_label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(gtkconv->menu_label), 0);
+	gtk_label_set_yalign(GTK_LABEL(gtkconv->menu_label), 0);
 
 	gtk_widget_show(gtkconv->menu_tabby);
 
@@ -10481,7 +10486,7 @@ pidgin_conv_tab_pack(PidginConvWindow *win, PidginConversation *gtkconv)
 	gtk_label_set_angle(GTK_LABEL(gtkconv->tab_label), angle);
 
 #if 0
-	gtk_label_set_alignment(GTK_LABEL(gtkconv->tab_label), 0.0, 0.5);
+	gtk_label_set_xalign(GTK_LABEL(gtkconv->tab_label), 0.0);
 #if GTK_CHECK_VERSION(3,12,0)
 	gtk_widget_set_margin_start(gtkconv->tab_label, 4);
 	gtk_widget_set_margin_end(gtkconv->tab_label, 4);

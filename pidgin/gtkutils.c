@@ -533,7 +533,8 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	gtk_label_set_markup(label, labeltitle);
 	g_free(labeltitle);
 
-	gtk_label_set_alignment(GTK_LABEL(label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
+	gtk_label_set_yalign(GTK_LABEL(label), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(label), FALSE, FALSE, 0);
 	gtk_widget_show(GTK_WIDGET(label));
 	pidgin_set_accessible_label(vbox, label);
@@ -2890,7 +2891,7 @@ pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *
 		label = gtk_label_new_with_mnemonic(widget_label);
 		gtk_widget_show(label);
 		if (sg) {
-			gtk_label_set_alignment(GTK_LABEL(label), 0, 0.5);
+			gtk_label_set_xalign(GTK_LABEL(label), 0);
 			gtk_size_group_add_widget(sg, label);
 		}
 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);

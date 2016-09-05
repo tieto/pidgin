@@ -565,7 +565,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new_with_mnemonic(_("_Account:"));
-	gtk_label_set_alignment(GTK_LABEL(label), 0, 0.5);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 	gtk_size_group_add_widget(sg, label);
@@ -585,7 +585,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new_with_mnemonic(_("_Buddy name:"));
-	gtk_label_set_alignment(GTK_LABEL(label), 0, 0.5);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 	gtk_size_group_add_widget(sg, label);
