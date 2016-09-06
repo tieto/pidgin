@@ -77,7 +77,6 @@ libpurple/dbus-signals.c
 libpurple/dbus-types.[ch]
 libpurple/enums.[ch]
 libpurple/example/nullclient
-libpurple/data/gconf/purple.schemas$
 libpurple/data/purple-url-handler.desktop$
 libpurple/data/purple-url-handler.desktop.in$
 libpurple/marshallers.[ch]

@@ -938,13 +938,6 @@ AC_SUBST(ZLIB_CFLAGS)
 AC_SUBST(ZLIB_LIBS)
 
 dnl #######################################################################
-dnl # GConf schemas
-dnl #######################################################################
-AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
-AM_CONDITIONAL(USE_GCONFTOOL, test "x$GCONFTOOL" != "xno")
-AM_GCONF_SOURCE_2
-
-dnl #######################################################################
 dnl # Check for GStreamer
 dnl #######################################################################
 AC_ARG_ENABLE(gstreamer,
@@ -2193,7 +2186,6 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/themes/Makefile
 		   pidgin/win32/pidgin_dll_rc.rc
 		   pidgin/win32/pidgin_exe_rc.rc
-		   libpurple/data/gconf/Makefile
 		   libpurple/data/purple-url-handler.desktop.in
 		   libpurple/data/purple-3.pc
 		   libpurple/data/purple-3-uninstalled.pc
