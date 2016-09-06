@@ -803,16 +803,16 @@ gboolean pidgin_auto_parent_window(GtkWidget *window);
 
 /**
  * pidgin_add_widget_to_vbox:
- * @vbox:         The GtkVBox to add the widget to.
+ * @vbox:         The vertically-oriented GtkBox to add the widget to.
  * @widget_label: The label to give the widget, can be %NULL.
  * @sg:           The GtkSizeGroup to add the label to, can be %NULL.
  * @widget:       The GtkWidget to add.
  * @expand:       Whether to expand the widget horizontally.
  * @p_label:      Place to store a pointer to the GtkLabel, or %NULL if you don't care.
  *
- * Add a labelled widget to a GtkVBox
+ * Add a labelled widget to a GtkBox
  *
- * Returns:  A GtkHBox already added to the GtkVBox containing the GtkLabel and the GtkWidget.
+ * Returns:  A GtkBox already added to the GtkBox containing the GtkLabel and the GtkWidget.
  */
 GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *sg, GtkWidget *widget, gboolean expand, GtkWidget **p_label);
 

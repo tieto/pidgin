@@ -41,7 +41,7 @@ add_pref_box(GtkSizeGroup *sg, GtkWidget *parent, const char *text,
 
 	label = gtk_label_new_with_mnemonic(text);
 	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
@@ -268,7 +268,8 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 	}
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
+	gtk_label_set_yalign(GTK_LABEL(label), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, TRUE, 0);
 	gtk_widget_show(label);
 
@@ -308,7 +309,8 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 
 		/* Optional Information section */
 		label = gtk_label_new(_("Optional information:"));
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_label_set_xalign(GTK_LABEL(label), 0);
+		gtk_label_set_yalign(GTK_LABEL(label), 0);
 		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 		gtk_widget_show(label);
 	}
@@ -320,7 +322,7 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 
 #if 0
 	/* Now the left side of the hbox */
-	vbox2 = gtk_vbox_new(FALSE, 12);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 0);
 	gtk_widget_show(vbox2);
 

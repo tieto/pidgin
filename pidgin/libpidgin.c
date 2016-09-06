@@ -692,12 +692,11 @@ int pidgin_start(int argc, char *argv[])
 
 	gui_check = gtk_init_check(&argc, &argv);
 	if (!gui_check) {
-		char *display = gdk_get_display();
+		const char *display = gdk_display_get_name(gdk_display_get_default());
 
 		printf("%s %s\n", PIDGIN_NAME, DISPLAY_VERSION);
 
 		g_warning("cannot open display: %s", display ? display : "unset");
-		g_free(display);
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
 #endif

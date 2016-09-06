@@ -256,7 +256,7 @@ static void add_slider(GtkWidget *win) {
 					GTK_CONTAINER(win));
 				wl != NULL;
 				wl = wl->next) {
-			if (GTK_IS_VBOX(G_OBJECT(wl->data)))
+			if (GTK_IS_BOX(G_OBJECT(wl->data)))
 				vbox = GTK_WIDGET(wl->data);
 			else {
 				purple_debug_error(WINTRANS_PLUGIN_ID,
@@ -495,7 +495,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 	GtkWidget *button;
 	GtkWidget *trans_box;
 
-	ret = gtk_vbox_new(FALSE, 18);
+	ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, 18);
 	gtk_container_set_border_width(GTK_CONTAINER (ret), 12);
 
 	/* IM Convo trans options */
@@ -506,7 +506,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 		G_CALLBACK(update_convs_wintrans),
 		(gpointer) OPT_WINTRANS_IM_ENABLED);
 
-	trans_box = gtk_vbox_new(FALSE, 18);
+	trans_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 18);
 	if (!purple_prefs_get_bool(OPT_WINTRANS_IM_ENABLED))
 		gtk_widget_set_sensitive(GTK_WIDGET(trans_box), FALSE);
 	gtk_widget_show(trans_box);
@@ -563,7 +563,7 @@ static GtkWidget *get_config_frame(PurplePlugin *plugin) {
 		G_CALLBACK(set_blist_trans),
 		(gpointer) OPT_WINTRANS_BL_ENABLED);
 
-	trans_box = gtk_vbox_new(FALSE, 18);
+	trans_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 18);
 	if (!purple_prefs_get_bool(OPT_WINTRANS_BL_ENABLED))
 		gtk_widget_set_sensitive(GTK_WIDGET(trans_box), FALSE);
 	gtk_widget_show(trans_box);

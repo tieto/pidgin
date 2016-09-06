@@ -385,6 +385,8 @@ static const GtkTargetEntry dnd_targets[] = {
 static void
 setup_icon_box(PidginStatusBox *status_box)
 {
+	GdkDisplay *display;
+
 	if (status_box->icon_box != NULL)
 		return;
 
@@ -417,8 +419,9 @@ setup_icon_box(PidginStatusBox *status_box)
 			g_object_unref(img);
 	}
 
-	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
-	status_box->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
+	display = gtk_widget_get_display(status_box->icon_box);
+	status_box->hand_cursor = gdk_cursor_new_for_display(display, GDK_HAND2);
+	status_box->arrow_cursor = gdk_cursor_new_for_display(display, GDK_LEFT_PTR);
 
 	/* Set up DND */
 	gtk_drag_dest_set(status_box->icon_box,
@@ -597,8 +600,7 @@ pidgin_status_box_class_init (PidginStatusBoxClass *klass)
 static void
 pidgin_status_box_refresh(PidginStatusBox *status_box)
 {
-	GtkStyle *style;
-	char aa_color[8];
+	const char *aa_color;
 	PurpleSavedStatus *saved_status;
 	char *primary, *secondary, *text;
 	const char *stock = NULL;
@@ -606,12 +608,6 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	GtkTreePath *path;
 	gboolean account_status = FALSE;
 	PurpleAccount *acct = (status_box->account) ? status_box->account : status_box->token_status_account;
-
-	style = gtk_widget_get_style(GTK_WIDGET(status_box));
-	snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
-		 style->text_aa[GTK_STATE_NORMAL].red >> 8,
-		 style->text_aa[GTK_STATE_NORMAL].green >> 8,
-		 style->text_aa[GTK_STATE_NORMAL].blue >> 8);
 
 	saved_status = purple_savedstatus_get_current();
 
@@ -693,6 +689,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 		stock = pidgin_stock_id_from_status_primitive(prim);
 	}
 
+	aa_color = pidgin_get_dim_grey_string(GTK_WIDGET(status_box));
 	if (status_box->account != NULL) {
 		text = g_strdup_printf("%s - <span size=\"smaller\" color=\"%s\">%s</span>",
 				       purple_account_get_username(status_box->account),
@@ -1709,7 +1706,11 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	status_box->hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
 	status_box->cell_view = gtk_cell_view_new();
 	status_box->vsep = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
-	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
+#if GTK_CHECK_VERSION(3,14,0)
+	status_box->arrow = gtk_image_new_from_icon_name("pan-down-symbolic", GTK_ICON_SIZE_BUTTON);
+#else
+	status_box->arrow = gtk_arrow_new(GTK_ARROW_DOWN, GTK_SHADOW_NONE);
+#endif
 
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING,
 					       G_TYPE_STRING, G_TYPE_POINTER, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN);
@@ -2078,15 +2079,10 @@ pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type,
 	}
 	else
 	{
-		GtkStyle *style;
-		char aa_color[8];
+		const char *aa_color;
 		gchar *escaped_title, *escaped_desc;
 
-		style = gtk_widget_get_style(GTK_WIDGET(status_box));
-		snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
-			 style->text_aa[GTK_STATE_NORMAL].red >> 8,
-			 style->text_aa[GTK_STATE_NORMAL].green >> 8,
-			 style->text_aa[GTK_STATE_NORMAL].blue >> 8);
+		aa_color = pidgin_get_dim_grey_string(GTK_WIDGET(status_box));
 
 		escaped_title = g_markup_escape_text(title, -1);
 		escaped_desc = g_markup_escape_text(desc, -1);

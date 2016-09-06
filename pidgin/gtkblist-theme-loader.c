@@ -47,28 +47,25 @@ pidgin_theme_font_parse(PurpleXmlNode *node)
 {
 	const char *font;
 	const char *colordesc;
-	GdkColor color;
+	GdkRGBA color;
 
 	font = purple_xmlnode_get_attrib(node, "font");
 
 	if ((colordesc = purple_xmlnode_get_attrib(node, "color")) == NULL ||
-			!gdk_color_parse(colordesc, &color))
-		gdk_color_parse(DEFAULT_TEXT_COLOR, &color);
+			!gdk_rgba_parse(&color, colordesc))
+		gdk_rgba_parse(&color, DEFAULT_TEXT_COLOR);
 
 	return pidgin_theme_font_new(font, &color);
 }
 
-static GdkColor *
+static GdkRGBA *
 parse_color(PurpleXmlNode *node, const char *tag)
 {
 	const char *temp = purple_xmlnode_get_attrib(node, tag);
-	GdkColor color;
+	GdkRGBA color;
 
-	if (temp && gdk_color_parse(temp, &color)) {
-#if !GTK_CHECK_VERSION(3,0,0)
-		gdk_colormap_alloc_color(gdk_colormap_get_system(), &color, FALSE, TRUE);
-#endif
-		return gdk_color_copy(&color);
+	if (temp && gdk_rgba_parse(&color, temp)) {
+		return gdk_rgba_copy(&color);
 	} else {
 		return NULL;
 	}
@@ -81,7 +78,7 @@ pidgin_blist_loader_build(const gchar *theme_dir)
 	gchar *dir, *filename_full, *data = NULL;
 	const gchar *temp, *name;
 	gboolean success = TRUE;
-	GdkColor *bgcolor, *expanded_bgcolor, *collapsed_bgcolor, *contact_color;
+	GdkRGBA *bgcolor, *expanded_bgcolor, *collapsed_bgcolor, *contact_color;
 	PidginThemeFont *expanded, *collapsed, *contact, *online, *away, *offline, *idle, *message, *message_nick_said, *status;
 	PidginBlistLayout layout;
 	PidginBlistTheme *theme;
@@ -241,13 +238,13 @@ pidgin_blist_loader_build(const gchar *theme_dir)
 	}
 
 	if (bgcolor)
-		gdk_color_free(bgcolor);
+		gdk_rgba_free(bgcolor);
 	if (expanded_bgcolor)
-		gdk_color_free(expanded_bgcolor);
+		gdk_rgba_free(expanded_bgcolor);
 	if (collapsed_bgcolor)
-		gdk_color_free(collapsed_bgcolor);
+		gdk_rgba_free(collapsed_bgcolor);
 	if (contact_color)
-		gdk_color_free(contact_color);
+		gdk_rgba_free(contact_color);
 
 	return PURPLE_THEME(theme);
 }

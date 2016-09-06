@@ -74,7 +74,7 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 			gtk_label = pidgin_prefs_dropdown_from_list(parent, pref_label,
 											  PURPLE_PREF_STRING, pref_name,
 											  purple_plugin_pref_get_choices(pref));
-			gtk_misc_set_alignment(GTK_MISC(gtk_label), 0, 0.5);
+			gtk_label_set_xalign(GTK_LABEL(gtk_label), 0);
 
 			if(sg)
 				gtk_size_group_add_widget(sg, gtk_label);
@@ -110,7 +110,7 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 				gtk_box_pack_start(GTK_BOX(parent), box, FALSE, FALSE, 0);
 
 				gtk_label = gtk_label_new_with_mnemonic(pref_label);
-				gtk_misc_set_alignment(GTK_MISC(gtk_label), 0, 0.5);
+				gtk_label_set_xalign(GTK_LABEL(gtk_label), 0);
 				gtk_widget_show(gtk_label);
 				gtk_box_pack_start(GTK_BOX(box), gtk_label, FALSE, FALSE, 0);
 
@@ -166,7 +166,7 @@ make_int_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 		case PURPLE_PLUGIN_PREF_CHOICE:
 			gtk_label = pidgin_prefs_dropdown_from_list(parent, pref_label,
 					PURPLE_PREF_INT, pref_name, purple_plugin_pref_get_choices(pref));
-			gtk_misc_set_alignment(GTK_MISC(gtk_label), 0, 0.5);
+			gtk_label_set_xalign(GTK_LABEL(gtk_label), 0);
 
 			if(sg)
 				gtk_size_group_add_widget(sg, gtk_label);
@@ -185,7 +185,8 @@ make_int_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 static void
 make_info_pref(GtkWidget *parent, PurplePluginPref *pref) {
 	GtkWidget *gtk_label = gtk_label_new(purple_plugin_pref_get_label(pref));
-	gtk_misc_set_alignment(GTK_MISC(gtk_label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(gtk_label), 0);
+	gtk_label_set_yalign(GTK_LABEL(gtk_label), 0);
 	gtk_label_set_line_wrap(GTK_LABEL(gtk_label), TRUE);
 	gtk_box_pack_start(GTK_BOX(parent), gtk_label, FALSE, FALSE, 0);
 	gtk_widget_show(gtk_label);

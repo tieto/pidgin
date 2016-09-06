@@ -57,11 +57,11 @@ G_BEGIN_DECLS
 
 /**
  * PidginMiniDialog:
- * @contents: A GtkVBox into which extra widgets for the dialog should be packed.
+ * @contents: A GtkBox into which extra widgets for the dialog should be packed.
  *
  * A widget resembling a diminutive dialog box, designed to be embedded in the
  * #PidginBuddyList.  Mini-dialogs have titles, optional descriptions, and a row
- * of buttons at the bottom; above the buttons is a #GtkHBox into which
+ * of buttons at the bottom; above the buttons is a #GtkBox into which
  * you can pack any random widgets you want to add to the dialog.  When any of
  * the dialog's buttons is clicked, the dialog will be destroyed.
  *
@@ -91,7 +91,7 @@ G_BEGIN_DECLS
  * </informaltable>
  */
 typedef struct {
-	GtkVBox parent;
+	GtkBox parent;
 	gpointer priv;
 
 	/*< public >*/

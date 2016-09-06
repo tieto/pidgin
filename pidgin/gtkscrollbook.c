@@ -51,7 +51,7 @@ pidgin_scroll_book_get_type (void)
 			NULL  /* value_table */
 		};
 
-		scroll_book_type = g_type_register_static(GTK_TYPE_VBOX,
+		scroll_book_type = g_type_register_static(GTK_TYPE_BOX,
 							 "PidginScrollBook",
 							 &scroll_book_info,
 							 0);
@@ -229,7 +229,8 @@ close_button_left_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label
 {
 	static GdkCursor *ptr = NULL;
 	if (ptr == NULL) {
-		ptr = gdk_cursor_new(GDK_LEFT_PTR);
+		GdkDisplay *display = gtk_widget_get_display(widget);
+		ptr = gdk_cursor_new_for_display(display, GDK_LEFT_PTR);
 	}
 
 	gtk_label_set_markup(label, "×");
@@ -242,7 +243,8 @@ close_button_entered_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *la
 {
 	static GdkCursor *hand = NULL;
 	if (hand == NULL) {
-		hand = gdk_cursor_new(GDK_HAND2);
+		GdkDisplay *display = gtk_widget_get_display(widget);
+		hand = gdk_cursor_new_for_display(display, GDK_HAND2);
 	}
 
 	gtk_label_set_markup(label, "<u>×</u>");
@@ -255,6 +257,8 @@ pidgin_scroll_book_init (PidginScrollBook *scroll_book)
 {
 	GtkWidget *eb;
 	GtkWidget *close_button;
+
+	gtk_orientable_set_orientation(GTK_ORIENTABLE(scroll_book), GTK_ORIENTATION_VERTICAL);
 
 	scroll_book->hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
@@ -272,7 +276,11 @@ pidgin_scroll_book_init (PidginScrollBook *scroll_book)
 	/* Right arrow */
 	eb = gtk_event_box_new();
 	gtk_box_pack_end(GTK_BOX(scroll_book->hbox), eb, FALSE, FALSE, 0);
+#if GTK_CHECK_VERSION(3,14,0)
+	scroll_book->right_arrow = gtk_image_new_from_icon_name("pan-right-symbolic", GTK_ICON_SIZE_BUTTON);
+#else
 	scroll_book->right_arrow = gtk_arrow_new(GTK_ARROW_RIGHT, GTK_SHADOW_NONE);
+#endif
 	gtk_container_add(GTK_CONTAINER(eb), scroll_book->right_arrow);
 	g_signal_connect_swapped(G_OBJECT(eb), "button-press-event", G_CALLBACK(scroll_right_cb), scroll_book);
 
@@ -283,7 +291,11 @@ pidgin_scroll_book_init (PidginScrollBook *scroll_book)
 	/* Left arrow */
 	eb = gtk_event_box_new();
 	gtk_box_pack_end(GTK_BOX(scroll_book->hbox), eb, FALSE, FALSE, 0);
+#if GTK_CHECK_VERSION(3,14,0)
+	scroll_book->left_arrow = gtk_image_new_from_icon_name("pan-left-symbolic", GTK_ICON_SIZE_BUTTON);
+#else
 	scroll_book->left_arrow = gtk_arrow_new(GTK_ARROW_LEFT, GTK_SHADOW_NONE);
+#endif
 	gtk_container_add(GTK_CONTAINER(eb), scroll_book->left_arrow);
 	g_signal_connect_swapped(G_OBJECT(eb), "button-press-event", G_CALLBACK(scroll_left_cb), scroll_book);
 
