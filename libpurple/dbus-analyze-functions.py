@@ -1,20 +1,21 @@
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import argparse
 import fileinput
 import re
-import string
 import sys
 
+
 # types translated into "int"
-simpletypes = ["int", "gint", "guint", "gboolean", "size_t", "gssize", "time_t"]
+simpletypes = ["int", "gint", "guint", "gboolean", "size_t", "gssize",
+               "time_t"]
 
 # List "excluded" contains functions that shouldn't be exported via
 # DBus.  If you remove a function from this list, please make sure
 # that it does not break "make" with the configure option
 # "--enable-dbus" turned on.
 
-excluded = [\
+excluded = [
     # I don't remember why this function is excluded; something to do
     # with the fact that it takes a (const) GList as a parameter.
     "purple_presence_add_list",
@@ -58,7 +59,7 @@ excluded = [\
 
     # Similiar to the above:
     "purple_notify_is_valid_ui_handle",
-    ]
+]
 
 # This is a list of functions that return a GList* or GSList * whose elements
 # are strings, not pointers to objects.
@@ -99,10 +100,10 @@ constlists = [
 
 pointer = "#pointer#"
 
+
 class MyException(Exception):
     pass
 
-myexception = MyException()
 
 def ctopascal(name):
     newname = ""
@@ -110,30 +111,32 @@ def ctopascal(name):
         newname += word.capitalize()
     return newname
 
-class Parameter:
+
+class Parameter(object):
     def __init__(self, type, name):
         self.name = name
         self.type = type
 
-    def fromtokens(tokens, parameternumber = -1):
+    def fromtokens(tokens, parameternumber=-1):
         if len(tokens) == 0:
-            raise myexception
-        if (len(tokens) == 1) or (tokens[-1] == pointer):
+            raise MyException()
+        if len(tokens) == 1 or tokens[-1] == pointer:
             if parameternumber >= 0:
-                return Parameter(tokens, "param%i" % parameternumber)
+                return Parameter(tokens, "param%i" % (parameternumber, ))
             else:
-                raise myexception
+                raise MyException()
         else:
             return Parameter(tokens[:-1], tokens[-1])
-                    
+
     fromtokens = staticmethod(fromtokens)
 
-class Binding:
+
+class Binding(object):
     def __init__(self, functiontext, paramtexts, output=None):
         self.function = Parameter.fromtokens(functiontext.split())
 
         if self.function.name in excluded:
-            raise myexception
+            raise MyException()
 
         self.params = []
         for i in range(len(paramtexts)):
@@ -164,21 +167,23 @@ class Binding:
 
         if len(type) == 1:
             # simple types (int, gboolean, etc.) and enums
-            if (type[0] in simpletypes) or ((type[0].startswith("Purple") and not type[0].endswith("Callback"))):
+            if type[0] in simpletypes or (
+                    type[0].startswith("Purple") and
+                    not type[0].endswith("Callback")):
                 return self.inputsimple(type, name, unsigned)
 
-        # pointers ... 
-        if (len(type) == 2) and (type[1] == pointer):
+        # pointers ...
+        if len(type) == 2 and type[1] == pointer:
             # strings
             if type[0] in ["char", "gchar"]:
                 if const:
                     return self.inputstring(type, name, unsigned)
                 else:
-                    raise myexception
+                    raise MyException()
 
             elif type[0] == "GHashTable":
                 return self.inputhash(type, name)
-                
+
             # known object types are transformed to integer handles
             elif type[0].startswith("Purple"):
                 return self.inputpurplestructure(type, name)
@@ -186,14 +191,13 @@ class Binding:
             # special case for *_get_data functions, be careful here...
             elif (type[0] == "size_t" or type[0] == "gsize") and name == "len":
                 return self.inputgetdata(type, name)
-            
+
             # unknown pointers are always replaced with NULL
             else:
                 return self.inputpointer(type, name)
 
-        raise myexception
+        raise MyException()
 
-   
     def processoutput(self, type, name):
         const = False
         unsigned = False
@@ -214,13 +218,12 @@ class Binding:
             return self.outputstring(type, name, const)
 
         # simple types (ints, booleans, enums, ...)
-        if (len(type) == 1) and \
-               ((type[0] in simpletypes) or (type[0].startswith("Purple"))):
+        if (len(type) == 1 and
+               (type[0] in simpletypes or type[0].startswith("Purple"))):
             return self.outputsimple(type, name, unsigned)
 
         # pointers ...
-        if (len(type) == 2) and (type[1] == pointer):
-
+        if len(type) == 2 and type[1] == pointer:
             # handles
             if type[0].startswith("Purple"):
                 return self.outputpurplestructure(type, name)
@@ -232,10 +235,10 @@ class Binding:
         if type[0] == "gconstpointer":
             return self.outputgetdata(type, name)
 
-        raise myexception
-    
+        raise MyException()
 
-class ClientBinding (Binding):
+
+class ClientBinding(Binding):
     def __init__(self, functiontext, paramtexts, knowntypes, headersonly,
                  **kwargs):
         Binding.__init__(self, functiontext, paramtexts, **kwargs)
@@ -249,7 +252,7 @@ class ClientBinding (Binding):
 
     def flush(self):
         paramslist = ", ".join(self.paramshdr)
-        if (paramslist == "") :
+        if paramslist == "":
             paramslist = "void"
         print("%s %s(%s)" % (self.functiontype, self.function.name,
                              paramslist),
@@ -268,7 +271,7 @@ class ClientBinding (Binding):
         print('dbus_g_proxy_call(purple_proxy, "%s", NULL,' % (
                 ctopascal(self.function.name), ),
               file=self.output)
-        
+
         for type_name in self.inputparams:
             print("\t%s, %s, " % type_name, end=' ', file=self.output)
         print("G_TYPE_INVALID,", file=self.output)
@@ -276,15 +279,15 @@ class ClientBinding (Binding):
         for type_name in self.outputparams:
             print("\t%s, &%s, " % type_name, end=' ', file=self.output)
         print("G_TYPE_INVALID);", file=self.output)
-        
+
         for code in self.returncode:
             print(code, file=self.output)
 
         print("}\n", file=self.output)
 
     def definepurplestructure(self, type):
-        if (self.headersonly) and (type[0] not in self.knowntypes):
-            print("struct _%s;" % type[0], file=self.output)
+        if self.headersonly and type[0] not in self.knowntypes:
+            print("struct _%s;" % (type[0], ), file=self.output)
             print("typedef struct _%s %s;" % (type[0], type[0]),
                   file=self.output)
             self.knowntypes.append(type[0])
@@ -298,34 +301,37 @@ class ClientBinding (Binding):
 
     def inputstring(self, type, name, us):
         if us:
-            self.paramshdr.append("const unsigned char *%s" % name)
+            self.paramshdr.append("const unsigned char *%s" % (name, ))
         else:
-            self.paramshdr.append("const char *%s" % name)
+            self.paramshdr.append("const char *%s" % (name, ))
         self.inputparams.append(("G_TYPE_STRING", name))
-        
+
     def inputpurplestructure(self, type, name):
         self.paramshdr.append("const %s *%s" % (type[0], name))
-        self.inputparams.append(("G_TYPE_INT", "GPOINTER_TO_INT(%s)" % name))
+        self.inputparams.append(("G_TYPE_INT",
+                                 "GPOINTER_TO_INT(%s)" % (name, )))
         self.definepurplestructure(type)
 
     def inputpointer(self, type, name):
         name += "_NULL"
         self.paramshdr.append("const %s *%s" % (type[0], name))
         self.inputparams.append(("G_TYPE_INT", "0"))
-        
+
     def inputhash(self, type, name):
-        self.paramshdr.append("const GHashTable *%s" % name)
-        self.inputparams.append(('dbus_g_type_get_map ("GHashTable", G_TYPE_STRING, G_TYPE_STRING)', name))
+        self.paramshdr.append("const GHashTable *%s" % (name, ))
+        self.inputparams.append(
+            ('dbus_g_type_get_map("GHashTable", G_TYPE_STRING, G_TYPE_STRING)',
+             name))
 
     def outputvoid(self, type, name):
         self.functiontype = "void"
 
     def outputstring(self, type, name, const):
         self.functiontype = "char*"
-        self.decls.append("char *%s = NULL;" % name)
+        self.decls.append("char *%s = NULL;" % (name, ))
         self.outputparams.append(("G_TYPE_STRING", name))
-#        self.returncode.append("NULLIFY(%s);" % name)
-        self.returncode.append("return %s;" % name);
+#        self.returncode.append("NULLIFY(%s);" % (name, ))
+        self.returncode.append("return %s;" % (name, ))
 
     def outputsimple(self, type, name, us):
         self.functiontype = type[0]
@@ -334,55 +340,59 @@ class ClientBinding (Binding):
             self.outputparams.append(("G_TYPE_UINT", name))
         else:
             self.outputparams.append(("G_TYPE_INT", name))
-        self.returncode.append("return %s;" % name);
+        self.returncode.append("return %s;" % (name, ))
 
     # we could add "const" to the return type but this would probably
     # be a nuisance
     def outputpurplestructure(self, type, name):
         name = name + "_ID"
-        self.functiontype = "%s*" % type[0]
-        self.decls.append("int %s = 0;" % name)
-        self.outputparams.append(("G_TYPE_INT", "%s" % name))
-        self.returncode.append("return (%s*) GINT_TO_POINTER(%s);" % (type[0], name));
+        self.functiontype = "%s*" % (type[0], )
+        self.decls.append("int %s = 0;" % (name, ))
+        self.outputparams.append(("G_TYPE_INT", "%s" % (name, )))
+        self.returncode.append("return (%s*) GINT_TO_POINTER(%s);" % (type[0],
+                                                                      name))
         self.definepurplestructure(type)
 
     def outputlist(self, type, name):
-        self.functiontype = "%s*" % type[0]
-        self.decls.append("GArray *%s;" % name)
-        self.outputparams.append(('dbus_g_type_get_collection("GArray", G_TYPE_INT)', name))
+        self.functiontype = "%s*" % (type[0], )
+        self.decls.append("GArray *%s;" % (name, ))
+        self.outputparams.append(
+            ('dbus_g_type_get_collection("GArray", G_TYPE_INT)', name))
         self.returncode.append("return garray_int_to_%s(%s);" %
-                               (type[0].lower(), name));
+                               (type[0].lower(), name))
 
     # Special case for *_get_data functions, don't need client bindings,
     #  but do need the name so it doesn't crash
     def inputgetdata(self, type, name):
-        raise myexception
-    def outputgetdata(self, type, name):
-        raise myexception
+        raise MyException()
 
-class ServerBinding (Binding):
+    def outputgetdata(self, type, name):
+        raise MyException()
+
+
+class ServerBinding(Binding):
     def __init__(self, functiontext, paramtexts, **kwargs):
         Binding.__init__(self, functiontext, paramtexts, **kwargs)
         self.dparams = ""
         self.cparams = []
-        self.cdecls  = []
-        self.ccode  = []
+        self.cdecls = []
+        self.ccode = []
         self.cparamsout = []
         self.ccodeout = []
         self.argfunc = "dbus_message_get_args"
 
     def flush(self):
         print("static DBusMessage*", file=self.output)
-        print("%s_DBUS(DBusMessage *message_DBUS, DBusError *error_DBUS) {" % \
+        print("%s_DBUS(DBusMessage *message_DBUS, DBusError *error_DBUS) {" %
               self.function.name,
               file=self.output)
-        
+
         print("\tDBusMessage *reply_DBUS;", file=self.output)
 
         for decl in self.cdecls:
             print(decl, file=self.output)
 
-        print("\t%s(message_DBUS, error_DBUS," % self.argfunc, end=' ',
+        print("\t%s(message_DBUS, error_DBUS," % (self.argfunc, ), end=' ',
               file=self.output)
         for param in self.cparams:
             print("DBUS_TYPE_%s, &%s," % param, end=' ', file=self.output)
@@ -400,7 +410,7 @@ class ServerBinding (Binding):
               file=self.output)
         for param in self.cparamsout:
             if type(param) is str:
-                print("%s," % param, end=' ', file=self.output)
+                print("%s," % (param, ), end=' ', file=self.output)
             else:
                 print("DBUS_TYPE_%s, &%s," % param, end=' ', file=self.output)
         print("DBUS_TYPE_INVALID);", file=self.output)
@@ -420,147 +430,167 @@ class ServerBinding (Binding):
     def addouttype(self, type, name):
         self.addstring("out", type, name)
 
-
     # input parameters
 
     def inputsimple(self, type, name, us):
         if us:
-            self.cdecls.append("\tdbus_uint32_t %s;" % name)
+            self.cdecls.append("\tdbus_uint32_t %s;" % (name, ))
             self.cparams.append(("UINT32", name))
             self.addintype("u", name)
         else:
-            self.cdecls.append("\tdbus_int32_t %s;" % name)
+            self.cdecls.append("\tdbus_int32_t %s;" % (name, ))
             self.cparams.append(("INT32", name))
             self.addintype("i", name)
 
     def inputstring(self, type, name, us):
         if us:
-            self.cdecls.append("\tconst unsigned char *%s;" % name)
+            self.cdecls.append("\tconst unsigned char *%s;" % (name, ))
         else:
-            self.cdecls.append("\tconst char *%s;" % name)
+            self.cdecls.append("\tconst char *%s;" % (name, ))
         self.cparams.append(("STRING", name))
-        self.ccode.append("\t%s = (%s && %s[0]) ? %s : NULL;" % (name,name,name,name))
+        self.ccode.append(
+            "\t%s = (%s && %s[0]) ? %s : NULL;" % (name, name, name, name))
         self.addintype("s", name)
 
     def inputhash(self, type, name):
         self.argfunc = "purple_dbus_message_get_args"
-        self.cdecls.append("\tDBusMessageIter %s_ITER;" % name)
-        self.cdecls.append("\tGHashTable *%s;" % name)
-        self.cparams.append(("ARRAY", "%s_ITER" % name))
-        self.ccode.append("\t%s = purple_dbus_iter_hash_table(&%s_ITER, error_DBUS);" \
-                     % (name, name))
+        self.cdecls.append("\tDBusMessageIter %s_ITER;" % (name, ))
+        self.cdecls.append("\tGHashTable *%s;" % (name, ))
+        self.cparams.append(("ARRAY", "%s_ITER" % (name, )))
+        self.ccode.append(
+            "\t%s = purple_dbus_iter_hash_table(&%s_ITER, error_DBUS);" % (
+                name,
+                name))
         self.ccode.append("\tCHECK_ERROR(error_DBUS);")
-        self.ccodeout.append("\tg_hash_table_destroy(%s);" % name)
+        self.ccodeout.append("\tg_hash_table_destroy(%s);" % (name, ))
         self.addintype("a{ss}", name)
 
     def inputpurplestructure(self, type, name):
-        self.cdecls.append("\tdbus_int32_t %s_ID;" %  name)
+        self.cdecls.append("\tdbus_int32_t %s_ID;" % (name, ))
         self.cdecls.append("\t%s *%s;" % (type[0], name))
         self.cparams.append(("INT32", name + "_ID"))
-        self.ccode.append("\tPURPLE_DBUS_ID_TO_POINTER(%s, %s_ID, %s, error_DBUS);"  % \
-                          (name, name, type[0]))
+        self.ccode.append(
+            "\tPURPLE_DBUS_ID_TO_POINTER(%s, %s_ID, %s, error_DBUS);" % (
+                name,
+                name,
+                type[0]))
         self.addintype("i", name)
 
     def inputpointer(self, type, name):
-        self.cdecls.append("\tdbus_int32_t %s_NULL;" %  name)
-        self.cdecls .append("\t%s *%s;" % (type[0], name))
+        self.cdecls.append("\tdbus_int32_t %s_NULL;" % (name, ))
+        self.cdecls.append("\t%s *%s;" % (type[0], name))
         self.cparams.append(("INT32", name + "_NULL"))
-        self.ccode  .append("\t%s = NULL;" % name)
+        self.ccode.append("\t%s = NULL;" % (name, ))
         self.addintype("i", name)
 
     # output parameters
 
     def outputvoid(self, type, name):
-        self.ccode.append("\t%s;" % self.call) # just call the function
+        self.ccode.append("\t%s;" % (self.call, ))  # just call the function
 
     def outputstring(self, type, name, const):
         if const:
-            self.cdecls.append("\tconst char *%s;" % name)
+            self.cdecls.append("\tconst char *%s;" % (name, ))
         else:
-            self.cdecls.append("\tchar *%s;" % name)
+            self.cdecls.append("\tchar *%s;" % (name, ))
         self.ccode.append("\tif ((%s = %s) == NULL)" % (name, self.call))
-        self.ccode.append("\t\t%s = \"\";" % (name))
+        self.ccode.append("\t\t%s = \"\";" % (name, ))
         self.cparamsout.append(("STRING", name))
         self.addouttype("s", name)
         if not const:
-            self.ccodeout.append("\tg_free(%s);" % name)
+            self.ccodeout.append("\tg_free(%s);" % (name, ))
 
     def outputsimple(self, type, name, us):
         if us:
-            self.cdecls.append("\tdbus_uint32_t %s;" % name)
+            self.cdecls.append("\tdbus_uint32_t %s;" % (name, ))
             self.cparamsout.append(("UINT32", name))
             self.addouttype("u", name)
         else:
-            self.cdecls.append("\tdbus_int32_t %s;" % name)
+            self.cdecls.append("\tdbus_int32_t %s;" % (name, ))
             self.cparamsout.append(("INT32", name))
             self.addouttype("i", name)
         self.ccode.append("\t%s = %s;" % (name, self.call))
 
     def outputpurplestructure(self, type, name):
-        self.cdecls.append("\tdbus_int32_t %s;" % name)
-        self.ccode .append("\tPURPLE_DBUS_POINTER_TO_ID(%s, %s, error_DBUS);" % (name, self.call))
+        self.cdecls.append("\tdbus_int32_t %s;" % (name, ))
+        self.ccode.append(
+            "\tPURPLE_DBUS_POINTER_TO_ID(%s, %s, error_DBUS);" % (name,
+                                                                  self.call))
         self.cparamsout.append(("INT32", name))
         self.addouttype("i", name)
 
     # GList*, GSList*, assume that list is a list of objects
     # unless the function is in stringlists
     def outputlist(self, type, name):
-        self.cdecls.append("\tdbus_int32_t %s_LEN;" % name)
-        self.ccodeout.append("\tg_free(%s);" % name)
+        self.cdecls.append("\tdbus_int32_t %s_LEN;" % (name, ))
+        self.ccodeout.append("\tg_free(%s);" % (name, ))
 
-        self.cdecls.append("\t%s *list;" % type[0]);
+        self.cdecls.append("\t%s *list;" % (type[0], ))
 
         if self.function.name in stringlists:
-            self.cdecls.append("\tchar **%s;" % name)
-            self.ccode.append("\tlist = %s;" % self.call)
-            self.ccode.append("\t%s = (char **)purple_%s_to_array(list, &%s_LEN);" % \
-                         (name, type[0], name))
-            self.cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_STRING, &%s, %s_LEN" \
-                          % (name, name))
-            if (not (self.function.name in constlists)):
+            self.cdecls.append("\tchar **%s;" % (name, ))
+            self.ccode.append("\tlist = %s;" % (self.call, ))
+            self.ccode.append(
+                "\t%s = (char **)purple_%s_to_array(list, &%s_LEN);" % (
+                    name,
+                    type[0],
+                    name))
+            self.cparamsout.append(
+                "DBUS_TYPE_ARRAY, DBUS_TYPE_STRING, &%s, %s_LEN" % (name,
+                                                                    name))
+            if self.function.name not in constlists:
                 type_name = type[0].lower()[1:]
-                self.ccodeout.append("\tg_%s_foreach(list, (GFunc)g_free, NULL);" % type_name)
-                self.ccodeout.append("\tg_%s_free(list);" % type_name)
+                self.ccodeout.append(
+                    "\tg_%s_foreach(list, (GFunc)g_free, NULL);" % (
+                        type_name, ))
+                self.ccodeout.append("\tg_%s_free(list);" % (type_name, ))
             self.addouttype("as", name)
         else:
-            self.cdecls.append("\tdbus_int32_t *%s;" % name)
-            self.ccode.append("\tlist = %s;" % self.call)
-            self.ccode.append("\t%s = purple_dbusify_%s(list, &%s_LEN);" % \
-                         (name, type[0], name))
-            if (not (self.function.name in constlists)):
-                self.ccode.append("\tg_%s_free(list);" % type[0].lower()[1:])
-            self.cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_INT32, &%s, %s_LEN" \
-                              % (name, name))
+            self.cdecls.append("\tdbus_int32_t *%s;" % (name, ))
+            self.ccode.append("\tlist = %s;" % (self.call, ))
+            self.ccode.append("\t%s = purple_dbusify_%s(list, &%s_LEN);" % (
+                name,
+                type[0],
+                name))
+            if self.function.name not in constlists:
+                type_name = type[0].lower()[1:]
+                self.ccode.append("\tg_%s_free(list);" % (type_name, ))
+            self.cparamsout.append(
+                "DBUS_TYPE_ARRAY, DBUS_TYPE_INT32, &%s, %s_LEN" % (name, name))
             self.addouttype("ai", name)
 
     # Special case for *_get_data functions
     def inputgetdata(self, type, name):
-        self.cdecls.append("\tsize_t %s = 0;" % name)
+        self.cdecls.append("\tsize_t %s = 0;" % (name, ))
         return True
+
     def outputgetdata(self, type, name):
         # This is a total hack, but self.call is set up before the parameters
         #  are processed, so we can't tell it to pass a parameter by reference.
-        self.call = "%s(%s)" % (self.function.name,
-                                ", ".join([(param.name, "&len")[param.name == "len"] for param in self.params]))
+        params = ', '.join('&len' if param.name == 'len' else param.name
+                           for param in self.params)
+        self.call = "%s(%s)" % (self.function.name, params)
 
-        self.cdecls.append("\tgconstpointer %s;" % name)
+        self.cdecls.append("\tgconstpointer %s;" % (name, ))
         self.ccode.append("\t%s = %s;" % (name, self.call))
-        self.cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_BYTE, &%s, %s" \
-                               % (name, "len"))
+        self.cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_BYTE, &%s, %s" % (
+            name,
+            "len"))
         self.addouttype("ay", name)
 
-class BindingSet:
-    regexp = r"^(\w[^()]*)\(([^()]*)\)\s*;\s*$";
+
+class BindingSet(object):
+    regexp = r"^(\w[^()]*)\(([^()]*)\)\s*;\s*$"
 
     def __init__(self, inputfile, fprefix, output=None):
         self.inputiter = iter(inputfile)
-        self.functionregexp = \
-             re.compile("^%s(\w[^()]*)\(([^()]*)\)\s*;\s*$" % fprefix)    
+        self.functionregexp = re.compile(
+            "^%s(\w[^()]*)\(([^()]*)\)\s*;\s*$" % (fprefix, ))
         self.typeregexp = re.compile("^\w+\s*\*?\s*$")
         self.output = output
 
     def process(self):
-        print("/* Generated by %s.  Do not edit! */" % sys.argv[0],
+        print("/* Generated by %s.  Do not edit! */" % (sys.argv[0], ),
               file=self.output)
 
         for line in self.inputiter:
@@ -575,7 +605,8 @@ class BindingSet:
             # accumulate lines until the parentheses are balance or an
             # empty line has been encountered
             myline = line.strip()
-            while (myline.count("(") > myline.count(")")) or self.typeregexp.match(myline):
+            while (myline.count("(") > myline.count(")") or
+                    self.typeregexp.match(myline)):
                 newline = next(self.inputiter).strip()
                 if len(newline) == 0:
                     break
@@ -599,10 +630,8 @@ class BindingSet:
             try:
                 self.processfunction(functiontext, paramtexts)
             except MyException:
-#                sys.stderr.write(myline + "\n")
-                 pass
+                pass
             except:
-#                sys.stderr.write(myline + "\n")
                 raise
 
         self.flush()
@@ -613,17 +642,16 @@ class ServerBindingSet (BindingSet):
         BindingSet.__init__(self, inputfile, fprefix, **kwargs)
         self.functions = []
 
-
     def processfunction(self, functiontext, paramtexts):
         binding = ServerBinding(functiontext, paramtexts, output=self.output)
         binding.process()
         self.functions.append((binding.function.name, binding.dparams))
-        
+
     def flush(self):
         print("static PurpleDBusBinding bindings_DBUS[] = { ",
               file=self.output)
         for function, params in self.functions:
-            print('{"%s", "%s", %s_DBUS},' % \
+            print('{"%s", "%s", %s_DBUS},' %
                   (ctopascal(function), params, function), file=self.output)
 
         print("{NULL, NULL, NULL}", file=self.output)
@@ -648,6 +676,7 @@ class ClientBindingSet (BindingSet):
 
     def flush(self):
         pass
+
 
 # Main program
 
