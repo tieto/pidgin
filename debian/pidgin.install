@@ -1,4 +1,3 @@
-debian/tmp/etc/gconf
 debian/tmp/usr/bin/pidgin
 debian/tmp/usr/lib/libpidgin.so.*
 debian/tmp/usr/lib/pidgin-3
