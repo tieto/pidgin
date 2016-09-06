@@ -5516,8 +5516,7 @@ show_initial_account_errors(PidginBuddyList *gtkblist)
  * I'm sure other things in this code assumes that also.
  */
 static void
-treeview_style_set (GtkWidget *widget,
-		    GtkStyle *prev_style,
+treeview_style_set(GtkWidget *widget,
 		    gpointer data)
 {
 	PurpleBuddyList *list = data;
@@ -5945,7 +5944,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_widget_set_name(gtkblist->treeview, "pidgin_blist_treeview");
 
 	g_signal_connect(gtkblist->treeview,
-			 "style-set",
+			 "style-updated",
 			 G_CALLBACK(treeview_style_set), list);
 	/* Set up selection stuff */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));

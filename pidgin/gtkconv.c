@@ -5889,7 +5889,7 @@ ignore_middle_click(GtkWidget *widget, GdkEventButton *e, gpointer null)
 	return FALSE;
 }
 
-static void set_typing_font(GtkWidget *widget, GtkStyle *style, PidginConversation *gtkconv)
+static void set_typing_font(GtkWidget *widget, PidginConversation *gtkconv)
 {
 /* TODO WEBKIT */
 #if 0
@@ -6024,7 +6024,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	                 G_CALLBACK(conv_dnd_recv), gtkconv);
 #endif
 
-	g_signal_connect(gtkconv->webview, "style-set", G_CALLBACK(set_typing_font), gtkconv);
+	g_signal_connect(gtkconv->webview, "style-updated", G_CALLBACK(set_typing_font), gtkconv);
 
 	/* Setup the container for the tab. */
 	gtkconv->tab_cont = tab_cont = gtk_box_new(GTK_ORIENTATION_VERTICAL, PIDGIN_HIG_BOX_SPACE);
