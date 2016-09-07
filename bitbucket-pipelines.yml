@@ -10,5 +10,6 @@ pipelines:
           - apt-get update
           - apt-get install -y libgplugin-dev
           - ./autogen.sh --disable-kwallet --disable-meanwhile --enable-debug --disable-avahi --enable-gtk-doc
+          - make -s -j$(cat /proc/cpuinfo | egrep "^processor\s+:" | wc -l)
           - make check -s -j$(cat /proc/cpuinfo | egrep "^processor\s+:" | wc -l)
 
