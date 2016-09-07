@@ -305,7 +305,7 @@ CLEANFILES += \
 	dbus-signals.c \
 	dbus-types.c \
 	dbus-types.h \
-	purple-client-bindings.c \
+	purple-client-bindings.ch \
 	purple-client-bindings.h \
 	purple.service
 
@@ -354,14 +354,14 @@ libpurple_client_la_SOURCES = purple-client.c purple-client.h
 libpurple_client_la_LDFLAGS = -version-info $(PURPLE_LT_VERSION_INFO) -no-undefined
 libpurple_client_la_LIBADD = $(DBUS_LIBS)
 
-purple-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
+purple-client-bindings.ch: dbus-analyze-functions.py $(dbus_exported)
 	$(AM_V_GEN) $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client -o $@ $(dbus_build_exported)
 
 purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(addprefix ciphers/, $(purple_cipherheaders)) $(addprefix media/, $(purple_mediaheaders)) $(purple_builtheaders) $(dbus_exported)
 	$(AM_V_GEN) $(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim -o $@ $(purple_build_coreheaders)
 	$(AM_V_at) $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client --headers --append -o $@ $(dbus_build_exported)
 
-$(libpurple_client_la_OBJECTS): purple-client-bindings.h purple-client-bindings.c
+$(libpurple_client_la_OBJECTS): purple-client-bindings.h purple-client-bindings.ch
 
 # purple-client-example
 
@@ -388,7 +388,7 @@ BUILT_SOURCES = $(purple_builtheaders) \
 	dbus-signals.c \
 	dbus-types.c \
 	dbus-types.h \
-	purple-client-bindings.c \
+	purple-client-bindings.ch \
 	purple-client-bindings.h
 
 else

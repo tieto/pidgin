@@ -367,18 +367,12 @@ dbus_signals_c = custom_target('dbus_signals_c',
 
 # libpurple-client
 
-purple_client_bindings_c = custom_target('purple_client_bindings_c',
-                                         input : dbus_exported,
-                                         output : 'purple-client-bindings.c',
-                                         command : [python, dbus_analyze_functions,
-                                                    '--client', '-o', '@OUTPUT@', '@INPUT@'])
-
 purple_client_bindings_h1 = custom_target('purple_client_bindings_h1',
     input : purple_build_coreheaders,
     output : 'purple-client-bindings1.h',
     command : [
         python, dbus_analyze_types,
-         '--keyword=enum', '--verbatim', '-o', '@OUTPUT@', '@INPUT@'
+        '--keyword=enum', '--verbatim', '-o', '@OUTPUT@', '@INPUT@'
     ]
 )
 
@@ -387,7 +381,7 @@ purple_client_bindings_h2 = custom_target('purple_client_bindings_h2',
     output : 'purple-client-bindings2.h',
     command : [
         python, dbus_analyze_functions,
-         '--client', '--headers', '-o', '@OUTPUT@', '@INPUT@'
+        '--client', '--headers', '-o', '@OUTPUT@', '@INPUT@'
     ]
 )
 
@@ -397,7 +391,17 @@ purple_client_bindings_h = custom_target('purple_client_bindings_h',
     capture : true,
     command : ['cat', '@INPUT@'])
 
-libpurple_client = library('purple-client', 'purple-client.c',
+purple_client_bindings_c = custom_target('purple_client_bindings_c',
+    input : dbus_exported,
+    output : 'purple-client-bindings.ch',
+    command : [
+        python, dbus_analyze_functions,
+        '--client', '-o', '@OUTPUT@', '@INPUT@'
+    ]
+)
+
+libpurple_client = library('purple-client',
+    'purple-client.c', purple_client_bindings_c, purple_client_bindings_h,
     soversion : purple_lt_current,
     version : PURPLE_LT_VERSION_INFO,
     dependencies : [dbus, dbus_glib],
@@ -437,7 +441,7 @@ if ENABLE_DBUS
 # purple-client-example
 
 purple_client_example = executable('purple-client-example',
-    'purple-client-example.c',
+    'purple-client-example.c', purple_client_bindings_h,
     link_with : [libpurple_client, libpurple],
     dependencies : [dbus, dbus_glib, glib],
     install : true)
