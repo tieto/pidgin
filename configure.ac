@@ -149,7 +149,6 @@ case "$host" in
 		is_win32="no"
 		is_not_win32="yes"
 		PLUGIN_LDFLAGS="-avoid-version"
-		AC_CHECK_HEADERS(signal.h)
 		;;
 esac
 AM_CONDITIONAL(IS_WIN32, test "x$is_win32" = "xyes")
@@ -164,9 +163,8 @@ AC_SUBST(PIDGIN_LIBS)
 AC_SUBST(FINCH_LIBS)
 
 dnl Checks for header files.
-AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h unistd.h locale.h stdint.h)
+AC_CHECK_HEADERS(fcntl.h unistd.h stdint.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_SIZEOF(time_t, ,[
@@ -251,7 +249,7 @@ FINCH_PLUGINDIR="\$(libdir)/finch-$PURPLE_MAJOR_VERSION"
 AC_SUBST([FINCH_PLUGINDIR])
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS(strdup strstr atexit setlocale)
+AC_CHECK_FUNCS(strdup)
 dnl Checks for getopt in standard library
 AC_CHECK_FUNCS(getopt_long,,
 [
@@ -470,13 +468,13 @@ fi #enable_i18n
 AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 
 dnl #######################################################################
-dnl # Check for GLib 2.34 (required)
+dnl # Check for GLib 2.36 (required)
 dnl #######################################################################
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.34.0 gio-2.0 gobject-2.0 gthread-2.0], , [
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.36.0 gio-2.0 gobject-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
-You must have GLib 2.34.0 or newer development headers installed to build.
+You must have GLib 2.36.0 or newer development headers installed to build.
 
 If you have these installed already you may need to install pkg-config so
 I can find them.
@@ -572,10 +570,10 @@ dnl #######################################################################
 dnl Check Pidgin dependencies
 dnl #######################################################################
 if test "x$enable_gtkui" = "xyes" ; then
-	PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.0.0], , [
+	PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= 3.4.2], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
-You must have GTK+ 3.0.0 or newer development headers installed to compile
+You must have GTK+ 3.4.2 or newer development headers installed to compile
 Pidgin.  If you want to build only Finch then specify --disable-gtkui when
 running configure.
 ])])
@@ -936,13 +934,6 @@ PKG_CHECK_MODULES(ZLIB, [zlib >= 1.2.0], , [
 
 AC_SUBST(ZLIB_CFLAGS)
 AC_SUBST(ZLIB_LIBS)
-
-dnl #######################################################################
-dnl # GConf schemas
-dnl #######################################################################
-AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
-AM_CONDITIONAL(USE_GCONFTOOL, test "x$GCONFTOOL" != "xno")
-AM_GCONF_SOURCE_2
 
 dnl #######################################################################
 dnl # Check for GStreamer
@@ -2096,9 +2087,8 @@ fi
 
 AC_MSG_CHECKING(for me pot o' gold)
 AC_MSG_RESULT(no)
-AC_CHECK_FUNCS(gethostid lrand48 timegm)
-AC_CHECK_FUNCS(memcpy memmove random strchr strerror vprintf)
-AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
+AC_CHECK_FUNCS(gethostid timegm)
+AC_CHECK_HEADERS(paths.h sgtty.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
 AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
@@ -2193,7 +2183,6 @@ AC_CONFIG_FILES([Makefile
 		   pidgin/themes/Makefile
 		   pidgin/win32/pidgin_dll_rc.rc
 		   pidgin/win32/pidgin_exe_rc.rc
-		   libpurple/data/gconf/Makefile
 		   libpurple/data/purple-url-handler.desktop.in
 		   libpurple/data/purple-3.pc
 		   libpurple/data/purple-3-uninstalled.pc

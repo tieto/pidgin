@@ -27,11 +27,13 @@
 
 #include "debug.h"
 
-#ifdef USE_VV
+#ifdef USE_GSTREAMER
 #include "media/backend-fs2.h"
 #include "marshallers.h"
 #include "media-gst.h"
+#endif /* USE_GSTREAMER */
 
+#ifdef USE_VV
 /** @copydoc _PurpleMediaSession */
 typedef struct _PurpleMediaSession PurpleMediaSession;
 /** @copydoc _PurpleMediaStream */

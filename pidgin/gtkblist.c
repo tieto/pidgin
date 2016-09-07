@@ -1001,7 +1001,8 @@ make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(data->window))),
 	                  hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	gtk_widget_set_halign(img, GTK_ALIGN_START);
+	gtk_widget_set_valign(img, GTK_ALIGN_START);
 
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
@@ -1010,7 +1011,8 @@ make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
 
 	gtk_widget_set_size_request(label, 400, -1);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
+	gtk_label_set_yalign(GTK_LABEL(label), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -5072,8 +5074,10 @@ headline_response_cb(GtkInfoBar *infobar, int resp, PidginBuddyList *gtkblist)
 static void
 headline_realize_cb(GtkWidget *widget, gpointer data)
 {
-	GdkCursor *hand_cursor = gdk_cursor_new(GDK_HAND2);
-	gdk_window_set_cursor(gtk_widget_get_window(widget), hand_cursor);
+	GdkWindow *window = gtk_widget_get_window(widget);
+	GdkDisplay *display = gdk_window_get_display(window);
+	GdkCursor *hand_cursor = gdk_cursor_new_for_display(display, GDK_HAND2);
+	gdk_window_set_cursor(window, hand_cursor);
 	g_object_unref(hand_cursor);
 }
 
@@ -5374,7 +5378,8 @@ create_account_label(PurpleAccount *account)
 	markup = g_strdup_printf("<span size=\"smaller\">%s</span>", username);
 	gtk_label_set_markup(GTK_LABEL(label), markup);
 	g_free(markup);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_label_set_xalign(GTK_LABEL(label), 0);
+	gtk_label_set_yalign(GTK_LABEL(label), 0);
 	g_object_set(G_OBJECT(label), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	description = purple_account_get_current_error(account)->description;
 	if (description != NULL && *description != '\0')
@@ -5511,8 +5516,7 @@ show_initial_account_errors(PidginBuddyList *gtkblist)
  * I'm sure other things in this code assumes that also.
  */
 static void
-treeview_style_set (GtkWidget *widget,
-		    GtkStyle *prev_style,
+treeview_style_set(GtkWidget *widget,
 		    gpointer data)
 {
 	PurpleBuddyList *list = data;
@@ -5554,14 +5558,14 @@ kiosk_page()
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Username:</b>"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_label_set_xalign(GTK_LABEL(label), 0.0);
 	gtk_box_pack_start(GTK_BOX(ret), label, FALSE, FALSE, 0);
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(ret), entry, FALSE, FALSE, 0);
 
 	label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Password:</b>"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_label_set_xalign(GTK_LABEL(label), 0.0);
 	gtk_box_pack_start(GTK_BOX(ret), label, FALSE, FALSE, 0);
 	entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
@@ -5616,7 +5620,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 					    "visible", GROUP_EXPANDER_VISIBLE_COLUMN,
 					    "expander-visible", GROUP_EXPANDER_COLUMN,
 					    "sensitive", GROUP_EXPANDER_COLUMN,
-					    "cell-background-gdk", BGCOLOR_COLUMN,
+					    "cell-background-rgba", BGCOLOR_COLUMN,
 					    NULL);
 
 	/* contact */
@@ -5626,7 +5630,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 					    "visible", CONTACT_EXPANDER_VISIBLE_COLUMN,
 					    "expander-visible", CONTACT_EXPANDER_COLUMN,
 					    "sensitive", CONTACT_EXPANDER_COLUMN,
-					    "cell-background-gdk", BGCOLOR_COLUMN,
+					    "cell-background-rgba", BGCOLOR_COLUMN,
 					    NULL);
 
 	for (i = 0; i < 5; i++) {
@@ -5638,7 +5642,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			gtk_tree_view_column_set_attributes(column, rend,
 							    "pixbuf", STATUS_ICON_COLUMN,
 							    "visible", STATUS_ICON_VISIBLE_COLUMN,
-							    "cell-background-gdk", BGCOLOR_COLUMN,
+							    "cell-background-rgba", BGCOLOR_COLUMN,
 							    NULL);
 			g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
 
@@ -5647,7 +5651,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			gtkblist->text_rend = rend = gtk_cell_renderer_text_new();
 			gtk_tree_view_column_pack_start(column, rend, TRUE);
 			gtk_tree_view_column_set_attributes(column, rend,
-							    "cell-background-gdk", BGCOLOR_COLUMN,
+							    "cell-background-rgba", BGCOLOR_COLUMN,
 							    "markup", NAME_COLUMN,
 							    NULL);
 			g_signal_connect(G_OBJECT(rend), "editing-started", G_CALLBACK(gtk_blist_renderer_editing_started_cb), NULL);
@@ -5663,7 +5667,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			gtk_tree_view_column_set_attributes(column, rend,
 							    "markup", IDLE_COLUMN,
 							    "visible", IDLE_VISIBLE_COLUMN,
-							    "cell-background-gdk", BGCOLOR_COLUMN,
+							    "cell-background-rgba", BGCOLOR_COLUMN,
 							    NULL);
 		} else if (emblem == i) {
 			/* emblem */
@@ -5671,7 +5675,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			g_object_set(rend, "xalign", 1.0, "yalign", 0.5, "ypad", 0, "xpad", 3, NULL);
 			gtk_tree_view_column_pack_start(column, rend, FALSE);
 			gtk_tree_view_column_set_attributes(column, rend, "pixbuf", EMBLEM_COLUMN,
-									  "cell-background-gdk", BGCOLOR_COLUMN,
+									  "cell-background-rgba", BGCOLOR_COLUMN,
 									  "visible", EMBLEM_VISIBLE_COLUMN, NULL);
 
 		} else if (protocol_icon == i) {
@@ -5681,7 +5685,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			gtk_tree_view_column_set_attributes(column, rend,
 							   "pixbuf", PROTOCOL_ICON_COLUMN,
 							   "visible", PROTOCOL_ICON_VISIBLE_COLUMN,
-							   "cell-background-gdk", BGCOLOR_COLUMN,
+							   "cell-background-rgba", BGCOLOR_COLUMN,
 							  NULL);
 			g_object_set(rend, "xalign", 0.0, "xpad", 3, "ypad", 0, NULL);
 
@@ -5691,7 +5695,7 @@ pidgin_blist_build_layout(PurpleBuddyList *list)
 			g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 			gtk_tree_view_column_pack_start(column, rend, FALSE);
 			gtk_tree_view_column_set_attributes(column, rend, "pixbuf", BUDDY_ICON_COLUMN,
-							    "cell-background-gdk", BGCOLOR_COLUMN,
+							    "cell-background-rgba", BGCOLOR_COLUMN,
 							    "visible", BUDDY_ICON_VISIBLE_COLUMN,
 							    NULL);
 		}
@@ -5868,7 +5872,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	g_free(tmp);
 	label = gtk_label_new(NULL);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.2);
+	gtk_label_set_yalign(GTK_LABEL(label), 0.2);
 	gtk_label_set_markup(GTK_LABEL(label), pretty);
 	g_free(pretty);
 	gtk_notebook_append_page(GTK_NOTEBOOK(gtkblist->notebook),label, NULL);
@@ -5889,7 +5893,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	content_area = gtk_info_bar_get_content_area(GTK_INFO_BAR(infobar));
 	gtkblist->headline_image = gtk_image_new_from_pixbuf(NULL);
-	gtk_misc_set_alignment(GTK_MISC(gtkblist->headline_image), 0.5, 0.5);
+	gtk_widget_set_halign(gtkblist->headline_image, GTK_ALIGN_CENTER);
+	gtk_widget_set_valign(gtkblist->headline_image, GTK_ALIGN_CENTER);
 	gtkblist->headline_label = gtk_label_new(NULL);
 	gtk_label_set_line_wrap(GTK_LABEL(gtkblist->headline_label), TRUE);
 	gtk_box_pack_start(GTK_BOX(content_area), gtkblist->headline_image,
@@ -5922,7 +5927,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 						 GDK_TYPE_PIXBUF, /* Buddy icon */
 						 G_TYPE_BOOLEAN,  /* Buddy icon visible */
 						 G_TYPE_POINTER,  /* Node */
-						 GDK_TYPE_COLOR,  /* bgcolor */
+						 GDK_TYPE_RGBA,   /* bgcolor */
 						 G_TYPE_BOOLEAN,  /* Group expander */
 						 G_TYPE_BOOLEAN,  /* Group expander visible */
 						 G_TYPE_BOOLEAN,  /* Contact expander */
@@ -5939,7 +5944,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_widget_set_name(gtkblist->treeview, "pidgin_blist_treeview");
 
 	g_signal_connect(gtkblist->treeview,
-			 "style-set",
+			 "style-updated",
 			 G_CALLBACK(treeview_style_set), list);
 	/* Set up selection stuff */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));
@@ -6401,7 +6406,7 @@ static void pidgin_blist_update_group(PurpleBuddyList *list,
 		GtkTreeIter iter;
 		GtkTreePath *path;
 		gboolean expanded;
-		GdkColor *bgcolor = NULL;
+		GdkRGBA *bgcolor = NULL;
 		GdkPixbuf *avatar = NULL;
 		PidginBlistTheme *theme = NULL;
 
@@ -6508,7 +6513,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 {
 	PurplePresence *presence = purple_buddy_get_presence(buddy);
 	GdkPixbuf *status, *avatar, *emblem, *protocol_icon;
-	GdkColor *color = NULL;
+	GdkRGBA *color = NULL;
 	char *mark;
 	char *idle = NULL;
 	gboolean expanded = ((struct _pidgin_blist_node *)purple_blist_node_get_ui_data(node->parent))->contact_expanded;
@@ -6653,7 +6658,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 			GdkPixbuf *status;
 			gchar *mark, *tmp;
 			const gchar *fg_color, *font;
-			GdkColor *color = NULL;
+			GdkRGBA *color = NULL;
 			PidginBlistTheme *theme;
 			PidginThemeFont *pair;
 			gboolean selected = (gtkblist->selected_node == cnode);
@@ -6765,7 +6770,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		PidginBlistNode *ui;
 		PurpleConversation *conv;
 		gboolean hidden = FALSE;
-		GdkColor *bgcolor = NULL;
+		GdkRGBA *bgcolor = NULL;
 		PidginThemeFont *pair;
 		PidginBlistTheme *theme;
 		gboolean selected = (gtkblist->selected_node == node);

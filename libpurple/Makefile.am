@@ -30,20 +30,17 @@ EXTRA_DIST = \
 		win32/giowin32.c \
 		win32/win32dep.h
 
-if USE_GCONFTOOL
-GCONF_DIR=data/gconf
-endif
-
-SUBDIRS = $(GCONF_DIR) . plugins protocols tests example
+SUBDIRS = . plugins protocols tests example
 
 purple_coresources = \
 	account.c \
 	accounts.c \
 	accountopt.c \
 	blistnode.c \
-	blistnodetypes.c \
+	buddy.c \
 	buddylist.c \
 	buddyicon.c \
+	chat.c \
 	ciphers/aescipher.c \
 	ciphers/descipher.c \
 	ciphers/des3cipher.c \
@@ -58,13 +55,16 @@ purple_coresources = \
 	circularbuffer.c \
 	cmds.c \
 	connection.c \
+	contact.c \
 	conversation.c \
 	conversationtypes.c \
 	conversations.c \
 	core.c \
+	countingnode.c \
 	debug.c \
 	e2ee.c \
 	eventloop.c \
+	group.c \
 	http.c \
 	idle.c \
 	image.c \
@@ -93,6 +93,7 @@ purple_coresources = \
 	proxy.c \
 	protocol.c \
 	protocols.c \
+	purple-gio.c \
 	purple-socket.c \
 	queuedoutputstream.c \
 	request.c \
@@ -135,21 +136,25 @@ purple_coreheaders = \
 	accounts.h \
 	accountopt.h \
 	blistnode.h \
-	blistnodetypes.h \
+	buddy.h \
 	buddylist.h \
 	buddyicon.h \
+	chat.h \
 	cipher.h \
 	circularbuffer.h \
 	cmds.h \
 	connection.h \
+	contact.h \
 	conversation.h \
 	conversationtypes.h \
 	conversations.h \
 	core.h \
+	countingnode.h \
 	dbus-maybe.h \
 	debug.h \
 	e2ee.h \
 	eventloop.h \
+	group.h \
 	http.h \
 	idle.h \
 	image.h \
@@ -173,6 +178,7 @@ purple_coreheaders = \
 	proxy.h \
 	protocol.h \
 	protocols.h \
+	purple-gio.h \
 	purple-socket.h \
 	queuedoutputstream.h \
 	request.h \
@@ -309,7 +315,7 @@ dbus_sources  = dbus-server.c dbus-useful.c
 dbus_headers  = dbus-server.h dbus-bindings.h dbus-purple.h dbus-useful.h dbus-define-api.h dbus-types.h
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnode.h \
-                blistnodetypes.h buddylist.h buddyicon.h connection.h conversation.h \
+                buddy.h buddylist.h buddyicon.h connection.h conversation.h \
                 conversationtypes.h conversations.h core.h xfer.h log.h notify.h \
                 prefs.h presence.h roomlist.h savedstatuses.h smiley.h smiley-list.h \
 				status.h server.h util.h xmlnode.h protocol.h protocols.h
@@ -493,7 +499,7 @@ introspection_sources = \
 	$(addprefix media/, $(purple_mediaheaders))
 
 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpurple.la
-Purple_3_0_gir_INCLUDES = GObject-2.0
+Purple_3_0_gir_INCLUDES = Gio-2.0 GObject-2.0
 if PLUGINS
 Purple_3_0_gir_INCLUDES += GPlugin-0.0
 endif

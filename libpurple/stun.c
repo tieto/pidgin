@@ -312,7 +312,7 @@ hbn_listen_cb(int fd, gpointer data) {
 
 	sc->incb = purple_input_add(fd, PURPLE_INPUT_READ, reply_cb, sc);
 
-	address = G_INET_ADDRESS(ld->addresses->data);
+	address = g_object_ref(G_INET_ADDRESS(ld->addresses->data));
 	socket_address = g_inet_socket_address_new(address, ld->port);
 
 	g_socket_address_to_native(socket_address, &(sc->addr), g_socket_address_get_native_size(socket_address), NULL);

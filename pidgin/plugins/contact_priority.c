@@ -104,7 +104,8 @@ get_config_frame(PurplePlugin *plugin)
 		label = gtk_label_new_with_mnemonic(_(statuses[i].description));
 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 		gtk_size_group_add_widget(sg, label);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_label_set_xalign(GTK_LABEL(label), 0);
+		gtk_label_set_yalign(GTK_LABEL(label), 0);
 
 		adj = GTK_ADJUSTMENT(gtk_adjustment_new(purple_prefs_get_int(pref),
 		                                        -500, 500, 1, 1, 1));

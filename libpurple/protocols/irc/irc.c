@@ -32,7 +32,7 @@
 #include "notify.h"
 #include "protocol.h"
 #include "plugins.h"
-#include "tls-certificate.h"
+#include "purple-gio.h"
 #include "util.h"
 #include "version.h"
 
@@ -106,9 +106,8 @@ irc_flush_cb(GObject *source, GAsyncResult *res, gpointer data)
 			res, &error);
 
 	if (!result) {
-		purple_connection_g_error(gc, error,
-				_("Lost connection with server: %s"));
-		g_clear_error(&error);
+		g_prefix_error(&error, _("Lost connection with server: "));
+		purple_connection_take_error(gc, error);
 		return;
 	}
 }
@@ -286,16 +285,17 @@ static void irc_login(PurpleAccount *account)
 	char **userparts;
 	const char *username = purple_account_get_username(account);
 	GSocketClient *client;
-	GProxyResolver *resolver;
+	GError *error = NULL;
 
 	gc = purple_account_get_connection(account);
 	purple_connection_set_flags(gc, PURPLE_CONNECTION_FLAG_NO_NEWLINES |
 		PURPLE_CONNECTION_FLAG_NO_IMAGES);
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
-		purple_connection_error (gc,
+		purple_connection_take_error(gc, g_error_new_literal(
+			PURPLE_CONNECTION_ERROR,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-			_("IRC nick and server may not contain whitespace"));
+			_("IRC nick and server may not contain whitespace")));
 		return;
 	}
 
@@ -318,23 +318,16 @@ static void irc_login(PurpleAccount *account)
 
 	purple_connection_update_progress(gc, _("Connecting"), 1, 2);
 
-	if ((resolver = purple_proxy_get_proxy_resolver(account)) == NULL) {
-		/* Invalid proxy settings */
-		purple_connection_error (gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Unable to connect"));
+	client = purple_gio_socket_client_new(account, &error);
+
+	if (client == NULL) {
+		purple_connection_take_error(gc, error);
 		return;
 	}
 
-	client = g_socket_client_new();
-	g_socket_client_set_proxy_resolver(client, resolver);
-	g_object_unref(resolver);
-
 	/* Optionally use TLS if it's set in the account settings */
-	if (purple_account_get_bool(account, "ssl", FALSE)) {
-		g_socket_client_set_tls(client, TRUE);
-		purple_tls_certificate_attach_to_socket_client(client);
-	}
+	g_socket_client_set_tls(client,
+			purple_account_get_bool(account, "ssl", FALSE));
 
 	g_socket_client_connect_to_host_async(client, irc->server,
 			purple_account_get_int(account, "port",
@@ -426,9 +419,8 @@ irc_login_cb(GObject *source, GAsyncResult *res, gpointer user_data)
 			res, &error);
 
 	if (conn == NULL) {
-		purple_connection_g_error(gc, error,
-				_("Unable to connect: %s"));
-		g_clear_error(&error);
+		g_prefix_error(&error, _("Unable to connect: "));
+		purple_connection_take_error(gc, error);
 		return;
 	}
 
@@ -460,21 +452,16 @@ static void irc_close(PurpleConnection *gc)
 		g_clear_object(&irc->cancellable);
 	}
 
+	if (irc->conn != NULL) {
+		purple_gio_graceful_close(G_IO_STREAM(irc->conn),
+				G_INPUT_STREAM(irc->input),
+				G_OUTPUT_STREAM(irc->output));
+	}
+
 	g_clear_object(&irc->input);
 	g_clear_object(&irc->output);
+	g_clear_object(&irc->conn);
 
-	if (irc->conn != NULL) {
-		GError *error = NULL;
-
-		if (!g_io_stream_close(G_IO_STREAM(irc->conn), NULL, &error)) {
-			purple_debug_warning("irc",
-					"Error closing connection: %s",
-					error->message);
-			g_clear_error(&error);
-		}
-
-		g_clear_object(&irc->conn);
-	}
 	if (irc->timer)
 		purple_timeout_remove(irc->timer);
 	g_hash_table_destroy(irc->cmds);
@@ -602,14 +589,14 @@ irc_read_input_cb(GObject *source, GAsyncResult *res, gpointer data)
 			G_DATA_INPUT_STREAM(source), res, &len, &error);
 
 	if (line == NULL && error != NULL) {
-		purple_connection_g_error(gc, error,
-				_("Lost connection with server: %s"));
-		g_clear_error(&error);
+		g_prefix_error(&error, _("Lost connection with server: "));
+		purple_connection_take_error(gc, error);
 		return;
 	} else if (line == NULL) {
-		purple_connection_error (gc,
+		purple_connection_take_error(gc, g_error_new_literal(
+			PURPLE_CONNECTION_ERROR,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Server closed the connection"));
+			_("Server closed the connection")));
 		return;
 	}
 

@@ -4634,7 +4634,6 @@ gchar * purple_escape_js(const gchar *str)
 void purple_restore_default_signal_handlers(void)
 {
 #ifndef _WIN32
-#ifdef HAVE_SIGNAL_H
 	signal(SIGHUP, SIG_DFL);	/* 1: terminal line hangup */
 	signal(SIGINT, SIG_DFL);	/* 2: interrupt program */
 	signal(SIGQUIT, SIG_DFL);	/* 3: quit program */
@@ -4660,7 +4659,6 @@ void purple_restore_default_signal_handlers(void)
 	signal(SIGCHLD, SIG_DFL);	/* 20: child status has changed */
 	signal(SIGXCPU, SIG_DFL);	/* 24: exceeded CPU time limit */
 	signal(SIGXFSZ, SIG_DFL);	/* 25: exceeded file size limit */
-#endif /* HAVE_SIGNAL_H */
 #endif /* !_WIN32 */
 }
 

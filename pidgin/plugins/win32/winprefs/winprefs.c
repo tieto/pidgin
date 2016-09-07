@@ -236,7 +236,7 @@ static GtkWidget* get_config_frame(PurplePlugin *plugin) {
 	char *run_key_val;
 	char *tmp;
 
-	ret = gtk_vbox_new(FALSE, 18);
+	ret = gtk_box_new(GTK_ORIENTATION_VERTICAL, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
 
 	/* Autostart */

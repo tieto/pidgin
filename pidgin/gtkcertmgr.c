@@ -271,7 +271,6 @@ tls_peers_mgmt_export_cb(GtkWidget *button, gpointer data)
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	gchar *id;
-	gchar *path;
 	GError *error = NULL;
 
 	/* See if things are selected */

@@ -46,7 +46,6 @@ libpurple/connection.c
 libpurple/conversation.c
 libpurple/conversationtypes.c
 libpurple/data/gconf/purple.schemas.in
-libpurple/data/purple-url-handler.desktop.in
 libpurple/dbus-server.c
 libpurple/dbus-server.h
 libpurple/http.c
@@ -81,6 +80,7 @@ libpurple/protocols.c
 libpurple/protocols/bonjour/bonjour.c
 libpurple/protocols/bonjour/bonjour.h
 libpurple/protocols/bonjour/jabber.c
+libpurple/protocols/bonjour/mdns_dns_sd.c
 libpurple/protocols/facebook/api.c
 libpurple/protocols/facebook/facebook.c
 libpurple/protocols/facebook/http.c

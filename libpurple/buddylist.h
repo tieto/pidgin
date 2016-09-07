@@ -31,7 +31,7 @@
 
 /* I can't believe I let ChipX86 inspire me to write good code. -Sean */
 
-#include "blistnodetypes.h"
+#include "buddy.h"
 
 #define PURPLE_TYPE_BUDDY_LIST             (purple_buddy_list_get_type())
 #define PURPLE_BUDDY_LIST(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_BUDDY_LIST, PurpleBuddyList))
@@ -48,6 +48,8 @@ typedef struct _PurpleBuddyListClass  PurpleBuddyListClass;
 typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
 
 #define PURPLE_BLIST_DEFAULT_GROUP_NAME _("Buddies")
+
+#include "chat.h"
 
 /**************************************************************************/
 /* Data Structures                                                        */

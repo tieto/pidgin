@@ -40,9 +40,6 @@
 /* Define if you have the external 'altzone' variable. */
 /* #undef HAVE_ALTZONE */
 
-/* Define to 1 if you have the `atexit' function. */
-#define HAVE_ATEXIT 1
-
 /* Define to 1 if you have the `bind_textdomain_codeset' function. */
 /* #undef HAVE_BIND_TEXTDOMAIN_CODESET */
 
@@ -150,26 +147,11 @@
 /* Define to 1 if you have the `socket' library (-lsocket). */
 /* #undef HAVE_LIBSOCKET */
 
-/* Define to 1 if you have the <locale.h> header file. */
-#define HAVE_LOCALE_H 1
-
-/* Define to 1 if you have the `lrand48' function. */
-/* #define HAVE_LRAND48 1 */
-
 /* Define to 1 if you have the <malloc.h> header file. */
 #define HAVE_MALLOC_H 1
 
 /* Define if we have support for application media type. */
 /* #undef HAVE_MEDIA_APPLICATION */
-
-/* Define to 1 if you have the `memcpy' function. */
-#define HAVE_MEMCPY 1
-
-/* Define to 1 if you have the `memmove' function. */
-#define HAVE_MEMMOVE 1
-
-/* Define to 1 if you have the <memory.h> header file. */
-#define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the `mono_jit_init' function. */
 /* #undef HAVE_MONO_JIT_INIT */
@@ -213,17 +195,8 @@
 /* Define to 1 if you have the <prio.h> header file. */
 /* #undef HAVE_PRIO_H */
 
-/* Define to 1 if you have the `random' function. */
-/* #define HAVE_RANDOM 1 */
-
-/* Define to 1 if you have the `setlocale' function. */
-#define HAVE_SETLOCALE 1
-
 /* Define to 1 if you have the <sgtty.h> header file. */
 /* #define HAVE_SGTTY_H 1 */
-
-/* Define to 1 if you have the <signal.h> header file. */
-/* #define HAVE_SIGNAL_H 1 */
 
 /* Define if we have silcmime.h */
 #define HAVE_SILCMIME_H 1
@@ -240,35 +213,17 @@
 /* Define to 1 if you have the <ssl.h> header file. */
 /* #undef HAVE_SSL_H */
 
-/* Define to 1 if you have the <stdarg.h> header file. */
-#define HAVE_STDARG_H 1
-
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
 
-/* Define to 1 if you have the <stdlib.h> header file. */
-#define HAVE_STDLIB_H 1
-
-/* Define to 1 if you have the `strchr' function. */
-#define HAVE_STRCHR 1
-
 /* Define to 1 if you have the `strdup' function. */
 #define HAVE_STRDUP 1
-
-/* Define to 1 if you have the `strerror' function. */
-#define HAVE_STRERROR 1
 
 /* Define to 1 if you have a strftime() that supports the %z format string. */
 /* #undef HAVE_STRFTIME_Z_FORMAT */
 
 /* Define to 1 if you have the <strings.h> header file. */
 #define HAVE_STRINGS_H 1
-
-/* Define to 1 if you have the <string.h> header file. */
-#define HAVE_STRING_H 1
-
-/* Define to 1 if you have the `strstr' function. */
-#define HAVE_STRSTR 1
 
 /* Define if struct sockaddr has an sa_len member */
 /* #undef HAVE_STRUCT_SOCKADDR_SA_LEN */
@@ -347,9 +302,6 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 /*#define HAVE_UNISTD_H 1*/
 
-/* Define to 1 if you have the `vprintf' function. */
-#define HAVE_VPRINTF 1
-
 /* Define to 1 if you have X11 */
 /* #define HAVE_X11 1 */
 
@@ -411,9 +363,6 @@
 #ifndef STATIC_PROTO_INIT
 #define STATIC_PROTO_INIT static void static_proto_init(void) {  }
 #endif
-
-/* Define to 1 if you have the ANSI C header files. */
-#define STDC_HEADERS 1
 
 /* Use GStreamer for playing sounds */
 /* It's defined in global.mak. */

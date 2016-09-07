@@ -520,16 +520,11 @@ static void run_editor (MMConversation *mmconv)
 
 static void kill_editor (MMConversation *mmconv)
 {
-#ifdef HAVE_SIGNAL_H
 	if (mmconv->pid)
 	{
 		kill(mmconv->pid, SIGINT);
 		mmconv->pid = 0;
 	}
-#else
-	purple_debug_warning("musicmessaging",
-		"kill() is not supported on this platform");
-#endif
 }
 
 static void init_conversation (PurpleConversation *conv)

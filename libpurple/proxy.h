@@ -331,6 +331,7 @@ void purple_proxy_connect_cancel_with_handle(void *handle);
 /**
  * purple_proxy_get_proxy_resolver:
  * @account: The account for which to get the proxy resolver.
+ * @error: Return location for a GError, or NULL.
  *
  * Returns a #GProxyResolver capable of resolving which proxy
  * to use for this account, if any. This object can be given to a
@@ -341,7 +342,8 @@ void purple_proxy_connect_cancel_with_handle(void *handle);
  *         account's (or system) proxy settings, or a reference to
  *         a #GProxyResolver on success.
  */
-GProxyResolver *purple_proxy_get_proxy_resolver(PurpleAccount *account);
+GProxyResolver *purple_proxy_get_proxy_resolver(PurpleAccount *account,
+		GError **error);
 
 G_END_DECLS
 

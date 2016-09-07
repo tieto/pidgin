@@ -284,9 +284,7 @@ init_libpurple(int argc, char **argv)
 	textdomain(PACKAGE);
 #endif
 
-#ifdef HAVE_SETLOCALE
 	setlocale(LC_ALL, "");
-#endif
 
 	/* scan command-line options */
 	opterr = 1;

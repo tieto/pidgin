@@ -151,8 +151,8 @@ void gnt_window_set_maximize(GntWindow *window, GntWindowFlags maximize);
  */
 GntWindowFlags gnt_window_get_maximize(GntWindow *window);
 
-void gnt_window_workspace_hiding(GntWindow *);
-void gnt_window_workspace_showing(GntWindow *);
+void gnt_window_workspace_hiding(GntWindow *window);
+void gnt_window_workspace_showing(GntWindow *window);
 
 G_END_DECLS
 

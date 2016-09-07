@@ -61,7 +61,7 @@ struct _GntWSClass
 {
 	GntBindableClass parent;
 
-	void (*draw_taskbar)(GntWS *ws, gboolean );
+	void (*draw_taskbar)(GntWS *ws, gboolean reposition);
 
 	void (*res1)(void);
 	void (*res2)(void);

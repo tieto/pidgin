@@ -46,6 +46,16 @@
  */
 typedef struct _PurpleTlsCertificateInfo PurpleTlsCertificateInfo;
 
+#define PURPLE_TYPE_TLS_CERTIFICATE_INFO \
+		(purple_tls_certificate_info_get_type())
+
+/**
+ * purple_tls_certificate_info_get_type:
+ *
+ * Returns: The #GType for the #PurpleTlsCertificateInfo boxed structure.
+ */
+GType purple_tls_certificate_info_get_type(void);
+
 /**
  * purple_tls_certificate_get_info:
  * @certificate: Certificate from which to parse the info
@@ -95,7 +105,7 @@ purple_tls_certificate_info_get_subject_name(PurpleTlsCertificateInfo *info);
  *
  * Returns the SHA1 fingerprint of the cert
  *
- * Returns: The SHA1 fingerprint of the cert
+ * Returns: (transfer full): The SHA1 fingerprint of the cert
  */
 GByteArray *
 purple_tls_certificate_get_fingerprint_sha1(GTlsCertificate *certificate);
