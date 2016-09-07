@@ -1229,6 +1229,7 @@ purple_media_manager_get_element_info(PurpleMediaManager *manager,
 	GList *iter;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
+	g_return_val_if_fail(id != NULL, NULL);
 
 	iter = manager->priv->elements;
 
