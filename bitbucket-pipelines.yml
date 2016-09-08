@@ -5,11 +5,6 @@ pipelines:
     - step:
         script:
           - set -ex
-          - wget -O - "https://packagecloud.io/pidgin/experimental/gpgkey" | apt-key add -
-          - echo "deb https://packagecloud.io/pidgin/experimental/debian/ stretch main" > /etc/apt/sources.list.d/gplugin.list
-          - apt-get update
-          - apt-get install -y libgplugin-dev
           - ./autogen.sh --disable-kwallet --disable-meanwhile --enable-debug --disable-avahi --enable-gtk-doc
-          - make -s -j$(cat /proc/cpuinfo | egrep "^processor\s+:" | wc -l)
-          - make check -s -j$(cat /proc/cpuinfo | egrep "^processor\s+:" | wc -l)
+          - make distcheck -s -j$(cat /proc/cpuinfo | egrep "^processor\s+:" | wc -l)
 
