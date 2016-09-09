@@ -6,5 +6,7 @@ pipelines:
         script:
           - set -ex
           - ./autogen.sh --disable-kwallet --disable-meanwhile --enable-debug --disable-avahi --enable-gtk-doc
-          - make distcheck -s -j$(cat /proc/cpuinfo | egrep "^processor\s+:" | wc -l)
+          - CPUS=$(cat /proc/cpuinfo | egrep "^processor\s+:" | wc -l)
+          - make -s -j${CPUS}
+          - make -s -j${CPUS} check
 
