@@ -90,6 +90,12 @@ typedef enum
 
 /**
  * PurpleSoundUiOps:
+ * @init: Called when the UI should initialize sound
+ * @uninit: Called when the UI should teardown sound
+ * @play_file: Called when a file should be played.
+ *             <sbr/>@filename: The filename to play
+ * @play_event: Called when a sound event should be played.
+ *              <sbr/>@event: The #@PurpleSoundEventID to play
  *
  * Operations used by the core to request that particular sound files, or the
  * sound associated with a particular event, should be played.

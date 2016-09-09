@@ -78,6 +78,8 @@ int  purple_serv_send_im(PurpleConnection *gc, PurpleMessage *msg);
 
 /**
  * purple_get_attention_type_from_code:
+ * @account: The #PurpleAccount
+ * @type_code: The protocol specific attention type code to convert
  *
  * Get information about an account's attention commands, from the protocol.
  *
@@ -254,6 +256,10 @@ void purple_serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 
 /**
  * purple_serv_got_typing_stopped:
+ * @gc: The #PurpleConnection
+ * @name: The name of the person that stopped typing.
+ *
+ * Called from a protocol when it has recieved a type stopped.
  *
  * @todo Could probably move this into the conversation API.
  */
@@ -265,6 +271,7 @@ void purple_serv_got_typing_stopped(PurpleConnection *gc, const char *name);
  * @who:    The username of the buddy that sent the message.
  * @msg:    The actual message received.
  * @flags:  The flags applicable to this message.
+ * @mtime:  The timestamp of the message.
  *
  * This function is called by the protocol when it receives an IM message.
  */
@@ -273,6 +280,7 @@ void purple_serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 /**
  * purple_serv_join_chat:
+ * @gc:   The #PurpleConnection
  * @data: The hash function should be g_str_hash() and the equal
  *             function should be g_str_equal().
  */
@@ -280,6 +288,7 @@ void purple_serv_join_chat(PurpleConnection *gc, GHashTable *data);
 
 /**
  * purple_serv_reject_chat:
+ * @gc: The #PurpleConnection 
  * @data: The hash function should be g_str_hash() and the equal
  *             function should be g_str_equal().
  */
@@ -350,7 +359,7 @@ void purple_serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 
 /**
  * purple_serv_send_file:
- * @g:      The connection on which the message was received.
+ * @gc:     The connection on which the message was received.
  * @who:    The name of the user to who send the file.
  * @file:   The filename to send.
  *

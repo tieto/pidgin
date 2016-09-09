@@ -63,11 +63,6 @@ struct _PurpleCountingNode {
 	PurpleBlistNode node;
 };
 
-/**
- * PurpleCountingNodeClass:
- *
- * The base class for all #PurpleCountingNode's.
- */
 struct _PurpleCountingNodeClass {
 	PurpleBlistNodeClass node_class;
 

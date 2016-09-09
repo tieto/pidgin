@@ -40,9 +40,9 @@ typedef void (*PurpleSignalMarshalFunc)(PurpleCallback cb, va_list args,
 
 G_BEGIN_DECLS
 
-/**************************************************************************/
-/* Signal API                                                             */
-/**************************************************************************/
+/******************************************************************************
+ * Signal API
+ *****************************************************************************/
 
 /**
  * PURPLE_SIGNAL_PRIORITY_DEFAULT:
@@ -247,6 +247,7 @@ void purple_signals_disconnect_by_handle(void *handle);
  * purple_signal_emit:
  * @instance: The instance emitting the signal.
  * @signal:   The signal being emitted.
+ * @...:      The arguments to pass to the callbacks.
  *
  * Emits a signal.
  *
@@ -270,6 +271,7 @@ void purple_signal_emit_vargs(void *instance, const char *signal, va_list args);
  * purple_signal_emit_return_1:
  * @instance: The instance emitting the signal.
  * @signal:   The signal being emitted.
+ * @...:      The arguments to pass to the callbacks.
  *
  * Emits a signal and returns the first non-NULL return value.
  *
