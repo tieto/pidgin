@@ -622,3 +622,11 @@ Some time later:
 (02:48:27 AM) user left the room.
 (02:49:04 AM) darkrain42: Wow. (again)
 
+--
+
+(13:34:15) elb: I think when 3.0 gets closer we should have a long string freeze and beg for active translations
+(13:34:57) maiku: Probably not unwise as much a such terms make me cringe :-D
+(13:35:09) dx: bonus points for not forgetting that there's a string freeze during the string freeze
+(13:35:18) *** dx sets low standards
+(13:35:33) maiku: Well now you're just taking the fun out of it :-D
+(13:36:06) dx: i don't think string freezes are supposed to be fun
