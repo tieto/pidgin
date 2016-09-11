@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 
-export DEB_BUILD_HARDENING=1
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+include /usr/share/dpkg/buildflags.mk
 
 include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/autoreconf.mk
@@ -46,8 +47,11 @@ DEB_INSTALL_MANPAGES_pidgin-dev := debian/dh_pidgin.1
 clean::
 	rm -f debian/copyright
 
-makebuilddir/pidgin::
-	touch configure # We don't want to regenerate autotools files
+configure/libpurple0::
+	# Fix build failure with full hardening flags:
+	sed -i -e 's/-fPIE//g' -e 's/-pie//g' \
+		build/libpurple/plugins/perl/common/Makefile.PL \
+		build/pidgin/plugins/perl/common/Makefile.PL \
 
 common-install-impl::
 	rm -f debian/tmp/usr/lib/pidgin/relnot.so # release notification plugin
