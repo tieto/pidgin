@@ -94,7 +94,6 @@ purple_coresources = \
 	protocol.c \
 	protocols.c \
 	purple-gio.c \
-	purple-socket.c \
 	queuedoutputstream.c \
 	request.c \
 	request-datasheet.c \
@@ -179,7 +178,6 @@ purple_coreheaders = \
 	protocol.h \
 	protocols.h \
 	purple-gio.h \
-	purple-socket.h \
 	queuedoutputstream.h \
 	request.h \
 	request-datasheet.h \

@@ -51,7 +51,6 @@
       <xi:include href="xml/eventloop.xml" />
       <xi:include href="xml/group.xml" />
       <xi:include href="xml/xfer.xml" />
-      <xi:include href="xml/purple-socket.xml" />
       <xi:include href="xml/http.xml" />
       <xi:include href="xml/idle.xml" />
       <xi:include href="xml/keyring.xml" />
