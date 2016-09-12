@@ -71,12 +71,14 @@ ggp_tcpsocket_connected(GObject *source, GAsyncResult *res, gpointer user_data)
 			res, &error);
 
 	if (conn == NULL) {
-		if (!g_error_matches(error,
-				G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-			purple_debug_error("gg", "socket failed to connect: %s",
-					error->message);
+		if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+			/* The connection was already closed, return now */
+			g_clear_error(&error);
+			return;
 		}
 
+		purple_debug_error("gg", "socket failed to connect: %s",
+				error->message);
 		g_clear_error(&error);
 	} else {
 		data->conn = conn;
@@ -88,7 +90,19 @@ ggp_tcpsocket_connected(GObject *source, GAsyncResult *res, gpointer user_data)
 		}
 	}
 
-	PURPLE_ASSERT_CONNECTION_IS_VALID(data->gc);
+	/* XXX: For some reason if you try to connect and then immediately
+	 * disconnect, this gets into a state where ggp_tcpsocket_close()
+	 * isn't called. The cancellable is therefore not cancelled, and
+	 * the connection is never closed. Guard against that state here.
+	 */
+	if (data->gc == NULL ||
+			!g_list_find(purple_connections_get_all(), data->gc)) {
+		purple_debug_error("gg",
+				"disconnected without closing connection: %p",
+				data);
+		ggp_tcp_socket_data_free(data);
+		return;
+	}
 
 	if (!gg_socket_manager_connected(data, data->priv_gg, fd)) {
 		purple_debug_error("gg", "socket not handled");
