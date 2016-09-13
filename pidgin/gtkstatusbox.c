@@ -412,7 +412,7 @@ setup_icon_box(PidginStatusBox *status_box)
 		PurpleImage *img = NULL;
 
 		if (filename && *filename)
-			img = purple_image_new_from_file(filename, TRUE);
+			img = purple_image_new_from_file(filename);
 
 		pidgin_status_box_set_buddy_icon(status_box, img);
 		if (img)
@@ -1450,7 +1450,7 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 
 		/* Even if no accounts were processed, load the icon that was set. */
 		if (filename != NULL)
-			img = purple_image_new_from_file(filename, TRUE);
+			img = purple_image_new_from_file(filename);
 	}
 
 	pidgin_status_box_set_buddy_icon(box, img);

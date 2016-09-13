@@ -562,7 +562,7 @@ do_insert_image_cb(GtkWidget *widget, int response, PidginWebViewToolbar *toolba
 	if (filename == NULL)
 		return;
 
-	img = purple_image_new_from_file(filename, TRUE);
+	img = purple_image_new_from_file(filename);
 
 	if (!img) {
 		gchar *buf = g_strdup_printf(_("Failed to store image: %s"),

@@ -169,7 +169,7 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 	g_hash_table_insert(priv->shortcut_map, g_strdup(shortcut), smiley);
 
 	smiley_img = purple_smiley_get_image(smiley);
-	if (priv->drop_failed_remotes && !purple_image_is_ready(smiley_img)) {
+	if (priv->drop_failed_remotes) {
 		g_object_set_data(G_OBJECT(smiley_img),
 			"purple-smiley-list-smiley", smiley);
 		g_signal_connect_object(smiley_img, "failed",

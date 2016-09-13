@@ -149,14 +149,8 @@ scrncap_pixbuf_to_image(GdkPixbuf *pixbuf)
 		return NULL;
 	}
 
-	if (purple_image_is_ready(image)) {
-		if (purple_image_get_extension(image) == NULL) {
-			purple_debug_error("screencap", "Invalid image format");
-			g_object_unref(image);
-			return NULL;
-		}
-	} else {
-		purple_debug_error("screencap", "Image is not ready");
+	if (purple_image_get_extension(image) == NULL) {
+		purple_debug_error("screencap", "Invalid image format");
 		g_object_unref(image);
 		return NULL;
 	}

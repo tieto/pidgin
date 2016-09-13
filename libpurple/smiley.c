@@ -63,7 +63,7 @@ purple_smiley_new(const gchar *shortcut, const gchar *path)
 		NULL);
 	priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
 
-	priv->image = purple_image_new_from_file(path, FALSE);
+	priv->image = purple_image_new_from_file(path);
 	if (!priv->image) {
 		purple_debug_error("smiley", "Couldn't load smiley data ");
 		g_object_unref(smiley);

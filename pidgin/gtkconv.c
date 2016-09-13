@@ -4181,7 +4181,7 @@ _pidgin_e2ee_stock_icon_get(const gchar *stock_name)
 	g_snprintf(filename, sizeof(filename), "%s.png", stock_name);
 	path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
 		"e2ee", "16", filename, NULL);
-	image = purple_image_new_from_file(path, FALSE);
+	image = purple_image_new_from_file(path);
 	g_free(path);
 
 	g_hash_table_insert(e2ee_stock, g_strdup(stock_name), image);
@@ -6593,11 +6593,14 @@ box_remote_image_cb(const GMatchInfo *info, GString *result, gpointer _conv)
 
 	full = g_match_info_fetch(info, 0);
 
+#warning fix this
+#if 0
 	if (purple_image_is_ready(image)) {
 		g_string_append(result, full);
 		g_free(full);
 		return FALSE;
 	}
+#endif
 
 	/* search for alt */
 	alt = strstr(full, "alt=\"");

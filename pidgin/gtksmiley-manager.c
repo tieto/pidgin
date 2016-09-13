@@ -163,7 +163,7 @@ edit_dialog_image_choosen(const char *filename, gpointer _edit_dialog)
 	if (!filename)
 		return;
 
-	image = purple_image_new_from_file(filename, TRUE);
+	image = purple_image_new_from_file(filename);
 	if (!image)
 		return;
 
@@ -506,7 +506,7 @@ smiley_list_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			return;
 		}
 
-		image = purple_image_new_from_file(filename, TRUE);
+		image = purple_image_new_from_file(filename);
 		if (!image) {
 			purple_debug_warning("gtksmiley-manager",
 				"dropped file is not a valid image");

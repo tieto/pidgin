@@ -30,176 +30,145 @@
 
 typedef struct {
 	gchar *path;
-	GString *contents;
+
+	GBytes *contents;
 
 	const gchar *extension;
 	const gchar *mime;
 	gchar *gen_filename;
 	gchar *friendly_filename;
-
-	gboolean is_ready;
-	gboolean has_failed;
 } PurpleImagePrivate;
 
-enum
-{
+enum {
 	PROP_0,
-	PROP_IS_READY,
-	PROP_HAS_FAILED,
 	PROP_LAST
 };
 
-enum
-{
-	SIG_READY,
-	SIG_FAILED,
-	SIG_LAST
-};
-
 static GObjectClass *parent_class;
-static guint signals[SIG_LAST];
 static GParamSpec *properties[PROP_LAST];
 
 /******************************************************************************
- * Internal logic
+ * Object stuff
  ******************************************************************************/
+static void
+purple_image_init(PurpleImage *image) {
+}
 
 static void
-has_failed(PurpleImage *image)
+purple_image_finalize(GObject *obj) {
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(obj);
+
+	g_bytes_unref(priv->contents);
+
+	g_free(priv->path);
+	g_free(priv->gen_filename);
+	g_free(priv->friendly_filename);
+
+	G_OBJECT_CLASS(parent_class)->finalize(obj);
+}
+
+static void
+purple_image_set_property(GObject *object, guint par_id,
+                          const GValue *value, GParamSpec *pspec)
 {
-	gboolean ready_changed;
-	PurpleImagePrivate *priv;
-	priv = PURPLE_IMAGE_GET_PRIVATE(image);
-
-	g_return_if_fail(!priv->has_failed);
-
-	priv->has_failed = TRUE;
-	ready_changed = (priv->is_ready != FALSE);
-	priv->is_ready = FALSE;
-
-	if (priv->contents) {
-		g_string_free(priv->contents, TRUE);
-		priv->contents = NULL;
+	switch (par_id) {
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
+			break;
 	}
+}
 
-	if (ready_changed) {
-		g_object_notify_by_pspec(G_OBJECT(image),
-			properties[PROP_IS_READY]);
+static void
+purple_image_get_property(GObject *object, guint par_id, GValue *value,
+                          GParamSpec *pspec)
+{
+	switch (par_id) {
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
+			break;
 	}
-	g_object_notify_by_pspec(G_OBJECT(image), properties[PROP_HAS_FAILED]);
-	g_signal_emit(image, signals[SIG_FAILED], 0);
 }
 
 static void
-became_ready(PurpleImage *image)
-{
-	PurpleImagePrivate *priv;
-	priv = PURPLE_IMAGE_GET_PRIVATE(image);
+purple_image_class_init(PurpleImageClass *klass) {
+	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
 
-	g_return_if_fail(!priv->has_failed);
-	g_return_if_fail(!priv->is_ready);
+	parent_class = g_type_class_peek_parent(klass);
 
-	priv->is_ready = TRUE;
+	gobj_class->finalize = purple_image_finalize;
+	gobj_class->get_property = purple_image_get_property;
+	gobj_class->set_property = purple_image_set_property;
 
-	g_object_notify_by_pspec(G_OBJECT(image), properties[PROP_IS_READY]);
-	g_signal_emit(image, signals[SIG_READY], 0);
+	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
 }
 
-static void
-steal_contents(PurpleImagePrivate *priv, gpointer data, gsize length)
-{
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(priv->contents == NULL);
-	g_return_if_fail(data != NULL);
-	g_return_if_fail(length > 0);
-
-	priv->contents = g_string_new(NULL);
-	g_free(priv->contents->str);
-	priv->contents->str = data;
-	priv->contents->len = priv->contents->allocated_len = length;
-}
-
-static void
-fill_data(PurpleImage *image)
-{
-	PurpleImagePrivate *priv;
-	GError *error = NULL;
-	gchar *contents;
-	gsize length;
-
-	priv = PURPLE_IMAGE_GET_PRIVATE(image);
-	if (priv->contents)
-		return;
-
-	if (!priv->is_ready)
-		return;
-
-	g_return_if_fail(priv->path);
-	(void)g_file_get_contents(priv->path, &contents, &length, &error);
-	if (error) {
-		purple_debug_error("image", "failed to read '%s' image: %s",
-			priv->path, error->message);
-		g_error_free(error);
-
-		has_failed(image);
-		return;
-	}
-
-	steal_contents(priv, contents, length);
-}
-
+G_DEFINE_TYPE_WITH_PRIVATE(PurpleImage, purple_image, G_TYPE_OBJECT);
 
 /******************************************************************************
- * API implementation
+ * API
  ******************************************************************************/
-
 PurpleImage *
-purple_image_new_from_file(const gchar *path, gboolean be_eager)
-{
-	PurpleImagePrivate *priv;
-	PurpleImage *img;
-
-	g_return_val_if_fail(path != NULL, NULL);
-	g_return_val_if_fail(g_file_test(path, G_FILE_TEST_EXISTS), NULL);
-
-	img = g_object_new(PURPLE_TYPE_IMAGE, NULL);
-	purple_image_set_friendly_filename(img, path);
-	priv = PURPLE_IMAGE_GET_PRIVATE(img);
-	priv->path = g_strdup(path);
-
-	if (be_eager) {
-		fill_data(img);
-		if (!priv->contents) {
-			g_object_unref(img);
-			return NULL;
-		}
-
-		g_assert(priv->is_ready && !priv->has_failed);
-	}
-
-	return img;
+purple_image_new_from_bytes(GBytes *bytes, GError **error) {
+	return g_object_new(
+		PURPLE_TYPE_IMAGE,
+		NULL
+	);
 }
 
 PurpleImage *
-purple_image_new_from_data(gpointer data, gsize length)
-{
-	PurpleImage *img;
-	PurpleImagePrivate *priv;
+purple_image_new_from_file(const gchar *path) {
+	PurpleImage *image = NULL;
+	GBytes *bytes = NULL;
+	gchar *contents = NULL;
+	gsize length = 0;
 
-	g_return_val_if_fail(data != NULL, NULL);
-	g_return_val_if_fail(length > 0, NULL);
+	if(!g_file_test(path, G_FILE_TEST_EXISTS)) {
+		return NULL;
+	}
 
-	img = g_object_new(PURPLE_TYPE_IMAGE, NULL);
-	priv = PURPLE_IMAGE_GET_PRIVATE(img);
+	if(!g_file_get_contents(path, &contents, &length, NULL)) {
+		return NULL;
+	}
 
-	steal_contents(priv, data, length);
+	bytes = g_bytes_new_take(contents, length);
 
-	return img;
+	image = purple_image_new_from_bytes(bytes, NULL);
+
+	g_bytes_unref(bytes);
+
+	return image;
+}
+
+PurpleImage *
+purple_image_new_from_data(const guint8 *data, gsize length) {
+	PurpleImage *image;
+	GBytes *bytes = NULL;
+
+	bytes = g_bytes_new(data, length);
+
+	image = purple_image_new_from_bytes(bytes, NULL);
+
+	g_bytes_unref(bytes);
+
+	return image;
+}
+
+PurpleImage *
+purple_image_new_from_data_take(guint8 *data, gsize length) {
+	PurpleImage *image;
+	GBytes *bytes = NULL;
+
+	bytes = g_bytes_new(data, length);
+
+	image = purple_image_new_from_bytes(bytes, NULL);
+
+	g_bytes_unref(bytes);
+
+	return image;
 }
 
 gboolean
-purple_image_save(PurpleImage *image, const gchar *path)
-{
+purple_image_save(PurpleImage *image, const gchar *path) {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
 	gconstpointer data;
 	gsize len;
@@ -223,8 +192,7 @@ purple_image_save(PurpleImage *image, const gchar *path)
 }
 
 const gchar *
-purple_image_get_path(PurpleImage *image)
-{
+purple_image_get_path(PurpleImage *image) {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
 
 	g_return_val_if_fail(priv != NULL, NULL);
@@ -232,58 +200,30 @@ purple_image_get_path(PurpleImage *image)
 	return priv->path;
 }
 
-gboolean
-purple_image_is_ready(PurpleImage *image)
-{
-	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
-
-	g_return_val_if_fail(priv != NULL, FALSE);
-
-	return priv->is_ready;
-}
-
-gboolean
-purple_image_has_failed(PurpleImage *image)
-{
-	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
-
-	g_return_val_if_fail(priv != NULL, TRUE);
-
-	return priv->has_failed;
-}
-
 gsize
-purple_image_get_size(PurpleImage *image)
-{
+purple_image_get_size(PurpleImage *image) {
 	PurpleImagePrivate *priv;
+
+	g_return_val_if_fail(PURPLE_IS_IMAGE(image), 0);
+
 	priv = PURPLE_IMAGE_GET_PRIVATE(image);
 
-	g_return_val_if_fail(priv != NULL, 0);
-	g_return_val_if_fail(priv->is_ready, 0);
-
-	fill_data(image);
-	g_return_val_if_fail(priv->contents, 0);
-
-	return priv->contents->len;
+	return g_bytes_get_size(priv->contents);
 }
 
 gconstpointer
-purple_image_get_data(PurpleImage *image)
-{
-	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+purple_image_get_data(PurpleImage *image) {
+	PurpleImagePrivate *priv = NULL;
 
-	g_return_val_if_fail(priv != NULL, NULL);
-	g_return_val_if_fail(priv->is_ready, NULL);
+	g_return_val_if_fail(PURPLE_IS_IMAGE(image), NULL);
 
-	fill_data(image);
-	g_return_val_if_fail(priv->contents, NULL);
+	priv = PURPLE_IMAGE_GET_PRIVATE(image);
 
-	return priv->contents->str;
+	return g_bytes_get_data(priv->contents, NULL);
 }
 
 const gchar *
-purple_image_get_extension(PurpleImage *image)
-{
+purple_image_get_extension(PurpleImage *image) {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
 	gconstpointer data;
 
@@ -317,8 +257,7 @@ purple_image_get_extension(PurpleImage *image)
 }
 
 const gchar *
-purple_image_get_mimetype(PurpleImage *image)
-{
+purple_image_get_mimetype(PurpleImage *image) {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
 	const gchar *ext = purple_image_get_extension(image);
 
@@ -346,8 +285,7 @@ purple_image_get_mimetype(PurpleImage *image)
 }
 
 const gchar *
-purple_image_generate_filename(PurpleImage *image)
-{
+purple_image_generate_filename(PurpleImage *image) {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
 	gconstpointer data;
 	gsize len;
@@ -375,8 +313,7 @@ purple_image_generate_filename(PurpleImage *image)
 }
 
 void
-purple_image_set_friendly_filename(PurpleImage *image, const gchar *filename)
-{
+purple_image_set_friendly_filename(PurpleImage *image, const gchar *filename) {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
 	gchar *newname;
 	const gchar *escaped;
@@ -400,223 +337,33 @@ purple_image_set_friendly_filename(PurpleImage *image, const gchar *filename)
 }
 
 const gchar *
-purple_image_get_friendly_filename(PurpleImage *image)
-{
-	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+purple_image_get_friendly_filename(PurpleImage *image) {
+	PurpleImagePrivate *priv = NULL;
 
-	g_return_val_if_fail(priv != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_IMAGE(image), NULL);
 
-	if (G_UNLIKELY(!priv->friendly_filename)) {
-		const gchar *newname = purple_image_generate_filename(image);
-		gsize newname_len = strlen(newname);
+	priv = PURPLE_IMAGE_GET_PRIVATE(image);
 
-		if (newname_len < 10)
-			return NULL;
-
-		/* let's use last 6 characters from checksum + 4 characters
-		 * from file ext */
-		newname += newname_len - 10;
-		priv->friendly_filename = g_strdup(newname);
+	if(priv->friendly_filename) {
+		return priv->friendly_filename;
 	}
 
-	if (G_UNLIKELY(priv->is_ready &&
-		strchr(priv->friendly_filename, '.') == NULL))
-	{
-		const gchar *ext = purple_image_get_extension(image);
-		gchar *tmp;
-		if (!ext)
-			return priv->friendly_filename;
-
-		tmp = g_strdup_printf("%s.%s", priv->friendly_filename, ext);
-		g_free(priv->friendly_filename);
-		priv->friendly_filename = tmp;
-	}
-
-	return priv->friendly_filename;
+	return purple_image_get_friendly_filename(image);
 }
 
 PurpleImage *
-purple_image_transfer_new(void)
-{
-	PurpleImage *img;
-	PurpleImagePrivate *priv;
-
-	img = g_object_new(PURPLE_TYPE_IMAGE, NULL);
-	priv = PURPLE_IMAGE_GET_PRIVATE(img);
-
-	priv->is_ready = FALSE;
-	priv->contents = g_string_new(NULL);
-
-	return img;
+purple_image_transfer_new(void) {
+	return NULL;
 }
 
 void
-purple_image_transfer_write(PurpleImage *image, gconstpointer data,
-	gsize length)
-{
-	PurpleImagePrivate *priv =
-		PURPLE_IMAGE_GET_PRIVATE(image);
-
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(!priv->has_failed);
-	g_return_if_fail(!priv->is_ready);
-	g_return_if_fail(priv->contents != NULL);
-	g_return_if_fail(data != NULL || length == 0);
-
-	if (length == 0)
-		return;
-
-	g_string_append_len(priv->contents, (const gchar*)data, length);
+purple_image_transfer_write(PurpleImage *image, gconstpointer data, gsize length) {
 }
 
 void
-purple_image_transfer_close(PurpleImage *image)
-{
-	PurpleImagePrivate *priv =
-		PURPLE_IMAGE_GET_PRIVATE(image);
-
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(!priv->has_failed);
-	g_return_if_fail(!priv->is_ready);
-	g_return_if_fail(priv->contents != NULL);
-
-	if (priv->contents->len == 0) {
-		purple_debug_error("image", "image is empty");
-		has_failed(image);
-		return;
-	}
-
-	became_ready(image);
+purple_image_transfer_close(PurpleImage *image) {
 }
 
 void
-purple_image_transfer_failed(PurpleImage *image)
-{
-	PurpleImagePrivate *priv =
-		PURPLE_IMAGE_GET_PRIVATE(image);
-
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(!priv->has_failed);
-	g_return_if_fail(!priv->is_ready);
-
-	has_failed(image);
-}
-
-/******************************************************************************
- * Object stuff
- ******************************************************************************/
-
-static void
-purple_image_init(GTypeInstance *instance, gpointer klass)
-{
-	PurpleImage *image = PURPLE_IMAGE(instance);
-	PurpleImagePrivate *priv =
-		PURPLE_IMAGE_GET_PRIVATE(image);
-
-	priv->contents = NULL;
-	priv->is_ready = TRUE;
-	priv->has_failed = FALSE;
-}
-
-static void
-purple_image_finalize(GObject *obj)
-{
-	PurpleImage *image = PURPLE_IMAGE(obj);
-	PurpleImagePrivate *priv =
-		PURPLE_IMAGE_GET_PRIVATE(image);
-
-	if (priv->contents)
-		g_string_free(priv->contents, TRUE);
-	g_free(priv->path);
-	g_free(priv->gen_filename);
-	g_free(priv->friendly_filename);
-
-	G_OBJECT_CLASS(parent_class)->finalize(obj);
-}
-
-static void
-purple_image_get_property(GObject *object, guint par_id, GValue *value,
-	GParamSpec *pspec)
-{
-	PurpleImage *image = PURPLE_IMAGE(object);
-	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
-
-	switch (par_id) {
-		case PROP_IS_READY:
-			g_value_set_boolean(value, priv->is_ready);
-			break;
-		case PROP_HAS_FAILED:
-			g_value_set_boolean(value, priv->has_failed);
-			break;
-		default:
-			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
-			break;
-	}
-}
-
-static void
-purple_image_class_init(PurpleImageClass *klass)
-{
-	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
-
-	parent_class = g_type_class_peek_parent(klass);
-
-	g_type_class_add_private(klass, sizeof(PurpleImagePrivate));
-
-	gobj_class->finalize = purple_image_finalize;
-	gobj_class->get_property = purple_image_get_property;
-
-	properties[PROP_IS_READY] = g_param_spec_boolean("is-ready",
-		"Is ready", "The image is ready to be displayed. Image may "
-		"change the state to failed in a single case: if it's backed "
-		"by a file and that file fails to load",
-		TRUE, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-
-	properties[PROP_HAS_FAILED] = g_param_spec_boolean("has-failed",
-		"Has hailed", "The remote host has failed to send the image",
-		FALSE, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-
-	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
-
-	/**
-	 * PurpleImage::failed:
-	 * @image: a image that failed to transfer.
-	 *
-	 * Called when a @image fails to be transferred. It's guaranteed to be
-	 * fired at most once for a particular @image.
-	 */
-	signals[SIG_FAILED] = g_signal_new("failed", G_OBJECT_CLASS_TYPE(klass),
-		0, 0, NULL, NULL,
-		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-
-	/**
-	 * PurpleImage::ready:
-	 * @image: a image that became ready.
-	 *
-	 * Called when a @image becames ready to be displayed. It's guaranteed to be
-	 * fired at most once for a particular @image.
-	 */
-	signals[SIG_READY] = g_signal_new("ready", G_OBJECT_CLASS_TYPE(klass),
-		0, 0, NULL, NULL,
-		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-}
-
-GType
-purple_image_get_type(void)
-{
-	static GType type = 0;
-
-	if (G_UNLIKELY(type == 0)) {
-		static const GTypeInfo info = {
-			.class_size = sizeof(PurpleImageClass),
-			.class_init = (GClassInitFunc)purple_image_class_init,
-			.instance_size = sizeof(PurpleImage),
-			.instance_init = purple_image_init,
-		};
-
-		type = g_type_register_static(G_TYPE_OBJECT,
-			"PurpleImage", &info, 0);
-	}
-
-	return type;
+purple_image_transfer_failed(PurpleImage *image) {
 }

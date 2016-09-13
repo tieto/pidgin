@@ -19,8 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
-#ifndef _PURPLE_IMAGE_H_
-#define _PURPLE_IMAGE_H_
+#ifndef PURPLE_IMAGE_H
+#define PURPLE_IMAGE_H
+
 /**
  * SECTION:image
  * @include:image.h
@@ -39,13 +40,13 @@
 
 #include <glib-object.h>
 
-typedef struct _PurpleImage PurpleImage;
+typedef struct _PurpleImage      PurpleImage;
 typedef struct _PurpleImageClass PurpleImageClass;
 
 #define PURPLE_TYPE_IMAGE            (purple_image_get_type())
-#define PURPLE_IMAGE(smiley)         (G_TYPE_CHECK_INSTANCE_CAST((smiley), PURPLE_TYPE_IMAGE, PurpleImage))
+#define PURPLE_IMAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_IMAGE, PurpleImage))
 #define PURPLE_IMAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_IMAGE, PurpleImageClass))
-#define PURPLE_IS_IMAGE(smiley)      (G_TYPE_CHECK_INSTANCE_TYPE((smiley), PURPLE_TYPE_IMAGE))
+#define PURPLE_IS_IMAGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_IMAGE))
 #define PURPLE_IS_IMAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_IMAGE))
 #define PURPLE_IMAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_IMAGE, PurpleImageClass))
 
@@ -54,19 +55,12 @@ typedef struct _PurpleImageClass PurpleImageClass;
  *
  * An image data container.
  */
-struct _PurpleImage
-{
+struct _PurpleImage {
 	/*< private >*/
 	GObject parent;
 };
 
-/**
- * PurpleImageClass:
- *
- * Base class for #PurpleImage objects.
- */
-struct _PurpleImageClass
-{
+struct _PurpleImageClass {
 	/*< private >*/
 	GObjectClass parent_class;
 
@@ -83,13 +77,22 @@ G_BEGIN_DECLS
  *
  * Returns: the #GType for an image.
  */
-GType
-purple_image_get_type(void);
+GType purple_image_get_type(void);
+
+/**
+ * purple_image_new_from_bytes:
+ * @bytes: A #GBytes containing the raw image data.
+ * @error: (optional): A return address for a #GError.
+ *
+ * Loads a raw image data as a new #PurpleImage object.
+ *
+ * Returns: the new #PurpleImage.
+ */
+PurpleImage *purple_image_new_from_bytes(GBytes *bytes, GError **error);
 
 /**
  * purple_image_new_from_file:
  * @path: the path to the image file.
- * @be_eager: %TRUE, if file should be loaded now, %FALSE when needed.
  *
  * Loads an image file as a new #PurpleImage object. The @path must exists, be
  * readable and should point to a valid image file. If you don't set @be_eager
@@ -98,8 +101,7 @@ purple_image_get_type(void);
  *
  * Returns: the new #PurpleImage.
  */
-PurpleImage *
-purple_image_new_from_file(const gchar *path, gboolean be_eager);
+PurpleImage *purple_image_new_from_file(const gchar *path);
 
 /**
  * purple_image_new_from_data:
@@ -113,8 +115,21 @@ purple_image_new_from_file(const gchar *path, gboolean be_eager);
  *
  * Returns: the new #PurpleImage.
  */
-PurpleImage *
-purple_image_new_from_data(gpointer data, gsize length);
+PurpleImage *purple_image_new_from_data(const guint8 *data, gsize length);
+
+/**
+ * purple_image_new_from_data_take:
+ * @data: the pointer to the image data buffer.
+ * @length: the length of @data.
+ *
+ * Creates a new #PurpleImage object with contents of @data buffer.
+ *
+ * The @data buffer is owned by #PurpleImage object, so you might want
+ * to #g_memdup it first.
+ *
+ * Returns: the new #PurpleImage.
+ */
+PurpleImage *purple_image_new_from_data_take(guint8 *data, gsize length);
 
 /**
  * purple_image_save:
@@ -125,8 +140,7 @@ purple_image_new_from_data(gpointer data, gsize length);
  *
  * Returns: %TRUE if succeeded, %FALSE otherwise.
  */
-gboolean
-purple_image_save(PurpleImage *image, const gchar *path);
+gboolean purple_image_save(PurpleImage *image, const gchar *path);
 
 /**
  * purple_image_get_path:
@@ -137,35 +151,7 @@ purple_image_save(PurpleImage *image, const gchar *path);
  *
  * Returns: the physical path of the @image, or %NULL.
  */
-const gchar *
-purple_image_get_path(PurpleImage *image);
-
-/**
- * purple_image_is_ready:
- * @image: the image.
- *
- * Checks, if the @image data is ready to be displayed. Remote image data may
- * not be accessible at the moment, so you should check it before using
- * #purple_image_get_data. If the image is not ready yet, you may wait for
- * #PurpleImage::ready signal.
- *
- * Returns: %TRUE, if the @image is ready.
- */
-gboolean
-purple_image_is_ready(PurpleImage *image);
-
-/**
- * purple_image_has_failed:
- * @image: the image.
- *
- * Checks, if the @image has failed to load its data. It can be caused either by
- * a remote failure (and #purple_image_transfer_failed call) or local file being
- * removed (see #purple_image_new_from_file).
- *
- * Returns: %TRUE, if the @image has failed to load.
- */
-gboolean
-purple_image_has_failed(PurpleImage *image);
+const gchar *purple_image_get_path(PurpleImage *image);
 
 /**
  * purple_image_get_size:
@@ -175,8 +161,7 @@ purple_image_has_failed(PurpleImage *image);
  *
  * Returns: the size of data, or 0 in case of failure.
  */
-gsize
-purple_image_get_size(PurpleImage *image);
+gsize purple_image_get_size(PurpleImage *image);
 
 /**
  * purple_image_get_data:
@@ -186,8 +171,7 @@ purple_image_get_size(PurpleImage *image);
  *
  * Returns: (transfer none): the @image data.
  */
-gconstpointer
-purple_image_get_data(PurpleImage *image);
+gconstpointer purple_image_get_data(PurpleImage *image);
 
 /**
  * purple_image_get_extension:
@@ -197,8 +181,7 @@ purple_image_get_data(PurpleImage *image);
  *
  * Returns: (transfer none): the file extension suitable for @image format.
  */
-const gchar *
-purple_image_get_extension(PurpleImage *image);
+const gchar *purple_image_get_extension(PurpleImage *image);
 
 /**
  * purple_image_get_mimetype:
@@ -208,8 +191,7 @@ purple_image_get_extension(PurpleImage *image);
  *
  * Returns: (transfer none): the mime-type suitable for @image format.
  */
-const gchar *
-purple_image_get_mimetype(PurpleImage *image);
+const gchar *purple_image_get_mimetype(PurpleImage *image);
 
 /**
  * purple_image_generate_filename:
@@ -221,8 +203,7 @@ purple_image_get_mimetype(PurpleImage *image);
  *
  * Returns: (transfer none): the generated file name.
  */
-const gchar *
-purple_image_generate_filename(PurpleImage *image);
+const gchar *purple_image_generate_filename(PurpleImage *image);
 
 /**
  * purple_image_set_friendly_filename:
@@ -236,8 +217,7 @@ purple_image_generate_filename(PurpleImage *image);
  * The provided @filename may either be a full path, or contain
  * filesystem-unfriendly characters, because it will be reformatted.
  */
-void
-purple_image_set_friendly_filename(PurpleImage *image, const gchar *filename);
+void purple_image_set_friendly_filename(PurpleImage *image, const gchar *filename);
 
 /**
  * purple_image_get_friendly_filename:
@@ -252,8 +232,7 @@ purple_image_set_friendly_filename(PurpleImage *image, const gchar *filename);
  *
  * Returns: (transfer none): the friendly filename.
  */
-const gchar *
-purple_image_get_friendly_filename(PurpleImage *image);
+const gchar *purple_image_get_friendly_filename(PurpleImage *image);
 
 /**
  * purple_image_transfer_new:
@@ -264,8 +243,7 @@ purple_image_get_friendly_filename(PurpleImage *image);
  *
  * Returns: the new image object.
  */
-PurpleImage *
-purple_image_transfer_new(void);
+PurpleImage *purple_image_transfer_new(void);
 
 /**
  * purple_image_transfer_write:
@@ -276,9 +254,7 @@ purple_image_transfer_new(void);
  * Adds a chunk of data to the internal receive buffer. Called when receiving
  * a remote file.
  */
-void
-purple_image_transfer_write(PurpleImage *image, gconstpointer data,
-	gsize length);
+void purple_image_transfer_write(PurpleImage *image, gconstpointer data, gsize length);
 
 /**
  * purple_image_transfer_close:
@@ -287,8 +263,7 @@ purple_image_transfer_write(PurpleImage *image, gconstpointer data,
  * Marks a remote @image as ready to be displayed. Called when finishing
  * transfer of remote file. You may call this only once for a certain @image.
  */
-void
-purple_image_transfer_close(PurpleImage *image);
+void purple_image_transfer_close(PurpleImage *image);
 
 /**
  * purple_image_transfer_failed:
@@ -297,9 +272,8 @@ purple_image_transfer_close(PurpleImage *image);
  * Marks a remote @image as failed to transfer. Called on error in remote file
  * transfer. You may call this only once for a certain @image.
  */
-void
-purple_image_transfer_failed(PurpleImage *image);
+void purple_image_transfer_failed(PurpleImage *image);
 
 G_END_DECLS
 
-#endif /* _PURPLE_IMAGE_H_ */
+#endif /* PURPLE_IMAGE_H */
