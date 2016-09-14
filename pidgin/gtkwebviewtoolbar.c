@@ -1198,13 +1198,8 @@ menu_position_func(GtkMenu  *menu,
 {
 	GtkWidget *widget = GTK_WIDGET(data);
 	GtkAllocation allocation;
-	GtkStyleContext *context;
-	gint ythickness;
 	int savy;
 
-	context = gtk_widget_get_style_context(widget);
-	gtk_style_context_get(context, gtk_style_context_get_state(context),
-	                      "ythickness", &ythickness, NULL);
 	gtk_widget_get_allocation(widget, &allocation);
 	gdk_window_get_origin(gtk_widget_get_window(widget), x, y);
 	*x += allocation.x;
@@ -1213,7 +1208,7 @@ menu_position_func(GtkMenu  *menu,
 
 	pidgin_menu_position_func_helper(menu, x, y, push_in, data);
 
-	if (savy > *y + ythickness + 1)
+	if (savy > *y + 1)
 		*y -= allocation.height;
 }
 
