@@ -23,13 +23,13 @@
 
 /* TODO
  *
- * This keyring needs some more work, so it will be disabled until its quality
- * was raised. Some of the pain points:
- *  - throws a lot of g_warnings
- *  - it doesn't notify about some backend faults (like access denied), some of
- *    them are not handled at all
- *  - it could use libsecret's Complete API
- *  - code formatting could be better
+ * This keyring now works (at the time of this writing), but there are
+ * some inconvenient edge cases. When looking up passwords, libsecret
+ * doesn't error if the keyring is locked. Therefore, it appears to
+ * this plugin that there's no stored password. libpurple seems to
+ * handle this as gracefully as possible, but it's still inconvenient.
+ * This plugin could possibly be ported to use libsecret's "Complete API"
+ * to resolve this if desired.
  */
 
 #include "internal.h"
