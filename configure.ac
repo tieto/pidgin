@@ -1538,19 +1538,17 @@ dnl #######################################################################
 dnl # Check for Secret Service headers
 dnl #######################################################################
 
-# disabled - see secretservice.c
-#AC_ARG_ENABLE(libsecret, [AC_HELP_STRING([--disable-libsecret], [enable Secret Service support])], enable_secret_service=no, enable_secret_service=yes)
+AC_ARG_ENABLE(libsecret, [AC_HELP_STRING([--disable-libsecret], [enable Secret Service support])], enable_secret_service=no, enable_secret_service=yes)
 
-#if test "x$enable_secret_service" = "xyes" ; then
-#	PKG_CHECK_MODULES(SECRETSERVICE, [libsecret-1], [
-#		AC_SUBST(SECRETSERVICE_CFLAGS)
-#		AC_SUBST(SECRETSERVICE_LIBS)
-#		AC_DEFINE(HAVE_SECRETSERVICE, 1, [Define if we have Secret Service.])
-#	])
-#fi
+if test "x$enable_secret_service" = "xyes" ; then
+	PKG_CHECK_MODULES(SECRETSERVICE, [libsecret-1], [
+		AC_SUBST(SECRETSERVICE_CFLAGS)
+		AC_SUBST(SECRETSERVICE_LIBS)
+		AC_DEFINE(HAVE_SECRETSERVICE, 1, [Define if we have Secret Service.])
+	])
+fi
 
-#AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x$enable_secret_service" = "xyes")
-AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x1" = "x2")
+AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x$enable_secret_service" = "xyes")
 
 dnl #######################################################################
 dnl # Check for GNOME Keyring headers
@@ -2272,7 +2270,7 @@ echo Build Unity integration plugin.: $enable_unity
 echo
 echo Build with GNOME Keyring...... : $enable_gnome_keyring
 echo Build with KWallet............ : $enable_kwallet
-#echo Build with Secret Service..... : $enable_secret_service
+echo Build with Secret Service..... : $enable_secret_service
 echo
 echo Build with plugin support..... : $enable_plugins
 echo Enable Introspection...........: $enable_introspection

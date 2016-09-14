@@ -21,8 +21,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
-#error "This keyring needs some more work (see TODO)"
-
 /* TODO
  *
  * This keyring needs some more work, so it will be disabled until its quality
