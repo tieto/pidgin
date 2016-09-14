@@ -38,14 +38,6 @@ int main(int argc, char *argv[])
 	SetConsoleOutputCP(65001); /* UTF-8 */
 #endif
 
-#if !GLIB_CHECK_VERSION(2, 32, 0)
-	/* GLib threading system is automaticaly initialized since 2.32.
-	 * For earlier versions, it have to be initialized before calling any
-	 * Glib or GTK+ functions.
-	 */
-	g_thread_init(NULL);
-#endif
-
 	/* This is for UI testing purposes only, don't use it! */
 	test_prgname = g_getenv("PIDGIN_TEST_PRGNAME");
 	g_set_prgname(test_prgname ? test_prgname : "Pidgin");
