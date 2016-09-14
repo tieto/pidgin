@@ -104,6 +104,16 @@ ss_g_error_to_keyring_error(GError **error, PurpleAccount *account)
 			"Failed to communicate with Secret "
 			"Service (account: %s).",
 			purple_account_get_username(account));
+	} else if (g_error_matches(old_error, SECRET_ERROR,
+			SECRET_ERROR_IS_LOCKED)) {
+		purple_debug_info("keyring-libsecret",
+			"Secret Service is locked (account: %s (%s)).\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
+		new_error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_ACCESSDENIED,
+			"Secret Service is locked (account: %s).",
+			purple_account_get_username(account));
 	} else {
 		purple_debug_error("keyring-libsecret",
 			"Unknown error (account: %s (%s), "
