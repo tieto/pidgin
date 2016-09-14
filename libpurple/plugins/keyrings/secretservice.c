@@ -51,6 +51,7 @@
 #define SECRETSERVICE_DOMAIN      (g_quark_from_static_string(SECRETSERVICE_ID))
 
 static PurpleKeyring *keyring_handler = NULL;
+static GCancellable *keyring_cancellable = NULL;
 
 static const SecretSchema purple_schema = {
 	"im.pidgin.Purple", SECRET_SCHEMA_NONE,
@@ -85,7 +86,11 @@ ss_g_error_to_keyring_error(GError **error, PurpleAccount *account)
 
 	old_error = *error;
 
-	if (g_error_matches(old_error, G_DBUS_ERROR,
+	if (g_error_matches(old_error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+		new_error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_CANCELLED,
+			_("Operation cancelled."));
+	} else if (g_error_matches(old_error, G_DBUS_ERROR,
 				G_DBUS_ERROR_SPAWN_SERVICE_NOT_FOUND) ||
 			g_error_matches(old_error, G_DBUS_ERROR,
 				G_DBUS_ERROR_IO_ERROR)) {
@@ -245,19 +250,33 @@ ss_save(PurpleAccount *account,
 }
 
 static void
+ss_cancel(void)
+{
+	g_cancellable_cancel(keyring_cancellable);
+
+	/* Swap out cancelled cancellable for new one for further operations */
+	g_clear_object(&keyring_cancellable);
+	keyring_cancellable = g_cancellable_new();
+}
+
+static void
 ss_close(void)
 {
+	ss_cancel();
 }
 
 static gboolean
 ss_init(GError **error)
 {
+	keyring_cancellable = g_cancellable_new();
+
 	keyring_handler = purple_keyring_new();
 
 	purple_keyring_set_name(keyring_handler, _(SECRETSERVICE_NAME));
 	purple_keyring_set_id(keyring_handler, SECRETSERVICE_ID);
 	purple_keyring_set_read_password(keyring_handler, ss_read);
 	purple_keyring_set_save_password(keyring_handler, ss_save);
+	purple_keyring_set_cancel_requests(keyring_handler, ss_cancel);
 	purple_keyring_set_close_keyring(keyring_handler, ss_close);
 
 	purple_keyring_register(keyring_handler);
@@ -272,6 +291,8 @@ ss_uninit(void)
 	purple_keyring_unregister(keyring_handler);
 	purple_keyring_free(keyring_handler);
 	keyring_handler = NULL;
+
+	g_clear_object(&keyring_cancellable);
 }
 
 /***********************************************/
