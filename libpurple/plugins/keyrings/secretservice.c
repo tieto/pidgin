@@ -160,17 +160,14 @@ ss_read(PurpleAccount *account, PurpleKeyringReadCallback cb, gpointer data)
 }
 
 static void
-ss_save_continue(GObject *object, GAsyncResult *result, gpointer data)
+ss_save_continue(GError *error, gpointer data)
 {
 	InfoStorage *storage = data;
 	PurpleKeyringSaveCallback cb;
-	GError *error = NULL;
 	PurpleAccount *account;
 
 	account = storage->account;
 	cb = storage->cb;
-
-	secret_password_store_finish(result, &error);
 
 	if (error != NULL) {
 		ss_g_error_to_keyring_error(&error, account);
@@ -184,6 +181,26 @@ ss_save_continue(GObject *object, GAsyncResult *result, gpointer data)
 
 	g_clear_error(&error);
 	g_free(storage);
+}
+
+static void
+ss_store_continue(GObject *object, GAsyncResult *result, gpointer data)
+{
+	GError *error = NULL;
+
+	secret_password_store_finish(result, &error);
+
+	ss_save_continue(error, data);
+}
+
+static void
+ss_clear_continue(GObject *object, GAsyncResult *result, gpointer data)
+{
+	GError *error = NULL;
+
+	secret_password_clear_finish(result, &error);
+
+	ss_save_continue(error, data);
 }
 
 static void
@@ -208,7 +225,7 @@ ss_save(PurpleAccount *account,
 
 		label = g_strdup_printf(_("Pidgin IM password for account %s"), username);
 		secret_password_store(&purple_schema, SECRET_COLLECTION_DEFAULT,
-			label, password, NULL, ss_save_continue, storage,
+			label, password, NULL, ss_store_continue, storage,
 			"user", username,
 			"protocol", purple_account_get_protocol_id(account),
 			NULL);
@@ -220,7 +237,7 @@ ss_save(PurpleAccount *account,
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 
-		secret_password_clear(&purple_schema, NULL, ss_save_continue,
+		secret_password_clear(&purple_schema, NULL, ss_clear_continue,
 			storage, "user", purple_account_get_username(account),
 			"protocol", purple_account_get_protocol_id(account),
 			NULL);
