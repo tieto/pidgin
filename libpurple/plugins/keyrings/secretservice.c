@@ -76,6 +76,48 @@ struct _InfoStorage
 /*     Keyring interface                       */
 /***********************************************/
 static void
+ss_g_error_to_keyring_error(GError **error, PurpleAccount *account)
+{
+	GError *old_error;
+	GError *new_error = NULL;
+
+	g_return_if_fail(error != NULL);
+
+	old_error = *error;
+
+	if (g_error_matches(old_error, G_DBUS_ERROR,
+				G_DBUS_ERROR_SPAWN_SERVICE_NOT_FOUND) ||
+			g_error_matches(old_error, G_DBUS_ERROR,
+				G_DBUS_ERROR_IO_ERROR)) {
+		purple_debug_info("keyring-libsecret",
+			"Failed to communicate with Secret "
+			"Service (account: %s (%s)).\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account));
+		new_error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_BACKENDFAIL,
+			"Failed to communicate with Secret "
+			"Service (account: %s).",
+			purple_account_get_username(account));
+	} else {
+		purple_debug_error("keyring-libsecret",
+			"Unknown error (account: %s (%s), "
+			"domain: %s, code: %d): %s.\n",
+			purple_account_get_username(account),
+			purple_account_get_protocol_id(account),
+			g_quark_to_string(old_error->domain),
+				old_error->code, old_error->message);
+		new_error = g_error_new(PURPLE_KEYRING_ERROR,
+			PURPLE_KEYRING_ERROR_BACKENDFAIL,
+			"Unknown error (account: %s).",
+			purple_account_get_username(account));
+	}
+
+	g_clear_error(error);
+	g_propagate_error(error, new_error);
+}
+
+static void
 ss_read_continue(GObject *object, GAsyncResult *result, gpointer data)
 {
 	InfoStorage *storage = data;
@@ -87,53 +129,19 @@ ss_read_continue(GObject *object, GAsyncResult *result, gpointer data)
 	password = secret_password_lookup_finish(result, &error);
 
 	if (error != NULL) {
-		int code = error->code;
-
-		switch (code) {
-			case G_DBUS_ERROR_SPAWN_SERVICE_NOT_FOUND:
-			case G_DBUS_ERROR_IO_ERROR:
-				error = g_error_new(PURPLE_KEYRING_ERROR,
-					PURPLE_KEYRING_ERROR_BACKENDFAIL,
-					"Failed to communicate with Secret "
-					"Service (account : %s).",
-					purple_account_get_username(account));
-				if (cb != NULL)
-					cb(account, NULL, error, storage->user_data);
-				g_error_free(error);
-				break;
-
-			default:
-				purple_debug_error("keyring-libsecret",
-					"Unknown error (account: %s (%s), "
-					"domain: %s, code: %d): %s.\n",
-					purple_account_get_username(account),
-					purple_account_get_protocol_id(account),
-					g_quark_to_string(error->domain), code,
-						error->message);
-				error = g_error_new(PURPLE_KEYRING_ERROR,
-					PURPLE_KEYRING_ERROR_BACKENDFAIL,
-					"Unknown error (account : %s).",
-					purple_account_get_username(account));
-				if (cb != NULL)
-					cb(account, NULL, error, storage->user_data);
-				g_error_free(error);
-				break;
-		}
-
+		ss_g_error_to_keyring_error(&error, account);
 	} else if (password == NULL) {
 		error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_NOPASSWORD,
 			"No password found for account: %s",
 			purple_account_get_username(account));
-		if (cb != NULL)
-			cb(account, NULL, error, storage->user_data);
-		g_error_free(error);
-
-	} else {
-		if (cb != NULL)
-			cb(account, password, NULL, storage->user_data);
 	}
 
+	if (cb != NULL) {
+		cb(account, password, error, storage->user_data);
+	}
+
+	g_clear_error(&error);
 	g_free(storage);
 }
 
@@ -165,51 +173,16 @@ ss_save_continue(GObject *object, GAsyncResult *result, gpointer data)
 	secret_password_store_finish(result, &error);
 
 	if (error != NULL) {
-		int code = error->code;
-
-		switch (code) {
-			case G_DBUS_ERROR_SPAWN_SERVICE_NOT_FOUND:
-			case G_DBUS_ERROR_IO_ERROR:
-				purple_debug_info("keyring-libsecret",
-					"Failed to communicate with Secret "
-					"Service (account : %s (%s)).\n",
-					purple_account_get_username(account),
-					purple_account_get_protocol_id(account));
-				error = g_error_new(PURPLE_KEYRING_ERROR,
-					PURPLE_KEYRING_ERROR_BACKENDFAIL,
-					"Failed to communicate with Secret Service (account : %s).",
-					purple_account_get_username(account));
-				if (cb != NULL)
-					cb(account, error, storage->user_data);
-				g_error_free(error);
-				break;
-
-			default:
-				purple_debug_error("keyring-libsecret",
-					"Unknown error (account: %s (%s), "
-					"domain: %s, code: %d): %s.\n",
-					purple_account_get_username(account),
-					purple_account_get_protocol_id(account),
-					g_quark_to_string(error->domain), code,
-						error->message);
-				error = g_error_new(PURPLE_KEYRING_ERROR,
-					PURPLE_KEYRING_ERROR_BACKENDFAIL,
-					"Unknown error (account : %s).",
-					purple_account_get_username(account));
-				if (cb != NULL)
-					cb(account, error, storage->user_data);
-				g_error_free(error);
-				break;
-		}
-
+		ss_g_error_to_keyring_error(&error, account);
 	} else {
 		purple_debug_info("keyring-libsecret", "Password for %s updated.\n",
 			purple_account_get_username(account));
-
-		if (cb != NULL)
-			cb(account, NULL, storage->user_data);
 	}
 
+	if (cb != NULL)
+		cb(account, error, storage->user_data);
+
+	g_clear_error(&error);
 	g_free(storage);
 }
 
