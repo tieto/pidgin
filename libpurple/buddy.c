@@ -238,7 +238,7 @@ purple_buddy_set_local_alias(PurpleBuddy *buddy, const char *alias)
 	if ((alias != NULL) && (*alias != '\0'))
 		new_alias = purple_utf8_strip_unprintables(alias);
 
-	if (!purple_strequal(priv->local_alias, new_alias)) {
+	if (purple_strequal(priv->local_alias, new_alias)) {
 		g_free(new_alias);
 		return;
 	}
@@ -294,7 +294,7 @@ purple_buddy_set_server_alias(PurpleBuddy *buddy, const char *alias)
 	if ((alias != NULL) && (*alias != '\0') && g_utf8_validate(alias, -1, NULL))
 		new_alias = purple_utf8_strip_unprintables(alias);
 
-	if (!purple_strequal(priv->server_alias, new_alias)) {
+	if (purple_strequal(priv->server_alias, new_alias)) {
 		g_free(new_alias);
 		return;
 	}
