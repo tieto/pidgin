@@ -82,17 +82,17 @@ GType purple_image_get_type(void);
 /**
  * purple_image_new_from_bytes:
  * @bytes: A #GBytes containing the raw image data.
- * @error: (optional): A return address for a #GError.
  *
  * Loads a raw image data as a new #PurpleImage object.
  *
  * Returns: the new #PurpleImage.
  */
-PurpleImage *purple_image_new_from_bytes(GBytes *bytes, GError **error);
+PurpleImage *purple_image_new_from_bytes(GBytes *bytes);
 
 /**
  * purple_image_new_from_file:
  * @path: the path to the image file.
+ * @error: (optional) An optional return address for a #GError
  *
  * Loads an image file as a new #PurpleImage object. The @path must exists, be
  * readable and should point to a valid image file. If you don't set @be_eager
@@ -101,7 +101,7 @@ PurpleImage *purple_image_new_from_bytes(GBytes *bytes, GError **error);
  *
  * Returns: the new #PurpleImage.
  */
-PurpleImage *purple_image_new_from_file(const gchar *path);
+PurpleImage *purple_image_new_from_file(const gchar *path, GError **error);
 
 /**
  * purple_image_new_from_data:
@@ -141,6 +141,17 @@ PurpleImage *purple_image_new_from_data_take(guint8 *data, gsize length);
  * Returns: %TRUE if succeeded, %FALSE otherwise.
  */
 gboolean purple_image_save(PurpleImage *image, const gchar *path);
+
+/**
+ * purple_image_get_contents:
+ * @image: The #PurpleImage.
+ *
+ * Returns a new reference to the #GBytes that contains the image data.
+ *
+ * Returns: (transfer full): A #GBytes containing the image data.
+ */
+GBytes *purple_image_get_contents(const PurpleImage *image);
+
 
 /**
  * purple_image_get_path:

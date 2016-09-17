@@ -42,12 +42,12 @@ static GParamSpec *properties[PROP_LAST];
  * Helpers
  ******************************************************************************/
 static void
-_purple_smiley_set_shortcut(PurpleSmiley *smiley, const ghcar *shortcut) {
+_purple_smiley_set_shortcut(PurpleSmiley *smiley, const gchar *shortcut) {
 	PurpleSmileyPrivate *priv = PURPLE_SMILEY_GET_PRIVATE(smiley);
 
-	g_free(priv->smiley);
+	g_free(priv->shortcut);
 
-	priv->smiley = (shortcut) ? g_strdup(shortcut) : NULL;
+	priv->shortcut = (shortcut) ? g_strdup(shortcut) : NULL;
 
 	g_object_notify(G_OBJECT(smiley), "shortcut");
 }
@@ -55,9 +55,10 @@ _purple_smiley_set_shortcut(PurpleSmiley *smiley, const ghcar *shortcut) {
 /*******************************************************************************
  * Object stuff
  ******************************************************************************/
+G_DEFINE_TYPE_WITH_PRIVATE(PurpleSmiley, purple_smiley, PURPLE_TYPE_IMAGE);
+
 static void
-purple_smiley_init(GTypeInstance *instance, gpointer klass) {
-	PurpleSmiley *smiley = PURPLE_SMILEY(instance);
+purple_smiley_init(PurpleSmiley *smiley) {
 	PURPLE_DBUS_REGISTER_POINTER(smiley, PurpleSmiley);
 }
 
@@ -69,21 +70,21 @@ purple_smiley_finalize(GObject *obj) {
 
 	PURPLE_DBUS_UNREGISTER_POINTER(smiley);
 
-	G_OBJECT_CLASS(parent_class)->finalize(obj);
+	G_OBJECT_CLASS(purple_smiley_parent_class)->finalize(obj);
 }
 
 static void
 purple_smiley_get_property(GObject *obj, guint param_id, GValue *value,
                            GParamSpec *pspec)
 {
-	PurpleSmiley *smiley = PURPLE_SMILEY(object);
+	PurpleSmiley *smiley = PURPLE_SMILEY(obj);
 
-	switch (par_id) {
+	switch (param_id) {
 		case PROP_SHORTCUT:
 			g_value_set_string(value, purple_smiley_get_shortcut(smiley));
 			break;
 		default:
-			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
 			break;
 	}
 }
@@ -99,7 +100,7 @@ purple_smiley_set_property(GObject *obj, guint param_id, const GValue *value,
 			_purple_smiley_set_shortcut(smiley, g_value_get_string(value));
 			break;
 		default:
-			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
 			break;
 	}
 }
@@ -122,8 +123,6 @@ purple_smiley_class_init(PurpleSmileyClass *klass) {
 
 	g_object_class_install_properties(obj_class, PROP_LAST, properties);
 }
-
-G_DEFINE_TYPE_WITH_PRIVATE(PurpleSmiley, purple_smiley, PURPLE_TYPE_IMAGE);
 
 /*******************************************************************************
  * API

@@ -490,7 +490,6 @@ static void
 jabber_message_remote_smiley_got(JabberData *data, gchar *alt, gpointer _smiley)
 {
 	PurpleSmiley *smiley = _smiley;
-	PurpleImage *image = purple_smiley_get_image(smiley);
 
 	g_free(alt); /* we really don't need it */
 
@@ -512,20 +511,19 @@ static void
 jabber_message_remote_smiley_add(JabberStream *js, PurpleConversation *conv,
 	const gchar *from, const gchar *shortcut, const gchar *cid)
 {
-	PurpleSmiley *smiley;
-	const JabberData *jdata;
+	PurpleSmiley *smiley = NULL;
+	const JabberData *jdata = NULL;
 
 	purple_debug_misc("jabber", "about to add remote smiley %s to the conv",
 		shortcut);
 
-	smiley = purple_conversation_add_remote_smiley(conv, shortcut);
-	if (!smiley) {
+	smiley = purple_conversation_get_smiley(conv, shortcut);
+	if(PURPLE_IS_SMILEY(smiley)) {
 		purple_debug_misc("jabber", "smiley was already present");
 		return;
 	}
 
 	/* TODO: cache lookup by "cid" */
-
 	jdata = jabber_data_find_remote_by_cid(js, from, cid);
 	if (jdata) {
 		PurpleImage *image = purple_smiley_get_image(smiley);

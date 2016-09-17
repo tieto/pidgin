@@ -99,6 +99,8 @@ GType purple_smiley_get_type(void);
  */
 PurpleSmiley *purple_smiley_new(const gchar *shortcut, const gchar *path);
 
+PurpleSmiley *purple_smiley_new_from_data(const gchar *shortcut, const guint8 *data, gsize length);
+
 /**
  * purple_smiley_new_remote:
  * @shortcut: the smiley shortcut (unescaped).

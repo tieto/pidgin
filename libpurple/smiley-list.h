@@ -19,8 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
-#ifndef _PURPLE_SMILEY_LIST_H_
-#define _PURPLE_SMILEY_LIST_H_
+#ifndef PURPLE_SMILEY_LIST_H
+#define PURPLE_SMILEY_LIST_H
+
 /**
  * SECTION:smiley-list
  * @include:smiley-list.h
@@ -42,9 +43,9 @@ typedef struct _PurpleSmileyList PurpleSmileyList;
 typedef struct _PurpleSmileyListClass PurpleSmileyListClass;
 
 #define PURPLE_TYPE_SMILEY_LIST            (purple_smiley_list_get_type())
-#define PURPLE_SMILEY_LIST(smiley)         (G_TYPE_CHECK_INSTANCE_CAST((smiley), PURPLE_TYPE_SMILEY_LIST, PurpleSmileyList))
+#define PURPLE_SMILEY_LIST(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_SMILEY_LIST, PurpleSmileyList))
 #define PURPLE_SMILEY_LIST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_SMILEY_LIST, PurpleSmileyListClass))
-#define PURPLE_IS_SMILEY_LIST(smiley)      (G_TYPE_CHECK_INSTANCE_TYPE((smiley), PURPLE_TYPE_SMILEY_LIST))
+#define PURPLE_IS_SMILEY_LIST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_SMILEY_LIST))
 #define PURPLE_IS_SMILEY_LIST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_SMILEY_LIST))
 #define PURPLE_SMILEY_LIST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_SMILEY_LIST, PurpleSmileyListClass))
 
@@ -53,19 +54,12 @@ typedef struct _PurpleSmileyListClass PurpleSmileyListClass;
  *
  * A container for #PurpleSmiley's.
  */
-struct _PurpleSmileyList
-{
+struct _PurpleSmileyList {
 	/*< private >*/
 	GObject parent;
 };
 
-/**
- * PurpleSmileyListClass:
- *
- * Base class for #PurpleSmileyList objects.
- */
-struct _PurpleSmileyListClass
-{
+struct _PurpleSmileyListClass {
 	/*< private >*/
 	GObjectClass parent_class;
 
@@ -82,8 +76,7 @@ G_BEGIN_DECLS
  *
  * Returns: the #GType for a smiley list.
  */
-GType
-purple_smiley_list_get_type(void);
+GType purple_smiley_list_get_type(void);
 
 /**
  * purple_smiley_list_new:
@@ -96,8 +89,7 @@ purple_smiley_list_get_type(void);
  *
  * Returns: newly created #PurpleSmileyList.
  */
-PurpleSmileyList *
-purple_smiley_list_new(void);
+PurpleSmileyList *purple_smiley_list_new(void);
 
 /**
  * purple_smiley_list_add:
@@ -112,8 +104,7 @@ purple_smiley_list_new(void);
  *
  * Returns: %TRUE if the @smiley was successfully added to the list.
  */
-gboolean
-purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley);
+gboolean purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley);
 
 /**
  * purple_smiley_list_remove:
@@ -123,8 +114,7 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley);
  * Removes a @smiley from the @list. If @smiley's reference count drops to zero,
  * it's destroyed.
  */
-void
-purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley);
+void purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley);
 
 /**
  * purple_smiley_list_is_empty:
@@ -134,8 +124,7 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley);
  *
  * Returns: %TRUE if the @list is empty, %FALSE otherwise.
  */
-gboolean
-purple_smiley_list_is_empty(PurpleSmileyList *list);
+gboolean purple_smiley_list_is_empty(const PurpleSmileyList *list);
 
 /**
  * purple_smiley_list_get_by_shortcut:
@@ -146,9 +135,7 @@ purple_smiley_list_is_empty(PurpleSmileyList *list);
  *
  * Returns: a #PurpleSmiley if the smiley was found, %NULL otherwise.
  */
-PurpleSmiley *
-purple_smiley_list_get_by_shortcut(PurpleSmileyList *list,
-	const gchar *shortcut);
+PurpleSmiley *purple_smiley_list_get_by_shortcut(PurpleSmileyList *list, const gchar *shortcut);
 
 /**
  * purple_smiley_list_get_trie:
@@ -161,8 +148,7 @@ purple_smiley_list_get_by_shortcut(PurpleSmileyList *list,
  *
  * Returns: (transfer none): a #PurpleTrie for contained smileys.
  */
-PurpleTrie *
-purple_smiley_list_get_trie(PurpleSmileyList *list);
+PurpleTrie *purple_smiley_list_get_trie(PurpleSmileyList *list);
 
 /**
  * purple_smiley_list_get_unique:
@@ -173,8 +159,7 @@ purple_smiley_list_get_trie(PurpleSmileyList *list);
  * Returns: (transfer container): the #GList of unique smileys. Use #g_list_free
  *          when done using it.
  */
-GList *
-purple_smiley_list_get_unique(PurpleSmileyList *list_);
+GList *purple_smiley_list_get_unique(PurpleSmileyList *list_);
 
 /**
  * purple_smiley_list_get_all:
@@ -185,9 +170,8 @@ purple_smiley_list_get_unique(PurpleSmileyList *list_);
  * Returns: (transfer container): the #GList of smileys. Use #g_list_free
  *          when done using it.
  */
-GList *
-purple_smiley_list_get_all(PurpleSmileyList *list_);
+GList *purple_smiley_list_get_all(PurpleSmileyList *list_);
 
 G_END_DECLS
 
-#endif /* _PURPLE_SMILEY_H_ */
+#endif /* PURPLE_SMILEY_LIST_H */
