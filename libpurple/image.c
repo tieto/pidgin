@@ -350,20 +350,4 @@ purple_image_get_friendly_filename(PurpleImage *image) {
 
 	return purple_image_get_friendly_filename(image);
 }
-
-PurpleImage *
-purple_image_transfer_new(void) {
-	return NULL;
-}
-
-void
-purple_image_transfer_write(PurpleImage *image, gconstpointer data, gsize length) {
-}
-
-void
-purple_image_transfer_close(PurpleImage *image) {
-}
-
-void
-purple_image_transfer_failed(PurpleImage *image) {
-}
+ 

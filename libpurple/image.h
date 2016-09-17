@@ -234,46 +234,6 @@ void purple_image_set_friendly_filename(PurpleImage *image, const gchar *filenam
  */
 const gchar *purple_image_get_friendly_filename(PurpleImage *image);
 
-/**
- * purple_image_transfer_new:
- *
- * Creates a new remote image, with a possibility to load data with
- * #purple_image_transfer_write and #purple_image_transfer_close. In case of
- * failure, you should call #urple_image_transfer_failed.
- *
- * Returns: the new image object.
- */
-PurpleImage *purple_image_transfer_new(void);
-
-/**
- * purple_image_transfer_write:
- * @image: the image.
- * @data: the incoming data buffer.
- * @length: the length of @data.
- *
- * Adds a chunk of data to the internal receive buffer. Called when receiving
- * a remote file.
- */
-void purple_image_transfer_write(PurpleImage *image, gconstpointer data, gsize length);
-
-/**
- * purple_image_transfer_close:
- * @image: the image.
- *
- * Marks a remote @image as ready to be displayed. Called when finishing
- * transfer of remote file. You may call this only once for a certain @image.
- */
-void purple_image_transfer_close(PurpleImage *image);
-
-/**
- * purple_image_transfer_failed:
- * @image: the image.
- *
- * Marks a remote @image as failed to transfer. Called on error in remote file
- * transfer. You may call this only once for a certain @image.
- */
-void purple_image_transfer_failed(PurpleImage *image);
-
 G_END_DECLS
 
 #endif /* PURPLE_IMAGE_H */
