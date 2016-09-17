@@ -3222,10 +3222,16 @@ gboolean
 purple_running_gnome(void)
 {
 #ifndef _WIN32
-	gchar *tmp = g_find_program_in_path("gnome-open");
+	gchar *tmp = g_find_program_in_path("gvfs-open");
 
-	if (tmp == NULL)
-		return FALSE;
+	if (tmp == NULL) {
+		tmp = g_find_program_in_path("gnome-open");
+
+		if (tmp == NULL) {
+			return FALSE;
+		}
+	}
+
 	g_free(tmp);
 
 	tmp = (gchar *)g_getenv("GNOME_DESKTOP_SESSION_ID");
