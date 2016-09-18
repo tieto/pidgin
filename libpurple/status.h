@@ -99,7 +99,7 @@ typedef enum
 	PURPLE_STATUS_TUNE,
 	PURPLE_STATUS_MOOD,
 
-	/*< private >*/
+	/**< private >*/
 	PURPLE_STATUS_NUM_PRIMITIVES,
 } PurpleStatusPrimitive;
 
@@ -163,7 +163,7 @@ struct _PurpleStatus
 struct _PurpleStatusClass {
 	GObjectClass parent_class;
 
-	/*< private >*/
+	/**< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
