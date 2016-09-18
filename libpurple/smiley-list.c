@@ -197,21 +197,6 @@ purple_smiley_list_new(void) {
 	return g_object_new(PURPLE_TYPE_SMILEY_LIST, NULL);
 }
 
-static void
-remote_smiley_failed(PurpleImage *smiley_img, gpointer _list) {
-	PurpleSmileyList *list = _list;
-	PurpleSmiley *smiley;
-
-	smiley = g_object_get_data(G_OBJECT(smiley_img),
-		"purple-smiley-list-smiley");
-
-	purple_debug_info("smiley-list", "remote smiley '%s' has failed, "
-		"removing it from the list...",
-		purple_smiley_get_shortcut(smiley));
-
-	purple_smiley_list_remove(list, smiley);
-}
-
 gboolean
 purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley) {
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
@@ -259,13 +244,6 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley) {
 		priv->smileys_end);
 
 	g_hash_table_insert(priv->shortcut_map, g_strdup(shortcut), smiley);
-
-	if (priv->drop_failed_remotes) {
-		g_object_set_data(G_OBJECT(smiley_img),
-			"purple-smiley-list-smiley", smiley);
-		g_signal_connect_object(smiley_img, "failed",
-			G_CALLBACK(remote_smiley_failed), list, 0);
-	}
 
 	smiley_path = smiley_get_uniqid(smiley);
 

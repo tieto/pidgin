@@ -99,6 +99,16 @@ GType purple_smiley_get_type(void);
  */
 PurpleSmiley *purple_smiley_new(const gchar *shortcut, const gchar *path);
 
+/**
+ * purple_smiley_new_from_data:
+ * @shortcut: The smiley shortcut (unescaped).
+ * @data: The raw data of the image.
+ * @length: The length of @data in bytes.
+ *
+ * Creates new smiley from @data.
+ *
+ * Returns: A new #PurpleSmiley.
+ */
 PurpleSmiley *purple_smiley_new_from_data(const gchar *shortcut, const guint8 *data, gsize length);
 
 /**
