@@ -183,7 +183,7 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *ne
 	}
 
 	if (new_icon_path != NULL) {
-		dialog->icon_img = purple_image_new_from_file(new_icon_path);
+		dialog->icon_img = purple_image_new_from_file(new_icon_path, NULL);
 		purple_debug_warning("gtkaccount", "data was not necessary");
 		g_free(data);
 	} else if (data != NULL) {
@@ -2133,7 +2133,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 				const char *path;
 				path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
 				if ((path != NULL) && (*path != '\0')) {
-					img = purple_image_new_from_file(path);
+					img = purple_image_new_from_file(path, NULL);
 				}
 			}
 		} else {

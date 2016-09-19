@@ -4181,7 +4181,7 @@ _pidgin_e2ee_stock_icon_get(const gchar *stock_name)
 	g_snprintf(filename, sizeof(filename), "%s.png", stock_name);
 	path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
 		"e2ee", "16", filename, NULL);
-	image = purple_image_new_from_file(path);
+	image = purple_image_new_from_file(path, NULL);
 	g_free(path);
 
 	g_hash_table_insert(e2ee_stock, g_strdup(stock_name), image);
@@ -6537,14 +6537,12 @@ static gboolean
 pidgin_conv_write_smiley(GString *out, PurpleSmiley *smiley,
 	PurpleConversation *conv, gpointer _proto_name)
 {
-	PurpleImage *image;
 	gchar *escaped_shortcut;
 	gchar *uri;
 
 	escaped_shortcut = g_markup_escape_text(
 		purple_smiley_get_shortcut(smiley), -1);
-	image = purple_smiley_get_image(smiley);
-	uri = purple_image_store_get_uri(image);
+	uri = purple_image_store_get_uri(PURPLE_IMAGE(smiley));
 
 	g_string_append_printf(out,
 		"<img class=\"emoticon\" alt=\"%s\" title=\"%s\" "
