@@ -66,11 +66,6 @@ void purple_init(void)
 {
 	GError *error = NULL;
 
-#if !GLIB_CHECK_VERSION(2, 36, 0)
-	/* GLib type system is automaticaly initialized since 2.36. */
-	g_type_init();
-#endif
-
 	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (!bus)
 		lose_gerror ("Couldn't connect to session bus", error);

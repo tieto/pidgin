@@ -622,15 +622,6 @@ void wpurple_init(void) {
 	WORD wVersionRequested;
 	WSADATA wsaData;
 
-#if !GLIB_CHECK_VERSION(2, 32, 0)
-	/* GLib threading system is automaticaly initialized since 2.32.
-	 * For earlier versions, it have to be initialized before calling any
-	 * Glib or GTK+ functions.
-	 */
-	if (!g_thread_supported())
-		g_thread_init(NULL);
-#endif
-
 	if (purple_debug_is_verbose())
 		purple_debug_misc("wpurple", "wpurple_init start\n");
 
