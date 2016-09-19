@@ -901,12 +901,11 @@ got_emoticon(MsnSlpCall *slpcall, const guchar *data, gsize size)
 {
 	PurpleConversation *conv;
 	PurpleSmiley *smiley;
-	PurpleImage *image;
 	MsnSwitchBoard *swboard;
 	const gchar *shortcut;
 
 	swboard = slpcall->slplink->swboard;
-	conv = swboard->conv;
+	conv = swboard->conv; 
 	shortcut = slpcall->data_info;
 
 	purple_debug_info("msn", "got smiley: %s", shortcut);
@@ -914,16 +913,14 @@ got_emoticon(MsnSlpCall *slpcall, const guchar *data, gsize size)
 	if (!conv)
 		return;
 
-	smiley = purple_conversation_get_remote_smiley(conv, shortcut);
-	g_return_if_fail(smiley);
-	image = purple_smiley_get_image(smiley);
+	smiley = purple_conversation_get_smiley(conv, shortcut);
+	if(!PURPLE_IS_SMILEY(smiley)) {
+		smiley = purple_smiley_new_from_data(shortcut, data, size);
 
-	/* FIXME: it would be better if we wrote the data as we received it
-	 * instead of all at once, calling write multiple times and close once
-	 * at the very end.
-	 */
-	purple_image_transfer_write(image, (gpointer)data, size);
-	purple_image_transfer_close(image);
+		purple_conversation_add_smiley(conv, smiley);
+
+		g_object_unref(G_OBJECT(smiley));
+	}
 }
 
 void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
@@ -960,8 +957,6 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	g_free(body_str);
 
 	for (tok = 0; tok < 9; tok += 2) {
-		PurpleSmiley *smiley;
-
 		if (tokens[tok] == NULL || tokens[tok + 1] == NULL) {
 			break;
 		}
@@ -1001,12 +996,9 @@ void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			conv = PURPLE_CONVERSATION(purple_im_conversation_new(session->account, who));
 		}
 
-		smiley = purple_conversation_add_remote_smiley(conv, smile);
-		if (smiley) { /* if not - it was already present */
-			/* TODO: cache lookup by "sha1" */
-
-			/* XXX: maybe handle end_cb and smiley download failures? */
+		if(purple_conversation_get_smiley(conv, smile) == NULL) {
 			purple_debug_info("msn", "requesting smiley: %s", smile);
+
 			msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
 		}
 
