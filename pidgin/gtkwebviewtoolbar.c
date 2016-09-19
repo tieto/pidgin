@@ -1197,7 +1197,6 @@ menu_position_func(GtkMenu  *menu,
                    gpointer data)
 {
 	GtkWidget *widget = GTK_WIDGET(data);
-	GtkRequisition menu_req;
 	GtkAllocation allocation;
 	GtkStyleContext *context;
 	gint ythickness;
@@ -1207,7 +1206,6 @@ menu_position_func(GtkMenu  *menu,
 	gtk_style_context_get(context, gtk_style_context_get_state(context),
 	                      "ythickness", &ythickness, NULL);
 	gtk_widget_get_allocation(widget, &allocation);
-	gtk_widget_get_preferred_size(GTK_WIDGET(menu), NULL, &menu_req);
 	gdk_window_get_origin(gtk_widget_get_window(widget), x, y);
 	*x += allocation.x;
 	*y += allocation.y + allocation.height;
