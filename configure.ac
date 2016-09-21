@@ -149,7 +149,6 @@ case "$host" in
 		is_win32="no"
 		is_not_win32="yes"
 		PLUGIN_LDFLAGS="-avoid-version"
-		AC_CHECK_HEADERS(signal.h)
 		;;
 esac
 AM_CONDITIONAL(IS_WIN32, test "x$is_win32" = "xyes")
@@ -164,9 +163,8 @@ AC_SUBST(PIDGIN_LIBS)
 AC_SUBST(FINCH_LIBS)
 
 dnl Checks for header files.
-AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h unistd.h locale.h stdint.h)
+AC_CHECK_HEADERS(fcntl.h unistd.h stdint.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_SIZEOF(time_t, ,[
@@ -251,7 +249,7 @@ FINCH_PLUGINDIR="\$(libdir)/finch-$PURPLE_MAJOR_VERSION"
 AC_SUBST([FINCH_PLUGINDIR])
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS(strdup strstr atexit setlocale)
+AC_CHECK_FUNCS(strdup)
 dnl Checks for getopt in standard library
 AC_CHECK_FUNCS(getopt_long,,
 [
@@ -2089,9 +2087,8 @@ fi
 
 AC_MSG_CHECKING(for me pot o' gold)
 AC_MSG_RESULT(no)
-AC_CHECK_FUNCS(gethostid lrand48 timegm)
-AC_CHECK_FUNCS(memcpy memmove random strchr strerror vprintf)
-AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
+AC_CHECK_FUNCS(gethostid timegm)
+AC_CHECK_HEADERS(paths.h sgtty.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
 AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)

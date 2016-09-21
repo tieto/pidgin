@@ -26,40 +26,10 @@
 #include <sys/param.h>
 #include <sys/time.h>
 
-#if defined(STDC_HEADERS) || defined(HAVE_STDLIB_H)
-# include <stdlib.h>
-#else
-# ifdef HAVE_MALLOC_H
-#  include <malloc.h>
-# else
-char *malloc(), *realloc(void);
-# endif
-char *getenv(), *strerror(), *ctime(), *strcpy(void);
-time_t time(void);
-#endif
-
-#ifndef HAVE_STRERROR
-extern char *sys_errlist[];
-# define strerror(x) (sys_errlist[(x)])
-#endif
+#include <stdlib.h>
 
 /* Strings. */
-#if defined(STDC_HEADERS) || defined(HAVE_STRING_H)
-# include <string.h>
-#else
-# ifndef HAVE_STRCHR
-#  define strchr index
-#  define strrchr rindex
-# endif
-char *strchr(), *strrchr(void);
-# ifndef HAVE_MEMCPY
-#  define memcpy(d, s, n) bcopy ((s), (d), (n))
-#  define memcmp bcmp
-# endif
-# ifndef HAVE_MEMMOVE
-#  define memmove(d, s, n) bcopy ((s), (d), (n))
-# endif
-#endif
+#include <string.h>
 
 /* Exit status handling and wait(). */
 #ifdef HAVE_SYS_WAIT_H

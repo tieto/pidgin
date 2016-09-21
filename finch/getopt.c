@@ -32,9 +32,7 @@
 #endif
 
 /* Alver says we need this for IRIX. */
-#if HAVE_STRING_H
 #include "string.h"
-#endif
 
 #ifdef __GNUC__
 #define alloca __builtin_alloca
