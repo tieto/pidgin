@@ -1538,14 +1538,26 @@ dnl #######################################################################
 dnl # Check for Secret Service headers
 dnl #######################################################################
 
-AC_ARG_ENABLE(libsecret, [AC_HELP_STRING([--disable-libsecret], [enable Secret Service support])], enable_secret_service=no, enable_secret_service=yes)
+AC_ARG_ENABLE(libsecret,
+	[AC_HELP_STRING([--disable-libsecret], [enable Secret Service support])],
+	enable_secret_service="$enableval", enable_secret_service="$is_not_win32")
 
 if test "x$enable_secret_service" = "xyes" ; then
 	PKG_CHECK_MODULES(SECRETSERVICE, [libsecret-1], [
 		AC_SUBST(SECRETSERVICE_CFLAGS)
 		AC_SUBST(SECRETSERVICE_LIBS)
 		AC_DEFINE(HAVE_SECRETSERVICE, 1, [Define if we have Secret Service.])
+	], [
+		AC_MSG_RESULT(no)
+		enable_secret_service="no"
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
+Libsecret development headers not found
+Use --disable-libsecret if you do not need it.
+])
+		fi
 	])
+
 fi
 
 AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x$enable_secret_service" = "xyes")
