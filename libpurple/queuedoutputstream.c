@@ -29,7 +29,7 @@ struct _PurpleQueuedOutputStreamPrivate {
 	GBytes *next;
 };
 
-GObjectClass *parent_class = NULL;
+static GObjectClass *parent_class = NULL;
 
 #define PURPLE_QUEUED_OUTPUT_STREAM_GET_PRIVATE(obj) \
 		(G_TYPE_INSTANCE_GET_PRIVATE((obj), \
