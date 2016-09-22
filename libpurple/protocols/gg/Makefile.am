@@ -131,7 +131,7 @@ libgg_la_SOURCES = $(GGSOURCES)
 
 endif
 
-libgg_la_LIBADD  = @PURPLE_LIBS@ $(LIBGADU_LIBS) $(JSON_LIBS)
+libgg_la_LIBADD  = @PURPLE_LIBS@ $(LIBGADU_LIBS) $(INTGG_LIBS) $(JSON_LIBS)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
