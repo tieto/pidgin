@@ -9,6 +9,7 @@ test_programs=\
 	test_des \
 	test_des3 \
 	test_hmac \
+	test_image \
 	test_md4 \
 	test_md5 \
 	test_sha1 \
@@ -26,6 +27,9 @@ test_des3_LDADD=$(COMMON_LIBS)
 
 test_hmac_SOURCES=test_hmac.c
 test_hmac_LDADD=$(COMMON_LIBS)
+
+test_image_SOURCES=test_image.c
+test_iamge_LDADD=$(COMMON_LIBS)
 
 test_md4_SOURCES=test_md4.c
 test_md4_LDADD=$(COMMON_LIBS)
