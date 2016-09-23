@@ -100,7 +100,7 @@ typedef enum
 	PURPLE_STATUS_MOOD,
 
 	/*< private >*/
-	PURPLE_STATUS_NUM_PRIMITIVES,
+	PURPLE_STATUS_NUM_PRIMITIVES, /*< skip >*/
 } PurpleStatusPrimitive;
 
 #include "presence.h"
