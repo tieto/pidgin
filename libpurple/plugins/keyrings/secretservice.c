@@ -121,7 +121,7 @@ ss_g_error_to_keyring_error(GError **error, PurpleAccount *account)
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account),
 			g_quark_to_string(old_error->domain),
-				old_error->code, old_error->message);
+			old_error->code, old_error->message);
 		new_error = g_error_new(PURPLE_KEYRING_ERROR,
 			PURPLE_KEYRING_ERROR_BACKENDFAIL,
 			"Unknown error (account: %s).",
