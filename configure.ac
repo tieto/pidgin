@@ -1198,7 +1198,7 @@ Then rerun this ./configure
 
 Falling back to using our own copy of libgadu.
 		])
-	])
+	], [$LIBGADU_LIBS])
 fi
 
 AM_CONDITIONAL(HAVE_LIBGADU, test "x$have_libgadu" = "xyes")
