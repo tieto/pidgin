@@ -47,7 +47,7 @@ DEB_INSTALL_MANPAGES_pidgin-dev := debian/dh_pidgin.1
 clean::
 	rm -f debian/copyright
 
-configure/libpurple0::
+common-configure-impl::
 	# Fix build failure with full hardening flags:
 	sed -i -e 's/-fPIE//g' -e 's/-pie//g' \
 		build/libpurple/plugins/perl/common/Makefile.PL \

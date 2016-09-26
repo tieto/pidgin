@@ -1,3 +1,9 @@
+pidgin (2.11.0-3) unstable; urgency=medium
+
+  * Build architecture-independent packages correctly (Closes: #838571)
+
+ -- Ari Pollak <ari@debian.org>  Sun, 25 Sep 2016 21:08:30 -0400
+
 pidgin (2.11.0-2) unstable; urgency=low
 
   * Drop build dependency on hardening-wrapper (Closes: #836645)
