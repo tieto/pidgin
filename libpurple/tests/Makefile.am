@@ -8,7 +8,6 @@ COMMON_LIBS=\
 test_programs=\
 	test_des \
 	test_des3 \
-	test_hmac \
 	test_md4 \
 	test_md5 \
 	test_sha1 \
@@ -23,9 +22,6 @@ test_des_LDADD=$(COMMON_LIBS)
 
 test_des3_SOURCES=test_des3.c
 test_des3_LDADD=$(COMMON_LIBS)
-
-test_hmac_SOURCES=test_hmac.c
-test_hmac_LDADD=$(COMMON_LIBS)
 
 test_md4_SOURCES=test_md4.c
 test_md4_LDADD=$(COMMON_LIBS)

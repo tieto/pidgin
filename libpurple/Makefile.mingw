@@ -71,7 +71,6 @@ C_SRC =	\
 			ciphers/aescipher.c \
 			ciphers/descipher.c \
 			ciphers/des3cipher.c \
-			ciphers/hmaccipher.c \
 			ciphers/md4hash.c \
 			ciphers/md5hash.c \
 			ciphers/pbkdf2cipher.c \
