@@ -32,7 +32,6 @@
 #include "account.h"
 #include "accountopt.h"
 #include "buddylist.h"
-#include "ciphers/md5hash.h"
 #include "cmds.h"
 #include "core.h"
 #include "debug.h"
@@ -1624,8 +1623,9 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 	YahooData *yd = purple_connection_get_protocol_data(gc);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	const char *name = purple_normalize(account, purple_account_get_username(account));
-	PurpleHash *md5_hash;
+	GChecksum *md5_hash;
 	guchar md5_digest[16];
+	gsize digest_len = 16;
 	gchar base64_string[25];
 	struct yahoo_packet *pkt;
 
@@ -1633,9 +1633,10 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 
 	g_return_if_fail(crypt != NULL);
 
-	md5_hash = purple_md5_hash_new();
-	purple_hash_append(md5_hash, (guchar *)crypt, strlen(crypt));
-	purple_hash_digest(md5_hash, md5_digest, sizeof(md5_digest));
+	md5_hash = g_checksum_new(G_CHECKSUM_MD5);
+	g_checksum_update(md5_hash, (guchar *)crypt, -1);
+	g_checksum_get_digest(md5_hash, md5_digest, &digest_len);
+	g_checksum_free(md5_hash);
 
 	to_y64(base64_string, md5_digest, 16);
 
@@ -1672,8 +1673,6 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 	if (yd->picture_checksum)
 		yahoo_packet_hash_int(pkt, 192, yd->picture_checksum);
 	yahoo_packet_send_and_free(pkt, yd);
-
-	g_object_unref(md5_hash);
 }
 
 static void yahoo_auth16_stage2(PurpleHttpConnection *http_conn,
@@ -3321,10 +3320,7 @@ yahoo_login_page_cb(PurpleHttpConnection *http_conn,
 	const gchar *got_data;
 	GHashTable *hash;
 	GString *url;
-	char md5[33], *hashp = md5, *chal;
-	int i;
-	PurpleCipher *cipher;
-	guchar digest[16];
+	char *md5, *chal;
 	PurpleHttpRequest *req;
 
 	if (!purple_http_response_is_successful(response))
@@ -3337,46 +3333,29 @@ yahoo_login_page_cb(PurpleHttpConnection *http_conn,
 	got_data = purple_http_response_get_data(response, &len);
 	hash = yahoo_login_page_hash(got_data, len);
 
-	cipher = purple_md5_cipher_new();
-
-	purple_cipher_append(cipher, (const guchar *)pass, strlen(pass));
-	purple_cipher_digest(cipher, digest, sizeof(digest));
-	for (i = 0; i < 16; ++i) {
-		g_snprintf(hashp, 3, "%02x", digest[i]);
-		hashp += 2;
-	}
+	md5 = g_compute_checksum_for_string(G_CHECKSUM_MD5, pass, -1);
 
 	chal = g_strconcat(md5, g_hash_table_lookup(hash, ".challenge"), NULL);
-	purple_cipher_reset(cipher);
-	purple_cipher_append(cipher, (const guchar *)chal, strlen(chal));
-	purple_cipher_digest(cipher, digest, sizeof(digest));
-	hashp = md5;
-	for (i = 0; i < 16; ++i) {
-		g_snprintf(hashp, 3, "%02x", digest[i]);
-		hashp += 2;
-	}
+	g_free(md5);
+
+	md5 = g_compute_checksum_for_string(G_CHECKSUM_MD5, chal, -1);
+	g_free(chal);
+
 	/*
 	 * I dunno why this is here and commented out.. but in case it's needed
 	 * I updated it..
-
-	purple_cipher_reset(cipher);
-	purple_cipher_append(cipher, md5, strlen(md5));
-	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
-	hashp = md5;
-	for (i = 0; i < 16; ++i) {
-		g_snprintf(hashp, 3, "%02x", digest[i]);
-		hashp += 2;
-	}
+	 chal = md5;
+	 md5 = g_compute_checksum_for_string(G_CHECKSUM_MD5, chal, -1);
+	 g_free(chal);
 	*/
-	g_free(chal);
 
 	url = g_string_new(NULL);
 	g_string_printf(url, "http://login.yahoo.com/config/login?login=%s&passwd=%s", purple_account_get_username(account), md5);
+	g_free(md5);
 	g_hash_table_foreach(hash, (GHFunc)yahoo_login_page_hash_iter, url);
 	url = g_string_append(url, "&.hash=1&.md5=1");
 
 	g_hash_table_destroy(hash);
-	g_object_unref(cipher);
 
 	req = purple_http_request_new(g_string_free(url, FALSE));
 	purple_http_request_set_max_redirects(req, 0);
