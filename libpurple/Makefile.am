@@ -47,7 +47,6 @@ purple_coresources = \
 	ciphers/md4hash.c \
 	ciphers/pbkdf2cipher.c \
 	ciphers/rc4cipher.c \
-	ciphers/sha1hash.c \
 	ciphers/sha256hash.c \
 	cipher.c \
 	circularbuffer.c \
@@ -248,7 +247,6 @@ purple_cipherheaders = \
 	md4hash.h \
 	pbkdf2cipher.h \
 	rc4cipher.h \
-	sha1hash.h \
 	sha256hash.h
 
 purple_builtheaders = purple.h version.h enums.h marshallers.h
