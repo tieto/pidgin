@@ -31,7 +31,6 @@
 #include "notification.h"
 
 #include "ciphers/des3cipher.h"
-#include "ciphers/hmaccipher.h"
 #include "ciphers/sha1hash.h"
 
 /**************************************************************************
@@ -102,37 +101,35 @@ rps_create_key(const char *key, int key_len, const char *data, size_t data_len)
 	const guchar magic[] = "WS-SecureConversation";
 	const int magic_len = sizeof(magic) - 1;
 
-	PurpleCipher *hmac;
-	PurpleHash *hash;
+	GHmac *hmac;
+	gsize digest_len = 20;
 	guchar hash1[20], hash2[20], hash3[20], hash4[20];
 	char *result;
 
-	hash = purple_sha1_hash_new();
-	hmac = purple_hmac_cipher_new(hash);
-	purple_cipher_set_key(hmac, (guchar *)key, key_len);
+	hmac = g_hmac_new(G_CHECKSUM_SHA1, (guchar *)key, key_len);
+	g_hmac_update(hmac, magic, magic_len);
+	g_hmac_update(hmac, (guchar *)data, data_len);
+	g_hmac_get_digest(hmac, hash1, &digest_len);
+	g_hmac_unref(hmac);
 
-	purple_cipher_append(hmac, magic, magic_len);
-	purple_cipher_append(hmac, (guchar *)data, data_len);
-	purple_cipher_digest(hmac, hash1, sizeof(hash1));
+	hmac = g_hmac_new(G_CHECKSUM_SHA1, (guchar *)key, key_len);
+	g_hmac_update(hmac, hash1, digest_len);
+	g_hmac_update(hmac, magic, magic_len);
+	g_hmac_update(hmac, (guchar *)data, data_len);
+	g_hmac_get_digest(hmac, hash2, &digest_len);
+	g_hmac_unref(hmac);
 
-	purple_cipher_reset_state(hmac);
-	purple_cipher_append(hmac, hash1, 20);
-	purple_cipher_append(hmac, magic, magic_len);
-	purple_cipher_append(hmac, (guchar *)data, data_len);
-	purple_cipher_digest(hmac, hash2, sizeof(hash2));
+	hmac = g_hmac_new(G_CHECKSUM_SHA1, (guchar *)key, key_len);
+	g_hmac_update(hmac, hash1, digest_len);
+	g_hmac_get_digest(hmac, hash3, &digest_len);
+	g_hmac_unref(hmac);
 
-	purple_cipher_reset_state(hmac);
-	purple_cipher_append(hmac, hash1, 20);
-	purple_cipher_digest(hmac, hash3, sizeof(hash3));
-
-	purple_cipher_reset_state(hmac);
-	purple_cipher_append(hmac, hash3, sizeof(hash3));
-	purple_cipher_append(hmac, magic, magic_len);
-	purple_cipher_append(hmac, (guchar *)data, data_len);
-	purple_cipher_digest(hmac, hash4, sizeof(hash4));
-
-	g_object_unref(hmac);
-	g_object_unref(hash);
+	hmac = g_hmac_new(G_CHECKSUM_SHA1, (guchar *)key, key_len);
+	g_hmac_update(hmac, hash3, sizeof(hash3));
+	g_hmac_update(hmac, magic, magic_len);
+	g_hmac_update(hmac, (guchar *)data, data_len);
+	g_hmac_get_digest(hmac, hash4, &digest_len);
+	g_hmac_unref(hmac);
 
 	result = g_malloc(24);
 	memcpy(result, hash2, sizeof(hash2));
@@ -175,8 +172,8 @@ msn_rps_encrypt(MsnNexus *nexus)
 	char usr_key_base[MSN_USER_KEY_SIZE], *usr_key;
 	const char magic1[] = "SESSION KEY HASH";
 	const char magic2[] = "SESSION KEY ENCRYPTION";
-	PurpleCipher *hmac;
-	PurpleHash *hasher;
+	GHmac *hmac;
+	gsize digest_len = 20;
 	size_t len;
 	guchar *hash;
 	char *key1, *key2, *key3;
@@ -207,13 +204,10 @@ msn_rps_encrypt(MsnNexus *nexus)
 	key3 = rps_create_key(key1, key1_len, magic2, sizeof(magic2) - 1);
 
 	len = strlen(nexus->nonce);
-	hasher = purple_sha1_hash_new();
-	hmac = purple_hmac_cipher_new(hasher);
-	purple_cipher_set_key(hmac, (guchar *)key2, 24);
-	purple_cipher_append(hmac, (guchar *)nexus->nonce, len);
-	purple_cipher_digest(hmac, hash, 20);
-	g_object_unref(hmac);
-	g_object_unref(hasher);
+	hmac = g_hmac_new(G_CHECKSUM_SHA1, (guchar *)key2, 24);
+	g_hmac_update(hmac, (guchar *)nexus->nonce, len);
+	g_hmac_get_digest(hmac, hash, &digest_len);
+	g_hmac_unref(hmac);
 
 	/* We need to pad this to 72 bytes, apparently */
 	nonce_fixed = g_malloc(len + 8);
@@ -517,11 +511,12 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	MsnNexusUpdateData *ud;
 	MsnNexusUpdateCallback *update;
 	PurpleHash *sha1;
-	PurpleCipher *hmac;
+	GHmac *hmac;
 
 	char *key;
 
 	guchar digest[20];
+	gsize digest_len = 20;
 
 	struct tm *tm;
 	time_t now;
@@ -593,7 +588,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	timestamp_b64 = purple_base64_encode(digest, 20);
 	g_free(now_str);
 
-	purple_hash_reset(sha1);
+	g_object_unref(sha1);
 
 	signedinfo = g_strdup_printf(MSN_SSO_SIGNEDINFO_TEMPLATE,
 	                             id,
@@ -605,13 +600,10 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	nonce_b64 = purple_base64_encode((guchar *)&nonce, sizeof(nonce));
 
 	key = rps_create_key(nexus->secret, 24, (char *)nonce, sizeof(nonce));
-	hmac = purple_hmac_cipher_new(sha1);
-	purple_cipher_set_key(hmac, (guchar *)key, 24);
-	purple_cipher_append(hmac, (guchar *)signedinfo, strlen(signedinfo));
-	purple_cipher_digest(hmac, signature, 20);
-
-	g_object_unref(hmac);
-	g_object_unref(sha1);
+	hmac = g_hmac_new(G_CHECKSUM_SHA1, (guchar *)key, 24);
+	g_hmac_update(hmac, (guchar *)signedinfo, -1);
+	g_hmac_get_digest(hmac, signature, &digest_len);
+	g_hmac_unref(hmac);
 
 	signature_b64 = purple_base64_encode(signature, 20);
 
