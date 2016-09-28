@@ -31,7 +31,6 @@
 #include "notification.h"
 
 #include "ciphers/des3cipher.h"
-#include "ciphers/sha1hash.h"
 
 /**************************************************************************
  * Valid Ticket Tokens
@@ -510,7 +509,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	MsnSession *session = nexus->session;
 	MsnNexusUpdateData *ud;
 	MsnNexusUpdateCallback *update;
-	PurpleHash *sha1;
+	GChecksum *sha1;
 	GHmac *hmac;
 
 	char *key;
@@ -562,7 +561,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	ud->nexus = nexus;
 	ud->id = id;
 
-	sha1 = purple_sha1_hash_new();
+	sha1 = g_checksum_new(G_CHECKSUM_SHA1);
 
 	domain = g_strdup_printf(MSN_SSO_RST_TEMPLATE,
 	                         id,
@@ -570,8 +569,8 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	                         ticket_domains[id][SSO_VALID_TICKET_POLICY] != NULL ?
 	                             ticket_domains[id][SSO_VALID_TICKET_POLICY] :
 	                             nexus->policy);
-	purple_hash_append(sha1, (guchar *)domain, strlen(domain));
-	purple_hash_digest(sha1, digest, 20);
+	g_checksum_update(sha1, (guchar *)domain, -1);
+	g_checksum_get_digest(sha1, digest, &digest_len);
 	domain_b64 = purple_base64_encode(digest, 20);
 
 	now = time(NULL);
@@ -582,13 +581,13 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	timestamp = g_strdup_printf(MSN_SSO_TIMESTAMP_TEMPLATE,
 	                            now_str,
 	                            purple_utf8_strftime("%Y-%m-%dT%H:%M:%SZ", tm));
-	purple_hash_reset(sha1);
-	purple_hash_append(sha1, (guchar *)timestamp, strlen(timestamp));
-	purple_hash_digest(sha1, digest, 20);
+	g_checksum_reset(sha1);
+	g_checksum_update(sha1, (guchar *)timestamp, -1);
+	g_checksum_get_digest(sha1, digest, &digest_len);
 	timestamp_b64 = purple_base64_encode(digest, 20);
 	g_free(now_str);
 
-	g_object_unref(sha1);
+	g_checksum_free(sha1);
 
 	signedinfo = g_strdup_printf(MSN_SSO_SIGNEDINFO_TEMPLATE,
 	                             id,

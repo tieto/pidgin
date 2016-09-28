@@ -25,8 +25,6 @@
 #include "msn.h"
 #include "object.h"
 #include "debug.h"
-/* Sha1 stuff */
-#include "ciphers/sha1hash.h"
 /* Base64 stuff */
 #include "util.h"
 
@@ -129,12 +127,13 @@ msn_object_new_from_image(PurpleImage *img, const char *location,
 {
 	MsnObject *msnobj;
 
-	PurpleHash *hash;
+	GChecksum *hash;
 	char *buf;
 	gconstpointer data;
 	size_t size;
 	char *base64;
 	unsigned char digest[20];
+	gsize digest_len = 20;
 
 	msnobj = NULL;
 
@@ -156,11 +155,11 @@ msn_object_new_from_image(PurpleImage *img, const char *location,
 	/* Compute the SHA1D field. */
 	memset(digest, 0, sizeof(digest));
 
-	hash = purple_sha1_hash_new();
-	purple_hash_append(hash, data, size);
-	purple_hash_digest(hash, digest, sizeof(digest));
+	hash = g_checksum_new(G_CHECKSUM_SHA1);
+	g_checksum_update(hash, data, size);
+	g_checksum_get_digest(hash, digest, &digest_len);
 
-	base64 = purple_base64_encode(digest, sizeof(digest));
+	base64 = purple_base64_encode(digest, digest_len);
 	msn_object_set_sha1d(msnobj, base64);
 	g_free(base64);
 
@@ -178,10 +177,10 @@ msn_object_new_from_image(PurpleImage *img, const char *location,
 
 	memset(digest, 0, sizeof(digest));
 
-	purple_hash_reset(hash);
-	purple_hash_append(hash, (const guchar *)buf, strlen(buf));
-	purple_hash_digest(hash, digest, sizeof(digest));
-	g_object_unref(hash);
+	g_checksum_reset(hash);
+	g_checksum_update(hash, (const guchar *)buf, -1);
+	g_checksum_get_digest(hash, digest, &digest_len);
+	g_checksum_free(hash);
 	g_free(buf);
 
 	base64 = purple_base64_encode(digest, sizeof(digest));

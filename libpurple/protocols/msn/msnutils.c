@@ -27,8 +27,6 @@
 #include "msn.h"
 #include "msnutils.h"
 
-#include "ciphers/md5hash.h"
-
 /**************************************************************************
  * Util
  **************************************************************************/
@@ -542,12 +540,13 @@ msn_email_is_valid(const char *passport)
 void
 msn_handle_chl(char *input, char *output)
 {
-	PurpleHash *hash;
+	GChecksum *hash;
 	const guchar productKey[] = MSNP15_WLM_PRODUCT_KEY;
 	const guchar productID[]  = MSNP15_WLM_PRODUCT_ID;
 	const char hexChars[]     = "0123456789abcdef";
 	char buf[BUFSIZE];
 	guint32 md5Parts[4];
+	gsize digest_len = sizeof(md5Parts);
 	unsigned char *newHash;
 	guint32 chlStringParts[BUFSIZE / sizeof(guint32)];
 	unsigned int newHashParts[5];
@@ -557,13 +556,13 @@ msn_handle_chl(char *input, char *output)
 	int len;
 	int i;
 
-	/* Create the MD5 hash by using Purple MD5 algorithm */
-	hash = purple_md5_hash_new();
+	/* Create the MD5 hash by using GLib's MD5 algorithm */
+	hash = g_checksum_new(G_CHECKSUM_MD5);
 
-	purple_hash_append(hash, (guchar *)input, strlen(input));
-	purple_hash_append(hash, productKey, sizeof(productKey) - 1);
-	purple_hash_digest(hash, (guchar *)md5Parts, sizeof(md5Parts));
-	g_object_unref(hash);
+	g_checksum_update(hash, (guchar *)input, -1);
+	g_checksum_update(hash, productKey, sizeof(productKey) - 1);
+	g_checksum_get_digest(hash, (guchar *)md5Parts, &digest_len);
+	g_checksum_free(hash);
 
 	/* Split it into four integers */
 	for (i = 0; i < 4; i++) {

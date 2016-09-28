@@ -23,7 +23,6 @@
  */
 
 #include "internal.h"
-#include "ciphers/md5hash.h"
 #include "core.h"
 #include "debug.h"
 
@@ -1408,10 +1407,8 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleAccount *account;
 	const char *rru;
 	const char *url;
-	PurpleHash *hash;
-	gchar creds[33];
+	gchar *creds;
 	char *buf;
-	gboolean digest_ok;
 
 	gulong tmp_timestamp;
 
@@ -1430,13 +1427,10 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	                      tmp_timestamp,
 	                      purple_connection_get_password(gc));
 
-	hash = purple_md5_hash_new();
-	purple_hash_append(hash, (const guchar *)buf, strlen(buf));
-	digest_ok = purple_hash_digest_to_str(hash, creds, sizeof(creds));
-	g_object_unref(hash);
+	creds = g_compute_checksum_for_string(G_CHECKSUM_MD5, buf, -1);
 	g_free(buf);
 
-	g_return_if_fail(digest_ok);
+	g_return_if_fail(creds != NULL);
 
 	g_free(session->passport_info.mail_url);
 	session->passport_info.mail_url =
@@ -1448,6 +1442,8 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		                msn_user_get_passport(session->user),
 		                session->passport_info.sid,
 		                rru);
+
+	g_free(creds);
 
 	/* The user wants to check his or her email */
 	if (cmd->trans && cmd->trans->data)
