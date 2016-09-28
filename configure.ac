@@ -1181,58 +1181,38 @@ fi
 dnl #######################################################################
 dnl # Check for Gadu-Gadu protocol library (libgadu)
 dnl #######################################################################
+AC_ARG_ENABLE(libgadu,
+	[AS_HELP_STRING([--disable-libgadu],
+		[compile without libgadu (required for GaduGadu support)])],
+	enable_libgadu="$enableval", enable_libgadu="yes")
 
-PKG_CHECK_MODULES(LIBGADU, [libgadu >= 1.12.0], [have_libgadu=yes], [have_libgadu=no])
-
-if test "x$have_libgadu" = "xyes"; then
-	AC_CHECK_LIB(gadu, gg_is_gpl_compliant, , [
-		LIBGADU_LIBS=""
-		LIBGADU_CFLAGS=""
-		have_libgadu=no
-		AC_MSG_WARN([
+if test "x$enable_libgadu" = "xyes"; then
+	PKG_CHECK_MODULES(LIBGADU, [libgadu >= 1.12.0], [
+		have_libgadu=yes
+		AC_CHECK_LIB(gadu, gg_is_gpl_compliant, , [
+			LIBGADU_LIBS=""
+			LIBGADU_CFLAGS=""
+			have_libgadu=no
+			if test "x$force_deps" = "xyes" ; then
+				AC_MSG_WARN([
 libgadu is not compatible with the GPL when compiled with OpenSSL support.
 
 To compile against system libgadu, please recompile libgadu using:
 ./configure --with-openssl=no
 Then rerun this ./configure
-
-Falling back to using our own copy of libgadu.
-		])
-	], [$LIBGADU_LIBS])
-fi
-
-AM_CONDITIONAL(HAVE_LIBGADU, test "x$have_libgadu" = "xyes")
-if test "x$have_libgadu" = "xyes"; then
-	AC_DEFINE(HAVE_LIBGADU, 1, [Linked with external libgadu])
-else
-	AC_CHECK_LIB(gnutls, gnutls_certificate_set_x509_system_trust, [gg_have_gnutls_csxst=yes], [gg_have_gnutls_csxst=no])
-
-	gg_gnutls_sts=""
-	if test "x$gg_have_gnutls_csxst" = "xno"; then
-		for i in /etc/ssl/ca-bundle.pem \
-			/etc/ssl/certs/ca-certificates.crt \
-			/etc/pki/tls/cert.pem \
-			/usr/local/share/certs/ca-root-nss.crt \
-			/etc/ssl/cert.pem
-		do
-			if test -e $i; then
-				gg_gnutls_sts="$i"
-				break
+				])
 			fi
-		done
-	fi
+		], [$LIBGADU_LIBS])
+	], [
+		have_libgadu=no
+	])
 
-	if test "x$gg_have_gnutls_csxst" = "xyes"; then
-		AC_DEFINE(HAVE_GNUTLS_CERTIFICATE_SET_X509_SYSTEM_TRUST, 1, [gnutls contains the gnutls_certificate_set_x509_system_trust function])
+	if test "x$have_libgadu" != "xyes" -a "x$force_deps" = "xyes" ; then
+		AC_MSG_ERROR([
+Libgadu development headers not found.
+Use --disable-libgadu if you do not need GG (GaduGadu) support.
+])
 	fi
-	if test "x$gg_gnutls_sts" != "x"; then
-		AC_DEFINE_UNQUOTED(GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE, ["$gg_gnutls_sts"], [use the given file as GnuTLS default trust store])
-	fi
-
-	dnl # redundant - only here to stay compatible with libgadu upstream
-	PKG_CHECK_MODULES([GNUTLS_2_10], [gnutls >= 2.10.0], [
-		AC_DEFINE([HAVE_GNUTLS_2_10], [], [Defined if GnuTLS >= 2.10.0 is available.])
-	],:)
 fi
 
 AC_SUBST(LIBGADU_LIBS)
@@ -1258,6 +1238,9 @@ if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
+fi
+if test "x$have_libgadu" != "xyes" ; then
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/gg//'`
 fi
 if test "x$is_win32" = "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/zephyr//'`
@@ -1332,6 +1315,9 @@ if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
+fi
+if test "x$have_libgadu" != "xyes"; then
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/gg//'`
 fi
 if test "x$is_win32" = "xyes" ; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/zephyr//'`
@@ -2254,7 +2240,6 @@ fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
-echo Use external libgadu.......... : $have_libgadu
 echo Install pixmaps............... : $enable_pixmaps
 echo Old tray icon compatibility... : $enable_traycompat
 echo Install translations.......... : $enable_i18n
