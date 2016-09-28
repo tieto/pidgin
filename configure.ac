@@ -155,9 +155,9 @@ AM_CONDITIONAL(IS_WIN32, test "x$is_win32" = "xyes")
 AC_SUBST([PLUGIN_LDFLAGS])
 
 dnl Define *_LIBS
-PURPLE_LIBS="\$(top_builddir)/libpurple/libpurple.la \$(GLIB_LIBS)"
-PIDGIN_LIBS="\$(top_builddir)/pidgin/libpidgin.la \$(GTK_LIBS)"
-FINCH_LIBS="\$(top_builddir)/finch/libfinch.la \$(top_builddir)/finch/libgnt/libgnt.la \$(GLIB_LIBS)"
+PURPLE_LIBS="\$(top_builddir)/libpurple/libpurple.la \$(GLIB_LIBS) \$(GPLUGIN_LIBS)"
+PIDGIN_LIBS="\$(top_builddir)/pidgin/libpidgin.la \$(GTK_LIBS) \$(PURPLE_LIBS) \$(WEBKIT_LIBS)"
+FINCH_LIBS="\$(top_builddir)/finch/libfinch.la \$(top_builddir)/finch/libgnt/libgnt.la \$(PURPLE_LIBS)"
 AC_SUBST(PURPLE_LIBS)
 AC_SUBST(PIDGIN_LIBS)
 AC_SUBST(FINCH_LIBS)
@@ -1198,7 +1198,7 @@ Then rerun this ./configure
 
 Falling back to using our own copy of libgadu.
 		])
-	])
+	], [$LIBGADU_LIBS])
 fi
 
 AM_CONDITIONAL(HAVE_LIBGADU, test "x$have_libgadu" = "xyes")
