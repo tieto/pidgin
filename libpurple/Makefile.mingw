@@ -74,7 +74,6 @@ C_SRC =	\
 			ciphers/md4hash.c \
 			ciphers/pbkdf2cipher.c \
 			ciphers/rc4cipher.c \
-			ciphers/sha256hash.c \
 			cipher.c \
 			circularbuffer.c \
 			cmds.c \

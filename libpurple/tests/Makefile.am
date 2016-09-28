@@ -9,7 +9,6 @@ test_programs=\
 	test_des \
 	test_des3 \
 	test_md4 \
-	test_sha256 \
 	test_trie \
 	test_util \
 	test_xmlnode
@@ -23,9 +22,6 @@ test_des3_LDADD=$(COMMON_LIBS)
 
 test_md4_SOURCES=test_md4.c
 test_md4_LDADD=$(COMMON_LIBS)
-
-test_sha256_SOURCES=test_sha256.c
-test_sha256_LDADD=$(COMMON_LIBS)
 
 test_trie_SOURCES=test_trie.c
 test_trie_LDADD=$(COMMON_LIBS)
