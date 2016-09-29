@@ -25,7 +25,6 @@
 #include "glibcompat.h"
 
 #include "pbkdf2cipher.h"
-#include "hmaccipher.h"
 #include "debug.h"
 
 /* 1024bit */
@@ -38,7 +37,7 @@
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_PBKDF2_CIPHER, PurplePBKDF2CipherPrivate))
 
 typedef struct {
-	PurpleHash *hash;
+	GChecksumType hash_type;
 	guint iter_count;
 	size_t out_len;
 
@@ -53,7 +52,7 @@ typedef struct {
  *****************************************************************************/
 enum {
 	PROP_NONE,
-	PROP_HASH,
+	PROP_HASH_TYPE,
 	PROP_ITER_COUNT,
 	PROP_OUT_LEN,
 	PROP_LAST,
@@ -65,20 +64,6 @@ enum {
 static GObjectClass *parent_class = NULL;
 static GParamSpec *properties[PROP_LAST];
 
-/*******************************************************************************
- * Helpers
- ******************************************************************************/
-static void
-purple_pbkdf2_cipher_set_hash(PurpleCipher *cipher,
-								PurpleHash *hash)
-{
-	PurplePBKDF2CipherPrivate *priv = PURPLE_PBKDF2_CIPHER_GET_PRIVATE(cipher);
-
-	priv->hash = g_object_ref(G_OBJECT(hash));
-
-	g_object_notify_by_pspec(G_OBJECT(cipher), properties[PROP_HASH]);
-}
-
 /******************************************************************************
  * Cipher Stuff
  *****************************************************************************/
@@ -89,8 +74,6 @@ purple_pbkdf2_cipher_reset(PurpleCipher *cipher)
 
 	g_return_if_fail(priv != NULL);
 
-	if(PURPLE_IS_HASH(priv->hash))
-		purple_hash_reset(priv->hash);
 	priv->iter_count = 1;
 	priv->out_len = 256;
 
@@ -167,17 +150,16 @@ purple_pbkdf2_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len)
 	PurplePBKDF2CipherPrivate *priv = PURPLE_PBKDF2_CIPHER_GET_PRIVATE(cipher);
 
 	guchar halfkey[PBKDF2_HASH_MAX_LEN], halfkey_hash[PBKDF2_HASH_MAX_LEN];
-	guint halfkey_len, halfkey_count, halfkey_pad, halfkey_no;
+	guint halfkey_count, halfkey_pad, halfkey_no;
+	gsize halfkey_len;
 	guchar *salt_ext;
 	size_t salt_ext_len;
 	guint iter_no;
-	PurpleCipher *hash;
 
 	g_return_val_if_fail(priv != NULL, FALSE);
 	g_return_val_if_fail(digest != NULL, FALSE);
 	g_return_val_if_fail(len >= priv->out_len, FALSE);
 
-	g_return_val_if_fail(priv->hash != NULL, FALSE);
 	g_return_val_if_fail(priv->iter_count > 0, FALSE);
 	g_return_val_if_fail(priv->passphrase != NULL ||
 		priv->passphrase_len == 0, FALSE);
@@ -188,19 +170,10 @@ purple_pbkdf2_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len)
 
 	salt_ext_len = priv->salt_len + 4;
 
-	hash = purple_hmac_cipher_new(priv->hash);
-	if (hash == NULL) {
-		purple_debug_error("pbkdf2", "Couldn't create new hmac "
-			"cipher\n");
-		return FALSE;
-	}
-	purple_cipher_set_key(hash, (const guchar*)priv->passphrase,
-		priv->passphrase_len);
-
-	halfkey_len = purple_cipher_get_digest_size(hash);
+	halfkey_len = g_checksum_type_get_length(priv->hash_type);
 	if (halfkey_len <= 0 || halfkey_len > PBKDF2_HASH_MAX_LEN) {
 		purple_debug_error("pbkdf2", "Unsupported hash function. "
-			"(digest size: %d)\n", halfkey_len);
+			"(digest size: %" G_GSIZE_FORMAT ")\n", halfkey_len);
 		return FALSE;
 	}
 
@@ -215,9 +188,18 @@ purple_pbkdf2_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len)
 		memset(halfkey, 0, halfkey_len);
 
 		for (iter_no = 1; iter_no <= priv->iter_count; iter_no++) {
+			GHmac *hmac;
 			guint i;
 
-			purple_cipher_reset_state(hash);
+			hmac = g_hmac_new(priv->hash_type,
+				(const guchar*)priv->passphrase,
+				priv->passphrase_len);
+			if (hmac == NULL) {
+				purple_debug_error("pbkdf2",
+					"Couldn't create new hmac cipher\n");
+				g_free(salt_ext);
+				return FALSE;
+			}
 
 			if (iter_no == 1) {
 				salt_ext[salt_ext_len - 4] =
@@ -229,21 +211,13 @@ purple_pbkdf2_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len)
 				salt_ext[salt_ext_len - 1] =
 					(halfkey_no & 0x000000ff) >> 0;
 
-				purple_cipher_append(hash, salt_ext,
-					salt_ext_len);
+				g_hmac_update(hmac, salt_ext, salt_ext_len);
 			}
 			else
-				purple_cipher_append(hash, halfkey_hash,
-					halfkey_len);
+				g_hmac_update(hmac, halfkey_hash, halfkey_len);
 
-			if (!purple_cipher_digest(hash, halfkey_hash,
-				halfkey_len)) {
-				purple_debug_error("pbkdf2",
-					"Couldn't retrieve a digest\n");
-				g_free(salt_ext);
-				g_object_unref(hash);
-				return FALSE;
-			}
+			g_hmac_get_digest(hmac, halfkey_hash, &halfkey_len);
+			g_hmac_unref(hmac);
 
 			for (i = 0; i < halfkey_len; i++)
 				halfkey[i] ^= halfkey_hash[i];
@@ -255,7 +229,6 @@ purple_pbkdf2_cipher_digest(PurpleCipher *cipher, guchar digest[], size_t len)
 	}
 
 	g_free(salt_ext);
-	g_object_unref(hash);
 
 	return TRUE;
 }
@@ -271,8 +244,8 @@ purple_pbkdf2_cipher_get_property(GObject *obj, guint param_id, GValue *value,
 	PurplePBKDF2CipherPrivate *priv = PURPLE_PBKDF2_CIPHER_GET_PRIVATE(cipher);
 
 	switch(param_id) {
-		case PROP_HASH:
-			g_value_set_object(value, purple_pbkdf2_cipher_get_hash(cipher));
+		case PROP_HASH_TYPE:
+			g_value_set_int(value, priv->hash_type);
 			break;
 		case PROP_ITER_COUNT:
 			g_value_set_uint(value, priv->iter_count);
@@ -294,8 +267,8 @@ purple_pbkdf2_cipher_set_property(GObject *obj, guint param_id,
 	PurplePBKDF2CipherPrivate *priv = PURPLE_PBKDF2_CIPHER_GET_PRIVATE(cipher);
 
 	switch(param_id) {
-		case PROP_HASH:
-			purple_pbkdf2_cipher_set_hash(cipher, g_value_get_object(value));
+		case PROP_HASH_TYPE:
+			priv->hash_type = g_value_get_int(value);
 			break;
 		case PROP_ITER_COUNT:
 			priv->iter_count = g_value_get_uint(value);
@@ -313,12 +286,8 @@ static void
 purple_pbkdf2_cipher_finalize(GObject *obj)
 {
 	PurpleCipher *cipher = PURPLE_CIPHER(obj);
-	PurplePBKDF2CipherPrivate *priv = PURPLE_PBKDF2_CIPHER_GET_PRIVATE(cipher);
 
 	purple_pbkdf2_cipher_reset(cipher);
-
-	if (priv->hash != NULL)
-		g_object_unref(priv->hash);
 
 	parent_class->finalize(obj);
 }
@@ -343,8 +312,8 @@ purple_pbkdf2_cipher_class_init(PurplePBKDF2CipherClass *klass) {
 
 	g_type_class_add_private(klass, sizeof(PurplePBKDF2CipherPrivate));
 
-	properties[PROP_HASH] = g_param_spec_object("hash", "hash", "hash",
-								PURPLE_TYPE_HASH,
+	properties[PROP_HASH_TYPE] = g_param_spec_int("hash-type", "hash-type", "hash-type",
+								G_MININT, G_MAXINT, -1,
 								G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY |
 								G_PARAM_STATIC_STRINGS);
 
@@ -364,6 +333,11 @@ purple_pbkdf2_cipher_class_init(PurplePBKDF2CipherClass *klass) {
 static void
 purple_pbkdf2_cipher_init(PurpleCipher *cipher)
 {
+	PurplePBKDF2CipherPrivate *priv =
+		PURPLE_PBKDF2_CIPHER_GET_PRIVATE(cipher);
+
+	priv->hash_type = -1;
+
 	purple_cipher_reset(cipher);
 }
 
@@ -397,24 +371,22 @@ purple_pbkdf2_cipher_get_type(void) {
 }
 
 PurpleCipher *
-purple_pbkdf2_cipher_new(PurpleHash *hash) {
-	g_return_val_if_fail(PURPLE_IS_HASH(hash), NULL);
-
+purple_pbkdf2_cipher_new(GChecksumType hash_type) {
 	return g_object_new(PURPLE_TYPE_PBKDF2_CIPHER,
-						"hash", hash,
+						"hash-type", hash_type,
 						NULL);
 }
 
-PurpleHash *
-purple_pbkdf2_cipher_get_hash(const PurplePBKDF2Cipher *cipher) {
+GChecksumType
+purple_pbkdf2_cipher_get_hash_type(const PurplePBKDF2Cipher *cipher) {
 	PurplePBKDF2CipherPrivate *priv = NULL;
 
-	g_return_val_if_fail(PURPLE_IS_PBKDF2_CIPHER(cipher), NULL);
+	g_return_val_if_fail(PURPLE_IS_PBKDF2_CIPHER(cipher), -1);
 
 	priv = PURPLE_PBKDF2_CIPHER_GET_PRIVATE(cipher);
 
-	if(priv && priv->hash)
-		return priv->hash;
+	if(priv)
+		return priv->hash_type;
 
-	return NULL;
+	return -1;
 }
