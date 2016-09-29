@@ -1197,7 +1197,7 @@ if test "x$enable_libgadu" = "xyes"; then
 				AC_MSG_WARN([
 libgadu is not compatible with the GPL when compiled with OpenSSL support.
 
-To compile against system libgadu, please recompile libgadu using:
+To link against libgadu, please recompile it using:
 ./configure --with-openssl=no
 Then rerun this ./configure
 				])
