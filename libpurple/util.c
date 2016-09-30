@@ -1882,7 +1882,6 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
  * - \n should be converted to a normal space
  * - in addition to <br>, <p> and <div> etc. should also be converted into \n
  * - We want to turn </td>#whitespace<td> sequences into a single tab
- * - We want to turn <td> into a single tab (for msn profile "parsing")
  * - We want to turn </tr>#whitespace<tr> sequences into a single \n
  * - <script>...</script> and <style>...</style> should be completely removed
  */
