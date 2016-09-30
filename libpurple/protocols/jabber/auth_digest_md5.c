@@ -23,7 +23,6 @@
 #include "internal.h"
 
 #include "debug.h"
-#include "ciphers/md5hash.h"
 #include "util.h"
 #include "xmlnode.h"
 
@@ -106,9 +105,9 @@ static char *
 generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		const char *cnonce, const char *a2, const char *realm)
 {
-	PurpleHash *hash;
-	guchar result[16];
+	GChecksum *hash;
 	size_t a1len;
+	gsize digest_len = 16;
 
 	gchar *a1, *convnode=NULL, *convpasswd = NULL, *ha1, *ha2, *kd, *x, *z;
 
@@ -121,36 +120,23 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		convpasswd = g_strdup(passwd);
 	}
 
-	hash = purple_md5_hash_new();
+	hash = g_checksum_new(G_CHECKSUM_MD5);
 
 	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd ? convpasswd : "");
-	purple_hash_append(hash, (const guchar *)x, strlen(x));
-	purple_hash_digest(hash, result, sizeof(result));
+	g_checksum_update(hash, (const guchar *)x, -1);
 
 	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
 	a1len = strlen(a1);
-	g_memmove(a1, result, 16);
 
-	purple_hash_reset(hash);
-	purple_hash_append(hash, (const guchar *)a1, a1len);
-	purple_hash_digest(hash, result, sizeof(result));
+	g_checksum_get_digest(hash, (guint8 *)a1, &digest_len);
+	g_checksum_free(hash);
 
-	ha1 = purple_base16_encode(result, 16);
-
-	purple_hash_reset(hash);
-	purple_hash_append(hash, (const guchar *)a2, strlen(a2));
-	purple_hash_digest(hash, result, sizeof(result));
-
-	ha2 = purple_base16_encode(result, 16);
+	ha1 = g_compute_checksum_for_string(G_CHECKSUM_MD5, a1, a1len);
+	ha2 = g_compute_checksum_for_string(G_CHECKSUM_MD5, a2, -1);
 
 	kd = g_strdup_printf("%s:%s:00000001:%s:auth:%s", ha1, nonce, cnonce, ha2);
 
-	purple_hash_reset(hash);
-	purple_hash_append(hash, (const guchar *)kd, strlen(kd));
-	purple_hash_digest(hash, result, sizeof(result));
-	g_object_unref(hash);
-
-	z = purple_base16_encode(result, 16);
+	z = g_compute_checksum_for_string(G_CHECKSUM_MD5, kd, -1);
 
 	g_free(convnode);
 	g_free(convpasswd);

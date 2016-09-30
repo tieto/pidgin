@@ -50,7 +50,7 @@ jabber_data_create_from_data(gconstpointer rawdata, gsize size, const char *type
 	g_return_val_if_fail(type != NULL, NULL);
 
 	data = g_new0(JabberData, 1);
-	checksum = jabber_calculate_data_hash(rawdata, size, "sha1");
+	checksum = g_compute_checksum_for_data(G_CHECKSUM_SHA1, rawdata, size);
 
 	g_snprintf(cid, sizeof(cid), "sha1+%s@bob.xmpp.org", checksum);
 	g_free(checksum);
@@ -238,11 +238,25 @@ jabber_data_has_valid_hash(const JabberData *data)
 		if (num_sub_parts == 2) {
 			const gchar *hash_algo = sub_parts[0];
 			const gchar *hash_value = sub_parts[1];
-			gchar *digest =
-				jabber_calculate_data_hash(jabber_data_get_data(data),
-				    jabber_data_get_size(data), hash_algo);
+			GChecksumType hash_type;
+			gboolean valid_hash_type = TRUE;
 
-			if (digest) {
+			if (purple_strequal(hash_algo, "sha1"))
+				hash_type = G_CHECKSUM_SHA1;
+			else if (purple_strequal(hash_algo, "sha256"))
+				hash_type = G_CHECKSUM_SHA256;
+			else if (purple_strequal(hash_algo, "sha512"))
+				hash_type = G_CHECKSUM_SHA512;
+			else if (purple_strequal(hash_algo, "md5"))
+				hash_type = G_CHECKSUM_MD5;
+			else
+				valid_hash_type = FALSE;
+
+			if (valid_hash_type) {
+				gchar *digest = g_compute_checksum_for_data(
+					hash_type, jabber_data_get_data(data),
+					jabber_data_get_size(data));
+
 				ret = purple_strequal(digest, hash_value);
 
 				if (!ret)
