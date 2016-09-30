@@ -122,16 +122,6 @@ libpurple/protocols/msn/slpcall.c
 libpurple/protocols/msn/state.c
 libpurple/protocols/msn/switchboard.c
 libpurple/protocols/msn/userlist.c
-libpurple/protocols/mxit/actions.c
-libpurple/protocols/mxit/filexfer.c
-libpurple/protocols/mxit/http.c
-libpurple/protocols/mxit/login.c
-libpurple/protocols/mxit/multimx.c
-libpurple/protocols/mxit/mxit.c
-libpurple/protocols/mxit/profile.c
-libpurple/protocols/mxit/protocol.c
-libpurple/protocols/mxit/roster.c
-libpurple/protocols/mxit/splashscreen.c
 libpurple/protocols/myspace/myspace.c
 libpurple/protocols/myspace/user.c
 libpurple/protocols/myspace/zap.c

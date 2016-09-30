@@ -231,7 +231,6 @@ PROTOCOLS_16 = \
 		protocols/16/jabber.png \
 		protocols/16/meanwhile.png \
 		protocols/16/msn.png \
-		protocols/16/mxit.png \
 		protocols/16/myspace.png \
 		protocols/16/silc.png \
 		protocols/16/simple.png \
@@ -286,7 +285,6 @@ PROTOCOLS_22 = \
 		protocols/22/jabber.png \
 		protocols/22/meanwhile.png \
 		protocols/22/msn.png \
-		protocols/22/mxit.png \
 		protocols/22/myspace.png \
 		protocols/22/silc.png \
 		protocols/22/simple.png \
@@ -304,7 +302,6 @@ PROTOCOLS_48 = \
 		protocols/48/jabber.png \
 		protocols/48/meanwhile.png \
 		protocols/48/msn.png \
-		protocols/48/mxit.png \
 		protocols/48/myspace.png \
 		protocols/48/silc.png \
 		protocols/48/simple.png \
@@ -322,7 +319,6 @@ PROTOCOLS_SCALABLE = \
 		protocols/scalable/jabber.svg \
 		protocols/scalable/meanwhile.svg \
 		protocols/scalable/msn.svg \
-		protocols/scalable/mxit.svg \
 		protocols/scalable/silc.svg \
 		protocols/scalable/simple.svg \
 		protocols/scalable/yahoo.svg \
