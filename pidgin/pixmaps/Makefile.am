@@ -166,10 +166,6 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/mobile.svg \
 		emotes/default/24/scalable/monkey.svg \
 		emotes/default/24/scalable/moon.svg \
-		emotes/default/24/scalable/msn-away.svg \
-		emotes/default/24/scalable/msn-busy.svg \
-		emotes/default/24/scalable/msn_online.svg \
-		emotes/default/24/scalable/msn.svg \
 		emotes/default/24/scalable/musical-note.svg \
 		emotes/default/24/scalable/peace.svg \
 		emotes/default/24/scalable/phone.svg \
