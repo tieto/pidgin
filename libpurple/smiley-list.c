@@ -26,6 +26,8 @@
 #include "smiley-parser.h"
 #include "trie.h"
 
+#include <string.h>
+
 #define PURPLE_SMILEY_LIST_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_SMILEY_LIST, \
 	PurpleSmileyListPrivate))
