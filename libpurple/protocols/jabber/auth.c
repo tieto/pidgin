@@ -38,9 +38,6 @@
 #include "iq.h"
 #include "notify.h"
 
-#include "ciphers/hmaccipher.h"
-#include "ciphers/md5hash.h"
-
 static GSList *auth_mechs = NULL;
 
 static void auth_old_result_cb(JabberStream *js, const char *from,
@@ -277,22 +274,15 @@ static void auth_old_cb(JabberStream *js, const char *from,
 			 * to non-SASL authentication.
 			 */
 			const char *challenge;
-			gchar digest[33];
-			PurpleCipher *hmac;
-			PurpleHash *md5;
-			gssize diglen;
+			gchar *digest;
 
 			/* Calculate the MHAC-MD5 digest */
-			md5 = purple_md5_hash_new();
-			hmac = purple_hmac_cipher_new(md5);
 			challenge = purple_xmlnode_get_attrib(x, "challenge");
-			purple_cipher_set_key(hmac, (guchar *)pw, strlen(pw));
-			purple_cipher_append(hmac, (guchar *)challenge, strlen(challenge));
-			diglen = purple_cipher_digest_to_str(hmac, digest, 33);
-			g_object_unref(hmac);
-			g_object_unref(md5);
+			digest = g_compute_hmac_for_string(G_CHECKSUM_MD5,
+					(guchar *)pw, strlen(pw),
+					challenge, -1);
 
-			g_return_if_fail(diglen > 0);
+			g_return_if_fail(digest != NULL);
 
 			/* Create the response query */
 			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
@@ -306,6 +296,7 @@ static void auth_old_cb(JabberStream *js, const char *from,
 			x = purple_xmlnode_new_child(query, "crammd5");
 
 			purple_xmlnode_insert_data(x, digest, 32);
+			g_free(digest);
 
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);
