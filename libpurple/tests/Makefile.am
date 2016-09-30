@@ -35,8 +35,7 @@ AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(GPLUGIN_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
-	$(DBUS_CFLAGS) \
-	$(NSS_CFLAGS)
+	$(DBUS_CFLAGS)
 
 EXTRA_DIST += \
 	data/test-image.png
