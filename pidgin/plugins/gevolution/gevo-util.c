@@ -103,8 +103,6 @@ gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy)
 		protocol_field = E_CONTACT_IM_AIM;
 	else if (!strcmp(protocol_id, "prpl-icq"))
 		protocol_field = E_CONTACT_IM_ICQ;
-	else if (!strcmp(protocol_id, "prpl-msn"))
-		protocol_field = E_CONTACT_IM_MSN;
 	else if (!strcmp(protocol_id, "prpl-yahoo"))
 		protocol_field = E_CONTACT_IM_YAHOO;
 	else if (!strcmp(protocol_id, "prpl-jabber"))
@@ -170,12 +168,7 @@ gevo_get_email_for_buddy(PurpleBuddy *buddy)
 		PurpleAccount *account = purple_buddy_get_account(buddy);
 		const char *prpl_id = purple_account_get_protocol_id(account);
 
-		if (!strcmp(prpl_id, "prpl-msn"))
-		{
-			mail = g_strdup(purple_normalize(account,
-										   purple_buddy_get_name(buddy)));
-		}
-		else if (!strcmp(prpl_id, "prpl-yahoo"))
+		if (!strcmp(prpl_id, "prpl-yahoo"))
 		{
 			mail = g_strdup_printf("%s@yahoo.com",
 								   purple_normalize(account,
