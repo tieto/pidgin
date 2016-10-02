@@ -33,7 +33,6 @@
 #include "gtkutils.h"
 
 #include "protocols/jabber/jabber.h"
-#include "protocols/msn/session.h"
 
 #ifdef MAX
 # undef MAX
@@ -81,13 +80,6 @@ text_sent_cb(GtkEntry *entry)
 		write(*a, &len, 2);
 		write(*a, txt, ntohs(len));
 		purple_debug(PURPLE_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
-
-	} else if (strcmp(prpl_id, "prpl-msn") == 0) {
-		MsnSession *session = gc->proto_data;
-		char buf[strlen(txt) + 3];
-
-		g_snprintf(buf, sizeof(buf), "%s\r\n", txt);
-		msn_servconn_write(session->notification->servconn, buf, strlen(buf));
 
 	} else if (strcmp(prpl_id, "prpl-irc") == 0) {
 		write(*(int *)gc->proto_data, txt, strlen(txt));
@@ -175,7 +167,7 @@ static PurplePluginInfo info =
 	N_("Raw"),
 	DISPLAY_VERSION,
 	N_("Lets you send raw input to text-based protocols."),
-	N_("Lets you send raw input to text-based protocols (XMPP, MSN, IRC, "
+	N_("Lets you send raw input to text-based protocols (XMPP, IRC, "
 	   "TOC). Hit 'Enter' in the entry box to send. Watch the debug window."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",
 	PURPLE_WEBSITE,
