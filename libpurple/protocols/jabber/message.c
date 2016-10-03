@@ -959,7 +959,6 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 
 	for (it = found_smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *smiley = it->data;
-		PurpleImage *smiley_image;
 		const gchar *shortcut = purple_smiley_get_shortcut(smiley);
 		const gchar *mimetype;
 		JabberData *jdata;
