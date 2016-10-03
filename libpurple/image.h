@@ -61,7 +61,6 @@ struct _PurpleImage {
 };
 
 struct _PurpleImageClass {
-	/*< private >*/
 	GObjectClass parent_class;
 
 	void (*purple_reserved1)(void);

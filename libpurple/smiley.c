@@ -141,6 +141,31 @@ purple_smiley_new(const gchar *shortcut, const gchar *path)
 }
 
 PurpleSmiley *
+purple_smiley_new_from_data(const gchar *shortcut,
+                            const guint8 *data,
+                            gsize length)
+{
+	PurpleSmiley *smiley = NULL;
+	GBytes *bytes = NULL;
+
+	g_return_val_if_fail(shortcut != NULL, NULL);
+
+	bytes = g_bytes_new(data, length);
+
+	smiley = g_object_new(
+		PURPLE_TYPE_SMILEY,
+		"shortcut", shortcut,
+		"contents", bytes,
+		NULL
+	);
+
+	g_bytes_unref(bytes);
+
+	return smiley;
+
+}
+
+PurpleSmiley *
 purple_smiley_new_remote(const gchar *shortcut) {
 	g_return_val_if_fail(shortcut != NULL, NULL);
 

@@ -9,6 +9,7 @@ test_programs=\
 	test_des \
 	test_des3 \
 	test_hmac \
+	test_image \
 	test_md4 \
 	test_md5 \
 	test_sha1 \
@@ -16,7 +17,6 @@ test_programs=\
 	test_trie \
 	test_util \
 	test_xmlnode
-
 
 test_des_SOURCES=test_des.c
 test_des_LDADD=$(COMMON_LIBS)
@@ -26,6 +26,9 @@ test_des3_LDADD=$(COMMON_LIBS)
 
 test_hmac_SOURCES=test_hmac.c
 test_hmac_LDADD=$(COMMON_LIBS)
+
+test_image_SOURCES=test_image.c
+test_image_LDADD=$(COMMON_LIBS)
 
 test_md4_SOURCES=test_md4.c
 test_md4_LDADD=$(COMMON_LIBS)
@@ -51,9 +54,13 @@ test_xmlnode_LDADD=$(COMMON_LIBS)
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
+	-DTEST_DATA_DIR=\"$(srcdir)/data\" \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GPLUGIN_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(NSS_CFLAGS)
+
+EXTRA_DIST = \
+	data/test-image.png
