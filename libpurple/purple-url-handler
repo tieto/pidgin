@@ -224,11 +224,6 @@ def irc(uri):
                 channel = "#" + channel
             gochat(account, {"server": server, "channel": channel, "password": params.get("key", "")}, params.get("msg"))
 
-def myim(uri):
-        protocol = "prpl-myspace"
-        print "TODO: send uri: ", uri
-        assert False, "Not implemented"
-
 def sip(uri):
     protocol = "prpl-simple"
     match = re.match(r"^sip:(.*)", uri)
@@ -353,8 +348,6 @@ def main(argv=sys.argv):
             icq(uri)
         elif type == "irc":
             irc(uri)
-        elif type == "myim":
-            myim(uri)
         elif type == "sip":
             sip(uri)
         elif type == "xmpp":

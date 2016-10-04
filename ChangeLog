@@ -1,5 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.12.0 (06/21/16):
+	General:
+	* Remove the MySpaceIM protocol plugin. The service has been defunct for a long time. (#15356)
+
 version 2.11.0 (06/21/16):
 	General:
 	* 2.10.12 was accidentally released with new additions to the API and

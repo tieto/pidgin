@@ -225,7 +225,6 @@ PROTOCOLS_16 = \
 		protocols/16/irc.png \
 		protocols/16/jabber.png \
 		protocols/16/meanwhile.png \
-		protocols/16/myspace.png \
 		protocols/16/silc.png \
 		protocols/16/simple.png \
 		protocols/16/yahoo.png \
@@ -277,7 +276,6 @@ PROTOCOLS_22 = \
 		protocols/22/irc.png \
 		protocols/22/jabber.png \
 		protocols/22/meanwhile.png \
-		protocols/22/myspace.png \
 		protocols/22/silc.png \
 		protocols/22/simple.png \
 		protocols/22/yahoo.png \
@@ -293,7 +291,6 @@ PROTOCOLS_48 = \
 		protocols/48/irc.png \
 		protocols/48/jabber.png \
 		protocols/48/meanwhile.png \
-		protocols/48/myspace.png \
 		protocols/48/silc.png \
 		protocols/48/simple.png \
 		protocols/48/yahoo.png \

@@ -107,9 +107,6 @@ libpurple/protocols/jabber/si.c
 libpurple/protocols/jabber/usermood.c
 libpurple/protocols/jabber/usernick.c
 libpurple/protocols/jabber/xdata.c
-libpurple/protocols/myspace/myspace.c
-libpurple/protocols/myspace/user.c
-libpurple/protocols/myspace/zap.c
 libpurple/protocols/novell/nmuser.c
 libpurple/protocols/novell/novell.c
 libpurple/protocols/oscar/authorization.c
