@@ -351,7 +351,7 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 		}
 
 		/*
-		 * This hack is necessary because some prpls (MSN) have unnamed chats
+		 * This hack is necessary because some prpls have unnamed chats
 		 * that all use the same name.  A PurpleConversation for one of those
 		 * is only ever re-used if the user has left, so calls to
 		 * purple_conversation_new need to fall-through to creating a new

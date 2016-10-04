@@ -139,7 +139,7 @@ struct _PurpleBuddy {
 	PurpleBlistNode node;                     /**< The node that this buddy inherits from */
 	char *name;                             /**< The name of the buddy. */
 	char *alias;                            /**< The user-set alias of the buddy */
-	char *server_alias;                     /**< The server-specified alias of the buddy.  (i.e. MSN "Friendly Names") */
+	char *server_alias;                     /**< The server-specified alias of the buddy */
 	void *proto_data;                       /**< This allows the prpl to associate whatever data it wants with a buddy */
 	PurpleBuddyIcon *icon;                    /**< The buddy icon. */
 	PurpleAccount *account;					/**< the account this buddy belongs to */

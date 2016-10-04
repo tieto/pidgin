@@ -315,8 +315,9 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
 
-	/* this should probably be part of global smiley theme settings later on,
-	  shared with MSN */
+	/* this should probably be part of global smiley theme settings
+	 * later on
+	 */
 	option = purple_account_option_bool_new(_("Show Custom Smileys"),
 		"custom_smileys", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,

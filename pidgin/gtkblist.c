@@ -3791,7 +3791,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 
 		/* Nickname/Server Alias */
 		/* I'd like to only show this if there's a contact or buddy
-		 * alias, but many people on MSN set long nicknames, which
+		 * alias, but people often set long nicknames, which
 		 * get ellipsized, so the only way to see the whole thing is
 		 * to look at the tooltip. */
 		if (full && b->server_alias != NULL && b->server_alias[0] != '\0')
@@ -4017,14 +4017,12 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 
 	tune = purple_presence_get_status(p, "tune");
 	if (tune && purple_status_is_active(tune)) {
-		/* Only in MSN.
-		 * TODO: Replace "Tune" with generalized "Media" in 3.0. */
+		/* TODO: Replace "Tune" with generalized "Media" in 3.0. */
 		if (purple_status_get_attr_string(tune, "game") != NULL) {
 			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "game.png", NULL);
 			return _pidgin_blist_get_cached_emblem(path);
 		}
-		/* Only in MSN.
-		 * TODO: Replace "Tune" with generalized "Media" in 3.0. */
+		/* TODO: Replace "Tune" with generalized "Media" in 3.0. */
 		if (purple_status_get_attr_string(tune, "office") != NULL) {
 			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "office.png", NULL);
 			return _pidgin_blist_get_cached_emblem(path);

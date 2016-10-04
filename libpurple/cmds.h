@@ -170,7 +170,7 @@ extern "C" {
  *          order for the command to ever actually be called.
  * @param prpl_id If the #PURPLE_CMD_FLAG_PRPL_ONLY flag is set, this is the id
  *                of the prpl to which the command applies (such as
- *                <tt>"prpl-msn"</tt>). If the flag is not set, this parameter
+ *                <tt>"prpl-aim"</tt>). If the flag is not set, this parameter
  *                is ignored; pass @c NULL (or a humourous string of your
  *                choice!).
  * @param func This is the function to call when someone enters this command.

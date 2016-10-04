@@ -192,7 +192,7 @@ struct _PurpleAccount
 	/*
 	 * TODO: Supplementing the next two linked lists with hash tables
 	 * should help performance a lot when these lists are long.  This
-	 * matters quite a bit for protocols like MSN, where all your
+	 * matters quite a bit for protocols, where all your
 	 * buddies are added to your permit list.  Currently we have to
 	 * iterate through the entire list if we want to check if someone
 	 * is permitted or denied.  We should do this for 3.0.0.

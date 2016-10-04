@@ -884,9 +884,8 @@ guint purple_conv_im_get_typing_timeout(const PurpleConvIm *im);
 
 /**
  * Sets the quiet-time when no PURPLE_TYPING messages will be sent.
- * Few protocols need this (maybe only MSN).  If the user is still
- * typing after this quiet-period, then another PURPLE_TYPING message
- * will be sent.
+ * Few protocols need this.  If the user is still typing after this
+ * quiet-period, then another PURPLE_TYPING message will be sent.
  *
  * @param im  The IM.
  * @param val The number of seconds to wait before allowing another
