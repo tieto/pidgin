@@ -90,9 +90,9 @@ guchar *jabber_scram_hi(const JabberScramHash *hash, const GString *str,
 	g_return_val_if_fail(iterations > 0, NULL);
 
 	digest_len = g_checksum_type_get_length(hash->type);
-	prev   = g_new0(guint8, digest_len);
-	tmp    = g_new0(guint8, digest_len);
-	result = g_new0(guint8, digest_len);
+	prev   = g_new0(guchar, digest_len);
+	tmp    = g_new0(guchar, digest_len);
+	result = g_new0(guchar, digest_len);
 
 	hmac = g_hmac_new(hash->type, (guchar *)str->str, str->len);
 
