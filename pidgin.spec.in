@@ -161,7 +161,7 @@ Requires:   pkgconfig
 
 %description
 Pidgin allows you to talk to anyone using a variety of messaging
-protocols including AIM, MSN, Yahoo!, XMPP, Bonjour, Gadu-Gadu,
+protocols including AIM, Yahoo!, XMPP, Bonjour, Gadu-Gadu,
 ICQ, IRC, Novell Groupwise, QQ, Lotus Sametime, SILC, Simple and
 Zephyr.  These protocols are implemented using a modular, easy to
 use design.  To use a protocol, just add an account using the
@@ -182,7 +182,7 @@ and plugins.
 libpurple contains the core IM support for IM clients such as Pidgin
 and Finch.
 
-libpurple supports a variety of messaging protocols including AIM, MSN,
+libpurple supports a variety of messaging protocols including AIM,
 Yahoo!, XMPP, Bonjour, Gadu-Gadu, ICQ, IRC, Novell Groupwise, QQ,
 Lotus Sametime, SILC, Simple and Zephyr.
 
