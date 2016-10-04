@@ -388,7 +388,6 @@ SectionGroupEnd
 !macroend
 SectionGroup /e $(URIHANDLERSSECTIONTITLE) SecURIHandlers
   !insertmacro URI_SECTION "aim"
-  !insertmacro URI_SECTION "msnim"
   !insertmacro URI_SECTION "myim"
   !insertmacro URI_SECTION "ymsgr"
   !insertmacro URI_SECTION "xmpp"
@@ -505,8 +504,6 @@ Section Uninstall
     ; Remove any URI handlers
     ; I can't think of an easy way to maintain a list in a single place
     Push "aim"
-    Call un.UnregisterURIHandler
-    Push "msnim"
     Call un.UnregisterURIHandler
     Push "myim"
     Call un.UnregisterURIHandler

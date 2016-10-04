@@ -224,29 +224,6 @@ def irc(uri):
                 channel = "#" + channel
             gochat(account, {"server": server, "channel": channel, "password": params.get("key", "")}, params.get("msg"))
 
-def msnim(uri):
-    protocol = "prpl-msn"
-    match = re.match(r"^msnim:([^?]*)(\?(.*))", uri)
-    if not match:
-        print("Invalid msnim URI: %s" % uri)
-        return
-
-    command = unquote_plus(match.group(1))
-    paramstring = match.group(3)
-    params = {}
-    if paramstring:
-        for param in paramstring.split("&"):
-            key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = unquote_plus(value)
-    screenname = params.get("contact", "")
-
-    account = findaccount(protocol)
-
-    if command.lower() == "chat":
-        goim(account, screenname)
-    elif command.lower() == "add":
-        addbuddy(account, screenname)
-
 def myim(uri):
         protocol = "prpl-myspace"
         print "TODO: send uri: ", uri
@@ -376,8 +353,6 @@ def main(argv=sys.argv):
             icq(uri)
         elif type == "irc":
             irc(uri)
-        elif type == "msnim":
-            msnim(uri)
         elif type == "myim":
             myim(uri)
         elif type == "sip":
