@@ -300,31 +300,6 @@ def gtalk(uri):
         # XXX V&V prompt to establish call
         goim(account, jid)
 
-def ymsgr(uri):
-    protocol = "prpl-yahoo"
-    match = re.match(r"^ymsgr:([^?]*)(\?([^&]*)(&(.*))?)", uri)
-    if not match:
-        print("Invalid ymsgr URI: %s" % uri)
-        return
-
-    command = unquote_plus(match.group(1))
-    screenname = unquote_plus(match.group(3))
-    paramstring = match.group(5)
-    params = {}
-    if paramstring:
-        for param in paramstring.split("&"):
-            key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = unquote_plus(value)
-
-    account = findaccount(protocol)
-
-    if command.lower() == "sendim":
-        goim(account, screenname, params.get("m"))
-    elif command.lower() == "chat":
-        gochat(account, {"room": screenname})
-    elif command.lower() == "addfriend":
-        addbuddy(account, screenname)
-
 
 def main(argv=sys.argv):
     if len(argv) != 2 or argv[1] == "--help" or argv[1] == "-h":
@@ -354,8 +329,6 @@ def main(argv=sys.argv):
             xmpp(uri)
         elif type == "gtalk":
             gtalk(uri)
-        elif type == "ymsgr":
-            ymsgr(uri)
         else:
             print("Unknown protocol: %s" % type)
     except dbus.DBusException as e:

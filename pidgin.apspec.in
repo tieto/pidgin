@@ -14,7 +14,7 @@ PackageVersion: 1
 
 [Description]
 Pidgin allows you to talk to anyone using a variety of messaging protocols,
-including AIM (Oscar and TOC), ICQ, IRC, Yahoo!, XMPP,
+including AIM (Oscar and TOC), ICQ, IRC, XMPP,
 Gadu-Gadu, and Zephyr. These protocols are implemented using a
 modular, easy to use design. To use a protocol, just add an account using the
 account editor.
@@ -23,7 +23,7 @@ Pidgin supports many common features of other clients, as well as many unique
 features, such as perl scripting, TCL scripting and C plugins.
 
 Pidgin is NOT affiliated with or endorsed by America Online, Inc., Microsoft
-Corporation, Yahoo! Inc., or ICQ Inc.
+Corporation, or ICQ Inc.
 
 [BuildPrepare]
 APBUILD_STATIC="Xss startup-notification-1" prepareBuild --enable-nss --enable-gnutls --enable-binreloc --disable-perl --disable-tcl --disable-gtktest --disable-glibtest --disable-vv  --disable-fortify

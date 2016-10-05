@@ -2130,7 +2130,6 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 	char *alias    = NULL;
 	GList *aims    = NULL;
 	GList *icqs    = NULL;
-	GList *yahoos  = NULL;
 	GList *jabbers = NULL;
 
 	s = temp_vcard = g_strdup(vcard);
@@ -2170,7 +2169,6 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 		if (!strcmp(field, "FN"))
 			alias = g_strdup(value);
 		else if (!strcmp(field, "X-AIM") || !strcmp(field, "X-ICQ") ||
-				 !strcmp(field, "X-YAHOO") ||
 				 !strcmp(field, "X-JABBER"))
 		{
 			char **values = g_strsplit(value, ":", 0);
@@ -2182,8 +2180,6 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 					aims = g_list_append(aims, g_strdup(*im));
 				else if (!strcmp(field, "X-ICQ"))
 					icqs = g_list_append(icqs, g_strdup(*im));
-				else if (!strcmp(field, "X-YAHOO"))
-					yahoos = g_list_append(yahoos, g_strdup(*im));
 				else if (!strcmp(field, "X-JABBER"))
 					jabbers = g_list_append(jabbers, g_strdup(*im));
 			}
@@ -2194,7 +2190,7 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 
 	g_free(temp_vcard);
 
-	if (aims == NULL && icqs == NULL && yahoos == NULL && jabbers == NULL)
+	if (aims == NULL && icqs == NULL && jabbers == NULL)
 	{
 		g_free(alias);
 
@@ -2203,7 +2199,6 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 
 	add_buddies_from_vcard("prpl-aim",    group, aims,    alias);
 	add_buddies_from_vcard("prpl-icq",    group, icqs,    alias);
-	add_buddies_from_vcard("prpl-yahoo",  group, yahoos,  alias);
 	add_buddies_from_vcard("prpl-jabber", group, jabbers, alias);
 
 	g_free(alias);

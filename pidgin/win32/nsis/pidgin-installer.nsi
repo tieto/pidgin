@@ -388,7 +388,6 @@ SectionGroupEnd
 !macroend
 SectionGroup /e $(URIHANDLERSSECTIONTITLE) SecURIHandlers
   !insertmacro URI_SECTION "aim"
-  !insertmacro URI_SECTION "ymsgr"
   !insertmacro URI_SECTION "xmpp"
 SectionGroupEnd
 
@@ -504,8 +503,6 @@ Section Uninstall
     ; I can't think of an easy way to maintain a list in a single place
     Push "aim"
     Call un.UnregisterURIHandler
-    Push "ymsgr"
-    Call un.UnregisterURIHandler
     Push "xmpp"
     Call un.UnregisterURIHandler
 
@@ -564,8 +561,6 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libsilc.dll"
     Delete "$INSTDIR\plugins\libsimple.dll"
     Delete "$INSTDIR\plugins\libtoc.dll"
-    Delete "$INSTDIR\plugins\libyahoo.dll"
-    Delete "$INSTDIR\plugins\libyahoojp.dll"
     Delete "$INSTDIR\plugins\libxmpp.dll"
     Delete "$INSTDIR\plugins\log_reader.dll"
     Delete "$INSTDIR\plugins\markerline.dll"

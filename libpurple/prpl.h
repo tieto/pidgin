@@ -162,7 +162,7 @@ typedef enum
 	/**
 	 * Notify on new mail.
 	 *
-	 * Yahoo notifies you when you have new mail.
+	 * If a protocol notifies you when you have new mail.
 	 */
 	OPT_PROTO_MAIL_CHECK = 0x00000020,
 
@@ -921,8 +921,8 @@ GList *purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence
  * @param gc The connection to send the message on.
  * @param who Whose attention to request.
  * @param type_code An index into the prpl's attention_types list determining the type
- *        of the attention request command to send. 0 if prpl only defines one
- *        (for example, Yahoo), but protocols are allowed to define more.
+ *        of the attention request command to send. 0 if prpl only defines one,
+ *        but protocols are allowed to define more.
  *
  * Note that you can't send arbitrary PurpleAttentionType's, because there is
  * only a fixed set of attention commands.

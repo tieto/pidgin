@@ -456,8 +456,8 @@ gboolean purple_markup_find_tag(const char *needle, const char *haystack,
 /**
  * Extracts a field of data from HTML.
  *
- * This is a scary function. See protocols/yahoo/yahoo_profile.c
- * for example usage.
+ * This is a scary function. It used to be used for MSN and Yahoo prpls,
+ * but since those prpls have been removed, this is now deprecated.
  *
  * @param str            The string to parse.
  * @param len            The size of str.

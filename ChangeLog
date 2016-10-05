@@ -13,6 +13,14 @@ version 2.12.0 (??/??/????):
 	  https://pidgin.im/pipermail/devel/2016-September/024078.htm
 	* Removed the MySpaceIM protocol plugin. The service has been defunct for a
 	  long time. (#15356)
+	* Remove the Yahoo! protocol plugin. Yahoo has completely
+	  reimplemented their protocol, so this version is no longer operable as
+	  of August 5th, 2016:
+	  https://yahoo.tumblr.com/post/145715934739/q2-2016-progress-report-on-our-product
+	  A new protocol plugin has been written to support the new protocol.
+	  It can be found here: https://github.com/EionRobb/funyahoo-plusplus
+	  This also removes support for Yahoo! Japan. According to
+	  http://messenger.yahoo.co.jp/ the service ended March 26th, 2014.
 
 	General
 	* Replaced instances of d.pidgin.im with developer.pidgin.im and updated the

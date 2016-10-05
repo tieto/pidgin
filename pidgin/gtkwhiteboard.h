@@ -37,8 +37,6 @@
 #define BRUSH_STATE_DOWN    1
 #define BRUSH_STATE_MOTION  2
 
-/* XXX: This seems duplicated with the Yahoo! Doodle prpl code.
- * XXX: How should they work together? */
 #define PALETTE_NUM_COLORS  7
 
 /**

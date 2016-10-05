@@ -121,7 +121,6 @@ update_buddies_from_contact(EContact *contact)
 
 	update_ims_from_contact(contact, name, "prpl-aim",    E_CONTACT_IM_AIM);
 	update_ims_from_contact(contact, name, "prpl-jabber", E_CONTACT_IM_JABBER);
-	update_ims_from_contact(contact, name, "prpl-yahoo",  E_CONTACT_IM_YAHOO);
 	update_ims_from_contact(contact, name, "prpl-icq",    E_CONTACT_IM_ICQ);
 	update_ims_from_contact(contact, name, "prpl-novell", E_CONTACT_IM_GROUPWISE);
 	update_ims_from_contact(contact, name, "prpl-gg",     E_CONTACT_IM_GADUGADU);

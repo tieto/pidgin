@@ -68,8 +68,8 @@ PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account,
  * @param gc The connection to send the message on.
  * @param who Whose attention to request.
  * @param type_code An index into the prpl's attention_types list determining the type
- * 	of the attention request command to send. 0 if prpl only defines one
- * 	(for example, Yahoo), but protocols are allowed to define more.
+ * 	of the attention request command to send. 0 if prpl only defines one,
+ * 	but protocols are allowed to define more.
  *
  * Note that you can't send arbitrary PurpleAttentionType's, because there is
  * only a fixed set of attention commands.
