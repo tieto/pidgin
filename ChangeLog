@@ -1,10 +1,28 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.12.0 (??/??/??):
-	General:
-	* Remove the MySpaceIM protocol plugin. The service has been defunct for a long time. (#15356)
+version 2.12.0 (??/??/????):
+	libpurple:
+	* Removed the MSN protocol plugin. It has been unusable and dormant for some
+	  time. MSNP18 has been discontinued and the protocol plugin would require a 
+	  large update to start working again. See: http://ismsndeadyet.com/ The
+	  third-party Pidgin SkypeWeb plugin, however, should provide enough
+	  functionality as a replacement if people still want to use MSN:
+	  https://github.com/EionRobb/skype4pidgin/tree/master/skypeweb
+	* Removed Mxit protocol plugin. The service was closed at the end of
+	  September 2016. See
+	  https://pidgin.im/pipermail/devel/2016-September/024078.htm
+	* Removed the MySpaceIM protocol plugin. The service has been defunct for a
+	  long time. (#15356)
 
-version 2.11.0 (06/21/16):
+	General
+	* Replaced instances of d.pidgin.im with developer.pidgin.im and updated the
+	  urls to use https. (#17036)
+
+	IRC
+	* Fixed issue of messages being silently cut off at 500 characters. Large
+	  messages are now split into parts and sent one by one. (#4753)
+
+version 2.11.0 (06/21/2016):
 	General:
 	* 2.10.12 was accidentally released with new additions to the API and
 	  should have been released as 2.11.0.  Unfortunately, we did not catch
@@ -27,13 +45,13 @@ version 2.11.0 (06/21/16):
 	  don't support rich text
 	* Fix a potential crash while exiting pidgin
 
-	AIM:
-	* Add support for the newer kerberos-based authentication of AIM 8.x
-
 	Windows-Specific Changes:
 	* Use getaddrinfo for DNS to enable IPv6 (#1075)
 	* Updates to dependencies:
 		* NSS 3.24 and NSPR 4.12.
+
+	AIM:
+	* Add support for the newer kerberos-based authentication of AIM 8.x
 
 	Bonjour
 	* Fixed building on Mac OSX (Patrick Cloke) (#16883)
@@ -79,7 +97,7 @@ version 2.11.0 (06/21/16):
 	* Fix a remote out-of-bounds read.  Discovered by Yves Younan of Cisco
 	  Talos.  (TALOS-CAN-0143)
 
-version 2.10.12 (12/31/15):
+version 2.10.12 (12/31/2015):
 	General:
 	* purple-url-handler now works with Python 3.x (Daniël van Eeden)
 	* Fixed an issue where transient startup statuses could be deleted
@@ -100,7 +118,7 @@ version 2.10.12 (12/31/15):
 	Gadu-Gadu:
 	* Updated internal libgadu to version 1.12.1.
 
-version 2.10.11 (11/23/14):
+version 2.10.11 (11/23/2014):
 	General:
 	* Fix handling of Self-Signed SSL/TLS Certificates when using the NSS
 	  plugin (#16412)
@@ -118,7 +136,7 @@ version 2.10.11 (11/23/14):
 	* Fail early when buddy list is unavailable instead of wasting bandwidth
 	  endlessly re-trying.
 
-version 2.10.10 (10/22/14):
+version 2.10.10 (10/22/2014):
 	General:
 	* Check the basic constraints extension when validating SSL/TLS
 	  certificates. This fixes a security hole that allowed a malicious
