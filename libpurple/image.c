@@ -167,10 +167,6 @@ purple_image_new_from_file(const gchar *path, GError **error) {
 	gchar *contents = NULL;
 	gsize length = 0;
 
-	if(!g_file_test(path, G_FILE_TEST_EXISTS)) {
-		return NULL;
-	}
-
 	if(!g_file_get_contents(path, &contents, &length, error)) {
 		return NULL;
 	}
