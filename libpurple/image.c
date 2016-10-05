@@ -111,7 +111,7 @@ purple_image_get_property(GObject *obj, guint param_id, GValue *value,
 			g_value_set_boxed(value, purple_image_get_contents(image));
 			break;
 		case PROP_SIZE:
-			g_value_set_uint(value, purple_image_get_size(image));
+			g_value_set_uint64(value, purple_image_get_size(image));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
