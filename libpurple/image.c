@@ -409,6 +409,6 @@ purple_image_get_friendly_filename(PurpleImage *image) {
 		return priv->friendly_filename;
 	}
 
-	return purple_image_get_friendly_filename(image);
+	return purple_image_generate_filename(image);
 }
  
