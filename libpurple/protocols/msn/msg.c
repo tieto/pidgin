@@ -905,7 +905,7 @@ got_emoticon(MsnSlpCall *slpcall, const guchar *data, gsize size)
 	const gchar *shortcut;
 
 	swboard = slpcall->slplink->swboard;
-	conv = swboard->conv; 
+	conv = swboard->conv;
 	shortcut = slpcall->data_info;
 
 	purple_debug_info("msn", "got smiley: %s", shortcut);
