@@ -47,7 +47,7 @@ _purple_smiley_set_shortcut(PurpleSmiley *smiley, const gchar *shortcut) {
 
 	g_free(priv->shortcut);
 
-	priv->shortcut = (shortcut) ? g_strdup(shortcut) : NULL;
+	priv->shortcut = g_strdup(shortcut);
 
 	g_object_notify(G_OBJECT(smiley), "shortcut");
 }
