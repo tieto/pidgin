@@ -80,7 +80,7 @@ GType purple_image_get_type(void);
 
 /**
  * purple_image_new_from_bytes:
- * @bytes: A #GBytes containing the raw image data.
+ * @bytes: (transfer none) A #GBytes containing the raw image data.
  *
  * Loads a raw image data as a new #PurpleImage object.
  *
@@ -118,7 +118,7 @@ PurpleImage *purple_image_new_from_data(const guint8 *data, gsize length);
 
 /**
  * purple_image_new_from_data_take:
- * @data: the pointer to the image data buffer.
+ * @data: (transfer full) the pointer to the image data buffer.
  * @length: the length of @data.
  *
  * Creates a new #PurpleImage object with contents of @data buffer.
