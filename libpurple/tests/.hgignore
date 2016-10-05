@@ -4,6 +4,7 @@ syntax: regexp
 ^test_des3?$
 ^test_hmac$
 ^test_image$
+^test_smiley$
 ^test_trie$
 ^test_util$
 ^test_xmlnode$

@@ -14,6 +14,7 @@ test_programs=\
 	test_md5 \
 	test_sha1 \
 	test_sha256 \
+	test_smiley \
 	test_trie \
 	test_util \
 	test_xmlnode
@@ -41,6 +42,9 @@ test_sha1_LDADD=$(COMMON_LIBS)
 
 test_sha256_SOURCES=test_sha256.c
 test_sha256_LDADD=$(COMMON_LIBS)
+
+test_smiley_SOURCES=test_smiley.c
+test_smiley_LDADD=$(COMMON_LIBS)
 
 test_trie_SOURCES=test_trie.c
 test_trie_LDADD=$(COMMON_LIBS)
