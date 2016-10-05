@@ -577,10 +577,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
 			value = "gmail.com";
 
-		if (value == NULL && g_object_get_data(G_OBJECT(item), "fakefacebook") &&
-			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
-			value = "chat.facebook.com";
-
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry), value);
 	}
@@ -776,7 +772,7 @@ add_protocol_options(AccountPrefsDialog *dialog)
 {
 	PurpleAccountOption *option;
 	PurpleAccount *account;
-	GtkWidget *vbox, *check, *entry, *combo, *menu, *item;
+	GtkWidget *vbox, *check, *entry, *combo;
 	GList *list, *node;
 	gint i, idx, int_value;
 	GtkListStore *model;
@@ -814,9 +810,6 @@ add_protocol_options(AccountPrefsDialog *dialog)
 	gtk_notebook_insert_page(GTK_NOTEBOOK(dialog->notebook), vbox,
 			gtk_label_new_with_mnemonic(_("Ad_vanced")), 1);
 	gtk_widget_show(vbox);
-
-	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
-	item = gtk_menu_get_active(GTK_MENU(menu));
 
 	for (l = dialog->prpl_info->protocol_options; l != NULL; l = l->next)
 	{
@@ -931,10 +924,6 @@ add_protocol_options(AccountPrefsDialog *dialog)
 				list = purple_account_option_get_list(option);
 				model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 				opt_entry->widget = combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(model));
-
-				if (g_object_get_data(G_OBJECT(item), "fakefacebook") &&
-					!strcmp(opt_entry->setting, "connection_security"))
-					str_value = "opportunistic_tls";
 
 				/* Loop through list of PurpleKeyValuePair items */
 				for (node = list; node != NULL; node = node->next) {
