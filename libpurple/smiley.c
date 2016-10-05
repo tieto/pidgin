@@ -130,14 +130,30 @@ purple_smiley_class_init(PurpleSmileyClass *klass) {
 PurpleSmiley *
 purple_smiley_new(const gchar *shortcut, const gchar *path)
 {
+	PurpleSmiley *smiley = NULL;
+	GBytes *bytes = NULL;
+	gchar *contents = NULL;
+	gsize length = 0;
+
 	g_return_val_if_fail(shortcut != NULL, NULL);
 	g_return_val_if_fail(path != NULL, NULL);
 
-	return g_object_new(
+	if(!g_file_get_contents(path, &contents, &length, NULL)) {
+		return NULL;
+	}
+
+	bytes = g_bytes_new_take(contents, length);
+
+	smiley = g_object_new(
 		PURPLE_TYPE_SMILEY,
+		"contents", bytes,
 		"shortcut", shortcut,
 		NULL
 	);
+
+	g_bytes_unref(bytes);
+
+	return smiley;
 }
 
 PurpleSmiley *
