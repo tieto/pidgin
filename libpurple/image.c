@@ -195,7 +195,7 @@ purple_image_new_from_data(const guint8 *data, gsize length) {
 }
 
 PurpleImage *
-purple_image_new_from_data_take(guint8 *data, gsize length) {
+purple_image_new_take_data(guint8 *data, gsize length) {
 	PurpleImage *image;
 	GBytes *bytes = NULL;
 

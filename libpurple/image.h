@@ -117,7 +117,7 @@ PurpleImage *purple_image_new_from_file(const gchar *path, GError **error);
 PurpleImage *purple_image_new_from_data(const guint8 *data, gsize length);
 
 /**
- * purple_image_new_from_data_take:
+ * purple_image_new_take_data:
  * @data: (transfer full) the pointer to the image data buffer.
  * @length: the length of @data.
  *
@@ -128,7 +128,7 @@ PurpleImage *purple_image_new_from_data(const guint8 *data, gsize length);
  *
  * Returns: the new #PurpleImage.
  */
-PurpleImage *purple_image_new_from_data_take(guint8 *data, gsize length);
+PurpleImage *purple_image_new_take_data(guint8 *data, gsize length);
 
 /**
  * purple_image_save:
