@@ -24,7 +24,6 @@ endif
 ## INCLUDE PATHS
 ##
 INCLUDE_PATHS +=	-I. \
-			-I./win32 \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
@@ -95,7 +94,6 @@ C_SRC =	\
 			usertune.c \
 			xdata.c \
 			xmpp.c \
-			win32/posix.uname.c \
 			$(VV_SRC)
 
 OBJECTS = $(C_SRC:%.c=%.o)
