@@ -69,6 +69,7 @@ pidgin/plugins/perl/common/GtkStatusBox.c
 pidgin/plugins/perl/common/GtkThemes.c
 pidgin/plugins/perl/common/GtkUtils.c
 pidgin/plugins/perl/common/Pidgin.c
+sub/libpurple/data/purple-url-handler.desktop.in
 sub/libpurple/plugins/perl/common/Account.c
 sub/libpurple/plugins/perl/common/AccountOpts.c
 sub/libpurple/plugins/perl/common/BuddyIcon.c
