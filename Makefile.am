@@ -14,6 +14,8 @@ EXTRA_DIST = \
 		m4macros/introspection.m4 \
 		package_revision.h \
 		po/Makefile.mingw \
+		tap-driver.sh \
+		tap-test \
 		valgrind-suppressions
 
 noinst_HEADERS = config.h package_revision.h
