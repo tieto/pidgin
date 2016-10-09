@@ -29,6 +29,9 @@ endif
 	$(AM_V_at)if [ ! -f "$(top_builddir)libpurple/libpurple.la" ]; then \
 		$(MAKE) -C libpurple libpurple.la; \
 	fi
+	$(AM_V_at)if [ ! -f "$(top_builddir)libpurple/protocols/facebook/libfacebook.la" ]; then \
+		$(MAKE) -C libpurple/protocols/facebook libfacebook.la; \
+	fi
 if ENABLE_GNT
 	$(AM_V_at)if [ ! -f "$(top_builddir)finch/libgnt/libgnt.la" ]; then \
 		$(MAKE) -C finch/libgnt libgnt.la; \
