@@ -1,6 +1,7 @@
 SUBDIRS = tests
 
 EXTRA_DIST = \
+	yahoojp.c \
 	Makefile.mingw
 
 pkgdir = @PURPLE_PLUGINDIR@
