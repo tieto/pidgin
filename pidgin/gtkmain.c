@@ -378,7 +378,7 @@ static GHashTable *pidgin_ui_get_info(void)
 
 		/*
 		 * prpl-aim-clientkey is a DevID (or "client key") for Pidgin, given to
-		 * us by AOL in September 2016.  prpl-icq-clientkey is also client key
+		 * us by AOL in September 2016.  prpl-icq-clientkey is also a client key
 		 * for Pidgin, owned by the AIM account "markdoliner."  Please don't use 
 		 * either for other applications.  Instead, you can either not specify a 
 		 * client key, in which case the default "libpurple" key will be used,
