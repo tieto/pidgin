@@ -191,7 +191,6 @@ libpurple/protocols/yahoo/ycht.c
 libpurple/protocols/yahoo/ymsg.c
 libpurple/protocols/zephyr/zephyr.c
 libpurple/proxy.c
-libpurple/purple-socket.c
 libpurple/request.c
 libpurple/request.h
 libpurple/savedstatuses.c

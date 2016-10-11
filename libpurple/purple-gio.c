@@ -48,9 +48,8 @@ graceful_close_cb(gpointer user_data)
 
 	/* Finally can gracefully close */
 
-	/* Close wrapper input stream, if any */
-	if (data->input != NULL &&
-			!g_input_stream_close(data->input, NULL, &error)) {
+	/* Close input stream, from wrapper or GIOStream */
+	if (!g_input_stream_close(data->input, NULL, &error)) {
 		purple_debug_warning("gio",
 				"Error closing input stream: %s",
 				error->message);
@@ -59,9 +58,8 @@ graceful_close_cb(gpointer user_data)
 
 	g_clear_object(&data->input);
 
-	/* Close wrapper output stream, if any */
-	if (data->output != NULL &&
-			!g_output_stream_close(data->output, NULL, &error)) {
+	/* Close output stream, from wrapper or GIOStream */
+	if (!g_output_stream_close(data->output, NULL, &error)) {
 		purple_debug_warning("gio",
 				"Error closing output stream: %s",
 				error->message);
@@ -97,7 +95,13 @@ purple_gio_graceful_close(GIOStream *stream,
 
 	data = g_new(GracefulCloseData, 1);
 	data->stream = g_object_ref(stream);
+
+	if (input == NULL)
+		input = g_io_stream_get_input_stream(stream);
 	data->input = g_object_ref(input);
+
+	if (output == NULL)
+		output = g_io_stream_get_output_stream(stream);
 	data->output = g_object_ref(output);
 
 	/* Try gracefully closing the stream synchronously */
