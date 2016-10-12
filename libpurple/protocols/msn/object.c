@@ -141,7 +141,7 @@ msn_object_new_from_image(PurpleImage *img, const char *location,
 	if (img == NULL)
 		return NULL;
 
-	size = purple_image_get_size(img);
+	size = purple_image_get_data_size(img);
 	data = purple_image_get_data(img);
 
 	/* New object */

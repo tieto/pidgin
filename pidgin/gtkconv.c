@@ -7861,7 +7861,7 @@ pidgin_conv_update_buddy_icon(PurpleIMConversation *im)
 			if (custom_img) {
 				/* There is a custom icon for this user */
 				data = purple_image_get_data(custom_img);
-				len = purple_image_get_size(custom_img);
+				len = purple_image_get_data_size(custom_img);
 			}
 		}
 	}

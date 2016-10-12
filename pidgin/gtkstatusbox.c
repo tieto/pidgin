@@ -2191,12 +2191,12 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 		g_signal_connect(G_OBJECT(loader), "size-prepared", G_CALLBACK(pixbuf_size_prepared_cb), NULL);
 		if (!gdk_pixbuf_loader_write(loader,
 				purple_image_get_data(status_box->buddy_icon_img),
-				purple_image_get_size(status_box->buddy_icon_img),
+				purple_image_get_data_size(status_box->buddy_icon_img),
 				&error) || error)
 		{
 			purple_debug_warning("gtkstatusbox",
 				"gdk_pixbuf_loader_write() failed with size=%"
-				G_GSIZE_FORMAT ": %s", purple_image_get_size(
+				G_GSIZE_FORMAT ": %s", purple_image_get_data_size(
 					status_box->buddy_icon_img),
 				error ? error->message : "(no error message)");
 			if (error)
@@ -2205,7 +2205,7 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 			purple_debug_warning("gtkstatusbox",
 				"gdk_pixbuf_loader_close() failed for image of "
 				"size %" G_GSIZE_FORMAT ": %s",
-				purple_image_get_size(status_box->buddy_icon_img),
+				purple_image_get_data_size(status_box->buddy_icon_img),
 				error ? error->message : "(no error message)");
 			if (error)
 				g_error_free(error);

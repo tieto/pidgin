@@ -3101,7 +3101,7 @@ GdkPixbuf *
 pidgin_pixbuf_from_image(PurpleImage *image)
 {
 	return pidgin_pixbuf_from_data(purple_image_get_data(image),
-		purple_image_get_size(image));
+		purple_image_get_data_size(image));
 }
 
 GdkPixbuf *pidgin_pixbuf_new_from_file(const gchar *filename)

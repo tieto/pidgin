@@ -1422,7 +1422,7 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	if ((img != NULL) &&
 	    (args->icbmflags & AIM_IMFLAGS_BUDDYREQ) && !bi->ico_sent && bi->ico_informed) {
 		gconstpointer data = purple_image_get_data(img);
-		size_t len = purple_image_get_size(img);
+		size_t len = purple_image_get_data_size(img);
 		purple_debug_info("oscar",
 				"Sending buddy icon to %s (%" G_GSIZE_FORMAT " bytes)\n",
 				userinfo->bn, len);
@@ -2546,7 +2546,7 @@ purple_icons_fetch(PurpleConnection *gc)
 			purple_debug_info("oscar",
 				"Uploading icon to icon server");
 			aim_bart_upload(od, purple_image_get_data(img),
-				purple_image_get_size(img));
+				purple_image_get_data_size(img));
 			g_object_unref(img);
 		}
 		od->set_icon = FALSE;
@@ -3057,7 +3057,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 		/* ... if it refers to a valid purple image ... */
 		if (image) {
 			/* ... append the message from start to the tag ... */
-			unsigned long size = purple_image_get_size(image);
+			unsigned long size = purple_image_get_data_size(image);
 			const gchar *filename = purple_image_get_friendly_filename(image);
 			gconstpointer imgdata = purple_image_get_data(image);
 
@@ -3205,7 +3205,7 @@ oscar_send_im(PurpleConnection *gc, PurpleMessage *msg)
 		img = purple_buddy_icons_find_account_icon(account);
 		if (img) {
 			gconstpointer data = purple_image_get_data(img);
-			args.iconlen = purple_image_get_size(img);
+			args.iconlen = purple_image_get_data_size(img);
 			args.iconsum = aimutil_iconsum(data, args.iconlen);
 			args.iconstamp = purple_buddy_icons_get_account_icon_timestamp(account);
 
@@ -5241,7 +5241,7 @@ void oscar_set_icon(PurpleConnection *gc, PurpleImage *img)
 		PurpleHash *hash;
 		guchar md5[16];
 		gconstpointer data = purple_image_get_data(img);
-		size_t len = purple_image_get_size(img);
+		size_t len = purple_image_get_data_size(img);
 
 		hash = purple_md5_hash_new();
 		purple_hash_append(hash, data, len);

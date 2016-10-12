@@ -2702,7 +2702,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 
 	if (custom_img) {
 		data = purple_image_get_data(custom_img);
-		len = purple_image_get_size(custom_img);
+		len = purple_image_get_data_size(custom_img);
 	}
 
 	if (data == NULL) {
@@ -2725,7 +2725,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 			account ? purple_account_get_username(account) : "(no account)",
 			account ? purple_account_get_protocol_id(account) : "(no account)",
 			buddy ? purple_buddy_get_name(buddy) : "(no buddy)",
-			custom_img ? purple_image_get_size(custom_img) : 0);
+			custom_img ? purple_image_get_data_size(custom_img) : 0);
 		if (custom_img)
 			g_object_unref(custom_img);
 		return NULL;

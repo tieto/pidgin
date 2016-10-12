@@ -125,7 +125,7 @@ msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleImage *img)
 	g_return_if_fail(slpmsg->buffer == NULL);
 	g_return_if_fail(slpmsg->ft == FALSE);
 
-	slpmsg->size = purple_image_get_size(img);
+	slpmsg->size = purple_image_get_data_size(img);
 	slpmsg->buffer = g_memdup(purple_image_get_data(img), slpmsg->size);
 }
 

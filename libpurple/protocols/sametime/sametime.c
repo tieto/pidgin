@@ -3878,7 +3878,7 @@ static char *im_mime_convert(PurpleConnection *gc,
 
       /* obtain and base64 encode the image data, and put it in the
 	 mime part */
-      size = purple_image_get_size(img);
+      size = purple_image_get_data_size(img);
       data = purple_base64_encode(purple_image_get_data(img), size);
       purple_mime_part_set_data(part, data);
       g_free(data);

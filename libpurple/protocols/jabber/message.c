@@ -935,7 +935,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 
 		it_next = g_list_next(it);
 
-		if (purple_image_get_size(PURPLE_IMAGE(smiley)) > JABBER_DATA_MAX_SIZE) {
+		if (purple_image_get_data_size(PURPLE_IMAGE(smiley)) > JABBER_DATA_MAX_SIZE) {
 			has_too_large_smiley = TRUE;
 			valid = FALSE;
 			purple_debug_warning("jabber", "Refusing to send "
@@ -976,7 +976,7 @@ jabber_message_smileyfy_xhtml(JabberMessage *jm, const char *xhtml)
 
 		jdata = jabber_data_create_from_data(
 			purple_image_get_data(PURPLE_IMAGE(smiley)),
-			purple_image_get_size(PURPLE_IMAGE(smiley)),
+			purple_image_get_data_size(PURPLE_IMAGE(smiley)),
 			mimetype, FALSE, jm->js);
 
 		purple_debug_info("jabber", "cache local smiley alt=%s, cid=%s",

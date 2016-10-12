@@ -206,7 +206,7 @@ webview_resource_loading(WebKitWebView *webview,
 
 			b64 = purple_base64_encode(
 				purple_image_get_data(img),
-				purple_image_get_size(img));
+				purple_image_get_data_size(img));
 			type = purple_image_get_mimetype(img);
 			src = g_strdup_printf("data:%s;base64,%s", type, b64);
 			g_free(b64);

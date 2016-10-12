@@ -212,7 +212,7 @@ request_own_user_display(MsnUser *user)
 	if (my_obj != NULL) {
 		PurpleImage *img = msn_object_get_image(my_obj);
 		data = purple_image_get_data(img);
-		len = purple_image_get_size(img);
+		len = purple_image_get_data_size(img);
 		info = msn_object_get_sha1(my_obj);
 	}
 

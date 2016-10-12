@@ -544,7 +544,7 @@ mxit_set_buddy_icon(PurpleConnection *gc, PurpleImage *img)
 		mxit_set_avatar(session, NULL, 0);
 	else {
 		mxit_set_avatar(session, purple_image_get_data(img),
-			purple_image_get_size(img));
+			purple_image_get_data_size(img));
 	}
 }
 

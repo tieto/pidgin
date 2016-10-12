@@ -111,7 +111,7 @@ purple_image_get_property(GObject *obj, guint param_id, GValue *value,
 			g_value_set_boxed(value, purple_image_get_contents(image));
 			break;
 		case PROP_SIZE:
-			g_value_set_uint64(value, purple_image_get_size(image));
+			g_value_set_uint64(value, purple_image_get_data_size(image));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -220,7 +220,7 @@ purple_image_save(PurpleImage *image, const gchar *path) {
 	g_return_val_if_fail(path[0] != '\0', FALSE);
 
 	data = purple_image_get_data(image);
-	len = purple_image_get_size(image);
+	len = purple_image_get_data_size(image);
 
 	g_return_val_if_fail(data != NULL, FALSE);
 	g_return_val_if_fail(len > 0, FALSE);
@@ -256,7 +256,7 @@ purple_image_get_path(PurpleImage *image) {
 }
 
 gsize
-purple_image_get_size(PurpleImage *image) {
+purple_image_get_data_size(PurpleImage *image) {
 	PurpleImagePrivate *priv;
 
 	g_return_val_if_fail(PURPLE_IS_IMAGE(image), 0);
@@ -293,7 +293,7 @@ purple_image_get_extension(PurpleImage *image) {
 	if (priv->extension)
 		return priv->extension;
 
-	if (purple_image_get_size(image) < 4)
+	if (purple_image_get_data_size(image) < 4)
 		return NULL;
 
 	data = purple_image_get_data(image);
@@ -360,7 +360,7 @@ purple_image_generate_filename(PurpleImage *image) {
 
 	ext = purple_image_get_extension(image);
 	data = purple_image_get_data(image);
-	len = purple_image_get_size(image);
+	len = purple_image_get_data_size(image);
 
 	g_return_val_if_fail(ext != NULL, NULL);
 	g_return_val_if_fail(data != NULL, NULL);

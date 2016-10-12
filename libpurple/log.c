@@ -845,7 +845,7 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 			}
 
 			image_data       = purple_image_get_data(image);
-			image_byte_count = purple_image_get_size(image);
+			image_byte_count = purple_image_get_data_size(image);
 			dir              = purple_log_get_log_dir(log->type, log->name, log->account);
 			new_filename = purple_image_generate_filename(image);
 

@@ -175,7 +175,7 @@ purple_smiley_custom_img_checksum(PurpleImage *img)
 
 	return g_compute_checksum_for_data(G_CHECKSUM_SHA1,
 		purple_image_get_data(img),
-		purple_image_get_size(img));
+		purple_image_get_data_size(img));
 }
 
 

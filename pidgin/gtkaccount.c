@@ -735,7 +735,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		img = purple_buddy_icons_find_account_icon(dialog->account);
 		if (img)
 		{
-			len = purple_image_get_size(img);
+			len = purple_image_get_data_size(img);
 			data = g_memdup(purple_image_get_data(img), len);
 		}
 		set_dialog_icon(dialog, data, len,
@@ -1374,7 +1374,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		{
 			if (dialog->icon_img)
 			{
-				size_t len = purple_image_get_size(dialog->icon_img);
+				size_t len = purple_image_get_data_size(dialog->icon_img);
 				purple_buddy_icons_set_account_icon(account,
 					g_memdup(purple_image_get_data(dialog->icon_img), len), len);
 				purple_account_set_buddy_icon_path(account,

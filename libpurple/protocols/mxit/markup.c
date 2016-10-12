@@ -1044,7 +1044,7 @@ inline_image_add(GString* mx, PurpleImage *image)
 	gchar* enc;
 
 	img_data = purple_image_get_data(image);
-	img_size = purple_image_get_size(image);
+	img_size = purple_image_get_data_size(image);
 
 	enc = purple_base64_encode( img_data, img_size );
 

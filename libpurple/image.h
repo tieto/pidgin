@@ -164,14 +164,14 @@ GBytes *purple_image_get_contents(const PurpleImage *image);
 const gchar *purple_image_get_path(PurpleImage *image);
 
 /**
- * purple_image_get_size:
+ * purple_image_get_data_size:
  * @image: the image.
  *
  * Returns the size of @image's data.
  *
  * Returns: the size of data, or 0 in case of failure.
  */
-gsize purple_image_get_size(PurpleImage *image);
+gsize purple_image_get_data_size(PurpleImage *image);
 
 /**
  * purple_image_get_data:

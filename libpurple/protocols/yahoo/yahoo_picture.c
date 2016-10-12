@@ -489,7 +489,7 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleImage *img)
 
 	} else {
 		gconstpointer data = purple_image_get_data(img);
-		size_t len = purple_image_get_size(img);
+		size_t len = purple_image_get_data_size(img);
 		GString *s = g_string_new_len(data, len);
 		struct yahoo_buddy_icon_upload_data *d;
 		int oldcksum = purple_account_get_int(account, YAHOO_PICCKSUM_SETTING, 0);

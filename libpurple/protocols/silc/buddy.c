@@ -1751,7 +1751,7 @@ void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleImage *img)
 
 	silc_mime_add_field(mime, "Content-Type", type);
 	silc_mime_add_data(mime, purple_image_get_data(img),
-		purple_image_get_size(img));
+		purple_image_get_data_size(img));
 
 	silc_client_attribute_add(client, conn, SILC_ATTRIBUTE_USER_ICON,
 		mime, sizeof(*mime));
