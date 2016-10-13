@@ -49,12 +49,6 @@ clean::
 post-patches::
 	NOCONFIGURE=1 ./autogen.sh
 
-common-configure-impl::
-	# Fix build failure with full hardening flags:
-	sed -i -e 's/-fPIE//g' -e 's/-pie//g' \
-		build/libpurple/plugins/perl/common/Makefile.PL \
-		build/pidgin/plugins/perl/common/Makefile.PL \
-
 common-install-impl::
 	rm -f debian/tmp/usr/lib/pidgin/relnot.so # release notification plugin
 	rm -f debian/tmp/usr/bin/nullclient # examples
