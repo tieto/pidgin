@@ -1,12 +1,15 @@
 #!/usr/bin/make -f
 
-export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all,-pie
 include /usr/share/dpkg/buildflags.mk
 
 include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/gnome.mk
 include /usr/share/cdbs/1/rules/utils.mk
+
+# Build into a separate directory
+DEB_BUILDDIR = $(DEB_SRCDIR)/build
 
 LDFLAGS += -Wl,--as-needed
 DEB_CONFIGURE_EXTRA_FLAGS = --disable-gevolution --disable-kwallet \
@@ -45,12 +48,6 @@ clean::
 
 post-patches::
 	NOCONFIGURE=1 ./autogen.sh
-
-common-configure-impl::
-	# Fix build failure with full hardening flags:
-	sed -i -e 's/-fPIE//g' -e 's/-pie//g' \
-		build/libpurple/plugins/perl/common/Makefile.PL \
-		build/pidgin/plugins/perl/common/Makefile.PL \
 
 common-install-impl::
 	rm -f debian/tmp/usr/lib/pidgin/relnot.so # release notification plugin
