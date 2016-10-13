@@ -8,6 +8,9 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/gnome.mk
 include /usr/share/cdbs/1/rules/utils.mk
 
+# Build into a separate directory
+DEB_BUILDDIR = $(DEB_SRCDIR)/build
+
 LDFLAGS += -Wl,--as-needed
 DEB_CONFIGURE_EXTRA_FLAGS = --disable-gevolution --disable-kwallet \
 	    --with-system-ssl-certs=/etc/ssl/certs \
