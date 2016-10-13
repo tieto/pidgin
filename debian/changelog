@@ -4,6 +4,20 @@ pidgin (3.0.0-1) UNRELEASED; urgency=medium
 
  -- Jakub Adam <jakub.adam@ktknet.cz>  Thu, 13 Mar 2014 22:18:09 +0100
 
+pidgin (2.11.0-3) unstable; urgency=medium
+
+  * Build architecture-independent packages correctly (Closes: #838571)
+
+ -- Ari Pollak <ari@debian.org>  Sun, 25 Sep 2016 21:08:30 -0400
+
+pidgin (2.11.0-2) unstable; urgency=low
+
+  * Drop build dependency on hardening-wrapper (Closes: #836645)
+  * Remove gconf2 dependency since the gconf URL handler file is not used by
+    GNOME anymore (Closes: #402431, #823913)
+
+ -- Ari Pollak <ari@debian.org>  Sun, 11 Sep 2016 19:06:53 -0400
+
 pidgin (2.11.0-1) unstable; urgency=high
 
   * Update description (Closes: #561624)
