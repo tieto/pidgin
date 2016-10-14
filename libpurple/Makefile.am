@@ -282,11 +282,16 @@ marshallers.c: marshallers.list marshallers.h
 	$(AM_V_GEN)echo "#include \"marshallers.h\"" > marshallers.c
 	$(AM_V_at)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
 
+# glib-mkenums doesn't handle VPATHs well, sed is used here to fix the
+# include paths and documentation.
+# Escaping possible . in $(srcdir) to \. for sed pattern.
 enums.h: $(srcdir)/enums.h.in $(purple_enumheaders)
 	$(AM_V_GEN)$(GLIB_MKENUMS) --template $(srcdir)/enums.h.in $(purple_enumheaders) > $@
+	sed -i 's,$(subst .,\.,$(srcdir))/,,g' $@
 
 enums.c: $(srcdir)/enums.c.in $(purple_enumheaders)
 	$(AM_V_GEN)$(GLIB_MKENUMS) --template $(srcdir)/enums.c.in $(purple_enumheaders) > $@
+	sed -i 's,$(subst .,\.,$(srcdir))/,,g' $@
 
 CLEANFILES = \
 	enums.c \
