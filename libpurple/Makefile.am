@@ -299,6 +299,9 @@ CLEANFILES = \
 	marshallers.c \
 	marshallers.h
 
+DISTCLEANFILES = \
+	data/purple-url-handler.desktop
+
 if ENABLE_DBUS
 
 CLEANFILES += \
