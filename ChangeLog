@@ -396,7 +396,7 @@ version 2.10.7 (02/13/2013):
 	Yahoo!:
 	* Fix a double-free in profile/picture loading code. (Mihai Serban)
 	  (#15053)
-	* Fix retrieving server-side buddy aliases. (Catalin Salgu) (#15381)
+	* Fix retrieving server-side buddy aliases. (Catalin Salgau) (#15381)
 
 	Plugins:
 	* The Voice/Video Settings plugin supports using the sndio GStreamer
