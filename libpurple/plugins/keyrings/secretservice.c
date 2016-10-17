@@ -169,7 +169,8 @@ ss_read(PurpleAccount *account, PurpleKeyringReadCallback cb, gpointer data)
 	storage->cb = cb;
 	storage->user_data = data;
 
-	secret_password_lookup(&purple_schema, NULL, ss_read_continue, storage,
+	secret_password_lookup(&purple_schema, keyring_cancellable,
+		ss_read_continue, storage,
 		"user", purple_account_get_username(account),
 		"protocol", purple_account_get_protocol_id(account), NULL);
 }
@@ -240,7 +241,8 @@ ss_save(PurpleAccount *account,
 
 		label = g_strdup_printf(_("Pidgin IM password for account %s"), username);
 		secret_password_store(&purple_schema, SECRET_COLLECTION_DEFAULT,
-			label, password, NULL, ss_store_continue, storage,
+			label, password, keyring_cancellable,
+			ss_store_continue, storage,
 			"user", username,
 			"protocol", purple_account_get_protocol_id(account),
 			NULL);
@@ -252,8 +254,9 @@ ss_save(PurpleAccount *account,
 			purple_account_get_username(account),
 			purple_account_get_protocol_id(account));
 
-		secret_password_clear(&purple_schema, NULL, ss_clear_continue,
-			storage, "user", purple_account_get_username(account),
+		secret_password_clear(&purple_schema, keyring_cancellable,
+			ss_clear_continue, storage,
+			"user", purple_account_get_username(account),
 			"protocol", purple_account_get_protocol_id(account),
 			NULL);
 	}
