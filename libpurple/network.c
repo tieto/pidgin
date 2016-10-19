@@ -624,7 +624,7 @@ wpurple_get_connected_network_count(void)
 	qs.dwSize = sizeof(WSAQUERYSET);
 	qs.dwNameSpace = NS_NLA;
 
-	retval = WSALookupServiceBegin(&qs, LUP_RETURN_ALL, &h);
+	retval = WSALookupServiceBeginA(&qs, LUP_RETURN_ALL, &h);
 	if (retval != ERROR_SUCCESS) {
 		gchar *msg;
 		errorid = WSAGetLastError();
@@ -639,7 +639,7 @@ wpurple_get_connected_network_count(void)
 		char buf[4096];
 		WSAQUERYSET *res = (LPWSAQUERYSET) buf;
 		DWORD size = sizeof(buf);
-		while ((retval = WSALookupServiceNext(h, 0, &size, res)) == ERROR_SUCCESS) {
+		while ((retval = WSALookupServiceNextA(h, 0, &size, res)) == ERROR_SUCCESS) {
 			net_cnt++;
 			purple_debug_info("network", "found network '%s'\n",
 					res->lpszServiceInstanceName ? res->lpszServiceInstanceName : "(NULL)");
@@ -734,7 +734,7 @@ static gpointer wpurple_network_change_thread(gpointer data)
 			memset(&qs, 0, sizeof(WSAQUERYSET));
 			qs.dwSize = sizeof(WSAQUERYSET);
 			qs.dwNameSpace = NS_NLA;
-			if (WSALookupServiceBegin(&qs, 0, &network_change_handle) == SOCKET_ERROR) {
+			if (WSALookupServiceBeginA(&qs, 0, &network_change_handle) == SOCKET_ERROR) {
 				int errorid = WSAGetLastError();
 				gchar *msg = g_win32_error_message(errorid);
 				purple_timeout_add(0, _print_debug_msg,
@@ -795,7 +795,7 @@ static gpointer wpurple_network_change_thread(gpointer data)
 		}
 
 		size = sizeof(buf);
-		while ((retval = WSALookupServiceNext(network_change_handle, 0, &size, res)) == ERROR_SUCCESS) {
+		while ((retval = WSALookupServiceNextA(network_change_handle, 0, &size, res)) == ERROR_SUCCESS) {
 			/*purple_timeout_add(0, _print_debug_msg,
 							   g_strdup_printf("thread found network '%s'\n",
 											   res->lpszServiceInstanceName ? res->lpszServiceInstanceName : "(NULL)"));*/
