@@ -50,8 +50,8 @@ version-check:
 	head ChangeLog.API | grep "^version $(PACKAGE_VERSION):$$" >/dev/null
 
 # Ensure we're working from a tag...
-	test x`hg log -r "tag($(PACKAGE_VERSION))" --template "{node}"` = x`hg id -i --debug`
-# ... and have no changes in the working copy. (this isn't really necessary with hg because hg id appends a "+")
+	test x`hg log -r "tag($(PACKAGE_VERSION))" --template "{node}"` = x`hg log -r . -T '{node}'`
+# ... and have no changes in the working copy.
 	test "x`hg st -mard`" = x
 
 sign-packages: dist
@@ -82,7 +82,7 @@ endif
 # successfully; the rm -f ensures both
 package_revision_raw.txt: .FORCE
 	$(AM_V_GEN)REAL_BLDDIR=$$PWD/$(top_builddir); \
-	(hg --cwd $(srcdir) id -i --debug) 2>/dev/null >$@.new \
+	(hg --cwd $(srcdir) log -r . -T {node}) 2>/dev/null >$@.new \
 	|| rm -f $@.new
 	$(AM_V_at)if test -f $@.new; then \
 		if ! diff $@ $@.new > /dev/null; then \
