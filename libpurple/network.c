@@ -639,7 +639,8 @@ wpurple_get_connected_network_count(void)
 		gchar *buf = NULL;
 		WSAQUERYSET *res = (LPWSAQUERYSET) buf;
 		DWORD current_size = 0;
-		while (TRUE) {
+		int iteration_count = 0;
+		while (iteration_count++ < 100) {
 			DWORD size = current_size;
 			retval = WSALookupServiceNextA(h, 0, &size, res);
 			if (retval == ERROR_SUCCESS) {
@@ -649,6 +650,10 @@ wpurple_get_connected_network_count(void)
 			} else {
 				errorid = WSAGetLastError();
 				if (errorid == WSAEFAULT) {
+					if (size == 0 || size > 102400) {
+						purple_debug_warning("network", "Got unexpected NLA buffer size %" G_GUINT32_FORMAT ".\n", (guint32) size);
+						break;
+					}
 					buf = g_realloc(buf, size);
 					res = (LPWSAQUERYSET) buf;
 					current_size = size;
@@ -729,6 +734,7 @@ static gpointer wpurple_network_change_thread(gpointer data)
 
 	while (TRUE) {
 		int retval;
+		int iteration_count;
 		DWORD retLen = 0;
 		WSACOMPLETION completion;
 		WSAOVERLAPPED overlapped;
@@ -806,7 +812,8 @@ static gpointer wpurple_network_change_thread(gpointer data)
 			return NULL;
 		}
 
-		while (TRUE) {
+		iteration_count = 0;
+		while (iteration_count++ < 100) {
 			DWORD size = current_size;
 			retval = WSALookupServiceNextA(network_change_handle, 0, &size, res);
 			if (retval == ERROR_SUCCESS) {
@@ -816,6 +823,11 @@ static gpointer wpurple_network_change_thread(gpointer data)
 			} else {
 				int errorid = WSAGetLastError();
 				if (errorid == WSAEFAULT) {
+					if (size == 0 || size > 102400) {
+						purple_timeout_add(0, _print_debug_msg,
+							   g_strdup_printf("Thread got unexpected NLA buffer size %" G_GUINT32_FORMAT ".\n", (guint32) size));
+						break;
+					}
 					buf = g_realloc(buf, size);
 					res = (LPWSAQUERYSET) buf;
 					current_size = size;
