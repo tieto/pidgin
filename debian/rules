@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 
-export DEB_BUILD_HARDENING=1
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all,-pie
+include /usr/share/dpkg/buildflags.mk
 
 include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
@@ -9,6 +10,10 @@ include /usr/share/cdbs/1/rules/utils.mk
 
 LDFLAGS += -Wl,--as-needed -Wl,-rpath=/opt/gstreamer1.4/lib/$(DEB_HOST_MULTIARCH)
 DEB_CONFIGURE_SCRIPT_ENV += PKG_CONFIG_PATH=/opt/gstreamer1.4/lib/$(DEB_HOST_MULTIARCH)/pkgconfig
+
+# Build into a separate directory
+DEB_BUILDDIR = $(DEB_SRCDIR)/build
+
 DEB_CONFIGURE_EXTRA_FLAGS = --disable-gevolution --disable-kwallet \
 	    --with-system-ssl-certs=/etc/ssl/certs \
 	    --enable-perl --enable-dbus --enable-gnutls=no \
