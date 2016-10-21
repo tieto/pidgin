@@ -16,7 +16,7 @@ Build-Depends: cdbs, debhelper (>= 9), intltool, libtool,
  network-manager-dev (>= 0.9.0) [linux-any],
  libsqlite3-dev (>= 3.3), libidn11-dev, ca-certificates,
  dh-autoreconf,
- libunity-dev, libmessaging-menu-dev, libgplugin-dev,
+ libunity-dev, libmessaging-menu-dev, libgplugin-dev, libsecret-1-dev,
  gtk-doc-tools
 Standards-Version: 3.9.8
 Vcs-Git: git://git.debian.org/git/collab-maint/pidgin.git
