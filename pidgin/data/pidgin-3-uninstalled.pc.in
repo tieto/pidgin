@@ -15,7 +15,7 @@ abs_top_builddir=@abs_top_builddir@
 plugindir=${libdir}/pidgin
 
 Name: Pidgin
-Description: Pidgin is a GTK2-based instant messenger application.
+Description: Pidgin is a GTK3-based instant messenger application.
 Version: @VERSION@
-Requires: gtk+-2.0 purple-3
+Requires: gtk+-3.0 webkitgtk-3.0 purple-3
 Cflags: -I${abs_top_srcdir}
