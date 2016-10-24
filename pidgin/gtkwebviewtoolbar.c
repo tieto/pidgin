@@ -132,7 +132,7 @@ pidgin_color_parse(const gchar *str, GdkRGBA *color)
 	if (color == NULL)
 		color = &dummy_color;
 
-	if (strcmp(str, "inherit") == 0) {
+	if ((strcmp(str, "inherit") == 0) || (strcmp(str, "rgba(0, 0, 0, 0)") == 0)) {
 		return FALSE;
 	} else {
 		return gdk_rgba_parse(color, str);
