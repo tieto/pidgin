@@ -2105,6 +2105,58 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 	return FALSE;
 }
 
+static void
+print_clipboard_contents()
+{
+	static GdkAtom markupAtom = NULL;
+	GtkClipboard *clipboard;
+	GtkSelectionData *data;
+	gchar *str;
+	gint len;
+
+	if (!markupAtom) {
+		markupAtom = gdk_atom_intern("text/html", FALSE);
+	}
+
+	clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+	if (!clipboard) {
+		purple_debug_info("clipboard", "Couldn't get clipboard");
+		return;
+	}
+
+	data = gtk_clipboard_wait_for_contents(clipboard, markupAtom);
+	if (data) {
+		const guchar *d;
+		d = gtk_selection_data_get_data(data);
+		len = gtk_selection_data_get_length(data);
+		if (len > 1 && (*(gunichar2 *)d) == 0xFEFF) {
+			str = g_utf16_to_utf8((gunichar2 *)d, len / sizeof (gunichar2),
+								NULL, NULL, NULL);
+			if (!str) {
+				purple_debug_info("clipboard", "Couldn't convert to UTF8");
+				return;
+			}
+		} else {
+			str = g_strndup((gchar *)d, len);
+		}
+		gtk_selection_data_free(data);
+	} else if (gtk_clipboard_wait_is_text_available(clipboard)) {
+		str = gtk_clipboard_wait_for_text(clipboard);
+		if (!str) {
+			purple_debug_info("clipboard", "Couldn't read text contents");
+			return;
+		}
+		len = strlen(str);
+	} else {
+		purple_debug_info("clipboard", "Couldn't read contents");
+		return;
+	}
+
+	purple_debug_info("clipboard", "%dB of data pasted: %s", len, str);
+
+	g_free(str);
+}
+
 static gboolean
 entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 {
@@ -2214,6 +2266,11 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				}
 
 				return TRUE;
+				break;
+
+			case GDK_KEY_v:
+			case GDK_KEY_V:
+				print_clipboard_contents();
 				break;
 		} /* End of switch */
 	}
