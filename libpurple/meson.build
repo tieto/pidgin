@@ -251,14 +251,14 @@ marshallers = gnome.genmarshal('marshallers',
 marshallers_c = marshallers[0]
 marshallers_h = marshallers[1]
 
-enums_h = gnome.mkenums('enums.h',
+enums = gnome.mkenums('enums',
     sources : purple_enumheaders,
-    template : 'enums.h.in',
-    install : true,
+    h_template : 'enums.h.in',
+    c_template : 'enums.c.in',
+    install_header : true,
     install_dir : get_option('includedir') + '/libpurple')
-enums_c = gnome.mkenums('enums.c',
-    sources : purple_enumheaders,
-    template : 'enums.c.in')
+enums_c = enums[0]
+enums_h = enums[1]
 
 purple_h = configure_file(input : 'purple.h.in',
                           output : 'purple.h',

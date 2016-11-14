@@ -1,4 +1,4 @@
-project('pidgin', 'c', meson_version : '>0.34.0')
+project('pidgin', 'c', meson_version : '>0.35.0')
 
 # UPDATING VERSION NUMBERS FOR RELEASES
 #
