@@ -858,7 +858,7 @@ static void simple_subscribe_exp(struct simple_account_data *sip, struct simple_
 	/* resubscribe before subscription expires */
 	/* add some jitter */
 	if (expiration > 60)
-		buddy->resubscribe = time(NULL) + (expiration - 60) + (rand() % 50);
+		buddy->resubscribe = time(NULL) + (expiration - 60) + (g_random_int_range(0, 50));
 	else if (expiration > 0)
 		buddy->resubscribe = time(NULL) + ((int) (expiration / 2));
 }
@@ -1795,7 +1795,7 @@ static void simple_udp_host_resolved_listen_cb(int listenfd, gpointer data) {
 	sip->listenpa = purple_input_add(sip->fd, PURPLE_INPUT_READ, simple_udp_process, sip->gc);
 
 	sip->resendtimeout = purple_timeout_add(2500, (GSourceFunc) resend_timeout, sip);
-	sip->registertimeout = purple_timeout_add((rand()%100)+10*1000, (GSourceFunc)subscribe_timeout, sip);
+	sip->registertimeout = purple_timeout_add(g_random_int_range(10000, 100000), (GSourceFunc)subscribe_timeout, sip);
 	do_register(sip);
 }
 
