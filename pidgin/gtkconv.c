@@ -11246,7 +11246,7 @@ generate_nick_colors(guint numcolors, GdkRGBA background)
 	 */
 	while(i < numcolors && time(NULL) < breakout_time)
 	{
-		GdkRGBA color = {rand() % 65536 / 65535.0, rand() % 65536 / 65535.0, rand() % 65536 / 65535.0, 1};
+		GdkRGBA color = {g_random_double_range(0, 1), g_random_double_range(0, 1), g_random_double_range(0, 1), 1};
 
 		if (color_is_visible(color, background,     MIN_LUMINANCE_CONTRAST_RATIO) &&
 			color_is_visible(color, nick_highlight, MIN_LUMINANCE_CONTRAST_RATIO) &&
