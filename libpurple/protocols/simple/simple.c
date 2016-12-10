@@ -44,21 +44,21 @@
 
 static PurpleProtocol *my_protocol = NULL;
 
-static char *gentag(void) {
-	return g_strdup_printf("%04d%04d", rand() & 0xFFFF, rand() & 0xFFFF);
+static gchar *gentag(void) {
+	return g_strdup_printf("%04d%04d", g_random_int(), g_random_int());
 }
 
 static char *genbranch(void) {
 	return g_strdup_printf("z9hG4bK%04X%04X%04X%04X%04X",
-		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
-		rand() & 0xFFFF, rand() & 0xFFFF);
+		g_random_int(), g_random_int(), g_random_int(),
+		g_random_int(), g_random_int());
 }
 
 static char *gencallid(void) {
 	return g_strdup_printf("%04Xg%04Xa%04Xi%04Xm%04Xt%04Xb%04Xx%04Xx",
-		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
-		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
-		rand() & 0xFFFF, rand() & 0xFFFF);
+		g_random_int(), g_random_int(), g_random_int(),
+		g_random_int(), g_random_int(), g_random_int(),
+		g_random_int(), g_random_int());
 }
 
 static const char *simple_list_icon(PurpleAccount *a, PurpleBuddy *b) {
