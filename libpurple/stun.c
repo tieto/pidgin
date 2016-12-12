@@ -324,10 +324,10 @@ hbn_listen_cb(int fd, gpointer data) {
 
 	hdr_data.type = htons(MSGTYPE_BINDINGREQUEST);
 	hdr_data.len = 0;
-	hdr_data.transid[0] = rand();
+	hdr_data.transid[0] = g_random_int();
 	hdr_data.transid[1] = ntohl(((int)'g' << 24) + ((int)'a' << 16) + ((int)'i' << 8) + (int)'m');
-	hdr_data.transid[2] = rand();
-	hdr_data.transid[3] = rand();
+	hdr_data.transid[2] = g_random_int();
+	hdr_data.transid[3] = g_random_int();
 
 	if(sendto(sc->fd, &hdr_data, sizeof(struct stun_header), 0,
 			(struct sockaddr *)&(sc->addr),
