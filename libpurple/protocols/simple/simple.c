@@ -1752,7 +1752,7 @@ static void login_cb(gpointer data, gint source, const gchar *error_message) {
 
 	conn = connection_create(sip, source);
 
-	sip->registertimeout = purple_timeout_add((rand()%100)+10*1000, (GSourceFunc)subscribe_timeout, sip);
+	sip->registertimeout = purple_timeout_add((g_random_int()%100)+10*1000, (GSourceFunc)subscribe_timeout, sip);
 
 	do_register(sip);
 
