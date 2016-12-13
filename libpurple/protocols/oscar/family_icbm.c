@@ -100,7 +100,7 @@ void aim_icbm_makecookie(guchar *cookie)
 
 	/* Should be like "21CBF95" and null terminated */
 	for (i = 0; i < 7; i++)
-		cookie[i] = 0x30 + ((guchar)rand() % 10);
+		cookie[i] = 0x30 + ((guchar)g_random_int() % 10);
 	cookie[7] = '\0';
 }
 
