@@ -273,11 +273,9 @@ regex_changed_cb(GtkWidget *w, DebugWindow *win) {
 
 	if (win->regex)
 		g_regex_unref(win->regex);
-#if GLIB_CHECK_VERSION(2,34,0)
+
 	win->regex = g_regex_new(text, G_REGEX_CASELESS|G_REGEX_JAVASCRIPT_COMPAT, 0, NULL);
-#else
-	win->regex = g_regex_new(text, G_REGEX_CASELESS, 0, NULL);
-#endif
+
 	if (win->regex == NULL) {
 		/* failed to compile */
 		regex_change_color(win->expression, FALSE);

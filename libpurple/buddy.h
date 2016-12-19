@@ -70,11 +70,6 @@ struct _PurpleBuddy {
 	PurpleBlistNode node;
 };
 
-/**
- * PurpleBuddyClass:
- *
- * The base class for all #PurpleBuddy's.
- */
 struct _PurpleBuddyClass {
 	PurpleBlistNodeClass node_class;
 

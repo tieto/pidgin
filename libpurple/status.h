@@ -70,6 +70,16 @@ typedef struct _PurpleMood {
 /**
  * PurpleStatusPrimitive:
  *
+ * @PURPLE_STATUS_UNSET: The status is not set
+ * @PURPLE_STATUS_OFFLINE: The status is offline
+ * @PURPLE_STATUS_AVAILABLE: The status is available
+ * @PURPLE_STATUS_UNAVAILABLE: The status is unavailable
+ * @PURPLE_STATUS_INVISIBLE: The stuatus is invisible
+ * @PURPLE_STATUS_AWAY: The status is away
+ * @PURPLE_STATUS_EXTENDED_AWAY: The status is extended away/do not disturb
+ * @PURPLE_STATUS_MOBILE: The status is mobile
+ * @PURPLE_STATUS_TUNE: The status includes a song title
+ * @PURPLE_STATUS_MOOD: The status includes a mood
  * A primitive defining the basic structure of a status type.
  */
 /*
@@ -88,7 +98,9 @@ typedef enum
 	PURPLE_STATUS_MOBILE,
 	PURPLE_STATUS_TUNE,
 	PURPLE_STATUS_MOOD,
-	PURPLE_STATUS_NUM_PRIMITIVES
+
+	/*< private >*/
+	PURPLE_STATUS_NUM_PRIMITIVES, /*< skip >*/
 } PurpleStatusPrimitive;
 
 #include "presence.h"

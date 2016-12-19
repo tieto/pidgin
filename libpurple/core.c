@@ -113,11 +113,6 @@ purple_core_init(const char *ui)
 	wpurple_init();
 #endif
 
-#if !GLIB_CHECK_VERSION(2, 36, 0)
-	/* GLib type system is automaticaly initialized since 2.36. */
-	g_type_init();
-#endif
-
 	_core = core = g_new0(PurpleCore, 1);
 	core->ui = g_strdup(ui);
 	core->reserved = NULL;
@@ -195,7 +190,6 @@ purple_core_init(const char *ui)
 	purple_log_init();
 	purple_network_init();
 	purple_pounces_init();
-	_purple_socket_init();
 	purple_proxy_init();
 	purple_sound_init();
 	purple_stun_init();
@@ -259,7 +253,6 @@ purple_core_quit(void)
 	purple_theme_manager_uninit();
 	purple_xfers_uninit();
 	purple_proxy_uninit();
-	_purple_socket_uninit();
 	_purple_image_store_uninit();
 	purple_network_uninit();
 

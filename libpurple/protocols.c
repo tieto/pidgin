@@ -794,8 +794,6 @@ purple_protocols_add(GType protocol_type, GError **error)
 	}
 
 	protocol = g_object_new(protocol_type, NULL);
-	klass = PURPLE_PROTOCOL_GET_CLASS(protocol);
-
 	if (!protocol) {
 		g_set_error(error, PURPLE_PROTOCOLS_DOMAIN, 0,
 		            _("Could not create protocol instance"));
@@ -820,6 +818,8 @@ purple_protocols_add(GType protocol_type, GError **error)
 	}
 
 	/* Make sure the protocol implements the required functions */
+	klass = PURPLE_PROTOCOL_GET_CLASS(protocol);
+
 	if (!klass->login        || !klass->close    ||
 	    !klass->status_types || !klass->list_icon )
 	{

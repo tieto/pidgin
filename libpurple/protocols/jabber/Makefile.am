@@ -1,7 +1,5 @@
 EXTRA_DIST = \
-	Makefile.mingw \
-	win32/posix.uname.c \
-	win32/utsname.h
+	Makefile.mingw
 
 pkgdir = @PURPLE_PLUGINDIR@
 
@@ -103,10 +101,6 @@ libjabber_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 
 if USE_CYRUS_SASL
 JABBERSOURCES += auth_cyrus.c
-endif
-
-if IS_WIN32
-JABBERSOURCES += win32/posix.uname.c
 endif
 
 if STATIC_JABBER

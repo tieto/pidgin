@@ -60,12 +60,6 @@
  */
 typedef GPluginPlugin PurplePlugin;
 
-/**
- * PurplePluginClass:
- *
- * The base class for all #PurplePlugin's.
- * This type is an alias for GPluginPluginClass.
- */
 typedef GPluginPluginClass PurplePluginClass;
 
 #else /* !defined(PURPLE_PLUGINS) */
@@ -178,11 +172,6 @@ struct _PurplePluginInfo {
 	gpointer ui_data;
 };
 
-/**
- * PurplePluginInfoClass:
- *
- * The base class for all #PurplePluginInfo's.
- */
 struct _PurplePluginInfoClass {
 #ifdef PURPLE_PLUGINS
 	GPluginPluginInfoClass parent_class;

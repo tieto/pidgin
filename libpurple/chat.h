@@ -51,11 +51,6 @@ struct _PurpleChat {
 	PurpleBlistNode node;
 };
 
-/**
- * PurpleChatClass:
- *
- * The base class for all #PurpleChat's.
- */
 struct _PurpleChatClass {
 	PurpleBlistNodeClass node_class;
 

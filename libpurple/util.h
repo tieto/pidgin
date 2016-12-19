@@ -44,6 +44,8 @@ typedef struct _PurpleMenuAction PurpleMenuAction;
 
 /**
  * PurpleKeyValuePair:
+ * @key: The key
+ * @value: The value
  *
  * A key-value pair.
  *
@@ -537,6 +539,8 @@ char *purple_uts35_to_str(const char *format, size_t len, struct tm *tm);
 
 /**
  * purple_markup_escape_text:
+ * @text: The text to escape
+ * @length: The length of the text, or -1 if #NULL terminated
  *
  * Escapes special characters in a plain-text string so they display
  * correctly as HTML.  For example, &amp; is replaced with &amp;amp; and &lt; is

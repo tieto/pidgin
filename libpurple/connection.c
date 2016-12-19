@@ -845,7 +845,6 @@ purple_connection_finalize(GObject *object)
 	}
 
 	purple_http_conn_cancel_all(gc);
-	_purple_socket_cancel_with_connection(gc);
 	purple_proxy_connect_cancel_with_handle(gc);
 
 	connections = g_list_remove(connections, gc);

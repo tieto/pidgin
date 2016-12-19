@@ -66,6 +66,7 @@ PurpleStringref *purple_stringref_new_noref(const char *value);
 /**
  * purple_stringref_printf:
  * @format: A printf-style format specification.
+ * @...: The arguments for the format specification.
  *
  * Creates an immutable reference-counted string object from a printf
  * format specification and arguments.  The created object will have a

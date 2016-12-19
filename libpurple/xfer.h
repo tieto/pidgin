@@ -72,7 +72,7 @@ typedef enum
  * @PURPLE_XFER_STATUS_UNKNOWN:       Unknown, the xfer may be null.
  * @PURPLE_XFER_STATUS_NOT_STARTED:   It hasn't started yet.
  * @PURPLE_XFER_STATUS_ACCEPTED:      Receive accepted, but destination file
- *                                    not selected yet
+ *                                    not selected yet.
  * @PURPLE_XFER_STATUS_STARTED:       purple_xfer_start has been called.
  * @PURPLE_XFER_STATUS_DONE:          The xfer completed successfully.
  * @PURPLE_XFER_STATUS_CANCEL_LOCAL:  The xfer was cancelled by us.
@@ -94,6 +94,15 @@ typedef enum
 
 /**
  * PurpleXferUiOps:
+ * @new_xfer: UI op that's called after a new transfer is created.
+ * @destroy: UI op that's called when a transfer is being destroyed.
+ * @add_xfer: UI op that's called when a transfer should be added to the UI.
+ * @update_progress: UI op that's called when a transfer's progress has been
+ *                   updated.
+ * @cancel_local: UI op that's called when a transfer has been cancelled on the
+ *                local end.
+ * @cancel_remote: UI op that's called when a transfer has been cancelled on
+ *                 the remote end.
  * @ui_write: UI op to write data received from the protocol. The UI must deal
  *            with the entire buffer and return size, or it is treated as an
  *            error.

@@ -73,11 +73,6 @@ struct _PurpleCipher {
 	GObject gparent;
 };
 
-/**
- * PurpleCipherClass:
- *
- * The base class for all #PurpleCipher's.
- */
 struct _PurpleCipherClass {
 	GObjectClass parent_class;
 
@@ -139,11 +134,6 @@ struct _PurpleHash {
 	GObject gparent;
 };
 
-/**
- * PurpleHashClass:
- *
- * The base class for all #PurpleHash's.
- */
 struct _PurpleHashClass {
 	GObjectClass parent_class;
 

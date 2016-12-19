@@ -3,64 +3,9 @@ pkgdir = @PURPLE_PLUGINDIR@
 EXTRA_DIST = \
 	account.c \
 	account.h \
-	Makefile.mingw \
-	lib/COPYING
-
-if ! HAVE_LIBGADU
-INTGG_SOURCES = \
-	lib/common.c \
-	lib/config.h \
-	lib/dcc.c \
-	lib/dcc7.c \
-	lib/debug.c \
-	lib/debug.h \
-	lib/deflate.c \
-	lib/deflate.h \
-	lib/encoding.c \
-	lib/encoding.h \
-	lib/endian.c \
-	lib/events.c \
-	lib/fileio.h \
-	lib/handlers.c \
-	lib/http.c \
-	lib/internal.h \
-	lib/libgadu.c \
-	lib/libgadu.h \
-	lib/message.c \
-	lib/message.h \
-	lib/network.c \
-	lib/network.h \
-	lib/obsolete.c \
-	lib/packets.pb-c.c \
-	lib/packets.pb-c.h \
-	lib/protobuf-c.c \
-	lib/protobuf-c.h \
-	lib/protobuf.c \
-	lib/protobuf.h \
-	lib/protocol.h \
-	lib/pubdir.c \
-	lib/pubdir50.c \
-	lib/resolver.c \
-	lib/resolver.h \
-	lib/session.h \
-	lib/strman.h \
-	lib/sha1.c \
-	lib/tvbuff.c \
-	lib/tvbuff.h \
-	lib/tvbuilder.c \
-	lib/tvbuilder.h
-
-INTGG_LIBS = $(ZLIB_LIBS) $(GNUTLS_LIBS)
-INTGG_CFLAGS = \
-	-I$(top_srcdir)/libpurple/protocols/gg/lib \
-	$(ZLIB_CFLAGS) \
-	$(GNUTLS_CFLAGS) \
-	-DGG_IGNORE_DEPRECATED
-
-endif
+	Makefile.mingw
 
 GGSOURCES = \
-	$(INTGG_SOURCES) \
 	avatar.c \
 	avatar.h \
 	blist.c \
@@ -137,7 +82,6 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_builddir)/libpurple \
 	$(LIBGADU_CFLAGS) \
-	$(INTGG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(JSON_CFLAGS) \
 	$(GPLUGIN_CFLAGS) \

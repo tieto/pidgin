@@ -45,7 +45,7 @@ libpurple/buddylist.c
 libpurple/connection.c
 libpurple/conversation.c
 libpurple/conversationtypes.c
-libpurple/data/gconf/purple.schemas.in
+libpurple/data/purple-url-handler.desktop.in
 libpurple/dbus-server.c
 libpurple/dbus-server.h
 libpurple/http.c
@@ -191,7 +191,6 @@ libpurple/protocols/yahoo/ycht.c
 libpurple/protocols/yahoo/ymsg.c
 libpurple/protocols/zephyr/zephyr.c
 libpurple/proxy.c
-libpurple/purple-socket.c
 libpurple/request.c
 libpurple/request.h
 libpurple/savedstatuses.c

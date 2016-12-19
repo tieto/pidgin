@@ -14,6 +14,8 @@ EXTRA_DIST = \
 		m4macros/introspection.m4 \
 		package_revision.h \
 		po/Makefile.mingw \
+		tap-driver.sh \
+		tap-test \
 		valgrind-suppressions
 
 noinst_HEADERS = config.h package_revision.h
@@ -26,6 +28,9 @@ if !ENABLE_GTK_DOC
 endif
 	$(AM_V_at)if [ ! -f "$(top_builddir)libpurple/libpurple.la" ]; then \
 		$(MAKE) -C libpurple libpurple.la; \
+	fi
+	$(AM_V_at)if [ ! -f "$(top_builddir)libpurple/protocols/facebook/libfacebook.la" ]; then \
+		$(MAKE) -C libpurple/protocols/facebook libfacebook.la; \
 	fi
 if ENABLE_GNT
 	$(AM_V_at)if [ ! -f "$(top_builddir)finch/libgnt/libgnt.la" ]; then \
@@ -45,9 +50,6 @@ dist: dist-pre-hook
 
 dist-hook:
 	rm $(distdir)/config.h
-
-distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/Pidgin.pm
-#	cp libpurple/plugins/perl/common/Gaim.pm $(distdir)/libpurple/plugins/perl/common
 
 commit-check:
 	(cd po ; intltool-update -m 2>&1 | grep -v '^mismatched quotes.*\.py$$' | sed "s|current directory|po directory|" | grep . ; if [ $$? = 0 ] ; then exit 1 ; else exit 0 ; fi)

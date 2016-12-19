@@ -42,10 +42,6 @@
 #include "data.h"
 #include "ibb.h"
 
-#ifdef _WIN32
-#include "win32/utsname.h"
-#endif
-
 static GHashTable *iq_handlers = NULL;
 static GHashTable *signal_iq_handlers = NULL;
 
@@ -232,16 +228,6 @@ static void jabber_iq_version_parse(JabberStream *js, const char *from,
 	if(type == JABBER_IQ_GET) {
 		GHashTable *ui_info;
 		const char *ui_name = NULL, *ui_version = NULL;
-#if 0
-		char *os = NULL;
-		if(!purple_prefs_get_bool("/plugins/prpl/jabber/hide_os")) {
-			struct utsname osinfo;
-
-			uname(&osinfo);
-			os = g_strdup_printf("%s %s %s", osinfo.sysname, osinfo.release,
-					osinfo.machine);
-		}
-#endif
 
 		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:version");
 		if (from)
@@ -266,13 +252,6 @@ static void jabber_iq_version_parse(JabberStream *js, const char *from,
 			purple_xmlnode_insert_data(purple_xmlnode_new_child(query, "name"), "libpurple", -1);
 			purple_xmlnode_insert_data(purple_xmlnode_new_child(query, "version"), VERSION, -1);
 		}
-
-#if 0
-		if(os) {
-			purple_xmlnode_insert_data(purple_xmlnode_new_child(query, "os"), os, -1);
-			g_free(os);
-		}
-#endif
 
 		jabber_iq_send(iq);
 	}

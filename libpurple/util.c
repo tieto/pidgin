@@ -3222,10 +3222,16 @@ gboolean
 purple_running_gnome(void)
 {
 #ifndef _WIN32
-	gchar *tmp = g_find_program_in_path("gnome-open");
+	gchar *tmp = g_find_program_in_path("gvfs-open");
 
-	if (tmp == NULL)
-		return FALSE;
+	if (tmp == NULL) {
+		tmp = g_find_program_in_path("gnome-open");
+
+		if (tmp == NULL) {
+			return FALSE;
+		}
+	}
+
 	g_free(tmp);
 
 	tmp = (gchar *)g_getenv("GNOME_DESKTOP_SESSION_ID");
@@ -4260,11 +4266,7 @@ purple_utf8_strip_unprintables(const gchar *str)
 const gchar *
 purple_gai_strerror(gint errnum)
 {
-#if GLIB_CHECK_VERSION(2, 32, 0)
 	static GPrivate msg_private = G_PRIVATE_INIT(g_free);
-#else
-	static GStaticPrivate msg_private = G_STATIC_PRIVATE_INIT;
-#endif
 	char *msg;
 	int saved_errno = errno;
 
@@ -4292,19 +4294,12 @@ purple_gai_strerror(gint errnum)
 		}
 	}
 
-#if GLIB_CHECK_VERSION(2, 32, 0)
 	msg = g_private_get(&msg_private);
-#else
-	msg = g_static_private_get(&msg_private);
-#endif
+
 	if (!msg)
 	{
 		msg = g_new(gchar, 64);
-#if GLIB_CHECK_VERSION(2, 32, 0)
 		g_private_set(&msg_private, msg);
-#else
-		g_static_private_set(&msg_private, msg, g_free);
-#endif
 	}
 
 	sprintf(msg, "unknown error (%d)", errnum);

@@ -117,11 +117,7 @@ caesar_cipher_set_property(GObject *obj, guint param_id, const GValue *value,
 
 	switch(param_id) {
 		case PROP_OFFSET:
-#if GLIB_CHECK_VERSION(2, 32, 0)
 			caesar_cipher_set_offset(cipher, g_value_get_schar(value));
-#else
-			caesar_cipher_set_offset(cipher, g_value_get_char(value));
-#endif
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);

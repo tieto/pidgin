@@ -94,7 +94,6 @@ purple_coresources = \
 	protocol.c \
 	protocols.c \
 	purple-gio.c \
-	purple-socket.c \
 	queuedoutputstream.c \
 	request.c \
 	request-datasheet.c \
@@ -179,7 +178,6 @@ purple_coreheaders = \
 	protocol.h \
 	protocols.h \
 	purple-gio.h \
-	purple-socket.h \
 	queuedoutputstream.h \
 	request.h \
 	request-datasheet.h \
@@ -284,17 +282,25 @@ marshallers.c: marshallers.list marshallers.h
 	$(AM_V_GEN)echo "#include \"marshallers.h\"" > marshallers.c
 	$(AM_V_at)$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
 
+# glib-mkenums doesn't handle VPATHs well, sed is used here to fix the
+# include paths and documentation.
+# Escaping possible . in $(srcdir) to \. for sed pattern.
 enums.h: $(srcdir)/enums.h.in $(purple_enumheaders)
 	$(AM_V_GEN)$(GLIB_MKENUMS) --template $(srcdir)/enums.h.in $(purple_enumheaders) > $@
+	sed -i 's,$(subst .,\.,$(srcdir))/,,g' $@
 
 enums.c: $(srcdir)/enums.c.in $(purple_enumheaders)
 	$(AM_V_GEN)$(GLIB_MKENUMS) --template $(srcdir)/enums.c.in $(purple_enumheaders) > $@
+	sed -i 's,$(subst .,\.,$(srcdir))/,,g' $@
 
 CLEANFILES = \
 	enums.c \
 	enums.h \
 	marshallers.c \
 	marshallers.h
+
+DISTCLEANFILES = \
+	data/purple-url-handler.desktop
 
 if ENABLE_DBUS
 
@@ -320,10 +326,14 @@ dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnode.h
                 prefs.h presence.h roomlist.h savedstatuses.h smiley.h smiley-list.h \
 				status.h server.h util.h xmlnode.h protocol.h protocols.h
 
+# Filter out enums.h and marshallers.h as they don't actually generate
+# anything. This way making from a VPATH and distcheck doesn't fail due
+# to not being able to find the enums.h or marshallers.h files if
+# they've already been generated in the $(srcdir).
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
 		$(addprefix $(srcdir)/ciphers/, $(purple_cipherheaders)) \
 		$(addprefix $(srcdir)/media/, $(purple_mediaheaders)) \
-		$(purple_builtheaders)
+		$(filter-out: enums.h marshallers.h, $(purple_builtheaders))
 dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))
 # We should probably make this better
 dbus_signals = $(addprefix $(srcdir)/, $(purple_coresources)) \
@@ -344,7 +354,10 @@ dbus-signals.c: dbus-analyze-signals.py $(dbus_signals)
 
 dbus-server.$(OBJEXT): dbus-bindings.c dbus-signals.c dbus-types.c dbus-types.h
 dbus-server.lo: dbus-bindings.c dbus-signals.c dbus-types.c dbus-types.h
-$(libpurple_la_OBJECTS): dbus-types.h
+
+# Declare these as dependencies so they're built even if `make distcheck`
+# is run immediately after configuring.
+$(libpurple_la_OBJECTS): dbus-types.h enums.h marshallers.h
 
 # libpurple-client
 
@@ -394,6 +407,10 @@ BUILT_SOURCES = $(purple_builtheaders) \
 else
 
 BUILT_SOURCES = $(purple_builtheaders) $(purple_builtsources)
+
+# Declare these as dependencies so they're built even if `make distcheck`
+# is run immediately after configuring.
+$(libpurple_la_OBJECTS): enums.h marshallers.h
 
 endif
 

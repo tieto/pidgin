@@ -115,7 +115,6 @@ C_SRC =	\
 			proxy.c \
 			protocol.c \
 			protocols.c \
-			purple-socket.c \
 			request.c \
 			request-datasheet.c \
 			roomlist.c \
