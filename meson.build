@@ -406,9 +406,6 @@ gio = dependency('gio-2.0')
 gobject = dependency('gobject-2.0')
 gthread = dependency('gthread-2.0')
 
-GLIB_GENMARSHAL = find_program('glib-genmarshal')
-GLIB_MKENUMS = find_program('glib-mkenums')
-
 if get_option('extraversion') != ''
 	DISPLAY_VERSION = '@0@-@1@'.format(meson.project_version(),
 	                                   get_option('extraversion'))
