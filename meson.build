@@ -237,7 +237,7 @@ else
 endif
 
 # Check for inet_aton
-if is_win32
+if is_not_win32
 	if not compiler.has_function('inet_aton')
 		if not compiler.has_function('inet_aton', args : '-lresolv')
 			error('inet_aton not found')
