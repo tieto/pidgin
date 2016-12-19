@@ -197,7 +197,7 @@ if IS_WIN32
 	]
 
 	# TODO: Do something with this object.
-	LIBPURPLE_WIN32RES = WINDRES.process('win32/libpurplerc.rc')
+	purple_coresources += windows.compile_resources('win32/libpurplerc.rc')
 endif
 
 purple_mediaheaders = [

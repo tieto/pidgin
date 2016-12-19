@@ -53,6 +53,14 @@ finch_SOURCES = [
 	'finch.c'
 ]
 
+if IS_WIN32
+#	libfinch_la_LIBADD += \
+#		-lwinmm
+
+	finch_SOURCES += windows.compile_resources('finch_winres.rc')
+	libfinch_SOURCES += windows.compile_resources('libfinch_winres.rc')
+endif
+
 if ENABLE_GNT
 	install_headers(libfinch_headers, subdir : 'finch')
 
@@ -82,15 +90,6 @@ if ENABLE_GNT
 	               configuration : conf,
 	               install : true,
 	               install_dir : get_option('libdir') + '/pkgconfig')
-endif
-
-if IS_WIN32
-#	libfinch_la_LIBADD += \
-#		-lwinmm
-
-	# TODO: Use this for something:
-	FINCH_WIN32RES = WINDRES.process('finch_winres.rc')
-	LIBFINCH_WIN32RES = WINDRES.process('libfinch_winres.rc')
 endif
 
 #AM_CPPFLAGS = \

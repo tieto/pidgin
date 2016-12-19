@@ -71,6 +71,7 @@ install_headers(libgnt_headers, subdir : 'gnt')
 libgnt_deps = [ncurses, libxml, glib, gobject] #pythonlib]
 if is_win32
 	libgnt_deps += [gmodule]
+	libgnt_SOURCES += windows.compile_resources('libgnt_winres.rc')
 endif
 
 libgnt_inc = include_directories('.')
@@ -92,11 +93,6 @@ configure_file(input : 'gnt.pc.in',
                configuration : conf,
                install : true,
                install_dir : get_option('libdir') + '/pkgconfig')
-
-if IS_WIN32
-	# TODO: Do something with this:
-	LIBGNT_WIN32RES = WINDRES.process('libgnt_winres.rc')
-endif
 
 if enable_introspection
 	libgnt_gir = gnome.generate_gir(libgnt,

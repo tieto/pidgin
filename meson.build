@@ -123,14 +123,13 @@ SUNCC = compiler.compiles('void main() {__SUNPRO_C;};')
 
 # Check for Win32
 if host_machine.system() == 'windows'
+	windows = import('windows')
+
 	is_win32 = true
 	is_not_win32 = false
 	# FIXME: Need to add ws2_32 to some target.
 	ws2_32 = compiler.find_library('ws2_32')
 	dnsapi = compiler.find_library('dnsapi')
-	WINDRES = generator(find_program('windres'),
-	    output : '@BASENAME@.o',
-	    arguments : ['-i', '@INPUT@', '-o', '@OUTPUT@'])
 	conf.set('IS_WIN32_CROSS_COMPILED', true)
 	conf.set('WIN32_LEAN_AND_MEAN', true)
 else

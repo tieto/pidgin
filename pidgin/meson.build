@@ -138,7 +138,7 @@ if IS_WIN32
 
 	pidgin_SOURCES += [
 		'win32/winpidgin.c',
-		'win32/pidgin_exe_rc.rc'
+		windows.compile_resources('win32/pidgin_exe_rc.rc')
 	]
 
 	libpidgin_headers += [
@@ -150,8 +150,7 @@ endif
 
 if ENABLE_GTK
 	if IS_WIN32
-		# TODO: Do something with this.
-		LIBPIDGIN_WIN32RES = WINDRES.process('win32/pidgin_dll_rc.rc')
+		libpidgin_SOURCES += windows.compile_resources('win32/pidgin_dll_rc.rc')
 	endif
 
 	install_headers(libpidgin_headers, subdir : 'pidgin')
