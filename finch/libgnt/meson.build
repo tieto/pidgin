@@ -68,6 +68,11 @@ libgnt_headers = [
 
 install_headers(libgnt_headers, subdir : 'gnt')
 
+libgnt_deps = [ncurses, libxml, glib, gobject] #pythonlib]
+if is_win32
+	libgnt_deps += [gmodule]
+endif
+
 libgnt_inc = include_directories('.')
 libgnt = library('gnt',
                  libgnt_SOURCES,
@@ -75,7 +80,7 @@ libgnt = library('gnt',
                  install : true,
                  soversion : gnt_lt_current,
                  version : GNT_LT_VERSION_INFO,
-                 dependencies : [ncurses, libxml, glib, gmodule, gobject])#pythonlib])
+                 dependencies : libgnt_deps)
 libgnt_dep = declare_dependency(
 	sources : gntmarshal_h,  # Ensure built before any dependencies.
     include_directories : [toplevel_inc, libgnt_inc],
