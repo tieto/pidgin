@@ -16,7 +16,7 @@ BONJOURSOURCES = [
 ]
 
 if IS_WIN32
-	BONJOURSOURCES += ['dns_sd_proxy.c']
+	BONJOURSOURCES += ['dns_sd_proxy.c', 'mdns_dns_sd.c']
 #	FIXME: libbonjour_la_LIBADD += -lnetapi32
 else
 	BONJOURSOURCES += ['mdns_avahi.c']

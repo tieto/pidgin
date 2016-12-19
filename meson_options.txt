@@ -74,6 +74,9 @@ option('silc-includes', type : 'string',
 option('silc-libs', type : 'string',
        description : 'compile the SILC plugin against the SILC libs in DIR')
 
+option('libgadu', type : 'boolean', value : true,
+       description : 'compile with libgadu (required for GaduGadu support)')
+
 option('distrib', type : 'boolean', value : false)
 
 option('static-prpls', type : 'string',
@@ -102,6 +105,9 @@ option('dbus', type : 'boolean', value : true,
 
 option('unity-integration', type : 'boolean', value : false,
        description : 'compile with support for unity integration plugin')
+
+option('secret-service', type : 'boolean', value : true,
+       description : 'enable Secret Service support')
 
 option('gnome-keyring', type : 'boolean', value : true,
        description : 'enable GNOME Keyring support')

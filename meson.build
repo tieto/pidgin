@@ -949,56 +949,34 @@ endif
 # Check for Gadu-Gadu protocol library (libgadu)
 #######################################################################
 
-libgadu = dependency('libgadu', version : '>= 1.12.0', required : false)
-have_libgadu = libgadu.found()
+enable_libgadu = get_option('libgadu')
+if enable_libgadu
+	libgadu = dependency('libgadu', version : '>= 1.12.0', required : false)
+	have_libgadu = libgadu.found()
 
-if have_libgadu
-	if not compiler.has_function('gg_is_gpl_compliant', args : '-lgadu')
-#		LIBGADU_LIBS=''
-#		LIBGADU_CFLAGS=''
-		have_libgadu = false
-		message('''
+	if have_libgadu
+		if not compiler.has_function('gg_is_gpl_compliant', dependencies : libgadu)
+			have_libgadu = false
+			message('''
 libgadu is not compatible with the GPL when compiled with OpenSSL support.
 
-To compile against system libgadu, please recompile libgadu using:
+To link against libgadu, please recompile libgadu using:
 ./configure --with-openssl=no
 Then rerun this ./configure
-
-Falling back to using our own copy of libgadu.
-		''')
+			''')
+		endif
 	endif
-endif
 
-HAVE_LIBGADU = have_libgadu
-if have_libgadu
-	conf.set('HAVE_LIBGADU', true)
+	if not have_libgadu and force_deps
+		error('''
+Libgadu development headers not found.
+Use -Dlibgadu=false if you do not need GG (GaduGadu) support.
+''')
+	endif
 else
-	gg_have_gnutls_csxst = compiler.has_function('gnutls_certificate_set_x509_system_trust', args : '-lgnutls')
-
-	gg_gnutls_sts = ''
-	if not gg_have_gnutls_csxst
-		foreach i : '/etc/ssl/ca-bundle.pem /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/cert.pem /usr/local/share/certs/ca-root-nss.crt /etc/ssl/cert.pem'.split()
-			if gg_gnutls_sts == '' and run_command('test', '-e', i).returncode() == 0
-				gg_gnutls_sts = i
-			endif
-		endforeach
-	endif
-
-	if gg_have_gnutls_csxst
-		conf.set('HAVE_GNUTLS_CERTIFICATE_SET_X509_SYSTEM_TRUST', true)
-	endif
-	if gg_gnutls_sts != ''
-		conf.set('GG_CONFIG_GNUTLS_SYSTEM_TRUST_STORE',
-		         '"@0@"'.format(gg_gnutls_sts))
-	endif
-
-	# redundant - only here to stay compatible with libgadu upstream
-	GNUTLS_2_10 = dependency('gnutls', version : '>= 2.10.0', required : false)
-	conf.set('HAVE_GNUTLS_2_10', GNUTLS_2_10.found())
+	have_libgadu = false
 endif
 
-#AC_SUBST(LIBGADU_LIBS)
-#AC_SUBST(LIBGADU_CFLAGS)
 
 DEFAULT_PRPLS = ['bonjour', 'facebook', 'gg', 'irc', 'jabber', 'msn', 'mxit',
                  'novell', 'oscar', 'sametime', 'silc', 'simple', 'yahoo',
@@ -1024,6 +1002,8 @@ foreach prpl : static_list
 	elif prpl == 'bonjour' and (not avahiincludes or not avahilibs)
 		# Do nothing
 	elif prpl == 'silc' and (not silcincludes or not silcclient)
+		# Do nothing
+	elif prpl == 'gg' and not have_libgadu
 		# Do nothing
 	elif prpl == 'zephyr' and is_win32
 		# Do nothing
@@ -1082,6 +1062,8 @@ foreach prpl : dynamic_list
 	elif prpl == 'bonjour' and (not avahiincludes or not avahilibs)
 		# Do nothing.
 	elif prpl == 'silc' and (not silcincludes or not silcclient)
+		# Do nothing.
+	elif prpl == 'gg' and not have_libgadu
 		# Do nothing.
 	elif prpl == 'zephyr' and is_win32
 		# Do nothing.
@@ -1229,18 +1211,16 @@ ENABLE_UNITY = enable_unity
 # Check for Secret Service headers
 #######################################################################
 
-# disabled - see secretservice.c
+enable_secret_service = get_option('secret-service')
+if enable_secret_service
+	secretservice = dependency('libsecret-1', required : force_deps)
+	if secretservice.found()
+	else
+		enable_secret_service = false
+	endif
+endif
 
-#if get_option('secret-service')
-#	PKG_CHECK_MODULES(SECRETSERVICE, [libsecret-1], [
-#		AC_SUBST(SECRETSERVICE_CFLAGS)
-#		AC_SUBST(SECRETSERVICE_LIBS)
-#		AC_DEFINE(HAVE_SECRETSERVICE, 1, [Define if we have Secret Service.])
-#	])
-#endif
-
-#AM_CONDITIONAL(ENABLE_SECRETSERVICE, test 'x$enable_secret_service' = 'xyes')
-ENABLE_SECRETSERVICE = false
+ENABLE_SECRETSERVICE = enable_secret_service
 
 #######################################################################
 # Check for GNOME Keyring headers
@@ -1842,7 +1822,6 @@ endif
 message('Build with Cyrus SASL support. : ' + enable_cyrus_sasl.to_string())
 message('Use kerberos 4 with zephyr.... : ' + kerberos.to_string())
 message('Use external libzephyr........ : ' + zephyr.to_string())
-message('Use external libgadu.......... : ' + have_libgadu.to_string())
 message('Install pixmaps............... : ' + INSTALL_PIXMAPS.to_string())
 message('Old tray icon compatibility... : ' + ENABLE_TRAYCOMPAT.to_string())
 message('Install translations.......... : ' + INSTALL_I18N.to_string())
@@ -1857,7 +1836,7 @@ message('Build Unity integration plugin.: ' + enable_unity.to_string())
 message('')
 message('Build with GNOME Keyring...... : ' + enable_gnome_keyring.to_string())
 message('Build with KWallet............ : ' + enable_kwallet.to_string())
-#message('Build with Secret Service..... : ' + enable_secret_service)
+message('Build with Secret Service..... : ' + enable_secret_service.to_string())
 message('')
 message('Build with plugin support..... : ' + PLUGINS.to_string())
 message('Enable Introspection...........: ' + enable_introspection.to_string())
