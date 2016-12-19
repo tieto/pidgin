@@ -66,6 +66,8 @@ libgnt_headers = [
 	'gnt.h'
 ]
 
+if ENABLE_GNT
+
 install_headers(libgnt_headers, subdir : 'gnt')
 
 libgnt_deps = [ncurses, libxml, glib, gobject] #pythonlib]
@@ -106,3 +108,5 @@ if enable_introspection
 endif
 
 subdir('wms')
+
+endif  # ENABLE_GNT
