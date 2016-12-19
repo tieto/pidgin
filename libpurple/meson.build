@@ -432,6 +432,7 @@ libpurple = library('purple',
                          gstreamer_app, idn, json, gnutls,
                          nss, zlib, math])
 libpurple_dep = declare_dependency(
+	sources : purple_builtsources,  # Ensure built before any dependencies.
     include_directories : [toplevel_inc, libpurple_inc],
     link_with : libpurple,
     dependencies : [gstreamer, gplugin, glib, gio])

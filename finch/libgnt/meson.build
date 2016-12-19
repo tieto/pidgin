@@ -77,6 +77,7 @@ libgnt = library('gnt',
                  version : GNT_LT_VERSION_INFO,
                  dependencies : [ncurses, libxml, glib, gmodule, gobject])#pythonlib])
 libgnt_dep = declare_dependency(
+	sources : gntmarshal_h,  # Ensure built before any dependencies.
     include_directories : [toplevel_inc, libgnt_inc],
     link_with : libgnt,
     dependencies : [ncurses, glib])
