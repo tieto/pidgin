@@ -403,8 +403,10 @@ endif
 # #######################################################################
 glib = dependency('glib-2.0', version : '>= 2.23.0')
 gio = dependency('gio-2.0')
+gmodule = dependency('gmodule-2.0')
 gobject = dependency('gobject-2.0')
 gthread = dependency('gthread-2.0')
+gnome = import('gnome')
 
 if get_option('extraversion') != ''
 	DISPLAY_VERSION = '@0@-@1@'.format(meson.project_version(),
@@ -502,11 +504,13 @@ Use -Dx=false if you do not need X11 support.
 		enable_screensaver = false
 		enable_sm = false
 		enable_gestures = false
+		x11 = declare_dependency()
 	endif
 
 	#######################################################################
 	# Check for XScreenSaver
 	#######################################################################
+	xss = declare_dependency()
 	if enable_screensaver
 		if with_x
 			# FIXME: Neither of these obey x_incpath_add or x_libpath_add.
@@ -812,6 +816,8 @@ Or use -Dvv=false if you do not need voice/video support.
 		endif
 		enable_vv = false
 	endif
+else
+	enable_vv = false
 endif
 USE_VV = enable_vv
 
@@ -825,6 +831,8 @@ if enable_vv
 		conf.set('USE_GSTAPP', true)
 		conf.set('HAVE_MEDIA_APPLICATION', true)
 	endif
+else
+	gstreamer_app = declare_dependency()
 endif
 
 #######################################################################
@@ -834,6 +842,8 @@ endif
 if get_option('idn')
 	idn = dependency('libidn', version : '>= 0.0.0', required : force_deps)
 	conf.set('USE_IDN', idn.found())
+else
+	idn = declare_dependency()
 endif
 
 #######################################################################
@@ -841,6 +851,9 @@ endif
 #######################################################################
 if get_option('meanwhile')
 	meanwhile = dependency('meanwhile', version : ['>= 1.0.0', '< 2.0.0'], required : force_deps)
+	enable_meanwhile = meanwhile.found()
+else
+	enable_meanwhile = false
 endif
 #AC_SUBST(MEANWHILE_CFLAGS)
 #AC_SUBST(MEANWHILE_LIBS)
@@ -904,7 +917,6 @@ endif
 SILC_CFLAGS = ''
 SILC_LIBS = ''
 have_silc = false
-silcclient = false
 if get_option('silc-includes') != '' or get_option('silc-libs') != ''
 	silc_manual_check = true
 else
@@ -914,8 +926,6 @@ if not silc_manual_check
 	silc = dependency('silcclient', version : '>= 1.1', required : false)
 	if silc.found()
 		have_silc = true
-		silcincludes = true
-		silcclient = true
 	else
 		have_silc = false
 	endif
@@ -941,7 +951,7 @@ endif
 #AC_SUBST(SILC_LIBS)
 #AC_SUBST(SILC_CFLAGS)
 # SILC Toolkit >= 1.0.1 has a new MIME API
-if silcclient
+if have_silc
 	conf.set('HAVE_SILCMIME_H', true)
 endif
 
@@ -997,11 +1007,11 @@ STATIC_PRPLS = []
 foreach prpl : static_list
 	if prpl == ''
 		# The list was empty; do nothing.
-	elif prpl == 'sametime' and not meanwhile.found()
+	elif prpl == 'sametime' and not enable_meanwhile
 		# Do nothing
-	elif prpl == 'bonjour' and (not avahiincludes or not avahilibs)
+	elif prpl == 'bonjour' and not enable_avahi
 		# Do nothing
-	elif prpl == 'silc' and (not silcincludes or not silcclient)
+	elif prpl == 'silc' and not have_silc
 		# Do nothing
 	elif prpl == 'gg' and not have_libgadu
 		# Do nothing
@@ -1038,8 +1048,8 @@ STATIC_MSN = STATIC_PRPLS.contains('msn')
 STATIC_MXIT = STATIC_PRPLS.contains('mxit')
 STATIC_NOVELL = STATIC_PRPLS.contains('novell')
 STATIC_OSCAR = STATIC_PRPLS.contains('oscar') or STATIC_PRPLS.contains('aim') or STATIC_PRPLS.contains('icq')
-STATIC_SAMETIME = STATIC_PRPLS.contains('sametime') and meanwhile.found()
-STATIC_SILC = STATIC_PRPLS.contains('silc') and have_silc
+STATIC_SAMETIME = STATIC_PRPLS.contains('sametime')
+STATIC_SILC = STATIC_PRPLS.contains('silc')
 STATIC_SIMPLE = STATIC_PRPLS.contains('simple')
 STATIC_YAHOO = STATIC_PRPLS.contains('yahoo')
 STATIC_ZEPHYR = STATIC_PRPLS.contains('zephyr')
@@ -1057,11 +1067,11 @@ DYNAMIC_PRPLS = []
 foreach prpl : dynamic_list
 	if prpl == ''
 		# The list was empty; do nothing.
-	elif prpl == 'sametime' and not meanwhile.found()
+	elif prpl == 'sametime' and not enable_meanwhile
 		# Do nothing.
-	elif prpl == 'bonjour' and (not avahiincludes or not avahilibs)
+	elif prpl == 'bonjour' and not enable_avahi
 		# Do nothing.
-	elif prpl == 'silc' and (not silcincludes or not silcclient)
+	elif prpl == 'silc' and not have_silc
 		# Do nothing.
 	elif prpl == 'gg' and not have_libgadu
 		# Do nothing.
@@ -1189,6 +1199,7 @@ if enable_dbus
 	enable_dbus = dbus.found() and dbus_glib.found()
 else
 	dbus = declare_dependency()
+	dbus_glib = declare_dependency()
 endif
 
 #######################################################################
@@ -1336,14 +1347,13 @@ if get_option('plugins')
 	gplugin = dependency('gplugin', version : '>= 0.0.17')
 	# GPLUGIN_REG sets pkg-config requirements in the .pc file
 	conf.set('GPLUGIN_REQ', ', gplugin')
-	gmodule = dependency('gmodule-2.0')
 	enable_introspection = true
 else
+	gplugin = declare_dependency()
 	enable_introspection = false
 endif
 
 if enable_introspection
-	gnome = import('gnome')
 	conf.set('ENABLE_INTROSPECTION', true)
 endif
 

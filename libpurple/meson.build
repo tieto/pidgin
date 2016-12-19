@@ -413,6 +413,7 @@ install_data(['purple-remote', 'purple-send', 'purple-send-async', 'purple-url-h
 else
 
 dbus_sources = []
+dbus_headers = []
 
 endif
 
