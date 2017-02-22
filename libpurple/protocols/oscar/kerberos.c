@@ -98,21 +98,11 @@ static gchar *get_kdc_url(OscarData *od)
 	return url;
 }
 
-/*
- * Using kerberos auth requires a developer ID. This key is for libpurple.
- * It is the default key for all libpurple-based clients.  AOL encourages
- * UIs (especially ones with lots of users) to override this with their
- * own key.  This key is owned by the AIM account "markdoliner"
- *
- * Keys can be managed at http://developer.aim.com/manageKeys.jsp
- */
-#define DEFAULT_CLIENT_KEY "ma15d7JTxbmVG-RP"
-
 static const char *get_client_key(OscarData *od)
 {
 	return oscar_get_ui_info_string(
 			od->icq ? "prpl-icq-clientkey" : "prpl-aim-clientkey",
-			DEFAULT_CLIENT_KEY);
+			od->icq ? ICQ_DEFAULT_CLIENT_KEY : AIM_DEFAULT_CLIENT_KEY);
 }
 
 static void
