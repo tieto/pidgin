@@ -1,7 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.12.0 (??/??/????):
+version 2.12.0 (03/10/2017):
 	libpurple:
+	* Fix an out of bounds memory read in purple_markup_unescape_entity.
+	  CVE-2017-XXXX
+	* Fix use of uninitialised memory if running non-debug-enabled versions of glib
 	* Removed the MSN protocol plugin. It has been unusable and dormant for some
 	  time. MSNP18 has been discontinued and the protocol plugin would require a 
 	  large update to start working again. See: http://ismsndeadyet.com/ The
