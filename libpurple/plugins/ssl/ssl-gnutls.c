@@ -1037,9 +1037,9 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 }
 
 static GByteArray *
-x509_sha1sum(PurpleCertificate *crt)
+x509_shasum(PurpleCertificate *crt, gnutls_digest_algorithm_t algo)
 {
-	size_t hashlen = 20; /* SHA1 hashes are 20 bytes */
+	size_t hashlen = (algo == GNUTLS_DIG_SHA1) ? 20 : 32;
 	size_t tmpsz = hashlen; /* Throw-away variable for GnuTLS to stomp on*/
 	gnutls_x509_crt_t crt_dat;
 	GByteArray *hash; /**< Final hash container */
@@ -1051,7 +1051,7 @@ x509_sha1sum(PurpleCertificate *crt)
 
 	/* Extract the fingerprint */
 	g_return_val_if_fail(
-		0 == gnutls_x509_crt_get_fingerprint(crt_dat, GNUTLS_DIG_SHA,
+		0 == gnutls_x509_crt_get_fingerprint(crt_dat, algo,
 						     hashbuf, &tmpsz),
 		NULL);
 
@@ -1063,6 +1063,18 @@ x509_sha1sum(PurpleCertificate *crt)
 	g_byte_array_append(hash, hashbuf, hashlen);
 
 	return hash;
+}
+
+static GByteArray *
+x509_sha1sum(PurpleCertificate *crt)
+{
+	return x509_shasum(crt, GNUTLS_DIG_SHA1);
+}
+
+static GByteArray *
+x509_sha256sum(PurpleCertificate *crt)
+{
+	return x509_shasum(crt, GNUTLS_DIG_SHA256);
 }
 
 static gchar *
@@ -1239,8 +1251,8 @@ static PurpleCertificateScheme x509_gnutls = {
 
 	NULL,
 	NULL,
-	NULL
-
+	sizeof(PurpleCertificateScheme), /* struct_size */
+	x509_sha256sum,                  /* SHA256 fingerprint */
 };
 
 static PurpleSslOps ssl_ops =
