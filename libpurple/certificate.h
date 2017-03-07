@@ -315,8 +315,30 @@ struct _PurpleCertificateScheme
 	 */
 	void (* verify_cert)(PurpleCertificateVerificationRequest *vrq, PurpleCertificateInvalidityFlags *flags);
 
-	void (*_purple_reserved3)(void);
+	/**
+	 * The size of the PurpleCertificateScheme. This should always be sizeof(PurpleCertificateScheme).
+	 * This allows adding more functions to this struct without requiring a major version bump.
+	 *
+	 * PURPLE_CERTIFICATE_SCHEME_HAS_FUNC() should be used for functions after this point.
+	 */
+	unsigned long struct_size;
+
+	/**
+	 * Retrieves the certificate public key fingerprint using SHA256
+	 *
+	 * @param crt   Certificate instance
+	 * @return Binary representation of SHA256 hash - must be freed using
+	 *         g_byte_array_free()
+	 * @since 2.12.0
+	 */
+	GByteArray * (* get_fingerprint_sha256)(PurpleCertificate *crt);
 };
+
+#define PURPLE_CERTIFICATE_SCHEME_HAS_FUNC(obj, member) \
+	(((G_STRUCT_OFFSET(PurpleCertificateScheme, member) < G_STRUCT_OFFSET(PurpleCertificateScheme, struct_size)) \
+	  || (G_STRUCT_OFFSET(PurpleCertificateScheme, member) < obj->struct_size)) && \
+	 obj->member != NULL)
+
 
 /** A set of operations used to provide logic for verifying a Certificate's
  *  authenticity.
@@ -578,12 +600,26 @@ purple_certificate_export(const gchar *filename, PurpleCertificate *crt);
  * Retrieves the certificate public key fingerprint using SHA1.
  *
  * @param crt        Certificate instance
- * @return Binary representation of the hash. You are responsible for free()ing
- *         this.
+ * @return Binary representation of the hash. You are responsible for freeing
+ *         this with g_byte_array_free().
  * @see purple_base16_encode_chunked()
+ * @see purple_certificate_get_fingerprint_sha256()
  */
 GByteArray *
 purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt);
+
+/**
+ * Retrieves the certificate public key fingerprint using SHA256.
+ *
+ * @param crt        Certificate instance
+ * @param sha1_fallback  If true, return SHA1 if the SSL module doesn't
+ *                       implement SHA256. Otherwise, return NULL.
+ * @return Binary representation of the hash. You are responsible for freeing
+ *         this with g_byte_array_free().
+ * @see purple_base16_encode_chunked()
+ */
+GByteArray *
+purple_certificate_get_fingerprint_sha256(PurpleCertificate *crt, gboolean sha1_fallback);
 
 /**
  * Get a unique identifier for the certificate
