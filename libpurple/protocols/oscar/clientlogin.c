@@ -73,21 +73,11 @@ static const gchar *get_start_oscar_session_url(OscarData *od)
 	return start_oscar_session_urls[od->icq ? 1 : 0];
 }
 
-/*
- * Using clientLogin requires a developer ID.  This key is for libpurple.
- * It is the default key for all libpurple-based clients.  AOL encourages
- * UIs (especially ones with lots of users) to override this with their
- * own key.  This key is owned by the AIM account "markdoliner"
- *
- * Keys can be managed at http://developer.aim.com/manageKeys.jsp
- */
-#define DEFAULT_CLIENT_KEY "ma15d7JTxbmVG-RP"
-
 static const char *get_client_key(OscarData *od)
 {
 	return oscar_get_ui_info_string(
 			od->icq ? "prpl-icq-clientkey" : "prpl-aim-clientkey",
-			DEFAULT_CLIENT_KEY);
+			od->icq ? ICQ_DEFAULT_CLIENT_KEY : AIM_DEFAULT_CLIENT_KEY);
 }
 
 static gchar *generate_error_message(xmlnode *resp, const char *url)
@@ -362,8 +352,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 	const gchar *encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
 
 	/*
-	 * Construct the GET parameters.  0x00000611 is the distid given to
-	 * us by AOL for use as the default libpurple distid.
+	 * Construct the GET parameters.
 	 */
 	query_string = g_strdup_printf("a=%s"
 			"&distId=%d"
@@ -372,7 +361,8 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 			"&ts=%" PURPLE_TIME_T_MODIFIER
 			"&useTLS=%d",
 			purple_url_encode(token),
-			oscar_get_ui_info_int(od->icq ? "prpl-icq-distid" : "prpl-aim-distid", 0x00000611),
+			oscar_get_ui_info_int(od->icq ? "prpl-icq-distid" : "prpl-aim-distid",
+				od->icq ? ICQ_DEFAULT_DIST_ID : AIM_DEFAULT_DIST_ID),
 			get_client_key(od),
 			hosttime,
 			strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0 ? 1 : 0);

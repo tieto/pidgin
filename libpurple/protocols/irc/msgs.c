@@ -1574,6 +1574,8 @@ irc_msg_cap(struct irc_conn *irc, const char *name, const char *from, char **arg
 	int id = 0;
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	const char *mech_list = NULL;
+	char *pos;
+	size_t index;
 
 	if (strncmp(args[2], "sasl ", 6))
 		return;
@@ -1637,6 +1639,15 @@ irc_msg_cap(struct irc_conn *irc, const char *name, const char *from, char **arg
 	}
 
 	irc->sasl_mechs = g_string_new(mech_list);
+	/* Drop EXTERNAL mechanism since we don't support it */
+	if ((pos = strstr(irc->sasl_mechs->str, "EXTERNAL"))) {
+		index = pos - irc->sasl_mechs->str;
+		g_string_erase(irc->sasl_mechs, index, strlen("EXTERNAL"));
+		/* Remove space which separated this mech from the next */
+		if ((irc->sasl_mechs->str)[index] == ' ') {
+			g_string_erase(irc->sasl_mechs, index, 1);
+		}
+	}
 
 	irc_auth_start_cyrus(irc);
 }

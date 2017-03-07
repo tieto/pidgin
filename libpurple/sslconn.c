@@ -190,7 +190,7 @@ purple_ssl_connect_fd(PurpleAccount *account, int fd,
 					PurpleSslErrorFunction error_func,
                     void *data)
 {
-    return purple_ssl_connect_with_host_fd(account, fd, func, error_func, NULL, data);
+	return purple_ssl_connect_with_host_fd(account, fd, func, error_func, NULL, data);
 }
 
 PurpleSslConnection *
@@ -219,8 +219,9 @@ purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
 	gsc->connect_cb      = func;
 	gsc->error_cb        = error_func;
 	gsc->fd              = fd;
-    if(host)
-        gsc->host            = g_strdup(host);
+	if (host) {
+		gsc->host = g_strdup(host);
+	}
 
 	/* TODO: Move this elsewhere */
 	gsc->verifier = purple_certificate_find_verifier("x509","tls_cached");

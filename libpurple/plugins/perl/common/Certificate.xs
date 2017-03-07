@@ -219,6 +219,19 @@ purple_certificate_get_fingerprint_sha1(crt)
 	OUTPUT:
 		RETVAL
 
+SV*
+purple_certificate_get_fingerprint_sha256(crt, sha1_fallback)
+	Purple::Certificate crt
+	gboolean sha1_fallback
+	PREINIT:
+		GByteArray *gba = NULL;
+	CODE:
+		gba = purple_certificate_get_fingerprint_sha256(crt, sha1_fallback);
+		RETVAL = newSVpv((gchar *)gba->data, gba->len);
+		g_byte_array_free(gba, TRUE);
+	OUTPUT:
+		RETVAL
+
 void
 purple_certificate_verify(verifier, subject_name, cert_chain, cb, cb_data)
 	Purple::Certificate::Verifier verifier

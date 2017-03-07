@@ -1,5 +1,14 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.12.0:
+	libpurple:
+		Added:
+		* PURPLE_MESSAGE_REMOTE_SEND in PurpleMessageFlags, to specify
+		messages like _SEND that were sent from another location.
+		* purple_certificate_get_fingerprint_sha256
+		* PurpleCertificateScheme.get_fingerprint_sha256
+		* PURPLE_CERTIFICATE_SCHEME_HAS_FUNC
+
 version 2.11.0:
 	libpurple:
 		Added:

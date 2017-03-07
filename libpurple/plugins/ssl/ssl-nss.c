@@ -881,11 +881,11 @@ x509_signed_by(PurpleCertificate * crt,
 }
 
 static GByteArray *
-x509_sha1sum(PurpleCertificate *crt)
+x509_shasum(PurpleCertificate *crt, SECOidTag algo)
 {
 	CERTCertificate *crt_dat;
-	size_t hashlen = 20; /* Size of an sha1sum */
-	GByteArray *sha1sum;
+	size_t hashlen = (algo == SEC_OID_SHA1) ? 20 : 32;
+	GByteArray *hash;
 	SECItem *derCert; /* DER representation of the cert */
 	SECStatus st;
 
@@ -899,22 +899,34 @@ x509_sha1sum(PurpleCertificate *crt)
 	derCert = &(crt_dat->derCert);
 
 	/* Make a hash! */
-	sha1sum = g_byte_array_sized_new(hashlen);
+	hash = g_byte_array_sized_new(hashlen);
 	/* glib leaves the size as 0 by default */
-	sha1sum->len = hashlen;
+	hash->len = hashlen;
 
-	st = PK11_HashBuf(SEC_OID_SHA1, sha1sum->data,
+	st = PK11_HashBuf(algo, hash->data,
 			  derCert->data, derCert->len);
 
 	/* Check for errors */
 	if (st != SECSuccess) {
-		g_byte_array_free(sha1sum, TRUE);
+		g_byte_array_free(hash, TRUE);
 		purple_debug_error("nss/x509",
 				   "Error: hashing failed!\n");
 		return NULL;
 	}
 
-	return sha1sum;
+	return hash;
+}
+
+static GByteArray *
+x509_sha1sum(PurpleCertificate *crt)
+{
+	return x509_shasum(crt, SEC_OID_SHA1);
+}
+
+static GByteArray *
+x509_sha256sum(PurpleCertificate *crt)
+{
+	return x509_shasum(crt, SEC_OID_SHA256);
 }
 
 static gchar *
@@ -1211,7 +1223,8 @@ static PurpleCertificateScheme x509_nss = {
 	x509_importcerts_from_file,      /* Multiple certificate import function */
 	x509_register_trusted_tls_cert,  /* Register a certificate as trusted for TLS */
 	x509_verify_cert,                /* Verify that the specified cert chain is trusted */
-	NULL
+	sizeof(PurpleCertificateScheme), /* struct_size */
+	x509_sha256sum,                  /* SHA256 fingerprint */
 };
 
 static PurpleSslOps ssl_ops =

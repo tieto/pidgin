@@ -474,23 +474,23 @@ rtf_push_state(NMRtfContext *ctx)
 static int
 rtf_pop_state(NMRtfContext *ctx)
 {
-    NMRtfStateSave *save_old;
+	NMRtfStateSave *save_old;
 	GSList *link_old;
 
-    if (ctx->saved == NULL)
-        return NMRTF_STACK_UNDERFLOW;
+	if (ctx->saved == NULL)
+		return NMRTF_STACK_UNDERFLOW;
 
 	save_old = ctx->saved->data;
-    ctx->chp = save_old->chp;
-    ctx->rds = save_old->rds;
-    ctx->ris = save_old->ris;
-    (ctx->depth)--;
+	ctx->chp = save_old->chp;
+	ctx->rds = save_old->rds;
+	ctx->ris = save_old->ris;
+	(ctx->depth)--;
 
-    g_free(save_old);
+	g_free(save_old);
 	link_old = ctx->saved;
 	ctx->saved = g_slist_remove_link(ctx->saved, link_old);
 	g_slist_free_1(link_old);
-    return NMRTF_OK;
+	return NMRTF_OK;
 }
 
 /*
@@ -671,13 +671,13 @@ rtf_flush_data(NMRtfContext *ctx)
 static int
 rtf_apply_property(NMRtfContext *ctx, NMRtfProperty prop, int val)
 {
-    if (ctx->rds == NMRTF_STATE_SKIP)  /* If we're skipping text, */
-        return NMRTF_OK;          /* don't do anything. */
+	if (ctx->rds == NMRTF_STATE_SKIP)  /* If we're skipping text, */
+		return NMRTF_OK;          /* don't do anything. */
 
 	/* Need to flush any temporary data before a property change*/
 	rtf_flush_data(ctx);
 
-    switch (prop) {
+	switch (prop) {
 		case NMRTF_PROP_FONT_IDX:
 			ctx->chp.font_idx = val;
 			break;
@@ -686,9 +686,9 @@ rtf_apply_property(NMRtfContext *ctx, NMRtfProperty prop, int val)
 			break;
 		default:
 			return NMRTF_BAD_TABLE;
-    }
+	}
 
-    return NMRTF_OK;
+	return NMRTF_OK;
 }
 
 /*
