@@ -1225,6 +1225,7 @@ static PurpleCertificateScheme x509_nss = {
 	x509_verify_cert,                /* Verify that the specified cert chain is trusted */
 	sizeof(PurpleCertificateScheme), /* struct_size */
 	x509_sha256sum,                  /* SHA256 fingerprint */
+	NULL,
 };
 
 static PurpleSslOps ssl_ops =

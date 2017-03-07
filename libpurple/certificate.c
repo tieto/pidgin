@@ -508,6 +508,24 @@ purple_certificate_get_times(PurpleCertificate *crt, time_t *activation, time_t 
 	return (scheme->get_times)(crt, activation, expiration);
 }
 
+gboolean
+purple_certificate_compare_pubkeys(PurpleCertificate *crt1, PurpleCertificate *crt2)
+{
+	PurpleCertificateScheme *scheme;
+
+	g_return_val_if_fail(crt1 && crt2, FALSE);
+	g_return_val_if_fail(crt1->scheme && crt2->scheme, FALSE);
+	g_return_val_if_fail(crt1->scheme == crt2->scheme, FALSE);
+
+	scheme = crt1->scheme;
+
+	if (!(PURPLE_CERTIFICATE_SCHEME_HAS_FUNC(scheme, compare_pubkeys))) {
+		return FALSE;
+	}
+
+	return (scheme->compare_pubkeys)(crt1, crt2);
+}
+
 gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 {
@@ -1746,11 +1764,17 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 	 * signature.
 	 */
 	last_fpr = purple_certificate_get_fingerprint_sha256(end_crt, TRUE);
+
+	ca_id = purple_certificate_get_unique_id(end_crt);
+
 	for (cur = ca_crts; cur; cur = cur->next) {
 		ca_crt = cur->data;
 		ca_fpr = purple_certificate_get_fingerprint_sha256(ca_crt, TRUE);
+		ca2_id = purple_certificate_get_unique_id(ca_crt);
 
 		if ( byte_arrays_equal(last_fpr, ca_fpr) ||
+				(purple_strequal(ca_id, ca2_id) &&
+				 purple_certificate_compare_pubkeys(end_crt, ca_crt)) ||
 				purple_certificate_signed_by(end_crt, ca_crt) )
 		{
 			/* TODO: If signed_by ever returns a reason, maybe mention
@@ -1760,11 +1784,14 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq,
 			   user's poor, leaky eyes. */
 			valid = TRUE;
 			g_byte_array_free(ca_fpr, TRUE);
+			g_free(ca2_id);
 			break;
 		}
 
 		g_byte_array_free(ca_fpr, TRUE);
+		g_free(ca2_id);
 	}
+	g_free(ca_id);
 
 	if (valid == FALSE)
 		flags |= PURPLE_CERTIFICATE_INVALID_CHAIN;
