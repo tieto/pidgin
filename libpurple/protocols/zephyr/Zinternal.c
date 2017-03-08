@@ -259,7 +259,7 @@ Code_t Z_ReadWait()
     if (!packet_len)
 	return (ZERR_EOF);
 
-	packet[packet_len] = '\0';
+    packet[packet_len] = '\0';
 
     /* Ignore obviously non-Zephyr packets. */
     zvlen = sizeof(ZVERSIONHDR) - 1;

@@ -1037,9 +1037,9 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 }
 
 static GByteArray *
-x509_sha1sum(PurpleCertificate *crt)
+x509_shasum(PurpleCertificate *crt, gnutls_digest_algorithm_t algo)
 {
-	size_t hashlen = 20; /* SHA1 hashes are 20 bytes */
+	size_t hashlen = (algo == GNUTLS_DIG_SHA1) ? 20 : 32;
 	size_t tmpsz = hashlen; /* Throw-away variable for GnuTLS to stomp on*/
 	gnutls_x509_crt_t crt_dat;
 	GByteArray *hash; /**< Final hash container */
@@ -1051,7 +1051,7 @@ x509_sha1sum(PurpleCertificate *crt)
 
 	/* Extract the fingerprint */
 	g_return_val_if_fail(
-		0 == gnutls_x509_crt_get_fingerprint(crt_dat, GNUTLS_DIG_SHA,
+		0 == gnutls_x509_crt_get_fingerprint(crt_dat, algo,
 						     hashbuf, &tmpsz),
 		NULL);
 
@@ -1063,6 +1063,18 @@ x509_sha1sum(PurpleCertificate *crt)
 	g_byte_array_append(hash, hashbuf, hashlen);
 
 	return hash;
+}
+
+static GByteArray *
+x509_sha1sum(PurpleCertificate *crt)
+{
+	return x509_shasum(crt, GNUTLS_DIG_SHA1);
+}
+
+static GByteArray *
+x509_sha256sum(PurpleCertificate *crt)
+{
+	return x509_shasum(crt, GNUTLS_DIG_SHA256);
 }
 
 static gchar *
@@ -1220,6 +1232,46 @@ x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 	return success;
 }
 
+/* GNUTLS_KEYID_USE_BEST_KNOWN was added in gnutls 3.4.1, but can't ifdef it
+ * because it's an enum member. Older versions will ignore it, which means
+ * using SHA1 instead of SHA256 to compare pubkeys. But hey, not my fault. */
+#if GNUTLS_VERSION_NUMBER < 0x030401
+#define KEYID_FLAG (1<<30)
+#else
+#define KEYID_FLAG GNUTLS_KEYID_USE_BEST_KNOWN
+#endif
+
+static gboolean
+x509_compare_pubkeys (PurpleCertificate *crt1, PurpleCertificate *crt2)
+{
+	gnutls_x509_crt_t crt_dat1, crt_dat2;
+	unsigned char buffer1[64], buffer2[64];
+	size_t size1, size2;
+	size1 = size2 = sizeof(buffer1);
+
+	g_return_val_if_fail(crt1 && crt2, FALSE);
+	g_return_val_if_fail(crt1->scheme == &x509_gnutls, FALSE);
+	g_return_val_if_fail(crt2->scheme == &x509_gnutls, FALSE);
+
+	crt_dat1 = X509_GET_GNUTLS_DATA(crt1);
+
+	if (gnutls_x509_crt_get_key_id(crt_dat1, KEYID_FLAG, buffer1, &size1) != 0) {
+		return FALSE;
+	}
+
+	crt_dat2 = X509_GET_GNUTLS_DATA(crt2);
+
+	if (gnutls_x509_crt_get_key_id(crt_dat2, KEYID_FLAG, buffer2, &size2) != 0) {
+		return FALSE;
+	}
+
+	if (size1 != size2) {
+		return FALSE;
+	}
+
+	return memcmp(buffer1, buffer2, size1) == 0;
+}
+
 /* X.509 certificate operations provided by this plugin */
 static PurpleCertificateScheme x509_gnutls = {
 	"x509",                          /* Scheme name */
@@ -1239,8 +1291,9 @@ static PurpleCertificateScheme x509_gnutls = {
 
 	NULL,
 	NULL,
-	NULL
-
+	sizeof(PurpleCertificateScheme), /* struct_size */
+	x509_sha256sum,                  /* SHA256 fingerprint */
+	x509_compare_pubkeys,            /* Compare public keys */
 };
 
 static PurpleSslOps ssl_ops =

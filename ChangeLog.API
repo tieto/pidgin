@@ -5,6 +5,11 @@ version 2.12.0:
 		Added:
 		* PURPLE_MESSAGE_REMOTE_SEND in PurpleMessageFlags, to specify
 		messages like _SEND that were sent from another location.
+		* purple_certificate_get_fingerprint_sha256
+		* purple_certificate_compare_pubkeys
+		* PurpleCertificateScheme.get_fingerprint_sha256
+		* PurpleCertificateScheme.compare_pubkeys
+		* PURPLE_CERTIFICATE_SCHEME_HAS_FUNC
 
 version 2.11.0:
 	libpurple:

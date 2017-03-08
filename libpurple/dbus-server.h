@@ -199,7 +199,9 @@ void purple_dbus_uninit(void);
 
  */
 
+#ifndef DBUS_EXPORT
 #define DBUS_EXPORT
+#endif
 
 /*
    Here we include the list of #PURPLE_DBUS_DECLARE_TYPE statements for
