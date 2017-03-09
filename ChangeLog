@@ -29,6 +29,7 @@ version 2.12.0 (03/10/2017):
 	  ended April 30th, 2015. A new protocol plugin has been written,
 	  using a different method, to support Facebook. It can be found at
 	  https://github.com/dequis/purple-facebook/wiki
+	* Fixed gnutls certificate validation errors that mainly affected google (Dequis)
 
 	General
 	* Replaced instances of d.pidgin.im with developer.pidgin.im and updated the

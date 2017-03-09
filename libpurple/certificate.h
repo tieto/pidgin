@@ -332,6 +332,16 @@ struct _PurpleCertificateScheme
 	 * @since 2.12.0
 	 */
 	GByteArray * (* get_fingerprint_sha256)(PurpleCertificate *crt);
+
+	/**
+	 * Compares the public keys of two certificates
+	 *
+	 * @param crt1  A certificate instance
+	 * @param crt2  Another certificate instance
+	 * @return TRUE if both certificates have the same key, otherwise FALSE
+	 * @since 2.12.0
+	 */
+	gboolean (* compare_pubkeys)(PurpleCertificate *crt1, PurpleCertificate *crt2);
 };
 
 #define PURPLE_CERTIFICATE_SCHEME_HAS_FUNC(obj, member) \
@@ -673,6 +683,20 @@ purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name)
  */
 gboolean
 purple_certificate_get_times(PurpleCertificate *crt, time_t *activation, time_t *expiration);
+
+/**
+ * Compares the public keys of two certificates.
+ *
+ * If the SSL backend does not implement this function, it may return FALSE
+ * every time. This is the case with the NSS plugin, which doesn't need it.
+ *
+ * @param crt1  A certificate instance
+ * @param crt2  Another certificate instance
+ * @return TRUE if both certificates have the same key, otherwise FALSE
+ * @since 2.12.0
+ */
+gboolean
+purple_certificate_compare_pubkeys(PurpleCertificate *crt1, PurpleCertificate *crt2);
 
 /*@}*/
 
