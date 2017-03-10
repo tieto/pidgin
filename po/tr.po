@@ -12,13 +12,14 @@
 # obsoleteman <tulliana@gmail.com>, 2007
 # Onur Küçüktunç onurcc@gmail.com, 2004
 # obsoleteman <tulliana@gmail.com>, 2007
+# Yasin Uysal <yasinuysal22@outlook.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:17-0500\n"
-"PO-Revision-Date: 2016-06-06 21:59+0000\n"
-"Last-Translator: Mehmet <mehmet337402@gmail.com>\n"
+"POT-Creation-Date: 2017-03-09 18:57-0600\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/pidgin/pidgin/language/"
 "tr/)\n"
 "Language: tr\n"
@@ -66,7 +67,6 @@ msgstr ""
 "Lütfen taşıma işini araştırarak kendiniz yapın. Lütfen bu hatayı http://"
 "developer.pidgin.im adresine bildirin."
 
-#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Hata"
 
@@ -240,7 +240,6 @@ msgstr "Lütfen kişi bilgilerini girin."
 msgid "Chats"
 msgstr "Sohbetler"
 
-#. Extract their Name and put it in
 msgid "Name"
 msgstr "İsim"
 
@@ -350,11 +349,9 @@ msgstr "Etiketi Değiştir"
 msgid "View Log"
 msgstr "Kayıtları Göster"
 
-#. General
 msgid "Nickname"
 msgstr "Takma ad"
 
-#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "Boşta"
@@ -793,7 +790,6 @@ msgid "Remaining"
 msgstr "Kalan"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
-#. presence
 msgid "Status"
 msgstr "Durum"
 
@@ -1041,8 +1037,9 @@ msgstr "Yeni Kişi Uyarıcı"
 msgid "Edit Buddy Pounce"
 msgstr "Kişi Uyarıcıyı Düzenle"
 
-msgid "Pounce Who"
-msgstr "Kimi Uyarsın"
+#. Create the "Pounce on Whom" frame.
+msgid "Pounce on Whom"
+msgstr "Uyarılacak Kişi"
 
 #. Account:
 msgid "Account:"
@@ -1287,8 +1284,8 @@ msgstr "GStreamer başlatılırken hata oluştu."
 msgid "(default)"
 msgstr "(öntanımlı)"
 
-msgid "Select Sound File ..."
-msgstr "Ses Dosyasını Seç ..."
+msgid "Select Sound File..."
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr "Ses Tercihleri"
@@ -1370,21 +1367,12 @@ msgstr "Durumu Sil"
 msgid "Saved Statuses"
 msgstr "Kaydedilmiş Durumlar"
 
-#. title
 msgid "Title"
 msgstr "Başlık"
 
 msgid "Type"
 msgstr "Tip"
 
-#. Statuses are almost all the same. Define a macro to reduce code repetition.
-#. PurpleStatusPrimitive
-#. id - use default
-#. name - use default
-#. saveable
-#. user_settable
-#. not independent
-#. Attributes - each status can have a message.
 msgid "Message"
 msgstr "İleti"
 
@@ -1416,12 +1404,12 @@ msgstr "İleti:"
 msgid "Edit Status"
 msgstr "Durumu Düzenle"
 
-msgid "Use different status for following accounts"
-msgstr "Farklı hesaplar için farklı durumlar kullan"
+msgid "Use a different status for some accounts"
+msgstr ""
 
-#. Save & Use
-msgid "Save & Use"
-msgstr "Kaydet & Kullan"
+#. Save and Use
+msgid "Save and Use"
+msgstr ""
 
 msgid "Certificates"
 msgstr "Sertifikalar"
@@ -1550,8 +1538,8 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr "Yukarıdaki için TinyURL: %s"
 
-msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr "Lütfen TinyURL bir kısa URL oluştururken bekleyin ..."
+msgid "Please wait while TinyURL fetches a shorter URL..."
+msgstr ""
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Sadece bu uzunluk veya daha uzun olduğunda TinyURL oluştur"
@@ -1565,15 +1553,12 @@ msgstr "TinyURL"
 msgid "TinyURL plugin"
 msgstr "TinyURL eklentisi"
 
-msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgid "Shorten URLs in messages using TinyURL"
 msgstr ""
-"URL(ler) ile bir ileti aldığınızda, daha kolay kopyalamak için TinyURL "
-"kullanın"
 
 msgid "Online"
 msgstr "Çevrimiçi"
 
-#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Çevrimdışı"
 
@@ -1821,7 +1806,6 @@ msgstr "(kendinden imzalanmış)"
 msgid "View Issuer Certificate"
 msgstr "Sağlayıcının Sertifikasını Göster"
 
-#. show error to user
 msgid "Registration Error"
 msgstr "Kayıt Hatası"
 
@@ -1837,7 +1821,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s çıkış yaptı"
 
 #. Undocumented
-#. Unknown error
 msgid "Unknown error"
 msgstr "Bilinmeyen Hata"
 
@@ -1968,23 +1951,6 @@ msgstr "\"irc\" adresleri için yakalayıcı"
 msgid "The command used to handle \"irc\" URLs, if enabled."
 msgstr "Bu komut etkinleştirilirse \"irc\" adreslerini açmak için kullanılır."
 
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Belirtilen komut \"msnim\" adreslerini yakalayabiliyor mu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"\"komut\" içerisinde belirtilen komut kısayolu \"msnim\" adreslerini "
-"yakalayabiliyorsa doğru."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" adresleri için yakalayıcı"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Bu komut etkinleştirilirse \"msnim\" adreslerini açmak için kullanılır."
-
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Belirtilen komut \"sip\" adreslerini yakalayabiliyor mu"
 
@@ -2016,23 +1982,6 @@ msgstr "\"xmpp\" adresleri için yakalayıcı"
 
 msgid "The command used to handle \"xmpp\" URLs, if enabled."
 msgstr "Bu komut etkinleştirilirse \"xmpp\" adreslerini açmak için kullanılır."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Belirtilen komut \"ymsgr\" adreslerini yakalayabiliyor mu"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"\"komut\" içerisinde belirtilen komut kısayolu \"ymsgr\" adreslerini "
-"yakalayabiliyorsa doğru."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" adresleri için yakalayıcı"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Bu komut etkinleştirilirse \"ymsgr\" adreslerini açmak için kullanılır."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2862,11 +2811,8 @@ msgstr "Gelen sohbetler için ruhsal durum"
 
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
-"Diğer kullanıcılar sizinle mesajlaşmaya başladığında konuşma penceresinin "
-"gözükmesini sağlar. Bu eklenti AIM, ICQ, XMPP, Sametime ve Yahoo! için "
-"uygundur."
 
 msgid "You feel a disturbance in the force..."
 msgstr "Sanki bir şeyler yazıyor..."
@@ -3083,11 +3029,9 @@ msgstr ""
 "http://www.activestate.com sitesinden ActiveTCL yükleyin.\n"
 
 msgid ""
-"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
-"im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
+"developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
-"Apple's \"Bonjour for Windows\" aracı bulunamadı, daha fazla bilgi için "
-"http://d.pidgin.im/BonjourWindows adresine bakınız."
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "Gelen anlık mesajlaşmalar dinlenemiyor"
@@ -3102,7 +3046,6 @@ msgstr "Ad"
 msgid "Last name"
 msgstr "Soyad"
 
-#. email
 msgid "Email"
 msgstr "E-Posta"
 
@@ -3189,14 +3132,12 @@ msgstr "Şehir"
 msgid "Year of birth"
 msgstr "Doğum Yılı"
 
-#. gender
 msgid "Gender"
 msgstr "Cinsiyet"
 
 msgid "Male or female"
 msgstr "Bay veya Bayan"
 
-#. 0
 msgid "Male"
 msgstr " Bay"
 
@@ -3234,22 +3175,16 @@ msgstr "Kişi için bir sohbet seçin : %s"
 msgid "Add to chat..."
 msgstr "Sohbete ekle..."
 
-#. 0
 #. Global
 msgid "Available"
 msgstr "Çevrimiçi"
 
-#. 2
 msgid "Chatty"
 msgstr "Konuşkan"
 
-#. 3
 msgid "Do Not Disturb"
 msgstr "Rahatsız Etme"
 
-#. 1
-#. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
-#. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
 msgid "Away"
 msgstr "Uzakta"
@@ -3257,8 +3192,6 @@ msgstr "Uzakta"
 msgid "UIN"
 msgstr "UIN"
 
-#. first name
-#. optional information
 msgid "First Name"
 msgstr "İsim"
 
@@ -3283,9 +3216,6 @@ msgstr "Arama kirterlerinize uyan bir kullanıcı bulunamadı."
 msgid "Unable to read from socket"
 msgstr "Soketten okunamıyor"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
 msgid "Connected"
 msgstr "Bağlandı"
 
@@ -3298,7 +3228,6 @@ msgstr "Sohbete ekle"
 msgid "Chat _name:"
 msgstr "Sohbet _adı:"
 
-#. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Bağlanılıyor"
@@ -4074,8 +4003,6 @@ msgstr "İşi"
 msgid "Role"
 msgstr "Rol"
 
-#. birthday
-#. birthday (required)
 msgid "Birthday"
 msgstr "Doğum Günü"
 
@@ -4169,7 +4096,6 @@ msgstr "Çıkış Yap"
 msgid "JID"
 msgstr "JID"
 
-#. last name
 msgid "Last Name"
 msgstr "Soyad"
 
@@ -4431,7 +4357,6 @@ msgstr "Hiçbiri (bekletiliyor)"
 msgid "None"
 msgstr "Hiçbiri"
 
-#. subscription type
 msgid "Subscription"
 msgstr "Üyelik"
 
@@ -4447,12 +4372,6 @@ msgstr "Durum Adı"
 msgid "Mood Comment"
 msgstr "Durum Yorumu"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
 msgid "Tune Artist"
 msgstr "Sanatçı Ayarı"
 
@@ -4697,8 +4616,6 @@ msgstr ""
 "Titreşim gönderilemiyor, %s desteklemiyor ya da şu anda titreşim almak "
 "istemiyor."
 
-#. Yahoo only supports one attention command: the 'buzz'.
-#. This is index number YAHOO_BUZZ.
 msgid "Buzz"
 msgstr "Arama"
 
@@ -4829,8 +4746,6 @@ msgstr "Şifrelenmemiş sistemlerden gelen düzyazılara (plain text) izin ver."
 msgid "Connect port"
 msgstr "Bağlantı portu"
 
-#. TODO: default to automatically try different ports. Make the user be
-#. * able to set the first port to try (like LastConnectedPort in Windows client).
 #. Account options
 msgid "Connect server"
 msgstr "Bağlantı sunucusu"
@@ -4841,8 +4756,9 @@ msgstr "Dosya aktarma vekil sunucuları"
 msgid "BOSH URL"
 msgstr "BOSH URL"
 
-#. this should probably be part of global smiley theme settings later on,
-#. shared with MSN
+#. this should probably be part of global smiley theme settings
+#. * later on
+#.
 msgid "Show Custom Smileys"
 msgstr "Özel gülücükleri göster"
 
@@ -4930,7 +4846,6 @@ msgstr "Bilinmeyen Hata"
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "%s dosyası gönderilemedi, kullanıcı dosya aktarımlarını desteklemiyor"
 
-#. not success
 msgid "File Send Failed"
 msgstr "Dosya Gönderimi Başarısız"
 
@@ -5228,1628 +5143,6 @@ msgstr "Eylemler"
 msgid "Select an action"
 msgstr "Bir eylem seçin"
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "\"%s\" eklenemiyor."
-
-msgid "Buddy Add error"
-msgstr "Kişi ekleme hatası"
-
-msgid "The username specified does not exist."
-msgstr "Belirtilen kullanıcı adı mevcut değil."
-
-msgid "Unable to parse message"
-msgstr "Mesaj ayrıştırılamıyor"
-
-msgid "Syntax Error (probably a client bug)"
-msgstr "Sözdizimi hatası (muhtemelen bir istemci hatası)"
-
-msgid "Invalid email address"
-msgstr "Geçersiz e-posta adresi"
-
-msgid "User does not exist"
-msgstr "Kullanıcı mevcut değil"
-
-msgid "Fully qualified domain name missing"
-msgstr "Fully qualified domain name (FQDN) yok"
-
-msgid "Already logged in"
-msgstr "Zaten çevrimiçi"
-
-msgid "Invalid username"
-msgstr "Geçersiz kullanıcı adı"
-
-msgid "Invalid friendly name"
-msgstr "Geçersiz arkadaşlık ismi"
-
-msgid "List full"
-msgstr "Tümünü listele"
-
-msgid "Already there"
-msgstr "Zaten orada"
-
-msgid "Not on list"
-msgstr "Listede değil"
-
-msgid "User is offline"
-msgstr "Kullanıcı çevrimdışı"
-
-msgid "Already in the mode"
-msgstr "Zaten modda"
-
-msgid "Already in opposite list"
-msgstr "Zaten karşı listede"
-
-msgid "Too many groups"
-msgstr "Çok fazla grup"
-
-msgid "Invalid group"
-msgstr "Geçersiz grup"
-
-msgid "User not in group"
-msgstr "Kişi grupta değil"
-
-msgid "Group name too long"
-msgstr "Grup adı çok uzun"
-
-msgid "Cannot remove group zero"
-msgstr "Sıfır grup silinemez"
-
-msgid "Tried to add a user to a group that doesn't exist"
-msgstr "Bir kişi, henüz bulunmayan bir gruba eklenilmeye çalışıldı"
-
-msgid "Switchboard failed"
-msgstr "Santral başarısız oldu"
-
-msgid "Notify transfer failed"
-msgstr "Uyarı aktarımı başarısız oldu"
-
-msgid "Required fields missing"
-msgstr "Gerekli alanlar eksik"
-
-msgid "Too many hits to a FND"
-msgstr "FND a çok fazla vuru"
-
-msgid "Not logged in"
-msgstr "Oturum açılmamış"
-
-msgid "Service temporarily unavailable"
-msgstr "Bu servis geçici olarak hizmet dışı"
-
-msgid "Database server error"
-msgstr "Veritabanı sunucusu hatası"
-
-msgid "Command disabled"
-msgstr "Komut pasifleştirildi"
-
-msgid "File operation error"
-msgstr "Dosya işlemi hatası"
-
-msgid "Memory allocation error"
-msgstr "Bellek ayırma hatası"
-
-msgid "Wrong CHL value sent to server"
-msgstr "Yanlış CHL değeri sunucuya yollandı"
-
-msgid "Server busy"
-msgstr "Sunucu meşgul"
-
-msgid "Server unavailable"
-msgstr "Sunucu geçersiz"
-
-msgid "Peer notification server down"
-msgstr "Peer bildirim sunucusu çalışmıyor"
-
-msgid "Database connect error"
-msgstr "Veritabanı bağlantı hatası"
-
-msgid "Server is going down (abandon ship)"
-msgstr "Sunucu kapanıyor (terkedilmiş gemi)"
-
-msgid "Error creating connection"
-msgstr "Bağlantı oluşturma hatası"
-
-msgid "CVR parameters are either unknown or not allowed"
-msgstr "CVR parametrelerinden biri veya hepsi bilinmiyor veya izin verilmiyor"
-
-msgid "Unable to write"
-msgstr "Yazılamıyor"
-
-msgid "Session overload"
-msgstr "Oturuma aşırı yüklendi"
-
-msgid "User is too active"
-msgstr "Kullanıcı çok aktif"
-
-msgid "Too many sessions"
-msgstr "Çok fazla oturum"
-
-msgid "Passport not verified"
-msgstr "Passport onaylanmadı"
-
-msgid "Bad friend file"
-msgstr "Kötü arkadaş dosyası"
-
-msgid "Not expected"
-msgstr "Beklenmeyen"
-
-msgid "Friendly name is changing too rapidly"
-msgstr "Arkadaşlık adı çpk çabuk değiştiriliyor"
-
-msgid "Server too busy"
-msgstr "Sunucu çok yoğun"
-
-msgid "Authentication failed"
-msgstr "Kimlik denetimi başarısız"
-
-msgid "Not allowed when offline"
-msgstr "Çevrim dışıyken izin verilmiyor"
-
-msgid "Not accepting new users"
-msgstr "Yeni kullanıcı kabul edilmiyor"
-
-msgid "Kids Passport without parental consent"
-msgstr "Ebeveyn izinsiz Çocuk Passport hesabı"
-
-msgid "Passport account not yet verified"
-msgstr "Passport hesabı henüz doğrulanmadı"
-
-msgid "Passport account suspended"
-msgstr "Kimlik hesabı dondurulmuş."
-
-msgid "Bad ticket"
-msgstr "Kötü bilet"
-
-#, c-format
-msgid "Unknown Error Code %d"
-msgstr "Bilinmeyen Hata Kodu %d"
-
-#, c-format
-msgid "MSN Error: %s\n"
-msgstr "MSN Hatası: %s\n"
-
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Arkadaş listesi eşitleme sorunu %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s yerel listede \"%s\" grubu içinde ama sunucu listesinde değil. Bu "
-"arkadaşı eklemek istiyor musunuz?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s yerel listede ama sunucu listesinde değil. Bu arkadaşın eklenmesini "
-"istiyor musunuz?"
-
-msgid "Other Contacts"
-msgstr "Diğer Kişiler"
-
-msgid "Non-IM Contacts"
-msgstr "Hazır mesajlaşma dışı bağlantılar"
-
-#, c-format
-msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
-msgstr ""
-"%s bir göz kırpması gönderdi. <a href='msn-wink://%s'>Oynatmak için burayı "
-"tıklayın</a>"
-
-#, c-format
-msgid "%s sent a wink, but it could not be saved"
-msgstr "%s bir göz kırpma yolladı, fakat kaydedilemedi."
-
-#, c-format
-msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
-msgstr ""
-"%s bir ses klibi yolladı. <a href='audio://%s'>Çalmak için buraya tıklayın</"
-"a>"
-
-#, c-format
-msgid "%s sent a voice clip, but it could not be saved"
-msgstr "%s bir ses klibi yolladı, fakat kaydedilemedi."
-
-#, c-format
-msgid "%s sent you a voice chat invite, which is not yet supported."
-msgstr ""
-"%s sesli sohbet daveti yolladı, fakat sesli sohbet henüz desteklenmiyor."
-
-msgid "Nudge"
-msgstr "Uyarı"
-
-#, c-format
-msgid "%s has nudged you!"
-msgstr "%s sizi dürttü!"
-
-#, c-format
-msgid "Nudging %s..."
-msgstr "%s Uyarılıyor..."
-
-msgid "Email Address..."
-msgstr "E-Posta Adresi..."
-
-msgid "Your new MSN friendly name is too long."
-msgstr "Yeni MSN arkadaşlık isminiz çok uzun."
-
-#, c-format
-msgid "Set friendly name for %s."
-msgstr "%s için arkadaşlık adı oluştur"
-
-msgid "Set Friendly Name"
-msgstr "Arkadaşlık Adını Ayarla"
-
-msgid "This is the name that other MSN buddies will see you as."
-msgstr "Bu isim MSN arkadaşlarınıza görünen isminizdir."
-
-msgid "This Location"
-msgstr "Bu Konum"
-
-msgid "This is the name that identifies this location"
-msgstr "Bu konumu tanımlayan bir isimdir"
-
-msgid "Other Locations"
-msgstr "Diğer Konumlar"
-
-msgid "You can sign out from other locations here"
-msgstr "Buradan diğer konumlardaki oturumlarınızı kapatabilirsiniz"
-
-#. TODO: Due to limitations in our current request field API, the
-#. following string will show up with a trailing colon.  This should
-#. be fixed either by adding an "include_colon" boolean, or creating
-#. a separate purple_request_field_label_new_without_colon function,
-#. or by never automatically adding the colon and requiring that
-#. callers add the colon themselves.
-msgid "You are not signed in from any other locations."
-msgstr "Herhangi bir yerden oturum açmış değilsiniz."
-
-msgid "Allow multiple logins?"
-msgstr "Birden fazla yerde oturum açmaya izin verilsin mi?"
-
-msgid ""
-"Do you want to allow or disallow connecting from multiple locations "
-"simultaneously?"
-msgstr ""
-"Aynı anda birden fazla yerde oturum açmaya izin vermek istiyor musunuz?"
-
-msgid "Allow"
-msgstr "İzin ver"
-
-msgid "Disallow"
-msgstr "İzin verme"
-
-msgid "Set your home phone number."
-msgstr "Ev telefon numaranızı ayarlayın."
-
-msgid "Set your work phone number."
-msgstr "İş telefon numaranızı ayarlayın."
-
-msgid "Set your mobile phone number."
-msgstr "Mobil telefon numaranızı ayarlayın."
-
-msgid "Allow MSN Mobile pages?"
-msgstr "MSN Mobil Sayfalarına izin verilsin mi ?"
-
-msgid ""
-"Do you want to allow or disallow people on your buddy list to send you MSN "
-"Mobile pages to your cell phone or other mobile device?"
-msgstr ""
-"Arkadaş listenizdeki kişilere,MSN Mobile sayfalarını sizin cep telefonunuza "
-"veya başka bir hareketli aygıtınıza göndermelerine izin vermek istiyor "
-"musunuz?"
-
-#, c-format
-msgid "Blocked Text for %s"
-msgstr "%s için Engellenmiş Metin"
-
-msgid "No text is blocked for this account."
-msgstr "Bu hesap için engellenmiş metin yok."
-
-#, c-format
-msgid ""
-"MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr "MSN sunucuları şu anda müteakip düzgün anlatımları engelliyor:<br/>%s"
-
-msgid "This account does not have email enabled."
-msgstr "Bu hesap etkinleştirilmiş bir e-postaya sahip değil."
-
-msgid "Send a mobile message."
-msgstr "Bir SMS gönder."
-
-msgid "Page"
-msgstr "Sayfa"
-
-msgid "Playing a game"
-msgstr "Oyunda"
-
-msgid "Working"
-msgstr "Çalışıyor"
-
-msgid "Has you"
-msgstr "Listesinde var mısınız?"
-
-msgid "Home Phone Number"
-msgstr "Ev Telefonu Numarası"
-
-msgid "Work Phone Number"
-msgstr "İş Telefonu Numarası"
-
-msgid "Mobile Phone Number"
-msgstr "Cep Telefonu Numarası"
-
-msgid "Be Right Back"
-msgstr "Hemen Dönecek"
-
-msgid "Busy"
-msgstr "Meşgul"
-
-msgid "On the Phone"
-msgstr "Telefonda"
-
-msgid "Out to Lunch"
-msgstr "Yemekte"
-
-msgid "Game Title"
-msgstr "Oyun Başlığı"
-
-msgid "Office Title"
-msgstr "Ofis Ünvanı"
-
-msgid "Set Friendly Name..."
-msgstr "Arkadaşlık İsmi Ayarla..."
-
-msgid "View Locations..."
-msgstr "Konumları Görüntüle..."
-
-msgid "Set Home Phone Number..."
-msgstr "Ev Telefonu Numarası Ayarla..."
-
-msgid "Set Work Phone Number..."
-msgstr "İş Telefonu Numarası Ayarla..."
-
-msgid "Set Mobile Phone Number..."
-msgstr "Cep Telefonu Numarası Ayarla..."
-
-msgid "Enable/Disable Mobile Devices..."
-msgstr "Mobil Aygıtları Etkinleştir/Pasifleştir"
-
-msgid "Allow/Disallow Multiple Logins..."
-msgstr "Birden Fazla Yerde Oturum Açmaya İzin ver/İzin verme.."
-
-msgid "Allow/Disallow Mobile Pages..."
-msgstr "Mobil Sayfalarına İzin Ver/Reddet"
-
-msgid "View Blocked Text..."
-msgstr "Engellenmiş Metni Görüntüle..."
-
-msgid "Open Hotmail Inbox"
-msgstr "Hotmail Gelen Kutusunu Aç"
-
-msgid "Send to Mobile"
-msgstr "Cebine Gönder"
-
-msgid "SSL support is needed for MSN. Please install a supported SSL library."
-msgstr ""
-"MSN için SSL desteği gereklidir. Lütfen geçerli bir SSL kütüphanesi yükleyin."
-
-#, c-format
-msgid ""
-"Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be valid email addresses."
-msgstr ""
-"%s adlı kişi eklenemiyor; çünkü kullanıcı adı geçersiz. Kullanıcı adları "
-"geçerli e-posta adresleri olmalıdır."
-
-msgid "Unable to Add"
-msgstr "Eklenemedi"
-
-msgid "Error retrieving profile"
-msgstr "Profil alınırken hata"
-
-msgid "General"
-msgstr "Genel"
-
-msgid "Age"
-msgstr "Yaş"
-
-msgid "Occupation"
-msgstr "Meslek"
-
-msgid "Location"
-msgstr "Konum"
-
-msgid "Hobbies and Interests"
-msgstr "Hobiler ve İlgi Alanları"
-
-msgid "A Little About Me"
-msgstr "Benim Hakkımda Birkaç Şey"
-
-msgid "Social"
-msgstr "Sosyal"
-
-msgid "Marital Status"
-msgstr "Medeni Hali"
-
-msgid "Interests"
-msgstr "İlgiler"
-
-msgid "Pets"
-msgstr "Evcil hayvanlar"
-
-msgid "Hometown"
-msgstr "Memleket"
-
-msgid "Places Lived"
-msgstr "yaşadığı Yerler"
-
-msgid "Fashion"
-msgstr "Moda"
-
-msgid "Humor"
-msgstr "Mizah"
-
-msgid "Music"
-msgstr "Müzik"
-
-msgid "Favorite Quote"
-msgstr "En Sevdiği Söz"
-
-msgid "Contact Info"
-msgstr "Bağlantı Bilgileri"
-
-msgid "Personal"
-msgstr "Kişisel"
-
-msgid "Significant Other"
-msgstr "Önemli Diğerleri"
-
-msgid "Home Phone"
-msgstr "Ev Telefonu"
-
-msgid "Home Phone 2"
-msgstr "Ev Telefonu2"
-
-msgid "Home Address"
-msgstr "Ev Adresi"
-
-msgid "Personal Mobile"
-msgstr "Kişisel Cep Telefonu"
-
-msgid "Home Fax"
-msgstr "Ev Faksı"
-
-msgid "Personal Email"
-msgstr "Kişisel E-posta"
-
-msgid "Personal IM"
-msgstr "Kişisel Anında Mesajlaşma Adresi"
-
-msgid "Anniversary"
-msgstr "Yıldönümü"
-
-#. Business
-msgid "Work"
-msgstr "İş"
-
-msgid "Company"
-msgstr "Şirket"
-
-msgid "Department"
-msgstr "Departman"
-
-msgid "Profession"
-msgstr "Uzmanlık"
-
-msgid "Work Phone"
-msgstr "İş Telefonu"
-
-msgid "Work Phone 2"
-msgstr "İş Telefonu2"
-
-msgid "Work Address"
-msgstr "İş Adresi"
-
-msgid "Work Mobile"
-msgstr "İş Cep Telefonu"
-
-msgid "Work Pager"
-msgstr "İş Çağrı Cihazı"
-
-msgid "Work Fax"
-msgstr "İş Faksı"
-
-msgid "Work Email"
-msgstr "İş E-Postası"
-
-msgid "Work IM"
-msgstr "İş Anında Mesajlaşma Adresi"
-
-msgid "Start Date"
-msgstr "Başlama Tarihi"
-
-msgid "Favorite Things"
-msgstr "Sevdiği Şeyler"
-
-msgid "Last Updated"
-msgstr "Son Güncelleme"
-
-msgid "Homepage"
-msgstr "Anasayfa"
-
-msgid "The user has not created a public profile."
-msgstr "Kullanıcı genel bir profil oluşturmamış."
-
-msgid ""
-"MSN reported not being able to find the user's profile. This either means "
-"that the user does not exist, or that the user exists but has not created a "
-"public profile."
-msgstr ""
-"MSN kulllanıcının profilini bulamıyor. Bu durumda kullanıcı mevcut değildir, "
-"ya da genel bir profil oluşturmamıştır."
-
-msgid ""
-"Could not find any information in the user's profile. The user most likely "
-"does not exist."
-msgstr ""
-"Kullanıcı profilinde herhangi bir bilgi bulunamadı. Kullanıcı büyük "
-"ihtimalle mevcut değil."
-
-msgid "View web profile"
-msgstr "Web profiline bak"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *< summary
-msgid "Windows Live Messenger Protocol Plugin"
-msgstr "Windows Live Messenger Protokolü Eklentisi"
-
-msgid "Use HTTP Method"
-msgstr "HTTP Metodunu Kullan"
-
-msgid "HTTP Method Server"
-msgstr "HTTP Yöntem Sunucusu"
-
-msgid "Show custom smileys"
-msgstr "Özel gülenyüzleri göster"
-
-msgid "Allow direct connections"
-msgstr "Doğrudan bağlantılara izin ver"
-
-msgid "Allow connecting from multiple locations"
-msgstr "Birden fazla yerde oturum açmaya izin verin"
-
-msgid "nudge: nudge a user to get their attention"
-msgstr "nudge : kullanıcıların sizi farketmesi için dürtme uyarısı"
-
-msgid "Windows Live ID authentication:Unable to connect"
-msgstr "Windows Live ID Kimlik Doğrulaması: Bağlanılamadı"
-
-msgid "Windows Live ID authentication:Invalid response"
-msgstr "Windows Live ID kimlik denetimi:Geçersiz yanıt"
-
-msgid "The following users are missing from your addressbook"
-msgstr "Bu kullanıcılar adres defterinizde yok"
-
-#, c-format
-msgid "Unknown error (%d): %s"
-msgstr "Bilinmeyen hata (%d): %s"
-
-msgid "Unable to add user"
-msgstr "Kullanıcı eklenemedi"
-
-#. Unknown error!
-#, c-format
-msgid "Unknown error (%d)"
-msgstr "Bilinmeyen hata (%d)"
-
-msgid "Unable to remove user"
-msgstr "Kullanıcı kaldırılamıyor"
-
-msgid "Mobile message was not sent because it was too long."
-msgstr "Cep iletisi gönderilemedi çünkü çok uzun."
-
-msgid "Mobile message was not sent because an unknown error occurred."
-msgstr "İleti gönderilemedi çünkü bilinmeyen bir hata oluştu."
-
-#, c-format
-msgid ""
-"The MSN server will shut down for maintenance in %d minute. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgid_plural ""
-"The MSN server will shut down for maintenance in %d minutes. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgstr[0] ""
-"MSN sunucusu bakım için %d dakika sonra kapanacaktır. Otomatik olarak "
-"çevrimdışı olacağınızdan yazışmalarınızı bitirmenizi öneririz.\n"
-"\n"
-"Bakım tamamlandığında tekrar başarıyla oturum açabileceksiniz."
-msgstr[1] ""
-"MSN sunucusu bakım için %d dakika sonra kapanacaktır. Otomatik olarak "
-"çevrimdışı olacağınızdan yazışmalarınızı bitirmenizi öneririz.\n"
-"\n"
-"Bakım tamamlandığında tekrar başarıyla oturum açabileceksiniz."
-
-msgid ""
-"Message was not sent because the system is unavailable. This normally "
-"happens when the user is blocked or does not exist."
-msgstr ""
-"İleti gönderilemedi çünkü sistem kullanılamaz. Bu genellikle kullanıcı "
-"engellendiğinde ya da mevcut olmadığında meydana gelir."
-
-msgid "Message was not sent because messages are being sent too quickly."
-msgstr "İleti gönderilemedi çünkü iletiler çok hızlı gönderilmeye çalışılıyor."
-
-msgid "Message was not sent because an unknown encoding error occurred."
-msgstr "İleti gönderilemedi çünkü bilinmeyen bir kodlama hatası meydana geldi."
-
-msgid "Message was not sent because an unknown error occurred."
-msgstr "İleti gönderilemedi çünkü bilinmeyen bir hata meydana geldi."
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. Converting the encoding from "
-"%s to UTF-8 failed.)"
-msgstr ""
-"%s (İleti alımında bir hata oluştu. Kodlama %s'den UTF-8'e dönüştürülemedi.)"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was %s, but it "
-"was not valid UTF-8.)"
-msgstr ""
-"%s (Bu ileti alınırken bir hata oluştu. Karakter kümesi %s, geçerli bir "
-"UTF-8 değil.)"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was missing, but "
-"it was not valid UTF-8.)"
-msgstr ""
-"%s (Bu ileti alınırken bir hata oluştu. Karakter kümesi eksik, geçerli bir "
-"UTF-8 değil.)"
-
-msgid "Writing error"
-msgstr "Yazma hatası"
-
-msgid "Reading error"
-msgstr "Okuma hatası"
-
-#, c-format
-msgid ""
-"Connection error from %s server:\n"
-"%s"
-msgstr ""
-"%s sunucusuna bağlanma hatası:\n"
-"%s"
-
-msgid "Our protocol is not supported by the server"
-msgstr "İletişim kuralımız sunucu tarafından desteklenmiyor"
-
-msgid "Error parsing HTTP"
-msgstr "HTTP ayrıştırma hatası"
-
-msgid "You have signed on from another location"
-msgstr "Başka bir konumdan giriş yaptınız"
-
-msgid "The MSN servers are temporarily unavailable. Please wait and try again."
-msgstr ""
-"MSN sunucular geçici olarak servis dışıdır. Lütfen bekleyin ve tekrar "
-"deneyin."
-
-msgid "The MSN servers are going down temporarily"
-msgstr "MSN sunucuları geçici olarak hizmet dışı"
-
-#, c-format
-msgid "Unable to authenticate: %s"
-msgstr "Doğruluk kanıtlanamıyor: %s"
-
-#, c-format
-msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr "MSN arkadaş listeniz geçici olarak erişilemez durumda: %s"
-
-msgid "Handshaking"
-msgstr "El Sıkışma"
-
-msgid "Transferring"
-msgstr "Aktarılıyor"
-
-msgid "Starting authentication"
-msgstr "Kimlik denetleniyor"
-
-msgid "Getting cookie"
-msgstr "Çerez alınıyor"
-
-msgid "Sending cookie"
-msgstr "Çerez gönderiliyor"
-
-msgid "Retrieving buddy list"
-msgstr "Liste alınıyor"
-
-#, c-format
-msgid "%s requests to view your webcam, but this request is not yet supported."
-msgstr ""
-"%s kameranızı görüntülemeyi talep ediyor, fakat bu istek henüz "
-"desteklenmiyor."
-
-#, c-format
-msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr ""
-"%s sizi kamerasını görüntülemeye davet ediyor, fakat bu davet henüz "
-"desteklenmiyor."
-
-msgid "Away From Computer"
-msgstr "Bilgisayardan Uzakta"
-
-msgid "On The Phone"
-msgstr "Telefonda"
-
-msgid "Out To Lunch"
-msgstr "Yemekte"
-
-msgid "Message may have not been sent because a timeout occurred:"
-msgstr "İleti gönderilmemiş olabilir çünkü bir zaman aşımı meydana geldi:"
-
-msgid "Message could not be sent, not allowed while invisible:"
-msgstr ""
-"İleti gönderilmemiş olabilir çünkü görünmez iken yollamaya izin verilmiyor:"
-
-msgid "Message could not be sent because the user is offline:"
-msgstr "İleti gönderilmemiş olabilir çünkü kullanıcı çevrimdışı:"
-
-msgid "Message could not be sent because a connection error occurred:"
-msgstr "İleti gönderilmemiş olabilir çünkü bir bağlantı hatası oluştu:"
-
-msgid "Message could not be sent because we are sending too quickly:"
-msgstr "İleti gönderilmemiş olabilir çünkü çok çabuk gönderdik:"
-
-msgid ""
-"Message could not be sent because we were unable to establish a session with "
-"the server. This is likely a server problem, try again in a few minutes:"
-msgstr ""
-"İleti gönderilemedi çünkü sunucu ile bir oturum kurulamadı. Muhtemelen bir "
-"sunucu sorunu var, birkaç dakika içinde yeniden deneyin:"
-
-msgid ""
-"Message could not be sent because an error with the switchboard occurred:"
-msgstr "İleti gönderilmemiş olabilir çünkü santralle bir problem oluştu:"
-
-msgid "Message may have not been sent because an unknown error occurred:"
-msgstr "İleti gönderilmemiş olabilir çünkü bilinmeyen bir hata meydana geldi:"
-
-msgid "Delete Buddy from Address Book?"
-msgstr "Kişi adres defterinden silinsin mi?"
-
-msgid "Do you want to delete this buddy from your address book as well?"
-msgstr "Bu kişiyi adres defterinizden de silmek ister misiniz?"
-
-msgid "The username specified is invalid."
-msgstr "Belirlenmiş kullanıcı adı geçersiz."
-
-msgid "The Display Name you entered is invalid."
-msgstr "Girdiğiniz Görünüm Adı geçersiz."
-
-msgid ""
-"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-msgstr "Girdiğiniz doğum günü geçersiz. Doğru biçim şöyledir: 'YYYY-AA-GG'."
-
-#. show error to user
-msgid "Profile Update Error"
-msgstr "Profil Güncelleme Hatası"
-
-#. no profile information yet, so we cannot update
-#. (reference: "libpurple/request.h")
-msgid "Profile"
-msgstr "Profil"
-
-msgid "Your profile information is not yet retrieved. Please try again later."
-msgstr "Profil bilgileriniz alınamadı. Lütfen yeniden deneyin."
-
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "Görüntü Adı"
-
-#. about me
-msgid "About Me"
-msgstr "Hakkımda"
-
-#. where I live
-msgid "Where I Live"
-msgstr "Nerede Yaşadığım"
-
-#. relationship status
-msgid "Relationship Status"
-msgstr "İlişki Durumu"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "Cep Telefonu Numarası"
-
-#. is searchable
-msgid "Can be searched"
-msgstr "Aranabilir"
-
-#. is suggestable
-msgid "Can be suggested"
-msgstr "Önerilebilir"
-
-msgid "Update your MXit Profile"
-msgstr "MXit profilini güncelle"
-
-msgid "The PIN you entered is invalid."
-msgstr "Girdiğiniz PIN geçersiz."
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "Girdiğiniz PIN geçersiz uzunlukta [4-10]."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "PIN geçersiz. Yalnızca [0-9] aralığındaki rakamlardan oluşmalıdır."
-
-msgid "The two PINs you entered do not match."
-msgstr "Girdiğiniz iki PIN birbirini tutmuyor."
-
-#. show error to user
-msgid "PIN Update Error"
-msgstr "PIN güncelleme hatası"
-
-#. pin
-#. pin (required)
-msgid "PIN"
-msgstr "PIN"
-
-#. verify pin
-msgid "Verify PIN"
-msgstr "PIN'i Doğrula"
-
-#. (reference: "libpurple/request.h")
-msgid "Change PIN"
-msgstr "PIN'i değiştir"
-
-msgid "Change MXit PIN"
-msgstr "MXit PIN değiştirme"
-
-msgid "View Splash"
-msgstr "Açılış Görünümü"
-
-msgid "There is no splash-screen currently available"
-msgstr "Şu an kullanılabilir açılış ekranı yok"
-
-msgid "About"
-msgstr "Hakkında"
-
-msgid "Search for user"
-msgstr "Kullanıcı ara"
-
-msgid "Search for a MXit contact"
-msgstr "MXit kişisi ara"
-
-msgid "Type search information"
-msgstr "Arama bilgisi girin"
-
-msgid "_Search"
-msgstr "_Ara"
-
-#. display / change profile
-msgid "Change Profile..."
-msgstr "Profili Değiştir"
-
-#. change PIN
-msgid "Change PIN..."
-msgstr "PIN değiştir"
-
-#. suggested friends
-msgid "Suggested friends..."
-msgstr "Önerilen arkadaşlar..."
-
-#. search for contacts
-msgid "Search for contacts..."
-msgstr "Kişileri ara..."
-
-#. display splash-screen
-msgid "View Splash..."
-msgstr "Açılış Görünümü..."
-
-#. display plugin version
-msgid "About..."
-msgstr "Hakkında..."
-
-#. the file is too big
-msgid "The file you are trying to send is too large!"
-msgstr "Göndermeye çalıştığınız dosya çok büyük!"
-
-#. file read error
-msgid "Unable to access the local file"
-msgstr "Yerel dosyaya erişilemiyor"
-
-#. file write error
-msgid "Unable to save the file"
-msgstr "Dosya kaydedilemedi"
-
-msgid ""
-"Unable to connect to the MXit HTTP server. Please check your server settings."
-msgstr ""
-"MXit HTTP sunucusuna bağlanılamıyor. Lütfen sunucu ayarlarınızı denetleyin."
-
-msgid "Logging In..."
-msgstr "Giriş Yapılıyor..."
-
-msgid ""
-"Unable to connect to the MXit server. Please check your server settings."
-msgstr "MXit sunucusuna bağlanılamıyor. Lütfen sunucu ayarlarınızı denetleyin."
-
-msgid "Connecting..."
-msgstr "Bağlanıyor..."
-
-msgid "The Display Name you entered is too short."
-msgstr "Yazdığınız Görünüm Adı çok kısa."
-
-msgid "The PIN you entered has an invalid length [7-10]."
-msgstr "Girdiğiniz PIN geçersiz uzunlukta [7-10]."
-
-#. mxit login name
-msgid "MXit ID"
-msgstr "MXit Kimliği"
-
-#. show the form to the user to complete
-msgid "Register New MXit Account"
-msgstr "Yeni MXit Hesabını Kaydet"
-
-msgid "Please fill in the following fields:"
-msgstr "Lütfen aşağıdaki alanları doldurun:"
-
-#. no reply from the WAP site
-msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr "MXit WAP sitesiyle bağlantı kurulamadı. Lütfen yeniden deneyin."
-
-#. wapserver error
-#. server could not find the user
-msgid ""
-"MXit is currently unable to process the request. Please try again later."
-msgstr "MXit şu anda talebi işleme alamıyor. Lütfen daha sonra tekrar deneyin."
-
-msgid "Wrong security code entered. Please try again later."
-msgstr "Güvenlik kodunu yanlış girdiniz. Lütfen daha sonra yeniden deneyin."
-
-msgid "Your session has expired. Please try again later."
-msgstr "Oturumunuzun süresi doldu. Lütfen daha sonra yeniden deneyin."
-
-msgid "Invalid country selected. Please try again."
-msgstr "Geçersiz bir ülke seçildi. Lütfen yeniden deneyin."
-
-msgid "The MXit ID you entered is not registered. Please register first."
-msgstr "Girdiğiniz MXit Kimliği kaydedilmemiş. Lütfen önce kaydolun."
-
-msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "Girdiğiniz MXit zaten kayıtlı. Lütfen başkasını seçin."
-
-msgid "Internal error. Please try again later."
-msgstr "İç hata. Lütfen yeniden deneyin."
-
-msgid "You did not enter the security code"
-msgstr "Güvenlik kodunu girmediniz"
-
-msgid "Security Code"
-msgstr "Güvenlik Kodu"
-
-#. ask for input (required)
-msgid "Enter Security Code"
-msgstr "Güvenlik Kodunu Girin"
-
-msgid "Your Country"
-msgstr "Ülkeniz"
-
-msgid "Your Language"
-msgstr "Diliniz"
-
-#. display the form to the user and wait for his/her input
-msgid "MXit Authorization"
-msgstr "MXit Kimlik Doğrulaması"
-
-msgid "MXit account validation"
-msgstr "MXit hesap onaylaması"
-
-msgid "Retrieving User Information..."
-msgstr "Kullanıcı Bilgisi Alınıyor..."
-
-msgid "was kicked"
-msgstr "atıldı"
-
-msgid "You have been kicked from this MultiMX."
-msgstr "Bu MultiMX'ten atıldınız."
-
-msgid "_Room Name:"
-msgstr "_Oda Adı:"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "Davet edildiniz"
-
-msgid "Loading menu..."
-msgstr "Menü yükleniyor..."
-
-msgid "Status Message"
-msgstr "Durum İletisi"
-
-msgid "Rejection Message"
-msgstr "Ret İletisi"
-
-msgid "No profile available"
-msgstr "Kullanılabilir profil yok"
-
-msgid "This contact does not have a profile."
-msgstr "Bu kişinin bir profili yok."
-
-msgid "Your MXit ID..."
-msgstr "MXit Kimliğiniz..."
-
-#. contact is in Deleted, Rejected or None state
-msgid "Re-Invite"
-msgstr "Yeniden Davet Et"
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "WAP Sunucusu"
-
-msgid "Connect via HTTP"
-msgstr "HTTP yoluyla bağlan"
-
-msgid "Enable splash-screen popup"
-msgstr "Açılış ekranı açılır penceresini etkinleştir"
-
-msgid "Don't want to say"
-msgstr "Söylemek istemiyor"
-
-msgid "Single"
-msgstr "Bekar"
-
-msgid "In a relationship"
-msgstr "İlişkisi var"
-
-msgid "Engaged"
-msgstr "Nişanlı"
-
-msgid "Married"
-msgstr "Evli"
-
-msgid "It's complicated"
-msgstr "Karmaşık"
-
-msgid "Widowed"
-msgstr "Boşanmış"
-
-msgid "Separated"
-msgstr "Ayrı"
-
-msgid "Divorced"
-msgstr "Boşanmış"
-
-msgid "Last Online"
-msgstr "En son çevirimiçi zamanı"
-
-msgid "Invite Message"
-msgstr "Davet Mesajı"
-
-msgid "No results"
-msgstr "Sonuç yok"
-
-msgid "No contacts found."
-msgstr "Kişi bulunamadı"
-
-#. define columns
-msgid "UserId"
-msgstr "Kullanıcı Kimliği"
-
-msgid "Where I live"
-msgstr "Yaşadığım yer"
-
-#, c-format
-msgid "You have %i suggested friend."
-msgid_plural "You have %i suggested friends."
-msgstr[0] "%i arkadaş öneriniz var."
-msgstr[1] "%i arkadaş öneriniz var."
-
-#, c-format
-msgid "We found %i contact that matches your search."
-msgid_plural "We found %i contacts that match your search."
-msgstr[0] "Aramanızla ilgili %i kişi bulundu."
-msgstr[1] "Aramanızla ilgili %i kişi bulundu."
-
-#. we must have lost the connection, so terminate it so that we can reconnect
-msgid "We have lost the connection to MXit. Please reconnect."
-msgstr "MXit ile bağlantı kesildi. Lütfen yeniden bağlanın."
-
-#. packet could not be queued for transmission
-msgid "Message Send Error"
-msgstr "İleti gönderme Hatası"
-
-msgid "Unable to process your request at this time"
-msgstr "İsteğiniz şu anda işlenemedi"
-
-msgid "Timeout while waiting for a response from the MXit server."
-msgstr "MXit sunucusundan bir yanıt beklenirken zaman aşımı"
-
-msgid "Successfully Logged In..."
-msgstr "Başarıyla Oturum Açıldı..."
-
-#, c-format
-msgid ""
-"%s sent you an encrypted message, but it is not supported on this client."
-msgstr "%s size şifreli bir ileti gönderdi, fakat bu istemci desteklenmiyor."
-
-msgid "Message Error"
-msgstr "İleti Hatası"
-
-#. could not be decrypted
-msgid "An encrypted message was received which could not be decrypted."
-msgstr "Kodu çözülemeyen şifrelenmiş bir ileti alındı."
-
-msgid "Cannot perform redirect using the specified protocol"
-msgstr ""
-"Belirtilen protokol kullanılarak yeniden yönlendirme gerçekleştirilemedi"
-
-msgid "An internal MXit server error occurred."
-msgstr "Dahili bir MXit sunucu hatası oluştu."
-
-#, c-format
-msgid "Login error: %s (%i)"
-msgstr "Oturum açma hatası: %s (%i)"
-
-#, c-format
-msgid "Logout error: %s (%i)"
-msgstr "Oturum kapatma hatası: %s (%i)"
-
-msgid "Contact Error"
-msgstr "Bağlantı Hatası"
-
-msgid "Message Sending Error"
-msgstr "İleti Gönderme Hatası"
-
-msgid "Status Error"
-msgstr "Durum Hatası"
-
-msgid "Mood Error"
-msgstr "Durum Hatası"
-
-msgid "Invitation Error"
-msgstr "Davet Hatası"
-
-msgid "Contact Removal Error"
-msgstr "Kişi Silme Hatası"
-
-msgid "Subscription Error"
-msgstr "Abone Olma Hatası"
-
-msgid "Contact Update Error"
-msgstr "Bağlantı Güncelleme Hatası"
-
-msgid "File Transfer Error"
-msgstr "Dosya Aktarım Hatası"
-
-msgid "Cannot create MultiMx room"
-msgstr "MultiMx odası oluşturulamıyor"
-
-msgid "MultiMx Invitation Error"
-msgstr "MultiMx Davet Hatası"
-
-msgid "Profile Error"
-msgstr "Profil Hatası"
-
-#. bad packet
-msgid "Invalid packet received from MXit."
-msgstr "MXit'ten geçersiz bir paket alındı."
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr "MXit'e bağlanma hatası oluştu. (okunan bölüm 0x01)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr "MXit'e bağlanma hatası oluştu. (okunan bölüm 0x02)"
-
-msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr "MXit'e bağlanma hatası oluştu. (okunan bölüm 0x03)"
-
-#. malformed packet length record (too long)
-msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr "MXit'e bağlanma hatası oluştu. (okunan bölüm 0x04)"
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr "MXit'e bağlanma hatası oluştu. (okunan bölüm 0x05)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr "MXit'e bağlanma hatası oluştu. (okunan bölüm 0x06)"
-
-msgid "In Love"
-msgstr "Aşık"
-
-msgid "Pending"
-msgstr "Bekliyor"
-
-msgid "Invited"
-msgstr "Davet Edildi"
-
-msgid "Rejected"
-msgstr "Reddedildi"
-
-msgid "Deleted"
-msgstr "Silindi"
-
-msgid "MXit Advertising"
-msgstr "MXit Tanıtımı"
-
-msgid "More Information"
-msgstr "Daha Fazla Bilgi"
-
-#, c-format
-msgid "No such user: %s"
-msgstr "Böyle bir kullanıcı yok: %s"
-
-msgid "User lookup"
-msgstr "Kullanıcı arama"
-
-msgid "Reading challenge"
-msgstr "Meydan okuma"
-
-msgid "Unexpected challenge length from server"
-msgstr "Sunucudan beklenmeyen cevap uzunluğu"
-
-msgid "Logging in"
-msgstr "Giriş yapılıyor"
-
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM - Ayarlı Kullanıcı Adı Yok"
-
-msgid "You appear to have no MySpace username."
-msgstr "MySpace kullanıcı adına sahip olmadığınız görünüyor."
-
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr "Birini şimdi ayarlamak ister misiniz? (Not: BU DEĞİŞTİRLEMEZ)"
-
-msgid "Lost connection with server"
-msgstr "Sunucu ile bağlantı kesildi"
-
-#. Can't write _()'d strings in array initializers. Workaround.
-#. khc: then use N_() in the array initializer and use _() when they are
-#. used
-msgid "New mail messages"
-msgstr "Yeni e-posta iletisi"
-
-msgid "New blog comments"
-msgstr "Yeni günlük yorumları"
-
-msgid "New profile comments"
-msgstr "Yeni profil yorumları"
-
-msgid "New friend requests!"
-msgstr "Yeni arkadaşlık isteği!"
-
-msgid "New picture comments"
-msgstr "Yeni resim yorumları"
-
-msgid "MySpace"
-msgstr "MySpace"
-
-msgid "IM Friends"
-msgstr "Hızlı Mesajlaşma Arkadaşları"
-
-#, c-format
-msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"%d arkadaş sunucudan eklendi veya güncellendi (sunucu tarafındaki "
-"arkadaşları dahi içeriyor)"
-msgstr[1] ""
-"%d arkadaş sunucudan eklendi veya güncellendi (sunucu tarafındaki "
-"arkadaşları dahi içeriyor)"
-
-msgid "Add contacts from server"
-msgstr "Sunucudan kişileri ekle"
-
-#, c-format
-msgid "Protocol error, code %d: %s"
-msgstr "Protokol hatası, kod: %d: %s"
-
-#, c-format
-msgid ""
-"%s Your password is %zu characters, which is longer than the maximum length "
-"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
-"cfm?fuseaction=accountSettings.changePassword and try again."
-msgstr ""
-"%s parolanız %zu karakterdir, olması gereken azami %d karakterden daha "
-"fazladır.  Lütfen parolanızı şu adreste kısaltın http://profileedit.myspace."
-"com/index.cfm?fuseaction=accountSettings.changePassword ve tekrar deneyin."
-
-msgid "Incorrect username or password"
-msgstr "Geçersiz kullanıcı adı veya parola"
-
-msgid "MySpaceIM Error"
-msgstr "MySpaceIM Hatası"
-
-msgid "Invalid input condition"
-msgstr "Geçersiz girdi durumu"
-
-msgid "Failed to add buddy"
-msgstr "Kişi eklenemedi"
-
-msgid "'addbuddy' command failed."
-msgstr "'addbuddy' komutu başarısız oldu."
-
-msgid "persist command failed"
-msgstr "üstelenen komut başarısız oldu"
-
-msgid "Failed to remove buddy"
-msgstr "Kişi silinemedi"
-
-msgid "'delbuddy' command failed"
-msgstr "'delbuddy' komutu başarısız oldu"
-
-msgid "blocklist command failed"
-msgstr "engelleme listesi komutu başarısız"
-
-msgid "Missing Cipher"
-msgstr "Kayıp Şifre"
-
-msgid "The RC4 cipher could not be found"
-msgstr "RC4 şifresi bulunamadı"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"RC4 desteği ile libpurple yükseltmesini yapın (>= 2.0.1). MySpaceIM "
-"eklentisi yüklenmeyecek."
-
-msgid "Add friends from MySpace.com"
-msgstr "MySpace.com adresinden yeni arkadaşlar ekle"
-
-msgid "Importing friends failed"
-msgstr "Arkadaşları içeri aktarma işlemi başarısız oldu"
-
-#. TODO: find out how
-msgid "Find people..."
-msgstr "Kişi bul..."
-
-msgid "Change IM name..."
-msgstr "Hızlı Mesajlaşma adını değiştir..."
-
-msgid "myim URL handler"
-msgstr "myim adres yakalayıcı"
-
-msgid "No suitable MySpaceIM account could be found to open this myim URL."
-msgstr "Bu myim adresini açmak için uygun MySpaceIM hesabı bulunamadı."
-
-msgid "Enable the proper MySpaceIM account and try again."
-msgstr "Uygun MySpaceIM hesabını etkinleştirip tekrar deneyin."
-
-msgid "Show display name in status text"
-msgstr "Durum metninde görünen ismi göster"
-
-msgid "Show headline in status text"
-msgstr "Durum metninde başlığı göster"
-
-msgid "Send emoticons"
-msgstr "Duygu simgeleri gönder"
-
-msgid "Screen resolution (dots per inch)"
-msgstr "Ekran Çözünürlüğü (her inç için nokta)"
-
-msgid "Base font size (points)"
-msgstr "Temel yazıtipi boyutu (pt)"
-
-msgid "User"
-msgstr "Kullanıcı"
-
-msgid "Headline"
-msgstr "Manşet"
-
-msgid "Song"
-msgstr "Şarkı"
-
-msgid "Total Friends"
-msgstr "Toplam Arkadaşlar"
-
-msgid "Client Version"
-msgstr "İstemci Sürümü"
-
-msgid ""
-"An error occurred while trying to set the username.  Please try again, or "
-"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
-"to set your username."
-msgstr ""
-"Kullanıcı adı ayarlamayı denerken bir hata oluştu. Lütfen tekrar deneyin ya "
-"da kullanıcı adınızı ayarlamak için http://editprofile.myspace.com/index.cfm?"
-"fuseaction=profile.username bağlantısını ziyaret edin."
-
-msgid "MySpaceIM - Username Available"
-msgstr "MySpaceIM - Kullanıcı Adı Uygun"
-
-msgid "This username is available. Would you like to set it?"
-msgstr "Bu kullanıcı adı uygun. Bunu kullanmak ister misiniz?"
-
-msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr "BİR KERE AYARLANMIŞ, BU DEĞİŞTİRİLEMEZ!"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM - Lütfen Bir Kullanıcı Adı Belirtin"
-
-msgid "This username is unavailable."
-msgstr "Bu kullanıcı adı uygun değil."
-
-msgid "Please try another username:"
-msgstr "Lütfen başka bir kullanıcı adı deneyin:"
-
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "Kullanıcı adı ayarlanmadı"
-
-msgid "Please enter a username to check its availability:"
-msgstr "Lütfen kullanılırlığının denetimi için bir kullanıcı adı girin."
-
-#. TODO: icons for each zap
-#. Lots of comments for translators:
-#. Zap means "to strike suddenly and forcefully as if with a
-#. * projectile or weapon."  This term often has an electrical
-#. * connotation, for example, "he was zapped by electricity when
-#. * he put a fork in the toaster."
-msgid "Zap"
-msgstr "Çarp"
-
-#, c-format
-msgid "%s has zapped you!"
-msgstr "%s size çarptı!"
-
-#, c-format
-msgid "Zapping %s..."
-msgstr "Çarpılıyor %s..."
-
-#. Whack means "to hit or strike someone with a sharp blow"
-msgid "Whack"
-msgstr "Vur"
-
-#, c-format
-msgid "%s has whacked you!"
-msgstr "%s size vurdu!"
-
-#, c-format
-msgid "Whacking %s..."
-msgstr "Vuruluyor %s..."
-
-#. Torch means "to set on fire."  Don't worry, this doesn't
-#. * make a whole lot of sense in English, either.  Feel free
-#. * to translate it literally.
-msgid "Torch"
-msgstr "Ateşle"
-
-#, c-format
-msgid "%s has torched you!"
-msgstr "%s sizi ateşledi!"
-
-#, c-format
-msgid "Torching %s..."
-msgstr "Ateşleniyor %s..."
-
-#. Smooch means "to kiss someone, often enthusiastically"
-msgid "Smooch"
-msgstr "Öp"
-
-#, c-format
-msgid "%s has smooched you!"
-msgstr "%s sizi öptü!"
-
-#, c-format
-msgid "Smooching %s..."
-msgstr "Öpülüyor %s..."
-
-#. A hug is a display of affection; wrapping your arms around someone
-msgid "Hug"
-msgstr "Kucakla"
-
-#, c-format
-msgid "%s has hugged you!"
-msgstr "%s sizi kucakladı!"
-
-#, c-format
-msgid "Hugging %s..."
-msgstr "%s Kucaklanıyor..."
-
-#. Slap means "to hit someone with an open/flat hand"
-msgid "Slap"
-msgstr "Tokatla"
-
-#, c-format
-msgid "%s has slapped you!"
-msgstr "%s sizi tokatladı!"
-
-#, c-format
-msgid "Slapping %s..."
-msgstr "Tokatlanıyor %s..."
-
-#. Goose means "to pinch someone on their butt"
-msgid "Goose"
-msgstr "Pandikle"
-
-#, c-format
-msgid "%s has goosed you!"
-msgstr "%s size pandik attı!"
-
-#, c-format
-msgid "Goosing %s..."
-msgstr "Pandikleniyor %s..."
-
-#. A high-five is when two people's hands slap each other
-#. * in the air above their heads.  It is done to celebrate
-#. * something, often a victory, or to congratulate someone.
-msgid "High-five"
-msgstr "Beşlik Çak"
-
-#, c-format
-msgid "%s has high-fived you!"
-msgstr "%s size bir beşlik çaktı!"
-
-#, c-format
-msgid "High-fiving %s..."
-msgstr "Beşlik çakılıyor %s..."
-
-#. We're not entirely sure what the MySpace people mean by
-#. * this... but we think it's the equivalent of "prank."  Or, for
-#. * someone to perform a mischievous trick or practical joke.
-msgid "Punk"
-msgstr "Eşek Şakası"
-
-#, c-format
-msgid "%s has punk'd you!"
-msgstr "%s size eşek şakası yaptı!"
-
-#, c-format
-msgid "Punking %s..."
-msgstr "Eşek şakası yapılıyor %s..."
-
-#. Raspberry is a slang term for the vibrating sound made
-#. * when you stick your tongue out of your mouth with your
-#. * lips closed and blow.  It is typically done when
-#. * gloating or bragging.  Nowadays it's a pretty silly
-#. * gesture, so it does not carry a harsh negative
-#. * connotation.  It is generally used in a playful tone
-#. * with friends.
-msgid "Raspberry"
-msgstr "Ahududu"
-
-#, c-format
-msgid "%s has raspberried you!"
-msgstr "%s sizi ahududuladı!"
-
-#, c-format
-msgid "Raspberrying %s..."
-msgstr "%s Ahududulanıyor..."
-
 msgid "Required parameters not passed in"
 msgstr "Zorunlu parametreler geçerli sayılmadı"
 
@@ -6900,6 +5193,9 @@ msgstr "Kendinizi ekleyemezsiniz"
 
 msgid "Master archive is misconfigured"
 msgstr "Ana arşiv yanlış yapılandırılmış."
+
+msgid "Incorrect username or password"
+msgstr "Geçersiz kullanıcı adı veya parola"
 
 msgid "Could not recognize the host of the username you entered"
 msgstr "Girdiğiniz kullanıcı adınının sunucusu tanınamadı"
@@ -7021,6 +5317,12 @@ msgstr "Sunucuyla iletişimde kurulurken hata oluştu. Bağlantı kapatılıyor.
 msgid "Telephone Number"
 msgstr "Telefon Numarası"
 
+msgid "Location"
+msgstr "Konum"
+
+msgid "Department"
+msgstr "Departman"
+
 msgid "Personal Title"
 msgstr "Başlık"
 
@@ -7069,6 +5371,9 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "Yazışmaya katılmak istiyor musunuz?"
 
+msgid "You have signed on from another location"
+msgstr "Başka bir konumdan giriş yaptınız"
+
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
@@ -7083,6 +5388,9 @@ msgstr ""
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Bu konferans kapandı. Artık iletiler gönderilmeyecek."
+
+msgid "Busy"
+msgstr "Meşgul"
 
 #. *< type
 #. *< ui_requirement
@@ -7187,6 +5495,9 @@ msgstr "Geçersiz sohbet odası adı"
 
 msgid "Invalid error"
 msgstr "Geçersiz hata"
+
+msgid "Not logged in"
+msgstr "Oturum açılmamış"
 
 msgid "Cannot receive IM due to parental controls"
 msgstr "Ebeveyn denetimleri nedeniyle anlık ileti alınamıyor"
@@ -7323,11 +5634,20 @@ msgstr "Müzik dinliyor"
 msgid "Studying"
 msgstr "Çalışıyor"
 
+msgid "Working"
+msgstr "Çalışıyor"
+
 msgid "In the restroom"
 msgstr "Dinlenme odasında"
 
 msgid "Received invalid data on connection with server"
 msgstr "Sunucu ile bağlantı sırasında geçersiz veri alındı"
+
+msgid "Error parsing response from authentication server"
+msgstr ""
+
+msgid "Unknown error during authentication"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -7459,6 +5779,11 @@ msgstr ""
 "Hesap ayarlarınızda şifreleme gerektir ibaresini kullanmışsınız, fakat "
 "şifreleme sisteminiz tarafından desteklenmiyor."
 
+msgid ""
+"You required Kerberos authentication but encryption is disabled in your "
+"account settings."
+msgstr ""
+
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -7475,7 +5800,6 @@ msgid "Received authorization"
 msgstr "İzin alındı."
 
 #. Unregistered username
-#. the username does not exist
 msgid "Username does not exist"
 msgstr "Kullanıcı adı mevcut değil"
 
@@ -7791,6 +6115,9 @@ msgstr ""
 "geçerli bir eposta adresi olmalı, veya bir harf ile başlamalı ve sadece "
 "harfler, rakamlar ve boşluklar içermeli, veya sadece rakamlar içermeli."
 
+msgid "Unable to Add"
+msgstr "Eklenemedi"
+
 msgid "Unable to Retrieve Buddy List"
 msgstr "Kişi listesi alınamadı"
 
@@ -7941,6 +6268,9 @@ msgstr "E-Posta adresiyle bir arkadaş ara"
 msgid "Type the email address of the buddy you are searching for."
 msgstr "Aradığınız arkadaşın e-posta adresini yazın."
 
+msgid "_Search"
+msgstr "_Ara"
+
 msgid "Set User Info (web)..."
 msgstr "Kullanıcı Bilgisi Ayarla (ağ)"
 
@@ -7977,8 +6307,17 @@ msgstr "İzin Bekleyen Kişileri Göster"
 msgid "Search for Buddy by Email Address..."
 msgstr "E-Posta Adresine Göre Kişi Ara..."
 
-msgid "Use clientLogin"
-msgstr "clientLogin Kullan"
+msgid "clientLogin"
+msgstr ""
+
+msgid "Kerberos"
+msgstr ""
+
+msgid "MD5-based"
+msgstr ""
+
+msgid "Authentication method"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -8103,6 +6442,9 @@ msgstr "%s kullanıcı bilgisi mevcut değil."
 msgid "Mobile Phone"
 msgstr "Cep Telefonu"
 
+msgid "Age"
+msgstr "Yaş"
+
 msgid "Personal Web Page"
 msgstr "Kişisel Web Sayfası"
 
@@ -8111,11 +6453,20 @@ msgstr "Kişisel Web Sayfası"
 msgid "Additional Information"
 msgstr "Ek Bilgi"
 
+msgid "Home Address"
+msgstr "Ev Adresi"
+
 msgid "Zip Code"
 msgstr "Posta Kodu"
 
+msgid "Work Address"
+msgstr "İş Adresi"
+
 msgid "Work Information"
 msgstr "İş Bilgileri"
+
+msgid "Company"
+msgstr "Şirket"
 
 msgid "Division"
 msgstr "Bölüm"
@@ -8134,6 +6485,12 @@ msgstr "Üye olduğu süre:"
 
 msgid "Capabilities"
 msgstr "Yetenekler"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "View web profile"
+msgstr "Web profiline bak"
 
 msgid "Invalid SNAC"
 msgstr "Geçersiz SNAC"
@@ -8430,6 +6787,9 @@ msgstr ""
 "'%s' tanıtıcısı Sametime topluluğunuzdaki kullanıcılarla eşleşmiyor. Bu "
 "giriş arkadaş listenizden kaldırıldı."
 
+msgid "Unable to add user"
+msgstr "Kullanıcı eklenemedi"
+
 #, c-format
 msgid ""
 "Error reading file %s: \n"
@@ -8714,6 +7074,9 @@ msgstr "Hiperaktif"
 
 msgid "Robot"
 msgstr "Robot"
+
+msgid "In Love"
+msgstr "Aşık"
 
 msgid "User Modes"
 msgstr "Kullanıcı Modları"
@@ -9001,6 +7364,9 @@ msgstr "Şirket"
 msgid "Unit"
 msgstr "Ünite"
 
+msgid "Homepage"
+msgstr "Anasayfa"
+
 msgid "Note"
 msgstr "Not"
 
@@ -9175,6 +7541,9 @@ msgstr "SILC Sunucusuna bağlanma hatası"
 
 msgid "Key Exchange failed"
 msgstr "Anahtar Değişimi yapılamadı"
+
+msgid "Authentication failed"
+msgstr "Kimlik denetimi başarısız"
 
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
@@ -9686,423 +8055,6 @@ msgstr "Kullanıcı Kimliğini Doğrula"
 msgid "Auth Domain"
 msgstr "Makine Kimliğini Doğrula"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join &lt;oda&gt;:  Yahoo'daki bir sohbet odasına katıl"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "list:  Yahoo ağındaki kanalları listele"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr "doodle: Kullanıcı ile Doodle oturumu başlatma isteği"
-
-msgid "Yahoo ID..."
-msgstr "Yahoo Kimliği..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! Protocol Plugin"
-msgstr "Yahoo! İletişim Kuralı Eklentisi"
-
-msgid "Pager port"
-msgstr "Çağrı cihazı portu"
-
-msgid "File transfer server"
-msgstr "Dosya aktarım sunucusu"
-
-msgid "File transfer port"
-msgstr "Dosya aktarım portu"
-
-msgid "Chat room locale"
-msgstr "Sohbet Odası Yereli"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "Konferans ve sohbet odası davetlerini yok say"
-
-msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "HTTP ve HTTPS bağlantıları için hesap vekil sunucusunu kullan"
-
-msgid "Chat room list URL"
-msgstr "Sohbet Odası Listesi URL"
-
-msgid "Yahoo JAPAN ID..."
-msgstr "Yahoo JAPON Kimliği..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! JAPAN Protocol Plugin"
-msgstr "Yahoo! JAPON İletişim Kuralı Eklentisi"
-
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s sizi henüz desteklenmeyen görüntülü konuşmaya davet etti."
-
-msgid "Your SMS was not delivered"
-msgstr "SMS iletilmedi"
-
-msgid "Your Yahoo! message did not get sent."
-msgstr "Yahoo! mesajınız yollanamadı."
-
-#, c-format
-msgid "Yahoo! system message for %s:"
-msgstr "Yahoo! sistem mesajı %s için:"
-
-msgid "Authorization denied message:"
-msgstr "İzin reddetme iletisi:"
-
-#, c-format
-msgid ""
-"%s has (retroactively) denied your request to add them to your list for the "
-"following reason: %s."
-msgstr ""
-"%s onları listenize ekleme isteğinizi (geçmişe dönük olarak) müteakip "
-"sebepten dolayı reddetti: %s."
-
-#, c-format
-msgid "%s has (retroactively) denied your request to add them to your list."
-msgstr "%s onları listenize ekleme isteğinizi (geçmişe dönük olarak) reddetti."
-
-msgid "Add buddy rejected"
-msgstr "Kişi ekleme reddedildi"
-
-#. Some error in the received stream
-msgid "Received invalid data"
-msgstr "Geçersiz veri alındı"
-
-#. security lock from too many failed login attempts
-msgid ""
-"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-"website may fix this."
-msgstr ""
-"Hesap kilitlendi: Çok fazla hatalı giriş denemesi. Yahoo! web sayfasına "
-"giriş yapmanız bunu düzeltebilir."
-
-#. indicates a lock of some description
-msgid ""
-"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
-"this."
-msgstr ""
-"Hesap kilitlendi: Sebep bilinmiyor. Yahoo! web sayfasına giriş yapmanız bunu "
-"düzeltebilir."
-
-#. indicates a lock due to logging in too frequently
-msgid ""
-"Account locked: You have been logging in too frequently.  Wait a few minutes "
-"before trying to connect again.  Logging into the Yahoo! website may help."
-msgstr ""
-"Hesap kilitlendi: Çok sık giriş yaptınız. Yeniden bağlanmayı denemeden önce "
-"birkaç dakika bekleyiniz. Yahoo! web sayfasına giriş yapmanız yardımcı "
-"olabilir."
-
-#. username or password missing
-msgid "Username or password missing"
-msgstr "Kullanıcı adı ya da parola eksik"
-
-#, c-format
-msgid ""
-"The Yahoo server has requested the use of an unrecognized authentication "
-"method.  You will probably not be able to successfully sign on to Yahoo.  "
-"Check %s for updates."
-msgstr ""
-"Yahoo sunucusu tanımlanamayan bir kimlik denetimi yöntemi kullanımı istedi. "
-"Yahoo'da başarıyla oturum açamayabilirsiniz. Güncellemeler için %s "
-"denetleyin."
-
-msgid "Failed Yahoo! Authentication"
-msgstr "Yahoo! Kimlik Denetimi Başarısız"
-
-#, c-format
-msgid ""
-"You have tried to ignore %s, but the user is on your buddy list.  Clicking "
-"\"Yes\" will remove and ignore the buddy."
-msgstr ""
-"%s kullanıcısını yoksaymaya çalışıyorsunuz, ama kullanıcı şu anda sizin "
-"listenizde. \"Evet\"e tıkladığınız takdirde bu kullanıcı listenizden "
-"silinecek ve yok sayılacaktır."
-
-msgid "Ignore buddy?"
-msgstr "Kişiyi yoksay?"
-
-msgid "Invalid username or password"
-msgstr "Geçersiz kullanıcı adı veya parola"
-
-msgid ""
-"Your account has been locked due to too many failed login attempts.  Please "
-"try logging into the Yahoo! website."
-msgstr ""
-"Çok fazla hatalı giriş denemesi nedeniyle hesabınız kilitlendi. Lütfen "
-"Yahoo! web sayfasına giriş yapmayı deneyiniz."
-
-msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr "Bilinmeyen hata 52. Tekrar bağlanarak bunu çözebilirsiniz."
-
-msgid ""
-"Error 1013: The username you have entered is invalid.  The most common cause "
-"of this error is entering your email address instead of your Yahoo! ID."
-msgstr ""
-"Hata 1013: Girmiş olduğunuz kullanıcı adı geçersiz. Yahoo! kullanıcı "
-"kimliğiniz yerine eposta adresinizi yazmanız bu sorunun en bilinen nedenidir."
-
-#, c-format
-msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
-msgstr ""
-"Bilinmeyen hata numarası %d. Yahoo! sitesinde oturum açmak belki bu durumu "
-"düzeltebilir."
-
-#, c-format
-msgid "Unable to add buddy %s to group %s to the server list on account %s."
-msgstr "%s kişisi, sunucu listesine %s grubuna %s hesabında eklenemedi."
-
-msgid "Unable to add buddy to server list"
-msgstr "Sunucu listesine arkadaş eklenemiyor"
-
-#, c-format
-msgid "[ Audible %s/%s/%s.swf ] %s"
-msgstr "[ Sesli %s/%s/%s.swf ] %s"
-
-msgid "Received unexpected HTTP response from server"
-msgstr "Sunucudan beklenmedik HTTP yanıtı alındı"
-
-#, c-format
-msgid "Lost connection with %s: %s"
-msgstr "%s ile bağlantı kaybedildi: %s"
-
-#, c-format
-msgid "Unable to establish a connection with %s: %s"
-msgstr "%s ile bağlantı sağlanamadı: %s"
-
-msgid "Unable to connect: The server returned an empty response."
-msgstr "Bağlanamadı: Sunucudan boş bir cevap döndü."
-
-msgid ""
-"Unable to connect: The server's response did not contain the necessary "
-"information"
-msgstr "Bağlanılamıyor: Sunucunun yanıtı gerekli bilgiyi içermedi"
-
-msgid "Not at Home"
-msgstr "Evde Değil"
-
-msgid "Not at Desk"
-msgstr "Büroda Değil"
-
-msgid "Not in Office"
-msgstr "Ofiste Değil"
-
-msgid "On Vacation"
-msgstr "Tatilde"
-
-msgid "Stepped Out"
-msgstr "_Dışarı Çıktı"
-
-msgid "Not on server list"
-msgstr "Sunucu listesinde değil"
-
-msgid "Appear Permanently Offline"
-msgstr "Sürekli Çevrimdışı görün"
-
-msgid "Presence"
-msgstr "Bulunma"
-
-msgid "Don't Appear Permanently Offline"
-msgstr "Sürekli Çevrimdışı görünme"
-
-msgid "Join in Chat"
-msgstr "Sohbete Katıl"
-
-msgid "Initiate Conference"
-msgstr "Konferans Başlat"
-
-msgid "Presence Settings"
-msgstr "Bulunma Ayarları"
-
-msgid "Start Doodling"
-msgstr "Karalamaya Başla"
-
-msgid "Activate which ID?"
-msgstr "Hangi kimlik etkinleştirilsin?"
-
-msgid "Select the ID you want to activate"
-msgstr "Etkinleştirmek istediğiniz Kimliği seçin"
-
-msgid "Join whom in chat?"
-msgstr "Kullanıcıyla sohbet et..."
-
-msgid "Activate ID..."
-msgstr "ID'yi aktifleştir..."
-
-msgid "Join User in Chat..."
-msgstr "Kullanıcıyla Sohbet Et..."
-
-msgid "Open Inbox"
-msgstr "Gelen Kutusunu Aç"
-
-msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr "SMS gönderilemiyor. Mobil taşıyıcı edinilemedi."
-
-msgid "Can't send SMS. Unknown mobile carrier."
-msgstr "SMS gönderilemiyor. Bilinmeyen mobil taşıyıcı."
-
-msgid "Getting mobile carrier to send the SMS."
-msgstr "SMS'i göndermek için mobil taşıyıcı alınıyor."
-
-#. Write a local message to this conversation showing that a request for a
-#. * Doodle session has been made
-#.
-msgid "Sent Doodle request."
-msgstr "Doodle isteği gönder."
-
-msgid "Unable to connect."
-msgstr "Bağlanılamıyor."
-
-msgid "Unable to establish file descriptor."
-msgstr "Dosya açıklayıcısı (tanımlayıcısı) kurulamadı."
-
-#, c-format
-msgid "%s is trying to send you a group of %d files.\n"
-msgstr "%s size %d dosya grubunu göndermeyi deniyor.\n"
-
-msgid "Write Error"
-msgstr "Yazma Hatası"
-
-msgid "Yahoo! Japan Profile"
-msgstr "Yahoo! Japon Profili"
-
-msgid "Yahoo! Profile"
-msgstr "Yahoo! Profili"
-
-msgid ""
-"Sorry, profiles marked as containing adult content are not supported at this "
-"time."
-msgstr ""
-"Üzgünüm, profiller bu seferlik desteklenmeyen yetişkin içeriğe sahip olarak "
-"işaretlenmiş."
-
-msgid ""
-"If you wish to view this profile, you will need to visit this link in your "
-"web browser:"
-msgstr ""
-"Bu profili görüntülemek istersiniz, tarayıcınızda bu bağlantıyı ziyaret "
-"etmeniz gerekiyor:"
-
-msgid "Yahoo! ID"
-msgstr "Yahoo! ID"
-
-msgid "Hobbies"
-msgstr "Hobiler"
-
-msgid "Latest News"
-msgstr "Son Haberler"
-
-msgid "Home Page"
-msgstr "Anasayfa"
-
-msgid "Cool Link 1"
-msgstr "Bağlantı 1"
-
-msgid "Cool Link 2"
-msgstr "Bağlantı 2"
-
-msgid "Cool Link 3"
-msgstr "Bağlantı 3"
-
-msgid "Last Update"
-msgstr "Son Güncelleme"
-
-msgid ""
-"This profile is in a language or format that is not supported at this time."
-msgstr "Bu profil şu an için desteklenmeyen bir dil veya formattadır."
-
-msgid ""
-"Could not retrieve the user's profile. This most likely is a temporary "
-"server-side problem. Please try again later."
-msgstr ""
-"Kullanıcının profiline erişilemedi. Bu muhtemelen sunucudan kaynaklanan "
-"geçici bir problemdir. Lütfen daha sonra tekrar deneyin."
-
-msgid ""
-"Could not retrieve the user's profile. This most likely means that the user "
-"does not exist; however, Yahoo! sometimes does fail to find a user's "
-"profile. If you know that the user exists, please try again later."
-msgstr ""
-"Kullanıcının profiline ulaşılamadı. Bu genelde böyle bir kullanıcının "
-"olmadığını işaret eder; fakat bazen Yahoo!'nun profillere ulaşamadığı olur."
-"Eğer kullanıcının doğru olduğuna eminseniz, lütfen daha sonra tekrar deneyin."
-
-msgid "The user's profile is empty."
-msgstr "Kullanıcı profili boş."
-
-#, c-format
-msgid "%s has declined to join."
-msgstr "%s katılmayı reddetti."
-
-msgid "Failed to join chat"
-msgstr "Sohbete katılım başarısız oldu"
-
-#. -6
-msgid "Unknown room"
-msgstr "Bilinmeyen oda"
-
-#. -15
-msgid "Maybe the room is full"
-msgstr "Sohbet odası dolu olabilir"
-
-#. -35
-msgid "Not available"
-msgstr "Erişilebilir değil"
-
-msgid ""
-"Unknown error. You may need to logout and wait five minutes before being "
-"able to rejoin a chatroom"
-msgstr ""
-"Bilinmeyen hata. Sohbet odasına yeniden girebilmek için çevrimdışı duruma "
-"geçip beş dakika beklemeniz gerekebilir."
-
-#, c-format
-msgid "You are now chatting in %s."
-msgstr "Şimdi %s odasında sohbet ediyorsunuz."
-
-msgid "Failed to join buddy in chat"
-msgstr "Kişiyle sohbete katılınamadı"
-
-msgid "Maybe they're not in a chat?"
-msgstr "Belki de onlar sohbet etmiyordur?"
-
-msgid "Fetching the room list failed."
-msgstr "Oda listesi alımı başarısız oldu."
-
-msgid "Voices"
-msgstr "Sesler"
-
-msgid "Webcams"
-msgstr "Web Kameralar"
-
-msgid "Connection problem"
-msgstr "Bağlantı sorunu"
-
-msgid "Unable to fetch room list."
-msgstr "Oda listesi alınamıyor."
-
-msgid "User Rooms"
-msgstr "Kullanıcı Odaları"
-
-msgid "Connection problem with the YCHT server"
-msgstr "YCHT sunucusu ile bağlantı problemi"
-
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
@@ -10113,6 +8065,12 @@ msgstr ""
 #, c-format
 msgid "Unable to send to chat %s,%s,%s"
 msgstr "Sohbet gönderilemedi %s,%s,%s "
+
+msgid "User is offline"
+msgstr "Kullanıcı çevrimdışı"
+
+msgid "User"
+msgstr "Kullanıcı"
 
 msgid "Hidden or not logged-in"
 msgstr "Gizli veya giriş yapmamış"
@@ -10504,12 +8462,9 @@ msgstr ""
 "programıdır."
 
 msgid ""
-"This means that you can be chatting with friends on MSN, talking to a friend "
-"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+"This means that you can be chatting with friends on AIM, talking to a friend "
+"on Google Talk, and sitting in an IRC chat room all at the same time."
 msgstr ""
-"Bu aynı anda arkadaşlarınızla MSN'de sohbet edebileceğiniz, Google Talk ile "
-"konuşabileceğiniz ve bir Yahoo sohbet odasında bulunabileceğiniz anlamına "
-"gelir."
 
 msgid "The buddy list showing friends on different networks."
 msgstr "Arkadaş listeniz farklı ağlardaki arkadaşlarınızı gösterir."
@@ -10520,8 +8475,8 @@ msgstr "Pidgin İnternet Mesajlaşma Aracı"
 msgid "Internet Messenger"
 msgstr "İnternet Mesajlaşma Aracı"
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+#, fuzzy
+msgid "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, and more"
 msgstr ""
 "Anında Sohbet. AIM, Google Talk, Jabber/XMPP, MSN, Yahoo ve daha fazlasını "
 "destekler"
@@ -11297,7 +9252,7 @@ msgid "SSL Servers"
 msgstr "SSL Sunucuları"
 
 msgid "Supported debug options are: plugins, version"
-msgstr ""
+msgstr "Desteklenen hata ayıklama seçenekleri: eklentiler, sürüm"
 
 msgid "Unknown command."
 msgstr "Bilinmeyen komut."
@@ -12046,20 +10001,13 @@ msgstr ""
 
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
-"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
-">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"emailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>This "
+"is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
 "support/\">archive</a>)<br/>We can't help with third-party protocols or "
 "plugins!<br/>This list's primary language is <b>English</b>.  You are "
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\"><b>Diğer Pidgin kullanıcılarından yardım</b></font> almanız "
-"e-posta yoluyla mümkündür<a href=\"mailto:support@pidgin.im\">support@pidgin."
-"im</a><br/>Bu <b>umumi</b> bir posta listesidir! (<a href=\"http://pidgin.im/"
-"pipermail/support/\">arşiv</a>)<br/>Üçüncü parti eklentiler veya iletişim "
-"kuralları için destek vermiyoruz!<br/> Bu listesin öncelikli dili "
-"<b>İngilizce</b>dir. Diğer dillerde de iletiler yazabilirsiniz, fakat "
-"yanıtlar açıklayıcı olmayabilir.<br/>"
 
 #, c-format
 msgid "About %s"
@@ -12867,10 +10815,6 @@ msgstr "Bir dosya seçin"
 msgid "Modify Buddy Pounce"
 msgstr "Kişi Uyarıcıyı Düzenle"
 
-#. Create the "Pounce on Whom" frame.
-msgid "Pounce on Whom"
-msgstr "Uyarılacak Kişi"
-
 msgid "_Account:"
 msgstr "_Hesap:"
 
@@ -13536,9 +11480,9 @@ msgstr "D_urum:"
 msgid "Use a _different status for some accounts"
 msgstr "Farklı hesaplar için _farklı durumlar kullan"
 
-#. Save & Use button
-msgid "Sa_ve & Use"
-msgstr "Kayde_t & Kullan"
+#. Save and Use button
+msgid "Sa_ve and Use"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -13601,9 +11545,6 @@ msgstr "Durum Seçici"
 
 msgid "Google Talk"
 msgstr "Google Talk"
-
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -13891,6 +11832,9 @@ msgstr "Alınan İletiler"
 #, c-format
 msgid "Select Color for %s"
 msgstr "%s için Renk Ayarla"
+
+msgid "General"
+msgstr "Genel"
 
 msgid "Ignore incoming format"
 msgstr "Gelen biçemi yoksay"
@@ -14275,14 +12219,11 @@ msgstr ""
 msgid "Notify For"
 msgstr "Uyar"
 
-msgid "\t_Notify for System messages"
+msgid "\tS_ystem messages"
 msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_Sadece biri kullanıcı adınızı söylediğinde"
-
-msgid "\tNotify for _System messages"
-msgstr ""
 
 msgid "_Focused windows"
 msgstr "_Aktif pencere"
@@ -14470,12 +12411,9 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "Metin tabanlı protokollerde ham girdi gönderebilmenizi sağlar."
 
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Metin tabanlı protokollerde (XMPP, MSN, IRC, TOC) ham girdi gönderebilmenizi "
-"sağlar. Girdi kutusunda göndermek için Enter tuşuna basın. Hata ayıklama "
-"penceresini izleyin."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -14923,14 +12861,8 @@ msgstr "Liste ve mesaj penceresi için geçirgenlik değişkeni."
 #. *  description
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
-"the buddy list.\n"
-"\n"
-"* Note: This plugin requires Win2000 or greater."
+"the buddy list."
 msgstr ""
-"Bu eklenti ileti penceresi ve kişi listesi penceresi için saydamlık "
-"ayarlarını yapmanızı sağlar.\n"
-"\n"
-"* Not: Eklenti Win2000 veya daha yeni bir sürüm gerektirir."
 
 #. Autostart
 msgid "Startup"

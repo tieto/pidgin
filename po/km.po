@@ -9,11 +9,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"POT-Creation-Date: 2017-03-09 18:54-0600\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Khmer (http://www.transifex.com/projects/p/pidgin/language/"
-"km/)\n"
+"Language-Team: Khmer (http://www.transifex.com/pidgin/pidgin/language/km/)\n"
 "Language: km\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -58,7 +57,6 @@ msgstr ""
 "កំហុស​ដែល​បានជួប​ប្រទះ %s ប្ដូរ​ទៅ​កា​រកំណត់​របស់​អ្នកពី %s ទៅ %s ។ សូម​អង្កេត​ និង​បំពេញ​ការ​ប្ដូរ​ដោយ​ដៃ ។ "
 "សូម​រាយការណ៍​កំហុស​នេះ​តាម http://developer.pidgin.im"
 
-#. the user did not fill in the captcha
 msgid "Error"
 msgstr "កំហុស"
 
@@ -230,7 +228,6 @@ msgstr "សូម​បញ្ចូល​ព័ត៌មាន​​មិត្
 msgid "Chats"
 msgstr "ជជែក"
 
-#. Extract their Name and put it in
 msgid "Name"
 msgstr "ឈ្មោះ"
 
@@ -337,11 +334,9 @@ msgstr "បិទ/បើក​ស្លាក"
 msgid "View Log"
 msgstr "មើល​កំណត់ហេតុ"
 
-#. General
 msgid "Nickname"
 msgstr "សម្មតិនាម"
 
-#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "ទំនេរ"
@@ -763,7 +758,6 @@ msgid "Remaining"
 msgstr "នៅ​សល់"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
-#. presence
 msgid "Status"
 msgstr "ស្ថានភាព"
 
@@ -1009,8 +1003,9 @@ msgstr "ក្រុមមិត្តភក្ដិ​ថ្មី"
 msgid "Edit Buddy Pounce"
 msgstr "កែសម្រួល​ក្រុម​មិត្តភក្ដិ"
 
-msgid "Pounce Who"
-msgstr "ក្រុមជា​នរណា"
+#. Create the "Pounce on Whom" frame.
+msgid "Pounce on Whom"
+msgstr "ក្រុម​នៅ​លើ​អ្នកណា"
 
 #. Account:
 msgid "Account:"
@@ -1255,8 +1250,8 @@ msgstr "GStreamer បានបរាជ័យ​ក្នុងការ​ច�
 msgid "(default)"
 msgstr "(លំនាំដើម)"
 
-msgid "Select Sound File ..."
-msgstr "ជ្រើស​ឯកសារ​សំឡេង..."
+msgid "Select Sound File..."
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr "ចំណូល​ចិត្ត​សំឡេង"
@@ -1338,21 +1333,12 @@ msgstr "លុប​ស្ថានភាព"
 msgid "Saved Statuses"
 msgstr "ស្ថានភាព​ដែល​បាន​រក្សាទុក"
 
-#. title
 msgid "Title"
 msgstr "ចំណង​ជើង"
 
 msgid "Type"
 msgstr "ប្រភេទ"
 
-#. Statuses are almost all the same. Define a macro to reduce code repetition.
-#. PurpleStatusPrimitive
-#. id - use default
-#. name - use default
-#. saveable
-#. user_settable
-#. not independent
-#. Attributes - each status can have a message.
 msgid "Message"
 msgstr "សារ"
 
@@ -1384,12 +1370,12 @@ msgstr "សារ ៖"
 msgid "Edit Status"
 msgstr "កែ​សម្រួល​ស្ថានភាព"
 
-msgid "Use different status for following accounts"
-msgstr "ប្រើ​ស្ថានភាព​ផ្សេង​សម្រាប់​គណនី​ដូច​ខាង​ក្រោម"
+msgid "Use a different status for some accounts"
+msgstr ""
 
-#. Save & Use
-msgid "Save & Use"
-msgstr "រក្សាទុក​​កា​រប្រើើ"
+#. Save and Use
+msgid "Save and Use"
+msgstr ""
 
 msgid "Certificates"
 msgstr "វិញ្ញាបនបត្រ"
@@ -1515,8 +1501,8 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr "TinyURL សម្រាប់​ខាង​លើ ៖ %s"
 
-msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr "សូម​រង់​ចាំ​អំឡុង​ពេល​ដែល ​TinyURL ទៅប្រ​​មូល​យក​ URL របស់​កម្មវិធីកាត់​ឲ្យ​ខ្លី..."
+msgid "Please wait while TinyURL fetches a shorter URL..."
+msgstr ""
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "បង្កើត​តែ TinyURL សម្រាប់ URLs ​ប្រវែង​នេះ ឬ​វែងជាង​នេះ"
@@ -1530,13 +1516,12 @@ msgstr "TinyURL"
 msgid "TinyURL plugin"
 msgstr "កម្មវិធី​ជំនួយ TinyURL"
 
-msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-msgstr "នៅពេល​ទទួល​សារ​ដែល​មាន URL(s) ប្រើ TinyURL សម្រាប់​​ការ​ចម្លង​កាន់តែ​ងាយ​ស្រួល"
+msgid "Shorten URLs in messages using TinyURL"
+msgstr ""
 
 msgid "Online"
 msgstr "លើ​បណ្ដាញ"
 
-#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "ក្រៅ​បណ្តាញ"
 
@@ -1772,7 +1757,6 @@ msgstr ""
 msgid "View Issuer Certificate"
 msgstr ""
 
-#. show error to user
 msgid "Registration Error"
 msgstr "កំហុស​ក្នុងកា​រចុះឈ្មោះ"
 
@@ -1788,7 +1772,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s បានបិទ"
 
 #. Undocumented
-#. Unknown error
 msgid "Unknown error"
 msgstr "មិនស្គាល់​កំហុស"
 
@@ -1908,21 +1891,6 @@ msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រា
 msgid "The command used to handle \"irc\" URLs, if enabled."
 msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"irc\" URLs ប្រសិន​បើ​បានបើក ។"
 
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែលបានបញ្ជាក់គួរ​គ្រប់គ្រង URLs \"msnim\" ។"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"msnim\" ។"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"msnim\" URLs ប្រសិន​បើ​បានបើក ។"
-
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "ថាតើ ពាក្យ​បញ្ជា​ដែល​បាន​បញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"sip\""
 
@@ -1951,21 +1919,6 @@ msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រា
 
 msgid "The command used to handle \"xmpp\" URLs, if enabled."
 msgstr "ពាក្យ​បញ្ជា​បាន​ប្រើ​ដើម្បី​គ្រប់គ្រង \"xmpp\" URLs ប្រសិន​បើ​បានបើក ។"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "ថាតើ ពាក្យ​បញ្ជាក់​ដែលបានបញ្ជាក់​គួរ​គ្រប់គ្រង URLs \"ymsgr\" ។"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"ពិត ប្រសិនបើ​ពាក្យ​បញ្ជា​បាន​បញ្ជាក់​នៅ​​គ្រាប់ចុច \"ពាក្យ​បញ្ជា\" គួរ​គ្រប់គ្រង URLs \"ymsgr\" ។"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "កម្មវិធី​គ្រប់គ្រង​សម្រាប់ URLs \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "ពាក្យ​បញ្ជា​បានប្រើ​ដើម្បី​គ្រប់គ្រង \"ymsgr\" URLs ប្រសិន​បើ​បានបើក ។"
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2186,21 +2139,19 @@ msgstr "<font color=\"red\"><b>មិនអាច​អាន​ឯកសារ�
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "សារ​ពី %s"
+msgstr ""
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
 
-#, fuzzy
 msgid "Network error."
-msgstr "បណ្ដាញ"
+msgstr ""
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
@@ -2218,9 +2169,8 @@ msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr "មិន​មាន​កូឌិក​​នៅ​សល់ទេ​ ។ ចំណូលចិត្ត​កូឌិក​របស់​​អ្នក​នៅ​ក្នុង​ fs-codecs.conf តឹងរឹង​ពេក ។"
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "មិនបានតភ្ជាប់​ទៅ​កាន់​ម៉ាស៊ីន​បម្រើ​ទេ"
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "កំហុស Farsight2 ដែល​មិនអាច​យក​ចេញ​​បានកើត​ឡើង ។"
@@ -2775,10 +2725,8 @@ msgstr "របៀប Psychic សម្រាប់​ការ​សន្ទន
 
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
-"ធ្វើ​ឲ្យ​បង្អួច​សន្ទនា​បង្ហាញ​ជា​អ្នក​ប្រើ​ផ្សេងៗ​ ចាប់ផ្ដើម​សរសេរ​សារ​ឲ្យ​អ្នក ។ ការងារ​សម្រាប់ AIM, "
-"ICQ, XMPP, Sametime និង Yahoo!"
 
 msgid "You feel a disturbance in the force..."
 msgstr "អ្នកមានអារម្មណ៍​ថា​រំខាន​ក្នុងការ​បង្ខំ..."
@@ -2993,11 +2941,9 @@ msgstr ""
 "http://www.activestate.com\n"
 
 msgid ""
-"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
-"im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
+"developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
-"មិនអាច​រកប្រអប់​ឧបករណ៍​ \"Bonjour for Windows\" របស់ Apple ឃើញទេ ចំពោះ​ព័ត៌មាន​បន្ថែម​ សូម​​"
-"មើល http://d.pidgin.im/BonjourWindows ។"
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "មិនអាច​ស្ដាប់​ការ​តភ្ជាប់ IM ចូល​បាន​ទេ"
@@ -3012,7 +2958,6 @@ msgstr "នាម​ខ្លួន"
 msgid "Last name"
 msgstr "នាម​ត្រកូល"
 
-#. email
 msgid "Email"
 msgstr "អ៊ីមែល"
 
@@ -3097,14 +3042,12 @@ msgstr "ទីក្រុង​"
 msgid "Year of birth"
 msgstr "ឆ្នាំ​កំណើត"
 
-#. gender
 msgid "Gender"
 msgstr "ភេទ"
 
 msgid "Male or female"
 msgstr "ប្រុស ឬ​ស្រី"
 
-#. 0
 msgid "Male"
 msgstr "ប្រុស"
 
@@ -3142,22 +3085,16 @@ msgstr "ជ្រើស​ការ​ជជែក​សម្រាប់មិ
 msgid "Add to chat..."
 msgstr "បន្ថែម​ទៅ​កា​រជជែក..."
 
-#. 0
 #. Global
 msgid "Available"
 msgstr "លើ​បណ្ដាញ"
 
-#. 2
 msgid "Chatty"
 msgstr "កា​រជជែក"
 
-#. 3
 msgid "Do Not Disturb"
 msgstr "កុំរំខាន"
 
-#. 1
-#. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
-#. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
 msgid "Away"
 msgstr "ចាកឆ្ងាយ"
@@ -3165,8 +3102,6 @@ msgstr "ចាកឆ្ងាយ"
 msgid "UIN"
 msgstr "UIN"
 
-#. first name
-#. optional information
 msgid "First Name"
 msgstr "នាម​ខ្លួន"
 
@@ -3191,9 +3126,6 @@ msgstr "មិនមាន​អ្នក​ប្រើ​ដែល​ផ្គ
 msgid "Unable to read from socket"
 msgstr "មិនអាច​អាន​ពី​រន្ធ​បានទេ"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
 msgid "Connected"
 msgstr "បាន​តភ្ជាប់"
 
@@ -3206,7 +3138,6 @@ msgstr "បន្ថែម​ទៅ​កាន់​ការ​ជជែក"
 msgid "Chat _name:"
 msgstr "ឈ្មោះការ​ជជែក ៖"
 
-#. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "តភ្ជាប់"
@@ -3961,8 +3892,6 @@ msgstr "ងារ​ការងារ"
 msgid "Role"
 msgstr "តួនាទី"
 
-#. birthday
-#. birthday (required)
 msgid "Birthday"
 msgstr "ថ្ងៃ​កំណើត"
 
@@ -4052,7 +3981,6 @@ msgstr "ចេញ"
 msgid "JID"
 msgstr "JID"
 
-#. last name
 msgid "Last Name"
 msgstr "នាម​ត្រកូល"
 
@@ -4314,7 +4242,6 @@ msgstr "គ្មាន (ដល់​មិនទាន់សម្រេច)"
 msgid "None"
 msgstr "គ្មាន"
 
-#. subscription type
 msgid "Subscription"
 msgstr "ការ​ជាវ"
 
@@ -4330,12 +4257,6 @@ msgstr ""
 msgid "Mood Comment"
 msgstr ""
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
 msgid "Tune Artist"
 msgstr "សិល្បករ Tune"
 
@@ -4578,8 +4499,6 @@ msgid ""
 "buzzes now."
 msgstr "មិនអាច​កេះកៀវ​បានទេ ពីព្រោះ %s មិន​គាំទ្រ​វា​ទេ ឬ​មិនមាន​បំណង​​ទទួល​ការ​កេះកៀវ​​ឥឡូវ​នោះ​ទេ ។"
 
-#. Yahoo only supports one attention command: the 'buzz'.
-#. This is index number YAHOO_BUZZ.
 msgid "Buzz"
 msgstr "កេះកៀវ"
 
@@ -4708,8 +4627,6 @@ msgstr "អនុញ្ញាត​ឲ្យ​អត្ថបទ​ធម្ម
 msgid "Connect port"
 msgstr "ច្រក​តភ្ជាប់"
 
-#. TODO: default to automatically try different ports. Make the user be
-#. * able to set the first port to try (like LastConnectedPort in Windows client).
 #. Account options
 msgid "Connect server"
 msgstr "តភ្ជាប់​ម៉ាស៊ីន​បម្រើ"
@@ -4720,8 +4637,9 @@ msgstr "ប្រូកស៊ី​ការ​ផ្ទេរ​ឯកសារ
 msgid "BOSH URL"
 msgstr "BOSH URL"
 
-#. this should probably be part of global smiley theme settings later on,
-#. shared with MSN
+#. this should probably be part of global smiley theme settings
+#. * later on
+#.
 msgid "Show Custom Smileys"
 msgstr "បង្ហាញ​សញ្ញាណ​ញញឹម​ផ្ទាល់"
 
@@ -4807,7 +4725,6 @@ msgstr "មិន​ស្គាល់​កំហុស​នៅ​ក្នុ
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "មិនអាច​ផ្ញើសារ​ទៅ​កាន់ %s អ្នក​ប្រើ​មិន​គាំទ្រ​កា​រផ្ទេរ​ឯកសារ​ទេ"
 
-#. not success
 msgid "File Send Failed"
 msgstr "បានបរាជ័យ​ក្នុងកា​រផ្ញើ​ឯកសារ"
 
@@ -5104,1595 +5021,6 @@ msgstr "សកម្មភាព"
 msgid "Select an action"
 msgstr "ជ្រើស​សកម្មភាព"
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "មិន​អាច​បន្ថែម \"%s\" ។"
-
-msgid "Buddy Add error"
-msgstr "កំហុស​ក្នុងកា​របន្ថែម​មិត្តភក្ដិ"
-
-msgid "The username specified does not exist."
-msgstr "មិនមាន​ឈ្មោះ​​អ្នក​ប្រើ​ដែល​បាន​បញ្ជាក់​ទេ ។"
-
-msgid "Unable to parse message"
-msgstr "មិន​អាច​ញែក​សារ​បានទេ"
-
-msgid "Syntax Error (probably a client bug)"
-msgstr "កំហុស​វាក្យសម្ពន្ធ (ប្រហែល​ជា​កំហុស​ម៉ាស៊ីន​ភ្ញៀវ)"
-
-msgid "Invalid email address"
-msgstr "អាសយដ្ឋាន​អ៊ីមែល​មិន​ត្រឹមត្រូវ"
-
-msgid "User does not exist"
-msgstr "មិន​មាន​​អ្នក​ប្រើ​ទេ"
-
-msgid "Fully qualified domain name missing"
-msgstr "បាត់​ឈ្មោះ​ដែល​ដែល​បានបញ្ជាក់​ទាំង​ស្រុង"
-
-msgid "Already logged in"
-msgstr "បាន​ចូលរួច​ហើយ"
-
-msgid "Invalid username"
-msgstr "ឈ្មោះ​អ្នក​ប្រើ​មិន​ត្រឹមត្រូវ"
-
-msgid "Invalid friendly name"
-msgstr "ឈ្មោះ​មិត្តភក្ដិ​មិន​ត្រឹមត្រូវ"
-
-msgid "List full"
-msgstr "បញ្ជី​ពេញ​ហើយ"
-
-msgid "Already there"
-msgstr "នៅ​ទីនោះ​រួច​ហើយ"
-
-msgid "Not on list"
-msgstr "មិន​នៅ​ក្នុង​បញ្ជី​ទេ"
-
-msgid "User is offline"
-msgstr "អ្នក​ប្រើ​នៅ​ក្រៅ​បណ្ដាញ"
-
-msgid "Already in the mode"
-msgstr "មាន​ក្នុង​របៀប​នេះ​រួច​ហើយ"
-
-msgid "Already in opposite list"
-msgstr "មាននៅ​ក្នុង​បញ្ជី​នោះ​រួច​ហើយ"
-
-msgid "Too many groups"
-msgstr "មានក្រុម​ច្រើនពេក"
-
-msgid "Invalid group"
-msgstr "ក្រុម​មិន​ត្រឹមត្រូវ"
-
-msgid "User not in group"
-msgstr "អ្នក​ប្រើ​មិននៅ​ក្នុង​ក្រុម​ទេ"
-
-msgid "Group name too long"
-msgstr "ឈ្មោះ​ក្រុម​វែងពេក"
-
-msgid "Cannot remove group zero"
-msgstr "មិនអាច​យក​ក្រុម​សូន្យ​ចេញបានទេ"
-
-msgid "Tried to add a user to a group that doesn't exist"
-msgstr "បាន​ព្យាយាម​បន្ថែម​អ្នក​ទៅ​ក្រុម​ដែល​មិនទាន់​មាន"
-
-msgid "Switchboard failed"
-msgstr "ប៉ាណូ​បានបរាជ័យ"
-
-msgid "Notify transfer failed"
-msgstr "បានបរាជ័យ​ក្នុងការ​ជូន​ដំណឹង​នៃ​កា​រផ្ទេរ"
-
-msgid "Required fields missing"
-msgstr "បាត់​វាល​ដែល​ត្រូវការ"
-
-msgid "Too many hits to a FND"
-msgstr "ចុច​គ្រាប់ចុច FND ច្រើន​ដង​ពេក"
-
-msgid "Not logged in"
-msgstr "មិនបានចូល​ទេ"
-
-msgid "Service temporarily unavailable"
-msgstr "សេវា​មិនអាច​ប្រើបានជា​បណ្ដោះអាសន្ន"
-
-msgid "Database server error"
-msgstr "កំហុស​ម៉ាស៊ីន​បម្រើ​មូលដ្ឋាន​ទិន្នន័យ"
-
-msgid "Command disabled"
-msgstr "បាន​បិទ​ពាក្យ​បញ្ជា"
-
-msgid "File operation error"
-msgstr "កំហុស​ក្នុងកា​រប្រតិបត្តិ​ឯកសារ"
-
-msgid "Memory allocation error"
-msgstr "កំហុស​ក្នុងការ​បម្រុង​ទុក​សតិ"
-
-msgid "Wrong CHL value sent to server"
-msgstr "តម្លៃ CHL មិនត្រឹមត្រូវ​បានផ្ញើ​ទៅ​កាន់ម៉ាស៊ីនបម្រើ"
-
-msgid "Server busy"
-msgstr "ម៉ាស៊ីនបម្រើ​រវល់"
-
-msgid "Server unavailable"
-msgstr "ម៉ាស៊ីន​បម្រើ​មិនអាច​ប្រើបានទេ"
-
-msgid "Peer notification server down"
-msgstr "ការ​ជូនដំណឹង​​ម៉ាស៊ីនបម្រើ​​ដូច​គ្នា​បាន​ខូច"
-
-msgid "Database connect error"
-msgstr "កំហុស​ក្នុងការ​តភ្ជាប់​មូលដ្ឋាន​ទិន្នន័យ"
-
-msgid "Server is going down (abandon ship)"
-msgstr "ម៉ាស៊ីន​បម្រើ​ខូច​ហើយ (មកជា​មួយ abandon)"
-
-msgid "Error creating connection"
-msgstr "កំហុស​ក្នុងការ​បង្កើត​ការ​តភ្ជាប់"
-
-msgid "CVR parameters are either unknown or not allowed"
-msgstr "ប៉ារ៉ាម៉ែត្រ​ដែល​ត្រូវ​បាន​ស្គាល់ ឬ​មិន​ត្រូវ​បានដំឡើង"
-
-msgid "Unable to write"
-msgstr "មិនអាច​សរសេរ"
-
-msgid "Session overload"
-msgstr "លើស​សម័យ"
-
-msgid "User is too active"
-msgstr "អ្នក​ប្រើ​សកម្មភាព​ពេក"
-
-msgid "Too many sessions"
-msgstr "មាន​សម័យ​ច្រើន​ពេក"
-
-msgid "Passport not verified"
-msgstr "មិនបានផ្ទៀងផ្ទាត់​លិខិត​ឆ្លងដែន​ទេ"
-
-msgid "Bad friend file"
-msgstr "ឯកសារ​មិត្តភក្ដិ​មិនល្អ"
-
-msgid "Not expected"
-msgstr "ដែលមិនបាន​រំពឹង​ទុក"
-
-msgid "Friendly name is changing too rapidly"
-msgstr "ឈ្មោះ​​មិត្តភក្ដិ​​កំពុង​ផ្លាស់ប្ដូរ​បន្តិចម្ដងៗ"
-
-msgid "Server too busy"
-msgstr "ម៉ាស៊ីន​បម្រើ​រវល់​ពេក"
-
-msgid "Authentication failed"
-msgstr "បាន​បរាជ័យ​ក្នុងកា​រផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
-
-msgid "Not allowed when offline"
-msgstr "មិន​បាន​អនុញ្ញាត​នៅពេល​នៅ​ក្រៅ​បណ្ដាញ"
-
-msgid "Not accepting new users"
-msgstr "មិនទទួលយក​អ្នក​ប្រើដែល​ថ្មីទេ"
-
-msgid "Kids Passport without parental consent"
-msgstr "ពាក្យ​សម្ងាត់​ក្មេង​ដោយ​គ្មានកា​រយល់ព្រម​ពី​ឳពុកម្ដាយ"
-
-msgid "Passport account not yet verified"
-msgstr "គណនី​លិខិតឆ្លងដែន​មិន​បាន​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​ទេ"
-
-msgid "Passport account suspended"
-msgstr "បានផ្អាក​គណនី​លិខិតឆ្លងដែន"
-
-msgid "Bad ticket"
-msgstr "សំបុត្រ​មិន​ល្អ"
-
-#, c-format
-msgid "Unknown Error Code %d"
-msgstr "មិន​ស្គាល់​កូដ​កំហុស %d"
-
-#, c-format
-msgid "MSN Error: %s\n"
-msgstr "កំហុស MSN ៖ %s\n"
-
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "បញ្ហា​ក្នុងការ​ធ្វើ​សមកាលកម្ម​បញ្ជីមិត្តភក្ដិ​នៅ​ក្នុង %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s នៅ​​ក្នុង​បញ្ជីមូលដ្ឋាន​ គឺ​នៅ​ក្នុងក្រុម \"%s\" ប៉ុន្តែ​មិននៅ​ក្នុង​បញ្ជី​ម៉ាស៊ីន​បម្រើ​ទេ ។ តើ​អ្នក​ចង់​"
-"បន្ថែមមិត្តភក្ដិ​នេះដែរឬទេ ?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s នៅ​ក្នុង​បញ្ជីមូលដ្ឋាន ប៉ុន្តែ​មិននៅ​ក្នុងបញ្ជី​ម៉ាស៊ីនបម្រើ​ទេ ។ តើ​អ្នកចង់​បន្ថែម​មិត្តភក្ដិ​នេះដែរឬទេ ?"
-
-msgid "Other Contacts"
-msgstr "ទំនាក់ទំនង​ផ្សេងៗ"
-
-msgid "Non-IM Contacts"
-msgstr "ទំនាក់ទំនង​ដែល​មិនមាន​ជា IM"
-
-#, c-format
-msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
-msgstr ""
-"%s បាន​ផ្ញើសញ្ញាណ​ ។ <a href='msn-wink://%s'> \n"
-"ចុច​ទីនេះ​ដើម្បី​ចាក់​វា​</a>"
-
-#, c-format
-msgid "%s sent a wink, but it could not be saved"
-msgstr "%s បាន​ផ្ញើ​សញ្ញា​មិចភ្នែក​ ប៉ុន្តែ​វា​មិន​អាច​ត្រូវ​បាន​រក្សាទុក​ទេ​"
-
-#, c-format
-msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
-msgstr "%s បាន​ផ្ញើ​ឈុត​សំឡេង ។ <a href='audio://%s'>ចុច​ទីនេះ ដើម្បី​ចាក់​វា</a>"
-
-#, c-format
-msgid "%s sent a voice clip, but it could not be saved"
-msgstr "%s បាន​ផ្ញើ​ឈុត​សំឡេង ប៉ុន្តែ​វា​មិនអាច​ត្រូវបានរក្សាទុក​ទេ"
-
-#, c-format
-msgid "%s sent you a voice chat invite, which is not yet supported."
-msgstr "%s បាន​ផ្ញើ​​ការ​អញ្ជើញ​ឲ្យ​ចូល​ជជែក​ជា​សំឡេង ដែល​មិន​ត្រូវបានគាំត្រ​នៅ​ឡើយ​ទេ ។"
-
-msgid "Nudge"
-msgstr "ច្រាន"
-
-#, c-format
-msgid "%s has nudged you!"
-msgstr "%s បាន​ច្រាន​អ្នក !"
-
-#, c-format
-msgid "Nudging %s..."
-msgstr "កំពុង​ច្រាន %s..."
-
-msgid "Email Address..."
-msgstr "អាសយដ្ឋាន​អ៊ីមែល..."
-
-msgid "Your new MSN friendly name is too long."
-msgstr "ឈ្មោះ​មិត្តភក្ដិ MSN ថ្មី​របស់​អ្នក​វែង​ពេក ។"
-
-#, c-format
-msgid "Set friendly name for %s."
-msgstr "កំណត់​ឈ្មោះ​មិត្តភក្តិ​សម្រាប់​ %s ។"
-
-msgid "Set Friendly Name"
-msgstr ""
-
-msgid "This is the name that other MSN buddies will see you as."
-msgstr "នេះជា​ឈ្មោះ​ដែល​មិត្តភក្ដិ MSN ផ្សេង​ទៀត​នឹង​ឃើញ​អ្នក ។"
-
-msgid "This Location"
-msgstr ""
-
-msgid "This is the name that identifies this location"
-msgstr ""
-
-msgid "Other Locations"
-msgstr ""
-
-msgid "You can sign out from other locations here"
-msgstr ""
-
-#. TODO: Due to limitations in our current request field API, the
-#. following string will show up with a trailing colon.  This should
-#. be fixed either by adding an "include_colon" boolean, or creating
-#. a separate purple_request_field_label_new_without_colon function,
-#. or by never automatically adding the colon and requiring that
-#. callers add the colon themselves.
-msgid "You are not signed in from any other locations."
-msgstr ""
-
-msgid "Allow multiple logins?"
-msgstr ""
-
-msgid ""
-"Do you want to allow or disallow connecting from multiple locations "
-"simultaneously?"
-msgstr ""
-
-msgid "Allow"
-msgstr "អនុញ្ញាត"
-
-msgid "Disallow"
-msgstr "មិន​អនុញ្ញាត"
-
-msgid "Set your home phone number."
-msgstr "កំណត់​លេខ​ទូរស័ព្ទ​ផ្ទះ​របស់​អ្នក ។"
-
-msgid "Set your work phone number."
-msgstr "កំណត់​លេខ​ទូរស័ព្ទ​ការងារ​របស់​អ្នក ។"
-
-msgid "Set your mobile phone number."
-msgstr "កំណត់​លេខ​ទូរស័ព្ទ​ចល័ត​របស់​អ្នក ។"
-
-msgid "Allow MSN Mobile pages?"
-msgstr "អនុញ្ញាត​ឲ្យ​មាន​ទំព័រ​ចល័ត​របស់ MSN ?"
-
-msgid ""
-"Do you want to allow or disallow people on your buddy list to send you MSN "
-"Mobile pages to your cell phone or other mobile device?"
-msgstr ""
-"តើអ្នក​ចង់​អនុញ្ញាត ឬ​មិន​អនុញ្ញាត​មនុស្ស​នៅ​ក្នុង​បញ្ជីមិត្តភក្ដិ​របស់​អ្នក​ផ្ញើ​ឲ្យ​អ្នក​នូវ​ទំព័រ​ចល័ត​របស់ MSN ទៅកាន់​"
-"ទូរស័ព្ទ​ចល័ត​របស់​អ្នក ឬ​ឧបករណ៍​ចល័ត​ផ្សេងៗ ?"
-
-#, c-format
-msgid "Blocked Text for %s"
-msgstr "អត្ថបទ​ដែលបានទប់ស្កាត់​សម្រាប់ %s"
-
-msgid "No text is blocked for this account."
-msgstr "គ្មាន​អត្ថបទ​ត្រូវ​បាន​ទប់ស្កាត់​សម្រាប់គណនី​នេះ ។"
-
-#, c-format
-msgid ""
-"MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr "ម៉ាស៊ីន​បម្រើ MSN បច្ចុប្បន្ន​កំពុង​ទប់ស្កាត់​កន្សោម​ធម្មតា​ដូច​ខាងក្រោម ៖ <br/>%s"
-
-msgid "This account does not have email enabled."
-msgstr "គណនី​នេះ​មិន​មាន​អាសយដ្ឋាន​បានបើក​ទេ ។"
-
-msgid "Send a mobile message."
-msgstr "ផ្ញើ​សារ​ចល័ត ។"
-
-msgid "Page"
-msgstr "ទំព័រ​​"
-
-msgid "Playing a game"
-msgstr "លេង​ល្បែង"
-
-msgid "Working"
-msgstr "ធ្វើការ"
-
-msgid "Has you"
-msgstr "មាន​អ្នក"
-
-msgid "Home Phone Number"
-msgstr "លេខ​ទូរស័ព្ទ​​ផ្ទះ​"
-
-msgid "Work Phone Number"
-msgstr "លេខ​ទូរស័ព្ទ​ការងារ"
-
-msgid "Mobile Phone Number"
-msgstr "លេខ​ទូរស័ព្ទ​ចល័ត"
-
-msgid "Be Right Back"
-msgstr "ថយក្រោយ"
-
-msgid "Busy"
-msgstr "រវល់"
-
-msgid "On the Phone"
-msgstr "ជាប់និយាយ​ទូរស័ព្ទ"
-
-msgid "Out to Lunch"
-msgstr "​ទៅ​អាហារ​ថ្ងៃ​ត្រង់​នៅ​ក្រៅ"
-
-msgid "Game Title"
-msgstr "ចំណង​ជើង​ល្បែង"
-
-msgid "Office Title"
-msgstr "ចំណង​ជើង​ការិយាល័យ"
-
-msgid "Set Friendly Name..."
-msgstr "កំណត់​​ឈ្មោះ​មិត្តភក្តិ..."
-
-msgid "View Locations..."
-msgstr ""
-
-msgid "Set Home Phone Number..."
-msgstr "កំណត់​លេខ​ទូរស័ព្ទ​ផ្ទះ..."
-
-msgid "Set Work Phone Number..."
-msgstr "កំណត់​លេខ​ទូរស័ព្ទ​កន្លែង​ធ្វើការ..."
-
-msgid "Set Mobile Phone Number..."
-msgstr "កំណត់​លេខ​ទូរស័ព្ទ​ចល័ត..."
-
-msgid "Enable/Disable Mobile Devices..."
-msgstr "បិទ/បើក​ឧបករណ៍​ចល័ត..."
-
-msgid "Allow/Disallow Multiple Logins..."
-msgstr ""
-
-msgid "Allow/Disallow Mobile Pages..."
-msgstr "អនុញ្ញាត/មិនអនុញ្ញាត​ទំព័រ​ចល័ត..."
-
-msgid "View Blocked Text..."
-msgstr "មើល​អត្ថបទ​ដែល​បាន​ទប់ស្កាត់..."
-
-msgid "Open Hotmail Inbox"
-msgstr "បើក​ប្រអប់​ Hotmail"
-
-msgid "Send to Mobile"
-msgstr "ផ្ញើ​ទៅ​ទូរស័ព្ទ​ចល័ត"
-
-msgid "SSL support is needed for MSN. Please install a supported SSL library."
-msgstr "ការ​គាំទ្រ SSL ត្រូវ​បានទាមទារ​សម្រាប់ MSN ។ សូម​ដំឡើង​បណ្ណាល័យ SSL ដែល​បានគាំទ្រ ។"
-
-#, c-format
-msgid ""
-"Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be valid email addresses."
-msgstr ""
-"មិនអាច​បន្ថែម​មិត្តភក្ដិ %s បាន​ទេ ពីព្រោះ​ឈ្មោះ​អ្នក​ប្រើ​មិន​ត្រឹមត្រូវ ។ ឈ្មោះ​អ្នក​ប្រើ​ត្រូវ​តែ​ជា​អាសយដ្ឋាន​"
-"អ៊ីមែល​ដែល​ត្រឹមត្រូវ ។"
-
-msgid "Unable to Add"
-msgstr "មិនអាច​បន្ថែម"
-
-msgid "Error retrieving profile"
-msgstr "កំហុសក្នុងការ​ទៅ​ទទួល​យក​ទម្រង់"
-
-msgid "General"
-msgstr "ទូទៅ"
-
-msgid "Age"
-msgstr "អាយុ"
-
-msgid "Occupation"
-msgstr "មុខរបរ"
-
-msgid "Location"
-msgstr "ទីតាំង"
-
-msgid "Hobbies and Interests"
-msgstr "ចំណូល​ចិត្ត និង​ចំណាប់​អារម្មណ៍"
-
-msgid "A Little About Me"
-msgstr "បន្តិចបន្តួច​អំពី​ខ្ញុំ"
-
-msgid "Social"
-msgstr "សង្គម"
-
-msgid "Marital Status"
-msgstr "ស្ថានភាព​គ្រួសារ"
-
-msgid "Interests"
-msgstr "ចំណាប់​អារម្មណ៍"
-
-msgid "Pets"
-msgstr "សត្វស្លាប"
-
-msgid "Hometown"
-msgstr "ទីក្រុង"
-
-msgid "Places Lived"
-msgstr "បន្តផ្ទាល់​នៅ​កន្លែង"
-
-msgid "Fashion"
-msgstr "ម៉ូដ"
-
-msgid "Humor"
-msgstr "អារម្មណ៍"
-
-msgid "Music"
-msgstr "តន្ត្រី"
-
-msgid "Favorite Quote"
-msgstr "សម្រង់​សំណព្វ"
-
-msgid "Contact Info"
-msgstr "ព័ត៌មាន​​ទំនាក់ទំនង"
-
-msgid "Personal"
-msgstr "ផ្ទាល់ខ្លួន"
-
-msgid "Significant Other"
-msgstr "ការ​សម្ងាត់​ផ្សេងៗ"
-
-msgid "Home Phone"
-msgstr "ទូរស័ព្ទ​​​​​ផ្ទះ"
-
-msgid "Home Phone 2"
-msgstr "ទូរស័ព្ទ​ផ្ទះ ២"
-
-msgid "Home Address"
-msgstr "អាសយដ្ឋាន​ផ្ទះ"
-
-msgid "Personal Mobile"
-msgstr "ទូរស័ព្ទ​ចល័ត​ផ្ទាល់ខ្លួន"
-
-msgid "Home Fax"
-msgstr "ទូរសារ​ផ្ទះ"
-
-msgid "Personal Email"
-msgstr "អ៊ីមែល​ផ្ទាល់ខ្លួន"
-
-msgid "Personal IM"
-msgstr "IM ផ្ទាល់ខ្លួន"
-
-msgid "Anniversary"
-msgstr "ខួប​កំណើត"
-
-#. Business
-msgid "Work"
-msgstr "ការងារ"
-
-msgid "Company"
-msgstr "ក្រុមហ៊ុន"
-
-msgid "Department"
-msgstr "នាយកដ្ឋាន"
-
-msgid "Profession"
-msgstr "វិជ្ជាជីវៈ"
-
-msgid "Work Phone"
-msgstr "ទូរស័ព្ទ​​​កន្លែង​​​ធ្វើការ"
-
-msgid "Work Phone 2"
-msgstr "ទូរស័ព្ទ​កន្លែង​ធ្វើការ​ ២"
-
-msgid "Work Address"
-msgstr "អាសយដ្ឋាន​កន្លែងធ្វើការ"
-
-msgid "Work Mobile"
-msgstr "ទូរស័ព្ទ​ចល័ត​កន្លែង​ធ្វើការ"
-
-msgid "Work Pager"
-msgstr "ភេយ័រ​កន្លែង​ធ្វើការ"
-
-msgid "Work Fax"
-msgstr "ទូរសារ​កន្លែង​ធ្វើការ"
-
-msgid "Work Email"
-msgstr "អ៊ីមែល​កន្លែង​ធ្វើការ"
-
-msgid "Work IM"
-msgstr "IM កន្លែង​ធ្វើការ"
-
-msgid "Start Date"
-msgstr "កាលបរិច្ឆេទ​ចាប់ផ្ដើម"
-
-msgid "Favorite Things"
-msgstr "វត្ថុ​សំណព្វ"
-
-msgid "Last Updated"
-msgstr "បាន​ធ្វើ​ឲ្យ​ទាន់សម័យ​ចុងក្រោយ"
-
-msgid "Homepage"
-msgstr "គេហទំព័រ"
-
-msgid "The user has not created a public profile."
-msgstr "អ្នក​ប្រើ​មិន​បាន​បង្កើត​ទម្រង់​សាធារណៈ​ទេ ។"
-
-msgid ""
-"MSN reported not being able to find the user's profile. This either means "
-"that the user does not exist, or that the user exists but has not created a "
-"public profile."
-msgstr ""
-"MSN បាន​រាយការណ៍​ថា​មិនអាច​រក​ទម្រង់​របស់​អ្នកប្រើទេ ។ នេះ​មាន​ន័យ​ថា​អ្នក​ប្រើ​មិន​ទាន់មាន​ទេ ឬ​ថា​​មាន​អ្នក​"
-"ប្រើ​ ប៉ុន្តែ​មិន​បានបង្កើត​ទម្រង់​ជា​សាធារណៈ​ទេ ។"
-
-msgid ""
-"Could not find any information in the user's profile. The user most likely "
-"does not exist."
-msgstr "មិនអាច​រក​ព័ត៌មាន​នៅ​ក្នុង​ទម្រង់​របស់​អ្នក​ប្រើ​ទេ ។ អ្នក​ប្រើ​ទំនង​ជា​មិន​ទាន់មាន​ទេ ។"
-
-msgid "View web profile"
-msgstr "មើល​ទម្រង់​លើ​បណ្ដាញ"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *< summary
-msgid "Windows Live Messenger Protocol Plugin"
-msgstr "កម្មវិធី​ជំនួយ​ពិធីការ​របស់​កម្មវិធី​ផ្ញើសារ​បន្តផ្ទាល់​របស់​វីនដូ"
-
-msgid "Use HTTP Method"
-msgstr "ប្រើ​វិធីសាស្ត្រ HTTP"
-
-msgid "HTTP Method Server"
-msgstr "ម៉ាស៊ីនបម្រើ​វិធីសាស្ត្រ HTTP"
-
-msgid "Show custom smileys"
-msgstr "បង្ហាញ​សញ្ញាណ​អារម្មណ៍​ផ្ទាល់ខ្លួន"
-
-msgid "Allow direct connections"
-msgstr ""
-
-msgid "Allow connecting from multiple locations"
-msgstr ""
-
-msgid "nudge: nudge a user to get their attention"
-msgstr "ច្រាន​ចេញ ៖ ច្រានអ្នកប្រើ​ចេញ​ដើម្បី​ទទួល​បាន​ការ​ចាបអារម្មណ៍​របស់​ពួកគេ"
-
-msgid "Windows Live ID authentication:Unable to connect"
-msgstr "ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​នៃ​លេខសម្គាល់​របស់ Windows Live ៖ មិនអាច​តភ្ជាប់​បានទេ"
-
-msgid "Windows Live ID authentication:Invalid response"
-msgstr "កា​រផ្ទៀងផ្ទាត់​​ភាព​ត្រឹមត្រូវ​នៃ​លេខសម្គាល់​របស់ Windows Live ៖ ការ​ឆ្លើយតប​មិនត្រឹមត្រូវ"
-
-msgid "The following users are missing from your addressbook"
-msgstr "អ្នក​ប្រើ​ដូច​ខាងក្រោម​បាត់​ពី​សៀវភៅ​អាសយដ្ឋាន​របស់​អ្នក"
-
-#, c-format
-msgid "Unknown error (%d): %s"
-msgstr "មិន​ស្គាល់​កំហុស (%d) ៖ %s"
-
-msgid "Unable to add user"
-msgstr "មិនអាច​បន្ថែម​អ្នក​ប្រើ​បានទេ"
-
-#. Unknown error!
-#, c-format
-msgid "Unknown error (%d)"
-msgstr "មិន​ស្គាល់​កំហុស (%d)"
-
-msgid "Unable to remove user"
-msgstr "មិនអាច​យក​អ្នក​ប្រើ​ចេញបាន​ទេ"
-
-msgid "Mobile message was not sent because it was too long."
-msgstr "សារ​ចល័ត​មិនត្រូវ​បានផ្ញើ​ទេ ដោយ​សារ​តែ​វា​វែង​ពេក ។"
-
-msgid "Mobile message was not sent because an unknown error occurred."
-msgstr ""
-
-#, c-format
-msgid ""
-"The MSN server will shut down for maintenance in %d minute. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgid_plural ""
-"The MSN server will shut down for maintenance in %d minutes. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgstr[0] ""
-"ម៉ាស៊ីន​បម្រើ MSN នឹង​បិទ​ដើម្បី​ថែទាំ​ក្នុងរយៈពេល %d នាទី ។ អ្នកនឹង​ត្រូវ​បាន​ចេញ​ដោយ​ស្វ័យ​ប្រវត្តិ​នៅ​ពេល​"
-"ណាមួយ ។ សូម​បញ្ចប់​ការ​សន្ទនា​ដែល​កំពុង​តែ​សន្ទនា ។\n"
-"\n"
-"បន្ទាប់​ពី​កា​រ​ថែទាំ​ចប់ អ្នក​នឹង​អាច​ចូល​ដោយ​ស្វ័យ​ប្រវត្តិ​បាន ។"
-
-msgid ""
-"Message was not sent because the system is unavailable. This normally "
-"happens when the user is blocked or does not exist."
-msgstr ""
-"សារ​មិន​ត្រូវ​បាន​ផ្ញើ​ទេ ពីព្រោះ​ប្រព័ន្ធ​មិនអាច​ប្រើ​បាន​ទេ ។ តាម​ធម្មតា​វា​កើតឡើង​នៅពេល​ដែល​អ្នកប្រើ​ត្រូវ​"
-"បានទប់ស្កាត់ ឬ​មិន​ទាន់មាន ។"
-
-msgid "Message was not sent because messages are being sent too quickly."
-msgstr "សារ​មិន​ត្រូវ​បានផ្ញើទេ ពីព្រោះ​សារ​កំពុង​ត្រូវ​បានផ្ញើ​រហ័ស​ពេក ។"
-
-msgid "Message was not sent because an unknown encoding error occurred."
-msgstr "សារ​មិន​ត្រូវ​បាន​ផ្ញើ​ទេ ពីព្រោះ​មាន​កំហុស​អ៊ិនកូដ​ដែល​មិនស្គាល់​បានកើត​ឡើង ។"
-
-msgid "Message was not sent because an unknown error occurred."
-msgstr "សារ​មិន​ត្រូវ​បាន​ផ្ញើ​បានទេ ពីព្រោះ​មាន​កំហុស​ដែលមិនស្គាល់​បានកើត​ឡើង ។"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. Converting the encoding from "
-"%s to UTF-8 failed.)"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was %s, but it "
-"was not valid UTF-8.)"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was missing, but "
-"it was not valid UTF-8.)"
-msgstr ""
-
-msgid "Writing error"
-msgstr "កំហុស​ក្នុងការ​សរសេរ"
-
-msgid "Reading error"
-msgstr "កំហុសក្នុងការ​អាន"
-
-#, c-format
-msgid ""
-"Connection error from %s server:\n"
-"%s"
-msgstr ""
-"កំហុស​ក្នុងការ​តភ្ជាប់​ពី​ម៉ាស៊ីន​បម្រើ %s ៖\n"
-"%s"
-
-msgid "Our protocol is not supported by the server"
-msgstr "ពិធីការ​របស់​យើង ​មិន​ត្រូវ​បានគាំទ្រ​ដោយ​ម៉ាស៊ីនបម្រើ​ទេ ។"
-
-msgid "Error parsing HTTP"
-msgstr "កំហុស​ក្នុងកា​រញែក HTTP"
-
-msgid "You have signed on from another location"
-msgstr "អ្នក​បាន​ចុះហត្ថលេខា​ពី​ទីតាំង​ផ្សេង ។"
-
-msgid "The MSN servers are temporarily unavailable. Please wait and try again."
-msgstr "ម៉ាស៊ីន​បម្រើ MSN មិនអាច​ប្រើ​បាន​ជា​បណ្ដោះ​អាសន្ន ។ សូម​រង់ចាំ ហើយ​ព្យាយាម​ម្ដង​ទៀត ។"
-
-msgid "The MSN servers are going down temporarily"
-msgstr "ម៉ាស៊ីន​បម្រើ MSN នឹង​ត្រូវផ្អាក​ជា​​​បណ្ដោះ​អាសន្ន ។"
-
-#, c-format
-msgid "Unable to authenticate: %s"
-msgstr "មិនអាច​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ ៖ %s"
-
-#, c-format
-msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
-
-msgid "Handshaking"
-msgstr "ការ​ចាប់ដៃ"
-
-msgid "Transferring"
-msgstr "ការ​ផ្ទេរ"
-
-msgid "Starting authentication"
-msgstr "ចាប់ផ្ដើម​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
-
-msgid "Getting cookie"
-msgstr "ទទួល​ខូគី"
-
-msgid "Sending cookie"
-msgstr "ផ្ញើ​ខូគី"
-
-msgid "Retrieving buddy list"
-msgstr "ទៅ​យក​បញ្ជី​មិត្តភក្ដិ"
-
-#, c-format
-msgid "%s requests to view your webcam, but this request is not yet supported."
-msgstr "%s ស្នើសុំ​មើល​ម៉ាស៊ីន​ថត​តាម​បណ្ដាញ​របស់​អ្នក ប៉ុន្តែ​សំណើ​នេះ​មិន​ត្រូវ​បានគាំទ្រ​នៅ​ឡើយទេ ។"
-
-#, c-format
-msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr "%s បាន​អញ្ជើញ​អ្នក​ឲ្យ​មើល​ម៉ាស៊ីន​ថត​តាម​បណ្ដាញ​របស់​អ្នក ប៉ុន្តែ​វា​មិន​ត្រូវ​បាន​គាំទ្រ​នៅ​ឡើយ​ទេ ។"
-
-msgid "Away From Computer"
-msgstr "ចាកឆ្ងាយ​ពី​កុំព្យូទ័រ"
-
-msgid "On The Phone"
-msgstr "និយាយ​ទូរស័ព្ទ"
-
-msgid "Out To Lunch"
-msgstr "ចេញ​ទៅ​ហូប​អាហារ​ថ្ងៃត្រង់​នៅ​ខាង​ក្រៅ"
-
-msgid "Message may have not been sent because a timeout occurred:"
-msgstr "សារ​អាច​មិន​ត្រូ​វបាន​ផ្ញើ​ ពីព្រោះ​អស់​ពេល ៖"
-
-msgid "Message could not be sent, not allowed while invisible:"
-msgstr "សារ​មិនអាច​​ត្រូវ​បាន​ផ្ញើ​ទេ មិន​​បាន​អនុញ្ញាត​ខណៈពេល​មើល​មិន​ឃើញ ៖"
-
-msgid "Message could not be sent because the user is offline:"
-msgstr "សារ​មិន​អាច​ត្រូវ​បាន​ផ្ញើ​ទេ ពីព្រោះ​អ្នក​ប្រើ​នៅ​ក្រៅ​បណ្ដាញ ៖"
-
-msgid "Message could not be sent because a connection error occurred:"
-msgstr "សារ​មិនអាច​ត្រូ​វបាន​ផ្ញើ​ទេ ពីព្រោះ​​មាន​កំហុស​ក្នុងការ​តភ្ជាប់​បានកើត​ឡើង ៖"
-
-msgid "Message could not be sent because we are sending too quickly:"
-msgstr "សារ​មិនអាច​ត្រូវ​បាន​ផ្ញើ​ទេ ពីព្រោះ​យើង​កំពុង​ផ្ញើ​រហ័ស​ពេក ៖"
-
-msgid ""
-"Message could not be sent because we were unable to establish a session with "
-"the server. This is likely a server problem, try again in a few minutes:"
-msgstr ""
-"សារ​មិន​អាច​​ត្រូវ​បានផ្ញើ​ទេ ពីព្រោះ​យើង​មិន​អាច​បង្កើត​សម័យ​ជា​មួយ​ម៉ាស៊ីន​បម្រើ ។ វា​ទំនង​ជា​បញ្ហា​ម៉ាស៊ីន​បម្រើ "
-"ព្យាយាម​ម្ដង​ទៀត​​ក្នុង​រយៈពេល​ពីរ​ បី​នាទី​ទៀត ៖"
-
-msgid ""
-"Message could not be sent because an error with the switchboard occurred:"
-msgstr "សារ​មិនអាច​ត្រូវ​បាន​ផ្ញើទេ​ ពីព្រោះ​មាន​កំហុស​ជា​មួយ​ប៉ាណូ​បានកើតឡើង ៖"
-
-msgid "Message may have not been sent because an unknown error occurred:"
-msgstr "សារ​មិន​​អាច​ត្រូវ​បាន​ទេ ពីព្រោះ​មាន​កំហុស​ដែល​មិន​ស្គាល់​បាន​កើតឡើង ៖"
-
-msgid "Delete Buddy from Address Book?"
-msgstr "លុប​មិត្តភក្ដិ​ពី​សៀវភៅ​អាសយដ្ឋាន ?"
-
-msgid "Do you want to delete this buddy from your address book as well?"
-msgstr "តើ​អ្នក​ចង់​លុប​មិត្តភក្ដិ​នេះ​ពី​សៀវភៅ​អាសយដ្ឋាន​របស់​អ្នកដែរឬទេ ?"
-
-msgid "The username specified is invalid."
-msgstr "ឈ្មោះ​អ្នកប្រើ​ដែល​បាន​បញ្ជាក់​មិន​ត្រឹមត្រូវ ។"
-
-msgid "The Display Name you entered is invalid."
-msgstr ""
-
-msgid ""
-"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-msgstr "ថ្ងៃ​កំណើត​ដែល​អ្នក​បាន​បញ្ចូល​មិនត្រឹមត្រូវទេ ។ ​ទ្រង់ទ្រាយ​ដែល​ត្រឹមត្រូវ​គឺ 'YYYY-MM-DD' ។"
-
-#. show error to user
-msgid "Profile Update Error"
-msgstr "កំហុសក្នុងការ​​​ធ្វើ​ឲ្យ​ទម្រង់​​ទាន់​សម័យ​"
-
-#. no profile information yet, so we cannot update
-#. (reference: "libpurple/request.h")
-msgid "Profile"
-msgstr "ទម្រង់"
-
-msgid "Your profile information is not yet retrieved. Please try again later."
-msgstr "ទម្រង់​ព័ត៌មាន​របស់​អ្នក​មិន​ត្រូវបាន​​ទៅយក​នៅ​​ឡើយ​ទេ ។ សូម​ព្យាយាម​​ម្តងទៀត នៅ​ពេល​ក្រោយ ។"
-
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "បង្ហាញ​ឈ្មោះ​"
-
-#. about me
-msgid "About Me"
-msgstr ""
-
-#. where I live
-msgid "Where I Live"
-msgstr ""
-
-#. relationship status
-msgid "Relationship Status"
-msgstr ""
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "លេខ​ទូរស័ព្ទ​ចល័ត"
-
-#. is searchable
-msgid "Can be searched"
-msgstr ""
-
-#. is suggestable
-msgid "Can be suggested"
-msgstr ""
-
-msgid "Update your MXit Profile"
-msgstr ""
-
-msgid "The PIN you entered is invalid."
-msgstr "PIN ដែល​អ្នក​បាន​បញ្ចូល​មិនត្រឹមត្រូវទេ ។"
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "PIN ដែល​អ្នក​បាន​បញ្ចូល​មាន​ប្រវែង​​មិន​​ត្រឹមត្រូវ [4-10] ។"
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "PIN មិនត្រឹមត្រូវ​ទេ ។ វា​គួរ​តែ​មាន​តួលេខ​ [0-9]​ ប៉ុណ្ណោះ​ ។"
-
-msgid "The two PINs you entered do not match."
-msgstr "PIN ពីរ ដែល​អ្នក​បាន​បញ្ចូល​​​មិន​ត្រូវ​គ្នា ។"
-
-#. show error to user
-msgid "PIN Update Error"
-msgstr ""
-
-#. pin
-#. pin (required)
-msgid "PIN"
-msgstr "PIN"
-
-#. verify pin
-msgid "Verify PIN"
-msgstr "ផ្ទៀងផ្ទាត់ PIN"
-
-#. (reference: "libpurple/request.h")
-msgid "Change PIN"
-msgstr ""
-
-msgid "Change MXit PIN"
-msgstr ""
-
-msgid "View Splash"
-msgstr "មើលការ​ស្វាគមន៍"
-
-msgid "There is no splash-screen currently available"
-msgstr "បច្ចុប្បន្ន​មិនមាន​អេក្រង់​ស្វាគមន៍​ទេ"
-
-msgid "About"
-msgstr "អំពី"
-
-msgid "Search for user"
-msgstr ""
-
-msgid "Search for a MXit contact"
-msgstr ""
-
-msgid "Type search information"
-msgstr ""
-
-msgid "_Search"
-msgstr "ស្វែងរក"
-
-#. display / change profile
-msgid "Change Profile..."
-msgstr "ផ្លាស់ប្ដូរ​ទម្រង់..."
-
-#. change PIN
-msgid "Change PIN..."
-msgstr ""
-
-#. suggested friends
-msgid "Suggested friends..."
-msgstr ""
-
-#. search for contacts
-msgid "Search for contacts..."
-msgstr ""
-
-#. display splash-screen
-msgid "View Splash..."
-msgstr "មើល​ការ​ស្វាគមន៍..."
-
-#. display plugin version
-msgid "About..."
-msgstr "អំពី..."
-
-#. the file is too big
-msgid "The file you are trying to send is too large!"
-msgstr "ឯកសារ​ដែល​អ្នក​កំពុង​តែ​ព្យាយាម​​ផ្ញើ​ធំពេក !"
-
-#. file read error
-msgid "Unable to access the local file"
-msgstr ""
-
-#. file write error
-msgid "Unable to save the file"
-msgstr ""
-
-msgid ""
-"Unable to connect to the MXit HTTP server. Please check your server settings."
-msgstr "មិនអាច​តភ្ជាប់​ទៅ​កាន់​ម៉ាស៊ីន​បម្រើ MXit HTTP បាន​ទេ ។ សូម​ពិនិត្យ​ការ​កំណត់​ម៉ាស៊ីន​បម្រើ​របស់​អ្នក ។"
-
-msgid "Logging In..."
-msgstr "កំពុង​ចូល..."
-
-msgid ""
-"Unable to connect to the MXit server. Please check your server settings."
-msgstr "មិន​អាច​តភ្ជាប់​ទៅ​កាន់​ម៉ាស៊ីនបម្រើ MXit បាន​ទេ ។ សូម​ពិនិត្យ​មើល​ការ​កំណត់​ម៉ាស៊ីន​បម្រើ​របស់​អ្នក ។"
-
-msgid "Connecting..."
-msgstr "កំពុង​តភ្ជាប់..."
-
-msgid "The Display Name you entered is too short."
-msgstr ""
-
-msgid "The PIN you entered has an invalid length [7-10]."
-msgstr "PIN ដែល​អ្នក​បាន​បញ្ចូល​​មាន​ប្រវែង​មិន​ត្រឹមត្រូវ [៧-១០] ។"
-
-#. mxit login name
-msgid "MXit ID"
-msgstr ""
-
-#. show the form to the user to complete
-msgid "Register New MXit Account"
-msgstr "ចុះឈ្មោះគណនី​ MXit ថ្មី"
-
-msgid "Please fill in the following fields:"
-msgstr "សូម​បំពេញ​វាល​ដូច​ខាងក្រោម ៖"
-
-#. no reply from the WAP site
-msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr "កំហុស​ក្នុង​ការ​​​តភ្ជាប់​ទៅ​កាន់​​តំបន់​បណ្តាញ MXit WAP ។ សូម​ព្យាយាម​ម្ដង​ទៀត​ នៅពេល​ក្រោយ ។"
-
-#. wapserver error
-#. server could not find the user
-msgid ""
-"MXit is currently unable to process the request. Please try again later."
-msgstr "MXit បច្ចុប្បន្ន​មិនអាច​ដំណើរការ​សំណើ​បាន​ទេ ។ សូម​ព្យាយាម​ម្ដង​ទៀត​នៅពេល​ក្រោយ ។"
-
-msgid "Wrong security code entered. Please try again later."
-msgstr "កូដ​សុវត្ថិភាព​ដែល​បាន​បញ្ចូល​មិន​ត្រឹមត្រូវ​ទេ ។ សូម​ព្យាយាម​ម្ដង​ទៀត​នៅ​ពេល​ក្រោយ ។"
-
-msgid "Your session has expired. Please try again later."
-msgstr "សម័យ​របស់​អ្នក​ផុត​កំណត់​ហើយ ។ សូម​ព្យាយាម​ម្ដង​ទៀត​នៅពេល​ក្រោយ ។"
-
-msgid "Invalid country selected. Please try again."
-msgstr "ប្រទេស​ដែល​បាន​ជ្រើសមិន​ត្រឹមត្រូវទេ ។ សូម​ព្យាយាម​ម្តង​ទៀត ។"
-
-msgid "The MXit ID you entered is not registered. Please register first."
-msgstr ""
-
-msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr ""
-
-msgid "Internal error. Please try again later."
-msgstr "កំហុស​ខាង​ក្នុង​ ។ សូមព្យាយាមម្ដង​ទៀត​នៅ​ពេល​ក្រោយ ។"
-
-msgid "You did not enter the security code"
-msgstr "អ្នក​មិន​បានបញ្ចូល​កូដ​សុវត្ថិភាព​នោះ​ទេ"
-
-msgid "Security Code"
-msgstr "កូដ​សុវត្ថិភាព"
-
-#. ask for input (required)
-msgid "Enter Security Code"
-msgstr "បញ្ចូល​កូដ​សុវត្ថិភាព"
-
-msgid "Your Country"
-msgstr "ប្រទេស​របស់​អ្នក​"
-
-msgid "Your Language"
-msgstr "ភាសា​របស់​អ្នក​"
-
-#. display the form to the user and wait for his/her input
-msgid "MXit Authorization"
-msgstr "ការ​​អនុញ្ញាត​របស់​ MXit"
-
-msgid "MXit account validation"
-msgstr "កា​រធ្វើ​ឲ្យ​គណនី MXit មាន​សុពលភាព"
-
-msgid "Retrieving User Information..."
-msgstr "កំពុង​ទៅ​យក​ព័ត៌មាន​របស់​​អ្នកប្រើ​..."
-
-msgid "was kicked"
-msgstr ""
-
-msgid "You have been kicked from this MultiMX."
-msgstr ""
-
-msgid "_Room Name:"
-msgstr ""
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr ""
-
-msgid "Loading menu..."
-msgstr "កំពុង​ផ្ទុក​ម៉ឺនុយ..."
-
-msgid "Status Message"
-msgstr "សារ​ស្ថានភាព"
-
-msgid "Rejection Message"
-msgstr ""
-
-msgid "No profile available"
-msgstr ""
-
-msgid "This contact does not have a profile."
-msgstr ""
-
-msgid "Your MXit ID..."
-msgstr ""
-
-#. contact is in Deleted, Rejected or None state
-msgid "Re-Invite"
-msgstr ""
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "ម៉ាស៊ីន​បម្រើ WAP"
-
-msgid "Connect via HTTP"
-msgstr "តភ្ជាប់​តាមរយៈ HTTP"
-
-msgid "Enable splash-screen popup"
-msgstr "បើក​​អេក្រង់​ស្វាគមន៍​លេច​ឡើង"
-
-msgid "Don't want to say"
-msgstr ""
-
-msgid "Single"
-msgstr ""
-
-msgid "In a relationship"
-msgstr ""
-
-msgid "Engaged"
-msgstr ""
-
-msgid "Married"
-msgstr ""
-
-msgid "It's complicated"
-msgstr ""
-
-msgid "Widowed"
-msgstr ""
-
-msgid "Separated"
-msgstr ""
-
-msgid "Divorced"
-msgstr ""
-
-msgid "Last Online"
-msgstr ""
-
-msgid "Invite Message"
-msgstr ""
-
-msgid "No results"
-msgstr ""
-
-msgid "No contacts found."
-msgstr ""
-
-#. define columns
-msgid "UserId"
-msgstr ""
-
-msgid "Where I live"
-msgstr ""
-
-#, c-format
-msgid "You have %i suggested friend."
-msgid_plural "You have %i suggested friends."
-msgstr[0] ""
-
-#, c-format
-msgid "We found %i contact that matches your search."
-msgid_plural "We found %i contacts that match your search."
-msgstr[0] ""
-
-#. we must have lost the connection, so terminate it so that we can reconnect
-msgid "We have lost the connection to MXit. Please reconnect."
-msgstr "យើង​បាន​បាត់​បង់​ការ​តភ្ជាប់​ទៅកាន់​ MXit ។ សូម​តភ្ជាប់​​ឡើង​វិញ ។"
-
-#. packet could not be queued for transmission
-msgid "Message Send Error"
-msgstr "កំហុស​ក្នុងការ​ផ្ញើ​សារ​"
-
-msgid "Unable to process your request at this time"
-msgstr "មិនអាច​ដំណើរការ​សំណើ​របស់​អ្នក​នៅពេល​នេះ​បានទេ"
-
-msgid "Timeout while waiting for a response from the MXit server."
-msgstr "អស់ពេល ខណៈដែល​រង់ចាំ​ការ​ឆ្លើយ​តប​ពី​ម៉ាស៊ីន​បម្រើ MXit ។"
-
-msgid "Successfully Logged In..."
-msgstr "បានចូល​ដោយ​ជោគជ័យ..."
-
-#, c-format
-msgid ""
-"%s sent you an encrypted message, but it is not supported on this client."
-msgstr "%s បាន​ផ្ញើ​ឲ្យ​អ្នក​នូវ​សារ​ដែល​បានអ៊ីនគ្រិប ប៉ុន្តែ​វា​មិន​ត្រូវ​បានគាំទ្រ​នៅ​លើ​ម៉ាស៊ីន​ភ្ញៀវ​នេះ​ទេ ។"
-
-msgid "Message Error"
-msgstr "កំហុស​សារ"
-
-#. could not be decrypted
-msgid "An encrypted message was received which could not be decrypted."
-msgstr ""
-
-msgid "Cannot perform redirect using the specified protocol"
-msgstr "មិនអាច​អនុវត្ត​កា​របញ្ចូន​បន្ត​ដោយ​ប្រើ​ពិធីការ​ដែលបាន​បញ្ជាក់​​នោះ​ទេ"
-
-msgid "An internal MXit server error occurred."
-msgstr "កំហុស​ម៉ាស៊ីន​​បម្រើ MXit ខាង​ក្នុង​បាន​កើត​ឡើង ។"
-
-#, c-format
-msgid "Login error: %s (%i)"
-msgstr "កំហុស​ចូល ៖ %s (%i)"
-
-#, c-format
-msgid "Logout error: %s (%i)"
-msgstr "កំហុស​ចេញ ៖ %s (%i)"
-
-msgid "Contact Error"
-msgstr "កំហុសក្នុងការ​ទំនាក់ទំនង"
-
-msgid "Message Sending Error"
-msgstr "កំហុស​ក្នុងការ​ផ្ញើសារ​"
-
-msgid "Status Error"
-msgstr "កំហុស​​ស្ថាន​ភាព"
-
-msgid "Mood Error"
-msgstr "កំហុស​អារម្មណ៍"
-
-msgid "Invitation Error"
-msgstr "កំហុស​ក្នុង​​ការ​អញ្ជើញ"
-
-msgid "Contact Removal Error"
-msgstr "កំហុស​ក្នុងការ​យក​ទំនាក់ទំនង​ចេញ"
-
-msgid "Subscription Error"
-msgstr "កំហុស​​ក្នុងការ​ជាវ​​ប្រចាំ"
-
-msgid "Contact Update Error"
-msgstr "កំហុស​ក្នុង​ការ​ធ្វើ​ឲ្យ​ទំនាក់ទំនង​ទាន់សម័យ​"
-
-msgid "File Transfer Error"
-msgstr "កំហុស​​ក្នុងការ​​ផ្ទេរ​​ឯកសារ"
-
-msgid "Cannot create MultiMx room"
-msgstr "មិនអាច​បង្កើត​បន្ទប់ MultiMx បាន​ទេ"
-
-msgid "MultiMx Invitation Error"
-msgstr "កំហុស​ក្នុង​ការ​អញ្ជើញ MultiMx"
-
-msgid "Profile Error"
-msgstr "កំហុស​ទម្រង់​"
-
-#. bad packet
-msgid "Invalid packet received from MXit."
-msgstr "បាន​ទទួល​កញ្ចប់​ព័ត៌មាន​​មិន​ត្រូមត្រូវ​​​ពី​ MXit ។"
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr "កំហុស​ការ​តភ្ជាប់​​បាន​កើត​ឡើងចំពោះ​ MXit ។ (​អាន​ដំណាក់កាល​ 0x01)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr "កំហុស​ក្នុងការ​តភ្ជាប់​បានកើត​ឡើង​ចំពោះ MXit ។ (អាន​ដំណាក់កាល 0x02)"
-
-msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr "កំហុស​ក្នុង​​ការ​តភ្ជាប់​​កើតឡើង​ចំពោះ MXit ។ (​អាន​ដំណាក់កាល​ 0x03)"
-
-#. malformed packet length record (too long)
-msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr "កំហុស​ក្នុងការ​​តភ្ជាប់​​កើត​ឡើង​​ចំពោះ​ MXit ។ (អាន​ដំណាក់កាល 0x04)"
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr "កំហុស​ក្នុងកា​រតភ្ជាប់​បានកើត​ឡើង​ចំពោះ MXit ។ (អាន​ដំណាក់កាល 0x05)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr "កំហុស​ក្នុងការ​តភ្ជាប់​បានកើត​ឡើង​ចំពោះ MXit ។ (អាន​ដំណាក់កាល 0x06)"
-
-msgid "In Love"
-msgstr "សេចក្តី​ស្រឡាញ់"
-
-msgid "Pending"
-msgstr "រង់ចាំ​"
-
-msgid "Invited"
-msgstr "បាន​អញ្ជើញ"
-
-msgid "Rejected"
-msgstr "បាន​ច្រានចោល"
-
-msgid "Deleted"
-msgstr "បាន​លុប"
-
-msgid "MXit Advertising"
-msgstr "ការ​ផ្សាយ MXit"
-
-msgid "More Information"
-msgstr "ព័ត៌មាន​បន្ថែម​"
-
-#, c-format
-msgid "No such user: %s"
-msgstr "គ្មាន​អ្នក​ប្រើ​បែបនេះ​ទេ ៖ %s"
-
-msgid "User lookup"
-msgstr "រក​មើល​អ្នក​ប្រើ"
-
-msgid "Reading challenge"
-msgstr "អាន​ការ​ប្រកួត"
-
-msgid "Unexpected challenge length from server"
-msgstr "ប្រវែង​កា​រប្រកួត​ដែល​មិន​រំពឹង​ទុក​ពី​ម៉ាស៊ីនបម្រើ"
-
-msgid "Logging in"
-msgstr "ចូល"
-
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM - គ្មាន​ឈ្មោះ​អ្នកប្រើបាន​កំណត់"
-
-msgid "You appear to have no MySpace username."
-msgstr "អ្នក​បង្ហាញ​ថា​គ្មាន​ឈ្មោះអ្នកប្រើ MySpace នោះ​ទេ ។"
-
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr "តើ​អ្នក​ចង់​កំណត់​មួយ​ដែរឬទេ ? (ចំណាំ ៖ វា​មិនអាច​ត្រូវ​បាន​ផ្លាស់ប្ដូរ​នោះ​ទេ !)"
-
-msgid "Lost connection with server"
-msgstr "បាត់​បង់ការ​តភ្ជាប់​ជា​មួយ​ម៉ាស៊ីន​បម្រើ"
-
-#. Can't write _()'d strings in array initializers. Workaround.
-#. khc: then use N_() in the array initializer and use _() when they are
-#. used
-msgid "New mail messages"
-msgstr "សារ​សំបុត្រ​ថ្មី"
-
-msgid "New blog comments"
-msgstr "មតិយោបល់​ប្លុក​ថ្មី"
-
-msgid "New profile comments"
-msgstr "មិតយោបល់​ទម្រង់​ថ្មី"
-
-msgid "New friend requests!"
-msgstr "សំណើ​របស់មិត្តភក្ដិ​ថ្មី !"
-
-msgid "New picture comments"
-msgstr "មតិយោបល់រូបភាព​ថ្មី"
-
-msgid "MySpace"
-msgstr "MySpace"
-
-msgid "IM Friends"
-msgstr "មិត្តភក្ដិ​របស់ IM"
-
-#, c-format
-msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"មិត្តភក្ដិ %d ត្រូវ​បាន​បន្ថែម ឬ​ធ្វើ​ឲ្យ​ទាន់សម័យ​ពី​ម៉ាស៊ីនបម្រើ (រួម​មាន​មិត្តភក្ដិ​ដែល​មាន​នៅ​ក្នុង​បញ្ជី​​នៅ​ខាង​"
-"ម៉ាស៊ីនបម្រើ​រួច​ហើយ)"
-
-msgid "Add contacts from server"
-msgstr "បន្ថែម​ទំនាក់ទំនង​ពី​ម៉ាស៊ីន​បម្រើ"
-
-#, c-format
-msgid "Protocol error, code %d: %s"
-msgstr "កំហុស​ពិធីការ កូដ %d: %s"
-
-#, c-format
-msgid ""
-"%s Your password is %zu characters, which is longer than the maximum length "
-"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
-"cfm?fuseaction=accountSettings.changePassword and try again."
-msgstr ""
-"%s ពាក្យ​សម្ងាត់​របស់​អ្នក​គឺមាន %zu តួអក្សរ ដែល​វែង​ជាង​ប្រវែង​អតិបរមា​របស់ %d ។  សូម​កាត់​ពាក្យ​សម្ងាត់​"
-"របស់​អ្នក​នៅ http://profileedit.myspace.com/index.cfm?fuseaction=accountSettings."
-"changePassword ហើយ​ព្យាយាម​ម្ដង​ទៀត ។"
-
-msgid "Incorrect username or password"
-msgstr "ឈ្មោះ​អ្នក​ប្រើ ឬ​ពាក្យ​សម្ងាត់​មិន​ត្រឹមត្រូវ"
-
-msgid "MySpaceIM Error"
-msgstr "កំហុស MySpaceIM"
-
-msgid "Invalid input condition"
-msgstr "លក្ខខណ្ឌ​បញ្ចូល​មិនត្រឹមត្រូវ"
-
-msgid "Failed to add buddy"
-msgstr "បាន​បរាជ័យ​ក្នុងការ​បន្ថែម​មិត្តភក្ដិ"
-
-msgid "'addbuddy' command failed."
-msgstr "ពាក្យ​បញ្ជា 'addbuddy' បាន​បរាជ័យ ។"
-
-msgid "persist command failed"
-msgstr "បាន​បរាជ័យ​ក្នុងកា​រព្យាយាម​ពាក្យ​បញ្ជា"
-
-msgid "Failed to remove buddy"
-msgstr "បាន​បរាជ័យ​ក្នុងការ​យក​មិត្តភក្ដិ​ចេញ"
-
-msgid "'delbuddy' command failed"
-msgstr "បាន​បរាជ័យ​ពាក្យ​បញ្ជា​ 'delbuddy'"
-
-msgid "blocklist command failed"
-msgstr "បានបរាជ័យ​​ពាក្យ​បញ្ជា​បញ្ជី​ទប់ស្កាត់"
-
-msgid "Missing Cipher"
-msgstr "បាត់​ការ​សរសេរ​សម្ងាត់"
-
-msgid "The RC4 cipher could not be found"
-msgstr "រក​មិនឃើញ​ការ​សរសេរ​សម្ងាត់ RC4"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"ធ្វើ​ឲ្យ​ប្រសើ​ឡើង​ទៅ libpurple ដោយ​មាន​ការ​គាំទ្រ RC4 (>= 2.0.1) ។ កម្មវិធី​ជំនួយ MySpaceIM នឹង​"
-"មិន​ត្រូវ​បាន​ផ្ទុក ។"
-
-msgid "Add friends from MySpace.com"
-msgstr "បន្ថែម​មិត្តភក្ដិ​ពី MySpace.com"
-
-msgid "Importing friends failed"
-msgstr "បានបរាជ័យ​ក្នុងកា​រនាំមិត្តភក្តិចូល"
-
-#. TODO: find out how
-msgid "Find people..."
-msgstr "រក​មនុស្ស..."
-
-msgid "Change IM name..."
-msgstr "ផ្លាស់ប្ដូរ​ឈ្មោះ IM​..."
-
-msgid "myim URL handler"
-msgstr "កម្មវិធី​គ្រប់គ្រង myim URL"
-
-msgid "No suitable MySpaceIM account could be found to open this myim URL."
-msgstr " រក​មិន​ឃើញ​​គណនី MySpaceIM សមរម្យ​ដើម្បី​បើក myim URL នេះ​ទេ ។"
-
-msgid "Enable the proper MySpaceIM account and try again."
-msgstr "បើក​គណនី​ MySpaceIM សមរម្យ​ ហើយ​ព្យាយាម​ម្ដង​ទៀត ។"
-
-msgid "Show display name in status text"
-msgstr "បង្ហាញ​ឈ្មោះ​បង្ហាញ​នៅ​ក្នុង​​អត្ថបទ​ស្ថានភាព"
-
-msgid "Show headline in status text"
-msgstr "បង្ហាញ​ពេល​កំណត់​នៅ​ក្នុងអត្ថបទ​ស្ថានភាព"
-
-msgid "Send emoticons"
-msgstr "ផ្ញើ​​សញ្ញា​អារម្មណ៍"
-
-msgid "Screen resolution (dots per inch)"
-msgstr "គុណភាព​បង្ហាញ​អេក្រង់ (ចុច​/អ៊ិន្ឈ៍)"
-
-msgid "Base font size (points)"
-msgstr "មាន​មូលដ្ឋាន​លើ​ទំហំ​ពុម្ពអក្សរ (ចំណុច)"
-
-msgid "User"
-msgstr "អ្នក​ប្រើ"
-
-msgid "Headline"
-msgstr "ចំណង​ជើង"
-
-msgid "Song"
-msgstr "ចម្រៀង"
-
-msgid "Total Friends"
-msgstr "មិត្តភក្ដិ​សរុប"
-
-msgid "Client Version"
-msgstr "កំណែ​ម៉ាស៊ីន​ភ្ញៀវ"
-
-msgid ""
-"An error occurred while trying to set the username.  Please try again, or "
-"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
-"to set your username."
-msgstr ""
-"កំហុស​ដែល​បាន​កើត​ឡើង​ អំឡុង​ពេល​​​ព្យាយាម​កំណត់ឈ្មោះ​អ្នក​ប្រើ​ ។ សូម​ព្យាយាម​ម្តងទៀត ឬ​មើល​ http://"
-"editprofile.myspace.com/index.cfm?fuseaction=profile.username ដើម្បី​កំណត់​ឈ្មោះអ្នក​"
-"ប្រើ​របស់​អ្នក​ ។"
-
-msgid "MySpaceIM - Username Available"
-msgstr "MySpaceIM - មាន​ឈ្មោះ​អ្នក​ប្រើ"
-
-msgid "This username is available. Would you like to set it?"
-msgstr "មាន​ឈ្មោះ​អ្នកប្រើ​នេះ ។ តើ​អ្នក​ចង់​កំណត់​វា​ដែរឬទេ ?"
-
-msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr "នៅ​ពេល​កំណត់ វា​មិនអាច​ត្រូ​វបាន​ផ្លាស់ប្ដូរ​ទេ !"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM - សូម​កំណត់​​ឈ្មោះ​អ្នកប្រើ"
-
-msgid "This username is unavailable."
-msgstr "ឈ្មោះ​អ្នក​ប្រើ​នេះ​មិនអាច​ប្រើបានទេ ។"
-
-msgid "Please try another username:"
-msgstr "សូម​ព្យាយាម​ឈ្មោះ​អ្នក​ប្រើ​ផ្សេង​ទៀត ៖"
-
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "គ្មាន​ឈ្មោះ​អ្នក​ប្រើ​ត្រូវ​បានកំណត់"
-
-msgid "Please enter a username to check its availability:"
-msgstr "សូម​បញ្ចូល​ឈ្មោះអ្នក​ប្រើ​ដើម្បី​ពិនិត្យ​មើល​ភាព​អាច​ប្រើបាន​របស់​វា ៖"
-
-#. TODO: icons for each zap
-#. Lots of comments for translators:
-#. Zap means "to strike suddenly and forcefully as if with a
-#. * projectile or weapon."  This term often has an electrical
-#. * connotation, for example, "he was zapped by electricity when
-#. * he put a fork in the toaster."
-msgid "Zap"
-msgstr "ឆក់"
-
-#, c-format
-msgid "%s has zapped you!"
-msgstr "%s បាន​ឆក់​អ្នក !"
-
-#, c-format
-msgid "Zapping %s..."
-msgstr "កំពុង​ឆក់ %s..."
-
-#. Whack means "to hit or strike someone with a sharp blow"
-msgid "Whack"
-msgstr "ទះ"
-
-#, c-format
-msgid "%s has whacked you!"
-msgstr "%s បាន​ទះ​អ្នក !"
-
-#, c-format
-msgid "Whacking %s..."
-msgstr "កំពុង​ទះ %s..."
-
-#. Torch means "to set on fire."  Don't worry, this doesn't
-#. * make a whole lot of sense in English, either.  Feel free
-#. * to translate it literally.
-msgid "Torch"
-msgstr "ដុត"
-
-#, c-format
-msgid "%s has torched you!"
-msgstr "%s បាន​ដុត​អ្នក !"
-
-#, c-format
-msgid "Torching %s..."
-msgstr "កំពុង​ដុត %s..."
-
-#. Smooch means "to kiss someone, often enthusiastically"
-msgid "Smooch"
-msgstr "ថើប​ថ្នមៗ"
-
-#, c-format
-msgid "%s has smooched you!"
-msgstr "%s បាន​ថើប​អ្នក​ថ្នមៗ !"
-
-#, c-format
-msgid "Smooching %s..."
-msgstr "កំពុង​ថើប​ថ្នមៗ %s..."
-
-#. A hug is a display of affection; wrapping your arms around someone
-msgid "Hug"
-msgstr "អោប"
-
-#, c-format
-msgid "%s has hugged you!"
-msgstr "%s បាន​អោប​អ្នក !"
-
-#, c-format
-msgid "Hugging %s..."
-msgstr "កំពុង​អោប %s..."
-
-#. Slap means "to hit someone with an open/flat hand"
-msgid "Slap"
-msgstr "ទះថ្នមៗ"
-
-#, c-format
-msgid "%s has slapped you!"
-msgstr "%s បានទះ​អ្នក​ថ្នមៗ !"
-
-#, c-format
-msgid "Slapping %s..."
-msgstr "កំពុង %s ថ្នមៗ​..."
-
-#. Goose means "to pinch someone on their butt"
-msgid "Goose"
-msgstr "ចាក់"
-
-#, c-format
-msgid "%s has goosed you!"
-msgstr "%s បានចាក់​អ្នក !"
-
-#, c-format
-msgid "Goosing %s..."
-msgstr "កំពុងចាក់ %s..."
-
-#. A high-five is when two people's hands slap each other
-#. * in the air above their heads.  It is done to celebrate
-#. * something, often a victory, or to congratulate someone.
-msgid "High-five"
-msgstr "ស្វាគមន៍"
-
-#, c-format
-msgid "%s has high-fived you!"
-msgstr "%s បាន​ស្វាគមន៍​អ្នក !"
-
-#, c-format
-msgid "High-fiving %s..."
-msgstr "កំពុង​ស្វាគមន៍ %s..."
-
-#. We're not entirely sure what the MySpace people mean by
-#. * this... but we think it's the equivalent of "prank."  Or, for
-#. * someone to perform a mischievous trick or practical joke.
-msgid "Punk"
-msgstr "ប៉ះ"
-
-#, c-format
-msgid "%s has punk'd you!"
-msgstr "%s បានប៉ះអ្នក !"
-
-#, c-format
-msgid "Punking %s..."
-msgstr "កំពុង​ប៉ះ %s..."
-
-#. Raspberry is a slang term for the vibrating sound made
-#. * when you stick your tongue out of your mouth with your
-#. * lips closed and blow.  It is typically done when
-#. * gloating or bragging.  Nowadays it's a pretty silly
-#. * gesture, so it does not carry a harsh negative
-#. * connotation.  It is generally used in a playful tone
-#. * with friends.
-msgid "Raspberry"
-msgstr "លម្អ"
-
-#, c-format
-msgid "%s has raspberried you!"
-msgstr "%s បានលម្អ​អ្នក !"
-
-#, c-format
-msgid "Raspberrying %s..."
-msgstr "កំពុង​លម្អ %s..."
-
 msgid "Required parameters not passed in"
 msgstr "ប៉ារ៉ាម៉ែត្រ​ដែល​ត្រូវការ​មិនបាន​ចម្លង​ទេ"
 
@@ -6743,6 +5071,9 @@ msgstr "មិនអាច​បន្ថែម​ខ្លួន​អ្នក
 
 msgid "Master archive is misconfigured"
 msgstr "ប័ណ្ណសារ​មេ​បាត់ misconfigured"
+
+msgid "Incorrect username or password"
+msgstr "ឈ្មោះ​អ្នក​ប្រើ ឬ​ពាក្យ​សម្ងាត់​មិន​ត្រឹមត្រូវ"
 
 msgid "Could not recognize the host of the username you entered"
 msgstr "មិនអាច​ស្គាល់​ឈ្មោះ​​អ្នកប្រើ​ម៉ាស៊ីន​ដែល​អ្នក​បានបញ្ចូល​ទេ"
@@ -6859,6 +5190,12 @@ msgstr "កំហុស​ក្នុងការ​តភ្ជាប់​ជ
 msgid "Telephone Number"
 msgstr "លេខ​ទូរស័ព្ទ"
 
+msgid "Location"
+msgstr "ទីតាំង"
+
+msgid "Department"
+msgstr "នាយកដ្ឋាន"
+
 msgid "Personal Title"
 msgstr "ចំណង​ជើង​ផ្ទាល់ខ្លួន"
 
@@ -6907,6 +5244,9 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "តើ​អ្នក​ចង់​ចូល​រួម​ក្នុងការ​សន្ទនា​ដែរឬទេ ?"
 
+msgid "You have signed on from another location"
+msgstr "អ្នក​បាន​ចុះហត្ថលេខា​ពី​ទីតាំង​ផ្សេង ។"
+
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
@@ -6920,6 +5260,9 @@ msgstr ""
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "សន្និសីទ​នេះ​ត្រូ​វបាន​បិទ ។ គ្មាន​សារ​អាច​ត្រូវ​បាន​ផ្ញើ​ទេ ។"
+
+msgid "Busy"
+msgstr "រវល់"
 
 #. *< type
 #. *< ui_requirement
@@ -7019,6 +5362,9 @@ msgstr "ឈ្មោះ​បន្ទប់​ជជែក​មិន​ត្
 
 msgid "Invalid error"
 msgstr "កំហុស​​មិន​ត្រឹមត្រូវ"
+
+msgid "Not logged in"
+msgstr "មិនបានចូល​ទេ"
 
 msgid "Cannot receive IM due to parental controls"
 msgstr "មិនអាច​ទទួល IM បាន​ទេ ដោយ​សារ​តែ​ការ​ត្រួតពិនិត្យ​​តឹងរឹង"
@@ -7155,11 +5501,20 @@ msgstr "ស្ដាប់​តន្ត្រី"
 msgid "Studying"
 msgstr ""
 
+msgid "Working"
+msgstr "ធ្វើការ"
+
 msgid "In the restroom"
 msgstr ""
 
 msgid "Received invalid data on connection with server"
 msgstr "បាន​​ទទួល​ទិន្នន័យ​មិនត្រឹមត្រូវ​នៅពេល​តភ្ជាប់​ជា​មួយ​ម៉ាស៊ីន​បម្រើ"
+
+msgid "Error parsing response from authentication server"
+msgstr ""
+
+msgid "Unknown error during authentication"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -7286,6 +5641,11 @@ msgid ""
 "supported by your system."
 msgstr ""
 
+msgid ""
+"You required Kerberos authentication but encryption is disabled in your "
+"account settings."
+msgstr ""
+
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -7301,7 +5661,6 @@ msgid "Received authorization"
 msgstr "បានទទួល​ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
 
 #. Unregistered username
-#. the username does not exist
 msgid "Username does not exist"
 msgstr "មិនមាន​​ឈ្មោះ​អ្នក​ប្រើ"
 
@@ -7588,6 +5947,9 @@ msgstr ""
 "អាសយដ្ឋានអ៊ីមែល​ដែល​ត្រឹមត្រូវ ឬ​ចាប់ផ្ដើម​ដោយ​អក្សរ ហើយមាន​តែ​អក្សរ លេខ និង​ចន្លោះ​មិនឃើញ ឬ​មាន​តែ​លេខ​"
 "ប៉ុណ្ណោះ ។"
 
+msgid "Unable to Add"
+msgstr "មិនអាច​បន្ថែម"
+
 msgid "Unable to Retrieve Buddy List"
 msgstr "មិនអាច​ទៅ​យក​បញ្ជីមិត្តភ្ដិ​បានទេ"
 
@@ -7740,6 +6102,9 @@ msgstr "រក​មិត្តភក្ដិ​តាម​អាសយដ្
 msgid "Type the email address of the buddy you are searching for."
 msgstr "វាយ​អាសយដ្ឋាន​អ៊ីមែល​របស់​មិត្តភក្ដិ​ដែល​អ្នកកំពុង​ស្វែងរក ។"
 
+msgid "_Search"
+msgstr "ស្វែងរក"
+
 msgid "Set User Info (web)..."
 msgstr "កំណត់​ព័ត៌មាន​របស់​អ្នកប្រើ (បណ្ដាញ)..."
 
@@ -7776,8 +6141,17 @@ msgstr "បង្ហាញ​ការ​ផ្ទៀងផ្ទាត់​រ
 msgid "Search for Buddy by Email Address..."
 msgstr "ស្វែងរក​មិត្តភក្ដិ​តាម​អាសយដ្ឋាន​អ៊ីមែល..."
 
-msgid "Use clientLogin"
-msgstr "ប្រើការ​​ចូល​ម៉ាស៊ីន​ភ្ញៀវ"
+msgid "clientLogin"
+msgstr ""
+
+msgid "Kerberos"
+msgstr ""
+
+msgid "MD5-based"
+msgstr ""
+
+msgid "Authentication method"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -7899,6 +6273,9 @@ msgstr "មិនមាន​ព័ត៌មាន​អ្នក​ប្រើ
 msgid "Mobile Phone"
 msgstr "ទូរស័ព្ទ​​ចល័ត"
 
+msgid "Age"
+msgstr "អាយុ"
+
 msgid "Personal Web Page"
 msgstr "ទំព័រ​បណ្ដាញ​ផ្ទាល់ខ្លួន"
 
@@ -7907,11 +6284,20 @@ msgstr "ទំព័រ​បណ្ដាញ​ផ្ទាល់ខ្លួន
 msgid "Additional Information"
 msgstr "ព័ត៌មាន​បន្ថែម"
 
+msgid "Home Address"
+msgstr "អាសយដ្ឋាន​ផ្ទះ"
+
 msgid "Zip Code"
 msgstr "លេខ​តំបន់"
 
+msgid "Work Address"
+msgstr "អាសយដ្ឋាន​កន្លែងធ្វើការ"
+
 msgid "Work Information"
 msgstr "ព័ត៌មាន​ការងារ"
+
+msgid "Company"
+msgstr "ក្រុមហ៊ុន"
 
 msgid "Division"
 msgstr "វិធី​ចែក"
@@ -7930,6 +6316,12 @@ msgstr "សមាជិក​តាំង​ពី"
 
 msgid "Capabilities"
 msgstr "សមត្ថភាព"
+
+msgid "Profile"
+msgstr "ទម្រង់"
+
+msgid "View web profile"
+msgstr "មើល​ទម្រង់​លើ​បណ្ដាញ"
 
 msgid "Invalid SNAC"
 msgstr "SNAC មិន​ត្រឹមត្រូវ"
@@ -8220,6 +6612,9 @@ msgstr ""
 "ឧបករណ៍​កំណត់​អត្តសញ្ញាណ '%s' មិន​បានផ្គូផ្គង​អ្នក​ប្រើនៅ​ក្នុង​​សហគមន៍ Sametime របស់​អ្នក​ទេ ។ ធាតុ​នេះ​"
 "ត្រូវ​បាន​យកចេញ​ពី​បញ្ជីមិត្តភក្ដិ​របស់​អ្នក​ហើយ ។"
 
+msgid "Unable to add user"
+msgstr "មិនអាច​បន្ថែម​អ្នក​ប្រើ​បានទេ"
+
 #, c-format
 msgid ""
 "Error reading file %s: \n"
@@ -8497,6 +6892,9 @@ msgstr "សកម្ម​ភាព"
 
 msgid "Robot"
 msgstr "មនុស្ស​យន្ត"
+
+msgid "In Love"
+msgstr "សេចក្តី​ស្រឡាញ់"
 
 msgid "User Modes"
 msgstr "របៀប​អ្នក​ប្រើ"
@@ -8783,6 +7181,9 @@ msgstr "អង្គការ"
 msgid "Unit"
 msgstr "ផ្នែក"
 
+msgid "Homepage"
+msgstr "គេហទំព័រ"
+
 msgid "Note"
 msgstr "ចំណាំ"
 
@@ -8956,6 +7357,9 @@ msgstr "កំហុស​ក្នុង​​ការ​​តភ្ជាប
 
 msgid "Key Exchange failed"
 msgstr "បានបរាជ័យ​ក្នុងកា​រផ្លាស់ប្ដូរ​សោ"
+
+msgid "Authentication failed"
+msgstr "បាន​បរាជ័យ​ក្នុងកា​រផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ"
 
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
@@ -9458,408 +7862,6 @@ msgstr "ផ្ទៀងផ្ទាត់​អ្នកប្រើ"
 msgid "Auth Domain"
 msgstr "ផ្ទៀងផ្ទាត់​ដែន"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "ចូលរួម &lt;room&gt; ៖  ចូលរួម​បន្ទប់​ជជែក​នៅ​ក្នុង​បណ្ដាញ​យ៉ាហ៊ូ"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "បញ្ជី ៖ រាយ​បន្ទប់​នៅ​ក្នុង​បណ្ដាញ​របស់​យ៉ាហ៊ូ"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr "doodle ៖ ស្នើ​អ្នកប្រើ​ឲ្យ​ចាប់ផ្ដើម​សម័យ​របស់ Doodle"
-
-msgid "Yahoo ID..."
-msgstr "លេខ​សម្គាល់​របស់​យ៉ាហ៊ូ..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! Protocol Plugin"
-msgstr "យ៉ាហ៊ូ​ ! កម្មវិធី​ជំនួយ​​ពិធីការ"
-
-msgid "Pager port"
-msgstr "ច្រក​ភេយ័រ"
-
-msgid "File transfer server"
-msgstr "ម៉ាស៊ីនបម្រើ​ផ្ទេរ​ឯកសារ"
-
-msgid "File transfer port"
-msgstr "ច្រក​ផ្ទេរ​ឯកសារ"
-
-msgid "Chat room locale"
-msgstr "បន្ទប់​ជជែក​មូលដ្ឋាន"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "មិនអើពើ​សន្និសីទ និង​ការ​អញ្ជើញ​របស់​បន្ទប់​ជជែក"
-
-msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr ""
-
-msgid "Chat room list URL"
-msgstr "URL បញ្ជី​បន្ទប់​ជជែក"
-
-msgid "Yahoo JAPAN ID..."
-msgstr "លេខ​​សម្គាល់​​យ៉ាហ៊ូ​ជប៉ុន..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! JAPAN Protocol Plugin"
-msgstr "យ៉ាហ៊ូ ! ​កម្មវីធី​​ជំនួយ​ពិធីការ​ជប៉ុន"
-
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s បានផ្ញើ​ការ​អញ្ជើញ​អ្នក​ឲ្យ​បើក​ម៉ាស៊ីន​ថត​តាមបណ្ដាញ ដែល​មិន​ត្រូវ​បាន​គាំទ្រ​នៅ​ឡើយទេ ។"
-
-msgid "Your SMS was not delivered"
-msgstr "SMS របស់​អ្នក​មិន​ត្រូវ​បាន​បញ្ជូន​ទេ"
-
-msgid "Your Yahoo! message did not get sent."
-msgstr "យ៉ាហ៊ូ​របស់​អ្នក ! សារ​មិន​ត្រូវ​បានផ្ញើ​ទេ ។"
-
-#, c-format
-msgid "Yahoo! system message for %s:"
-msgstr "យ៉ាហ៊ូ ! សារ​ប្រព័ន្ធ​សម្រាប់ %s ៖"
-
-msgid "Authorization denied message:"
-msgstr "ការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​បានបដិសេធ​សារ ៖"
-
-#, c-format
-msgid ""
-"%s has (retroactively) denied your request to add them to your list for the "
-"following reason: %s."
-msgstr ""
-"%s បាន (ប្រតិសកម្ម) បដិសេធ​សំណើ​របស់​អ្នក ដើម្បីបន្ថែមពួកគេ​ទៅ​ក្នុង​បញ្ជី​របស់អ្នក​​ដោយ​មាន​ហេតុផល​"
-"ដូចខាងក្រោម ៖ %s ។"
-
-#, c-format
-msgid "%s has (retroactively) denied your request to add them to your list."
-msgstr "%s បាន​ (ប្រតិសកម្ម) បដិសេធ​សំណើ​របស់​អ្នក ដើម្បី​បន្ថែម​ពួកគេ​ទៅ​ក្នុង​បញ្ជី​របស់​អ្នក ។"
-
-msgid "Add buddy rejected"
-msgstr "បន្ថែម​មិត្តភក្ដិ​ដែល​បាន​ច្រានចេញ"
-
-#. Some error in the received stream
-msgid "Received invalid data"
-msgstr "បាន​ទទួល​ទិន្នន័យ​មិន​ត្រឹមត្រូវ"
-
-#. security lock from too many failed login attempts
-msgid ""
-"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-"website may fix this."
-msgstr ""
-"គណនី​ជាប់សោ ៖ បាន​បរាជ័យ​ ដោយសារ​មាន​ការ​​ប៉ុនប៉ង​ចូល​ច្រើន​​ដង​ពេក ។ ចូល​ក្នុងយ៉ាហ៊ូ ! តំបន់​បណ្ដាញ​អាច​កែ​វា​"
-"បាន ។"
-
-#. indicates a lock of some description
-msgid ""
-"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
-"this."
-msgstr "គណនី​ជាប់សោ ៖ មិនស្គាល់​ហេតុផល​នោះ​ទេ ។ ចូល​​ក្នុងយ៉ាហ៊ូ! តំបន់​​បណ្ដាញ​អាច​កែ​​វាបាន​ ។"
-
-#. indicates a lock due to logging in too frequently
-msgid ""
-"Account locked: You have been logging in too frequently.  Wait a few minutes "
-"before trying to connect again.  Logging into the Yahoo! website may help."
-msgstr ""
-
-#. username or password missing
-msgid "Username or password missing"
-msgstr "បាត់​ឈ្មោះ​អ្នក​ប្រើ ឬ​ពាក្យ​សម្ងាត់"
-
-#, c-format
-msgid ""
-"The Yahoo server has requested the use of an unrecognized authentication "
-"method.  You will probably not be able to successfully sign on to Yahoo.  "
-"Check %s for updates."
-msgstr ""
-"ម៉ាស៊ីន​បម្រើ​យ៉ាហ៊ូ​បាន​ស្នើ​ឲ្យ​ប្រើ​វិធីសាស្ត្រ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​ដែល​មិន​ស្គាល់ ។  អ្នក​នឹង​ប្រហែលជា​មិនអាច​"
-"ចូល​ក្នុងយ៉ាហ៊ូ​ដោយជោគជ័យ ។ ពិនិត្យ​មើល %s សម្រាប់​ភាព​ទាន់សម័យ ។"
-
-msgid "Failed Yahoo! Authentication"
-msgstr "បាន​បរាជ័យ​ក្នុងការ​ផ្ទៀងផ្ទាត់​ភាព​ត្រឹម​ត្រូវ​របស់​យ៉ាហ៊ូ !"
-
-#, c-format
-msgid ""
-"You have tried to ignore %s, but the user is on your buddy list.  Clicking "
-"\"Yes\" will remove and ignore the buddy."
-msgstr ""
-"អ្នកបាន​ព្យាយាម​មិនអើពើ %s ប៉ុន្តែ​អ្នកប្រើ​នៅ​ក្នុង​បញ្ជី​មិត្តភក្ដិ​របស់​អ្នក ។ ចុច \"បាទ/ចាស\" នឹង​យក​"
-"ចេញ ហើយ​មិនអើពើ​មិត្តភក្ដិ ។"
-
-msgid "Ignore buddy?"
-msgstr "មិនអើពើ​មិត្តភក្ដិ !"
-
-msgid "Invalid username or password"
-msgstr "ឈ្មោះ​អ្នក​ប្រើ ឬ​ពាក្យ​សម្ងាត់​មិន​ត្រឹមត្រូវ"
-
-msgid ""
-"Your account has been locked due to too many failed login attempts.  Please "
-"try logging into the Yahoo! website."
-msgstr ""
-"គណនី​របស់​អ្នក​ត្រូវ​បាន​ចាក់សោ ដោយ​សារ​តែ​​បាន​​​បរាជ័យ​ក្នុងការ​​​​​ប៉ុនប៉ង​ចូល​ច្រើន​​ដង​ពេក ។ សូម​ព្យាយាម​ចូល​​ក្នុង​តំបន់​"
-"បណ្ដាញ​​យ៉ាហ៊ូ​ !"
-
-msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr "មិន​ស្គាល់កំហុស ៥២ ។ កា​រតភ្ជាប់ឡើងវិញ​គួរតែ​កែ​វា​បាន ។"
-
-msgid ""
-"Error 1013: The username you have entered is invalid.  The most common cause "
-"of this error is entering your email address instead of your Yahoo! ID."
-msgstr ""
-"កំហុស ១០១៣ ៖ ឈ្មោះ​អ្នក​ប្រើ​ដែល​អ្នក​បានបញ្ចូល​មិន​ត្រឹមត្រូវ​ទេ ។  មូលហេតុ​ដែល​បណ្ដាល​ឲ្យ​មាន​កំហុស​នេះ​​គឺ​មក​ពី​"
-"បញ្ចូល​អាសយដ្ឋាន​អ៊ីមែល​របស់​អ្នក​​ជំនួស​ឲ្យ​លេខ​សម្គាល់​យ៉ាហ៊ូ​របស់​អ្នក ។"
-
-#, c-format
-msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
-msgstr "មិន​ស្គាល់លេខ​កំហុស %d ។ ចូល​ក្នុង​តំបន់យ៉ាហ៊ូ ! អាចជួសជុល​វា​បាន ។"
-
-#, c-format
-msgid "Unable to add buddy %s to group %s to the server list on account %s."
-msgstr "មិនអាច​បន្ថែម​មិត្តភក្ដិ​ %s ទៅក្រុម %s ទៅ​កាន់បញ្ជី​ម៉ាស៊ីនបម្រើ​នៅ​លើ​គណនី %s បាន​ទេ ។"
-
-msgid "Unable to add buddy to server list"
-msgstr "មិន​អាច​បន្ថែម​មិត្តភក្ដិ ​ទៅ​កាន់​បញ្ជី​ម៉ាស៊ីន​បម្រើ​បាន​ទេ​"
-
-#, c-format
-msgid "[ Audible %s/%s/%s.swf ] %s"
-msgstr "[ Audible %s/%s/%s.swf ] %s"
-
-msgid "Received unexpected HTTP response from server"
-msgstr "បាន​ទទួល​​កា​រឆ្លើយ​តប HTTP ដែល​មិន​រំពឹង​ពី​ម៉ាស៊ីន​បម្រើ ។"
-
-#, c-format
-msgid "Lost connection with %s: %s"
-msgstr "បាត់បង់​ការ​តភ្ជាប់​ជា​មួយ %s ៖ %s"
-
-#, c-format
-msgid "Unable to establish a connection with %s: %s"
-msgstr "មិន​អាច​បង្កើត​ការ​តភ្ជាប់​ជាមួយ %s ៖ %s បាន​ទេ"
-
-msgid "Unable to connect: The server returned an empty response."
-msgstr ""
-
-msgid ""
-"Unable to connect: The server's response did not contain the necessary "
-"information"
-msgstr ""
-
-msgid "Not at Home"
-msgstr "មិននៅ​ផ្ទះ​ទេ"
-
-msgid "Not at Desk"
-msgstr "មិននៅ​តុ​ទេ"
-
-msgid "Not in Office"
-msgstr "មិន​នៅ​ក្នុងការិយាល័យ​ទេ"
-
-msgid "On Vacation"
-msgstr "បវេស្សនកាល"
-
-msgid "Stepped Out"
-msgstr "ចេញ"
-
-msgid "Not on server list"
-msgstr "មិន​នៅ​ក្នុង​បញ្ជី​ម៉ាស៊ីនបម្រើ​ទេ"
-
-msgid "Appear Permanently Offline"
-msgstr "បង្ហាញ​នៅ​ក្រៅ​បណ្ដាញ​ជា​អចិន្ត្រៃយ៍"
-
-msgid "Presence"
-msgstr "វត្តមាន"
-
-msgid "Don't Appear Permanently Offline"
-msgstr "កុំបង្ហាញ​នៅ​ក្រៅ​បណ្ដាញ​អចិន្ត្រៃយ៍"
-
-msgid "Join in Chat"
-msgstr "ចូលរួម​ក្នុងកា​រជជែក"
-
-msgid "Initiate Conference"
-msgstr "ចាប់ផ្ដើម​សន្និសីទ"
-
-msgid "Presence Settings"
-msgstr "ការ​កំណត់​វត្តមាន"
-
-msgid "Start Doodling"
-msgstr "ចាប់ផ្ដើម Doodling"
-
-msgid "Activate which ID?"
-msgstr ""
-
-msgid "Select the ID you want to activate"
-msgstr "ជ្រើស​លេខ​សម្គាល់​ដែល​អ្នក​ចង់​ធ្វើ​ឲ្យ​សកម្ម"
-
-msgid "Join whom in chat?"
-msgstr "អ្នកណា​ចូលរួម​ក្នុងកា​រជជែក ?"
-
-msgid "Activate ID..."
-msgstr "ធ្វើ​ឲ្យ​លេខសម្គាល់​សកម្ម..."
-
-msgid "Join User in Chat..."
-msgstr "ចូលរួម​អ្នកប្រើ​នៅ​ក្នុង​ការ​ជជែក..."
-
-msgid "Open Inbox"
-msgstr "បើក​ប្រអប់"
-
-msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr "មិន​អាច​ផ្ញើ​សារ​​បាន​ទេ ។​ មិនអាច​ទទួល​យក​ឧបករណ៍​បញ្ជូន​ចល័ត​បាន​ទេ"
-
-msgid "Can't send SMS. Unknown mobile carrier."
-msgstr "មិន​អាច​ផ្ញើ​សារ​​បាន​ទេ ។ មិន​ស្គាល់​ឧបករណ៍​បញ្ជូន​​ចល័ត​ទេ ។"
-
-msgid "Getting mobile carrier to send the SMS."
-msgstr "​ទទួល​យក​ឧបករណ៍​បញ្ជូន​​​ចល័ត​​​ដើម្បី​ផ្ញើសារ ។"
-
-#. Write a local message to this conversation showing that a request for a
-#. * Doodle session has been made
-#.
-msgid "Sent Doodle request."
-msgstr "បានផ្ញើ​សំណើ Doodle ។"
-
-msgid "Unable to connect."
-msgstr "មិនអាច​តភ្ជាប់​បានទេ ។"
-
-msgid "Unable to establish file descriptor."
-msgstr "មិនអាច​បង្កើត​​ឧបករណ៍​ពិពណ៌នា​ឯកសារ​បានទេ ។"
-
-#, c-format
-msgid "%s is trying to send you a group of %d files.\n"
-msgstr "%s កំពុង​ព្យាយាម​ផ្ញើ​ឲ្យ​អ្នក​នូវ​ក្រុម​ឯកសារ %d ។\n"
-
-msgid "Write Error"
-msgstr "កំហុស​ក្នុងកា​រសរសេរ"
-
-msgid "Yahoo! Japan Profile"
-msgstr "ទម្រង់​យ៉ាហ៊ូ ជប៉ុន"
-
-msgid "Yahoo! Profile"
-msgstr "ទម្រង់ យ៉ាហ៊ូ !"
-
-msgid ""
-"Sorry, profiles marked as containing adult content are not supported at this "
-"time."
-msgstr "សូម​អភ័យ​ទោស ទម្រង់​បាន​សម្គាល់ថា​មាន​មាតិកា​​មនុស្ស​ពេញវ័យ​មិន​ត្រូវ​បានគាំទ្រ​នៅ​ពេល​នេះ​ទេ ។"
-
-msgid ""
-"If you wish to view this profile, you will need to visit this link in your "
-"web browser:"
-msgstr "ប្រសិន​បើ​អ្នក​ចង់​មើល​ជម្រង់​នេះ អ្នកត្រូវតែ​ទស្សនា​តំណ​នេះ​នៅ​ក្នុង​កម្មវិធី​រុករក​បណ្តាញ​របស់​អ្នក ៖"
-
-msgid "Yahoo! ID"
-msgstr "លេខ​សម្គាល់​របស់​យ៉ាហ៊ូ !"
-
-msgid "Hobbies"
-msgstr "ចំណូល​ចិត្ត"
-
-msgid "Latest News"
-msgstr "ព័ត៌មាន​ចុងក្រោយ"
-
-msgid "Home Page"
-msgstr "គេហទំព័រ"
-
-msgid "Cool Link 1"
-msgstr "តំណ ១"
-
-msgid "Cool Link 2"
-msgstr "តំណ ២"
-
-msgid "Cool Link 3"
-msgstr "តំណ ៣"
-
-msgid "Last Update"
-msgstr "ភាព​ទាន់សម័យ​ចុងក្រោយ"
-
-msgid ""
-"This profile is in a language or format that is not supported at this time."
-msgstr "ទម្រង់​នេះ​ស្ថិត​ក្នុង​ភាសា ឬ​ទ្រង់ទ្រាយ​ដែល​មិន​បាន​គាំទ្រ​នៅពេល​នេះ​ទេ ។"
-
-msgid ""
-"Could not retrieve the user's profile. This most likely is a temporary "
-"server-side problem. Please try again later."
-msgstr ""
-"មិនអាច​ទៅយក​ទម្រង់​របស់​អ្នកប្រើ​បានទេ ។ វា​ទំនង​ជា​បញ្ហា​ខាង​ម៉ាស៊ីនបម្រើជា​បណ្ដោះអាសន្ន ។ សូម​ព្យាយាម​"
-"ម្ដង​ទៀត​ពេល​ក្រោយ ។"
-
-msgid ""
-"Could not retrieve the user's profile. This most likely means that the user "
-"does not exist; however, Yahoo! sometimes does fail to find a user's "
-"profile. If you know that the user exists, please try again later."
-msgstr ""
-"មិនអាច​ទៅ យក​ទម្រង់​របស់​អ្នកប្រើបានទេ ។ វា​ទំនង​ជា​មាន​ន័យ​ថា ​មិនទាន់​មាន​អ្នកប្រើ​ទេ ទោះ​ជា​យ៉ាង​ណា​ក៏​"
-"ដោយ យ៉ាហ៊ូ ពេលខ្លះ​បានអនុវត្ត​មិនជោគជ័យ​ដើម្បីរក​ទម្រង់​របស់​អ្នក​ប្រើ ។ ប្រសិនបើ​អ្នក​ដឹង​ថា​មាន​អ្នកប្រើហើយ "
-"សូម​ព្យាយាម​ម្ដង​ទៀត​នៅ​ពេល​ក្រោយ ។"
-
-msgid "The user's profile is empty."
-msgstr "ទម្រង់​របស់​អ្នកប្រើ​ទទេរ ។"
-
-#, c-format
-msgid "%s has declined to join."
-msgstr "%s បាន​បដិសេធ​​ក្នុងកា​រចូលរួម ។"
-
-msgid "Failed to join chat"
-msgstr "បានបរាជ័យ​ក្នុងការ​ចូលរួម​ក្នុងការ​ជជែក"
-
-#. -6
-msgid "Unknown room"
-msgstr "មិន​ស្គាល់​បន្ទប់"
-
-#. -15
-msgid "Maybe the room is full"
-msgstr "ប្រហែល​ជា​បន្ទប់ពេញ​ហើយ"
-
-#. -35
-msgid "Not available"
-msgstr "មិនមាន"
-
-msgid ""
-"Unknown error. You may need to logout and wait five minutes before being "
-"able to rejoin a chatroom"
-msgstr "មិនស្គាល់​កំហុស ។ អ្នក​ត្រូវ​តែ​ចេញ ហើយ​រង់ចាំ​ប្រាំ​នាទី​ មុននឹង​អាច​ចូលរួម​ក្នុង​បន្ទប់​ជជែក​ម្ដង​ទៀត"
-
-#, c-format
-msgid "You are now chatting in %s."
-msgstr "ឥឡូវ​អ្នកកំពុង​ជជែក​​នៅ​ក្នុង %s ។"
-
-msgid "Failed to join buddy in chat"
-msgstr "បានបរាជ័យ​ក្នុងកា​រ​បញ្ចូល​មិត្តភក្ដិ​ក្នុងកា​រជជែក"
-
-msgid "Maybe they're not in a chat?"
-msgstr "ប្រហែល​ជា​មិនមាន​នៅ​ក្នុងការ​ជជែក​ទេ ?"
-
-msgid "Fetching the room list failed."
-msgstr "បាន​បរាជ័យ​ក្នុងការ​​ទៅយក​បញ្ជី​បន្ទប់ ។"
-
-msgid "Voices"
-msgstr "សំឡេង"
-
-msgid "Webcams"
-msgstr "ម៉ាស៊ីន​ថត​តាមបណ្ដាញ"
-
-msgid "Connection problem"
-msgstr "បញ្ហា​ក្នុង​ការ​តភ្ជាប់"
-
-msgid "Unable to fetch room list."
-msgstr "មិនអាច​ទៅ​យក​បញ្ជី​បន្ទប់​បានទេ ។"
-
-msgid "User Rooms"
-msgstr "បន្ទប់​អ្នកប្រើ"
-
-msgid "Connection problem with the YCHT server"
-msgstr "បញ្ហា​ក្នុង​កា​រតភ្ជាប់​ជា​មួយ​ម៉ាស៊ីន​បម្រើ YCHT ។"
-
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
@@ -9868,6 +7870,12 @@ msgstr "(មានកំហុសក្នុងបម្លែង​សារ�
 #, c-format
 msgid "Unable to send to chat %s,%s,%s"
 msgstr "មិនអាច​ផ្ញើ​ទៅកាន់ការ​ជជែក %s,%s,%s បានទេ"
+
+msgid "User is offline"
+msgstr "អ្នក​ប្រើ​នៅ​ក្រៅ​បណ្ដាញ"
+
+msgid "User"
+msgstr "អ្នក​ប្រើ"
 
 msgid "Hidden or not logged-in"
 msgstr "បានលាក់ ឬ​មិនបានចូល"
@@ -10250,8 +8258,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"This means that you can be chatting with friends on MSN, talking to a friend "
-"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+"This means that you can be chatting with friends on AIM, talking to a friend "
+"on Google Talk, and sitting in an IRC chat room all at the same time."
 msgstr ""
 
 msgid "The buddy list showing friends on different networks."
@@ -10263,8 +8271,8 @@ msgstr "កម្មវិធី​ផ្ញើសារ​អ៊ីនធឺណ
 msgid "Internet Messenger"
 msgstr "កម្មវិធី​ផ្ញើសារ​អ៊ីនធឺណិត"
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+#, fuzzy
+msgid "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, and more"
 msgstr ""
 "ជជែក​កំសាន្ត​តាម​ IM ។ គាំទ្រ AIM, Google Talk, Jabber/XMPP, MSN, យ៉ាហ៊ូ​ និង​​ផ្សេងៗ​ទៀត"
 
@@ -10978,13 +8986,11 @@ msgstr "ឈ្មោះ​ក្លែងក្លាយ ៖"
 msgid "_Group:"
 msgstr " ក្រុម ៖"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "ចូល​ដោយ​ស្វ័យ​ប្រវត្តិ នៅពេល​គនណី​តភ្ជាប់ ។​"
+msgstr ""
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
-msgstr "នៅ​ក្នុង​ការជជែក​បន្ទាប់​ពី​បង្អួច​ត្រូវ​បានបិទ ។"
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "សូម​បញ្ចូល​ឈ្មោះ​​​ក្រុម​ដែល​ត្រូ​វ​បន្ថែម ។"
@@ -11023,9 +9029,8 @@ msgstr "វាយ​ឈ្មោះ​ម៉ាស៊ីន​សម្រាប
 msgid "SSL Servers"
 msgstr "ម៉ាស៊ីនបម្រើស SSL"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "ជម្រើស​បំបាត់​កំហុស​ដែល​បានគាំទ្រ​គឺ ៖ កំណែកម្មវិធី​ជំនួយ"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "មិនស្គាល់​ពាក្យ​បញ្ជា ។"
@@ -11759,8 +9764,8 @@ msgstr ""
 
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
-"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
-">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"emailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>This "
+"is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
 "support/\">archive</a>)<br/>We can't help with third-party protocols or "
 "plugins!<br/>This list's primary language is <b>English</b>.  You are "
 "welcome to post in another language, but the responses may be less helpful."
@@ -12387,9 +10392,8 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
-#, fuzzy
 msgid "Media error"
-msgstr "កំហុសក្នុងការ​អាន"
+msgstr ""
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12548,10 +10552,6 @@ msgstr "ជ្រើស​ឯកសារ"
 
 msgid "Modify Buddy Pounce"
 msgstr "កែសម្រួល​ក្រុម​មិត្តភក្ដិ"
-
-#. Create the "Pounce on Whom" frame.
-msgid "Pounce on Whom"
-msgstr "ក្រុម​នៅ​លើ​អ្នកណា"
 
 msgid "_Account:"
 msgstr "គណនី ៖"
@@ -13216,9 +11216,9 @@ msgstr "ស្ថានភាព ៖"
 msgid "Use a _different status for some accounts"
 msgstr "ប្រើ​ស្ថានភាព​ផ្សេង​សម្រាប់គណនី​មួយ​ចំនួន"
 
-#. Save & Use button
-msgid "Sa_ve & Use"
-msgstr "រក្សាទុក​ការ​ប្រើ"
+#. Save and Use button
+msgid "Sa_ve and Use"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -13280,9 +11280,6 @@ msgstr "កម្មវិធី​ជ្រើស​ស្ថានភាព"
 
 msgid "Google Talk"
 msgstr "Google Talk"
-
-msgid "Facebook (XMPP)"
-msgstr ""
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -13565,6 +11562,9 @@ msgstr "សារ​បានទទួល"
 #, c-format
 msgid "Select Color for %s"
 msgstr "ជ្រើស​ពណ៌​សម្រាប់ %s"
+
+msgid "General"
+msgstr "ទូទៅ"
 
 msgid "Ignore incoming format"
 msgstr "មិនអើពើ​ទ្រង់ទ្រាយ​ចូល"
@@ -13937,16 +11937,11 @@ msgstr ""
 msgid "Notify For"
 msgstr "ជូន​ដំណឹង​សម្រាប់"
 
-#, fuzzy
-msgid "\t_Notify for System messages"
-msgstr "សារ​ប្រព័ន្ធ"
+msgid "\tS_ystem messages"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\tតែ​នៅពេល​មាន​អ្នកណាម្នាក់​និយាយ​អំពីឈ្មោះ​អ្នកប្រើ​របស់​អ្នក"
-
-#, fuzzy
-msgid "\tNotify for _System messages"
-msgstr "សារ​ប្រព័ន្ធ"
 
 msgid "_Focused windows"
 msgstr "បង្អួច​បានផ្ដោត​អារម្មណ៍"
@@ -14132,11 +12127,9 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "អនុញ្ញាត​ឲ្យ​អ្នក​ផ្ញើ​កា​របញ្ចូលដើម​ទៅ​កាន់​​​អត្ថបទ​ដែល​មានមូលដ្ឋាន​លើ​ពិធីការ ។"
 
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"អនុញ្ញាត​ឲ្យ​អ្នក​ផ្ញើ​ការ​បញ្ចូលដើម​ទៅ​អត្ថបទ​ដែលមានមូលដ្ឋាន​លើ​ពិធីការ (XMPP, MSN, IRC, TOC) ។ ចុច​"
-"គ្រាប់ចុច 'បញ្ចូល (Enter)' នៅ​ក្នុង​ប្រអប់​ធាតុ​ដើម្បី​ផ្ញើ ។ មើល​បង្អួច​បំបាត់កំហុស ។"
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -14582,13 +12575,8 @@ msgstr "ភាព​ថ្លា​ដែល​មាន​សម្រាប់
 #. *  description
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
-"the buddy list.\n"
-"\n"
-"* Note: This plugin requires Win2000 or greater."
+"the buddy list."
 msgstr ""
-"កម្មវិធី​ជំនួយ​នេះ​បើក​ភាព​ថ្លា​អាល់ហ្វា​ដែល​អាច​ប្រើ​បាន​នៅ​ក្នុង​បង្អួច​សន្ទនា និង​បញ្ជីមិត្តភក្ដិ ។\n"
-"\n"
-"* ចំណាំ ៖ កម្មវិធី​ជំនួយ​នេះ​ត្រូវការ Win2000 ឬ​ខ្ពស់​ជាង​នេះ ។"
 
 #. Autostart
 msgid "Startup"

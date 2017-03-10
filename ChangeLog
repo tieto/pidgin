@@ -3,7 +3,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.12.0 (??/??/????):
 	libpurple:
 	* Removed the MSN protocol plugin. It has been unusable and dormant for some
-	  time. MSNP18 has been discontinued and the protocol plugin would require a 
+	  time. MSNP18 has been discontinued and the protocol plugin would require a
 	  large update to start working again. See: http://ismsndeadyet.com/ The
 	  third-party Pidgin SkypeWeb plugin, however, should provide enough
 	  functionality as a replacement if people still want to use MSN:
