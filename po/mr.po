@@ -9,10 +9,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"POT-Creation-Date: 2017-03-09 18:55-0600\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Marathi (http://www.transifex.com/projects/p/pidgin/language/"
+"Language-Team: Marathi (http://www.transifex.com/pidgin/pidgin/language/"
 "mr/)\n"
 "Language: mr\n"
 "MIME-Version: 1.0\n"
@@ -58,7 +58,6 @@ msgstr ""
 "%s यांस %s पासून %s पर्यंत संरचना स्थानांतरीत करतेवेळी त्रुटी आढळली. कृपया तपासणी करा व "
 "हाताने स्थानांतरन पूर्ण करा. कृपया त्रुटी http://developer.pidgin.im येथे कळवा"
 
-#. the user did not fill in the captcha
 msgid "Error"
 msgstr "त्रुटी"
 
@@ -230,7 +229,6 @@ msgstr "कृपया बड्डीची माहिती घाला."
 msgid "Chats"
 msgstr "संभाषण"
 
-#. Extract their Name and put it in
 msgid "Name"
 msgstr "नाव"
 
@@ -337,11 +335,9 @@ msgstr "टॅगला टॉगल करा"
 msgid "View Log"
 msgstr "लॉग पहा"
 
-#. General
 msgid "Nickname"
 msgstr "टोपणनाव"
 
-#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "निष्क्रिय"
@@ -765,7 +761,6 @@ msgid "Remaining"
 msgstr "उर्वरीत"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
-#. presence
 msgid "Status"
 msgstr "स्थिती"
 
@@ -1012,8 +1007,9 @@ msgstr "नवीन बड्डीचे हल्ले"
 msgid "Edit Buddy Pounce"
 msgstr "बड्डी हल्ल्यास संपादन करा"
 
-msgid "Pounce Who"
-msgstr "हल्ला जो कोणी"
+#. Create the "Pounce on Whom" frame.
+msgid "Pounce on Whom"
+msgstr "ज्याच्यावर हल्ला करा"
 
 #. Account:
 msgid "Account:"
@@ -1258,8 +1254,8 @@ msgstr "Gस्ट्रीमर  सुरू करण्यास अपय�
 msgid "(default)"
 msgstr "(पूर्वनिर्धारीत)"
 
-msgid "Select Sound File ..."
-msgstr "आवाज फाइल नीवडा ..."
+msgid "Select Sound File..."
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr "आवाज आवड निवड"
@@ -1341,21 +1337,12 @@ msgstr "सद्यःस्थिती नष्ट करा"
 msgid "Saved Statuses"
 msgstr "जतन केलेली स्थिर उपयुक्तता"
 
-#. title
 msgid "Title"
 msgstr "शीर्षक"
 
 msgid "Type"
 msgstr "प्रकार"
 
-#. Statuses are almost all the same. Define a macro to reduce code repetition.
-#. PurpleStatusPrimitive
-#. id - use default
-#. name - use default
-#. saveable
-#. user_settable
-#. not independent
-#. Attributes - each status can have a message.
 msgid "Message"
 msgstr "संदेश"
 
@@ -1387,12 +1374,12 @@ msgstr "संदेश:"
 msgid "Edit Status"
 msgstr "सद्यःस्थितींचे संपादन करा"
 
-msgid "Use different status for following accounts"
-msgstr "खालील पत्त्यांसाठी निराळ्या सद्यःस्थितीना वापरा"
+msgid "Use a different status for some accounts"
+msgstr ""
 
-#. Save & Use
-msgid "Save & Use"
-msgstr "साठवा & वापरा"
+#. Save and Use
+msgid "Save and Use"
+msgstr ""
 
 msgid "Certificates"
 msgstr "प्रमाणपत्रे"
@@ -1517,8 +1504,8 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr "वरील करीता TinyURL: %s"
 
-msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr "TinyURL लहानसे URL प्राप्त करेपर्यंत कृपया जरा वेळ थांबा..."
+msgid "Please wait while TinyURL fetches a shorter URL..."
+msgstr ""
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "फक्त या किंवा यापेक्षा जास्त लांबीच्या URLs करीता TinyURL निर्माण करा"
@@ -1532,13 +1519,12 @@ msgstr "TinyURL"
 msgid "TinyURL plugin"
 msgstr "TinyURL प्लगइन"
 
-msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-msgstr "URL(s) पासून संदेश प्राप्त करतेवेळी, सोप्या कॉपीइंगसाठी TinyURL चा वापर करा"
+msgid "Shorten URLs in messages using TinyURL"
+msgstr ""
 
 msgid "Online"
 msgstr "ऑनलाइन"
 
-#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "ऑफलाईन"
 
@@ -1776,7 +1762,6 @@ msgstr ""
 msgid "View Issuer Certificate"
 msgstr ""
 
-#. show error to user
 msgid "Registration Error"
 msgstr "नोंदणी त्रुटी"
 
@@ -1792,7 +1777,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s बंद केले"
 
 #. Undocumented
-#. Unknown error
 msgid "Unknown error"
 msgstr "अपरिचीत त्रुटी"
 
@@ -1919,22 +1903,6 @@ msgstr "\"irc\" URLs साठी हाताळक"
 msgid "The command used to handle \"irc\" URLs, if enabled."
 msgstr "जर सक्षम असेल, तर \"irc\" URLs ना हाताळण्यासाठी वापरलेले आदेश."
 
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "निर्देशित केलेल्या आदेशाने  \"msnim\" URLsला हाताळायले हवे किंवा नाही"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"जर  \"आदेश\" कि मध्ये निर्देशित केलेल्या आदेशाने   URLs ची \"msnim\"   हाताळायले पाहिजे "
-"असेल तर खरे आहे."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" URLs साठी हाताळक"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "जर सक्षम असेल, तर \"msnim\" URLs ना हाताळण्यासाठी वापरलेले आदेश."
-
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "निर्देशित केलेल्या आदेशाने  \"sip\" URLsला हाताळायले हवे किंवा नाही"
 
@@ -1966,22 +1934,6 @@ msgstr "\"xmpp\" URLs साठी हाताळक"
 
 msgid "The command used to handle \"xmpp\" URLs, if enabled."
 msgstr "जर सक्षम असेल, तर  \"xmpp\" URLs ना हाताळण्यासाठी वापरलेले आदेश."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "निर्देशित केलेल्या आदेशाने \"ymsgr\" URLsला हाताळायले हवे किंवा नाही"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"जर  \"आदेश\" कि मध्ये निर्देशित केलेल्या आदेशाने   URLs ची \"ymsgr\"   हाताळायले पाहिजे "
-"असेल तर खरे आहे."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" URLs साठी हाताळक"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "जर सक्षम असेल, तर   \"ymsgr\" URLs ना हाताळण्यासाठी वापरलेले आदेश."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2202,21 +2154,19 @@ msgstr "<font color=\"red\"><b>फाइल वाचता आली नाह�
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "%s पासून संदेश"
+msgstr ""
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
 
-#, fuzzy
 msgid "Network error."
-msgstr "नेटवर्क"
+msgstr ""
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
@@ -2234,9 +2184,8 @@ msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr "कोडेक्स् आढळले नाही. तुम्हची fs-codecs.conf मधील कोडेक पसंती खूप जास्त गंभीर आहे."
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "सर्व्हरशी जोडले गेले नाही"
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "विना-प्राप्यजोगी Farsight2 त्रुटी आढळली."
@@ -2796,10 +2745,8 @@ msgstr "येणाऱ्या संवादासाठी मानसि�
 
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
-"इतर चौकटीं आपणास संदेश  देण्यास सुरू करण्याप्रमाणे संवाद विन्डोत दिसण्यासाठी परिणामित "
-"करते. हे खालीलकरीता कार्य करते AIM, ICQ, XMPP, सेमटाईम, व Yahoo!"
 
 msgid "You feel a disturbance in the force..."
 msgstr "आपणास आग्रह करताना व्यत्यय वाटतो..."
@@ -3017,11 +2964,9 @@ msgstr ""
 "www.activestate.com कडून सक्रिय TCLची स्थापना करा\n"
 
 msgid ""
-"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
-"im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
+"developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
-"Apple चे \"Bonjour for Windows\" टूलकिट आढळले नाही, अधिक माहितीसाठी http://d."
-"pidgin.im/BonjourWindows पहा."
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "येणारे IM जोडणी ऐकण्यास अपयशी"
@@ -3036,7 +2981,6 @@ msgstr "पहिले नाव"
 msgid "Last name"
 msgstr "शेवटचे नाव (आडनाव)"
 
-#. email
 msgid "Email"
 msgstr "ईमेल"
 
@@ -3122,14 +3066,12 @@ msgstr "शहर"
 msgid "Year of birth"
 msgstr "जन्म वर्ष"
 
-#. gender
 msgid "Gender"
 msgstr "लिंग"
 
 msgid "Male or female"
 msgstr "पुरूष किंवा स्त्री"
 
-#. 0
 msgid "Male"
 msgstr "माले"
 
@@ -3167,22 +3109,16 @@ msgstr "बड्डीजाठी संभाषण निवडा: %s"
 msgid "Add to chat..."
 msgstr "संभाषणात समाविष्ट करा..."
 
-#. 0
 #. Global
 msgid "Available"
 msgstr "उपलब्ध"
 
-#. 2
 msgid "Chatty"
 msgstr "गप्पिष्ट"
 
-#. 3
 msgid "Do Not Disturb"
 msgstr "मला विचारू नका"
 
-#. 1
-#. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
-#. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
 msgid "Away"
 msgstr "दूर"
@@ -3190,8 +3126,6 @@ msgstr "दूर"
 msgid "UIN"
 msgstr "UIN"
 
-#. first name
-#. optional information
 msgid "First Name"
 msgstr "प्रथमनाव"
 
@@ -3216,9 +3150,6 @@ msgstr "आपल्या शोध निकषाशी जुळणारे
 msgid "Unable to read from socket"
 msgstr "सॉकेटकडील वाचण्यास असमर्थ"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
 msgid "Connected"
 msgstr "जोडलेले"
 
@@ -3231,7 +3162,6 @@ msgstr "संभाषणात समाविष्ट करा"
 msgid "Chat _name:"
 msgstr "संभाषण नाव (_n):"
 
-#. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "जुळवणी करीत आहे"
@@ -3993,8 +3923,6 @@ msgstr "कार्याचे शिर्षक"
 msgid "Role"
 msgstr "भुमिका"
 
-#. birthday
-#. birthday (required)
 msgid "Birthday"
 msgstr "वाढदिवस"
 
@@ -4085,7 +4013,6 @@ msgstr "लॉग आउट"
 msgid "JID"
 msgstr "JID"
 
-#. last name
 msgid "Last Name"
 msgstr "आडनाव"
 
@@ -4347,7 +4274,6 @@ msgstr "काहीही नाही (प्रलंबित करण्�
 msgid "None"
 msgstr "काहीही नाही"
 
-#. subscription type
 msgid "Subscription"
 msgstr "सबस्क्रिपशन"
 
@@ -4363,12 +4289,6 @@ msgstr "मूडचे नाव"
 msgid "Mood Comment"
 msgstr "मूडची टिप्पणी"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
 msgid "Tune Artist"
 msgstr "कलाकार ट्यून करा"
 
@@ -4611,8 +4531,6 @@ msgid ""
 "buzzes now."
 msgstr "बोलवण्यास अशक्य, कारण %s समर्थन पुरवत नाही किंवा आत्ता बज्ज स्वीकारत नाही."
 
-#. Yahoo only supports one attention command: the 'buzz'.
-#. This is index number YAHOO_BUZZ.
 msgid "Buzz"
 msgstr "बोलवणे"
 
@@ -4741,8 +4659,6 @@ msgstr "अनक्रिप्टेड प्रवाहावर साध�
 msgid "Connect port"
 msgstr "पोर्टला जोडा"
 
-#. TODO: default to automatically try different ports. Make the user be
-#. * able to set the first port to try (like LastConnectedPort in Windows client).
 #. Account options
 msgid "Connect server"
 msgstr "सर्व्हरला जोडा"
@@ -4753,8 +4669,9 @@ msgstr "फाइल स्थानांतरन प्रॉक्सीज"
 msgid "BOSH URL"
 msgstr "BOSH URL"
 
-#. this should probably be part of global smiley theme settings later on,
-#. shared with MSN
+#. this should probably be part of global smiley theme settings
+#. * later on
+#.
 msgid "Show Custom Smileys"
 msgstr "पसंतीचे स्माइलीज दाखवा"
 
@@ -4842,7 +4759,6 @@ msgstr "उपस्थित असलेली अज्ञात त्रु
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "%s ला फाइल पाठवण्यास असमर्थ, वापरकर्ता फाइल स्थानांतरणाला आधार देत नाही"
 
-#. not success
 msgid "File Send Failed"
 msgstr "पाठवलेली फाइल अपयशी"
 
@@ -5139,1612 +5055,6 @@ msgstr "क्रिया"
 msgid "Select an action"
 msgstr "कृती नीवडा"
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr " \"%s\" ला समाविष्ट करण्यात असमर्थ."
-
-msgid "Buddy Add error"
-msgstr "बड्डी समावेश करतेवेळी त्रुटी"
-
-msgid "The username specified does not exist."
-msgstr "निर्देशीत वापरकर्त्याचेनाव अस्तित्वात नाही."
-
-msgid "Unable to parse message"
-msgstr "संदेशाचे स्पष्टीकरण देण्यास असमर्थ"
-
-msgid "Syntax Error (probably a client bug)"
-msgstr "वाक्यरचना दोष (बहुधा ग्राहकाचा दोष असावा)"
-
-msgid "Invalid email address"
-msgstr "अवैध इमेल पत्ता"
-
-msgid "User does not exist"
-msgstr "वापरकर्ता आस्तित्वात नाही "
-
-msgid "Fully qualified domain name missing"
-msgstr "संपूर्ण अर्हताप्राप्त महाजालावरील संकेतस्थळाचे नाव गहाळ झाले"
-
-msgid "Already logged in"
-msgstr "आधीच प्रवेश केलेला आहे"
-
-msgid "Invalid username"
-msgstr "अवैध वापरकर्त्याचेनाव"
-
-msgid "Invalid friendly name"
-msgstr "अवैध मैत्री नाव"
-
-msgid "List full"
-msgstr "यादी पूर्ण भरली आहे"
-
-msgid "Already there"
-msgstr "आधिपासूनच आहे"
-
-msgid "Not on list"
-msgstr "यादी वर नाही"
-
-msgid "User is offline"
-msgstr "वापरकर्ता बंद आहे "
-
-msgid "Already in the mode"
-msgstr "आधीच अवस्था मध्ये आहे"
-
-msgid "Already in opposite list"
-msgstr "आधीच विरूध्द यादीमध्ये आहे"
-
-msgid "Too many groups"
-msgstr "असंख्य  गट"
-
-msgid "Invalid group"
-msgstr "अवैध गट"
-
-msgid "User not in group"
-msgstr "वापरकर्ता गटामध्ये नाही "
-
-msgid "Group name too long"
-msgstr "गटाचे नाव खूपच लांब आहे "
-
-msgid "Cannot remove group zero"
-msgstr "गट शुन्य काढू शकत नाही "
-
-msgid "Tried to add a user to a group that doesn't exist"
-msgstr "अस्तित्वात नसणारया गटांकडे वापरकर्त्यास समाविष्ट करण्याचा प्रयत्न केला"
-
-msgid "Switchboard failed"
-msgstr "स्विचबोर्ड निकामी/अपयशी झाला"
-
-msgid "Notify transfer failed"
-msgstr "स्थानांतर अपयशी झालेले  कळवा"
-
-msgid "Required fields missing"
-msgstr "गहाळ झालेले क्षेत्राची आवश्यकता"
-
-msgid "Too many hits to a FND"
-msgstr "FND ला खुप हिट दिल्यात"
-
-msgid "Not logged in"
-msgstr "प्रवेश केलेला नाही"
-
-msgid "Service temporarily unavailable"
-msgstr "सेवा तात्पुरती अनुपलब्ध आहे"
-
-msgid "Database server error"
-msgstr "माहितीकोश सर्व्हर दोष"
-
-msgid "Command disabled"
-msgstr "असक्षम केलेले आदेश"
-
-msgid "File operation error"
-msgstr "फाइल कार्य दोष"
-
-msgid "Memory allocation error"
-msgstr "स्मृती विभाजनात दोष"
-
-msgid "Wrong CHL value sent to server"
-msgstr "सर्व्हरला चुकीचे CHL मूल्य पाठवले"
-
-msgid "Server busy"
-msgstr "सर्व्हर व्यस्त/कार्यमग्न"
-
-msgid "Server unavailable"
-msgstr "सर्व्हर उपल्बध नाही"
-
-msgid "Peer notification server down"
-msgstr "सर्व्हर खाली सूचना क्षेत्र पीअर "
-
-msgid "Database connect error"
-msgstr "माहितीकोश  जोडणीत दोष"
-
-msgid "Server is going down (abandon ship)"
-msgstr "सर्व्हर खाली जात आहे (जहाज सोडुन)"
-
-msgid "Error creating connection"
-msgstr "दोष  निर्मीती जोडणी"
-
-msgid "CVR parameters are either unknown or not allowed"
-msgstr "CVR परिमाणे अज्ञात किंवा परवानी नसलेली आहेत"
-
-msgid "Unable to write"
-msgstr "लिहण्यास असमर्थ"
-
-msgid "Session overload"
-msgstr "सत्र जास्त लोड केले"
-
-msgid "User is too active"
-msgstr "वापरकर्ता खूपच क्रियाशील आहे"
-
-msgid "Too many sessions"
-msgstr "भरपुर सत्रे"
-
-msgid "Passport not verified"
-msgstr "परवाना पडताळलेला नाही"
-
-msgid "Bad friend file"
-msgstr "खराब मित्राची फाइल"
-
-msgid "Not expected"
-msgstr "अपेक्षित नाही"
-
-msgid "Friendly name is changing too rapidly"
-msgstr "ओळखीच नाव खूपच वेगाने बदलत आहे"
-
-msgid "Server too busy"
-msgstr "सर्व्हर खूपच व्यस्त/कार्यमग्न आहे "
-
-msgid "Authentication failed"
-msgstr " सप्रमाणता अपयशी झाली"
-
-msgid "Not allowed when offline"
-msgstr "बंद असताना परवानगी दिली नाही"
-
-msgid "Not accepting new users"
-msgstr "नवीन वापरकर्त्याचा स्वीकारत नाही "
-
-msgid "Kids Passport without parental consent"
-msgstr "पालकांच्या संमतीशिवाय बालकांचा परवाना"
-
-msgid "Passport account not yet verified"
-msgstr "अजुन परवाने खात्याची पडताळणी केली नाही"
-
-msgid "Passport account suspended"
-msgstr "पासपोर्ट खाते वगळले"
-
-msgid "Bad ticket"
-msgstr "चुकीचे तिकीट"
-
-#, c-format
-msgid "Unknown Error Code %d"
-msgstr "अज्ञात दोष संकेतीक %d"
-
-#, c-format
-msgid "MSN Error: %s\n"
-msgstr "MSN दोष: %s\n"
-
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "%s (%s) मध्ये बड्डी यादी एकावेळीच वितरित करते"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"स्थानिक यादीवरील %s गट \"%s\" च्या आत आहे परंतु सर्व्हर यादीवर नाही. आपणास ही बड्डी "
-"समाविष्ट करावीशी वाटते का?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s हे स्थानिक यादीवर आहे परंतू सर्व्हर यादीवर नाही. आपणास ही बड्डी समाविष्ट करायची आहे "
-"का ?"
-
-msgid "Other Contacts"
-msgstr "इतर संपर्क"
-
-msgid "Non-IM Contacts"
-msgstr "विना-IM संपर्क"
-
-#, c-format
-msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
-msgstr "%s ने wink पाठवले. <a href='msn-wink://%s'>चालवण्यासाठी येथे क्लिक करा</a>"
-
-#, c-format
-msgid "%s sent a wink, but it could not be saved"
-msgstr "%s ने wink पाठवले, परंतु साठवण्यास अशक्य"
-
-#, c-format
-msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
-msgstr "%s ने वॉईस क्लिक पाठवले. <a href='audio://%s'>चालवण्यासाठी येथे क्लिक करा</a>"
-
-#, c-format
-msgid "%s sent a voice clip, but it could not be saved"
-msgstr "%s ने वॉईस क्लिक पाठवले, परंतु साठवणे अशक्य"
-
-#, c-format
-msgid "%s sent you a voice chat invite, which is not yet supported."
-msgstr "%s ने वॉईस संभाषण निमंत्रण पाठवले, जे अजूनही समर्थीत नाही."
-
-msgid "Nudge"
-msgstr "ढोसणे"
-
-#, c-format
-msgid "%s has nudged you!"
-msgstr "%s ने तुम्हाला ढोसला!"
-
-#, c-format
-msgid "Nudging %s..."
-msgstr "%s ला ढोसत आहे..."
-
-msgid "Email Address..."
-msgstr "ईमेल पत्ता..."
-
-msgid "Your new MSN friendly name is too long."
-msgstr " आपले नवीन MSN मैत्री नाव खूपच मोठे आहे."
-
-#, c-format
-msgid "Set friendly name for %s."
-msgstr "%s करीता ओळखीचे नाव सेट करा."
-
-msgid "Set Friendly Name"
-msgstr "मैत्रीपूर्ण नाव ठरवा"
-
-msgid "This is the name that other MSN buddies will see you as."
-msgstr "हे नाव जे इतर MSN बड्डी प्रमाणे आपण पाहू शकाल."
-
-msgid "This Location"
-msgstr " ह्या स्थळी"
-
-msgid "This is the name that identifies this location"
-msgstr "हे नाव आहे जे ह्या स्थळास ओळखते"
-
-msgid "Other Locations"
-msgstr "इतर स्थळ"
-
-msgid "You can sign out from other locations here"
-msgstr "आपण इथे इतर स्थळातून बाहेर येऊ शकता"
-
-#. TODO: Due to limitations in our current request field API, the
-#. following string will show up with a trailing colon.  This should
-#. be fixed either by adding an "include_colon" boolean, or creating
-#. a separate purple_request_field_label_new_without_colon function,
-#. or by never automatically adding the colon and requiring that
-#. callers add the colon themselves.
-msgid "You are not signed in from any other locations."
-msgstr "आपण साईन्ड इन नसल्यामुळे, इतर स्थळातून आत येऊ शकत नाही"
-
-msgid "Allow multiple logins?"
-msgstr "अनेक लॉगईनची अनुमती द्यायची?"
-
-msgid ""
-"Do you want to allow or disallow connecting from multiple locations "
-"simultaneously?"
-msgstr "एकाचवेळी अनेक स्थळाकडून जोडण्यास आपणास अनुमती द्यायची आहे का नाही ?"
-
-msgid "Allow"
-msgstr "परवानगी देणे"
-
-msgid "Disallow"
-msgstr "परवानगी नाही"
-
-msgid "Set your home phone number."
-msgstr "आपला निवासी दुरध्वनी क्रमांकाची मांडणी करा."
-
-msgid "Set your work phone number."
-msgstr "आपल्या कचेरीच्या दुरध्वनी क्रमांकाची मांडणी   करा."
-
-msgid "Set your mobile phone number."
-msgstr "आपला भ्रमणध्वनीच्या (मोबाईल)  क्रमांकाची मांडणी  करा."
-
-msgid "Allow MSN Mobile pages?"
-msgstr " MSN मोबाईल पानांसाठी परवानगी द्यायची?"
-
-msgid ""
-"Do you want to allow or disallow people on your buddy list to send you MSN "
-"Mobile pages to your cell phone or other mobile device?"
-msgstr ""
-"आपल्या सेल फोन  किंवा भ्रमणध्वनी साधनाकडे MSN भ्रमणध्वनी(मोबाईल) ची पाने पाठवण्यासाठी "
-"आपणास आपल्या बड्डी यादीवर व्यक्तिंना परवानगी द्यावी किंवा न द्यावी वाटते का?"
-
-#, c-format
-msgid "Blocked Text for %s"
-msgstr "%s करीता मजकूर ब्लॉक केले"
-
-msgid "No text is blocked for this account."
-msgstr "या खात्यासाठी मजकूर रोखले नाही."
-
-#, c-format
-msgid ""
-"MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr "MSN सर्व्हर्स् सध्या खालील रेग्यूलर एक्सप्रेशन्स् रोखत आहे:<br/>%s"
-
-msgid "This account does not have email enabled."
-msgstr "या खात्यात ईमेल समर्थीत नाही."
-
-msgid "Send a mobile message."
-msgstr "भ्रमणध्वनीचे (मोबाईल) संदेश पाठवा."
-
-msgid "Page"
-msgstr "पान"
-
-msgid "Playing a game"
-msgstr "खेळ खेळत आहे"
-
-msgid "Working"
-msgstr "कार्य"
-
-msgid "Has you"
-msgstr "तुमच्याकडे"
-
-msgid "Home Phone Number"
-msgstr "घराचा फोन क्रमांक"
-
-msgid "Work Phone Number"
-msgstr "कार्यालय फोन क्रमांक"
-
-msgid "Mobile Phone Number"
-msgstr "मोबाईल फोन क्रमांक"
-
-msgid "Be Right Back"
-msgstr "आत्ताच येतो"
-
-msgid "Busy"
-msgstr "व्यस्त"
-
-msgid "On the Phone"
-msgstr "दुरध्वनीवर"
-
-msgid "Out to Lunch"
-msgstr "जेवणासाठी बाहेर"
-
-msgid "Game Title"
-msgstr "खेळाचे शीर्षक"
-
-msgid "Office Title"
-msgstr "ऑफिसचे शीर्षक"
-
-msgid "Set Friendly Name..."
-msgstr "ओळखीचे नाव सेट करा..."
-
-msgid "View Locations..."
-msgstr "स्थळे दृश्यित करा..."
-
-msgid "Set Home Phone Number..."
-msgstr "निवासी दुरध्वनी क्रमांकाची मांडणी करा..."
-
-msgid "Set Work Phone Number..."
-msgstr "कचेरीचे दुरध्वनी क्रमांक..."
-
-msgid "Set Mobile Phone Number..."
-msgstr "भ्रमणध्वनी(मोबाईल) क्रमांकाची मांडणी करा..."
-
-msgid "Enable/Disable Mobile Devices..."
-msgstr "भ्रमणध्वनी(मोबाईल) साधनांना सक्षम/असक्षम करा..."
-
-msgid "Allow/Disallow Multiple Logins..."
-msgstr "अनेक लॉगईनसला अनुमती द्या/  देऊ नका."
-
-msgid "Allow/Disallow Mobile Pages..."
-msgstr "भ्रमणध्वनी (मोबाईल) पानांना परवानगी द्या/परवानगी देऊ नका..."
-
-msgid "View Blocked Text..."
-msgstr "रोखलेल्या मजकूराचे दृष्य..."
-
-msgid "Open Hotmail Inbox"
-msgstr "हॉटमेलचा इनबॉक्स/टपाल येणारा बॉक्स उघडा"
-
-msgid "Send to Mobile"
-msgstr "भ्रमणध्वनी (मोबाईल) कडे पाठवा "
-
-msgid "SSL support is needed for MSN. Please install a supported SSL library."
-msgstr "SSL आधार MSN साठी आवश्यक आहे.  कृपया आधार असलेल्या SSL वाचनालयास स्थापन करा."
-
-#, c-format
-msgid ""
-"Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be valid email addresses."
-msgstr ""
-"वापरकर्त्याचेनाव अवैध असल्यामुळे बड्डी %s समावेश करणे अशक्य.  वापकर्त्याचेनाव वैध ईमेल पत्ते "
-"असायला हवे."
-
-msgid "Unable to Add"
-msgstr "समावेश करणे अशक्य"
-
-msgid "Error retrieving profile"
-msgstr "दोष भरून देणारे माहितीलेख"
-
-msgid "General"
-msgstr "सर्वसाधारण"
-
-msgid "Age"
-msgstr "वय"
-
-msgid "Occupation"
-msgstr "व्यापार"
-
-msgid "Location"
-msgstr "ठिकाण"
-
-msgid "Hobbies and Interests"
-msgstr "छंद आणि आवड"
-
-msgid "A Little About Me"
-msgstr "माझ्या बदल थोडेसे"
-
-msgid "Social"
-msgstr "सामाजिक"
-
-msgid "Marital Status"
-msgstr "वैवाहिक स्थिती"
-
-msgid "Interests"
-msgstr "आवड"
-
-msgid "Pets"
-msgstr "आवडते (लाडके जनावर)"
-
-msgid "Hometown"
-msgstr "गाव"
-
-msgid "Places Lived"
-msgstr "वसती केलेली ठिकाणे"
-
-msgid "Fashion"
-msgstr "केश/वेशभूषा पद्धत"
-
-msgid "Humor"
-msgstr "मनोवृत्ती"
-
-msgid "Music"
-msgstr "संगीत"
-
-msgid "Favorite Quote"
-msgstr "आवडते उदाहरण"
-
-msgid "Contact Info"
-msgstr "संपर्क माहिती"
-
-msgid "Personal"
-msgstr "वैयक्तिक"
-
-msgid "Significant Other"
-msgstr "महत्वाचे इतर"
-
-msgid "Home Phone"
-msgstr "घरचा दूरध्वनी"
-
-msgid "Home Phone 2"
-msgstr "निवासी दुरध्वनी"
-
-msgid "Home Address"
-msgstr "घरचा पत्ता"
-
-msgid "Personal Mobile"
-msgstr " वैयक्तिक  भ्रमणध्वनी(मोबाईल)"
-
-msgid "Home Fax"
-msgstr "घरचा फॅक्स"
-
-msgid "Personal Email"
-msgstr "वैयक्तिक ईमेल"
-
-msgid "Personal IM"
-msgstr "वैयक्तिक  IM"
-
-msgid "Anniversary"
-msgstr "ऍनीवर्सरी"
-
-#. Business
-msgid "Work"
-msgstr "कामकाजाचे दुरध्वनी"
-
-msgid "Company"
-msgstr "कंपनी"
-
-msgid "Department"
-msgstr "विभाग"
-
-msgid "Profession"
-msgstr "व्यवसाय"
-
-msgid "Work Phone"
-msgstr "कचेरीचे दुरध्वनी"
-
-msgid "Work Phone 2"
-msgstr "कचेरीचे दुरध्वनी २"
-
-msgid "Work Address"
-msgstr "ऑफिसचा पत्ता"
-
-msgid "Work Mobile"
-msgstr "कचेरीचा भ्रमणध्वनी(मोबाईल)"
-
-msgid "Work Pager"
-msgstr "कचेरीचे पेजर"
-
-msgid "Work Fax"
-msgstr "कचेरीचा फॅक्स"
-
-msgid "Work Email"
-msgstr "कार्य ईमेल"
-
-msgid "Work IM"
-msgstr "कचेरी IM"
-
-msgid "Start Date"
-msgstr "आरंभ दिनांक"
-
-msgid "Favorite Things"
-msgstr "आवडत्या गोष्टी"
-
-msgid "Last Updated"
-msgstr "शेवटी अद्ययावत केलेले"
-
-msgid "Homepage"
-msgstr "मुख्यपान"
-
-msgid "The user has not created a public profile."
-msgstr "वापरकर्त्याने सार्वजनिक माहितीलेख निर्माण केलेला नाही."
-
-msgid ""
-"MSN reported not being able to find the user's profile. This either means "
-"that the user does not exist, or that the user exists but has not created a "
-"public profile."
-msgstr ""
-"वापरकर्त्याचा माहितीलेख शोधण्या साठी सांगितलेले MSN समर्थ होत नाही.याचा अर्थ वापरकर्ता "
-"अस्तित्वात नाही किंवा वापरकर्ता अस्तित्वात आहे पण सार्वजानिक माहितीलेख  निर्माण करत "
-"नाही."
-
-msgid ""
-"Could not find any information in the user's profile. The user most likely "
-"does not exist."
-msgstr ""
-"वापरकर्त्याच्या माहितीलेखातील कोणतीही माहिती शोधता आली नाही.  वापरकर्ता बहुतकरून "
-"अस्तित्वात नाही."
-
-msgid "View web profile"
-msgstr "वेब प्रोफाइलचे दृष्य"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *< summary
-msgid "Windows Live Messenger Protocol Plugin"
-msgstr "Windows लाइव्ह मेसेंजर प्रोटोकॉलचे प्लगइन"
-
-msgid "Use HTTP Method"
-msgstr "HTTP पद्धत वापरा"
-
-msgid "HTTP Method Server"
-msgstr "HTTP पद्धत सर्व्हर"
-
-msgid "Show custom smileys"
-msgstr "इच्छित स्माईलीज (हास्य मुद्रा)दाखवा"
-
-msgid "Allow direct connections"
-msgstr "प्रत्यक्ष जोडणी अनुमती द्या"
-
-msgid "Allow connecting from multiple locations"
-msgstr "एकाचवेळी अनेक स्थळाकडून जोडण्यास आपणास अनुमती द्यायची आहे का नाही ?"
-
-msgid "nudge: nudge a user to get their attention"
-msgstr "कोपरखळी:वापरकर्ता त्यांचे लक्ष वेधणारी कोपरखळी "
-
-msgid "Windows Live ID authentication:Unable to connect"
-msgstr "Windows लाइव्ह ID ओळख पटवा:जोडणी करण्यास अशक्य"
-
-msgid "Windows Live ID authentication:Invalid response"
-msgstr "Windows लाइव्ह ID ओळख पटवा:अवैध प्रतिसाद"
-
-msgid "The following users are missing from your addressbook"
-msgstr "खालील वापरकर्ते तुमच्या पत्तापुस्तिकामध्ये आढळले नाही"
-
-#, c-format
-msgid "Unknown error (%d): %s"
-msgstr "अपरिचीत त्रुटी (%d): %s"
-
-msgid "Unable to add user"
-msgstr "वापरकर्ता समाविष्ट करण्यास असमर्थ"
-
-#. Unknown error!
-#, c-format
-msgid "Unknown error (%d)"
-msgstr "अपरिचीत त्रुटी (%d)"
-
-msgid "Unable to remove user"
-msgstr "वापरकर्ता काढून टाकणे अशक्य"
-
-msgid "Mobile message was not sent because it was too long."
-msgstr "खूप लांब असल्यामुळे मोबाईल संदेश पाठवणे अशक्य."
-
-msgid "Mobile message was not sent because an unknown error occurred."
-msgstr "मोबाईल संदेश पाठवता आला नाही कारण अज्ञात दोष आढळला."
-
-#, c-format
-msgid ""
-"The MSN server will shut down for maintenance in %d minute. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgid_plural ""
-"The MSN server will shut down for maintenance in %d minutes. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgstr[0] ""
-"MSN सर्व्हर %dमिनिटात देखभालीसाठी बंद होईल. त्यावेळेस आपण स्वयंपणे बाहेर पडाल. कोणताही "
-"कार्यरत संवाद समाप्त करा.\n"
-"\n"
-"देखभाल पूर्ण केल्यानंतर,  आपण यशस्वीपणे उघडण्यास समर्थ असाल."
-msgstr[1] ""
-"MSN सर्व्हर %dमिनिटात देखभालीसाठी बंद होईल. त्यावेळेस आपण स्वयंपणे बाहेर पडाल. कोणताही "
-"कार्यरत संवाद समाप्त करा.\n"
-"\n"
-"देखभाल पूर्ण केल्यानंतर,  आपण यशस्वीपणे उघडण्यास समर्थ असाल."
-
-msgid ""
-"Message was not sent because the system is unavailable. This normally "
-"happens when the user is blocked or does not exist."
-msgstr ""
-"प्रणाली अनुपलब्ध असल्यामुळे संदेश पाठवणे अशक्य. हे सहसा वापरकर्त्याला रोखल्यावर किंवा "
-"अस्तित्वात नसल्यावर आढळते."
-
-msgid "Message was not sent because messages are being sent too quickly."
-msgstr "संदेश लवकर पाठवले जात असल्यामुळे संदेश पाठव ले गेले नाही."
-
-msgid "Message was not sent because an unknown encoding error occurred."
-msgstr "अपरिचीत एनकोडिंग त्रुटी आढळल्यामुळे संदेश पाठवणे अशक्य आहे."
-
-msgid "Message was not sent because an unknown error occurred."
-msgstr "अपरिचीत त्रुटी आढळल्यामुळे संदेश पाठवणे अशक्य आहे."
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. Converting the encoding from "
-"%s to UTF-8 failed.)"
-msgstr ""
-"%s (हा संदेश प्राप्त करण्यात त्रुटी आली. %s कडून UTF-8 कडे एनकोडिंगचे रूपांतरण करणे असफल "
-"झाले.)"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was %s, but it "
-"was not valid UTF-8.)"
-msgstr ""
-"%s (हा संदेश प्राप्त करण्यात त्रुटी आली. %s कॅरेक्टर सेट होते, परंतु ते UTF-8 प्रमाणित नव्हते.)"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was missing, but "
-"it was not valid UTF-8.)"
-msgstr ""
-"%s (हा संदेश प्राप्त करण्यात त्रुटी आली. कॅरेक्सेटर सेट होते, परंतु ते UTF-8 कडे वैध नाही.)"
-
-msgid "Writing error"
-msgstr "लिहण्यात दोष"
-
-msgid "Reading error"
-msgstr "वाचण्यात दोष"
-
-#, c-format
-msgid ""
-"Connection error from %s server:\n"
-"%s"
-msgstr ""
-"%s सर्व्हरकडून जोडणीत दोष:\n"
-"%s"
-
-msgid "Our protocol is not supported by the server"
-msgstr "प्रोटोकॉल या सर्व्हर द्वारे समर्थीत नाही"
-
-msgid "Error parsing HTTP"
-msgstr "HTTP वाचतेवेळी त्रुटी"
-
-msgid "You have signed on from another location"
-msgstr "स्वाक्षरी इतर ठिकाणापासून केली आहे"
-
-msgid "The MSN servers are temporarily unavailable. Please wait and try again."
-msgstr "MSN सेवा तात्पुरती उपलब्ध नाही. कृपया प्रतिक्षा करा आणि पुन्हा प्रयत्न करा."
-
-msgid "The MSN servers are going down temporarily"
-msgstr "MSN सर्व्हर्स तात्पुर्ते डाऊन होत आहे"
-
-#, c-format
-msgid "Unable to authenticate: %s"
-msgstr "सप्रमाणित करण्यास असमर्थ: %s"
-
-#, c-format
-msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
-
-msgid "Handshaking"
-msgstr "हस्तांदोलन"
-
-msgid "Transferring"
-msgstr "स्थानांतरण"
-
-msgid "Starting authentication"
-msgstr "सप्रमाणतेचा आरंभ"
-
-msgid "Getting cookie"
-msgstr " कुकी प्राप्त होते"
-
-msgid "Sending cookie"
-msgstr "कुकी पाठवते "
-
-msgid "Retrieving buddy list"
-msgstr "पुन्हा प्राप्त झालेली बड्डी सूची "
-
-#, c-format
-msgid "%s requests to view your webcam, but this request is not yet supported."
-msgstr "%s ने वेबकॅम पहाण्याची विनंती केली आहे, परंतु ही विनंती अजूनही समर्थीत नाही."
-
-#, c-format
-msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr ""
-"%s ने स्वतःचे वेबकॅम पहाण्यासाठी विनंती केली आहे, परंतु ही विनंती अजूनही समर्थीत नाही."
-
-msgid "Away From Computer"
-msgstr "संगणका पासून दूर"
-
-msgid "On The Phone"
-msgstr "दुरध्वनी वर"
-
-msgid "Out To Lunch"
-msgstr "जेवणासाठी बाहेर"
-
-msgid "Message may have not been sent because a timeout occurred:"
-msgstr "संदेश पाठवू शकत नाही कारण वेळ समाप्त झाली आहे:"
-
-msgid "Message could not be sent, not allowed while invisible:"
-msgstr "संदेश पाठवू शकत नाही, अदृश्य असताना परवानगी नाही:"
-
-msgid "Message could not be sent because the user is offline:"
-msgstr "संदेश पाठवू शकत नाही कारण वापरकर्ता बंद आहे:"
-
-msgid "Message could not be sent because a connection error occurred:"
-msgstr "संदेश पाठवता आला  नाही कारण जोडण्यात दोष आढळला:"
-
-msgid "Message could not be sent because we are sending too quickly:"
-msgstr "संदेश पाठवता आला नाही कारण आपण खूपच पटकन पाठवत आहात:"
-
-msgid ""
-"Message could not be sent because we were unable to establish a session with "
-"the server. This is likely a server problem, try again in a few minutes:"
-msgstr ""
-"सर्व्हरशी सत्र स्थापीत करण्यास अशक्य असल्यामुळे संदेश पाठवणे अशक्य आहे. ही संभाव्यतया "
-"सर्व्हरमधील त्रुटी असू शकते, काहिक मिनीटांत पुनः प्रयत्न करा:"
-
-msgid ""
-"Message could not be sent because an error with the switchboard occurred:"
-msgstr "संदेश पाठवू शकत नाही कारण स्वीचबोर्ड मध्ये दोष आढळला:"
-
-msgid "Message may have not been sent because an unknown error occurred:"
-msgstr "संदेश पाठवला नाही कारण अज्ञात दोष आढळला:"
-
-msgid "Delete Buddy from Address Book?"
-msgstr "बड्डी पत्ता पुस्तिका पासून नष्ट करा?"
-
-msgid "Do you want to delete this buddy from your address book as well?"
-msgstr "हा बड्डी तुम्हाला पत्ता पुस्तिकातून देखील नष्ट करायचे?"
-
-msgid "The username specified is invalid."
-msgstr "निर्देशीत वापरकर्त्याचेनाव अवैध आहे."
-
-msgid "The Display Name you entered is invalid."
-msgstr "आपण भरलेले प्रदर्शन नाव अवैध आहे."
-
-msgid ""
-"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-msgstr "दिलेल्या वाढदिवासचे दिनांक अवैध आहे. योग्य रूपण असे आहे: 'YYYY-MM-DD'."
-
-#. show error to user
-msgid "Profile Update Error"
-msgstr "प्रोफाइल सुधारणाकरतेवेळी त्रुटी"
-
-#. no profile information yet, so we cannot update
-#. (reference: "libpurple/request.h")
-msgid "Profile"
-msgstr "माहितीलेख"
-
-msgid "Your profile information is not yet retrieved. Please try again later."
-msgstr "प्रोफाइल माहिती अजूनही प्राप्त झाली नाही. कृपया पुढे पुनः प्रयत्न करा."
-
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "दिस्पलेचे नाव"
-
-#. about me
-msgid "About Me"
-msgstr "माझ्याविषयी"
-
-#. where I live
-msgid "Where I Live"
-msgstr "मी कुठे राहतो"
-
-#. relationship status
-msgid "Relationship Status"
-msgstr "नातेसंबंध स्थिती"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "मोबाईल क्रमांक"
-
-#. is searchable
-msgid "Can be searched"
-msgstr "शोधू शकता"
-
-#. is suggestable
-msgid "Can be suggested"
-msgstr "सूचवू शकता"
-
-msgid "Update your MXit Profile"
-msgstr "आपले MXit  प्रोफाईल अद्ययावत करा"
-
-msgid "The PIN you entered is invalid."
-msgstr "दिलेला PIN अवैध आहे."
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "दिलेल्या PIN ची लांबी अवैध आहे [4-10]."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "PIN अवैध आहे. त्यामध्ये फक्त अंक [0-9] असायला हवे."
-
-msgid "The two PINs you entered do not match."
-msgstr "दिलेले दोन PINs जुळत नाही."
-
-#. show error to user
-msgid "PIN Update Error"
-msgstr "PIN अद्ययावतीकरण दोष"
-
-#. pin
-#. pin (required)
-msgid "PIN"
-msgstr "PIN"
-
-#. verify pin
-msgid "Verify PIN"
-msgstr "PIN तपासा"
-
-#. (reference: "libpurple/request.h")
-msgid "Change PIN"
-msgstr "PIN बदला"
-
-msgid "Change MXit PIN"
-msgstr "MXit PIN बदला"
-
-msgid "View Splash"
-msgstr "स्पलॅश दृष्य"
-
-msgid "There is no splash-screen currently available"
-msgstr "स्पलॅश-पडदा सध्या उपलब्ध नाही"
-
-msgid "About"
-msgstr "विषयी"
-
-msgid "Search for user"
-msgstr "वापरकर्त्यासाठी शोध"
-
-msgid "Search for a MXit contact"
-msgstr "MXit  संपर्कांना शोधा"
-
-msgid "Type search information"
-msgstr "शोध माहिती टंकलिखित करा"
-
-msgid "_Search"
-msgstr "शोधा (_S)"
-
-#. display / change profile
-msgid "Change Profile..."
-msgstr "प्रोफाइल बदला..."
-
-#. change PIN
-msgid "Change PIN..."
-msgstr "PIN बदला..."
-
-#. suggested friends
-msgid "Suggested friends..."
-msgstr "सुचवलेले मित्र/मैत्रिणी..."
-
-#. search for contacts
-msgid "Search for contacts..."
-msgstr "संपर्कांना शोधा..."
-
-#. display splash-screen
-msgid "View Splash..."
-msgstr "स्पलॅश दृष्य..."
-
-#. display plugin version
-msgid "About..."
-msgstr "विषयी..."
-
-#. the file is too big
-msgid "The file you are trying to send is too large!"
-msgstr "पाठवण्याजोगी फाइल खूप मोठी आहे!"
-
-#. file read error
-msgid "Unable to access the local file"
-msgstr "स्थानिक फाईल मिळविण्यास असमर्थ"
-
-#. file write error
-msgid "Unable to save the file"
-msgstr "फाईल जतन करण्यास असमर्थ"
-
-msgid ""
-"Unable to connect to the MXit HTTP server. Please check your server settings."
-msgstr "MXit HTTP सर्व्हरशी जोडणी करण्यास अशक्य. कृपया सर्व्हरची संरचना तपासा."
-
-msgid "Logging In..."
-msgstr "प्रवेश करत आहे..."
-
-msgid ""
-"Unable to connect to the MXit server. Please check your server settings."
-msgstr "MXit सर्व्हरशी जोडणी अशक्य. कृपया सर्व्हरची संरचना तपासा ."
-
-msgid "Connecting..."
-msgstr "जोडणी करत आहे..."
-
-msgid "The Display Name you entered is too short."
-msgstr "आपण भरलेले दर्शक नाव खूपच लहान आहे."
-
-msgid "The PIN you entered has an invalid length [7-10]."
-msgstr "दिलेल्या PIN ची लांबी अवैध आहे [7-10]."
-
-#. mxit login name
-msgid "MXit ID"
-msgstr "MXit ID"
-
-#. show the form to the user to complete
-msgid "Register New MXit Account"
-msgstr "नवीन MXit खात्याची नोंदणी करा"
-
-msgid "Please fill in the following fields:"
-msgstr "कृपया खालील क्षेत्र भरा:"
-
-#. no reply from the WAP site
-msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr "MXit WAP स्थळाशी संपर्क साधतेवेळी त्रुटी. कृपया पुनः प्रयत्न करा."
-
-#. wapserver error
-#. server could not find the user
-msgid ""
-"MXit is currently unable to process the request. Please try again later."
-msgstr "MXit सध्या विनंती विश्लेषीत करण्यास अशक्य आहे. कृपया पुढे पुनः प्रयत्न करा."
-
-msgid "Wrong security code entered. Please try again later."
-msgstr "चुकीचे सुरक्षा कोड दिले. कृपया पुनः प्रयत्न करा."
-
-msgid "Your session has expired. Please try again later."
-msgstr "सत्राची वेळ समाप्ती झाली. कृपया पुनः प्रयत्न करा."
-
-msgid "Invalid country selected. Please try again."
-msgstr "अवैध देश नीवडा. कृपया पुनः प्रयत्न करा."
-
-msgid "The MXit ID you entered is not registered. Please register first."
-msgstr "आपण भरलेल्या MXit ID ची नोंदणी केली नाही.  कृपया प्रथम नोंदणी करा."
-
-msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "आपण भरलेल्या MXit ID  ची आधीच नोंदणी केली आहे. कृपया दुसरे पसंतीने निवडा."
-
-msgid "Internal error. Please try again later."
-msgstr "आंतरीक त्रुटी. कृपया पुनः प्रयत्न करा."
-
-msgid "You did not enter the security code"
-msgstr "तुम्ही सुरक्षा कोड दिले नाही"
-
-msgid "Security Code"
-msgstr "सुरक्षा कोड"
-
-#. ask for input (required)
-msgid "Enter Security Code"
-msgstr "सुरक्षा कोड द्या"
-
-msgid "Your Country"
-msgstr "आपले देश"
-
-msgid "Your Language"
-msgstr "आपली भाषा"
-
-#. display the form to the user and wait for his/her input
-msgid "MXit Authorization"
-msgstr "MXit ओळख पटवा"
-
-msgid "MXit account validation"
-msgstr "MXit खात्याची तपासणी"
-
-msgid "Retrieving User Information..."
-msgstr "वापरकर्ता माहिती प्राप्त करत आहे..."
-
-msgid "was kicked"
-msgstr "आघात केला"
-
-msgid "You have been kicked from this MultiMX."
-msgstr "हा MultiMX कडून आपणास दूर केले गेले."
-
-msgid "_Room Name:"
-msgstr "_खोली नाव:"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "आपणास आमंत्रित केले आहे"
-
-msgid "Loading menu..."
-msgstr "मेन्यू लोड करत आहे..."
-
-msgid "Status Message"
-msgstr "स्थिती संदेश"
-
-msgid "Rejection Message"
-msgstr "नाकारण्याचा संदेश"
-
-msgid "No profile available"
-msgstr "प्रोफाइल उपलब्ध नाही"
-
-msgid "This contact does not have a profile."
-msgstr "ह्या संपर्काकडे प्रोफाईल नाही."
-
-msgid "Your MXit ID..."
-msgstr "आपला  MXit ID..."
-
-#. contact is in Deleted, Rejected or None state
-msgid "Re-Invite"
-msgstr "पुन्हा-आमंत्रित करा"
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "WAP सर्व्हर"
-
-msgid "Connect via HTTP"
-msgstr "HTTP द्वारे जोडणी करा"
-
-msgid "Enable splash-screen popup"
-msgstr "स्पलॅश-पडदा पॉपअप समर्थीत करा"
-
-msgid "Don't want to say"
-msgstr "सांगण्याची ईच्छा नाही"
-
-msgid "Single"
-msgstr "अविवाहित"
-
-msgid "In a relationship"
-msgstr "नातेसंबंधात"
-
-msgid "Engaged"
-msgstr "नातेसंबंधात बांधलेला"
-
-msgid "Married"
-msgstr "विवाहीत"
-
-msgid "It's complicated"
-msgstr "गुंतागुंतीचे आहे"
-
-msgid "Widowed"
-msgstr "विधवा झालेली किंवा विधुर झालेला"
-
-msgid "Separated"
-msgstr "विभक्त"
-
-msgid "Divorced"
-msgstr "घटस्फोटीत"
-
-msgid "Last Online"
-msgstr "शेवटचे ऑनलाईन"
-
-msgid "Invite Message"
-msgstr "संदेश आमंत्रित करा"
-
-msgid "No results"
-msgstr "अहवाल नाही"
-
-msgid "No contacts found."
-msgstr "संपर्क सापडले नाही."
-
-#. define columns
-msgid "UserId"
-msgstr "UserId"
-
-msgid "Where I live"
-msgstr "मी कुठे राहतो"
-
-#, c-format
-msgid "You have %i suggested friend."
-msgid_plural "You have %i suggested friends."
-msgstr[0] "आपणाकडे  %i  सूचवलेले मित्रमैत्रिणी आहेत."
-msgstr[1] "आपणाकडे  %i  सूचवलेले मित्रमैत्रिणी आहेत."
-
-#, c-format
-msgid "We found %i contact that matches your search."
-msgid_plural "We found %i contacts that match your search."
-msgstr[0] "आम्हाला आपल्या शोधाशी जुळणारे %i  संपर्क सापडले."
-msgstr[1] "आम्हाला आपल्या शोधाशी जुळणारे %i  संपर्क सापडले."
-
-#. we must have lost the connection, so terminate it so that we can reconnect
-msgid "We have lost the connection to MXit. Please reconnect."
-msgstr "MXit सह जोडणी खंडीत झाली. कृपया पुनः जोडणी करा."
-
-#. packet could not be queued for transmission
-msgid "Message Send Error"
-msgstr "संदेश पाठवतेवेळी त्रुटी"
-
-msgid "Unable to process your request at this time"
-msgstr "यावेळी आपली विनंती विश्लेषीत करण्यास अशक्य"
-
-msgid "Timeout while waiting for a response from the MXit server."
-msgstr "MXit सर्व्हर पासून प्रतिसादसरीता थांबतेवेळी वेळ समाप्ती आढळली."
-
-msgid "Successfully Logged In..."
-msgstr "यशस्वीरित्या प्रवेश केला..."
-
-#, c-format
-msgid ""
-"%s sent you an encrypted message, but it is not supported on this client."
-msgstr "%s ने एनक्रिप्टेड संदेश पाठवला आहे, परंतु या क्लाएंटवर ते समर्थीत नाही."
-
-msgid "Message Error"
-msgstr "संदेश त्रुटी"
-
-#. could not be decrypted
-msgid "An encrypted message was received which could not be decrypted."
-msgstr "एनक्रिपटेड संदेश प्राप्त झाला जो डिक्रिप्ट करता आला नाही."
-
-msgid "Cannot perform redirect using the specified protocol"
-msgstr "निर्देशीत प्रोटोकॉलचा वापर करून पुनः योग्य स्थळावर पाठवणे अशक्य"
-
-msgid "An internal MXit server error occurred."
-msgstr "आंतरीक MXit सर्व्हर त्रुटी आढळली."
-
-#, c-format
-msgid "Login error: %s (%i)"
-msgstr "प्रवेश त्रुटी: %s (%i)"
-
-#, c-format
-msgid "Logout error: %s (%i)"
-msgstr "बाहेर पडतेवेळी त्रुटी: %s (%i)"
-
-msgid "Contact Error"
-msgstr "संपर्क त्रुटी"
-
-msgid "Message Sending Error"
-msgstr "संदेश पाठवतेवेळी त्रुटी"
-
-msgid "Status Error"
-msgstr "स्थिती त्रुटी"
-
-msgid "Mood Error"
-msgstr "मूड त्रुटी"
-
-msgid "Invitation Error"
-msgstr "निमंत्रण त्रुटी"
-
-msgid "Contact Removal Error"
-msgstr "संपर्क काढून टाकल्याची त्रुटी"
-
-msgid "Subscription Error"
-msgstr "सबस्क्रिप्शन त्रुटी"
-
-msgid "Contact Update Error"
-msgstr "संपर्क सुधारणा त्रुटी"
-
-msgid "File Transfer Error"
-msgstr "फाइल स्थानांतरन त्रुटी"
-
-msgid "Cannot create MultiMx room"
-msgstr "MultiMx रूम निर्माण करणे अशक्य"
-
-msgid "MultiMx Invitation Error"
-msgstr "MultiMx निमंत्रण त्रुटी"
-
-msgid "Profile Error"
-msgstr "प्रोफाइल त्रुटी"
-
-#. bad packet
-msgid "Invalid packet received from MXit."
-msgstr "MXit पासून अवैध पॅकेट प्राप्त झाले."
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr "MXit ला जोडणी संबंधीत त्रुटी आढळली. (रिड स्टेज 0x01)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr "MXit ला जोडणी संबंधीत त्रुटी आढळली. (रिड स्टेज 0x02)"
-
-msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr "MXit ला जोडणी संबंधीत त्रुटी आढळली. (रिड स्टेज 0x03)"
-
-#. malformed packet length record (too long)
-msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr "MXit ला जोडणी संबंधीत त्रुटी आढळली. (रिड स्टेज 0x04)"
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr "MXit ला जोडणी संबंधीत त्रुटी आढळली. (रिड स्टेज 0x05)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr "MXit ला जोडणी संबंधीत त्रुटी आढळली. (रिड स्टेज 0x06)"
-
-msgid "In Love"
-msgstr "प्रेमात "
-
-msgid "Pending"
-msgstr "उर्वरीत"
-
-msgid "Invited"
-msgstr "आमंत्रीत"
-
-msgid "Rejected"
-msgstr "नकारले"
-
-msgid "Deleted"
-msgstr "नष्ट केले"
-
-msgid "MXit Advertising"
-msgstr "MXit अडवर्टाइजींग"
-
-msgid "More Information"
-msgstr "अधिक माहिती"
-
-#, c-format
-msgid "No such user: %s"
-msgstr "असा वापरकर्ता आढळला नाही: %s"
-
-msgid "User lookup"
-msgstr "वापकर्ता लूकअप"
-
-msgid "Reading challenge"
-msgstr "आव्हान वाचत आहे"
-
-msgid "Unexpected challenge length from server"
-msgstr "सर्व्हर पासून अनेपक्षीत आव्हान आढळले"
-
-msgid "Logging in"
-msgstr "प्रवेश करत आहे"
-
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM - वापकर्त्याचेनाव सेट केले नाही"
-
-msgid "You appear to have no MySpace username."
-msgstr "आपले MySpace वापरकर्तानाव आढळले नाही."
-
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr "तुम्हाला आत्ता सेट करायचे? (टिप: यांस बदलवणे शक्य नाही!)"
-
-msgid "Lost connection with server"
-msgstr "सर्व्हरशी जोडणी खंडीत झाली"
-
-#. Can't write _()'d strings in array initializers. Workaround.
-#. khc: then use N_() in the array initializer and use _() when they are
-#. used
-msgid "New mail messages"
-msgstr "नवीन मेल संदेश"
-
-msgid "New blog comments"
-msgstr "नवीन ब्लॉग टिपण्णी"
-
-msgid "New profile comments"
-msgstr "नवीन प्रोफाइल टिपण्णी"
-
-msgid "New friend requests!"
-msgstr "नवीन मित्रकरीता विनंती!"
-
-msgid "New picture comments"
-msgstr "नवीन चित्रकरीता टिपण्णी"
-
-msgid "MySpace"
-msgstr "MySpace"
-
-msgid "IM Friends"
-msgstr "IM मित्र"
-
-#, c-format
-msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"%d बड्डी सर्व्हरपासून समावेश किंवा सुधारीत केले (सर्व्हर-साइड सूचीतील आधिपासूनच बड्डीज "
-"समाविष्टीत)"
-msgstr[1] ""
-"%d बड्डीज सर्व्हरपासून समावेश किंवा सुधारीत केले (सर्व्हर-साइड सूचीतील आधिपासूनच बड्डीज "
-"समाविष्टीत)"
-
-msgid "Add contacts from server"
-msgstr "सर्व्हरपासून संपर्क समावेश करा"
-
-#, c-format
-msgid "Protocol error, code %d: %s"
-msgstr "प्रोटोकॉल त्रुटी, कोड %d: %s"
-
-#, c-format
-msgid ""
-"%s Your password is %zu characters, which is longer than the maximum length "
-"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
-"cfm?fuseaction=accountSettings.changePassword and try again."
-msgstr ""
-"%s पासवर्ड %zu अक्षरी आहे, जे कमाल लांबी %d पेक्षा जास्त आहे.  पासवर्ड http://"
-"profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword "
-"येथे बदला व पुनः प्रयत्न करा."
-
-msgid "Incorrect username or password"
-msgstr "अयोग्य वापरकर्ता किंवा परवलीचा शब्द"
-
-msgid "MySpaceIM Error"
-msgstr "MySpaceIM त्रुटी"
-
-msgid "Invalid input condition"
-msgstr "अवैध इंपुट अट"
-
-msgid "Failed to add buddy"
-msgstr "बड्डी समावेश करण्यास अपयशी"
-
-msgid "'addbuddy' command failed."
-msgstr "'addbuddy' आदेश अपयशी."
-
-msgid "persist command failed"
-msgstr "persist आदेश अपयशी"
-
-msgid "Failed to remove buddy"
-msgstr "बड्डी काढून टाकण्यास अपयशी"
-
-msgid "'delbuddy' command failed"
-msgstr "'delbuddy' आदेश अपयशी"
-
-msgid "blocklist command failed"
-msgstr "blocklist आदेश अपयशी"
-
-msgid "Missing Cipher"
-msgstr "सीफर आढळले नाही"
-
-msgid "The RC4 cipher could not be found"
-msgstr "RC4 सीफर आढळले नाही"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"RC4 समर्थन (>= 2.0.1) सह libpurple करीता सुधारणा करा. MySpaceIM प्लगइन लोड केले "
-"जाणार नाही."
-
-msgid "Add friends from MySpace.com"
-msgstr "MySpace.com पासून मित्र समावेश करा"
-
-msgid "Importing friends failed"
-msgstr "मित्र आयात अपयशी"
-
-#. TODO: find out how
-msgid "Find people..."
-msgstr "वापरकर्ता शोधा..."
-
-msgid "Change IM name..."
-msgstr "IM नाव बदला..."
-
-msgid "myim URL handler"
-msgstr "myim URL हँडलर"
-
-msgid "No suitable MySpaceIM account could be found to open this myim URL."
-msgstr "myim URL उघडण्यासाठी योग्य MySpaceIM खाते आढळले नाही."
-
-msgid "Enable the proper MySpaceIM account and try again."
-msgstr "योग्य MySpaceIM खाते समर्थीत करा व पुनः प्रयत्न करा."
-
-msgid "Show display name in status text"
-msgstr "स्थिती मजकूरात डिस्पले नाव दाखवा"
-
-msgid "Show headline in status text"
-msgstr "स्थिती मजकूरात हेडलाइन दाखवा"
-
-msgid "Send emoticons"
-msgstr "इमोटिकॉन्स पाठवा"
-
-msgid "Screen resolution (dots per inch)"
-msgstr "पडद्याची रेजॉल्यूशन (डॉट्स् दर इंच)"
-
-msgid "Base font size (points)"
-msgstr "बेस फॉन्ट आकार (पॉइंट्स्)"
-
-msgid "User"
-msgstr "वापरकर्ता"
-
-msgid "Headline"
-msgstr "हेडलाइन"
-
-msgid "Song"
-msgstr "गीत"
-
-msgid "Total Friends"
-msgstr "एकूण मित्र"
-
-msgid "Client Version"
-msgstr "क्लाएंट आवृत्ती"
-
-msgid ""
-"An error occurred while trying to set the username.  Please try again, or "
-"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
-"to set your username."
-msgstr ""
-"वापरकर्तानाव सेट करतेवेळी त्रुटी आढळली.  कृपया पुनः प्रयत्न करा, किंवा वापरकर्तानाव सेट "
-"करण्यासाठी http://editprofile.myspace.com/index.cfm?fuseaction=profile."
-"username येथे भेट द्या."
-
-msgid "MySpaceIM - Username Available"
-msgstr "MySpaceIM - वापरकर्तानाव उपलब्ध"
-
-msgid "This username is available. Would you like to set it?"
-msgstr "हे वापरकर्तानाव उपलब्ध आहे. तुम्हाला सेट करायचे?"
-
-msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr "एकदाचे सेट केल्यावर, त्यांस बदलणे अशक्य आहे!"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM - कृपया वापरकर्ताना सेट करा"
-
-msgid "This username is unavailable."
-msgstr "हा वापरकर्तानाव अऩुपलब्ध आहे."
-
-msgid "Please try another username:"
-msgstr "कृपया इतर वापरकर्तानावसाठी पुनः प्रयत्न करा:"
-
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "वापरकर्तानाव सेट केले नाही"
-
-msgid "Please enter a username to check its availability:"
-msgstr "कृपया उपलब्धता तपासण्यासाठी वापरकर्तानाव द्या:"
-
-#. TODO: icons for each zap
-#. Lots of comments for translators:
-#. Zap means "to strike suddenly and forcefully as if with a
-#. * projectile or weapon."  This term often has an electrical
-#. * connotation, for example, "he was zapped by electricity when
-#. * he put a fork in the toaster."
-msgid "Zap"
-msgstr "झॅप (zap)"
-
-#, c-format
-msgid "%s has zapped you!"
-msgstr "%s ने तुम्हाला झॅप केले!"
-
-#, c-format
-msgid "Zapping %s..."
-msgstr "%s ला झॅप करत आहे..."
-
-#. Whack means "to hit or strike someone with a sharp blow"
-msgid "Whack"
-msgstr "व्हॅक (whack)"
-
-#, c-format
-msgid "%s has whacked you!"
-msgstr "%s ने तुम्हाला डिवचले!"
-
-#, c-format
-msgid "Whacking %s..."
-msgstr "%s ला डिवचत आहे..."
-
-#. Torch means "to set on fire."  Don't worry, this doesn't
-#. * make a whole lot of sense in English, either.  Feel free
-#. * to translate it literally.
-msgid "Torch"
-msgstr "टॉर्च (torch)"
-
-#, c-format
-msgid "%s has torched you!"
-msgstr "%s ने तुम्हाला टॉर्च केले!"
-
-#, c-format
-msgid "Torching %s..."
-msgstr "%s ला टॉर्च करत आहे..."
-
-#. Smooch means "to kiss someone, often enthusiastically"
-msgid "Smooch"
-msgstr "मुक्का घेणे (smooch)"
-
-#, c-format
-msgid "%s has smooched you!"
-msgstr "%s ने तुम्हाचा मुक्का घेतला!"
-
-#, c-format
-msgid "Smooching %s..."
-msgstr "%s चा मुक्का घेत आहे..."
-
-#. A hug is a display of affection; wrapping your arms around someone
-msgid "Hug"
-msgstr "मिठ्ठी मारणे (hug)"
-
-#, c-format
-msgid "%s has hugged you!"
-msgstr "%s ने तुम्हाला मिठ्ठी मारली!"
-
-#, c-format
-msgid "Hugging %s..."
-msgstr "%s ला मिठ्ठी मारत आहे..."
-
-#. Slap means "to hit someone with an open/flat hand"
-msgid "Slap"
-msgstr "स्लॅप (slap)"
-
-#, c-format
-msgid "%s has slapped you!"
-msgstr "%s ने तुम्हाला थोबाडीत मारले!"
-
-#, c-format
-msgid "Slapping %s..."
-msgstr "%s ला थोबाडीत मारत आहे..."
-
-#. Goose means "to pinch someone on their butt"
-msgid "Goose"
-msgstr "चिमटी घेणे"
-
-#, c-format
-msgid "%s has goosed you!"
-msgstr "%s ने तुमची चिमटी घेतली!"
-
-#, c-format
-msgid "Goosing %s..."
-msgstr "%s ची चिमटी घेत आहे..."
-
-#. A high-five is when two people's hands slap each other
-#. * in the air above their heads.  It is done to celebrate
-#. * something, often a victory, or to congratulate someone.
-msgid "High-five"
-msgstr "अभिनंदन"
-
-#, c-format
-msgid "%s has high-fived you!"
-msgstr "%s ने तुमचे अभिनंदन केले आहे!"
-
-#, c-format
-msgid "High-fiving %s..."
-msgstr "%s चे अभिनंदन करत आहे..."
-
-#. We're not entirely sure what the MySpace people mean by
-#. * this... but we think it's the equivalent of "prank."  Or, for
-#. * someone to perform a mischievous trick or practical joke.
-msgid "Punk"
-msgstr "थट्टा करणे"
-
-#, c-format
-msgid "%s has punk'd you!"
-msgstr "%s ने तुमची थट्टा केली!"
-
-#, c-format
-msgid "Punking %s..."
-msgstr "%s ची थट्टा करत आहे..."
-
-#. Raspberry is a slang term for the vibrating sound made
-#. * when you stick your tongue out of your mouth with your
-#. * lips closed and blow.  It is typically done when
-#. * gloating or bragging.  Nowadays it's a pretty silly
-#. * gesture, so it does not carry a harsh negative
-#. * connotation.  It is generally used in a playful tone
-#. * with friends.
-msgid "Raspberry"
-msgstr "फुरक्या मारणे"
-
-#, c-format
-msgid "%s has raspberried you!"
-msgstr "%s तुम्हाला फुरकी मारली!"
-
-#, c-format
-msgid "Raspberrying %s..."
-msgstr "%s ला फुरक्या मारत आहे..."
-
 msgid "Required parameters not passed in"
 msgstr "आवश्यक परिमाणे पुढे जाउ शकत नाहीत "
 
@@ -6795,6 +5105,9 @@ msgstr "स्वतःला समाविष्ट करणे अशक्
 
 msgid "Master archive is misconfigured"
 msgstr "प्रधान इतिहास अयोग्य अंतर्गत रचना केलेला आहे"
+
+msgid "Incorrect username or password"
+msgstr "अयोग्य वापरकर्ता किंवा परवलीचा शब्द"
 
 msgid "Could not recognize the host of the username you entered"
 msgstr "आत्ताच दिलेल्या वापरकर्तानावाचे यजमान ओळखण्यास अशक्य"
@@ -6915,6 +5228,12 @@ msgstr "सर्व्हरशी संपर्क करताना दो
 msgid "Telephone Number"
 msgstr "टेलिफोन क्रमांक"
 
+msgid "Location"
+msgstr "ठिकाण"
+
+msgid "Department"
+msgstr "विभाग"
+
 msgid "Personal Title"
 msgstr "वैयक्तिक शीर्षक"
 
@@ -6963,6 +5282,9 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "आपणास संवादात सामील होण्यास  आवडेल का?"
 
+msgid "You have signed on from another location"
+msgstr "स्वाक्षरी इतर ठिकाणापासून केली आहे"
+
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
@@ -6975,6 +5297,9 @@ msgstr "सर्व्हरशी जोडणी करण्यास अश
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "ही सभा बंद करण्यात आली आहे. आणखी संदेश पाठवले जाऊ शकत नाही."
+
+msgid "Busy"
+msgstr "व्यस्त"
 
 #. *< type
 #. *< ui_requirement
@@ -7077,6 +5402,9 @@ msgstr "संभाषण रूमचे नाव अवैध आहे"
 
 msgid "Invalid error"
 msgstr "अवैध दोष"
+
+msgid "Not logged in"
+msgstr "प्रवेश केलेला नाही"
 
 msgid "Cannot receive IM due to parental controls"
 msgstr "पॅरेंटल कंट्रोलमुळे IM प्राप्त झाले नाही"
@@ -7213,11 +5541,20 @@ msgstr "संगीत ऐकत आहे"
 msgid "Studying"
 msgstr "अभ्यास"
 
+msgid "Working"
+msgstr "कार्य"
+
 msgid "In the restroom"
 msgstr "रेस्टरूममध्ये"
 
 msgid "Received invalid data on connection with server"
 msgstr "सर्व्हरशी जोडणी स्थापीत केल्यानंतर अवैध डाटा प्राप्त झाले"
+
+msgid "Error parsing response from authentication server"
+msgstr ""
+
+msgid "Unknown error during authentication"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -7347,6 +5684,11 @@ msgstr ""
 "आपणास आपल्या खाते सेटिंग्जमध्ये एनक्रिपशनची आवश्यकता , परंतु एनक्रिपशन आपल्या सिस्टमला "
 "समर्थन करत नाही."
 
+msgid ""
+"You required Kerberos authentication but encryption is disabled in your "
+"account settings."
+msgstr ""
+
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr "थोड्याचवेळात तुम्ही खंडीत व्हाल.  असे असल्यास, सुधारणासाठी %s तपासा."
@@ -7361,7 +5703,6 @@ msgid "Received authorization"
 msgstr "अधिकृत परवानगी मिळाली"
 
 #. Unregistered username
-#. the username does not exist
 msgid "Username does not exist"
 msgstr "वापकर्तानाव अस्तित्वात नाही"
 
@@ -7664,6 +6005,9 @@ msgstr ""
 "असायला हवे, किंवा अक्षरासह सुर व्हायला हवे व फक्त अक्षरे, क्रमांक व स्पेस्, किंवा ठराविक "
 "क्रमांकच समाविष्टीत असायला हवे."
 
+msgid "Unable to Add"
+msgstr "समावेश करणे अशक्य"
+
 msgid "Unable to Retrieve Buddy List"
 msgstr "बड्डी सूची प्राप्त करण्यास अशक्य"
 
@@ -7815,6 +6159,9 @@ msgstr "ईमेल पत्त्याद्वारे बड्डी क
 msgid "Type the email address of the buddy you are searching for."
 msgstr "शोधण्याजोगी बड्डीचा ईमेल पत्ता टाईप करा."
 
+msgid "_Search"
+msgstr "शोधा (_S)"
+
 msgid "Set User Info (web)..."
 msgstr "वापरकर्त्याची माहिती सेट करा (वेब)..."
 
@@ -7851,8 +6198,17 @@ msgstr "बड्डीज अधिकृत परवानगीची वा
 msgid "Search for Buddy by Email Address..."
 msgstr "ईमेल पत्त्याद्वारे बड्डी करीता शोधा..."
 
-msgid "Use clientLogin"
-msgstr "क्लाएंट प्रवेशचा वापर करा"
+msgid "clientLogin"
+msgstr ""
+
+msgid "Kerberos"
+msgstr ""
+
+msgid "MD5-based"
+msgstr ""
+
+msgid "Authentication method"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -7975,6 +6331,9 @@ msgstr "वापरकर्ता माहिती उपलब्ध ना
 msgid "Mobile Phone"
 msgstr "मोबाईल फोन"
 
+msgid "Age"
+msgstr "वय"
+
 msgid "Personal Web Page"
 msgstr "वैयक्तिक बेब पान"
 
@@ -7983,11 +6342,20 @@ msgstr "वैयक्तिक बेब पान"
 msgid "Additional Information"
 msgstr "अतिरिक्त माहिती"
 
+msgid "Home Address"
+msgstr "घरचा पत्ता"
+
 msgid "Zip Code"
 msgstr "झिप कोड"
 
+msgid "Work Address"
+msgstr "ऑफिसचा पत्ता"
+
 msgid "Work Information"
 msgstr "कार्याची माहिती"
+
+msgid "Company"
+msgstr "कंपनी"
 
 msgid "Division"
 msgstr "विभाग "
@@ -8006,6 +6374,12 @@ msgstr "पासून सभासद"
 
 msgid "Capabilities"
 msgstr "कार्यक्षमता"
+
+msgid "Profile"
+msgstr "माहितीलेख"
+
+msgid "View web profile"
+msgstr "वेब प्रोफाइलचे दृष्य"
 
 msgid "Invalid SNAC"
 msgstr "अवैध SNAC"
@@ -8297,6 +6671,9 @@ msgstr ""
 "ओळखकर्ता '%s'  आपल्या सेमटाईम पंथामध्ये कोणत्याही वापरकर्त्याशी जुळत नाही. ही नोंद "
 "आपल्या बड्डी यादीतून काढण्यात आली आहे."
 
+msgid "Unable to add user"
+msgstr "वापरकर्ता समाविष्ट करण्यास असमर्थ"
+
 #, c-format
 msgid ""
 "Error reading file %s: \n"
@@ -8575,6 +6952,9 @@ msgstr "खूपच क्रियाशील"
 
 msgid "Robot"
 msgstr "यंत्रमानव"
+
+msgid "In Love"
+msgstr "प्रेमात "
 
 msgid "User Modes"
 msgstr "वापरकर्त्याची अवस्था"
@@ -8864,6 +7244,9 @@ msgstr "संस्था"
 msgid "Unit"
 msgstr "एकक"
 
+msgid "Homepage"
+msgstr "मुख्यपान"
+
 msgid "Note"
 msgstr "टिप"
 
@@ -9037,6 +7420,9 @@ msgstr "SILC सर्व्हरशी जोडणी करतेवेळ�
 
 msgid "Key Exchange failed"
 msgstr "किची अदलाबदल  करण्यात अपयशी झाले "
+
+msgid "Authentication failed"
+msgstr " सप्रमाणता अपयशी झाली"
 
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
@@ -9546,418 +7932,6 @@ msgstr "सप्रमाणता असलेले वापरकर्त�
 msgid "Auth Domain"
 msgstr "अधिकृत परवानगीचे महाजालावरील संकेत स्थळ"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "सामील होणे &lt;room&gt;:  याहू जालजोडणीवर संभाषण खोलीत सामील व्हा"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "यादी:याहू जालजोडणीवर रूमची सूची"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr "डुडल: डुडल सत्र चालू  करण्याची वापरकर्त्यास विनंती करा"
-
-msgid "Yahoo ID..."
-msgstr "Yahoo ID..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! Protocol Plugin"
-msgstr "Yahoo! प्रोटोकॉल प्लगइन"
-
-msgid "Pager port"
-msgstr "पेजर पोर्ट"
-
-msgid "File transfer server"
-msgstr "फाइल स्थानांतर करणारा सर्व्हर"
-
-msgid "File transfer port"
-msgstr "फाइल स्थानांतर पोर्ट"
-
-msgid "Chat room locale"
-msgstr "संभाषण खोलीचे घटनास्थान"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr " संभाषण आणि खोलीतील संभाषण आमंत्रणास दुर्लक्षित करा"
-
-msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "HTTP  आणि HTTPS जोडणीसाठी खाते प्रॉक्झी चा उपयोग करा "
-
-msgid "Chat room list URL"
-msgstr "संभाषण  रूमची  यादीURL"
-
-msgid "Yahoo JAPAN ID..."
-msgstr "Yahoo JAPAN ID..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! JAPAN Protocol Plugin"
-msgstr "Yahoo! JAPAN प्रोटोकॉल प्लगइन"
-
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s ने तुम्हाला वेबकॅम निमंत्रण पाठवले आहे, जे अजूनही समर्थीत नाही."
-
-msgid "Your SMS was not delivered"
-msgstr "तुमचा SMS पोहचला नाही"
-
-msgid "Your Yahoo! message did not get sent."
-msgstr "आपला याहु!  पाठवलेला संदेश मिळाला नाही."
-
-#, c-format
-msgid "Yahoo! system message for %s:"
-msgstr " %s करिता याहु! पद्धती संदेश:"
-
-msgid "Authorization denied message:"
-msgstr "अधिकृत परवानगीचा संदेश नाकारला:"
-
-#, c-format
-msgid ""
-"%s has (retroactively) denied your request to add them to your list for the "
-"following reason: %s."
-msgstr ""
-"%s ने खालील कारणासाठी आपल्या यादीकडे समाविष्ट करण्यासाठी आपली विनंती "
-"(रिट्रोअक्टिवली) नाकारली: %s."
-
-#, c-format
-msgid "%s has (retroactively) denied your request to add them to your list."
-msgstr ""
-"%s ने (रिट्रोअक्टिवली)त्यांना आपल्या यादीत समाविष्ट करण्यासाठी आपली विनंती नाकारली."
-
-msgid "Add buddy rejected"
-msgstr "समाविष्ट केलेली बड्डी नाकारली "
-
-#. Some error in the received stream
-msgid "Received invalid data"
-msgstr "अवैध डाटा प्राप्त झाले"
-
-#. security lock from too many failed login attempts
-msgid ""
-"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-"website may fix this."
-msgstr ""
-"खाते कुलूपबंद केले: एकापेक्षा जास्त प्रवेश प्रयत्न अपयशी. Yahoo! संकेतस्थळावर प्रवेश केल्याने याचे "
-"निवारन शक्य आहे."
-
-#. indicates a lock of some description
-msgid ""
-"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
-"this."
-msgstr ""
-"खाते कुलूपबंद केले: अपरिचीत कारण. Yahoo! संकेतस्थळावर प्रवेश केल्याने याचे निवारन शक्य आहे."
-
-#. indicates a lock due to logging in too frequently
-msgid ""
-"Account locked: You have been logging in too frequently.  Wait a few minutes "
-"before trying to connect again.  Logging into the Yahoo! website may help."
-msgstr ""
-"खाते कुलूपबंद केले: तुम्ही बऱ्याच वेळ पासून प्रवेश करत आहे.  पुनः जोडणी करण्यापूर्वी काहिक "
-"मिनीटे थांबा.  Yahoo! संकेतस्थळावर प्रवेश केल्याने मदत होईल."
-
-#. username or password missing
-msgid "Username or password missing"
-msgstr "वापरकर्तानाव किंवा पासवर्ड आढळले नाही"
-
-#, c-format
-msgid ""
-"The Yahoo server has requested the use of an unrecognized authentication "
-"method.  You will probably not be able to successfully sign on to Yahoo.  "
-"Check %s for updates."
-msgstr ""
-"याहू सर्व्हरने अपरिचित सप्रमाणतेच्या पद्धतीच्या वापराची विनंती केली आहे.  आपण बहुधा याहूवर "
-"यशस्वीपणे उघडण्यास समर्थ नसाल.  अद्ययावतसाठी %s तपासा."
-
-msgid "Failed Yahoo! Authentication"
-msgstr "याहू! सप्रमाणता अपयशी झाली"
-
-#, c-format
-msgid ""
-"You have tried to ignore %s, but the user is on your buddy list.  Clicking "
-"\"Yes\" will remove and ignore the buddy."
-msgstr ""
-"आपण %sला दुर्लक्षित करण्याचा प्रयत्न करत आहात, परंतु वापरकर्ता आपल्या बड्डी यादीवर आहे.  "
-"\"हो\" ला क्लिक केल्याने बड्डीना काढून टाकले जाईल आणि दुर्लक्षित केले जाईल."
-
-msgid "Ignore buddy?"
-msgstr " बड्डीना दुर्लक्षित करायचे आहे का?"
-
-msgid "Invalid username or password"
-msgstr "अवैध वापरकर्तानाव किंवा पासवर्ड"
-
-msgid ""
-"Your account has been locked due to too many failed login attempts.  Please "
-"try logging into the Yahoo! website."
-msgstr ""
-"एकापेक्षा जास्त प्रवेश प्रयत्नमुळे तुमचे खाते कुलूपबंद केले आहे.  कृपया Yahoo! संकेतस्थळावर प्रवेश "
-"करण्याचा प्रयत्न करा."
-
-msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr "अपरिचीत त्रुटी 52.  पुनः जोडणी केल्यावर याचे निवारन व्हायला हवे."
-
-msgid ""
-"Error 1013: The username you have entered is invalid.  The most common cause "
-"of this error is entering your email address instead of your Yahoo! ID."
-msgstr ""
-"त्रुटी 1013: दिलेले वापरकर्तानाव अवैध आहे.  या त्रुटीचे संभाव्य कारण म्हणजे Yahoo! ID ऐवजी "
-"स्वतःचा ईमेल पत्ता देणे."
-
-#, c-format
-msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
-msgstr "अज्ञात दोष क्रमांक %d. याहुतुन प्रवेश करत आहे! याला कदाचित संकेतस्थळ स्थिर करेल."
-
-#, c-format
-msgid "Unable to add buddy %s to group %s to the server list on account %s."
-msgstr "बड्डी %s यांस गट %s करीता, सर्व्हर सूचीवरील खाते %s करीता समावेश करण्यास अशक्य."
-
-msgid "Unable to add buddy to server list"
-msgstr "सर्व्हर सूचीमध्ये बड्डी समावेश करण्यास अशक्य"
-
-#, c-format
-msgid "[ Audible %s/%s/%s.swf ] %s"
-msgstr "[ सुश्राव्य %s/%s/%s.swf ] %s"
-
-msgid "Received unexpected HTTP response from server"
-msgstr "सर्व्हरपासून अनपेक्षीत HTTP प्रतिसाद प्राप्त झाले"
-
-#, c-format
-msgid "Lost connection with %s: %s"
-msgstr "%s सह जोडणी खंडीत झाली: %s"
-
-#, c-format
-msgid "Unable to establish a connection with %s: %s"
-msgstr "%s सह जोडणी स्थापीत करणे अशक्य: %s"
-
-msgid "Unable to connect: The server returned an empty response."
-msgstr "जोडणी अशक्य: सर्व्हरने रिकामे प्रतिसाद पुरवले."
-
-msgid ""
-"Unable to connect: The server's response did not contain the necessary "
-"information"
-msgstr "जोडणी करण्यास अशक्य: सर्व्हरच्या प्रतिसादात आवश्यक माहिती समाविष्टीत नाही"
-
-msgid "Not at Home"
-msgstr "घरात नाही"
-
-msgid "Not at Desk"
-msgstr "डेस्कवर नाही"
-
-msgid "Not in Office"
-msgstr "ऑफिसमध्ये नाही"
-
-msgid "On Vacation"
-msgstr "रजेवर"
-
-msgid "Stepped Out"
-msgstr "बाहेर गेले"
-
-msgid "Not on server list"
-msgstr "सर्व्हर यादीवर  नाही"
-
-msgid "Appear Permanently Offline"
-msgstr "कायमचे बंद असताना दिसते"
-
-msgid "Presence"
-msgstr "उपस्थिती"
-
-msgid "Don't Appear Permanently Offline"
-msgstr "कायमच बंद असलेले दिसत नाही"
-
-msgid "Join in Chat"
-msgstr "संभाषणामध्ये सामील व्हा"
-
-msgid "Initiate Conference"
-msgstr "सभेला आरंभ करा "
-
-msgid "Presence Settings"
-msgstr "उपस्थित नियंत्रणे"
-
-msgid "Start Doodling"
-msgstr "डुडलिंग करण्यास सुरू करा"
-
-msgid "Activate which ID?"
-msgstr "कोणता ID सक्रिय करावा ?"
-
-msgid "Select the ID you want to activate"
-msgstr "सक्रिय करण्याजोगी ID नीवडा"
-
-msgid "Join whom in chat?"
-msgstr "संभाषणमध्ये कोणाशी संवाद करायचे?"
-
-msgid "Activate ID..."
-msgstr "ID सक्रिय करा..."
-
-msgid "Join User in Chat..."
-msgstr "संभाषणात वापरकर्त्याने सामिल व्हा..."
-
-msgid "Open Inbox"
-msgstr "इंबॉक्स उघडा"
-
-msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr "SMS पाठवणे अशक्य. मोबाईल कॅरीअर प्राप्त करणे अशक्य."
-
-msgid "Can't send SMS. Unknown mobile carrier."
-msgstr "SMS पाठवणे अशक्य. अपरिचीत मोबाईल कॅरिअर."
-
-msgid "Getting mobile carrier to send the SMS."
-msgstr "SMS पाठवण्यासाठी मोबाईल कॅरिअर प्राप्त करणे अशक्य."
-
-#. Write a local message to this conversation showing that a request for a
-#. * Doodle session has been made
-#.
-msgid "Sent Doodle request."
-msgstr "डुडल विनंती पाठवली."
-
-msgid "Unable to connect."
-msgstr "जोडू शकत नाही."
-
-msgid "Unable to establish file descriptor."
-msgstr "फाइल विवरक स्थापित करण्यास असमर्थ."
-
-#, c-format
-msgid "%s is trying to send you a group of %d files.\n"
-msgstr "%s तुम्हाला %d फाइल्स्चा संच पाठवण्याचा प्रयत्न करत आहे.\n"
-
-msgid "Write Error"
-msgstr "लेखन दोष"
-
-msgid "Yahoo! Japan Profile"
-msgstr "याहु ! जपान  माहितीलेख"
-
-msgid "Yahoo! Profile"
-msgstr "याहु! माहितीलेख"
-
-msgid ""
-"Sorry, profiles marked as containing adult content are not supported at this "
-"time."
-msgstr ""
-"माफ करा,  प्रौढ विषय समावेशनासारखे चिन्हांकित केलेले माहितीलेख ह्या वेळेसाठी सहाय्य करत "
-"नाही."
-
-msgid ""
-"If you wish to view this profile, you will need to visit this link in your "
-"web browser:"
-msgstr ""
-"जर आपणास ह्या माहितीलेखास दृश्यित करावेसे वाटते, तर आपणास आपल्या वेब ब्राऊजरमध्ये ह्या "
-"दुव्यास भेट देण्याची आवश्यकता भासेल:"
-
-msgid "Yahoo! ID"
-msgstr "याहु! ID"
-
-msgid "Hobbies"
-msgstr "छंद"
-
-msgid "Latest News"
-msgstr "ताजी बातमी"
-
-msgid "Home Page"
-msgstr "मुख्य पृष्ठ"
-
-msgid "Cool Link 1"
-msgstr "स्थिर दुवा 1"
-
-msgid "Cool Link 2"
-msgstr "स्थिर दुवा 2"
-
-msgid "Cool Link 3"
-msgstr "स्थिर दुवा 3"
-
-msgid "Last Update"
-msgstr "शेवटचे अद्ययावत"
-
-msgid ""
-"This profile is in a language or format that is not supported at this time."
-msgstr "या प्रोफाइलमधील भाषा किंवा रूपण यावेळी समर्थीत नाही."
-
-msgid ""
-"Could not retrieve the user's profile. This most likely is a temporary "
-"server-side problem. Please try again later."
-msgstr ""
-"वापरकर्त्याचा माहितीलेख परत मिळवू शकत नाही.  हा खरीतर तात्पुरती सर्व्हरकडची समस्या "
-"आहे. कृपया नंतर पुन्हा प्रयन्त करा."
-
-msgid ""
-"Could not retrieve the user's profile. This most likely means that the user "
-"does not exist; however, Yahoo! sometimes does fail to find a user's "
-"profile. If you know that the user exists, please try again later."
-msgstr ""
-"वापरकर्त्याचा माहितीलेख  परत मिळवू शकत नाही.  ह्याचा  खरा अर्थ असा कि वापरकर्ता "
-"अस्तित्वात नाही, जसे, याहू! काहीवेळा वापरकर्त्याचा माहितीलेख   शोधण्यास अपयशी. जर "
-"आपणास तो वापरकर्ता आस्तित्वात आहे हे माहित असेल तर कृपया नंतर परत प्रयन्त करा."
-
-msgid "The user's profile is empty."
-msgstr "वापरकर्त्याचा माहितीलेख रिक्त आहे."
-
-#, c-format
-msgid "%s has declined to join."
-msgstr "%s ने सामिल होण्यास नकारले."
-
-msgid "Failed to join chat"
-msgstr "संभाषणात  सामील होण्यास अपयश आले"
-
-#. -6
-msgid "Unknown room"
-msgstr "अपरिचीत रूम"
-
-#. -15
-msgid "Maybe the room is full"
-msgstr "कदाचित खोली भरलेली असेल"
-
-#. -35
-msgid "Not available"
-msgstr "उपलब्ध नाही"
-
-msgid ""
-"Unknown error. You may need to logout and wait five minutes before being "
-"able to rejoin a chatroom"
-msgstr ""
-"अज्ञात दोष. आपणास बाहेर येण्याची गरज असावी आणि संभाषण खोलीत सामिल होण्यापूर्वी पाच "
-"मिनिटे प्रतीक्षा करा"
-
-#, c-format
-msgid "You are now chatting in %s."
-msgstr "आता आपण  %sमध्ये संभाषण करत आहात."
-
-msgid "Failed to join buddy in chat"
-msgstr "संभाषणात बड्डी सामील करण्यात अपयश आले"
-
-msgid "Maybe they're not in a chat?"
-msgstr "कदाचित ते संभाषणामध्ये नसतील?"
-
-msgid "Fetching the room list failed."
-msgstr "खोली यादी   आणण्यात  अपयश आले."
-
-msgid "Voices"
-msgstr "आवाज"
-
-msgid "Webcams"
-msgstr "वेबकॅंम"
-
-msgid "Connection problem"
-msgstr "जोडणीची/जुळणीची समस्या"
-
-msgid "Unable to fetch room list."
-msgstr "खोली यादी जाऊन आणण्यास असमर्थ."
-
-msgid "User Rooms"
-msgstr "वापरकर्त्याची खोली"
-
-msgid "Connection problem with the YCHT server"
-msgstr "YCHT सर्व्हरशी जोडणी करतेवेळी अडचण आढळली"
-
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
@@ -9967,6 +7941,12 @@ msgstr ""
 #, c-format
 msgid "Unable to send to chat %s,%s,%s"
 msgstr "संभाषण %s,%s,%s कडे पाठवण्यात असमर्थ"
+
+msgid "User is offline"
+msgstr "वापरकर्ता बंद आहे "
+
+msgid "User"
+msgstr "वापरकर्ता"
 
 msgid "Hidden or not logged-in"
 msgstr "अदृश्य असलेले किंवा प्रवेश न केलेले"
@@ -10354,8 +8334,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"This means that you can be chatting with friends on MSN, talking to a friend "
-"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+"This means that you can be chatting with friends on AIM, talking to a friend "
+"on Google Talk, and sitting in an IRC chat room all at the same time."
 msgstr ""
 
 msgid "The buddy list showing friends on different networks."
@@ -10367,8 +8347,8 @@ msgstr "Pidgin इंटरनेट संदेशवाहक"
 msgid "Internet Messenger"
 msgstr "इंटरनेट मेसेंजर"
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+#, fuzzy
+msgid "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, and more"
 msgstr ""
 "IM वरील संभाषण. AIM, Google Talk, Jabber/XMPP, MSN, Yahoo व आणखीकरीता समर्थन "
 "पुरवतो"
@@ -11090,13 +9070,11 @@ msgstr "अलायस (_l):"
 msgid "_Group:"
 msgstr "गट (_G):"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "खाते जुळल्यानंतर स्वयं सामिल व्हा (_j)."
+msgstr ""
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
-msgstr "पटल बंद झाल्यावर संभाषणमध्ये रहा (_R)."
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "कृपया समाविष्ट करायच्या गटाचे नाव नोंद घाला."
@@ -11135,9 +9113,8 @@ msgstr "या प्रमाणपत्रकरीता यजमान न
 msgid "SSL Servers"
 msgstr "SSL सर्व्हर्स"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "समर्थीत डिबग पर्याय याप्रमाणे आहेत: प्लगइन्स्ची आवृत्ती"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "अपरिचीत आदेश."
@@ -11883,19 +9860,13 @@ msgstr ""
 
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
-"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
-">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"emailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>This "
+"is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
 "support/\">archive</a>)<br/>We can't help with third-party protocols or "
 "plugins!<br/>This list's primary language is <b>English</b>.  You are "
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\"><b>इतर Pidgin वापकर्त्यांपासून मदत </b></font> <a href=\"mailto:"
-"support@pidgin.im\">support@pidgin.im</a> येथे ईमेल पाठवून शक्य आहे<br/>ही "
-"<b>पब्लिक</b> मेलींग लिस्ट आहे! (<a href=\"http://pidgin.im/pipermail/support/"
-"\">आर्काइव्ह</a>)<br/>तिसरे पक्षीय प्रोटोकॉल्स् किंवा प्लगईन्स् करीता मदत पुरवणे अशक्य आहे!"
-"<br/>या लिस्टची प्राथमिक भाषा <b>इंग्रजी</b> आहे.  तुम्ही इतर भाषांमध्ये पोस्ट करू शकता, "
-"परंतु प्रतिसाद जास्त फायदेशीर ठरू शकणार नाही.<br/>"
 
 #, c-format
 msgid "About %s"
@@ -12530,9 +10501,8 @@ msgstr "_माध्यम"
 msgid "_Hangup"
 msgstr "_अस्थिर"
 
-#, fuzzy
 msgid "Media error"
-msgstr "वाचण्यात दोष"
+msgstr ""
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12693,10 +10663,6 @@ msgstr "फाइल निवडा"
 
 msgid "Modify Buddy Pounce"
 msgstr "बड्डी व्यत्यय संपादीत करा"
-
-#. Create the "Pounce on Whom" frame.
-msgid "Pounce on Whom"
-msgstr "ज्याच्यावर हल्ला करा"
 
 msgid "_Account:"
 msgstr "खाते (_A):"
@@ -13362,9 +11328,9 @@ msgstr "सद्यःस्थिती (_S):"
 msgid "Use a _different status for some accounts"
 msgstr "काही खात्यांसाठी निराळी सद्यःस्थिती वापरा (_d)"
 
-#. Save & Use button
-msgid "Sa_ve & Use"
-msgstr "साठवा आणि वापरा (_v)"
+#. Save and Use button
+msgid "Sa_ve and Use"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -13427,9 +11393,6 @@ msgstr "स्थिती नीवडकर्ता"
 
 msgid "Google Talk"
 msgstr "Google Talk"
-
-msgid "Facebook (XMPP)"
-msgstr "फेसबुक (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -13716,6 +11679,9 @@ msgstr "प्राप्त झालेले संदेश"
 #, c-format
 msgid "Select Color for %s"
 msgstr "%s साठी रंग निवडा"
+
+msgid "General"
+msgstr "सर्वसाधारण"
 
 msgid "Ignore incoming format"
 msgstr "आत येणाऱ्या स्वरूपास दुर्लक्षित करा"
@@ -14096,16 +12062,11 @@ msgstr ""
 msgid "Notify For"
 msgstr "साठी सूचना घ्या"
 
-#, fuzzy
-msgid "\t_Notify for System messages"
-msgstr "पद्धती संदेश"
+msgid "\tS_ystem messages"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t जेव्हा कोणिही तुमचा वापरकर्तानाव घेतो (_O)"
-
-#, fuzzy
-msgid "\tNotify for _System messages"
-msgstr "पद्धती संदेश"
 
 msgid "_Focused windows"
 msgstr "प्रकाशमान केलेले पटल (_F)"
@@ -14291,12 +12252,9 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "आपण प्राथमिक आदानाला मजकूर-आधारित प्रोटोकॉलसकडे पाठवा."
 
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"मजकूरावर आधारित प्रोटोकॉलकडे प्राथमिक माहिती आपणास पाठवू देते  (XMPP, MSN, IRC, "
-"TOC). पाठवण्याकरिता नोंदी बॉक्समधील 'प्रवेश करा' वर प्रहार करा. दोष चौकटी(विन्डो)  "
-"पहा."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -14744,13 +12702,8 @@ msgstr "बड्डी यादी अणि संवादासाठी �
 #. *  description
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
-"the buddy list.\n"
-"\n"
-"* Note: This plugin requires Win2000 or greater."
+"the buddy list."
 msgstr ""
-"हा प्लगईन संवाद विन्डोवर अस्थिर घटक अल्फाच्या पारदर्शकतेस आणि बड्डी यादीस सक्षम करते.\n"
-"\n"
-"*टिप:ह्या प्लगईनला Win2000 किंवा त्यापेक्षा मोठ्याची आवश्यकता आहे."
 
 #. Autostart
 msgid "Startup"
@@ -14891,12 +12844,10 @@ msgstr ""
 "आताच स्थापन केलेल्या पिडजिनच्या आवृत्तीची स्थापना रद्द करण्यास असमर्थ.  आता स्थापन केलेल्या "
 "आवृत्तीस नष्ट न करता नवीन आवृत्ती स्थापन केली जाईल.   "
 
-#, fuzzy
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
 "installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"पिडजिनला सुसंगत GTK+ रनटाइमची आवश्यकता असते (आधीच सादर करण्यासाठी दिसत नाही.)"
 
 #. Installer Subsection Text
 msgid "URI Handlers"

@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Kevin Scannell <kscanne@gmail.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
-"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Irish (http://www.transifex.com/projects/p/pidgin/language/"
-"ga/)\n"
+"POT-Creation-Date: 2017-03-09 18:54-0600\n"
+"PO-Revision-Date: 2017-01-07 18:34+0000\n"
+"Last-Translator: Kevin Scannell <kscanne@gmail.com>\n"
+"Language-Team: Irish (http://www.transifex.com/pidgin/pidgin/language/ga/)\n"
 "Language: ga\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -58,7 +58,6 @@ msgstr ""
 "duit an scéal a fhiosrú agus an t-aistriú a chur i gcrích de láimh. Déan "
 "tuairisc ar an earráid seo anseo: http://developer.pidgin.im"
 
-#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Earráid"
 
@@ -234,7 +233,6 @@ msgstr "Cuir eolas faoin chara isteach."
 msgid "Chats"
 msgstr "Comhráite"
 
-#. Extract their Name and put it in
 msgid "Name"
 msgstr "Ainm"
 
@@ -341,11 +339,9 @@ msgstr "Scoránaigh an Chlib"
 msgid "View Log"
 msgstr "Féach ar Logchomhad"
 
-#. General
 msgid "Nickname"
 msgstr "Leasainm"
 
-#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "Díomhaoin"
@@ -792,7 +788,6 @@ msgid "Remaining"
 msgstr "Fágtha"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
-#. presence
 msgid "Status"
 msgstr "Stádas"
 
@@ -1047,8 +1042,9 @@ msgstr "Forrán Nua"
 msgid "Edit Buddy Pounce"
 msgstr "Cuir Forrán in Eagar"
 
-msgid "Pounce Who"
-msgstr "Cara"
+#. Create the "Pounce on Whom" frame.
+msgid "Pounce on Whom"
+msgstr "Sprioc an Fhorráin"
 
 #. Account:
 msgid "Account:"
@@ -1295,7 +1291,7 @@ msgstr "Níorbh fhéidir le GStreamer túsú."
 msgid "(default)"
 msgstr "(réamhshocrú)"
 
-msgid "Select Sound File ..."
+msgid "Select Sound File..."
 msgstr "Roghnaigh Comhad Fuaime..."
 
 msgid "Sound Preferences"
@@ -1378,21 +1374,12 @@ msgstr "Scrios Stádas"
 msgid "Saved Statuses"
 msgstr "Stádais Shábháilte"
 
-#. title
 msgid "Title"
 msgstr "Teideal"
 
 msgid "Type"
 msgstr "Cineál"
 
-#. Statuses are almost all the same. Define a macro to reduce code repetition.
-#. PurpleStatusPrimitive
-#. id - use default
-#. name - use default
-#. saveable
-#. user_settable
-#. not independent
-#. Attributes - each status can have a message.
 msgid "Message"
 msgstr "Teachtaireacht"
 
@@ -1424,11 +1411,11 @@ msgstr "Teachtaireacht:"
 msgid "Edit Status"
 msgstr "Cuir Stádas in Eagar"
 
-msgid "Use different status for following accounts"
-msgstr "Úsáid stádas difriúil do na cuntais seo a leanas"
+msgid "Use a different status for some accounts"
+msgstr "Úsáid stádas difriúil do chuntais áirithe"
 
-#. Save & Use
-msgid "Save & Use"
+#. Save and Use
+msgid "Save and Use"
 msgstr "Sábháil agus Úsáid"
 
 msgid "Certificates"
@@ -1558,7 +1545,7 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr "TinyURL don seoladh thuas: %s"
 
-msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgid "Please wait while TinyURL fetches a shorter URL..."
 msgstr "Fan nóiméad fad is a chruthaíonn TinyURL URL níos giorra..."
 
 msgid "Only create TinyURL for URLs of this length or greater"
@@ -1573,15 +1560,12 @@ msgstr "TinyURL"
 msgid "TinyURL plugin"
 msgstr "Breiseán TinyURL"
 
-msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-msgstr ""
-"Nuair a fhaigheann tú teachtaireacht a bhfuil URL(anna) ann, úsáid TinyURL "
-"chun í a chóipeáil níos éasca"
+msgid "Shorten URLs in messages using TinyURL"
+msgstr "Bain úsáid as TinyURL chun URLanna a ghiorrú"
 
 msgid "Online"
 msgstr "Ar Líne"
 
-#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "As Líne"
 
@@ -1801,7 +1785,7 @@ msgid "Certificate Information"
 msgstr "Eolas faoin Teastas"
 
 msgid "Unable to find Issuer Certificate"
-msgstr ""
+msgstr "Níl aon fháil ar Theastas an Eisitheora"
 
 #. Make messages
 #, c-format
@@ -1815,14 +1799,21 @@ msgid ""
 "Activation date: %s\n"
 "Expiration date: %s\n"
 msgstr ""
+"Gnáthainm: %s\n"
+"\n"
+"Eisithe ag: %s\n"
+"\n"
+"Méarlorg (SHA1): %s\n"
+"\n"
+"Dáta tosaithe: %s\n"
+"Dáta éaga: %s\n"
 
 msgid "(self-signed)"
-msgstr ""
+msgstr "(féinsínithe)"
 
 msgid "View Issuer Certificate"
-msgstr ""
+msgstr "Taispeáin Teastas an Eisitheora"
 
-#. show error to user
 msgid "Registration Error"
 msgstr "Earráid Chláraithe"
 
@@ -1838,7 +1829,6 @@ msgid "+++ %s signed off"
 msgstr "+++ Logáil %s amach"
 
 #. Undocumented
-#. Unknown error
 msgid "Unknown error"
 msgstr "Earráid anaithnid"
 
@@ -1970,22 +1960,6 @@ msgstr "An láimhseálaí le haghaidh URLanna \"irc\""
 msgid "The command used to handle \"irc\" URLs, if enabled."
 msgstr "An t-ordú chun URLanna \"irc\" a láimhseáil."
 
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"msnim\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"msnim\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"msnim\" a láimhseáil."
-
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Ar chóir don ordú sonraithe URLanna \"sip\" a láimhseáil"
 
@@ -2017,22 +1991,6 @@ msgstr "An láimhseálaí le haghaidh URLanna \"xmpp\""
 
 msgid "The command used to handle \"xmpp\" URLs, if enabled."
 msgstr "An t-ordú chun URLanna \"xmpp\" a láimhseáil."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Ar chóir don ordú sonraithe URLanna \"ymsgr\" a láimhseáil"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Fíor más mian leat URLanna \"ymsgr\" a láimhseáil leis an ordú sa réimse "
-"\"command\"."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "An láimhseálaí le haghaidh URLanna \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "An t-ordú chun URLanna \"ymsgr\" a láimhseáil."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2257,26 +2215,31 @@ msgstr "<font color=\"red\"><b>Níorbh fhéidir an comhad a léamh: %s</b></font
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <UATH-FHREAGRA>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "Teachtaireacht ó %s"
+msgstr ""
+"\n"
+"\n"
+"Teachtaireacht ó Farsight: "
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
+"Earráid agus an glao á thúsú. Is dócha gur tharla fadhb agus GStreamer nó "
+"Farsight á suiteáil."
 
-#, fuzzy
 msgid "Network error."
-msgstr "Líonra"
+msgstr "Earráid líonra."
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
 "GStreamer codecs."
 msgstr ""
+"Theip ar idirbheartaíocht codec. Seans gur féidir an fhadhb seo a réiteach "
+"trí tuilleadh codec-anna GStreamer a shuiteáil."
 
 msgid ""
 "No codecs found. Install some GStreamer codecs found in GStreamer plugins "
@@ -2291,9 +2254,8 @@ msgstr ""
 "Níl aon codec-anna fágtha. Tá do chuid sainroghanna i fs-codecs.conf ró-"
 "dhocht."
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "Níl tú ceangailte leis an bhfreastalaí"
+msgstr "Níorbh fhéidir dul i dteagmháil leis an bpáirtí i gcéin"
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Tharla earráid dhocheartaithe in Farsight2."
@@ -2872,11 +2834,11 @@ msgstr "Mód síceach le haghaidh comhráite isteach"
 
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
 "Leis an rogha seo, taispeántar fuinneoga comhrá duit chomh luath agus a "
 "thosaíonn úsáideoir eile comhrá leat. Feidhmíonn sé seo le AIM, ICQ, XMPP, "
-"Sametime, agus Yahoo!"
+"agus Sametime"
 
 msgid "You feel a disturbance in the force..."
 msgstr "Braitheann tú corraíl san Fhórsa..."
@@ -2926,38 +2888,38 @@ msgid "Tests to see that most things are working."
 msgstr "Féach an bhfuil rudaí ag feidhmiú mar is ceart."
 
 msgid "TLS/SSL Versions"
-msgstr ""
+msgstr "Leaganacha TLS/SSL"
 
 msgid "Minimum Version"
-msgstr ""
+msgstr "Íosleagan"
 
 msgid "Maximum Version"
-msgstr ""
+msgstr "Uasleagan"
 
 msgid "SSL 2"
-msgstr ""
+msgstr "SSL 2"
 
 msgid "SSL 3"
-msgstr ""
+msgstr "SSL 3"
 
 msgid "TLS 1.0"
-msgstr ""
+msgstr "TLS 1.0"
 
 msgid "TLS 1.1"
-msgstr ""
+msgstr "TLS 1.1"
 
 msgid "TLS 1.2"
-msgstr ""
+msgstr "TLS 1.2"
 
 msgid "TLS 1.3"
-msgstr ""
+msgstr "TLS 1.3"
 
 #. TODO: look into how to do this for older versions?
 msgid "Not Supported for NSS < 3.14"
-msgstr ""
+msgstr "Ní thacaítear le NSS < 3.14"
 
 msgid "Ciphers"
-msgstr ""
+msgstr "Sifir"
 
 #. *< type
 #. *< ui_requirement
@@ -2966,14 +2928,14 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "NSS Preferences"
-msgstr ""
+msgstr "Sainroghanna NSS"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 msgid "Configure Ciphers and other Settings for the NSS SSL/TLS Plugin"
-msgstr ""
+msgstr "Cumraigh Sifir agus Socruithe eile don Bhreiseán SSL/TLS NSS"
 
 #. Scheme name
 msgid "X.509 Certificates"
@@ -3093,11 +3055,12 @@ msgstr ""
 "úsáid, suiteáil ActiveTCL ó http://www.activestate.com\n"
 
 msgid ""
-"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
-"im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
+"developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
-"Ní féidir uirlisí \"Bonjour for Windows\" de chuid Apple a aimsiú.  "
-"Tuilleadh eolais ó http://d.pidgin.im/BonjourWindows."
+"Níorbh fhéidir an bosca uirlisí \"Bonjour for Windows\" de chuid Apple a "
+"aimsiú, féach https://developer.pidgin.im/BonjourWindows chun tuilleadh "
+"eolais a fháil."
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "Ní féidir éisteacht le ceangail isteach TM"
@@ -3114,7 +3077,6 @@ msgstr "Ainm"
 msgid "Last name"
 msgstr "Sloinne"
 
-#. email
 msgid "Email"
 msgstr "Ríomhphost"
 
@@ -3201,14 +3163,12 @@ msgstr "Cathair"
 msgid "Year of birth"
 msgstr "Bliain bhreithe"
 
-#. gender
 msgid "Gender"
 msgstr "Inscne"
 
 msgid "Male or female"
 msgstr "Fireann nó baineann"
 
-#. 0
 msgid "Male"
 msgstr "Fireannach"
 
@@ -3246,22 +3206,16 @@ msgstr "Roghnaigh comhrá le haghaidh carad: %s"
 msgid "Add to chat..."
 msgstr "Cuir le comhrá..."
 
-#. 0
 #. Global
 msgid "Available"
 msgstr "Ar fáil"
 
-#. 2
 msgid "Chatty"
 msgstr "Cainteach"
 
-#. 3
 msgid "Do Not Disturb"
 msgstr "Ná Cuir Isteach Orm"
 
-#. 1
-#. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
-#. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
 msgid "Away"
 msgstr "Amuigh"
@@ -3269,8 +3223,6 @@ msgstr "Amuigh"
 msgid "UIN"
 msgstr "UIN"
 
-#. first name
-#. optional information
 msgid "First Name"
 msgstr "Ainm"
 
@@ -3295,9 +3247,6 @@ msgstr "Níor aimsíodh aon úsáideoirí a mheaitseáileann do chuardach."
 msgid "Unable to read from socket"
 msgstr "Ní féidir léamh ó shoicéad"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
 msgid "Connected"
 msgstr "Ceangailte"
 
@@ -3310,14 +3259,13 @@ msgstr "Cuir le comhrá"
 msgid "Chat _name:"
 msgstr "Ai_nm an chomhrá:"
 
-#. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Ceangal"
 
 #, c-format
 msgid "Unable to resolve hostname: %s"
-msgstr ""
+msgstr "Ní féidir an t-óstainm a réiteach: %s"
 
 msgid "Chat error"
 msgstr "Earráid i gcomhrá"
@@ -3473,7 +3421,7 @@ msgid "Auto-detect incoming UTF-8"
 msgstr "Braith UTF-8 go huathoibríoch"
 
 msgid "Ident name"
-msgstr ""
+msgstr "Ainm aitheantais"
 
 msgid "Real name"
 msgstr "Fíorainm"
@@ -3527,10 +3475,10 @@ msgid "Nick"
 msgstr "Leasainm"
 
 msgid "Login name"
-msgstr ""
+msgstr "Ainm cuntais"
 
 msgid "Host name"
-msgstr ""
+msgstr "Óstainm"
 
 msgid "Currently on"
 msgstr "Anseo faoi láthair"
@@ -4094,8 +4042,6 @@ msgstr "Teideal Poist"
 msgid "Role"
 msgstr "Ról"
 
-#. birthday
-#. birthday (required)
 msgid "Birthday"
 msgstr "Lá breithe"
 
@@ -4188,7 +4134,6 @@ msgstr "Logáil Amach"
 msgid "JID"
 msgstr "JID"
 
-#. last name
 msgid "Last Name"
 msgstr "Sloinne"
 
@@ -4450,7 +4395,6 @@ msgstr "Faic (ag fanacht le 'Chuig')"
 msgid "None"
 msgstr "Faic"
 
-#. subscription type
 msgid "Subscription"
 msgstr "Síntiús"
 
@@ -4466,12 +4410,6 @@ msgstr "Meon: Ainm"
 msgid "Mood Comment"
 msgstr "Meon: Trácht"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
 msgid "Tune Artist"
 msgstr "Amhrán: Ealaíontóir"
 
@@ -4717,8 +4655,6 @@ msgstr ""
 "Ní féidir scairt a dhéanamh, toisc nach dtacaíonn %s leis, nó níor mhaith "
 "leis/léi scairt a fháil faoi láthair."
 
-#. Yahoo only supports one attention command: the 'buzz'.
-#. This is index number YAHOO_BUZZ.
 msgid "Buzz"
 msgstr "Scairt"
 
@@ -4854,8 +4790,6 @@ msgstr "Ceadaigh fíordheimhniú gnáth-théacs thar shruthanna neamhchriptithe"
 msgid "Connect port"
 msgstr "Port ceangail"
 
-#. TODO: default to automatically try different ports. Make the user be
-#. * able to set the first port to try (like LastConnectedPort in Windows client).
 #. Account options
 msgid "Connect server"
 msgstr "Freastalaí ceangail"
@@ -4866,8 +4800,9 @@ msgstr "Seachfhreastalaithe aistrithe comhad"
 msgid "BOSH URL"
 msgstr "URL BOSH"
 
-#. this should probably be part of global smiley theme settings later on,
-#. shared with MSN
+#. this should probably be part of global smiley theme settings
+#. * later on
+#.
 msgid "Show Custom Smileys"
 msgstr "Taispeáin Straoiseoga Saincheaptha"
 
@@ -4959,7 +4894,6 @@ msgstr ""
 "Ní féidir comhad a sheoladh chuig %s; ní thacaíonn an t-úsáideoir le "
 "haistrithe comhad"
 
-#. not success
 msgid "File Send Failed"
 msgstr "Níorbh fhéidir an comhad a sheoladh"
 
@@ -5258,1702 +5192,6 @@ msgstr "Gníomhartha"
 msgid "Select an action"
 msgstr "Roghnaigh gníomh"
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "Ní féidir \"%s\" a chur leis an liosta."
-
-msgid "Buddy Add error"
-msgstr "Earráid: cara á chur leis"
-
-msgid "The username specified does not exist."
-msgstr "Níl an t-úsáideoir seo ann."
-
-msgid "Unable to parse message"
-msgstr "Ní féidir an teachtaireacht a pharsáil"
-
-msgid "Syntax Error (probably a client bug)"
-msgstr "Earráid Chomhréire (fabht sa chliant is dócha)"
-
-msgid "Invalid email address"
-msgstr "Seoladh neamhbhailí ríomhphoist"
-
-msgid "User does not exist"
-msgstr "Níl an t-úsáideoir seo ann"
-
-msgid "Fully qualified domain name missing"
-msgstr "Ainm láncháilithe an fhearainn ar iarraidh"
-
-msgid "Already logged in"
-msgstr "Logáilte isteach cheana"
-
-msgid "Invalid username"
-msgstr "Ainm neamhbhailí úsáideora"
-
-msgid "Invalid friendly name"
-msgstr "Ainm neamhbhailí cairdiúil"
-
-msgid "List full"
-msgstr "Tá an liosta lán"
-
-msgid "Already there"
-msgstr "Tá sé ann cheana"
-
-msgid "Not on list"
-msgstr "Níl sé ar liosta"
-
-msgid "User is offline"
-msgstr "Tá an t-úsáideoir as líne"
-
-msgid "Already in the mode"
-msgstr "Sa mhód cheana"
-
-msgid "Already in opposite list"
-msgstr "Sa liosta eile cheana"
-
-msgid "Too many groups"
-msgstr "An iomarca grúpaí"
-
-msgid "Invalid group"
-msgstr "Grúpa neamhbhailí"
-
-msgid "User not in group"
-msgstr "Níl an t-úsáideoir sa ghrúpa"
-
-msgid "Group name too long"
-msgstr "Tá ainm an ghrúpa rófhada"
-
-msgid "Cannot remove group zero"
-msgstr "Ní féidir grúpa a náid a scriosadh"
-
-msgid "Tried to add a user to a group that doesn't exist"
-msgstr "Rinne tú iarracht úsáideoir a chur le grúpa nach bhfuil ann"
-
-msgid "Switchboard failed"
-msgstr "Theip ar lasc-chlár"
-
-msgid "Notify transfer failed"
-msgstr "Cuir in iúl gur theip ar an aistriú"
-
-msgid "Required fields missing"
-msgstr "Réimsí riachtanacha ar iarraidh"
-
-msgid "Too many hits to a FND"
-msgstr "An iomarca amas ar FND"
-
-msgid "Not logged in"
-msgstr "Níl logáilte isteach"
-
-msgid "Service temporarily unavailable"
-msgstr "Níl an tseirbhís ar fáil ar feadh tamaill"
-
-msgid "Database server error"
-msgstr "Earráid ón bhfreastalaí bunachair sonraí"
-
-msgid "Command disabled"
-msgstr "Ordú díchumasaithe"
-
-msgid "File operation error"
-msgstr "Earráid oibríochta comhaid"
-
-msgid "Memory allocation error"
-msgstr "Earráid leithdháilte cuimhne"
-
-msgid "Wrong CHL value sent to server"
-msgstr "Seoladh luach mícheart CHL chuig an bhfreastalaí"
-
-msgid "Server busy"
-msgstr "Freastalaí gnóthach"
-
-msgid "Server unavailable"
-msgstr "Níl an freastalaí ar fáil"
-
-msgid "Peer notification server down"
-msgstr "Freastalaí fógartha comhghleacaithe as fearas"
-
-msgid "Database connect error"
-msgstr "Earráid ag ceangal leis an mbunachar sonraí"
-
-msgid "Server is going down (abandon ship)"
-msgstr "Freastalaí á mhúchadh (fág an long láithreach bonn!)"
-
-msgid "Error creating connection"
-msgstr "Earráid agus ceangal á chruthú"
-
-msgid "CVR parameters are either unknown or not allowed"
-msgstr "Paraiméadair CVR anaithnide nó neamhcheadaithe"
-
-msgid "Unable to write"
-msgstr "Ní féidir scríobh"
-
-msgid "Session overload"
-msgstr "Seisiún ró-ualaithe"
-
-msgid "User is too active"
-msgstr "Tá an t-úsáideoir róghníomhach"
-
-msgid "Too many sessions"
-msgstr "An iomarca seisiún"
-
-msgid "Passport not verified"
-msgstr "Pas gan deimhniú"
-
-msgid "Bad friend file"
-msgstr "Droch-chomhad cairde"
-
-msgid "Not expected"
-msgstr "Gan súil leis"
-
-msgid "Friendly name is changing too rapidly"
-msgstr "Tá an t-ainm cairdiúil ag athrú róghasta"
-
-msgid "Server too busy"
-msgstr "Freastalaí róghnóthach"
-
-msgid "Authentication failed"
-msgstr "Theip ar fhíordheimhniú"
-
-msgid "Not allowed when offline"
-msgstr "Ní cheadaítear é seo agus as líne"
-
-msgid "Not accepting new users"
-msgstr "Níl sé ag glacadh le húsáideoirí nua"
-
-msgid "Kids Passport without parental consent"
-msgstr "Pas Páistí gan toiliú na dtuismitheoirí"
-
-msgid "Passport account not yet verified"
-msgstr "Níl an cuntas Passport deimhnithe fós"
-
-msgid "Passport account suspended"
-msgstr "Cuntas Passport ar fionraí"
-
-msgid "Bad ticket"
-msgstr "Drochthicéad"
-
-#, c-format
-msgid "Unknown Error Code %d"
-msgstr "Cód Anaithnid Earráid %d"
-
-#, c-format
-msgid "MSN Error: %s\n"
-msgstr "Earráid MSN: %s\n"
-
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Tharla earráid agus an liosta cairde á shioncrónú i %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"Tá %s ón liosta logánta i ngrúpa \"%s\" ach níl sé/sí ar an liosta ar an "
-"bhfreastalaí. An bhfuil fonn ort an cara seo a athrú?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"Tá %s ar an liosta logánta ach níl sé/sí ar an liosta ar an bhfreastalaí. An "
-"bhfuil fonn ort an cara seo a chur leis?"
-
-msgid "Other Contacts"
-msgstr "Teagmhálacha Eile"
-
-msgid "Non-IM Contacts"
-msgstr "Teagmhálacha Neamh-TM"
-
-#, c-format
-msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
-msgstr ""
-"Sheol %s caochadh súile. <a href='msn-wink://%s'>Cliceáil anseo chun é a "
-"sheinm</a>"
-
-#, c-format
-msgid "%s sent a wink, but it could not be saved"
-msgstr "Sheol %s caochadh súile, ach níorbh fhéidir é a shábháil"
-
-#, c-format
-msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
-msgstr ""
-"Sheol %s gearrthóg ghutha. <a href='audio://%s'>Cliceáil chun í a sheinm</a>"
-
-#, c-format
-msgid "%s sent a voice clip, but it could not be saved"
-msgstr "Sheol %s gearrthóg ghutha, ach níorbh fhéidir í a shábháil"
-
-#, c-format
-msgid "%s sent you a voice chat invite, which is not yet supported."
-msgstr "Sheol %s cuireadh duit chun comhrá gutha, ach ní thacaítear leis fós."
-
-msgid "Nudge"
-msgstr "Tabhair Sonc"
-
-#, c-format
-msgid "%s has nudged you!"
-msgstr "Thug %s sonc duit!"
-
-#, c-format
-msgid "Nudging %s..."
-msgstr "Sonc á thabhairt do %s..."
-
-msgid "Email Address..."
-msgstr "Seoladh Ríomhphoist..."
-
-msgid "Your new MSN friendly name is too long."
-msgstr "Tá d'ainm cairdiúil nua ar MSN rófhada."
-
-#, c-format
-msgid "Set friendly name for %s."
-msgstr "Socraigh ainm cairdiúil le haghaidh %s."
-
-msgid "Set Friendly Name"
-msgstr "Socraigh Ainm Cairdiúil"
-
-msgid "This is the name that other MSN buddies will see you as."
-msgstr "Seo é an t-ainm a fheicfidh cairde eile ar MSN."
-
-msgid "This Location"
-msgstr "An Áit Seo"
-
-msgid "This is the name that identifies this location"
-msgstr "Seo é an t-ainm ar an áit seo"
-
-msgid "Other Locations"
-msgstr "Áiteanna Eile"
-
-msgid "You can sign out from other locations here"
-msgstr "Is féidir logáil amach ó áiteanna eile anseo"
-
-#. TODO: Due to limitations in our current request field API, the
-#. following string will show up with a trailing colon.  This should
-#. be fixed either by adding an "include_colon" boolean, or creating
-#. a separate purple_request_field_label_new_without_colon function,
-#. or by never automatically adding the colon and requiring that
-#. callers add the colon themselves.
-msgid "You are not signed in from any other locations."
-msgstr "Níl tú logáilte isteach ó aon áit eile."
-
-msgid "Allow multiple logins?"
-msgstr "Ceadaigh níos mó ná seisiún amháin?"
-
-msgid ""
-"Do you want to allow or disallow connecting from multiple locations "
-"simultaneously?"
-msgstr ""
-"An bhfuil fonn ort níos mó ná seisiún amháin ó áiteanna éagsúla a cheadú?"
-
-msgid "Allow"
-msgstr "Ceadaigh"
-
-msgid "Disallow"
-msgstr "Ná Ceadaigh"
-
-msgid "Set your home phone number."
-msgstr "Socraigh d'uimhir ghutháin sa bhaile."
-
-msgid "Set your work phone number."
-msgstr "Socraigh d'uimhir ghutháin san oifig."
-
-msgid "Set your mobile phone number."
-msgstr "Socraigh uimhir do ghutháin shoghluaiste."
-
-msgid "Allow MSN Mobile pages?"
-msgstr "Ceadaigh Glaonna ó MSN Mobile?"
-
-msgid ""
-"Do you want to allow or disallow people on your buddy list to send you MSN "
-"Mobile pages to your cell phone or other mobile device?"
-msgstr ""
-"An bhfuil fonn ort cead a thabhairt do dhaoine ar do liosta cairde "
-"leathanaigh MSN Mobile a sheoladh chuig do ghuthán nó chuig ghléas "
-"soghluaiste eile?"
-
-#, c-format
-msgid "Blocked Text for %s"
-msgstr "Téacs Coiscthe do %s"
-
-msgid "No text is blocked for this account."
-msgstr "Níl aon téacs coiscthe don chuntas seo."
-
-#, c-format
-msgid ""
-"MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr ""
-"Cuireann freastalaithe MSN cosc ar na sloinn ionadaíochta seo a leanas:<br/>"
-"%s"
-
-msgid "This account does not have email enabled."
-msgstr "Níl ríomhphost cumasaithe ag an gcuntas seo."
-
-msgid "Send a mobile message."
-msgstr "Seol teachtaireacht soghluaiste."
-
-msgid "Page"
-msgstr "Glao"
-
-msgid "Playing a game"
-msgstr "Ag imirt cluiche"
-
-msgid "Working"
-msgstr "Ag obair"
-
-msgid "Has you"
-msgstr "Tá tú aige/aici"
-
-msgid "Home Phone Number"
-msgstr "Uimhir Ghutháin (Baile)"
-
-msgid "Work Phone Number"
-msgstr "Uimhir Ghutháin (Obair)"
-
-msgid "Mobile Phone Number"
-msgstr "Uimhir Shoghluaiste"
-
-msgid "Be Right Back"
-msgstr "Ar Ais go Luath"
-
-msgid "Busy"
-msgstr "Gnóthach"
-
-msgid "On the Phone"
-msgstr "Ar an nGuthán"
-
-msgid "Out to Lunch"
-msgstr "Imithe chuig Lón"
-
-msgid "Game Title"
-msgstr "Teideal an Chluiche"
-
-msgid "Office Title"
-msgstr "Teideal na hOifige"
-
-msgid "Set Friendly Name..."
-msgstr "Socraigh Ainm Cairdiúil..."
-
-msgid "View Locations..."
-msgstr "Féach ar Áiteanna..."
-
-msgid "Set Home Phone Number..."
-msgstr "Socraigh Uimhir Ghutháin sa Bhaile..."
-
-msgid "Set Work Phone Number..."
-msgstr "Socraigh Uimhir Ghutháin san Oifig..."
-
-msgid "Set Mobile Phone Number..."
-msgstr "Socraigh Uimhir Shoghluaiste..."
-
-msgid "Enable/Disable Mobile Devices..."
-msgstr "Cumasaigh/Díchumasaigh Gléasanna Soghluaiste..."
-
-msgid "Allow/Disallow Multiple Logins..."
-msgstr "Ceadaigh/Coisc Níos Mó ná Seisiún Amháin..."
-
-msgid "Allow/Disallow Mobile Pages..."
-msgstr "Ceadaigh/Coisc Glaonna Soghluaiste..."
-
-msgid "View Blocked Text..."
-msgstr "Féach ar Théacs Coiscthe..."
-
-msgid "Open Hotmail Inbox"
-msgstr "Oscail Bosca Isteach Hotmail"
-
-msgid "Send to Mobile"
-msgstr "Seol chuig Gléas Soghluaiste"
-
-msgid "SSL support is needed for MSN. Please install a supported SSL library."
-msgstr ""
-"Teastaíonn ó MSN tacaíocht SSL. Caithfidh tú leabharlann oiriúnach SSL a "
-"shuiteáil."
-
-#, c-format
-msgid ""
-"Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be valid email addresses."
-msgstr ""
-"Ní féidir an cara %s a chur leis toisc nach bhfuil an t-ainm úsáideora "
-"bailí. Is gá seoladh ríomhphoist bailí a úsáid."
-
-msgid "Unable to Add"
-msgstr "Ní féidir cur leis"
-
-msgid "Error retrieving profile"
-msgstr "Earráid agus próifíl á fáil"
-
-msgid "General"
-msgstr "Ginearálta"
-
-msgid "Age"
-msgstr "Aois"
-
-msgid "Occupation"
-msgstr "Post"
-
-msgid "Location"
-msgstr "Áit"
-
-msgid "Hobbies and Interests"
-msgstr "Caitheamh Aimsire agus Suimeanna"
-
-msgid "A Little About Me"
-msgstr "Maidir Liomsa"
-
-msgid "Social"
-msgstr "Sóisialta"
-
-msgid "Marital Status"
-msgstr "Stádas Pósta:"
-
-msgid "Interests"
-msgstr "Suimeanna"
-
-msgid "Pets"
-msgstr "Peataí"
-
-msgid "Hometown"
-msgstr "Baile Dúchais"
-
-msgid "Places Lived"
-msgstr "Áiteanna Eile"
-
-msgid "Fashion"
-msgstr "Faisean"
-
-msgid "Humor"
-msgstr "Greann"
-
-msgid "Music"
-msgstr "Ceol"
-
-msgid "Favorite Quote"
-msgstr "Athfhriotal Is Ansa Leat"
-
-msgid "Contact Info"
-msgstr "Faisnéis Teagmhála"
-
-msgid "Personal"
-msgstr "Pearsanta"
-
-msgid "Significant Other"
-msgstr "An Eile Shuntasach"
-
-msgid "Home Phone"
-msgstr "Guthán Baile"
-
-msgid "Home Phone 2"
-msgstr "Guthán Baile 2"
-
-msgid "Home Address"
-msgstr "Seoladh Baile"
-
-msgid "Personal Mobile"
-msgstr "Guthán Póca Pearsanta"
-
-msgid "Home Fax"
-msgstr "Facs Baile"
-
-msgid "Personal Email"
-msgstr "Ríomhphost Pearsanta"
-
-msgid "Personal IM"
-msgstr "Cuntas Pearsanta TM"
-
-msgid "Anniversary"
-msgstr "Cothrom Bliana"
-
-#. Business
-msgid "Work"
-msgstr "Obair"
-
-msgid "Company"
-msgstr "Comhlacht"
-
-msgid "Department"
-msgstr "Roinn"
-
-msgid "Profession"
-msgstr "Slí Bheatha"
-
-msgid "Work Phone"
-msgstr "Guthán (Obair)"
-
-msgid "Work Phone 2"
-msgstr "Guthán (Obair) 2"
-
-msgid "Work Address"
-msgstr "Seoladh (Obair)"
-
-msgid "Work Mobile"
-msgstr "Guthán Póca (Obair)"
-
-msgid "Work Pager"
-msgstr "Glaoire (Obair)"
-
-msgid "Work Fax"
-msgstr "Facs (Obair)"
-
-msgid "Work Email"
-msgstr "Seoladh Ríomhphoist (Obair)"
-
-msgid "Work IM"
-msgstr "Cuntas TM (Obair)"
-
-msgid "Start Date"
-msgstr "Dáta Tosaigh"
-
-msgid "Favorite Things"
-msgstr "Rudaí is ansa leat"
-
-msgid "Last Updated"
-msgstr "Nuashonraithe"
-
-msgid "Homepage"
-msgstr "Leathanach Baile"
-
-msgid "The user has not created a public profile."
-msgstr "Níl aon phróifíl phoiblí cruthaithe ag an úsáideoir."
-
-msgid ""
-"MSN reported not being able to find the user's profile. This either means "
-"that the user does not exist, or that the user exists but has not created a "
-"public profile."
-msgstr ""
-"Dúirt MSN nach raibh siad in ann próifíl an úsáideora a aimsiú. Ciallaíonn "
-"sé sin nach bhfuil an t-úsáideoir ann ar chor ar bith, nó tá sé/sí ann ach "
-"níl próifíl phoiblí aige/aici fós."
-
-msgid ""
-"Could not find any information in the user's profile. The user most likely "
-"does not exist."
-msgstr ""
-"Níor aimsíodh aon fhaisnéis i bpróifíl an úsáideora. Is dócha nach bhfuil a "
-"leithéid d'úsáideoir ann."
-
-msgid "View web profile"
-msgstr "Féach ar phróifíl Ghréasáin"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *< summary
-msgid "Windows Live Messenger Protocol Plugin"
-msgstr "Breiseán don Phrótacal Windows Live Messenger"
-
-msgid "Use HTTP Method"
-msgstr "Úsáid modh HTTP"
-
-msgid "HTTP Method Server"
-msgstr "Freastalaí Modh HTTP"
-
-msgid "Show custom smileys"
-msgstr "Taispeáin straoiseoga saincheaptha"
-
-msgid "Allow direct connections"
-msgstr "Ceadaigh ceangal díreach"
-
-msgid "Allow connecting from multiple locations"
-msgstr "Ceadaigh ceangal ó níos mó ná áit amháin"
-
-msgid "nudge: nudge a user to get their attention"
-msgstr "nudge: tabhair sonc d'úsáideoir chun a (h)aird a tharraingt"
-
-msgid "Windows Live ID authentication:Unable to connect"
-msgstr "Fíordheimhniú Windows Live ID:Ní féidir ceangal"
-
-msgid "Windows Live ID authentication:Invalid response"
-msgstr "Fíordheimhniú Windows Live ID:Freagra neamhbhailí"
-
-msgid "The following users are missing from your addressbook"
-msgstr "Níl na húsáideoirí seo a leanas i do leabhar seoltaí"
-
-#, c-format
-msgid "Unknown error (%d): %s"
-msgstr "Earráid anaithnid (%d): %s"
-
-msgid "Unable to add user"
-msgstr "Ní féidir an t-úsáideoir a chur leis"
-
-#. Unknown error!
-#, c-format
-msgid "Unknown error (%d)"
-msgstr "Earráid anaithnid (%d)"
-
-msgid "Unable to remove user"
-msgstr "Ní féidir an t-úsáideoir a bhaint"
-
-msgid "Mobile message was not sent because it was too long."
-msgstr "Níor seoladh an teachtaireacht shoghluaiste toisc go raibh sí rófhada."
-
-msgid "Mobile message was not sent because an unknown error occurred."
-msgstr ""
-"Níor seoladh an teachtaireacht shoghluaiste mar gheall ar earráid anaithnid."
-
-#, c-format
-msgid ""
-"The MSN server will shut down for maintenance in %d minute. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgid_plural ""
-"The MSN server will shut down for maintenance in %d minutes. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgstr[0] ""
-"Múchfar an freastalaí MSN chun críche cothabhála i gceann %d nóiméad. "
-"Logálfar amach thú ag an am sin. Ba chóir duit deireadh a chur le haon "
-"chomhráite atá ar siúl agat.\n"
-"\n"
-"Nuair a bheidh an chothabháil críochnaithe, beidh tú in ann logáil isteach "
-"arís."
-msgstr[1] ""
-"Múchfar an freastalaí MSN chun críche cothabhála i gceann %d nóiméad. "
-"Logálfar amach thú ag an am sin. Ba chóir duit deireadh a chur le haon "
-"chomhráite atá ar siúl agat.\n"
-"\n"
-"Nuair a bheidh an chothabháil críochnaithe, beidh tú in ann logáil isteach "
-"arís."
-msgstr[2] ""
-"Múchfar an freastalaí MSN chun críche cothabhála i gceann %d nóiméad. "
-"Logálfar amach thú ag an am sin. Ba chóir duit deireadh a chur le haon "
-"chomhráite atá ar siúl agat.\n"
-"\n"
-"Nuair a bheidh an chothabháil críochnaithe, beidh tú in ann logáil isteach "
-"arís."
-msgstr[3] ""
-"Múchfar an freastalaí MSN chun críche cothabhála i gceann %d nóiméad. "
-"Logálfar amach thú ag an am sin. Ba chóir duit deireadh a chur le haon "
-"chomhráite atá ar siúl agat.\n"
-"\n"
-"Nuair a bheidh an chothabháil críochnaithe, beidh tú in ann logáil isteach "
-"arís."
-msgstr[4] ""
-"Múchfar an freastalaí MSN chun críche cothabhála i gceann %d nóiméad. "
-"Logálfar amach thú ag an am sin. Ba chóir duit deireadh a chur le haon "
-"chomhráite atá ar siúl agat.\n"
-"\n"
-"Nuair a bheidh an chothabháil críochnaithe, beidh tú in ann logáil isteach "
-"arís."
-
-msgid ""
-"Message was not sent because the system is unavailable. This normally "
-"happens when the user is blocked or does not exist."
-msgstr ""
-"Níor seoladh an teachtaireacht mar nach bhfuil an córas ar fáil. De ghnáth, "
-"tarlaíonn sé seo nuair atá cosc ar úsáideoir, nó nach bhfuil sé/sí ann."
-
-msgid "Message was not sent because messages are being sent too quickly."
-msgstr ""
-"Níor seoladh an teachtaireacht toisc go bhfuil teachtaireachtaí á seoladh "
-"róghasta faoi láthair."
-
-msgid "Message was not sent because an unknown encoding error occurred."
-msgstr ""
-"Níor seoladh an teachtaireacht mar gheall ar earráid anaithnid ionchódaithe."
-
-msgid "Message was not sent because an unknown error occurred."
-msgstr "Níor seoladh an teachtaireacht mar gheall ar earráid anaithnid."
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. Converting the encoding from "
-"%s to UTF-8 failed.)"
-msgstr ""
-"%s (Tharla earráid agus an teachtaireacht seo á fáil. Níorbh fhéidir an t-"
-"ionchódú a athrú ó %s go UTF-8.)"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was %s, but it "
-"was not valid UTF-8.)"
-msgstr ""
-"%s (Tharla earráid agus an teachtaireacht seo á fáil. Is é %s an tacar "
-"carachtar, ach ní UTF-8 bailí é.)"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was missing, but "
-"it was not valid UTF-8.)"
-msgstr ""
-"%s (Tharla earráid agus an teachtaireacht seo á fáil. Bhí an tacar carachtar "
-"ar iarraidh, ach ní UTF-8 bailí é.)"
-
-msgid "Writing error"
-msgstr "Earráid sa scríobh"
-
-msgid "Reading error"
-msgstr "Earráid léimh"
-
-#, c-format
-msgid ""
-"Connection error from %s server:\n"
-"%s"
-msgstr ""
-"Earráid ag ceangal le freastalaí %s:\n"
-"%s"
-
-msgid "Our protocol is not supported by the server"
-msgstr "Ní thacaíonn an freastalaí lenár bprótacal"
-
-msgid "Error parsing HTTP"
-msgstr "Earráid agus HTTP á pharsáil"
-
-msgid "You have signed on from another location"
-msgstr "Logáil tú isteach ó áit eile"
-
-msgid "The MSN servers are temporarily unavailable. Please wait and try again."
-msgstr ""
-"Níl aon fháil ar na freastalaithe MSN faoi láthair. Fan nóiméad agus bain "
-"triail eile as."
-
-msgid "The MSN servers are going down temporarily"
-msgstr "Tá na freastalaithe MSN ag dul as líne ar feadh tamaill"
-
-#, c-format
-msgid "Unable to authenticate: %s"
-msgstr "Ní féidir fíordheimhniú: %s"
-
-#, c-format
-msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
-
-msgid "Handshaking"
-msgstr "Croitheadh láimhe"
-
-msgid "Transferring"
-msgstr "Aistriú"
-
-msgid "Starting authentication"
-msgstr "Fíordheimhniú á thosú"
-
-msgid "Getting cookie"
-msgstr "Fianán á fháil"
-
-msgid "Sending cookie"
-msgstr "Fianán á sheoladh"
-
-msgid "Retrieving buddy list"
-msgstr "Liosta cairde á fháil"
-
-#, c-format
-msgid "%s requests to view your webcam, but this request is not yet supported."
-msgstr ""
-"Ba mhaith le %s do cheamara Gréasáin a fheiceáil, ach ní thacaítear leis seo "
-"fós."
-
-#, c-format
-msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr ""
-"Thug %s cuireadh duit a c(h)eamara Gréasáin a fheiceáil, ach ní thacaítear "
-"leis seo fós."
-
-msgid "Away From Computer"
-msgstr "Ar shiúl ón ríomhaire"
-
-msgid "On The Phone"
-msgstr "Ar an nGuthán"
-
-msgid "Out To Lunch"
-msgstr "Imithe Chuig Lón"
-
-msgid "Message may have not been sent because a timeout occurred:"
-msgstr "Seans nach raibh an teachtaireacht seolta mar gur imigh sé thar am:"
-
-msgid "Message could not be sent, not allowed while invisible:"
-msgstr ""
-"Níorbh fhéidir an teachtaireacht a sheoladh. Níl sé ceadaithe agus "
-"dofheicthe:"
-
-msgid "Message could not be sent because the user is offline:"
-msgstr ""
-"Níorbh fhéidir an teachtaireacht a sheoladh toisc go bhfuil an t-úsáideoir "
-"as líne:"
-
-msgid "Message could not be sent because a connection error occurred:"
-msgstr ""
-"Níorbh fhéidir an teachtaireacht a sheoladh mar gheall ar earráid leis an "
-"gceangal:"
-
-msgid "Message could not be sent because we are sending too quickly:"
-msgstr ""
-"Níorbh fhéidir an teachtaireacht a sheoladh toisc go bhfuil teachtaireachtaí "
-"á seoladh róghasta faoi láthair:"
-
-msgid ""
-"Message could not be sent because we were unable to establish a session with "
-"the server. This is likely a server problem, try again in a few minutes:"
-msgstr ""
-"Níorbh fhéidir an teachtaireacht a sheoladh toisc nach rabhamar in ann "
-"seisiún a bhunú leis an bhfreastalaí. Is dócha gur leis an bhfreastalaí an "
-"fhadhb. Bain triail eile as tar éis cúpla nóiméad:"
-
-msgid ""
-"Message could not be sent because an error with the switchboard occurred:"
-msgstr ""
-"Níorbh fhéidir an teachtaireacht a sheoladh mar gheall ar earráid leis an "
-"lasc-chlár:"
-
-msgid "Message may have not been sent because an unknown error occurred:"
-msgstr "Seans nár seoladh an teachtaireacht mar gheall ar earráid anaithnid:"
-
-msgid "Delete Buddy from Address Book?"
-msgstr "An bhfuil fonn ort an cara a scriosadh ón Leabhar Seoltaí?"
-
-msgid "Do you want to delete this buddy from your address book as well?"
-msgstr ""
-"An bhfuil fonn ort an cara seo a scriosadh ó do leabhar seoltaí freisin?"
-
-msgid "The username specified is invalid."
-msgstr "Tá an t-ainm úsáideora sin neamhbhailí."
-
-msgid "The Display Name you entered is invalid."
-msgstr "Chuir tú Ainm Taispeána neamhbhailí isteach."
-
-msgid ""
-"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-msgstr ""
-"Chuir tú breithlá neamhbhailí isteach. Seo é an fhormáid: 'BBBB-MM-LL'."
-
-#. show error to user
-msgid "Profile Update Error"
-msgstr "Earráid agus Próifíl á Nuashonrú"
-
-#. no profile information yet, so we cannot update
-#. (reference: "libpurple/request.h")
-msgid "Profile"
-msgstr "Próifíl"
-
-msgid "Your profile information is not yet retrieved. Please try again later."
-msgstr "Níl d'fhaisnéis phróifíle faighte fós. Déan iarracht eile ar ball."
-
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "Ainm Taispeána"
-
-#. about me
-msgid "About Me"
-msgstr "Maidir Liomsa"
-
-#. where I live
-msgid "Where I Live"
-msgstr "An áit a mairim"
-
-#. relationship status
-msgid "Relationship Status"
-msgstr "Stádas Pósta"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "Guthán Póca"
-
-#. is searchable
-msgid "Can be searched"
-msgstr "Inchuardaithe"
-
-#. is suggestable
-msgid "Can be suggested"
-msgstr "Inmholta"
-
-msgid "Update your MXit Profile"
-msgstr "Nuashonraigh do phróifíl MXit"
-
-msgid "The PIN you entered is invalid."
-msgstr "Chuir tú UAP neamhbhailí isteach."
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "Tá an UAP a chuir tú isteach rófhada nó róghearr [4-10]."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "Tá an UAP neamhbhailí. Ní cheadaítear ach digití [0-9]."
-
-msgid "The two PINs you entered do not match."
-msgstr "Ní ionann an dá UAP a chuir tú isteach."
-
-#. show error to user
-msgid "PIN Update Error"
-msgstr "Earráid agus UAP á nuashonrú"
-
-#. pin
-#. pin (required)
-msgid "PIN"
-msgstr "UAP"
-
-#. verify pin
-msgid "Verify PIN"
-msgstr "Deimhnigh an UAP"
-
-#. (reference: "libpurple/request.h")
-msgid "Change PIN"
-msgstr "Athraigh an UAP"
-
-msgid "Change MXit PIN"
-msgstr "Athraigh an UAP MXit"
-
-msgid "View Splash"
-msgstr "Féach ar Splancscáileán"
-
-msgid "There is no splash-screen currently available"
-msgstr "Níl aon splancscáileán ar fáil faoi láthair"
-
-msgid "About"
-msgstr "Maidir Leis"
-
-msgid "Search for user"
-msgstr "Lorg úsáideoir"
-
-msgid "Search for a MXit contact"
-msgstr "Lorg úsáideoir MXit"
-
-msgid "Type search information"
-msgstr "Clóscríobh téarmaí cuardaigh"
-
-msgid "_Search"
-msgstr "_Cuardaigh"
-
-#. display / change profile
-msgid "Change Profile..."
-msgstr "Athraigh Próifíl..."
-
-#. change PIN
-msgid "Change PIN..."
-msgstr "Athraigh an UAP..."
-
-#. suggested friends
-msgid "Suggested friends..."
-msgstr "Cairde molta..."
-
-#. search for contacts
-msgid "Search for contacts..."
-msgstr "Lorg teagmhálacha..."
-
-#. display splash-screen
-msgid "View Splash..."
-msgstr "Féach ar Splancscáileán..."
-
-#. display plugin version
-msgid "About..."
-msgstr "Maidir leis..."
-
-#. the file is too big
-msgid "The file you are trying to send is too large!"
-msgstr "Tá an teachtaireacht atá á seoladh rómhór!"
-
-#. file read error
-msgid "Unable to access the local file"
-msgstr "Ní féidir an comhad logánta a rochtain"
-
-#. file write error
-msgid "Unable to save the file"
-msgstr "Ní féidir an comhad a shábháil"
-
-msgid ""
-"Unable to connect to the MXit HTTP server. Please check your server settings."
-msgstr ""
-"Ní féidir ceangal leis an bhfreastalaí HTTP MXit. Deimhnigh socruithe an "
-"fhreastalaí."
-
-msgid "Logging In..."
-msgstr "Ag Logáil Isteach..."
-
-msgid ""
-"Unable to connect to the MXit server. Please check your server settings."
-msgstr ""
-"Ní féidir ceangal leis an bhfreastalaí MXit.  Deimhnigh socruithe an "
-"fhreastalaí."
-
-msgid "Connecting..."
-msgstr "Á Cheangal..."
-
-msgid "The Display Name you entered is too short."
-msgstr "Tá an tAinm Taispeána róghearr."
-
-msgid "The PIN you entered has an invalid length [7-10]."
-msgstr "Tá an UAP a chuir tú isteach rófhada nó róghearr [7-10]."
-
-#. mxit login name
-msgid "MXit ID"
-msgstr "Aitheantas MXit"
-
-#. show the form to the user to complete
-msgid "Register New MXit Account"
-msgstr "Cláraigh Cuntas Nua MXit"
-
-msgid "Please fill in the following fields:"
-msgstr "Líon isteach na réimsí seo a leanas:"
-
-#. no reply from the WAP site
-msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr ""
-"Earráid le linn cumarsáide leis an suíomh WAP MXit. Bain triail eile as ar "
-"ball."
-
-#. wapserver error
-#. server could not find the user
-msgid ""
-"MXit is currently unable to process the request. Please try again later."
-msgstr ""
-"Níl MXit in ann an t-iarratas a phróiseáil faoi láthair. Déan iarracht eile "
-"ar ball."
-
-msgid "Wrong security code entered. Please try again later."
-msgstr ""
-"Chuir tú an cód slándála mícheart isteach. Bain triail eile as ar ball."
-
-msgid "Your session has expired. Please try again later."
-msgstr "Tá do sheisiún thar am. Bain triail eile as ar ball."
-
-msgid "Invalid country selected. Please try again."
-msgstr "Tír neamhbhailí roghnaithe. Bain triail eile as."
-
-msgid "The MXit ID you entered is not registered. Please register first."
-msgstr ""
-"Chuir tú isteach aitheantas MXit nach bhfuil cláraithe. Ba chóir duit clárú "
-"ar dtús."
-
-msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr ""
-"Chuir tú isteach aitheantas MXit atá cláraithe cheana. Roghnaigh aitheantas "
-"eile."
-
-msgid "Internal error. Please try again later."
-msgstr "Earráid inmheánach. Déan iarracht eile ar ball."
-
-msgid "You did not enter the security code"
-msgstr "Níor chuir tú cód slándála isteach"
-
-msgid "Security Code"
-msgstr "Cód Slándála"
-
-#. ask for input (required)
-msgid "Enter Security Code"
-msgstr "Cuir Cód Slándála Isteach"
-
-msgid "Your Country"
-msgstr "Do Thír"
-
-msgid "Your Language"
-msgstr "Do Theanga"
-
-#. display the form to the user and wait for his/her input
-msgid "MXit Authorization"
-msgstr "Údarú MXit"
-
-msgid "MXit account validation"
-msgstr "Bailíochtú cuntais MXit"
-
-msgid "Retrieving User Information..."
-msgstr "Eolas Úsáideora á Fháil..."
-
-msgid "was kicked"
-msgstr "ciceáilte amach"
-
-msgid "You have been kicked from this MultiMX."
-msgstr "Bhí tú ciceáilte amach as an MultiMX."
-
-msgid "_Room Name:"
-msgstr "_Ainm an tSeomra:"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "Thug tú cuireadh do"
-
-msgid "Loading menu..."
-msgstr "Roghchlár á luchtú..."
-
-msgid "Status Message"
-msgstr "Teachtaireacht Stádais"
-
-msgid "Rejection Message"
-msgstr "Teachtaireacht Diúltaithe"
-
-msgid "No profile available"
-msgstr "Níl aon phróifíl ar fáil"
-
-msgid "This contact does not have a profile."
-msgstr "Níl próifíl ag an teagmháil seo."
-
-msgid "Your MXit ID..."
-msgstr "D'Aitheantas MXit..."
-
-#. contact is in Deleted, Rejected or None state
-msgid "Re-Invite"
-msgstr "Tabhair Cuireadh Arís"
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "Freastalaí WAP"
-
-msgid "Connect via HTTP"
-msgstr "Ceangail trí HTTP"
-
-msgid "Enable splash-screen popup"
-msgstr "Cumasaigh splancscáileán aníos"
-
-msgid "Don't want to say"
-msgstr "Níor mhaith liom a rá"
-
-msgid "Single"
-msgstr "Singil"
-
-msgid "In a relationship"
-msgstr "I gcaidreamh"
-
-msgid "Engaged"
-msgstr "Geallta"
-
-msgid "Married"
-msgstr "Pósta"
-
-msgid "It's complicated"
-msgstr "Tá sé casta"
-
-msgid "Widowed"
-msgstr "Ar Baintreach"
-
-msgid "Separated"
-msgstr "Scartha"
-
-msgid "Divorced"
-msgstr "Colscartha"
-
-msgid "Last Online"
-msgstr "Ar Líne"
-
-msgid "Invite Message"
-msgstr "Cuireadh"
-
-msgid "No results"
-msgstr "Gan torthaí"
-
-msgid "No contacts found."
-msgstr "Níor aimsíodh aon teagmhálacha."
-
-#. define columns
-msgid "UserId"
-msgstr "Aitheantas"
-
-msgid "Where I live"
-msgstr "An áit a mairim"
-
-#, c-format
-msgid "You have %i suggested friend."
-msgid_plural "You have %i suggested friends."
-msgstr[0] "Tá %i chara molta agat."
-msgstr[1] "Tá %i chara molta agat."
-msgstr[2] "Tá %i chara molta agat."
-msgstr[3] "Tá %i gcara molta agat."
-msgstr[4] "Tá %i cara molta agat."
-
-#, c-format
-msgid "We found %i contact that matches your search."
-msgid_plural "We found %i contacts that match your search."
-msgstr[0] "D'aimsíomar %i duine comhoiriúnach le do chuardach."
-msgstr[1] "D'aimsíomar %i dhuine comhoiriúnach le do chuardach."
-msgstr[2] "D'aimsíomar %i dhuine comhoiriúnach le do chuardach."
-msgstr[3] "D'aimsíomar %i nduine comhoiriúnach le do chuardach."
-msgstr[4] "D'aimsíomar %i duine comhoiriúnach le do chuardach."
-
-#. we must have lost the connection, so terminate it so that we can reconnect
-msgid "We have lost the connection to MXit. Please reconnect."
-msgstr "Cailleadh an ceangal le MXit. Déan iarracht eile."
-
-#. packet could not be queued for transmission
-msgid "Message Send Error"
-msgstr "Earráid Seolta Teachtaireachta"
-
-msgid "Unable to process your request at this time"
-msgstr "Ní féidir d'iarratas a phróiseáil faoi láthair"
-
-msgid "Timeout while waiting for a response from the MXit server."
-msgstr "Imithe thar am ag feitheamh le freagra ón bhfreastalaí MXit."
-
-msgid "Successfully Logged In..."
-msgstr "Logáilte Isteach..."
-
-#, c-format
-msgid ""
-"%s sent you an encrypted message, but it is not supported on this client."
-msgstr ""
-"Sheol %s teachtaireacht chriptithe chugat, ach ní thacaíonn an cliant seo "
-"leis."
-
-msgid "Message Error"
-msgstr "Earráid Teachtaireachta"
-
-#. could not be decrypted
-msgid "An encrypted message was received which could not be decrypted."
-msgstr "Fuarthas teachtaireacht chriptithe ach níorbh fhéidir í a dhíchriptiú."
-
-msgid "Cannot perform redirect using the specified protocol"
-msgstr "Ní féidir athdhíriú leis an bprótacal roghnaithe"
-
-msgid "An internal MXit server error occurred."
-msgstr "Tharla earráid inmheánach sa bhfreastalaí MXit."
-
-#, c-format
-msgid "Login error: %s (%i)"
-msgstr "Earráid ag logáil isteach: %s (%i)"
-
-#, c-format
-msgid "Logout error: %s (%i)"
-msgstr "Earráid ag logáil amach: %s (%i)"
-
-msgid "Contact Error"
-msgstr "Earráid le Teagmháil"
-
-msgid "Message Sending Error"
-msgstr "Earráid agus Teachtaireacht á Seoladh"
-
-msgid "Status Error"
-msgstr "Earráid agus Stádas á Shocrú"
-
-msgid "Mood Error"
-msgstr "Earráid agus Meon á Shocrú"
-
-msgid "Invitation Error"
-msgstr "Earráid agus Cuireadh á Sheoladh"
-
-msgid "Contact Removal Error"
-msgstr "Earráid agus Teagmháil á Baint"
-
-msgid "Subscription Error"
-msgstr "Earráid ag Liostáil"
-
-msgid "Contact Update Error"
-msgstr "Earráid agus Teagmháil á Nuashonrú"
-
-msgid "File Transfer Error"
-msgstr "Earráid agus Comhad á Aistriú"
-
-msgid "Cannot create MultiMx room"
-msgstr "Ní féidir seomra MultiMx a chruthú"
-
-msgid "MultiMx Invitation Error"
-msgstr "Earráid agus Cuireadh MultiMx á Sheoladh"
-
-msgid "Profile Error"
-msgstr "Earráid sa Phróifíl"
-
-#. bad packet
-msgid "Invalid packet received from MXit."
-msgstr "Fuarthas paicéad neamhbhailí ó MXit."
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr "Earráid agus ceangal á bhunú le MXit. (céim léite 0x01)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr "Earráid agus ceangal á bhunú le MXit. (céim léite 0x02)"
-
-msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr "Earráid agus ceangal á bhunú le MXit. (céim léite 0x03)"
-
-#. malformed packet length record (too long)
-msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr "Earráid agus ceangal á bhunú le MXit. (céim léite 0x04)"
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr "Earráid agus ceangal á bhunú le MXit. (céim léite 0x05)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr "Earráid agus ceangal á bhunú le MXit. (céim léite 0x06)"
-
-msgid "In Love"
-msgstr "I nGrá"
-
-msgid "Pending"
-msgstr "Ar Feitheamh"
-
-msgid "Invited"
-msgstr "Cuireadh Faighte"
-
-msgid "Rejected"
-msgstr "Diúltaithe"
-
-msgid "Deleted"
-msgstr "Scriosta"
-
-msgid "MXit Advertising"
-msgstr "Fógraíocht MXit"
-
-msgid "More Information"
-msgstr "Tuilleadh Eolais"
-
-#, c-format
-msgid "No such user: %s"
-msgstr "Níl a leithéid d'úsáideoir ann: %s"
-
-msgid "User lookup"
-msgstr "Cuardach úsáideoirí"
-
-msgid "Reading challenge"
-msgstr "Dúshlán á léamh"
-
-msgid "Unexpected challenge length from server"
-msgstr "Ní rabhthas ag súil le dúshlán den fhad seo ón bhfreastalaí"
-
-msgid "Logging in"
-msgstr "Logáil isteach"
-
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM - Gan Ainm Úsáideora"
-
-msgid "You appear to have no MySpace username."
-msgstr "Dealraíonn nach bhfuil ainm úsáideora MySpace agat."
-
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr "An bhfuil fonn ort ainm a roghnú anois? (Aire: NÍ FÉIDIR É A ATHRÚ!)"
-
-msgid "Lost connection with server"
-msgstr "Cailleadh an ceangal leis an bhfreastalaí"
-
-#. Can't write _()'d strings in array initializers. Workaround.
-#. khc: then use N_() in the array initializer and use _() when they are
-#. used
-msgid "New mail messages"
-msgstr "Teachtaireachtaí nua ríomhphoist"
-
-msgid "New blog comments"
-msgstr "Trácht nua ar bhlag"
-
-msgid "New profile comments"
-msgstr "Trácht nua ar phróifíl"
-
-msgid "New friend requests!"
-msgstr "Iarratais nua ar chairdeas!"
-
-msgid "New picture comments"
-msgstr "Trácht nua ar ghrianghrafanna"
-
-msgid "MySpace"
-msgstr "MySpace"
-
-msgid "IM Friends"
-msgstr "Cairde TM"
-
-#, c-format
-msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"Bhí cara amháin faighte nó nuashonraithe ón bhfreastalaí (cairde ar liosta "
-"an fhreastalaí san áireamh)"
-msgstr[1] ""
-"Bhí %d chara faighte nó nuashonraithe ón bhfreastalaí (cairde ar liosta an "
-"fhreastalaí san áireamh)"
-msgstr[2] ""
-"Bhí %d chara faighte nó nuashonraithe ón bhfreastalaí (cairde ar liosta an "
-"fhreastalaí san áireamh)"
-msgstr[3] ""
-"Bhí %d gcara faighte nó nuashonraithe ón bhfreastalaí (cairde ar liosta an "
-"fhreastalaí san áireamh)"
-msgstr[4] ""
-"Bhí %d cara faighte nó nuashonraithe ón bhfreastalaí (cairde ar liosta an "
-"fhreastalaí san áireamh)"
-
-msgid "Add contacts from server"
-msgstr "Cuir teagmhálacha ón bhfreastalaí leis"
-
-#, c-format
-msgid "Protocol error, code %d: %s"
-msgstr "Earráid phrótacail, cód %d: %s"
-
-#, c-format
-msgid ""
-"%s Your password is %zu characters, which is longer than the maximum length "
-"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
-"cfm?fuseaction=accountSettings.changePassword and try again."
-msgstr ""
-"%s Tá %zu carachtar i d'fhocal faire, agus ní cheadaítear focal faire a "
-"bheith níos faide ná %d carachtar.  Giorraigh an focal faire anseo: http://"
-"profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword "
-"agus déan iarracht eile."
-
-msgid "Incorrect username or password"
-msgstr "Ainm úsáideora nó focal faire mícheart"
-
-msgid "MySpaceIM Error"
-msgstr "Earráid MySpaceIM"
-
-msgid "Invalid input condition"
-msgstr "Coinníoll neamhbhailí ionchurtha"
-
-msgid "Failed to add buddy"
-msgstr "Níorbh fhéidir cara a chur leis"
-
-msgid "'addbuddy' command failed."
-msgstr "Theip ar ordú 'addbuddy'."
-
-msgid "persist command failed"
-msgstr "Theip ar ordú 'persist'"
-
-msgid "Failed to remove buddy"
-msgstr "Níorbh fhéidir an cara a bhaint"
-
-msgid "'delbuddy' command failed"
-msgstr "Theip ar ordú 'delbuddy'"
-
-msgid "blocklist command failed"
-msgstr "Theip ar ordú 'blocklist'"
-
-msgid "Missing Cipher"
-msgstr "Sifear Ar Iarraidh"
-
-msgid "The RC4 cipher could not be found"
-msgstr "Sifear RC4 gan aimsiú"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"Ní mór duit leagan de libpurple a shuiteáil a thacaíonn le RC4 (>= 2.0.1). "
-"Ní luchtófar an breiseán MySpaceIM."
-
-msgid "Add friends from MySpace.com"
-msgstr "Iompórtáil cairde ó MySpace.com"
-
-msgid "Importing friends failed"
-msgstr "Níorbh fhéidir cairde a iompórtáil"
-
-#. TODO: find out how
-msgid "Find people..."
-msgstr "Aimsigh daoine..."
-
-msgid "Change IM name..."
-msgstr "Athraigh ainm TM..."
-
-msgid "myim URL handler"
-msgstr "Láimhseálaí URLanna 'myim'"
-
-msgid "No suitable MySpaceIM account could be found to open this myim URL."
-msgstr ""
-"Níor aimsíodh cuntas oiriúnach MySpaceIM chun an URL myim seo a oscailt."
-
-msgid "Enable the proper MySpaceIM account and try again."
-msgstr "Cumasaigh an cuntas oiriúnach MySpaceIM agus déan iarracht eile."
-
-msgid "Show display name in status text"
-msgstr "Taispeáin ainm taispeána i dtéacs an stádais"
-
-msgid "Show headline in status text"
-msgstr "Taispeáin ceannlíne i dtéacs an stádais"
-
-msgid "Send emoticons"
-msgstr "Seol straoiseoga"
-
-msgid "Screen resolution (dots per inch)"
-msgstr "Taifeach an scáileáin (poncanna san orlach)"
-
-msgid "Base font size (points)"
-msgstr "Bunmhéid na clófhoirne (pointí)"
-
-msgid "User"
-msgstr "Úsáideoir"
-
-msgid "Headline"
-msgstr "Ceannlíne"
-
-msgid "Song"
-msgstr "Amhrán"
-
-msgid "Total Friends"
-msgstr "Líon Iomlán Cairde"
-
-msgid "Client Version"
-msgstr "Leagan an Chliaint"
-
-msgid ""
-"An error occurred while trying to set the username.  Please try again, or "
-"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
-"to set your username."
-msgstr ""
-"Tharla earráid agus an t-ainm úsáideora á shocrú. Déan iarracht eile, nó  "
-"féach ar http://editprofile.myspace.com/index.cfm?fuseaction=profile."
-"username chun d'ainm úsáideora a roghnú."
-
-msgid "MySpaceIM - Username Available"
-msgstr "MySpaceIM - Tá an tAinm Úsáideora ar fáil"
-
-msgid "This username is available. Would you like to set it?"
-msgstr "Tá an t-ainm úsáideora seo ar fáil. An bhfuil fonn ort é a úsáid?"
-
-msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr "AIRE! NÍ FÉIDIR AN tAINM SEO A ATHRÚ!"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM - Roghnaigh Ainm Úsáideora"
-
-msgid "This username is unavailable."
-msgstr "Níl an t-ainm úsáideora seo ar fáil."
-
-msgid "Please try another username:"
-msgstr "Bain triail as ainm úsáideora eile:"
-
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "Níl aon ainm úsáideora ann"
-
-msgid "Please enter a username to check its availability:"
-msgstr "Cuir ainm úsáideora isteach agus féach an bhfuil sé ar fáil:"
-
-#. TODO: icons for each zap
-#. Lots of comments for translators:
-#. Zap means "to strike suddenly and forcefully as if with a
-#. * projectile or weapon."  This term often has an electrical
-#. * connotation, for example, "he was zapped by electricity when
-#. * he put a fork in the toaster."
-msgid "Zap"
-msgstr "Zaipeáil"
-
-#, c-format
-msgid "%s has zapped you!"
-msgstr "Zaipeáil %s thú!"
-
-#, c-format
-msgid "Zapping %s..."
-msgstr "%s á zaipeáil..."
-
-#. Whack means "to hit or strike someone with a sharp blow"
-msgid "Whack"
-msgstr "Leadair"
-
-#, c-format
-msgid "%s has whacked you!"
-msgstr "Leadair %s thú!"
-
-#, c-format
-msgid "Whacking %s..."
-msgstr "%s á leadradh..."
-
-#. Torch means "to set on fire."  Don't worry, this doesn't
-#. * make a whole lot of sense in English, either.  Feel free
-#. * to translate it literally.
-msgid "Torch"
-msgstr "Loisc"
-
-#, c-format
-msgid "%s has torched you!"
-msgstr "Loisc %s thú!"
-
-#, c-format
-msgid "Torching %s..."
-msgstr "%s á loscadh..."
-
-#. Smooch means "to kiss someone, often enthusiastically"
-msgid "Smooch"
-msgstr "Póg"
-
-#, c-format
-msgid "%s has smooched you!"
-msgstr "Phóg %s thú!"
-
-#, c-format
-msgid "Smooching %s..."
-msgstr "Ag tabhairt póg do %s..."
-
-#. A hug is a display of affection; wrapping your arms around someone
-msgid "Hug"
-msgstr "Beir barróg ar"
-
-#, c-format
-msgid "%s has hugged you!"
-msgstr "Rug %s barróg ort!"
-
-#, c-format
-msgid "Hugging %s..."
-msgstr "Ag breith barróg ar %s..."
-
-#. Slap means "to hit someone with an open/flat hand"
-msgid "Slap"
-msgstr "Tabhair boiseog do"
-
-#, c-format
-msgid "%s has slapped you!"
-msgstr "Thug %s boiseog duit!"
-
-#, c-format
-msgid "Slapping %s..."
-msgstr "Ag tabhairt boiseog do %s..."
-
-#. Goose means "to pinch someone on their butt"
-msgid "Goose"
-msgstr "Bain liomóg as"
-
-#, c-format
-msgid "%s has goosed you!"
-msgstr "Bhain %s liomóg asat!"
-
-#, c-format
-msgid "Goosing %s..."
-msgstr "Ag baint liomóg as %s..."
-
-#. A high-five is when two people's hands slap each other
-#. * in the air above their heads.  It is done to celebrate
-#. * something, often a victory, or to congratulate someone.
-msgid "High-five"
-msgstr "Bos in airde"
-
-#, c-format
-msgid "%s has high-fived you!"
-msgstr "Thug %s bos in airde duit!"
-
-#, c-format
-msgid "High-fiving %s..."
-msgstr "Ag tabhairt bos in airde do %s..."
-
-#. We're not entirely sure what the MySpace people mean by
-#. * this... but we think it's the equivalent of "prank."  Or, for
-#. * someone to perform a mischievous trick or practical joke.
-msgid "Punk"
-msgstr "Buail bob ar"
-
-#, c-format
-msgid "%s has punk'd you!"
-msgstr "Bhuail %s bob ort!"
-
-#, c-format
-msgid "Punking %s..."
-msgstr "Ag bualadh bob ar %s..."
-
-#. Raspberry is a slang term for the vibrating sound made
-#. * when you stick your tongue out of your mouth with your
-#. * lips closed and blow.  It is typically done when
-#. * gloating or bragging.  Nowadays it's a pretty silly
-#. * gesture, so it does not carry a harsh negative
-#. * connotation.  It is generally used in a playful tone
-#. * with friends.
-msgid "Raspberry"
-msgstr "Broim Teanga"
-
-#, c-format
-msgid "%s has raspberried you!"
-msgstr "Thug %s broim teanga duit!"
-
-#, c-format
-msgid "Raspberrying %s..."
-msgstr "Ag tabhairt broim teanga do %s..."
-
 msgid "Required parameters not passed in"
 msgstr "Paraiméadair riachtanacha ar iarraidh"
 
@@ -7004,6 +5242,9 @@ msgstr "Ní féidir leat tusa féin a chur leis"
 
 msgid "Master archive is misconfigured"
 msgstr "Droch-chumraíocht ar an bpríomhchartlann"
+
+msgid "Incorrect username or password"
+msgstr "Ainm úsáideora nó focal faire mícheart"
 
 msgid "Could not recognize the host of the username you entered"
 msgstr ""
@@ -7134,6 +5375,12 @@ msgstr "Earráid chumarsáide leis an bhfreastalaí. Ceangal á dhúnadh."
 msgid "Telephone Number"
 msgstr "Uimhir Ghutháin"
 
+msgid "Location"
+msgstr "Áit"
+
+msgid "Department"
+msgstr "Roinn"
+
 msgid "Personal Title"
 msgstr "Teideal Pearsanta"
 
@@ -7182,6 +5429,9 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "An bhfuil fonn ort páirt a ghlacadh sa chomhrá?"
 
+msgid "You have signed on from another location"
+msgstr "Logáil tú isteach ó áit eile"
+
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
@@ -7199,6 +5449,9 @@ msgstr ""
 msgid "This conference has been closed. No more messages can be sent."
 msgstr ""
 "Bhí an chomhdháil seo dúnta. Ní féidir tuilleadh teachtaireachtaí a sheoladh."
+
+msgid "Busy"
+msgstr "Gnóthach"
 
 #. *< type
 #. *< ui_requirement
@@ -7303,6 +5556,9 @@ msgstr "Ainm neamhbhailí ar sheomra comhrá"
 
 msgid "Invalid error"
 msgstr "Earráid neamhbhailí"
+
+msgid "Not logged in"
+msgstr "Níl logáilte isteach"
 
 msgid "Cannot receive IM due to parental controls"
 msgstr "Ní féidir TM a fháil mar gheall ar rialúcháin tuismitheoirí"
@@ -7439,11 +5695,20 @@ msgstr "Éisteacht le ceol"
 msgid "Studying"
 msgstr "Staidéar"
 
+msgid "Working"
+msgstr "Ag obair"
+
 msgid "In the restroom"
 msgstr "Sa leithreas"
 
 msgid "Received invalid data on connection with server"
 msgstr "Fuarthas sonraí neamhbhailí tar éis ceangal leis an bhfreastalaí"
+
+msgid "Error parsing response from authentication server"
+msgstr "Earráid agus freagra ón fhreastalaí fíordheimhnithe á pharsáil"
+
+msgid "Unknown error during authentication"
+msgstr "Earráid anaithnid le linn fíordheimhnithe"
 
 #. *< type
 #. *< ui_requirement
@@ -7574,6 +5839,13 @@ msgstr ""
 "D'éiligh tú criptiúchán i socruithe do chuntas, ach ní thacaíonn do chóras "
 "le criptiúchán."
 
+msgid ""
+"You required Kerberos authentication but encryption is disabled in your "
+"account settings."
+msgstr ""
+"D'éiligh tú fíordheimhniú Kerberos, ach dhíchumasaigh tú criptiúchán i "
+"socruithe do chuntas."
+
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -7589,7 +5861,6 @@ msgid "Received authorization"
 msgstr "Údarú faighte"
 
 #. Unregistered username
-#. the username does not exist
 msgid "Username does not exist"
 msgstr "Níl an t-ainm úsáideora seo ann"
 
@@ -7959,6 +6230,9 @@ msgstr ""
 "amháin: seoladh bailí ríomhphoist, uimhreacha amháin, nó litir ar dtús ansin "
 "litreacha, uimhreacha agus spásanna."
 
+msgid "Unable to Add"
+msgstr "Ní féidir cur leis"
+
 msgid "Unable to Retrieve Buddy List"
 msgstr "Ní féidir an liosta cairde a fháil"
 
@@ -8112,6 +6386,9 @@ msgstr "Lorg cara lena s(h)eoladh ríomhphoist"
 msgid "Type the email address of the buddy you are searching for."
 msgstr "Cuir seoladh ríomhphoist do charad isteach."
 
+msgid "_Search"
+msgstr "_Cuardaigh"
+
 msgid "Set User Info (web)..."
 msgstr "Socraigh Eolas Úsáideora (Gréasán)..."
 
@@ -8148,8 +6425,17 @@ msgstr "Taispeáin cairde ag feitheamh le húdarú"
 msgid "Search for Buddy by Email Address..."
 msgstr "Lorg cara lena s(h)eoladh ríomhphoist..."
 
-msgid "Use clientLogin"
-msgstr "Úsáid clientLogin"
+msgid "clientLogin"
+msgstr "clientLogin"
+
+msgid "Kerberos"
+msgstr "Kerberos"
+
+msgid "MD5-based"
+msgstr "MD5-bunaithe"
+
+msgid "Authentication method"
+msgstr "Modh fíordheimhnithe"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -8273,6 +6559,9 @@ msgstr "Níl eolas úsáideora ar fáil: %s"
 msgid "Mobile Phone"
 msgstr "Guthán Póca"
 
+msgid "Age"
+msgstr "Aois"
+
 msgid "Personal Web Page"
 msgstr "Leathanach Pearsanta"
 
@@ -8281,11 +6570,20 @@ msgstr "Leathanach Pearsanta"
 msgid "Additional Information"
 msgstr "Eolas Breise"
 
+msgid "Home Address"
+msgstr "Seoladh Baile"
+
 msgid "Zip Code"
 msgstr "Cód Poist"
 
+msgid "Work Address"
+msgstr "Seoladh (Obair)"
+
 msgid "Work Information"
 msgstr "Faisnéis Oibre"
+
+msgid "Company"
+msgstr "Comhlacht"
 
 msgid "Division"
 msgstr "Rannóg"
@@ -8304,6 +6602,12 @@ msgstr "Ina B(h)all Ó"
 
 msgid "Capabilities"
 msgstr "Cumais"
+
+msgid "Profile"
+msgstr "Próifíl"
+
+msgid "View web profile"
+msgstr "Féach ar phróifíl Ghréasáin"
 
 msgid "Invalid SNAC"
 msgstr "SNAC Neamhbhailí"
@@ -8600,6 +6904,9 @@ msgstr ""
 "Níor mheaitseáil '%s' aon úsáideoirí i do chomhphobal Sametime. Scriosadh an "
 "iontráil seo ó do liosta cairde."
 
+msgid "Unable to add user"
+msgstr "Ní féidir an t-úsáideoir a chur leis"
+
 #, c-format
 msgid ""
 "Error reading file %s: \n"
@@ -8883,6 +7190,9 @@ msgstr "Hipirghníomhach"
 
 msgid "Robot"
 msgstr "Róbat"
+
+msgid "In Love"
+msgstr "I nGrá"
 
 msgid "User Modes"
 msgstr "Móid Úsáideora"
@@ -9176,6 +7486,9 @@ msgstr "Eagraíocht"
 msgid "Unit"
 msgstr "Aonad"
 
+msgid "Homepage"
+msgstr "Leathanach Baile"
+
 msgid "Note"
 msgstr "Nóta"
 
@@ -9351,6 +7664,9 @@ msgstr "Earráid ag ceangal leis an bhfreastalaí SILC"
 
 msgid "Key Exchange failed"
 msgstr "Theip ar Mhalartú Eochracha"
+
+msgid "Authentication failed"
+msgstr "Theip ar fhíordheimhniú"
 
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
@@ -9874,431 +8190,6 @@ msgstr "Úsáideoir"
 msgid "Auth Domain"
 msgstr "Fearann"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join &lt;seomra&gt;:  Glac páirt i seomra comhrá i líonra Yahoo"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "list: Taispeáin na seomraí i líonra Yahoo"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr "doodle: Seol iarratas chuig úsáideoir seisiún Doodle a thosú"
-
-msgid "Yahoo ID..."
-msgstr "Aitheantas Yahoo!..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! Protocol Plugin"
-msgstr "Breiseán don Phrótacal Yahoo!"
-
-msgid "Pager port"
-msgstr "Port glaoire"
-
-msgid "File transfer server"
-msgstr "Aistriú comhad: freastalaí"
-
-msgid "File transfer port"
-msgstr "Aistriú comhad: port"
-
-msgid "Chat room locale"
-msgstr "Teanga an tseomra comhrá"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "Déan neamhshuim ar chuirí chuig comhdhálacha agus chuig comhráite"
-
-msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Úsáid seachfhreastalaí cuntais le haghaidh ceangail HTTP agus HTTPS"
-
-msgid "Chat room list URL"
-msgstr "URL an liosta seomraí comhrá"
-
-msgid "Yahoo JAPAN ID..."
-msgstr "Aitheantas Yahoo! JAPAN..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! JAPAN Protocol Plugin"
-msgstr "Breiseán don Phrótacal Yahoo! JAPAN"
-
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr ""
-"Thug %s cuireadh duit chun do cheamara Gréasáin a chomhroinnt, ach ní "
-"thacaítear leis seo fós."
-
-msgid "Your SMS was not delivered"
-msgstr "Níor seoladh do theachtaireacht SMS"
-
-msgid "Your Yahoo! message did not get sent."
-msgstr "Níor seoladh do theachtaireacht Yahoo!"
-
-#, c-format
-msgid "Yahoo! system message for %s:"
-msgstr "Teachtaireacht ón chóras Yahoo! i gcomhair %s:"
-
-msgid "Authorization denied message:"
-msgstr "Údarú diúltaithe. Teachtaireacht:"
-
-#, c-format
-msgid ""
-"%s has (retroactively) denied your request to add them to your list for the "
-"following reason: %s."
-msgstr ""
-"Níor thug úsáideoir %s cead duit (go haisghníomhach) é/í a chur le do liosta "
-"ar an gcúis seo a leanas: %s."
-
-#, c-format
-msgid "%s has (retroactively) denied your request to add them to your list."
-msgstr ""
-"Níor thug úsáideoir %s cead duit (go haisghníomhach) é/í a chur le do liosta."
-
-msgid "Add buddy rejected"
-msgstr "Iarratas diúltaithe"
-
-#. Some error in the received stream
-msgid "Received invalid data"
-msgstr "Fuarthas sonraí neamhbhailí"
-
-#. security lock from too many failed login attempts
-msgid ""
-"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-"website may fix this."
-msgstr ""
-"Cuntas curtha faoi ghlas: An iomarca iarrachtaí ar logáil isteach. Réitigh "
-"an fhadhb seo trí logáil isteach sa suíomh Gréasáin Yahoo!"
-
-#. indicates a lock of some description
-msgid ""
-"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
-"this."
-msgstr ""
-"Cuntas curtha faoi ghlas: Ní fios cén fáth. Réitigh an fhadhb seo trí logáil "
-"isteach sa suíomh Gréasáin Yahoo!"
-
-#. indicates a lock due to logging in too frequently
-msgid ""
-"Account locked: You have been logging in too frequently.  Wait a few minutes "
-"before trying to connect again.  Logging into the Yahoo! website may help."
-msgstr ""
-"Cuntas curtha faoi ghlas: Bhí tú ag logáil isteach rómhinic. Fan cúpla "
-"nóiméad ansin déan iarracht eile. Ba chóir duit logáil isteach sa suíomh "
-"Gréasáin Yahoo! freisin."
-
-#. username or password missing
-msgid "Username or password missing"
-msgstr "Ainm úsáideora nó focal faire ar iarraidh"
-
-#, c-format
-msgid ""
-"The Yahoo server has requested the use of an unrecognized authentication "
-"method.  You will probably not be able to successfully sign on to Yahoo.  "
-"Check %s for updates."
-msgstr ""
-"Bhí an freastalaí Yahoo! ag iarraidh modh anaithnid fíordheimhnithe a úsáid. "
-"Is dócha nach mbeidh tú in ann logáil isteach in Yahoo. Lorg nuashonruithe ó "
-"%s."
-
-msgid "Failed Yahoo! Authentication"
-msgstr "Níorbh fhéidir logáil isteach i Yahoo!"
-
-#, c-format
-msgid ""
-"You have tried to ignore %s, but the user is on your buddy list.  Clicking "
-"\"Yes\" will remove and ignore the buddy."
-msgstr ""
-"Rinne tú iarracht neamhaird a dhéanamh de %s, ach tá an t-úsáideoir ar do "
-"liosta cairde. Cliceáil \"Tá\" chun an t-úsáideoir a bhaint den liosta agus "
-"neamhaird a dhéanamh de/di."
-
-msgid "Ignore buddy?"
-msgstr "Déan neamhaird den chara?"
-
-msgid "Invalid username or password"
-msgstr "Ainm úsáideora nó focal faire neamhbhailí"
-
-msgid ""
-"Your account has been locked due to too many failed login attempts.  Please "
-"try logging into the Yahoo! website."
-msgstr ""
-"Bhí do chuntas curtha faoi ghlas mar gheall ar an iomarca iarrachtaí logála "
-"isteach. Bain triail as logáil isteach sa suíomh Gréasáin Yahoo!."
-
-msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr "Earráid anaithnid 52.  Réitigh an fhadhb trí cheangal nua a bhunú."
-
-msgid ""
-"Error 1013: The username you have entered is invalid.  The most common cause "
-"of this error is entering your email address instead of your Yahoo! ID."
-msgstr ""
-"Earráid 1013: Chuir tú ainm úsáideora neamhbhailí isteach. Go minic "
-"tarlaíonn sé seo toisc gur chuir tú do sheoladh ríomhphoist isteach in ionad "
-"d'aitheantais Yahoo."
-
-#, c-format
-msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
-msgstr ""
-"Earráid anaithnid %d. Réitigh an fhadhb seo trí logáil isteach sa suíomh "
-"Gréasáin Yahoo!"
-
-#, c-format
-msgid "Unable to add buddy %s to group %s to the server list on account %s."
-msgstr ""
-"Ní féidir cara %s a chur le grúpa %s ar liosta an fhreastalaí ar chuntas %s."
-
-msgid "Unable to add buddy to server list"
-msgstr "Ní féidir an cara a chur leis an liosta ar an bhfreastalaí"
-
-#, c-format
-msgid "[ Audible %s/%s/%s.swf ] %s"
-msgstr "[ Audible %s/%s/%s.swf ] %s"
-
-msgid "Received unexpected HTTP response from server"
-msgstr "Fuarthas freagra HTTP ón bhfreastalaí gan súil leis"
-
-#, c-format
-msgid "Lost connection with %s: %s"
-msgstr "Cailleadh an ceangal le %s: %s"
-
-#, c-format
-msgid "Unable to establish a connection with %s: %s"
-msgstr "Ní féidir ceangal a bhunú le %s: %s"
-
-msgid "Unable to connect: The server returned an empty response."
-msgstr "Ní féidir ceangal: Fuarthas freagra folamh ón bhfreastalaí."
-
-msgid ""
-"Unable to connect: The server's response did not contain the necessary "
-"information"
-msgstr ""
-"Ní féidir ceangal: Bhí an fhaisnéis riachtanach ar iarraidh ón fhreagra an "
-"fhreastalaí"
-
-msgid "Not at Home"
-msgstr "As Baile"
-
-msgid "Not at Desk"
-msgstr "Ar siúl ón Deasc"
-
-msgid "Not in Office"
-msgstr "As an oifig"
-
-msgid "On Vacation"
-msgstr "Ar Saoire"
-
-msgid "Stepped Out"
-msgstr "Amuigh ar feadh nóiméid"
-
-msgid "Not on server list"
-msgstr "Níl ar liosta an fhreastalaí"
-
-msgid "Appear Permanently Offline"
-msgstr "Taispeáin As Líne i gCónaí"
-
-msgid "Presence"
-msgstr "Láithreacht"
-
-msgid "Don't Appear Permanently Offline"
-msgstr "Ná Taispeáin As Líne i gCónaí"
-
-msgid "Join in Chat"
-msgstr "Glac páirt i gcomhrá"
-
-msgid "Initiate Conference"
-msgstr "Tosaigh Comhdháil"
-
-msgid "Presence Settings"
-msgstr "Socruithe Láithreachta"
-
-msgid "Start Doodling"
-msgstr "Tosaigh Scriobláil"
-
-msgid "Activate which ID?"
-msgstr ""
-
-msgid "Select the ID you want to activate"
-msgstr "Roghnaigh an t-aitheantas ba mhaith leat cur i bhfeidhm"
-
-msgid "Join whom in chat?"
-msgstr "Cén duine ar mhaith leat caint leis?"
-
-msgid "Activate ID..."
-msgstr "Cuir Aitheantas i bhFeidhm..."
-
-msgid "Join User in Chat..."
-msgstr "Téigh isteach i gcomhrá le húsáideoir..."
-
-msgid "Open Inbox"
-msgstr "Oscail an Bosca Isteach"
-
-msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr "Ní féidir SMS a sheoladh. Ní féidir iompróir soghluaiste a fháil."
-
-msgid "Can't send SMS. Unknown mobile carrier."
-msgstr "Ní féidir SMS a sheoladh. Iompróir soghluaiste anaithnid."
-
-msgid "Getting mobile carrier to send the SMS."
-msgstr "Ag iarraidh ar iompróir soghluaiste an SMS a sheoladh."
-
-#. Write a local message to this conversation showing that a request for a
-#. * Doodle session has been made
-#.
-msgid "Sent Doodle request."
-msgstr "Iarratas scrioblála seolta."
-
-msgid "Unable to connect."
-msgstr "Ní féidir ceangal."
-
-msgid "Unable to establish file descriptor."
-msgstr "Ní féidir tuairisceoir comhaid a shocrú."
-
-#, c-format
-msgid "%s is trying to send you a group of %d files.\n"
-msgstr "Tá %s ag iarraidh %d chomhad a sheoladh chugat.\n"
-
-msgid "Write Error"
-msgstr "Earráid sa scríobh"
-
-msgid "Yahoo! Japan Profile"
-msgstr "Próifíl Yahoo! Japan"
-
-msgid "Yahoo! Profile"
-msgstr "Próifíl Yahoo!"
-
-msgid ""
-"Sorry, profiles marked as containing adult content are not supported at this "
-"time."
-msgstr ""
-"Tá brón orainn, ní thacaítear le próifílí atá dírithe ar dhaoine fásta fós."
-
-msgid ""
-"If you wish to view this profile, you will need to visit this link in your "
-"web browser:"
-msgstr ""
-"Más mian leat féachaint ar an bpróifíl seo, caithfidh tú cuairt a dhéanamh "
-"ar an nasc seo i do bhrabhsálaí Gréasáin:"
-
-msgid "Yahoo! ID"
-msgstr "Aitheantas Yahoo!"
-
-msgid "Hobbies"
-msgstr "Caitheamh Aimsire"
-
-msgid "Latest News"
-msgstr "An Nuacht Is Déanaí"
-
-msgid "Home Page"
-msgstr "Leathanach Baile"
-
-msgid "Cool Link 1"
-msgstr "Nasc Suimiúil 1"
-
-msgid "Cool Link 2"
-msgstr "Nasc Suimiúil 2"
-
-msgid "Cool Link 3"
-msgstr "Nasc Suimiúil 3"
-
-msgid "Last Update"
-msgstr "Nuashonrú Is Déanaí"
-
-msgid ""
-"This profile is in a language or format that is not supported at this time."
-msgstr ""
-"Tá an phróifíl seo i dteanga nó i bhformáid nach dtacaítear léi ag an am seo."
-
-msgid ""
-"Could not retrieve the user's profile. This most likely is a temporary "
-"server-side problem. Please try again later."
-msgstr ""
-"Níorbh fhéidir próifíl an úsáideora a fháil. Is dócha gur fadhb shealadach "
-"leis an bhfreastalaí é seo. Déan iarracht eile ar ball."
-
-msgid ""
-"Could not retrieve the user's profile. This most likely means that the user "
-"does not exist; however, Yahoo! sometimes does fail to find a user's "
-"profile. If you know that the user exists, please try again later."
-msgstr ""
-"Níorbh fhéidir próifíl an úsáideora a fháil. Is dócha nach bhfuil an t-"
-"úsáideoir seo ann ar chor ar bith; ach, teipeann ar Yahoo! próifíl úsáideora "
-"a aimsiú uaireanta. Má tá tú cinnte go bhfuil an t-úsáideoir seo ann, déan "
-"iarracht eile ar ball."
-
-msgid "The user's profile is empty."
-msgstr "Tá próifíl an úsáideora folamh."
-
-#, c-format
-msgid "%s has declined to join."
-msgstr "Dhiúltaigh %s dul isteach."
-
-msgid "Failed to join chat"
-msgstr "Níorbh fhéidir leat dul isteach sa chomhrá"
-
-#. -6
-msgid "Unknown room"
-msgstr "Seomra anaithnid"
-
-#. -15
-msgid "Maybe the room is full"
-msgstr "Seans go bhfuil an seomra lán"
-
-#. -35
-msgid "Not available"
-msgstr "Níl ar fáil"
-
-msgid ""
-"Unknown error. You may need to logout and wait five minutes before being "
-"able to rejoin a chatroom"
-msgstr ""
-"Earráid anaithnid. Ba chóir duit logáil amach agus fan cúig nóiméad sula "
-"ndéanfaidh tú iarracht eile dul isteach i seomra comhrá"
-
-#, c-format
-msgid "You are now chatting in %s."
-msgstr "Tá tú ag déanamh comhrá i %s anois."
-
-msgid "Failed to join buddy in chat"
-msgstr "Níorbh fhéidir dul isteach sa chomhrá leis an gcara"
-
-msgid "Maybe they're not in a chat?"
-msgstr "B'fhéidir nach bhfuil sé/sí i gcomhrá?"
-
-msgid "Fetching the room list failed."
-msgstr "Níorbh fhéidir liosta na seomraí a fháil."
-
-msgid "Voices"
-msgstr "Guthanna"
-
-msgid "Webcams"
-msgstr "Ceamaraí Gréasáin"
-
-msgid "Connection problem"
-msgstr "Fadhb leis an gceangal"
-
-msgid "Unable to fetch room list."
-msgstr "Ní féidir liosta na seomraí a fháil."
-
-msgid "User Rooms"
-msgstr "Seomraí Úsáideora"
-
-msgid "Connection problem with the YCHT server"
-msgstr "Fadhb ag ceangal leis an bhfreastalaí YCHT"
-
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
@@ -10309,6 +8200,12 @@ msgstr ""
 #, c-format
 msgid "Unable to send to chat %s,%s,%s"
 msgstr "Ní féidir comhrá a sheoladh %s,%s,%s"
+
+msgid "User is offline"
+msgstr "Tá an t-úsáideoir as líne"
+
+msgid "User"
+msgstr "Úsáideoir"
 
 msgid "Hidden or not logged-in"
 msgstr "I bhfolach nó logáilte amach"
@@ -10710,20 +8607,25 @@ msgstr ""
 "ainm nua ar an seanchomhad: %s~."
 
 msgid "Instant Messaging Client"
-msgstr ""
+msgstr "Cliant Teachtaireachtaí Meandaracha"
 
 msgid ""
 "Pidgin is a chat program which lets you log in to accounts on multiple chat "
 "networks simultaneously."
 msgstr ""
+"Is feidhmchlár comhrá é Pidgin a ligeann duit go leor líonraí comhrá a úsáid "
+"san am céanna."
 
 msgid ""
-"This means that you can be chatting with friends on MSN, talking to a friend "
-"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+"This means that you can be chatting with friends on AIM, talking to a friend "
+"on Google Talk, and sitting in an IRC chat room all at the same time."
 msgstr ""
+"Ciallaíonn seo gur féidir leat comhrá a dhéanamh le cairde ar AIM agus "
+"Google Talk, agus páirt a ghlacadh i seomra IRC san am céanna. "
 
 msgid "The buddy list showing friends on different networks."
 msgstr ""
+"Taispeánann an liosta cairde do chuid teagmhálaithe ar líonraí éagsúla."
 
 msgid "Pidgin Internet Messenger"
 msgstr "Teachtaire Idirlín Pidgin"
@@ -10731,8 +8633,8 @@ msgstr "Teachtaire Idirlín Pidgin"
 msgid "Internet Messenger"
 msgstr "Teachtaire Idirlín"
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+#, fuzzy
+msgid "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, and more"
 msgstr ""
 "Comhrá trí TM.  Tacaíonn sé le AIM, Google Talk, Jabber/XMPP, MSN, Yahoo "
 "agus seirbhísí eile"
@@ -11474,13 +9376,11 @@ msgstr "_Leasainm:"
 msgid "_Group:"
 msgstr "_Grúpa:"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "Glac _páirt go huathoibríoch nuair a cheanglaíonn cuntas."
+msgstr "Glac _páirt go huathoibríoch nuair a cheanglaíonn cuntas"
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
-msgstr "_Fan sa chomhrá tar éis go ndúntar an fhuinneog."
+msgstr "_Fan sa chomhrá tar éis go ndúntar an fhuinneog"
 
 msgid "Please enter the name of the group to be added."
 msgstr "Cuir isteach ainm an ghrúpa le cur leis."
@@ -11519,9 +9419,8 @@ msgstr "Cuir isteach an t-óstainm a bhaineann leis an teastas seo."
 msgid "SSL Servers"
 msgstr "Freastalaithe SSL"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "Roghanna dífhabhtaithe a dtacaítear leo: plugins version"
+msgstr "Roghanna dífhabhtaithe a dtacaítear leo: plugins, version"
 
 msgid "Unknown command."
 msgstr "Ordú anaithnid."
@@ -11957,7 +9856,7 @@ msgid "Assamese"
 msgstr "Asaimis"
 
 msgid "Asturian"
-msgstr ""
+msgstr "Astúiris"
 
 msgid "Belarusian Latin"
 msgstr "Bealarúisis Laidineach"
@@ -11972,10 +9871,10 @@ msgid "Bengali-India"
 msgstr "Beangáilis-An India"
 
 msgid "Breton"
-msgstr ""
+msgstr "Briotáinis"
 
 msgid "Bodo"
-msgstr ""
+msgstr "Bódóis"
 
 msgid "Bosnian"
 msgstr "Boisnis"
@@ -12017,7 +9916,7 @@ msgid "Spanish"
 msgstr "Spáinnis"
 
 msgid "Argentine Spanish"
-msgstr ""
+msgstr "Spáinnis na hAirgintíne"
 
 msgid "Estonian"
 msgstr "Eastóinis"
@@ -12071,7 +9970,7 @@ msgid "Ubuntu Georgian Translators"
 msgstr "Aistritheoirí Seoirsise Ubuntu"
 
 msgid "Kazakh"
-msgstr ""
+msgstr "Casaicis"
 
 msgid "Khmer"
 msgstr "Ciméiris"
@@ -12086,19 +9985,19 @@ msgid "Korean"
 msgstr "Cóiréis"
 
 msgid "Kashmiri"
-msgstr ""
+msgstr "Caismíris"
 
 msgid "Kurdish"
 msgstr "Coirdis"
 
 msgid "Kurdish (Sorani)"
-msgstr ""
+msgstr "Coirdis (Sorani)"
 
 msgid "Lithuanian"
 msgstr "Liotuáinis"
 
 msgid "Latvian"
-msgstr ""
+msgstr "Laitvis"
 
 msgid "Maithili"
 msgstr "Maitilis"
@@ -12164,7 +10063,7 @@ msgid "Russian"
 msgstr "Rúisis"
 
 msgid "Sindhi"
-msgstr ""
+msgstr "Sindis"
 
 msgid "Slovak"
 msgstr "Slóvaicis"
@@ -12179,7 +10078,7 @@ msgid "Serbian"
 msgstr "Seirbis"
 
 msgid "Serbian Latin"
-msgstr ""
+msgstr "Seirbis Laidineach"
 
 msgid "Sinhala"
 msgstr "Siolóinis"
@@ -12200,7 +10099,7 @@ msgid "Thai"
 msgstr "Téalainnis"
 
 msgid "Tatar"
-msgstr ""
+msgstr "Tatairis"
 
 msgid "Ukranian"
 msgstr "Úcráinis"
@@ -12209,12 +10108,12 @@ msgid "Urdu"
 msgstr "Urdais"
 
 msgid "Uzbek"
-msgstr ""
+msgstr "Úisbéiceastáinis"
 
 #. Translators: This is a person's name. For most languages we recommend
 #. not translating it.
 msgid "Akmal Khushvakov"
-msgstr ""
+msgstr "Akmal Khushvakov"
 
 msgid "Vietnamese"
 msgstr "Vítneaimis"
@@ -12277,21 +10176,20 @@ msgstr ""
 
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
-"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
-">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"emailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>This "
+"is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
 "support/\">archive</a>)<br/>We can't help with third-party protocols or "
 "plugins!<br/>This list's primary language is <b>English</b>.  You are "
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"Is féidir <font size=\"4\"><b>cuidiú ó úsáideoirí Pidgin eile</b></font> a "
-"fháil tríríomhphoist a sheoladh chuig <a href=\"mailto:support@pidgin.im"
+"Is féidir <font size=\"4\"><b>cúnamh ó úsáideoirí Pidgin eile</b></font> a "
+"fháil trí ríomhphoist a sheoladh chuig <a href=\"mailto:support@pidgin.im"
 "\">support@pidgin.im</a><br/>Is liosta <b>poiblí</b> é seo! (<a href="
 "\"http://pidgin.im/pipermail/support/\">cartlann</a>)<br/>Ní féidir linn "
 "cabhrú le breiseáin nó le prótacail tríú páirtí!<br/>Is é <b>Béarla</b> "
-"príomhtheanga oifigiúil an liosta seo. Fáilte romhat rud éigin a scríobh i "
-"dteanga eile, ach ní dócha go bhfaighidh tú freagra úsáideach sa chás sin."
-"<br/>"
+"príomhtheanga an liosta seo. Fáilte romhat rud éigin a scríobh i dteanga "
+"eile, ach ní dócha go bhfaighidh tú freagra úsáideach sa chás sin.<br/>"
 
 #, c-format
 msgid "About %s"
@@ -12942,9 +10840,8 @@ msgstr "_Meáin"
 msgid "_Hangup"
 msgstr "_Croch Suas"
 
-#, fuzzy
 msgid "Media error"
-msgstr "Earráid léimh"
+msgstr "Earráid mheáin"
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12963,35 +10860,35 @@ msgstr "Glao Isteach"
 #.
 #. Letters on the '2' key of a numeric keypad
 msgid "ABC"
-msgstr ""
+msgstr "ABC"
 
 #. Letters on the '3' key of a numeric keypad
 msgid "DEF"
-msgstr ""
+msgstr "DEF"
 
 #. Letters on the '4' key of a numeric keypad
 msgid "GHI"
-msgstr ""
+msgstr "GHI"
 
 #. Letters on the '5' key of a numeric keypad
 msgid "JKL"
-msgstr ""
+msgstr "JKL"
 
 #. Letters on the '6' key of a numeric keypad
 msgid "MNO"
-msgstr ""
+msgstr "MNO"
 
 #. Letters on the '7' key of a numeric keypad
 msgid "PQRS"
-msgstr ""
+msgstr "PQRS"
 
 #. Letters on the '8' key of a numeric keypad
 msgid "TUV"
-msgstr ""
+msgstr "TUV"
 
 #. Letters on the '9' key of a numeric keypad
 msgid "WXYZ"
-msgstr ""
+msgstr "WXYZ"
 
 msgid "_Hold"
 msgstr "_Cuir ar feitheamh"
@@ -13037,6 +10934,8 @@ msgstr "Roghnaíodh an t-ordú brabhsála 'De Láimh', ach níl aon ordú socrai
 
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
 msgstr ""
+"Ní féidir an URL a oscailt: is cosúil gur ordú neamhbhailí brabhsálaí é "
+"'Manual'."
 
 msgid "No message"
 msgstr "Gan teachtaireacht"
@@ -13114,10 +11013,6 @@ msgstr "Roghnaigh comhad"
 
 msgid "Modify Buddy Pounce"
 msgstr "Athraigh Forrán ar Chara"
-
-#. Create the "Pounce on Whom" frame.
-msgid "Pounce on Whom"
-msgstr "Sprioc an Fhorráin"
 
 msgid "_Account:"
 msgstr "_Cuntas:"
@@ -13791,8 +11686,8 @@ msgstr "_Stádas:"
 msgid "Use a _different status for some accounts"
 msgstr "Úsáid stádas _difriúil do chuntais áirithe"
 
-#. Save & Use button
-msgid "Sa_ve & Use"
+#. Save and Use button
+msgid "Sa_ve and Use"
 msgstr "Sá_bháil agus Úsáid"
 
 #, c-format
@@ -13857,9 +11752,6 @@ msgstr "Roghnóir Stádais"
 
 msgid "Google Talk"
 msgstr "Google Talk"
-
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -14153,6 +12045,9 @@ msgstr "Teachtaireachtaí Faighte"
 #, c-format
 msgid "Select Color for %s"
 msgstr "Roghnaigh dath le haghaidh %s"
+
+msgid "General"
+msgstr "Ginearálta"
 
 msgid "Ignore incoming format"
 msgstr "Déan neamhaird ar an bhformáid a thagann isteach"
@@ -14542,16 +12437,11 @@ msgstr ""
 msgid "Notify For"
 msgstr "Cuir in iúl dom"
 
-#, fuzzy
-msgid "\t_Notify for System messages"
-msgstr "Teachtaireachtaí Córais"
+msgid "\tS_ystem messages"
+msgstr "Tea_chtaireachtaí Córais"
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_Nuair a deir duine éigin d'ainm úsáideora amháin"
-
-#, fuzzy
-msgid "\tNotify for _System messages"
-msgstr "Teachtaireachtaí Córais"
 
 msgid "_Focused windows"
 msgstr "_Fuinneoga i bhfócas"
@@ -14742,12 +12632,12 @@ msgstr ""
 "ghnáth-théacs."
 
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Leis seo, is féidir leat ionchur amh a sheoladh chuig prótacail bunaithe ar "
-"ghnáth-théacs (XMPP, MSN, IRC, TOC). Brúigh 'Enter' sa mbosca ionchurtha "
-"chun é a sheoladh. Féach san fhuinneog dhífhabhtaithe."
+"ghnáth-théacs (XMPP, IRC, TOC). Brúigh 'Enter' sa mbosca ionchurtha chun é a "
+"sheoladh. Féach ar an bhfuinneog dhífhabhtaithe."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -15045,33 +12935,36 @@ msgstr ""
 
 #. Alerts
 msgid "Chatroom alerts"
-msgstr ""
+msgstr "Foláirimh seomra comhrá"
 
 msgid "Chatroom message alerts _only where someone says your username"
-msgstr ""
+msgstr "Fógraí se_omra comhrá nuair a deir duine éigin d'ainm úsáideora amháin"
 
 #. Launcher integration
 msgid "Launcher Icon"
-msgstr ""
+msgstr "Deilbhín an Tosaitheora"
 
 msgid "_Disable launcher integration"
-msgstr ""
+msgstr "_Díchumasaigh comhtháthú an tosaitheora"
 
 msgid "Show number of unread _messages on launcher icon"
 msgstr ""
+"Taispeáin líon na dteachtaireachtaí gan léa_mh ar dheilbhín an tosaitheora"
 
 msgid "Show number of unread co_nversations on launcher icon"
-msgstr ""
+msgstr "Taispeái_n líon na gcomhráite gan léamh ar dheilbhín an tosaitheora"
 
 #. Messaging menu integration
 msgid "Messaging Menu"
-msgstr ""
+msgstr "Roghchlár Teachtaireachta"
 
 msgid "Show number of _unread messages for conversations in messaging menu"
 msgstr ""
+"Tais_peáin líon na dteachtaireachtaí gan léamh sa roghchlár teachtaireachta"
 
 msgid "Show _elapsed time for unread conversations in messaging menu"
 msgstr ""
+"Taispeáin _am caite na gcomhráite gan léamh sa roghchlár teachtaireachta"
 
 #. *< type
 #. *< ui_requirement
@@ -15080,17 +12973,19 @@ msgstr ""
 #. *< priority
 #. *< id
 msgid "Unity Integration"
-msgstr ""
+msgstr "Comhtháthú Unity"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Provides integration with Unity."
-msgstr ""
+msgstr "Soláthraíonn seo comhtháthú le hUnity."
 
 #. *  description
 msgid "Provides integration with Unity's messaging menu and launcher."
 msgstr ""
+"Soláthraíonn seo comhtháthú le roghchlár teachtaireachta agus tosaitheoir "
+"Unity."
 
 msgid "Audio"
 msgstr "Fuaim"
@@ -15201,14 +13096,10 @@ msgstr "Trédhearcacht Athraitheach don liosta cairde agus do chomhráite."
 #. *  description
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
-"the buddy list.\n"
-"\n"
-"* Note: This plugin requires Win2000 or greater."
+"the buddy list."
 msgstr ""
 "Cumasaíonn an breiseán seo trédhearcacht inathraitheach alfa i bhfuinneoga "
-"comhrá agus sa liosta cairde.\n"
-"\n"
-"* Nóta: Teastaíonn Win2000 nó níos mó ón mbreiseán seo."
+"comhrá agus sa liosta cairde."
 
 #. Autostart
 msgid "Startup"
@@ -15354,7 +13245,6 @@ msgstr ""
 "Ní féidir an leagan de Pidgin atá ann faoi láthair a dhíshuiteáil. "
 "Suiteálfar an leagan nua gan an seanleagan a dhíshuiteáil."
 
-#, fuzzy
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
 "installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"

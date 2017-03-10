@@ -9,10 +9,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"POT-Creation-Date: 2017-03-09 18:52-0600\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Burmese (Myanmar) (http://www.transifex.com/projects/p/pidgin/"
+"Language-Team: Burmese (Myanmar) (http://www.transifex.com/pidgin/pidgin/"
 "language/my_MM/)\n"
 "Language: my_MM\n"
 "MIME-Version: 1.0\n"
@@ -58,7 +58,6 @@ msgstr ""
 "%s သည် %s မှ %s သို့ ချိန်ညှိချက်များ ပြောင်းရွှေ့ရာတွင် ချို့ယွင်းမှုများ တွေ့ခဲ့သည်။ ကြည့်ရှု စစ်ဆေးပြီး "
 "အပြောင်းအရွှေ့ကို ကိုယ်တိုင် ပြုလုပ်ပါ။ ဤ ချို့ယွင်းချက်ကို http://developer.pidgin.im တွင် သတင်းပို့ပါ။"
 
-#. the user did not fill in the captcha
 msgid "Error"
 msgstr "ချို့ယွင်းချက်"
 
@@ -230,7 +229,6 @@ msgstr "မိတ်ဆွေ အချက်အလက်များကို �
 msgid "Chats"
 msgstr "စကားပြောဆိုချက်များ"
 
-#. Extract their Name and put it in
 msgid "Name"
 msgstr "အမည်"
 
@@ -337,11 +335,9 @@ msgstr "အလွယ် အမှတ်အသား"
 msgid "View Log"
 msgstr "မှတ်တမ်း ကြည့်ရှုရန်"
 
-#. General
 msgid "Nickname"
 msgstr "အမည်ပြောင်"
 
-#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "မလှုပ်မရှား"
@@ -768,7 +764,6 @@ msgid "Remaining"
 msgstr "လက်ကျန်"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
-#. presence
 msgid "Status"
 msgstr "အနေအထား"
 
@@ -1016,8 +1011,9 @@ msgstr "မိတ်ဆွေပေါင်း အသစ်"
 msgid "Edit Buddy Pounce"
 msgstr "မိတ်ဆွေပေါင်းကို တည်းဖြတ်ရန်"
 
-msgid "Pounce Who"
-msgstr "လက်တို့ရမည့်သူ"
+#. Create the "Pounce on Whom" frame.
+msgid "Pounce on Whom"
+msgstr "လက်တို့ ခံရမည့်သူ"
 
 #. Account:
 msgid "Account:"
@@ -1262,8 +1258,8 @@ msgstr "GStreamer အစပြုလို့ မရပါ။"
 msgid "(default)"
 msgstr "(ပုံမှန်)"
 
-msgid "Select Sound File ..."
-msgstr "အသံဖိုင် ရွေးချယ်ရန်..."
+msgid "Select Sound File..."
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr "အသံ ဦးစားပေးချက်များ"
@@ -1345,21 +1341,12 @@ msgstr "ပယ်ဖျက်မှု အနေအထား"
 msgid "Saved Statuses"
 msgstr "သိမ်း​ဆည်းထားသော အနေအထားများ"
 
-#. title
 msgid "Title"
 msgstr "ခေါင်းစဉ်"
 
 msgid "Type"
 msgstr "အမျိုးအစား"
 
-#. Statuses are almost all the same. Define a macro to reduce code repetition.
-#. PurpleStatusPrimitive
-#. id - use default
-#. name - use default
-#. saveable
-#. user_settable
-#. not independent
-#. Attributes - each status can have a message.
 msgid "Message"
 msgstr "စာတို​"
 
@@ -1391,12 +1378,12 @@ msgstr "စာတို -"
 msgid "Edit Status"
 msgstr "အနေအထားကို တည်းဖြတ်ရန်"
 
-msgid "Use different status for following accounts"
-msgstr "အောက်ပါ အကောင့်များအတွက် အခြား အနေအထားကို သုံးစွဲရန်"
+msgid "Use a different status for some accounts"
+msgstr ""
 
-#. Save & Use
-msgid "Save & Use"
-msgstr "သိမ်းဆည်းပြီး သုံးစွဲရန်"
+#. Save and Use
+msgid "Save and Use"
+msgstr ""
 
 msgid "Certificates"
 msgstr "အသိအမှတ်ပြုလွှာများ"
@@ -1523,8 +1510,8 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr "%s ၏ အထက်အတွက် TinyURL"
 
-msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr "TinyURL သည် သာ၍ တိုသော URL ကို ရယူနေစဉ်တွင် ခဏ စောင့်ပါ..."
+msgid "Please wait while TinyURL fetches a shorter URL..."
+msgstr ""
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "ဤမျှ ရှည်လျားသော URL များအတွက်သာ TinyURL ကို ဖန်တီးရန်"
@@ -1538,13 +1525,12 @@ msgstr "TinyURL"
 msgid "TinyURL plugin"
 msgstr "TinyURL ပလပ်အင်"
 
-msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-msgstr "URL ပါဝင်သော မက်ဆေ့များကို လက်ခံသောအခါ ကူးယူမှု လွယ်ကူရန်အတွက် TinyURL ကို သုံးစွဲရန်"
+msgid "Shorten URLs in messages using TinyURL"
+msgstr ""
 
 msgid "Online"
 msgstr "အွန်လိုင်း"
 
-#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "​အော့ဖ်လိုင်း"
 
@@ -1777,7 +1763,6 @@ msgstr ""
 msgid "View Issuer Certificate"
 msgstr ""
 
-#. show error to user
 msgid "Registration Error"
 msgstr "မှတ်ပုံတင်ခြင်း ချို့ယွင်းမှု"
 
@@ -1793,7 +1778,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s ထွက်သွားသည်။"
 
 #. Undocumented
-#. Unknown error
 msgid "Unknown error"
 msgstr "အမျိုးအမည်မသိ ချို့ယွင်းချက်"
 
@@ -1918,21 +1902,6 @@ msgstr " \"irc\" URLs ကို ကိုင်တွယ်သူ"
 msgid "The command used to handle \"irc\" URLs, if enabled."
 msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"irc\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
 
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"msnim\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"msnim\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "\"msnim\" URLs ကို ကိုင်တွယ်သူ"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"msnim\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
-
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"sip\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
 
@@ -1962,21 +1931,6 @@ msgstr "\"xmpp\" URLs ကို ကိုင်တွယ်သူ"
 
 msgid "The command used to handle \"xmpp\" URLs, if enabled."
 msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"xmpp\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "သတ်မှတ်ထားသော ညွှန်ကြားချက်သည် \"ymsgr\" URLs ကို ကိုင်တွယ်ရန် လိုမလို"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"\"command\" ကီးထဲ၌ သတ်မှတ်ထားသော ညွှန်ကြားချက်သည \"ymsgr\" URLs ကို ကိုင်တွယ်ပါက​ အမှန်ဟု သတ်မှတ်မည်။"
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "\"ymsgr\" URLs ကို ကိုင်တွယ်သူ"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "အကယ်၍ ဖွင့်ထားပါက၊ \"ymsgr\" URLs ကို ကိုင်တွယ်ရာတွင် သုံးစွဲသော ညွှန်ကြားချက်။"
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2198,21 +2152,19 @@ msgstr "<font color=\"red\"><b>ဖတ်မရသော ဖိုင် - %s</b>
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <အလိုအလျောက်-အကြောင်းပြန်ကြားချက်> - %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "%s ထံမှ ပေးစာ"
+msgstr ""
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
 
-#, fuzzy
 msgid "Network error."
-msgstr "ကွန်ရက်"
+msgstr ""
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
@@ -2229,9 +2181,8 @@ msgid ""
 "No codecs left. Your codec preferences in fs-codecs.conf are too strict."
 msgstr "codecs မကျန်ပါ။ fs-codecs.conf ရှိ သင့် ဦးစားပေးချက်များသည် စည်းကြပ်လွန်းသည်။ "
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "ဆာဗာကို ဆက်သွယ်မထားပါ"
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "ပြန်လည်ပြင်ယူရန် မဖြစ်နိုင်သော Farsight2 ချို့ယွင်းမှု ဖြစ်ပေါ်ခဲ့သည်။"
@@ -2791,10 +2742,8 @@ msgstr "ဝင်ရောက်လာသော စကားပြောဆိ�
 
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
-"အခြား သုံးစွဲသူများသည် သင့်ထံ စာပို့လျှင် စကားပြောဆိုမှု ဝင်းဒိုးများ ပေါ်လာစေပါ။ AIM, ICQ, XMPP, "
-"Sametime နှင့် Yahoo! တို့တွင် သုံးစွဲနိုင်သည်။"
 
 msgid "You feel a disturbance in the force..."
 msgstr "ဖိအားပေး နှောင့်ယှက်ခံရသည်ဟု သင် ခံစားရသည်..."
@@ -3009,11 +2958,9 @@ msgstr ""
 "activestate.com မှ ActiveTCL ထည့်သွင်းပါ။\n"
 
 msgid ""
-"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
-"im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
+"developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
-"Apple ၏ \"ဝင်းဒိုးများအတွက် Bonjour\" ကိရိယာစုံကို ရှာမတွေ့နိုင်ပါ၊ အသေးစိတ် အချက်အလက်အတွက် http://"
-"d.pidgin.im/BonjourWindows ကို ကြည့်ရှုပါ။"
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "IM အ၀င် ဆက်သွယ်မှုများကို မဖမ်းယူနိုင်ပါ"
@@ -3028,7 +2975,6 @@ msgstr "ပထမ အမည်"
 msgid "Last name"
 msgstr "နောက်ဆုံး အမည်"
 
-#. email
 msgid "Email"
 msgstr "အီးမေးလ်"
 
@@ -3113,14 +3059,12 @@ msgstr "မြို့"
 msgid "Year of birth"
 msgstr "မွေးသက္ကရာဇ်"
 
-#. gender
 msgid "Gender"
 msgstr "လိင် - ကျား/မ"
 
 msgid "Male or female"
 msgstr "ကျား/မ"
 
-#. 0
 msgid "Male"
 msgstr "ကျား"
 
@@ -3158,22 +3102,16 @@ msgstr "မိတ်ဆွေ %s အတွက် စကားပြောခန�
 msgid "Add to chat..."
 msgstr "စကားပြောခန်းထဲ ထည့်သွင်းရန်..."
 
-#. 0
 #. Global
 msgid "Available"
 msgstr "ရရှိနိုင်သည်"
 
-#. 2
 msgid "Chatty"
 msgstr "စကားပြောထူသည်"
 
-#. 3
 msgid "Do Not Disturb"
 msgstr "မနှောင့်ယှက်ရန်"
 
-#. 1
-#. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
-#. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
 msgid "Away"
 msgstr "အပြင်ထွက်သည်"
@@ -3181,8 +3119,6 @@ msgstr "အပြင်ထွက်သည်"
 msgid "UIN"
 msgstr "UIN"
 
-#. first name
-#. optional information
 msgid "First Name"
 msgstr "ပထမ အမည်"
 
@@ -3207,9 +3143,6 @@ msgstr "သင့် ရှာဖွေမှု သတ်မှတ်ချက�
 msgid "Unable to read from socket"
 msgstr "Socket မှ မဖတ်နိုင်ပါ"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
 msgid "Connected"
 msgstr "ဆက်သွယ်ထားသည်"
 
@@ -3222,7 +3155,6 @@ msgstr "စကားပြောခန်းထဲ ထည့်သွင်း�
 msgid "Chat _name:"
 msgstr "_N စကားပြောသူ အမည် -"
 
-#. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "ဆက်သွယ်နေသည်"
@@ -3978,8 +3910,6 @@ msgstr "အလုပ်အကိုင်"
 msgid "Role"
 msgstr "ပါဝင်မှု"
 
-#. birthday
-#. birthday (required)
 msgid "Birthday"
 msgstr "မွေးနေ့သက္ကရာဇ်"
 
@@ -4069,7 +3999,6 @@ msgstr "ထွက်ခွာရန်"
 msgid "JID"
 msgstr "JID"
 
-#. last name
 msgid "Last Name"
 msgstr "နောက်ဆုံး အမည်"
 
@@ -4331,7 +4260,6 @@ msgstr "သို့ (ရွှေ့ဆိုင်းသည့်အထိ)"
 msgid "None"
 msgstr "ဘာမျှမရှိ"
 
-#. subscription type
 msgid "Subscription"
 msgstr "စာရင်းသွင်းခြင်း"
 
@@ -4347,12 +4275,6 @@ msgstr "နည်းနာ အမည်"
 msgid "Mood Comment"
 msgstr "နည်းနာ မှတ်ချက်"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
 msgid "Tune Artist"
 msgstr "ပန်းချီ ချိန်ညှိရန်"
 
@@ -4597,8 +4519,6 @@ msgstr ""
 "အချက်ပေး၍ မရပါ၊ အကြောင်းမှာ %s သည် ၄င်းကို ထောက်ပံ့ မပေးပါ (သို့) လောလောဆယ် ၄င်းကို လက်ခံလိုခြင်း "
 "မရှိပါ။"
 
-#. Yahoo only supports one attention command: the 'buzz'.
-#. This is index number YAHOO_BUZZ.
 msgid "Buzz"
 msgstr "အချက်ပေး"
 
@@ -4727,8 +4647,6 @@ msgstr "စာဝှက်မထားသော streams များအတွက
 msgid "Connect port"
 msgstr "Port ကို ဆက်သွယ်ရန်"
 
-#. TODO: default to automatically try different ports. Make the user be
-#. * able to set the first port to try (like LastConnectedPort in Windows client).
 #. Account options
 msgid "Connect server"
 msgstr "ဆာဗာကို ဆက်သွယ်ရန်Port ကို ဆက်သွယ်ရန်"
@@ -4739,8 +4657,9 @@ msgstr "ဖိုင်ကို ရွှေ့ပြောင်းပေး�
 msgid "BOSH URL"
 msgstr "BOSH URL"
 
-#. this should probably be part of global smiley theme settings later on,
-#. shared with MSN
+#. this should probably be part of global smiley theme settings
+#. * later on
+#.
 msgid "Show Custom Smileys"
 msgstr "စိတ်ကြိုက် ရုပ်ပြောင်များကို ပြရန်"
 
@@ -4827,7 +4746,6 @@ msgstr "လက်ရှိ တွေ့ရသော အမည်မသိ ချ
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "%s ထံသို့ ဖိုင် ပေးပို့ရန် မဖြစ်နိုင်ပါ။ သုံးစွဲသူသည် ဖိုင်ဝေမျှမှုကို လက်မခံပါ။ "
 
-#. not success
 msgid "File Send Failed"
 msgstr "ဖိုင် ပေးပို့၍ မရပါ"
 
@@ -5125,1596 +5043,6 @@ msgstr "လှုပ်ရှားမှုများ"
 msgid "Select an action"
 msgstr "လှုပ်ရှားမှုတစ်ခု ရွေးရန်"
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "\"%s\" ကို ထည့်သွင်း၍ မရပါ"
-
-msgid "Buddy Add error"
-msgstr "မိတ်ဆွေ ထည့်သွင်းမှု ချို့ယွင်းချက်"
-
-msgid "The username specified does not exist."
-msgstr "သတ်မှတ်ထားသော သုံးစွဲသူအမည် မရှိပါ။"
-
-msgid "Unable to parse message"
-msgstr "ပေးစာကို ခွဲဖြာစိစစ်၍ မရပါ"
-
-msgid "Syntax Error (probably a client bug)"
-msgstr "ဝါကျ အထားအသို မှားယွင်းချက်"
-
-msgid "Invalid email address"
-msgstr "အီးမေးလ် လိပ်စာ အမှား"
-
-msgid "User does not exist"
-msgstr "သုံးစွဲသူ မရှိပါ"
-
-msgid "Fully qualified domain name missing"
-msgstr "အရည်အသွေး ပြည့်မီသော ဒိုမိန်းအမည် ပျောက်ဆုံးနေသည်"
-
-msgid "Already logged in"
-msgstr "အကောင့်ထဲ သင် ၀င်ရောက်နေပြီ"
-
-msgid "Invalid username"
-msgstr "သုံးစွဲသူ အမည် အမှား"
-
-msgid "Invalid friendly name"
-msgstr "အမည်ပြောင်း အမှား"
-
-msgid "List full"
-msgstr "အပြည့်အစုံ ဖေါ်ပြရန်"
-
-msgid "Already there"
-msgstr "ရှိပြီးသား"
-
-msgid "Not on list"
-msgstr "စာရင်းတွင် မရှိပါ"
-
-msgid "User is offline"
-msgstr "သုံးစွဲသူသည် အော့ဖ်လိုင်း ဖြစ်နေသည်"
-
-msgid "Already in the mode"
-msgstr "နည်းစနစ်အတွင်း ​ရှိနေသည်"
-
-msgid "Already in opposite list"
-msgstr "ဆန့်ကျင်ဘက် စာရင်းတွင် ပါရှိပြီ"
-
-msgid "Too many groups"
-msgstr "အုပ်စုများ များလွန်းနေသည်"
-
-msgid "Invalid group"
-msgstr "မမှန်သော အုပ်စု"
-
-msgid "User not in group"
-msgstr "သုံးစွဲသူသည် အုပ်စုထဲတွင် မရှိပါ"
-
-msgid "Group name too long"
-msgstr "အုပ်စု အမည် ရှည်လွန်းသည်"
-
-msgid "Cannot remove group zero"
-msgstr "အုပ်စုကို သုညဖြစ်အောင် ဖယ်ရှားမရပါ"
-
-msgid "Tried to add a user to a group that doesn't exist"
-msgstr "သုံးစွဲသူကို မရှိသော အုပ်စုထဲသို့ ထည့်သွင်းရန် ကြိုးစားခဲ့သည်"
-
-msgid "Switchboard failed"
-msgstr "Switchboard အလုပ်မလုပ်ပါ"
-
-msgid "Notify transfer failed"
-msgstr "ရွှေ့ပြောင်းမှု အသိပေးစနစ် ပျက်နေသည်"
-
-msgid "Required fields missing"
-msgstr "လိုအပ်သော အကွက်များ ပျောက်ဆုံးနေသည်"
-
-msgid "Too many hits to a FND"
-msgstr "FND ကို အချက်များစွာ နှိပ်မိသည်"
-
-msgid "Not logged in"
-msgstr "အကောင့်ထဲ မဝင်ပါ"
-
-msgid "Service temporarily unavailable"
-msgstr "၀န်ဆောင်မှု ခေတ္တခဏ ရပ်နားထားသည်"
-
-msgid "Database server error"
-msgstr "ဒေတာဘေ့စ် ဆာဗာ ချို့ယွင်းမှု"
-
-msgid "Command disabled"
-msgstr "ညွှန်ကြားချက် ပိတ်ထားသည်"
-
-msgid "File operation error"
-msgstr "ဖိုင် ခန့်ခွဲမှု ချို့ယွင်းချက်"
-
-msgid "Memory allocation error"
-msgstr "မှတ်ဉာဏ် ​နေရာချထားမှု ချို့ယွင်းချက်"
-
-msgid "Wrong CHL value sent to server"
-msgstr "ဆာဗာထံသို့ မှားသော CHL တန်ဖိုး ပေးပို့သည်"
-
-msgid "Server busy"
-msgstr "ဆာဗာ အလုပ်များနေသည်"
-
-msgid "Server unavailable"
-msgstr "ဆာဗာ အဆင်မပြေပါ"
-
-msgid "Peer notification server down"
-msgstr "Peer အသိပေး ဆာဗာ အလုပ်မလုပ်ပါ"
-
-msgid "Database connect error"
-msgstr "ဒေတာဘေ့စ် ဆက်သွယ်မှု ချို့ယွင်းချက်"
-
-msgid "Server is going down (abandon ship)"
-msgstr "ဆာဗာ အလုပ်မလုပ်ပါ"
-
-msgid "Error creating connection"
-msgstr "အဆက်အသွယ် ဖန်တီးမှု ချို့ယွင်းချက်"
-
-msgid "CVR parameters are either unknown or not allowed"
-msgstr "CVR ပါရာမီတာများကို မသိရှိပါ (သို့) ခွင့်မပြုပါ"
-
-msgid "Unable to write"
-msgstr "ရေးသား၍ မရပါ"
-
-msgid "Session overload"
-msgstr "အစီအစဉ် မနိုင်မနင်းဖြစ်နေသည်"
-
-msgid "User is too active"
-msgstr "သုံးစွဲသူသည် လှုပ်ရှားလွန်းနေသည်"
-
-msgid "Too many sessions"
-msgstr "လုပ်​ဆောင်မှု များလွန်းနေသည်"
-
-msgid "Passport not verified"
-msgstr "Passport ကို အတည်မပြုပါ"
-
-msgid "Bad friend file"
-msgstr "မကောင်းသော မိတ်ဆွေ ဖိုင်"
-
-msgid "Not expected"
-msgstr "မျှော်လင့်မထားပါ"
-
-msgid "Friendly name is changing too rapidly"
-msgstr "အမည်ပြောင်သည် အပြောင်းလဲ မြန်ဆန်လွန်းနေသည်"
-
-msgid "Server too busy"
-msgstr "ဆာဗာ အလုပ်များလွန်းသည်"
-
-msgid "Authentication failed"
-msgstr "အတည်ပြုချက်  မအောင်မြင်ပါ"
-
-msgid "Not allowed when offline"
-msgstr "အော့ဖ်လိုင်း အချိန်တွင် ခွင့်မပြုပါ"
-
-msgid "Not accepting new users"
-msgstr "သုံးစွဲသူ လူသစ်များကို လက်မခံပါ"
-
-msgid "Kids Passport without parental consent"
-msgstr "အုပ်ထိန်းသူ သဘော မပါသော ကလေး Passport"
-
-msgid "Passport account not yet verified"
-msgstr "Passport အကောင့်ကို အတည်မပြုသေးပါ"
-
-msgid "Passport account suspended"
-msgstr "Passport ​အကောင့်ကို ဆိုင်းငံ့ထားသည်"
-
-msgid "Bad ticket"
-msgstr "မကောင်းသော လက်မှတ်"
-
-#, c-format
-msgid "Unknown Error Code %d"
-msgstr "အမည်မသိ ချို့ယွင်းမှု ကုဒ် %d"
-
-#, c-format
-msgid "MSN Error: %s\n"
-msgstr "MSN ချို့ယွင်းချက် - %s\n"
-
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "မိတ်ဆွေစာရင်း ချိန်ကိုက် လုပ်ဆောင်မှု ချို့ယွင်းသည့် နေရာ %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"ဒေသတွင်းစာရင်းထဲမှ %s သည် \"%s\" အုပ်စု၏ အထဲတွင် ရှိသည်၊ သို့သော် ဆာဗာစာရင်းတွင် မရှိပါ။ ဤမိတ်ဆွေကို "
-"ထည့်သွင်းစေလိုသလား?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr "%s သည် ဒေသတွင်းစာရင်းထဲတွင် ရှိသည်၊ သို့သော် ဆာဗာစာရင်းတွင် မရှိပါ။ ဤမိတ်ဆွေကို ထည့်သွင်းစေလိုသလား? "
-
-msgid "Other Contacts"
-msgstr "အခြား အဆက်အသွယ်များ"
-
-msgid "Non-IM Contacts"
-msgstr "IM အဆက်အသွယ်များ မဟုတ်"
-
-#, c-format
-msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
-msgstr "%s သည် မျက်ရိပ် ပေးနေသည်။ <a href='msn-wink://%s'>၄င်းကို ဖွင့်ရန် ဒီနေရာကို နှိပ်ပါ</a>"
-
-#, c-format
-msgid "%s sent a wink, but it could not be saved"
-msgstr "%s သည် မျက်ရိပ် ပေးနေသည်၊ သို့ရာတွင် ၄င်းကို သိမ်းဆည်း၍ မရပါ"
-
-#, c-format
-msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
-msgstr ""
-"%s သည် အသံ အပိုင်းအစ တစ်ခု ပေးပို့ထားသည်။ <a href='audio://%s'>၄င်းကို ဖွင့်ရန် ဒီနေရာကို နှိပ်ပါ</a>"
-
-#, c-format
-msgid "%s sent a voice clip, but it could not be saved"
-msgstr "%s သည် အသံ အပိုင်းအစ တစ်ခု ပေးပို့ထားသည်၊ သို့သော် ၄င်းကို သိမ်းဆည်း၍ မရပါ"
-
-#, c-format
-msgid "%s sent you a voice chat invite, which is not yet supported."
-msgstr "%s သည် အသံဖြင့် စကားပြောရန် ဖိတ်ကြား​ထားသည်၊ ၄င်းကို အထောက်အပံ့ မပေးသေးပါ။"
-
-msgid "Nudge"
-msgstr "တိုက်တွန်းသည်"
-
-#, c-format
-msgid "%s has nudged you!"
-msgstr "%s သည် သင့်ကို တိုက်တွန်းနေသည်။"
-
-#, c-format
-msgid "Nudging %s..."
-msgstr "%s ကို တိုက်တွန်းနေသည်..."
-
-msgid "Email Address..."
-msgstr "အီးမေးလ် လိပ်စာ"
-
-msgid "Your new MSN friendly name is too long."
-msgstr "MSN ၏ အမည်ပြောင် အသစ် ရှည်လွန်းသည်။"
-
-#, c-format
-msgid "Set friendly name for %s."
-msgstr "%s အတွက် အမည်ပြောင် သတ်မှတ်ပါ။"
-
-msgid "Set Friendly Name"
-msgstr "အမည်ပြောင် သတ်မှတ်​ရန်"
-
-msgid "This is the name that other MSN buddies will see you as."
-msgstr "ဤအမည်ဖြင့် အခြား MSN မိတ်ဆွေများက သင့်ကို  မြင်ရမည် ဖြစ်သည်။"
-
-msgid "This Location"
-msgstr "ဤ တည်နေရာ"
-
-msgid "This is the name that identifies this location"
-msgstr "ဤတည်နေရာကို ထင်ရှားစေသော အမည် ဖြစ်သည်။ "
-
-msgid "Other Locations"
-msgstr "အခြား တည်နေရာများ"
-
-msgid "You can sign out from other locations here"
-msgstr "ဤနေရာကနေ အခြားတည်နေရာများမှ သင် ထွက်ခွာနိုင်သည်"
-
-#. TODO: Due to limitations in our current request field API, the
-#. following string will show up with a trailing colon.  This should
-#. be fixed either by adding an "include_colon" boolean, or creating
-#. a separate purple_request_field_label_new_without_colon function,
-#. or by never automatically adding the colon and requiring that
-#. callers add the colon themselves.
-msgid "You are not signed in from any other locations."
-msgstr "သင်သည် အခြားတည်နေရာများမှ အကောင့်ထဲ ဝင်ရောက်ခြင်း မရှိပါ။ "
-
-msgid "Allow multiple logins?"
-msgstr "အကြိမ်ကြမ် ၀င်ရောက်ခွင့် ပြုမည်လား။"
-
-msgid ""
-"Do you want to allow or disallow connecting from multiple locations "
-"simultaneously?"
-msgstr "ဆက်သွယ်ခွင့်ကို အခြားနေရာများမှ တစ်ပြိုင်နက်တည်း ခွင့်ပြုမည်လော (သို့) ခွင့်မပြုပဲ ထားမည်လော? "
-
-msgid "Allow"
-msgstr "ခွင့်ပြုရန်"
-
-msgid "Disallow"
-msgstr "ခွင့်မပြုရန်"
-
-msgid "Set your home phone number."
-msgstr "သင့် အိမ်ဖုန်းနံပါတ်ကို သတ်မှတ်ပါ။"
-
-msgid "Set your work phone number."
-msgstr "သင့် အလုပ်ဖုန်းနံပါတ်ကို သတ်မှတ်ပါ။"
-
-msgid "Set your mobile phone number."
-msgstr "သင့် လက်ကိုင်ဖုန်းနံပါတ်ကို သတ်မှတ်ပါ။"
-
-msgid "Allow MSN Mobile pages?"
-msgstr "MSN မိုဘိုင်း စာမျက်နှာများကို ခွင့်ပြုမည်​လား?"
-
-msgid ""
-"Do you want to allow or disallow people on your buddy list to send you MSN "
-"Mobile pages to your cell phone or other mobile device?"
-msgstr ""
-"သင့် မိတ်ဆွေစာရင်းရှိ လူများသည် MSN လက်ကိုင်ဖုန်း စာမျက်နှာများကို သင့် မိုဘိုင်းဖုန်း (သို့) အခြား လက်ကိုင်ဖုန်းသို့ "
-"ပေးပို့ခွင့်ပြုမည်လား (သို့) ခွင့်ပြုပဲ ထားမည်လား?"
-
-#, c-format
-msgid "Blocked Text for %s"
-msgstr "%s ကို ပိတ်ဆို့​သော စသား"
-
-msgid "No text is blocked for this account."
-msgstr "ဤအကောင့်ကို ပိတ်ဆို့သော စာသား မရှိပါ။"
-
-#, c-format
-msgid ""
-"MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr "MSN ဆာဗာများသည် လောလောဆယ် အောက်ပါ ပုံမှန် ဖေါ်ပြချက်များကို ပိတ်ဆို့နေသည် - <br/>%s"
-
-msgid "This account does not have email enabled."
-msgstr "ဤအကောင့်၌ အီးမေးလ် ဖွင့်မထားပါ။"
-
-msgid "Send a mobile message."
-msgstr "လက်ကိုင်ဖုန်း စာတိုတစ်စောင် ပေးပို့ရန်။"
-
-msgid "Page"
-msgstr "စာမျက်နှာ"
-
-msgid "Playing a game"
-msgstr "ဂိမ်းကစားနေသည်"
-
-msgid "Working"
-msgstr "အလုပ်လုပ်နေသည်"
-
-msgid "Has you"
-msgstr "မင်းရော"
-
-msgid "Home Phone Number"
-msgstr "အိမ် ဖုန်း နံပါတ်"
-
-msgid "Work Phone Number"
-msgstr "အလုပ် ဖုန်း နံပါတ်"
-
-msgid "Mobile Phone Number"
-msgstr "လက်ကိုင်ဖုန်း နံပါတ်"
-
-msgid "Be Right Back"
-msgstr "ပြန်လာမည်"
-
-msgid "Busy"
-msgstr "အလုပ်များနေသည်"
-
-msgid "On the Phone"
-msgstr "ဖုန်းပြောနေသည်"
-
-msgid "Out to Lunch"
-msgstr "နေ့လည်စာ စားသည်"
-
-msgid "Game Title"
-msgstr "ဂိမ်း အမည်"
-
-msgid "Office Title"
-msgstr "ရုံးခန်း အမည်"
-
-msgid "Set Friendly Name..."
-msgstr "အမည်ပြောင် သတ်မှတ်ရန်..."
-
-msgid "View Locations..."
-msgstr "တည်နေရာများကို ကြည့်ရန်..."
-
-msgid "Set Home Phone Number..."
-msgstr "အိမ် ဖုန်းနံပါတ် သတ်မှတ်ရန်..."
-
-msgid "Set Work Phone Number..."
-msgstr "အလုပ် ဖုန်းနံပါတ် သတ်မှတ်ရန်..."
-
-msgid "Set Mobile Phone Number..."
-msgstr "လက်ကိုင်ဖုန်း နံပါတ် သတ်မှတ်ရန်..."
-
-msgid "Enable/Disable Mobile Devices..."
-msgstr "မိုဘိုင်း စက်ပစ္စည်းများကို ဖွင့်ရန်/ပိတ်ရန်..."
-
-msgid "Allow/Disallow Multiple Logins..."
-msgstr "အကောင့်ထဲ အကြိမ်ကြိမ် ၀င်ရောက်ခွင့် ပြုရန်/မပြုရန်..."
-
-msgid "Allow/Disallow Mobile Pages..."
-msgstr "လက်ကိုဖုန်း စာမျက်နှာများကို ဖွင့်ရန်/ပိတ်ရန်..."
-
-msgid "View Blocked Text..."
-msgstr "ပိတ်ဆို့ထားသော စာသားကို ကြည့်ရန်..."
-
-msgid "Open Hotmail Inbox"
-msgstr "Hotmail စာပုံးကို ဖွင့်ရန်"
-
-msgid "Send to Mobile"
-msgstr "မိုဘိုင်းဖုန်းသို့ ပေးပို့ရန်"
-
-msgid "SSL support is needed for MSN. Please install a supported SSL library."
-msgstr "MSN အတွက် SSL အထောက်အပံ့ လိုအပ်သည်။ ​ထောက်ပံ့ထားသော SSL လိုင်ဘရာရီ ကို ထည့်သွင်းပါ။"
-
-#, c-format
-msgid ""
-"Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be valid email addresses."
-msgstr ""
-"သုံးစွဲသူအမည် မမှန်သောကြောင့် မိတ်ဆွေ %s ကို ထည့်သွင်း၍ မရပါ။​ ​သုံးစွဲသူအမည်များသည် အီးမေးလ်လိပ်စာ အမှန် "
-"ဖြစ်ရမည်။"
-
-msgid "Unable to Add"
-msgstr "ထည့်သွင်း၍ မရပါ"
-
-msgid "Error retrieving profile"
-msgstr "ပရိုဖိုင် ထုတ်ယူမှု ချို့ယွင်းချက်"
-
-msgid "General"
-msgstr "ယေဘုယျ"
-
-msgid "Age"
-msgstr "အသက်"
-
-msgid "Occupation"
-msgstr "အလုပ်အကိုင် "
-
-msgid "Location"
-msgstr "တည်နေရာ"
-
-msgid "Hobbies and Interests"
-msgstr "ဝါသနာများနှင့် ဝါသနာများ"
-
-msgid "A Little About Me"
-msgstr "ကျွန်တော့် အကြောင်း အကျဉ်း"
-
-msgid "Social"
-msgstr "လူမှုရေး"
-
-msgid "Marital Status"
-msgstr "အိမ်ထောင်ရှိ/ မရှိ"
-
-msgid "Interests"
-msgstr "ဝါသနာများ"
-
-msgid "Pets"
-msgstr "အိမ်မွေး တိရိစ္ဆာန်များ"
-
-msgid "Hometown"
-msgstr "ဇာတိမြို့"
-
-msgid "Places Lived"
-msgstr "နေထိုင်ခဲ့သော နေရာများ"
-
-msgid "Fashion"
-msgstr "ဖက်ရှင်"
-
-msgid "Humor"
-msgstr "ရယ်စရာ"
-
-msgid "Music"
-msgstr "တေးဂီတ"
-
-msgid "Favorite Quote"
-msgstr "စိတ်ကြိုက် ဆိုရိုးစကား"
-
-msgid "Contact Info"
-msgstr "ဆက်သွယ်ရန်လိပ်စာ"
-
-msgid "Personal"
-msgstr "ကိုယ်ရေးကိုယ်တာ"
-
-msgid "Significant Other"
-msgstr "အခြား ထင်ရှားသောအရာ"
-
-msgid "Home Phone"
-msgstr "အိမ် ဖုန်း"
-
-msgid "Home Phone 2"
-msgstr "အိမ်ဖုန်း ၂"
-
-msgid "Home Address"
-msgstr "အိမ်လိပ်စာ"
-
-msgid "Personal Mobile"
-msgstr "ကိုယ်ပိုင် မိုဘိုင်းဖုန်း"
-
-msgid "Home Fax"
-msgstr "အိမ်သုံး ဖက်စ်"
-
-msgid "Personal Email"
-msgstr "ကိုယ်ပိုင် အီးမေးလ်"
-
-msgid "Personal IM"
-msgstr "ကိုယ်ပိုင် IM"
-
-msgid "Anniversary"
-msgstr "နှစ်ပတ်လည်"
-
-#. Business
-msgid "Work"
-msgstr "အလုပ်"
-
-msgid "Company"
-msgstr "ကုမ္ပဏီ"
-
-msgid "Department"
-msgstr "ဌာန"
-
-msgid "Profession"
-msgstr "ကျွမ်းကျင်မှု"
-
-msgid "Work Phone"
-msgstr "အလုပ် ဖုန်း"
-
-msgid "Work Phone 2"
-msgstr "အလုပ် ဖုန်း ၂"
-
-msgid "Work Address"
-msgstr "အလုပ် လိပ်စာ"
-
-msgid "Work Mobile"
-msgstr "အလုပ် မိုဘိုင်းဖုန်း"
-
-msgid "Work Pager"
-msgstr "လုပ်ငန်း စာပို့စက်"
-
-msgid "Work Fax"
-msgstr "လုပ်ငန်းသုံး ဖက်စ်"
-
-msgid "Work Email"
-msgstr "လုပ်ငန်းသုံး အီးမေးလ်"
-
-msgid "Work IM"
-msgstr "လုပ်ငန်းသုံး IM"
-
-msgid "Start Date"
-msgstr "အစပြုသော နေ့စွဲ"
-
-msgid "Favorite Things"
-msgstr "နှစ်သက်သောအရာများ"
-
-msgid "Last Updated"
-msgstr "နောက်ဆုံး မွမ်းမံချက်"
-
-msgid "Homepage"
-msgstr "ပင်မစာမျက်နှာ"
-
-msgid "The user has not created a public profile."
-msgstr "သုံးစွဲသူသည် အများ မြင်နိုင်သည့် ပရိုဖိုင်ကို မဖန်တီးပါ။"
-
-msgid ""
-"MSN reported not being able to find the user's profile. This either means "
-"that the user does not exist, or that the user exists but has not created a "
-"public profile."
-msgstr ""
-"သုံးစွဲသူ၏ ပရိုဖိုင်ကို ရှာလို့မရကြောင်း MSN က သတင်းပို့သည်။ သုံးစွဲသူ မရှိ၍ ဖြစ်မည်၊ (သို့) သုံးစွဲသူသာ ရှိပြီး အများ "
-"မြင်နိုင်သည့် ပရိုဖိုင် ဖန်တီးမထား၍ ဖြစ်နိုင်သည်။"
-
-msgid ""
-"Could not find any information in the user's profile. The user most likely "
-"does not exist."
-msgstr "သုံးစွဲသူ၏ ပရိုဖိုင်တွင် အချက်အလက် တစ်ခုမှ ရှာမတွေ့နိုင်ပါ။ သုံးစွဲသူ မရှိ၍ ဖြစ်မည်။"
-
-msgid "View web profile"
-msgstr "ကွန်ယက် ပရိုဖိုင် ကြည့်ရန်"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *< summary
-msgid "Windows Live Messenger Protocol Plugin"
-msgstr "Windows Live Messenger ပရိုတိုကော ပလပ်အင်"
-
-msgid "Use HTTP Method"
-msgstr "HTTP နည်းစနစ် သုံးစွဲရန်"
-
-msgid "HTTP Method Server"
-msgstr "HTTP နည်းစနစ်သုံး ဆာဗာ"
-
-msgid "Show custom smileys"
-msgstr "ကိုယ်တိုင်လုပ် ရုပ်ပြောင်များ ပြရန်"
-
-msgid "Allow direct connections"
-msgstr "တိုက်ရိုက် ဆက်သွယ်မှုများ ခွင့်ပြုရန်"
-
-msgid "Allow connecting from multiple locations"
-msgstr "တည်နေရာ အမျိုးမျိုးမှ ဆက်သွယ်ခွင့် ပြုရန်"
-
-msgid "nudge: nudge a user to get their attention"
-msgstr "nudge: သုံးစွဲသူ အာရုံစိုက်လာအောင် တိုက်တွန်းပါ"
-
-msgid "Windows Live ID authentication:Unable to connect"
-msgstr "Windows Live ID authentication:ဆက်သွယ်မှု မပြုနိုင်ပါ"
-
-msgid "Windows Live ID authentication:Invalid response"
-msgstr "Windows Live ID authentication:မှားယွင်းသော တုံ့ပြန်မှု"
-
-msgid "The following users are missing from your addressbook"
-msgstr "အောက်ပါ သုံးစွဲသူများသည် သင့် လိပ်စာ စာအုပ်ထဲမှ ပျောက်ဆုံးနေသည်"
-
-#, c-format
-msgid "Unknown error (%d): %s"
-msgstr "အမည်မသိ ချို့ယွင်းချက် (%d): %s"
-
-msgid "Unable to add user"
-msgstr "သုံးစွဲသူကို ထည့်သွင်း၍ မရပါ။"
-
-#. Unknown error!
-#, c-format
-msgid "Unknown error (%d)"
-msgstr "အမည်မသိ ချို့ယွင်းချက် (%d)"
-
-msgid "Unable to remove user"
-msgstr "သုံးစွဲသူကို ဖယ်ရှား၍ မရပါ"
-
-msgid "Mobile message was not sent because it was too long."
-msgstr "လက်ကိုင်ဖုန်း ပေးစာသည် ရှည်လွန်းသောကြောင့် ပေးပို့၍ မရပါ။"
-
-msgid "Mobile message was not sent because an unknown error occurred."
-msgstr "လက်ကိုင်ဖုန်း ပေးစာ၌ အမည်မသိ ချို့ယွင်းချက် ရှိနေသောကြောင့် ပေးပို့၍ မရပါ။"
-
-#, c-format
-msgid ""
-"The MSN server will shut down for maintenance in %d minute. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgid_plural ""
-"The MSN server will shut down for maintenance in %d minutes. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgstr[0] ""
-"MSN ဆာဗာ ကို ပြုပြင်ထိန်းသိမ်းမှု အတွက် %d မိနစ် ပိတ်ထားမည်။  ထိုအချိန်တွင် သင် အလိုအလျောက် "
-"ထွက်ခွာပေးရလိမ့်မည်။  လက်ရှိ သုံးစေဆဲ စကားပြောဆိုမှုများကို လက်စသတ်ပါ။\n"
-"\n"
-"ပြပြင်ထိန်းသိမ်းမှု ပြီးစီးသည့်နောက်တွင် သင် အောင်မြင်စွာ ဝင်ရောက်နိုင်လိမ့်မည်။"
-
-msgid ""
-"Message was not sent because the system is unavailable. This normally "
-"happens when the user is blocked or does not exist."
-msgstr ""
-"စက်ပိုင်း အဆင်မပြေသောကြာင့် စာတို ပေးပို့၍ မရပါ။ သုံးစွဲသူအမည် အပိတ်ခံရလျှင် (သို့) မရှိလျှင် ဤသို့ ဖြစ်တတ်သည်။ "
-
-msgid "Message was not sent because messages are being sent too quickly."
-msgstr "ပေးစာများ ပေးပို့မှု မြန်လွန်း၍ ဤစာကို ပို့မရပါ။"
-
-msgid "Message was not sent because an unknown encoding error occurred."
-msgstr "အမည်မသိ စာဝှက်စနစ် ချို့ယွင်းချက် ရှိနေ၍ စာကို ပို့မရပါ။"
-
-msgid "Message was not sent because an unknown error occurred."
-msgstr "အမည်မသိ ချို့ယွင်းချက် ရှိနေ၍ စာကို ပို့မရပါ။"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. Converting the encoding from "
-"%s to UTF-8 failed.)"
-msgstr "%s (ဤစာကို လက်ခံရာ၌ ချို့ယွင်းချက် ရှိသည်။ စာဝှက်စနစ်ကို %s မှ UTF-8 သို့ ပြောင်း၍ မရပါ။)"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was %s, but it "
-"was not valid UTF-8.)"
-msgstr ""
-"%s (ဤစာကို လက်ခံရာတွင် ချို့ယွင်းချက် ရှိသည်။ အက္ခရာစုသည် %s ဖြစ်သည်၊ သို့သော် ၄င်းသည် UTF-8 အမှန် "
-"မဟုတ်ပါ။)"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was missing, but "
-"it was not valid UTF-8.)"
-msgstr ""
-"%s (ဤစာကို လက်ခံရာတွင် ချို့ယွင်းချက် ရှိသည်။ အက္ခရာစု ပျောက်နေသည်၊ သို့ရာတွင် ၄င်းသည် UTF-8 အမှန် "
-"မဟုတ်ပါ။)"
-
-msgid "Writing error"
-msgstr "ရေးသားမှု ချို့ယွင်းချက်"
-
-msgid "Reading error"
-msgstr "ဖတ်ရှုခြင်း ချို့ယွင်းချက်"
-
-#, c-format
-msgid ""
-"Connection error from %s server:\n"
-"%s"
-msgstr ""
-"%s ဆာဗာမှ ဆက်သွယ်မှု ချို့ယွင်းချက် - \n"
-"%s"
-
-msgid "Our protocol is not supported by the server"
-msgstr "ကျွန်ပ်တို့ ပရိုတိုကောကို ဆာဗာမှ အထောက်အပံ့ မပေးပါ။ "
-
-msgid "Error parsing HTTP"
-msgstr "HTTP ခွဲဖြာစိစစ်မှု ချို့ယွင်းချက်"
-
-msgid "You have signed on from another location"
-msgstr "သင်သည် အကောင့်ထဲသို့ အခြားနေရာမှ ဝင်ရောက်နေသည်"
-
-msgid "The MSN servers are temporarily unavailable. Please wait and try again."
-msgstr "MSN ဆာဗာများ ခေတ္တ ပိတ်ထားသည်။ ခဏစောင့်ဆိုင်းပြီး ထပ်ကြိုးစားကြည့်ပါ။"
-
-msgid "The MSN servers are going down temporarily"
-msgstr "MSN ဆာဗာများသည် ခေတ္တ အလုပ်မလုပ်ပါ။"
-
-#, c-format
-msgid "Unable to authenticate: %s"
-msgstr "အတည်ပြု၍ မရသောအရာ - %s"
-
-#, c-format
-msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
-
-msgid "Handshaking"
-msgstr "လက်ဆွဲနှုတ်ဆက်ခြင်း"
-
-msgid "Transferring"
-msgstr "ရွှေ့ပြောင်းခြင်း"
-
-msgid "Starting authentication"
-msgstr "အတည်ပြုမှု စတင်နေသည်"
-
-msgid "Getting cookie"
-msgstr "Cookie ရယူနေသည်"
-
-msgid "Sending cookie"
-msgstr " Cookie ပေးပို့နေသည်"
-
-msgid "Retrieving buddy list"
-msgstr "မိတ်ဆွေစာရင်း ထုတ်ယူရန်"
-
-#, c-format
-msgid "%s requests to view your webcam, but this request is not yet supported."
-msgstr ""
-"%s သည် သင့် webcam ကို ကြည့်ရန် တောင်းဆိုနေသည်၊ သို့ရာတွင် ဤတောင်းဆိုချက်အတွက် အထောက်အပံ့ မရှိသေးပါ။"
-
-#, c-format
-msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr ""
-"%s သည် သူ/သူမ၏ webcam ကို ကြည့်ရန် သင့်ကို ဖိတ်ခေါ်နေသည်၊ သို့ရာတွင် ၄င်းအတွက် အထောက်အပံ့ မရှိသေးပါ။"
-
-msgid "Away From Computer"
-msgstr "ကွန်ပျူတာ အနီး၌ မရှိပါ"
-
-msgid "On The Phone"
-msgstr "ဖုံးပြောနေသည်"
-
-msgid "Out To Lunch"
-msgstr "နေ့လည်စာ စားနေသည်"
-
-msgid "Message may have not been sent because a timeout occurred:"
-msgstr "သတ်မှတ်ချိန် ကုန်ဆုံးသွား၍ ပေးစာ ပို့မရခြင်း ဖြစ်နိုင်သည် -"
-
-msgid "Message could not be sent, not allowed while invisible:"
-msgstr "ပေးစာ ပို့မရပါ၊ ကိုယ်ဖျောက်ထားစဉ် ပေးခွင့် မပေးပါ -"
-
-msgid "Message could not be sent because the user is offline:"
-msgstr "သုံးစွဲသူ အော့ဖ်လိုင်း ဖြစ်နေ၍ ပေးစာ ပို့မရနိုင်ပါ -"
-
-msgid "Message could not be sent because a connection error occurred:"
-msgstr "ဆက်သွယ်မှုလိုင်း ချို့ယွင်းမှု ဖြစ်နေ၍ ပေးစာ ပို့မရနိုင်ပါ -"
-
-msgid "Message could not be sent because we are sending too quickly:"
-msgstr "​ကျွန်ပ်တို့ ပေးပို့မှု မြန်ဆန်လွန်း၍ ပေးစာ ပို့မရနိုင်ပါ -"
-
-msgid ""
-"Message could not be sent because we were unable to establish a session with "
-"the server. This is likely a server problem, try again in a few minutes:"
-msgstr ""
-"​ဆာဗာနှင့် ဆက်သွယ် မရသောကြောင့် ပေးစာ ပို့မရနိုင်ပါ။ ဤအချက်သည် ဆာဗာ ပြဿနာ ဖြစ်နိုင်သည်၊ မိနစ်အနည်းငယ် "
-"အကြာ ထပ်ကြိုးစားကြည့်ပါ -"
-
-msgid ""
-"Message could not be sent because an error with the switchboard occurred:"
-msgstr "Switchboard ၌ ချို့ယွင်းချက် ဖြစ်ပေါ်နေသောကြောင့် ပေးစာ ပို့မရနိုင်ပါ -"
-
-msgid "Message may have not been sent because an unknown error occurred:"
-msgstr "အမည်မသိ ချို့ယွင်းချက် ဖြစ်ပေါ်နေသောကြောင့် ပေးစာ ပို့မရခြင်း ဖြစ်မည် -"
-
-msgid "Delete Buddy from Address Book?"
-msgstr "မိတ်ဆွေကို လိပ်စာ စာအုပ်မှ ပယ်ဖျက်မလား?"
-
-msgid "Do you want to delete this buddy from your address book as well?"
-msgstr "ဤမိတ်ဆွေကိုလည် လိပ်စာ စာအုပ်မှ ပယ်ဖျက်လိုသလား?"
-
-msgid "The username specified is invalid."
-msgstr "သတ်မှတ်ထားသော သုံးစွဲသူ အမည်သည် မမှန်ပါ။"
-
-msgid "The Display Name you entered is invalid."
-msgstr "သင် ရေးထည့်လိုက်သော ဖေါ်ပြအမည်သည် မမှန်ပါ။"
-
-msgid ""
-"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-msgstr "သင် ရေးထည့်သော မွေးသက္ကရာဇ် မမှန်ပါ။ ဖြည့်စွတ်ပုံစံ အမှန်မှာ - 'YYYY-MM-DD' ဖြစ်သည်။"
-
-#. show error to user
-msgid "Profile Update Error"
-msgstr "ပရိုဖိုင် မွမ်းမံမှု ချို့ယွင်းချက်"
-
-#. no profile information yet, so we cannot update
-#. (reference: "libpurple/request.h")
-msgid "Profile"
-msgstr "ပရိုဖိုင်"
-
-msgid "Your profile information is not yet retrieved. Please try again later."
-msgstr "သင့် ပရိုဖိုင် အချက်အလက်ကို ပြန်မထုတ်ရသေးပါ။ နောက်မှ ထပ်ကြိုးစားကြည့်ပါ။"
-
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "ဖေါ်ပြအမည်"
-
-#. about me
-msgid "About Me"
-msgstr "ကျွန်တော့်အကြောင်း"
-
-#. where I live
-msgid "Where I Live"
-msgstr "ကျွန်တော် နေထိုင်ရာ နေရာ"
-
-#. relationship status
-msgid "Relationship Status"
-msgstr ""
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "လက်ကိုင်ဖုန်း နံပါတ်"
-
-#. is searchable
-msgid "Can be searched"
-msgstr "ရှာဖွေ၍ ရသည်"
-
-#. is suggestable
-msgid "Can be suggested"
-msgstr "အကြံပြု၍ ရသည်"
-
-msgid "Update your MXit Profile"
-msgstr "သင့် MXit ပရိုဖိုင်ကို မွမ်းမံရန်"
-
-msgid "The PIN you entered is invalid."
-msgstr "သင် ရေးထည့်သော PIN မမှန်ပါ။"
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "သင် ရေးထည့်သော PIN ၌ အတိုင်းအတာ မမှန်ပါ [4-10]။"
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "PIN မမှန်ပါ။ ၄င်း၌ ဒစ်ဂျစ် [၀-၉] သာ ရှိရမည်။"
-
-msgid "The two PINs you entered do not match."
-msgstr "သင် ရေးထည့်သော PIN ၂ ခု ကိုက်ညီမှု မရှိပါ။"
-
-#. show error to user
-msgid "PIN Update Error"
-msgstr "PIN မွမ်းမံမှု ချို့ယွင်းချက်"
-
-#. pin
-#. pin (required)
-msgid "PIN"
-msgstr "PIN"
-
-#. verify pin
-msgid "Verify PIN"
-msgstr "PIN အတည်ပြုရန်"
-
-#. (reference: "libpurple/request.h")
-msgid "Change PIN"
-msgstr "PIN ပြောင်းရန်"
-
-msgid "Change MXit PIN"
-msgstr "MXit PIN ပြောင်းရန်"
-
-msgid "View Splash"
-msgstr "Splash ကြည့်ရန်"
-
-msgid "There is no splash-screen currently available"
-msgstr "လောလောဆယ် splash-screen မရ​နိုင်သေးပါ"
-
-msgid "About"
-msgstr "အကြောင်း"
-
-msgid "Search for user"
-msgstr "သုံးစွဲသူကို ရှာဖွေရန်"
-
-msgid "Search for a MXit contact"
-msgstr "MXit အဆက်အသွယ်ကို ရှာဖွေရန်"
-
-msgid "Type search information"
-msgstr "ရှာဖွေရန် အချက်အလက်များ ရေးထည့်ရန်"
-
-msgid "_Search"
-msgstr "_S ရှာဖွေရန်"
-
-#. display / change profile
-msgid "Change Profile..."
-msgstr "ပရိုဖိုင် ပြောင်းရန်..."
-
-#. change PIN
-msgid "Change PIN..."
-msgstr "PIN ပြောင်းရန်..."
-
-#. suggested friends
-msgid "Suggested friends..."
-msgstr "အကြံပြု​ထားသော မိတ်ဆွေများ..."
-
-#. search for contacts
-msgid "Search for contacts..."
-msgstr "အဆက်အသွယ်များ ရှာဖွေရန်..."
-
-#. display splash-screen
-msgid "View Splash..."
-msgstr "Splash ကြည့်ရန်..."
-
-#. display plugin version
-msgid "About..."
-msgstr "အကြောင်းအရာ ..."
-
-#. the file is too big
-msgid "The file you are trying to send is too large!"
-msgstr "သင် ပေးပို့ရန် ကြိုးစားနေသော ဖိုင် အလွန်ကြီးနေသည်။"
-
-#. file read error
-msgid "Unable to access the local file"
-msgstr ""
-
-#. file write error
-msgid "Unable to save the file"
-msgstr ""
-
-msgid ""
-"Unable to connect to the MXit HTTP server. Please check your server settings."
-msgstr "MXit HTTP ဆာဗာကို ဆက်သွယ်ရန် မဖြစ်နိုင်ပါ။ သင့် ဆာဗာ၏ ချိန်ညှိချက်များကို စစ်ဆေးပါ။ "
-
-msgid "Logging In..."
-msgstr "အကောင့်ထဲ ၀င်ရောက်နေသည်..."
-
-msgid ""
-"Unable to connect to the MXit server. Please check your server settings."
-msgstr "MXit ဆာဗာကို ဆက်သွယ်ရန် မဖြစ်နိုင်ပါ။ သင့် ဆာဗာ ချိန်ညှိချက်များကို စစ်ဆေးပါ။"
-
-msgid "Connecting..."
-msgstr "ဆက်သွယ်နေသည်..."
-
-msgid "The Display Name you entered is too short."
-msgstr "သင် ရေးထည့်သော ဖော်ပြအမည် တိုလွန်းနေသည်။"
-
-msgid "The PIN you entered has an invalid length [7-10]."
-msgstr "သင် ရေးထည့်သော PIN ၏ အတိုင်းအတာ မမှန်ပါ [၇-၁၀]။"
-
-#. mxit login name
-msgid "MXit ID"
-msgstr "MXit ID"
-
-#. show the form to the user to complete
-msgid "Register New MXit Account"
-msgstr "MXit အကောင့် အသစ် မှတ်ပုံတင်ရန်"
-
-msgid "Please fill in the following fields:"
-msgstr "အောက်ပါ အကွက်များကို ဖြည့်စွက်ပါ။"
-
-#. no reply from the WAP site
-msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr "MXit WAP စာမျက်နှာနှင့် ဆက်သွယ်မှု ချို့ယွင်းနေသည်။ နောက် ထပ်ကြိုးစားပါ။ "
-
-#. wapserver error
-#. server could not find the user
-msgid ""
-"MXit is currently unable to process the request. Please try again later."
-msgstr "လောလောဆယ် MXit သည် တောင်းဆိုချက်ကို မဆောင်ရွတ်နိုင်ပါ။ နောက် ထပ်ကြိုးစားကြည့်ပါ။"
-
-msgid "Wrong security code entered. Please try again later."
-msgstr "လုံခြုံရေးကုဒ် အမှား ရေးပေးခဲ့သည်။ နောက်ထပ် ကြိုးစားကြည့်ပါ။"
-
-msgid "Your session has expired. Please try again later."
-msgstr "သင့်အချိန် ကုန်သွားပြီ။ နောက်ထပ် ကြိုးစားကြည့်ပါ။"
-
-msgid "Invalid country selected. Please try again."
-msgstr "နိုင်ငံ ရွေးချယ်မှု မှားနေသည်။ ထပ်ကြိုးစားကြည့်ပါ။"
-
-msgid "The MXit ID you entered is not registered. Please register first."
-msgstr "သင် ရေးထည့်သော MXit ID ကို မှတ်ပုံမတင်ထားပါ။ အရင်ဦးဆုံး မှတ်ပုံတင်ပါ။"
-
-msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr "သင် ရေးထည့်သော MXit ID ကို မှတ်ပုံတင်ထားပြီး ဖြစ်သည်။ အခြား တစ်ခုကို ရွေးပါ။"
-
-msgid "Internal error. Please try again later."
-msgstr "စက်တွင်းပိုင်း ချို့ယွင်းချက်။ နောက်ထပ် ကြိုးစားကြည့်ပါ။"
-
-msgid "You did not enter the security code"
-msgstr "လုံခြုံရေးကုဒ်ကို သင် မရေးထည့်ပါ။"
-
-msgid "Security Code"
-msgstr "လုံခြုံရေးကုဒ်"
-
-#. ask for input (required)
-msgid "Enter Security Code"
-msgstr "လုံခြုံရေးကုဒ်ကို ရေးထည့်ပါ။"
-
-msgid "Your Country"
-msgstr "သင့်နိုင်ငံ"
-
-msgid "Your Language"
-msgstr "သင့်ဘာသာစကား"
-
-#. display the form to the user and wait for his/her input
-msgid "MXit Authorization"
-msgstr "MXit ခွင့်ပြုချက်"
-
-msgid "MXit account validation"
-msgstr "MXit အကောင့် မှန်ကန်မှု ရှိခြင်း"
-
-msgid "Retrieving User Information..."
-msgstr "သုံးစွဲသူ အချက်အလက်များ ထုတ်ယူနေသည်..."
-
-msgid "was kicked"
-msgstr "ကန်ထုတ်ခံရသည်"
-
-msgid "You have been kicked from this MultiMX."
-msgstr "သင့်ကို MultiMX မှ ကန်ထုတ်ခံရသည်။"
-
-msgid "_Room Name:"
-msgstr "_R စကားပြောခန်းအမည် -"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "သင့်ကို ဖိတ်ကြားထားသည်"
-
-msgid "Loading menu..."
-msgstr "Menu ကို ဖွင့်နေသည်..."
-
-msgid "Status Message"
-msgstr "Status စာတန်း"
-
-msgid "Rejection Message"
-msgstr "ပေးစာ ငြင်းဆိုချက်"
-
-msgid "No profile available"
-msgstr "ပရိုဖိုင် မရှိပါ"
-
-msgid "This contact does not have a profile."
-msgstr "ဤအဆက်အသွယ်၌ ပရိုဖိုင်း မရှိပါ။"
-
-msgid "Your MXit ID..."
-msgstr "သင့် MXit ID..."
-
-#. contact is in Deleted, Rejected or None state
-msgid "Re-Invite"
-msgstr "ထပ်မံ ဖိတ်ကြားရန်"
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "WAP ဆာဗာ"
-
-msgid "Connect via HTTP"
-msgstr "HTTP မှတဆင့် ဆက်သွယ်ရန်"
-
-msgid "Enable splash-screen popup"
-msgstr "Splash-screen ပွင့်ထွက် စာမျက်နှာကို ဖွင့်ထားရန်"
-
-msgid "Don't want to say"
-msgstr ""
-
-msgid "Single"
-msgstr ""
-
-msgid "In a relationship"
-msgstr ""
-
-msgid "Engaged"
-msgstr ""
-
-msgid "Married"
-msgstr ""
-
-msgid "It's complicated"
-msgstr ""
-
-msgid "Widowed"
-msgstr ""
-
-msgid "Separated"
-msgstr ""
-
-msgid "Divorced"
-msgstr ""
-
-msgid "Last Online"
-msgstr "နောက်ဆုံး အွန်လိုင်း၌ တည်ရှိမှု"
-
-msgid "Invite Message"
-msgstr "စာပို့ရန် ဖိတ်ခေါ်ရန်"
-
-msgid "No results"
-msgstr "ရလာဒ် မရှိပါ"
-
-msgid "No contacts found."
-msgstr "အဆက်အသွယ်များ မရှိပါ။"
-
-#. define columns
-msgid "UserId"
-msgstr "သုံးစွဲသူ Id"
-
-msgid "Where I live"
-msgstr "ကျွန်တော် နေထိုင်ရာ နေရာ"
-
-#, c-format
-msgid "You have %i suggested friend."
-msgid_plural "You have %i suggested friends."
-msgstr[0] "သူငယ်ချင်းဖြစ်ရမည့်သူ %i ရှိသည်။"
-
-#, c-format
-msgid "We found %i contact that matches your search."
-msgid_plural "We found %i contacts that match your search."
-msgstr[0] "သင့်ရှာဖွေမှုနှင့် လိုက်ဖက်သော အဆက်အသွယ် %i ရှာတွေ့သည်။"
-
-#. we must have lost the connection, so terminate it so that we can reconnect
-msgid "We have lost the connection to MXit. Please reconnect."
-msgstr "MXit သို့ ဆက်သွယ်မှု ပျက်သွားသည်။ ထပ်မံ ဆက်သွယ်ပေးပါ။"
-
-#. packet could not be queued for transmission
-msgid "Message Send Error"
-msgstr "စာပေးပို့မှု ချို့ယွင်းချက်"
-
-msgid "Unable to process your request at this time"
-msgstr "သင့် တောင်းဆိုချက်ကို ယခု မဆောင်ရွတ်နိုင်ါ။"
-
-msgid "Timeout while waiting for a response from the MXit server."
-msgstr "MXit ဆာဗာမှ တုံ့ပြန်မှုကို စောင့်ရင်း အချိန်လွန်သွားသည်။ "
-
-msgid "Successfully Logged In..."
-msgstr "အကောင့်ထဲ အောင်မြင်စွာ ဝင်ရောက်ပြီ..."
-
-#, c-format
-msgid ""
-"%s sent you an encrypted message, but it is not supported on this client."
-msgstr "%s သည် သင့်ထံ စာဝှက်ထားသော ​စာ ပေးပို့ထားသည်၊ သို့ရာတွင် ဤသုံးစွဲသူအတွက် ထောက်ပံ့ မပေးသေးပါ။"
-
-msgid "Message Error"
-msgstr "ပေးစာ ချို့ယွင်းချက်"
-
-#. could not be decrypted
-msgid "An encrypted message was received which could not be decrypted."
-msgstr ""
-
-msgid "Cannot perform redirect using the specified protocol"
-msgstr "သတ်မှတ်ထားသော ပရိုတိုကော သုံးပြီး လမ်းလွှဲမပေးနိုင်ပါ"
-
-msgid "An internal MXit server error occurred."
-msgstr "MXit ဆာဗာ အတွင်းပိုင်း၌ ချို့ယွင်းချက် ဖြစ်နေသည်။"
-
-#, c-format
-msgid "Login error: %s (%i)"
-msgstr "အကောင့်ထဲ ဝင်ရောက်မှု ချို့ယွင်းချက် - %s (%i)"
-
-#, c-format
-msgid "Logout error: %s (%i)"
-msgstr "အကောင့်မှ ထွက်ခွာမှု ချို့ယွင်းချက် - %s (%i)"
-
-msgid "Contact Error"
-msgstr "ဆက်သွယ်မှု ချို့ယွင်းချက်"
-
-msgid "Message Sending Error"
-msgstr "စာပေးပို့ခြင်း ချို့ယွင်းချက်"
-
-msgid "Status Error"
-msgstr "အနေအထား ချို့ယွင်းချက်"
-
-msgid "Mood Error"
-msgstr "နည်းနာ ချို့ယွင်းချက်"
-
-msgid "Invitation Error"
-msgstr "ဖိတ်ကြားမှု ချို့ယွင်းချက်"
-
-msgid "Contact Removal Error"
-msgstr "အဆက်အသွယ် ဖယ်ရှားမှု ချို့ယွင်းချက်"
-
-msgid "Subscription Error"
-msgstr "စာရင်းသွင်းခြင်း ချို့ယွင်းချက်"
-
-msgid "Contact Update Error"
-msgstr "အဆက်အသွယ် မွမ်းမံမှု ချို့ယွင်းချက်"
-
-msgid "File Transfer Error"
-msgstr "ဖိုင် ရွှေ့ပြောင်းမှု ချို့ယွင်းချက်"
-
-msgid "Cannot create MultiMx room"
-msgstr "MultiMx စကားပြေခန်း ဖန်တီး၍ မရပါ။"
-
-msgid "MultiMx Invitation Error"
-msgstr "MultiMx ဖိတ်ခေါ်မှု ချို့ယွင်းချက်"
-
-msgid "Profile Error"
-msgstr "ပရိုဖိုင် ချို့ယွင်းချက်"
-
-#. bad packet
-msgid "Invalid packet received from MXit."
-msgstr "MXit ထံမှ မှားနေသော packet ရရှိနေသည်။"
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr "MXit ထံ ဆက်သွယ်မှု ချို့ယွင်းနေသည်။ (ဖတ်ရှုရမည့် အဆင့် 0x01)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr "MXit ထံ ဆက်သွယ်မှု ချို့ယွင်းနေသည်။ (ဖတ်ရှုရမည့် အဆင့် 0x02)"
-
-msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr "MXit ထံ ဆက်သွယ်မှု ချို့ယွင်းနေသည်။ (ဖတ်ရှုရမည့် အဆင့် 0x03)"
-
-#. malformed packet length record (too long)
-msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr "MXit ထံ ဆက်သွယ်မှု ချို့ယွင်းနေသည်။ (ဖတ်ရှုရမည့် အဆင့် 0x04)"
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr "MXit ထံ ဆက်သွယ်မှု ချို့ယွင်းနေသည်။ (ဖတ်ရှုရမည့် အဆင့် 0x05)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr "MXit ထံ ဆက်သွယ်မှု ချို့ယွင်းနေသည်။ (ဖတ်ရှုရမည့် အဆင့် 0x06)"
-
-msgid "In Love"
-msgstr "သဘောကျ​နေမိသည်"
-
-msgid "Pending"
-msgstr "စောင့်ငံ့နေသည်"
-
-msgid "Invited"
-msgstr "ဖိတ်ကြားခံရသည်"
-
-msgid "Rejected"
-msgstr "ငြင်းပယ်ခံရသည်"
-
-msgid "Deleted"
-msgstr "ပယ်ဖျက်ထားသည်"
-
-msgid "MXit Advertising"
-msgstr "MXit ကြော်ငြာ"
-
-msgid "More Information"
-msgstr "အသေးစိတ် အချက်အလက်"
-
-#, c-format
-msgid "No such user: %s"
-msgstr "ဤသုံးစွဲသူမျိုး မရှိပါ - %s"
-
-msgid "User lookup"
-msgstr "သုံးစွဲသူကို ရှာဖွေရန်"
-
-msgid "Reading challenge"
-msgstr "စိန်ခေါ်ချက် ​ဖတ်ရှုခြင်း"
-
-msgid "Unexpected challenge length from server"
-msgstr "ဆာဗာမှ မျှော်လင့်မထားသော စိမ်ခေါ်ချက် အတိုင်းအတာ"
-
-msgid "Logging in"
-msgstr "အကောင့်ထဲ ၀င်ရောက်နေသည်"
-
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM - သုံးစွဲသူ သတ်မှတ်မထားပါ"
-
-msgid "You appear to have no MySpace username."
-msgstr "သင်၌ MySpace သုံးစွဲသူအမည် ရှိပုံ မပေါ်ပါ။"
-
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr "သုံးစွဲသူ အမည်ကို ယခု သတ်မှတ်လိုသလား? (မှတ်ချက် - ပြောင်း၍ မရတော့ပါ။)"
-
-msgid "Lost connection with server"
-msgstr "ဆာဗာနှင့် ဆက်သွယ်မှု ပြတ်သွားသည်"
-
-#. Can't write _()'d strings in array initializers. Workaround.
-#. khc: then use N_() in the array initializer and use _() when they are
-#. used
-msgid "New mail messages"
-msgstr "ပေးစာ အသစ်"
-
-msgid "New blog comments"
-msgstr "ဘလော့ဂ် မှတ်ချက် အသစ်"
-
-msgid "New profile comments"
-msgstr "ပရိုဖိုင် မှတ်ချက် အသစ်"
-
-msgid "New friend requests!"
-msgstr "မိတ်ဆွေ တောင်းဆိုချက် အသစ်!"
-
-msgid "New picture comments"
-msgstr "ရုပ်ပုံ မှတ်ချက် အသစ်"
-
-msgid "MySpace"
-msgstr "MySpace"
-
-msgid "IM Friends"
-msgstr "IM မိတ်ဆွေများ"
-
-#, c-format
-msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"မိတ်ဆွေ %d ဦး ဆာဗာထံမှ လာပေါင်းထည့်သည်။ (ဆာဗာဘက်စာရင်းတွင် ရှိပြီးသားမိတ်ဆွေများ ပါဝင်သည်)"
-
-msgid "Add contacts from server"
-msgstr "ဆာဗာမှ အဆက်အသွယ်များကို ထည့်သွင်းရန်"
-
-#, c-format
-msgid "Protocol error, code %d: %s"
-msgstr "ပရိုတိုကော ချို့ယွင်းချက်၊ ကုဒ် %d - %s"
-
-#, c-format
-msgid ""
-"%s Your password is %zu characters, which is longer than the maximum length "
-"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
-"cfm?fuseaction=accountSettings.changePassword and try again."
-msgstr ""
-"%s သင့် စကားဝှက်၌ အက္ခရာ %zu ပါသည်၊ ၄င်းသည် %d ထက် ပိုမရှည်ပါ။ သင့် စကားဝှက်ကို http://"
-"profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword "
-"တိုအောင် ပြုလုပ်ပါ။"
-
-msgid "Incorrect username or password"
-msgstr "သုံးစွဲသူအမည် (သို့) စကားဝှက် မမှန်ပါ"
-
-msgid "MySpaceIM Error"
-msgstr "MySpaceIM ချို့ယွင်းချက်"
-
-msgid "Invalid input condition"
-msgstr "ရေးသွင်းမှု အခြေအနေ မှားယွင်းသည်"
-
-msgid "Failed to add buddy"
-msgstr "မိတ်ဆွေ ထည့်သွင်း၍ မရပါ"
-
-msgid "'addbuddy' command failed."
-msgstr "'addbuddy' ညွှန်ကြားချက် အလုပ်မလုပ်ပါ"
-
-msgid "persist command failed"
-msgstr "persist ညွှန်ကြားချက် အလုပ်မလုပ်ပါ"
-
-msgid "Failed to remove buddy"
-msgstr "မိတ်ဆွေကို ဖယ်ရှား၍ မရပါ"
-
-msgid "'delbuddy' command failed"
-msgstr "'delbuddy' ညွှန်ကြားချက် အလုပ်မလုပ်ပါ"
-
-msgid "blocklist command failed"
-msgstr "ပိတ်ဆို့စာရင်း ညွှန်ကြားချက် အလုပ်မလုပ်ပါ"
-
-msgid "Missing Cipher"
-msgstr "စာဝှက်စနစ် ပျောက်နေသည်"
-
-msgid "The RC4 cipher could not be found"
-msgstr "RC4 စာဝှက်စနစ် မတွေ့ရှိပါ"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"RC4 အကူအညီဖြင့် libpurple သို့ အဆင့်မြှင့်ပါ (>= 2.0.1)။ MySpaceIM ပလပ်အင် ဖွင့်လာမည် မဟုတ်ပါ။"
-
-msgid "Add friends from MySpace.com"
-msgstr "MySpace.com မှ မိတ်ဆွေများကို ထည့်သွင်းရန်"
-
-msgid "Importing friends failed"
-msgstr "မိတ်ဆွေများ တင်သွင်း၍ မရပါ"
-
-#. TODO: find out how
-msgid "Find people..."
-msgstr "လူရှာရန်..."
-
-msgid "Change IM name..."
-msgstr "IM အမည် ပြောင်းရန်..."
-
-msgid "myim URL handler"
-msgstr "myim URL ထိန်းကျောင်းသူ"
-
-msgid "No suitable MySpaceIM account could be found to open this myim URL."
-msgstr "ဤ myim URL ကို ဖွင့်ရန် သင့်လျှော်သော MySpaceIM အကောင့် မရှိပါ။"
-
-msgid "Enable the proper MySpaceIM account and try again."
-msgstr "သင့်လျော်သော MySpaceIM အကောင့်ကို ဖွင့်ပြီး ထပ်ကြိုးစားပါ။"
-
-msgid "Show display name in status text"
-msgstr "Status စာတမ်းတွင် ဖော်ပြအမည်ကို ဖေါ်ပြရန်"
-
-msgid "Show headline in status text"
-msgstr "Status စာတမ်းတွင် ခေါင်းစဉ်ကို ဖေါ်ပြရန်"
-
-msgid "Send emoticons"
-msgstr "ခံစားမှုပြ အရုပ်များကို ပေးပို့ရန်"
-
-msgid "Screen resolution (dots per inch)"
-msgstr "ဖန်သားပြင်ပုံရိပ် အချိုးအစား (၁ လက်မရှိ အစက်ပေါင်း)"
-
-msgid "Base font size (points)"
-msgstr "အခြေခံ ဖောင့် အရွယ်အစား (ပွိုင့်)"
-
-msgid "User"
-msgstr "သုံးစွဲသူ"
-
-msgid "Headline"
-msgstr "ခေါင်းစီး"
-
-msgid "Song"
-msgstr "သီချင်း"
-
-msgid "Total Friends"
-msgstr "မိတ်ဆွေ စုစုပေါင်း"
-
-msgid "Client Version"
-msgstr "သုံးစွဲသူ ​ဗားရှင်း"
-
-msgid ""
-"An error occurred while trying to set the username.  Please try again, or "
-"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
-"to set your username."
-msgstr ""
-"သုံးစွဲသူအမည်ကို သတ်မှတ်ရန် ကြိုးစားစဉ် ချို့ယွင်းမှု ဖြစ်ပွားခဲ့သည်။ နောက်ထပ် ကြိုးစားကြည့်ပါ (သို့) သုံးစွဲသူအမည်ကို "
-"သတ်မှတ်ရန် http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
-"ကို သွားပါ။"
-
-msgid "MySpaceIM - Username Available"
-msgstr "MySpaceIM - သုံးစွဲသူအမည် ရနိင်သည်"
-
-msgid "This username is available. Would you like to set it?"
-msgstr "ဤသုံးစွဲသူအမည် ရနိုင်သည်။ ၄င်းကို သတ်မှတ်လိုသလား?"
-
-msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr "တကြိမ် သတ်မှတ်ပြီးပါက ပြောင်း၍ မရတော့ပါ!"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM - သုံးစွဲသူအမည် သတ်မှတ်ရန်"
-
-msgid "This username is unavailable."
-msgstr "ဤသုံးစွဲသူအမည် မရနိုင်ပါ။"
-
-msgid "Please try another username:"
-msgstr "အခြား သုံးစွဲသူအမည်ကို ထပ်ကြိုးစားကြည့်ပါ -"
-
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "သုံးစွဲသူအမည် သတ်မှတ်မထားပါ"
-
-msgid "Please enter a username to check its availability:"
-msgstr "သုံးစွဲသူအမည် တစ်ခု ရနိုင် မရနိုင် သိရှိရန် ရေးထည့်ကြည့်ပါ -"
-
-#. TODO: icons for each zap
-#. Lots of comments for translators:
-#. Zap means "to strike suddenly and forcefully as if with a
-#. * projectile or weapon."  This term often has an electrical
-#. * connotation, for example, "he was zapped by electricity when
-#. * he put a fork in the toaster."
-msgid "Zap"
-msgstr "ဖျက်ဆီးသည်"
-
-#, c-format
-msgid "%s has zapped you!"
-msgstr "%s သည် သင့်ကို ဖျက်ဆီးသည်!"
-
-#, c-format
-msgid "Zapping %s..."
-msgstr "%s ကို ဖျက်ဆီးနေသည်..."
-
-#. Whack means "to hit or strike someone with a sharp blow"
-msgid "Whack"
-msgstr "ရိုက်သည်"
-
-#, c-format
-msgid "%s has whacked you!"
-msgstr "%s သည် သင့်ကို ရိုက်သည်!"
-
-#, c-format
-msgid "Whacking %s..."
-msgstr "%s ကို ရိုက်နေသည်..."
-
-#. Torch means "to set on fire."  Don't worry, this doesn't
-#. * make a whole lot of sense in English, either.  Feel free
-#. * to translate it literally.
-msgid "Torch"
-msgstr "မီးထွန်းသည်"
-
-#, c-format
-msgid "%s has torched you!"
-msgstr "%s သည် သင့်ကို မီးထွန်းပေးသည်!"
-
-#, c-format
-msgid "Torching %s..."
-msgstr "%s ကို မီးထိုးနေသည်..."
-
-#. Smooch means "to kiss someone, often enthusiastically"
-msgid "Smooch"
-msgstr "ဖက်နမ်းသည်"
-
-#, c-format
-msgid "%s has smooched you!"
-msgstr "%s သည် သင့်ကို ဖက်နမ်းသည်!"
-
-#, c-format
-msgid "Smooching %s..."
-msgstr "%s ကို ဖက်နမ်းနေသည်..."
-
-#. A hug is a display of affection; wrapping your arms around someone
-msgid "Hug"
-msgstr "ဖက်သည်"
-
-#, c-format
-msgid "%s has hugged you!"
-msgstr "%s သည် သင့်ကို ဖက်ထားသည်!"
-
-#, c-format
-msgid "Hugging %s..."
-msgstr "%s ကို ဖက်နေသည်..."
-
-#. Slap means "to hit someone with an open/flat hand"
-msgid "Slap"
-msgstr "ဖြတ်ရိုက်သည်"
-
-#, c-format
-msgid "%s has slapped you!"
-msgstr "%s သည် သင့်ကို ဖြတ်ရိုက်သည်!"
-
-#, c-format
-msgid "Slapping %s..."
-msgstr "%s ကို ဖြတ်ရိုက်နေသည်..."
-
-#. Goose means "to pinch someone on their butt"
-msgid "Goose"
-msgstr "ချွန်တွန်းသည်"
-
-#, c-format
-msgid "%s has goosed you!"
-msgstr "%s သည် သင့်ကို ချိန်တွန်းသည်!"
-
-#, c-format
-msgid "Goosing %s..."
-msgstr "%s ကို ချွန်တွန်းနေသည်..."
-
-#. A high-five is when two people's hands slap each other
-#. * in the air above their heads.  It is done to celebrate
-#. * something, often a victory, or to congratulate someone.
-msgid "High-five"
-msgstr "လက်ဝါးချင်းရိုက်သည်"
-
-#, c-format
-msgid "%s has high-fived you!"
-msgstr "%s သည် သင့်ကို လက်ဝါးချင်း ရိုက်နေသည်!"
-
-#, c-format
-msgid "High-fiving %s..."
-msgstr "%s ကို လက်ဝါးချင်း ရိုက်နေသည်..."
-
-#. We're not entirely sure what the MySpace people mean by
-#. * this... but we think it's the equivalent of "prank."  Or, for
-#. * someone to perform a mischievous trick or practical joke.
-msgid "Punk"
-msgstr "ပူညံပူညံ လုပ်သည်"
-
-#, c-format
-msgid "%s has punk'd you!"
-msgstr "%s သည် သင့်ကို ပူညံပူညံ လုပ်သွားသည်။"
-
-#, c-format
-msgid "Punking %s..."
-msgstr "%s ကို ပူညံပူညံ သွားလုပ်သည်... "
-
-#. Raspberry is a slang term for the vibrating sound made
-#. * when you stick your tongue out of your mouth with your
-#. * lips closed and blow.  It is typically done when
-#. * gloating or bragging.  Nowadays it's a pretty silly
-#. * gesture, so it does not carry a harsh negative
-#. * connotation.  It is generally used in a playful tone
-#. * with friends.
-msgid "Raspberry"
-msgstr "ရှုတ်ချသည်"
-
-#, c-format
-msgid "%s has raspberried you!"
-msgstr "%s သည် သင့်ကို ရှုတ်ချသည်!"
-
-#, c-format
-msgid "Raspberrying %s..."
-msgstr "%s ကို ရှုတ်ချနေသည်..."
-
 msgid "Required parameters not passed in"
 msgstr "လိုအပ်သော ပါရာမီတာများကို သွင်းမထားပါ"
 
@@ -6765,6 +5093,9 @@ msgstr "သင့်ကိုယ်သင် ထည့်သွင်း၍ မ�
 
 msgid "Master archive is misconfigured"
 msgstr "Master archive ကို မှားယွင်းစွာ ပြင်ဆင်ထားသည်"
+
+msgid "Incorrect username or password"
+msgstr "သုံးစွဲသူအမည် (သို့) စကားဝှက် မမှန်ပါ"
 
 msgid "Could not recognize the host of the username you entered"
 msgstr "သင် ရေးထည့်သော သုံးစွဲသူအမည်၏ host ကို မမှတ်မိပါ"
@@ -6883,6 +5214,12 @@ msgstr "ဆာဗာနှင့် ဆက်သွယ်မှု ချို�
 msgid "Telephone Number"
 msgstr "တယ်လီဖုံး နံပါတ်"
 
+msgid "Location"
+msgstr "တည်နေရာ"
+
+msgid "Department"
+msgstr "ဌာန"
+
 msgid "Personal Title"
 msgstr "ကိုယ်ပိုင် ရာထူး"
 
@@ -6931,6 +5268,9 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "စကားပြောဆိုထဲ ပါဝင်လိုသလား?"
 
+msgid "You have signed on from another location"
+msgstr "သင်သည် အကောင့်ထဲသို့ အခြားနေရာမှ ဝင်ရောက်နေသည်"
+
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
@@ -6943,6 +5283,9 @@ msgstr "ဆာဗာကို မဆက်သွယ်နိုင်ပါ။ �
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "ဆွေးနွေးခန်းကို ပိတ်လိုက်ပြီ။ စာများကို နောက်ထပ် ပေးပို့၍ မရတော့ပါ။"
+
+msgid "Busy"
+msgstr "အလုပ်များနေသည်"
 
 #. *< type
 #. *< ui_requirement
@@ -7044,6 +5387,9 @@ msgstr "မှားနေသော စကားပြောခန်း အမ�
 
 msgid "Invalid error"
 msgstr "မှားယွင်းနေသော ချို့ယွင်းချက်"
+
+msgid "Not logged in"
+msgstr "အကောင့်ထဲ မဝင်ပါ"
 
 msgid "Cannot receive IM due to parental controls"
 msgstr "အုပ်ထိန်းသူ၏ ထိန်းချုပ်မှုများကြောင့် IM ကို လက်ခံနိုင်ပါ"
@@ -7180,11 +5526,20 @@ msgstr "သီချင်းနားထောင်နေသည်"
 msgid "Studying"
 msgstr "စာလေ့လာနေသည်"
 
+msgid "Working"
+msgstr "အလုပ်လုပ်နေသည်"
+
 msgid "In the restroom"
 msgstr "သန့်စင်ခန်း သွားနေသည်"
 
 msgid "Received invalid data on connection with server"
 msgstr "ဆာဗာနှင့် ဆက်သွယ်ရာ၌ ဒေတာ အမှား လက်ခံရရှိသည်"
+
+msgid "Error parsing response from authentication server"
+msgstr ""
+
+msgid "Unknown error during authentication"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -7312,6 +5667,11 @@ msgid ""
 "supported by your system."
 msgstr "သင့်အကောင့် ချိန်ညှိချက်များထဲ၌ စာဝှက်စနစ် လိုအပ်သည်၊ သို့သော် စာဝှက်စနစ်ကို သင့်စက်က ထောက်ပံ့မထားပါ။"
 
+msgid ""
+"You required Kerberos authentication but encryption is disabled in your "
+"account settings."
+msgstr ""
+
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr "သင့်ကို မကြာခင် အဆက်ဖြတ် ခံရမည်။ သို့ဖြစ်ပါက မွမ်းမံချက်များအတွက် %s ကို စစ်ဆေးပါ။"
@@ -7326,7 +5686,6 @@ msgid "Received authorization"
 msgstr "လုပ်ပိုင်ခွင့် ရရှိထားသည်"
 
 #. Unregistered username
-#. the username does not exist
 msgid "Username does not exist"
 msgstr "သုံးစွဲသူအမည် မရှိပါ"
 
@@ -7618,6 +5977,9 @@ msgstr ""
 "သုံးစွဲသူအမည် မမှန်သောကြောင့် မိတ်ဆွေ %s ကို ထည့်သွင်း၍ မရပါ။ သုံးစွဲသူအမည်များသည် အီးမေးလ်လိပ်စာ အမှန် "
 "ဖြစ်ရမည် (သို့) စာလုံးနှင့် စပြီး စာသားများ၊ ဂဏန်းများနှင့် ကွက်လပ်များ၊ (သို့) ဂဏန်းများ ပါရှိရမည်။"
 
+msgid "Unable to Add"
+msgstr "ထည့်သွင်း၍ မရပါ"
+
 msgid "Unable to Retrieve Buddy List"
 msgstr "မိတ်ဆွေ စာရင်းကို ပြန်ဖေါ်၍ မရပါ"
 
@@ -7767,6 +6129,9 @@ msgstr "အီးမေးလ် လိပ်စာဖြင့် မိတ်�
 msgid "Type the email address of the buddy you are searching for."
 msgstr "သင် ရှာဖွေလိုသော မိတ်ဆွေ၏ အီးမေးလ်လိပ်စာကို ရေးထည့်ပါ။ "
 
+msgid "_Search"
+msgstr "_S ရှာဖွေရန်"
+
 msgid "Set User Info (web)..."
 msgstr "သုံးစွဲသူ အချက်အလက် (ကွန်ရက်) ကို သတ်မှတ်ရန်..."
 
@@ -7803,8 +6168,17 @@ msgstr "ခွင့်ပြုချက် စောင့်ဆိုင်�
 msgid "Search for Buddy by Email Address..."
 msgstr "အီးမေးလ် လိပ်စာဖြင့် မိတ်ဆွေ ရှာဖွေရန်..."
 
-msgid "Use clientLogin"
-msgstr "သုံးစွဲသူဝင်ရောက်မှု ပုံစံကို သုံးစွဲရန်"
+msgid "clientLogin"
+msgstr ""
+
+msgid "Kerberos"
+msgstr ""
+
+msgid "MD5-based"
+msgstr ""
+
+msgid "Authentication method"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -7927,6 +6301,9 @@ msgstr "သုံးစွဲသူ အချက်အလက် မရနို�
 msgid "Mobile Phone"
 msgstr "လက်ကိုင်ဖုန်း"
 
+msgid "Age"
+msgstr "အသက်"
+
 msgid "Personal Web Page"
 msgstr "ကိုယ်ပိုင် ကွန်ရက်စာမျက်နှာ"
 
@@ -7935,11 +6312,20 @@ msgstr "ကိုယ်ပိုင် ကွန်ရက်စာမျက်�
 msgid "Additional Information"
 msgstr "နောက်ဆက်တွဲ အချက်အလက်"
 
+msgid "Home Address"
+msgstr "အိမ်လိပ်စာ"
+
 msgid "Zip Code"
 msgstr "စာပို့ သင်္ကေတ"
 
+msgid "Work Address"
+msgstr "အလုပ် လိပ်စာ"
+
 msgid "Work Information"
 msgstr "လုပ်ငန်းခွင် အချက်အလက်"
+
+msgid "Company"
+msgstr "ကုမ္ပဏီ"
 
 msgid "Division"
 msgstr "ဌာနခွဲ"
@@ -7958,6 +6344,12 @@ msgstr "အဖွဲ့ဝင် စဖြစ်ချိန်"
 
 msgid "Capabilities"
 msgstr "အစွမ်းအစများ"
+
+msgid "Profile"
+msgstr "ပရိုဖိုင်"
+
+msgid "View web profile"
+msgstr "ကွန်ယက် ပရိုဖိုင် ကြည့်ရန်"
 
 msgid "Invalid SNAC"
 msgstr "မှားနေသော SNAC"
@@ -8251,6 +6643,9 @@ msgstr ""
 "သိရှိမှတ်သားမှုစနစ် '%s' သည် သင့် Sametime အဖွဲ့အစည်း အတွင်းရှိ မည်သည့် သုံးစွဲသူနှင့်မှ မကိုက်ညီပါ။ သင့် "
 "မိတ်ဆွေစာရင်းမှ ၎င်းကို ဖယ်ရှားထားသည်။ "
 
+msgid "Unable to add user"
+msgstr "သုံးစွဲသူကို ထည့်သွင်း၍ မရပါ။"
+
 #, c-format
 msgid ""
 "Error reading file %s: \n"
@@ -8528,6 +6923,9 @@ msgstr "လွန်ကဲပြီး တက်ကြွနေသည်"
 
 msgid "Robot"
 msgstr "စက်ရုပ်"
+
+msgid "In Love"
+msgstr "သဘောကျ​နေမိသည်"
 
 msgid "User Modes"
 msgstr "သုံးစွဲသူ နည်းစနစ်များ"
@@ -8814,6 +7212,9 @@ msgstr "အဖွဲ့အစည်း"
 msgid "Unit"
 msgstr "ယူနစ်"
 
+msgid "Homepage"
+msgstr "ပင်မစာမျက်နှာ"
+
 msgid "Note"
 msgstr "မှတ်စု"
 
@@ -8987,6 +7388,9 @@ msgstr "SILC ဆာဗာထံသို့ ဆက်သွယ်မှု ခ�
 
 msgid "Key Exchange failed"
 msgstr "ကီး ဖလှယ်၍ မရပါ"
+
+msgid "Authentication failed"
+msgstr "အတည်ပြုချက်  မအောင်မြင်ပါ"
 
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
@@ -9490,414 +7894,6 @@ msgstr "Auth သုံးစွဲသူ"
 msgid "Auth Domain"
 msgstr "Auth ဒိုမိန်း"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join &lt;room&gt;:  ရာဟူး ကွန်ရက်ရှိ စကားပြောခန်း တစ်ခုတွင် ပါဝင်ရန်"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "စာရင်း - ရာဟူး ကွန်ရက်ရှိ စကားပြောခန်းများကို စာရင်းပြုစုရန်"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr "doodle: Doodle အစီအစဉ်ကို စတင်ဖို့ သုံးစွဲသူကို တောင်းဆိုရန်"
-
-msgid "Yahoo ID..."
-msgstr "ရာဟူး ID..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! Protocol Plugin"
-msgstr "ရာဟူး ပရိုတိုကော ပလပ်အင်"
-
-msgid "Pager port"
-msgstr "စာပို့စက် port"
-
-msgid "File transfer server"
-msgstr "ဖိုင် ရွှေ့ပြောင်းသော ဆာဗာ"
-
-msgid "File transfer port"
-msgstr "ဖိုင် ရွှေ့ပြောင်းသော port"
-
-msgid "Chat room locale"
-msgstr "စကားပြောခန်းသုံး ဘာသာစကား"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "ဆွေးနွေးခန်းနှင့် စကားပြောခန်း ဖိတ်ကြားမှုများကို လျစ်လျူရှုရန်"
-
-msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "HTTP နှင့် HTTPS ဆက်သွယ်မှုလိုင်းများအတွက် အကောင့် ပရောက်ဆီ သုံးစွဲပါ"
-
-msgid "Chat room list URL"
-msgstr "စကားပြောခန်း စာရင်း URL"
-
-msgid "Yahoo JAPAN ID..."
-msgstr "ရာဟူး ဂျပန် ID..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! JAPAN Protocol Plugin"
-msgstr "ရာဟူး ဂျပန် ပရိုတိုကော ပလပ်အင်"
-
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s သည် မပံ့ပိုးသေးသော webcam အတွက် သင့်ကို ဖိတ်ခေါ်နေသည်။"
-
-msgid "Your SMS was not delivered"
-msgstr "သင့် SMS ကို မပေးပို့နိင်ပါ"
-
-msgid "Your Yahoo! message did not get sent."
-msgstr "သင့် ရာဟူး ပေးစာကို ပို့မရပါ။"
-
-#, c-format
-msgid "Yahoo! system message for %s:"
-msgstr "%s အတွက် ရာဟူးမှ ပေးစာ -"
-
-msgid "Authorization denied message:"
-msgstr "အတည်ပြုချက်အတွက် စာတမ်း -"
-
-#, c-format
-msgid ""
-"%s has (retroactively) denied your request to add them to your list for the "
-"following reason: %s."
-msgstr ""
-"%s သည် သင့် မိတ်ဆွေစာရင်းထဲ ထည့်သွင်းရန် တောင်းဆိုမှုကို (ထပ်ခါထပ်ခါ) ငြင်းပယ်ခံရသည့် အကြောင်းရင်း - %s ။"
-
-#, c-format
-msgid "%s has (retroactively) denied your request to add them to your list."
-msgstr "%s သည် သင့် မိတ်ဆွေစာရင်းထဲ ထည့်သွင်းရန် တောင်းဆိုမှုကို (ထပ်ခါထပ်ခါ) ငြင်းပယ်ခဲ့သည်။"
-
-msgid "Add buddy rejected"
-msgstr "မိတ်ဆွေ ထည့်သွင်းမှု ငြင်းပယ်ခံရသည်"
-
-#. Some error in the received stream
-msgid "Received invalid data"
-msgstr "မမှန်သော ဒေတာများကို လက်ခံရရှိသည်"
-
-#. security lock from too many failed login attempts
-msgid ""
-"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-"website may fix this."
-msgstr ""
-"အကောင့် ပိတ်ခံရသည် - အကောင့်ထဲ ၀င်ရောက်ရန် အကြိမ်ကြိမ် ကြိုးပမ်းမှု မအောင်မြင်ပါ။ ရာဟူး ကွန်ရက် "
-"စာမျက်နှာထဲ ဝင်ရောက်ခြင်းဖြင့် ဖြေရှင်းနိုင်သည်။"
-
-#. indicates a lock of some description
-msgid ""
-"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
-"this."
-msgstr ""
-"အကောင့် ပိတ်ခံရသည် - အမည်မသိ အကြောင်းပြချက်။ ရာဟူး ကွန်ရက်စာမျက်နှာထဲ ဝင်ရောက်ခြင်းဖြင့် "
-"ဖြေရှင်းနိုင်သည်။"
-
-#. indicates a lock due to logging in too frequently
-msgid ""
-"Account locked: You have been logging in too frequently.  Wait a few minutes "
-"before trying to connect again.  Logging into the Yahoo! website may help."
-msgstr ""
-"အကောင့် ပိတ်ခံရသည် - သင်သည် အကောင့်ထဲ ဝင်ရောက်မှု အကြိမ်ရေ များလွန်းနေသည်။ နောက်တစ်ကြိမ် မ၀င်မီ "
-"မိနစ်အနည်းငယ် စောင့်ဆိုင်းပါ။ ရာဟူး ကွန်ရက် စာမျက်နှာထဲ ဝင်ရောက်ခြင်းဖြင့် အဆင်ပြေနိုင်သည်။"
-
-#. username or password missing
-msgid "Username or password missing"
-msgstr "သုံးစွဲသူအမည် သို့မဟုတ် စကားဝှက် လိုနေသည်"
-
-#, c-format
-msgid ""
-"The Yahoo server has requested the use of an unrecognized authentication "
-"method.  You will probably not be able to successfully sign on to Yahoo.  "
-"Check %s for updates."
-msgstr ""
-"ရာဟူး ဆာဗာသည် အမည်မသိသော အတည်ပြုမှု နည်းလမ်း တစ်ခုကို သုံးစွဲရန် တောင်းဆိုထားသည်။ ရာဟူး အကောင့်ထဲတွင် "
-"အောင်မြင်စွာ ဝင်ရောက်နိုင်မည် မဟုတ်ပါ။ မွမ်းမံချက်များ ရယူရန် %s ကို ကြည့်ပါ။"
-
-msgid "Failed Yahoo! Authentication"
-msgstr "ရာဟူး အတည်ပြုချက် မအောင်မြင်ပါ"
-
-#, c-format
-msgid ""
-"You have tried to ignore %s, but the user is on your buddy list.  Clicking "
-"\"Yes\" will remove and ignore the buddy."
-msgstr ""
-"သင်သည် %s ကို လျစ်လျူရှုရန် ကြိုးစားသော်လည်း၊ သူသည် သင့် မိတ်ဆွေစာရင်းထဲတွင် ရှိနေသည်။ \"ဟုတ်ပြီ\" ခလုတ်ကို "
-"နှိပ်ခြင်းဖြင့် မိတ်ဆွေကို ဖယ်ထုတ်ပြီး လျစ်လျူရှုသွားလိမ့်မည်။ "
-
-msgid "Ignore buddy?"
-msgstr "မိတ်ဆွေကို လျစ်လျူရှုမည်လား?"
-
-msgid "Invalid username or password"
-msgstr "သုံးစွဲသူအမည် (သို့) စကားဝှက် မှားနေသည်"
-
-msgid ""
-"Your account has been locked due to too many failed login attempts.  Please "
-"try logging into the Yahoo! website."
-msgstr ""
-"သင့်အကောင့်ထဲ ဝင်ရောက်ရန် ကြိမ်ဖန်များစွာ မအောင်မြင်သောကြောင့် ပိတ်ထားသည်။ ရာဟူး ကွန်ရက် စာမျက်နှာထဲ "
-"၀င်ကြည့်ပါ။"
-
-msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr "အမည်မသိ ချို့ယွင်းချက် ၅၂ ခု။ ပြန်လည်ဆက်သွယ်ခြင်းဖြင့် ဖြေရှင်းနိုင်သည်။"
-
-msgid ""
-"Error 1013: The username you have entered is invalid.  The most common cause "
-"of this error is entering your email address instead of your Yahoo! ID."
-msgstr ""
-"ချို့ယွင်းချက် ၁၀၁၃ - သင် ရေးထည့်သော သုံးစွဲသူအမည် မှားနေသည်။ ဤချို့ယွင်းချက် ဖြစ်ပေါ်စေသော အဖြစ်နိုင်ဆုံး "
-"အကြောင်းရင်းမှာ သင့် ရာဟူး ID အစား အီးမေးလ်လိပ်စာကို ရေးပေးမိသောကြောင့် ဖြစ်သည်။"
-
-#, c-format
-msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
-msgstr ""
-"အမည်မသိ ချို့ယွင်းချက် အမှတ် %d ။ ရာဟူး ကွန်ရက် စာမျက်နှာထဲ ဝင်ရောက်ခြင်းဖြင့် ၄င်းကို ဖြေရှင်းနိုင်သည်။"
-
-#, c-format
-msgid "Unable to add buddy %s to group %s to the server list on account %s."
-msgstr "မိတ်ဆွေ %s ကို ဆာဗာ စာရင်းပေါ်ရှိ အုပ်စု %s သို့ အကောင့် %s ထဲ မထည့်သွင်းနိုင်ပါ။"
-
-msgid "Unable to add buddy to server list"
-msgstr "ဆာဗာ စာရင်းထဲ မိတ်ဆွေကို ထည့်သွင်းရန် မဖြစ်နိုင်ပါ"
-
-#, c-format
-msgid "[ Audible %s/%s/%s.swf ] %s"
-msgstr "[ နားထောင်နိုင်သော %s/%s/%s.swf ] %s"
-
-msgid "Received unexpected HTTP response from server"
-msgstr "ဆာဗာထံမှ မမျှော်လင့်သော HTTP တုံ့ပြန်မှု ရရှိထားသည်"
-
-#, c-format
-msgid "Lost connection with %s: %s"
-msgstr "%s နှင့် ဆက်သွယ်မှု ပြတ်သွားသသည် - %s"
-
-#, c-format
-msgid "Unable to establish a connection with %s: %s"
-msgstr "%s နှင့် အဆက်အသွယ် မလုပ်နိုင်ပါ - %s"
-
-msgid "Unable to connect: The server returned an empty response."
-msgstr "အဆက်အသွယ်လုပ်ရန် မဖြစ်နိုင်ပါ - ဆာဗာမှ ဗလာ တုံ့ပြန်မှု ပြန်ပေးသည်။"
-
-msgid ""
-"Unable to connect: The server's response did not contain the necessary "
-"information"
-msgstr "အဆက်အသွယ်လုပ်ရန် မဖြစ်နိုင်ပါ - ဆာဗာ၏ တုံ့ပြန်ချက်၌ လိုအပ်နေသော အချက်အလက်များ မပါရှိ"
-
-msgid "Not at Home"
-msgstr "အိမ်၌ မရှိပါ"
-
-msgid "Not at Desk"
-msgstr "စားပွဲ၌ မရှိပါ"
-
-msgid "Not in Office"
-msgstr "ရုံး၌ မရှိပါ"
-
-msgid "On Vacation"
-msgstr "အခွင့်ယူထားသည်"
-
-msgid "Stepped Out"
-msgstr "အပြင် ထွက်သွားသည်"
-
-msgid "Not on server list"
-msgstr "ဆာဗာ စာရင်း၌ မရှိပါ"
-
-msgid "Appear Permanently Offline"
-msgstr "အမြဲတမ်း အော့ဖ်လိုင်း ရောက်နေပုံပေါ်သည်"
-
-msgid "Presence"
-msgstr "ရှိနေသည်"
-
-msgid "Don't Appear Permanently Offline"
-msgstr "အမြဲတမ်း အော့ဖ်လိုင်း ရောက်နေပုံမပေါ်ပါ"
-
-msgid "Join in Chat"
-msgstr "စကားပြောခန်းထဲ ပါ၀င်ရန်"
-
-msgid "Initiate Conference"
-msgstr "ဆွေးနွေးခန်း အစပျိုးရန်"
-
-msgid "Presence Settings"
-msgstr "လက်ရှိ ချိန်ညှိချက်များ"
-
-msgid "Start Doodling"
-msgstr "Doodle ပြုလုပ်မှု စတင်ရန်"
-
-msgid "Activate which ID?"
-msgstr ""
-
-msgid "Select the ID you want to activate"
-msgstr "သင် အသက်သွင်းလိုသော ID ကို ရွေးရန်"
-
-msgid "Join whom in chat?"
-msgstr "စကားပြောခန်းရှိ မည့်သူကို စကားပြောမည်နည်း?"
-
-msgid "Activate ID..."
-msgstr "ID ကို အသက်သွင်းရန်..."
-
-msgid "Join User in Chat..."
-msgstr "စကားပြောခန်းရှိ သုံးစွဲသူကို စကားပြောရန်..."
-
-msgid "Open Inbox"
-msgstr "စာပုံးကို ဖွင့်ရန်"
-
-msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr "SMS ပေးပို့၍ မရပါ။ လက်ကိုင်ဖုန်း ဌာနကို ရှာမရပါ။"
-
-msgid "Can't send SMS. Unknown mobile carrier."
-msgstr "SMS ပေးပို့လို့ မရပါ။ လက်ကိုင်ဖုန်း ဌာန အမျိုးအမည် မသိပါ။"
-
-msgid "Getting mobile carrier to send the SMS."
-msgstr "SMS ပေးပို့ရန် လက်ကိုင်ဖုန်း ဌာနကို ရှာနေသည်။"
-
-#. Write a local message to this conversation showing that a request for a
-#. * Doodle session has been made
-#.
-msgid "Sent Doodle request."
-msgstr "Doodle တောင်းဆိုမှု ပေးပို့လိုက်ပြီ။"
-
-msgid "Unable to connect."
-msgstr "ဆက်သွယ်၍ မရပါ။"
-
-msgid "Unable to establish file descriptor."
-msgstr "ဖိုင် ဖေါ်ပြမှု မပြုလုပ်နိုင်ပါ။"
-
-#, c-format
-msgid "%s is trying to send you a group of %d files.\n"
-msgstr "%s သည်  သင့်ထံ ဖိုင် %d ခု ပေးပို့ရန် ကြိုးစားနေသည်။\n"
-
-msgid "Write Error"
-msgstr "ရေးသားမှု ချို့ယွင်းချက်"
-
-msgid "Yahoo! Japan Profile"
-msgstr "ရာဟူး ဂျပန် ပရိုဖိုင်"
-
-msgid "Yahoo! Profile"
-msgstr "ရာဟူး ပရိုဖိုင်"
-
-msgid ""
-"Sorry, profiles marked as containing adult content are not supported at this "
-"time."
-msgstr ""
-"စိတ်မရှိပါနဲ့။ ပရိုဖိုင်းထဲ၌ လူကြီးဆိုင်ရာ အကြောင်းအရာများ ပါဝင်သည်ဟု မှတ်သားထားသည်၊ ​ယခုအချိန်တွင် "
-"အထောက်အပံ့ မပေးသေးပါ။"
-
-msgid ""
-"If you wish to view this profile, you will need to visit this link in your "
-"web browser:"
-msgstr "အကယ်၍ ဤပရိုဖိုင်ကို ကြည့်လိုလျှင်၊ ဤလင့်ခ်ကို သင့် ကွန်ရက် ဘရောင်ဇာ မှ ကြည့်ရန် လိုအပ်လိမ့်မည် -"
-
-msgid "Yahoo! ID"
-msgstr "ရာဟူး ID"
-
-msgid "Hobbies"
-msgstr "ဝါသနာများ"
-
-msgid "Latest News"
-msgstr "နောက်ဆုံးသတင်းများ"
-
-msgid "Home Page"
-msgstr "ပင်မ စာမျက်နှာ"
-
-msgid "Cool Link 1"
-msgstr "ကောင်းမွန်သော လင့်ခ် ၁"
-
-msgid "Cool Link 2"
-msgstr "ကောင်းမွန်သော လင့်ခ် ၂"
-
-msgid "Cool Link 3"
-msgstr "ကောင်းမွန်သော လင့်ခ် ၃"
-
-msgid "Last Update"
-msgstr "နောက်ဆုံး မွမ်းမံချက်"
-
-msgid ""
-"This profile is in a language or format that is not supported at this time."
-msgstr "ဤပရိုဖိုင်သည် ယခုအချိန်တွင် အသုံးမပြုတော့သော ဘာသာစကား (သို့) အမျိုးအစားကို သုံးစွဲထားသည်။"
-
-msgid ""
-"Could not retrieve the user's profile. This most likely is a temporary "
-"server-side problem. Please try again later."
-msgstr ""
-"သုံးစွဲသူ၏ ပရိုဖိုင်ကို ထုတ်ယူလို့ မရပါ။ အများဆုံးအားဖြင့် ဆာဗာဘက်မှ ယာယီ ပြဿနာကြောင့် ဖြစ်နိုင်သည်။ ခဏနေမှ "
-"ထပ်ကြိုးစားကြည့်ပါ။"
-
-msgid ""
-"Could not retrieve the user's profile. This most likely means that the user "
-"does not exist; however, Yahoo! sometimes does fail to find a user's "
-"profile. If you know that the user exists, please try again later."
-msgstr ""
-"သုံးစွဲသူ၏ ပရိုဖိုင်ကို ထုတ်ယူ၍ မရပါ။ များသောအားဖြင့် သုံးစွဲသူ မရှိခြင်းကြောင့် ဖြစ်နိုင်သည်။ သို့သော် တခါတရံ "
-"ရာဟူးမှ သုံးစွဲသူ ပရိုဖိုင်ကို လိုက်ရှာရာ၌ မအောင်မြင်ပါ။ သုံးစွဲသူ ရှိနေလျှင့် နောက်မှ ထပ် ကြိုးစားပါ။"
-
-msgid "The user's profile is empty."
-msgstr "သုံးစွဲသူ ပရိုဖိုင် အလွတ်ဖြစ်နေသည်။"
-
-#, c-format
-msgid "%s has declined to join."
-msgstr "%s သည် ပါဝင်ရန် ငြင်းပယ်နေသည်။"
-
-msgid "Failed to join chat"
-msgstr "စကားပြောခန်းတွင် ပါဝင်၍ မရပါ"
-
-#. -6
-msgid "Unknown room"
-msgstr "အမည်မသိ စကားပြောခန်း"
-
-#. -15
-msgid "Maybe the room is full"
-msgstr "စကားပြောခန်း ပြည့်နေ၍ ဖြစ်မည်"
-
-#. -35
-msgid "Not available"
-msgstr "အဆင်မပြေပါ"
-
-msgid ""
-"Unknown error. You may need to logout and wait five minutes before being "
-"able to rejoin a chatroom"
-msgstr ""
-"အမည်မသိ ချို့ယွင်းချက်။ စကားပြောခန်းတွင် ပြန်ဝင်နိုင်ရန် သင် ထွက်ခွာပြီး ငါးမိနစ်ခန့် စောင့်ဆိုင်းရမည်။"
-
-#, c-format
-msgid "You are now chatting in %s."
-msgstr "သင် ယခု %s ဖြင့် စကားပြောနေသည်။"
-
-msgid "Failed to join buddy in chat"
-msgstr "စကားပြောခန်းရှိ မိတ်ဆွေနှင့် စကားပြော၍ မရပါ"
-
-msgid "Maybe they're not in a chat?"
-msgstr "သူတို့သည် စကားပြောခန်း၌ မရှိ၍ ဖြစ်နိုင်မည်လား?"
-
-msgid "Fetching the room list failed."
-msgstr "စကားပြောခန်း စာရင်း မရယူနိုင်ပါ။"
-
-msgid "Voices"
-msgstr "အသံများ"
-
-msgid "Webcams"
-msgstr "ကင်မရာ"
-
-msgid "Connection problem"
-msgstr "ဆက်သွယ်မှုလိုင်း ပြဿနာ"
-
-msgid "Unable to fetch room list."
-msgstr "စကားပြောခန်း စာရင်း ထုတ်ယူလို့ မရပါ။"
-
-msgid "User Rooms"
-msgstr "သုံးစွဲသူ စကားပြောခန်းများ"
-
-msgid "Connection problem with the YCHT server"
-msgstr "YCHT ဆာဗာနှင့် ဆက်သွယ်မှု ပြဿနာ"
-
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
@@ -9907,6 +7903,12 @@ msgstr ""
 #, c-format
 msgid "Unable to send to chat %s,%s,%s"
 msgstr "စကားပြောခန်း %s,%s,%s တို့ထံ မပေးပို့နိုင်ပါ"
+
+msgid "User is offline"
+msgstr "သုံးစွဲသူသည် အော့ဖ်လိုင်း ဖြစ်နေသည်"
+
+msgid "User"
+msgstr "သုံးစွဲသူ"
 
 msgid "Hidden or not logged-in"
 msgstr "ဖျောက်ထားသည် (သို့) အကောင့်ထဲ မ၀င်ပါ"
@@ -10290,8 +8292,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"This means that you can be chatting with friends on MSN, talking to a friend "
-"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+"This means that you can be chatting with friends on AIM, talking to a friend "
+"on Google Talk, and sitting in an IRC chat room all at the same time."
 msgstr ""
 
 msgid "The buddy list showing friends on different networks."
@@ -10303,8 +8305,8 @@ msgstr "ပင်ဂျင်း အင်တာနက် မစ်ဆင်း�
 msgid "Internet Messenger"
 msgstr "အင်တာနက် မစ်ဆင်းဂျာ -"
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+#, fuzzy
+msgid "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, and more"
 msgstr ""
 "IM သုံးပြီး စကားပြောရန်။ AIM, Google Talk, Jabber/XMPP, MSN, Yahoo နှင့် အခြားကို "
 "ထောက်ပံ့ထားသည်။"
@@ -11023,13 +9025,11 @@ msgstr "_L အမည်ကွဲ -"
 msgid "_Group:"
 msgstr "_G အုပ်စု -"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "_J အကောင့် ဆက်သွယ်မိသည်နှင့် အလိုအလျောက် ၀င်ရောက်သည်။"
+msgstr ""
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
-msgstr "_R ဝင်းဒိုး ပိတ်သွားပြီးနောက် စကားပြောခန်း၌ ကျန်ရစ်ရန်။"
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "ထည့်သွင်းမဲ့ အုပ်စုအမည်ကို ရေးထည့်ပါ။"
@@ -11068,9 +9068,8 @@ msgstr "ဤအသိအမှတ်ပြုလွှာအတွက် host အ
 msgid "SSL Servers"
 msgstr "SSL ဆာဗာများ"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "ထောက်ပံ့ထားသော အမှားပြင်ဆင်မှု ရွေးစရာများမှာ - ပလပ်အင် ဗားရှင်း"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "အမည်မသိ ညွှန်ကြားချက်။"
@@ -11813,19 +9812,13 @@ msgstr ""
 
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
-"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
-">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"emailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>This "
+"is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
 "support/\">archive</a>)<br/>We can't help with third-party protocols or "
 "plugins!<br/>This list's primary language is <b>English</b>.  You are "
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\"><b>အခြား Pidgin သုံးစွဲသူများထံမှ အ​ကူအညီ</b></font>ကို <a href="
-"\"mailto:support@pidgin.im\">support@pidgin.im</a>ထံသို့ အီးမေးလ် ပေးပို့ခြင်းဖြင့် "
-"ရရှိနိုင်သည်။<br/>၄င်းသည် <b>လူထုသုံး</b> ​စာပေးပို့မှု စနစ် ဖြစ်သည်။ (<a href=\"http://pidgin.im/"
-"pipermail/support/\">archive</a>)<br/>အခြား ပရိုတိုကောများ (သို့) ပလပ်အင်များဖြင့် "
-"ကျွန်ပ်တို့ အ​ကူအညီ မပေးနိုင်ပါ။<br/>ဤစာရင်းသုံး အခြေခံ ဘာသာစကားမှာ<b> အင်္ဂလိပ်</b>ဖြစ်သည်။  အခြား "
-"ဘာသာစကားဖြင့် စာ​ ပေးပို့နိုင်သည်၊ သို့သော် အကြောင်းကြားစာများသည် အထောက်အကူ နည်းနိုင်သည်။<br/>"
 
 #, c-format
 msgid "About %s"
@@ -12445,9 +10438,8 @@ msgstr "_M မီဒီယာ"
 msgid "_Hangup"
 msgstr "_H ရပ်ထားသည်"
 
-#, fuzzy
 msgid "Media error"
-msgstr "ဖတ်ရှုခြင်း ချို့ယွင်းချက်"
+msgstr ""
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12608,10 +10600,6 @@ msgstr "ဖိုင်တစ်ခု ရွေးရန်"
 
 msgid "Modify Buddy Pounce"
 msgstr "မိတ်ဆွေချင်း လက်တို့မှု ပြုပြင်ရန်"
-
-#. Create the "Pounce on Whom" frame.
-msgid "Pounce on Whom"
-msgstr "လက်တို့ ခံရမည့်သူ"
 
 msgid "_Account:"
 msgstr "_A အကောင့် -"
@@ -13276,9 +11264,9 @@ msgstr "_S အခြေအနေ -"
 msgid "Use a _different status for some accounts"
 msgstr "_D အချို့ အကောင့်များအတွက် မတူညီသော အနေအထားကို သုံးရန်"
 
-#. Save & Use button
-msgid "Sa_ve & Use"
-msgstr "သိမ်းဆည်းပြီး သုံးစွဲရန်"
+#. Save and Use button
+msgid "Sa_ve and Use"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -13340,9 +11328,6 @@ msgstr "အနေအထား ရွေးကိရိယာ"
 
 msgid "Google Talk"
 msgstr "ဂူးဂဲ တော့ခ်"
-
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -13625,6 +11610,9 @@ msgstr "လက်ခံရရှိသော ပေးစာများ"
 #, c-format
 msgid "Select Color for %s"
 msgstr "%s အတွက် အရောင် ရွေးချယ်ရန်"
+
+msgid "General"
+msgstr "ယေဘုယျ"
 
 msgid "Ignore incoming format"
 msgstr "အဝင် ပုံစံကို လျစ်လျူရှုရန်"
@@ -13994,16 +11982,11 @@ msgstr "တေးဂီတ ပေးပို့သော ပလပ်အင်�
 msgid "Notify For"
 msgstr "အသိပေးရန်"
 
-#, fuzzy
-msgid "\t_Notify for System messages"
-msgstr "စက် ​ပေးစာများ"
+msgid "\tS_ystem messages"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "_O \t တစ်ယောက်ယောက်သည် သင့်အမည်ကို ခေါ်သည့် အခါ၌သာ"
-
-#, fuzzy
-msgid "\tNotify for _System messages"
-msgstr "စက် ​ပေးစာများ"
 
 msgid "_Focused windows"
 msgstr "_F ဦးတည်နေသော ဝင်းဒိုးများ"
@@ -14189,11 +12172,9 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "စာပေးပို့ချက် အကြမ်းကို စာသား-အခြေပြု ပရိုတိုကောများထံ ပေးပို့စေသည်။"
 
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"စာပေးပို့ချက် အကြမ်းကို စာသား-အခြေပြု ပရိုတိုကောများ (XMPP, MSN, IRC, TOC) ထံ ပေးပို့စေသည်။ "
-"ရေးသွင်းသည့် အကွက်ထဲတွင် 'Enter' ကို နှိပ်ပြီး ပေးပို့ပါ။ အမှားပြင် ၀င်းဒိုးကို စောင့်ကြည့်ပါ။"
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -14641,14 +12622,8 @@ msgstr "မိတ်ဆွေ စာရင်းနှင့် စကားပ�
 #. *  description
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
-"the buddy list.\n"
-"\n"
-"* Note: This plugin requires Win2000 or greater."
+"the buddy list."
 msgstr ""
-"ဤပလပ်အင်သည် စကားပြောဆိုမှု ၀င်းဒိုးနှင့် မိတ်ဆွေစာရင်းတို့အပေါ် ပြောင်းလဲနိုင်သော အလ်ဖာ ဖောက်ထွင်းမြင်နိုင်မှုကို "
-"ပြုလုပ်ပေးနိုင်သည်။\n"
-"\n"
-"* မှတ်ချက် - ဤပလပ်အင်သည် Win2000 သို့မဟုတ် ထိုထက် မြင့်သော အဆင့် လိုအပ်သည်။"
 
 #. Autostart
 msgid "Startup"
@@ -14792,13 +12767,10 @@ msgstr ""
 "လက်ရှိ သွင်းထားသော Pidgin ဗားရှင်းကို ဖယ်ထုတ်၍ မရပါ။ လက်ရှိ သွင်းထားသော ဗားရှင်းကို မဖယ်ရှားပဲ "
 "ဗာရှင်းအသစ်ကို ထည့်သွင်းသွားမည်။"
 
-#, fuzzy
 msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
 "installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
-"Pidgin သည် လိုက်ဖက်သော GTK+ Runtime (လောလောဆယ် ရှိနေသည့် ပုံမပေါ်ပါ) တစ်ခု လိုအပ်နေသည်။ .$\\r "
-"GTK+ Runtime ထည့်သွင်းမှုကို ကျော်သွားလိုသလား?"
 
 #. Installer Subsection Text
 msgid "URI Handlers"

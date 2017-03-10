@@ -8,10 +8,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:24-0500\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"POT-Creation-Date: 2017-03-09 18:53-0600\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Georgian (http://www.transifex.com/projects/p/pidgin/language/"
+"Language-Team: Georgian (http://www.transifex.com/pidgin/pidgin/language/"
 "ka/)\n"
 "Language: ka\n"
 "MIME-Version: 1.0\n"
@@ -47,7 +47,6 @@ msgid ""
 "http://developer.pidgin.im"
 msgstr ""
 
-#. the user did not fill in the captcha
 msgid "Error"
 msgstr "შეცდომა"
 
@@ -215,7 +214,6 @@ msgstr ""
 msgid "Chats"
 msgstr "Chats"
 
-#. Extract their Name and put it in
 msgid "Name"
 msgstr "სახელი"
 
@@ -322,11 +320,9 @@ msgstr ""
 msgid "View Log"
 msgstr ""
 
-#. General
 msgid "Nickname"
 msgstr "მეტსახელი"
 
-#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "უმოქმედო"
@@ -728,7 +724,6 @@ msgid "Remaining"
 msgstr "დარჩენილი დრო"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
-#. presence
 msgid "Status"
 msgstr "სტატუსი"
 
@@ -964,7 +959,8 @@ msgstr ""
 msgid "Edit Buddy Pounce"
 msgstr ""
 
-msgid "Pounce Who"
+#. Create the "Pounce on Whom" frame.
+msgid "Pounce on Whom"
 msgstr ""
 
 #. Account:
@@ -1210,7 +1206,7 @@ msgstr ""
 msgid "(default)"
 msgstr ""
 
-msgid "Select Sound File ..."
+msgid "Select Sound File..."
 msgstr ""
 
 msgid "Sound Preferences"
@@ -1291,21 +1287,12 @@ msgstr ""
 msgid "Saved Statuses"
 msgstr "შენახული სტატუსები"
 
-#. title
 msgid "Title"
 msgstr "სათაური"
 
 msgid "Type"
 msgstr "ტიპი"
 
-#. Statuses are almost all the same. Define a macro to reduce code repetition.
-#. PurpleStatusPrimitive
-#. id - use default
-#. name - use default
-#. saveable
-#. user_settable
-#. not independent
-#. Attributes - each status can have a message.
 msgid "Message"
 msgstr "შეტყობინება"
 
@@ -1337,11 +1324,11 @@ msgstr ""
 msgid "Edit Status"
 msgstr ""
 
-msgid "Use different status for following accounts"
+msgid "Use a different status for some accounts"
 msgstr ""
 
-#. Save & Use
-msgid "Save & Use"
+#. Save and Use
+msgid "Save and Use"
 msgstr ""
 
 msgid "Certificates"
@@ -1461,7 +1448,7 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr ""
 
-msgid "Please wait while TinyURL fetches a shorter URL ..."
+msgid "Please wait while TinyURL fetches a shorter URL..."
 msgstr ""
 
 msgid "Only create TinyURL for URLs of this length or greater"
@@ -1476,13 +1463,12 @@ msgstr ""
 msgid "TinyURL plugin"
 msgstr ""
 
-msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgid "Shorten URLs in messages using TinyURL"
 msgstr ""
 
 msgid "Online"
 msgstr "ხაზზე"
 
-#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "გასული ქსელიდან"
 
@@ -1709,7 +1695,6 @@ msgstr ""
 msgid "View Issuer Certificate"
 msgstr ""
 
-#. show error to user
 msgid "Registration Error"
 msgstr "რეგისტრაციის შეცდომა"
 
@@ -1725,7 +1710,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s გავიდა ქსელიდან"
 
 #. Undocumented
-#. Unknown error
 msgid "Unknown error"
 msgstr "უცნობი შეცდომა"
 
@@ -1845,20 +1829,6 @@ msgstr ""
 msgid "The command used to handle \"irc\" URLs, if enabled."
 msgstr ""
 
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-
-msgid "The handler for \"msnim\" URLs"
-msgstr ""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr ""
 
@@ -1885,20 +1855,6 @@ msgid "The handler for \"xmpp\" URLs"
 msgstr ""
 
 msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr ""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr ""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
 msgstr ""
 
 #, c-format
@@ -2107,21 +2063,19 @@ msgstr ""
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <ავტო-პასუხი>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "შეტყობინება %s -გან"
+msgstr ""
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
 
-#, fuzzy
 msgid "Network error."
-msgstr "ქსელი"
+msgstr ""
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
@@ -2673,7 +2627,7 @@ msgstr ""
 
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
 
 msgid "You feel a disturbance in the force..."
@@ -2887,8 +2841,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
-"im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
+"developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
 
 msgid "Unable to listen for incoming IM connections"
@@ -2904,7 +2858,6 @@ msgstr "სახელი"
 msgid "Last name"
 msgstr "გვარი"
 
-#. email
 msgid "Email"
 msgstr "Email"
 
@@ -2989,14 +2942,12 @@ msgstr "ქალაქი"
 msgid "Year of birth"
 msgstr "დაბადების წელი"
 
-#. gender
 msgid "Gender"
 msgstr ""
 
 msgid "Male or female"
 msgstr ""
 
-#. 0
 msgid "Male"
 msgstr "მამრობითი"
 
@@ -3034,22 +2985,16 @@ msgstr ""
 msgid "Add to chat..."
 msgstr "დაამატე ჩატს..."
 
-#. 0
 #. Global
 msgid "Available"
 msgstr "მისაწვდომია"
 
-#. 2
 msgid "Chatty"
 msgstr ""
 
-#. 3
 msgid "Do Not Disturb"
 msgstr ""
 
-#. 1
-#. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
-#. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
 msgid "Away"
 msgstr "გასული"
@@ -3057,8 +3002,6 @@ msgstr "გასული"
 msgid "UIN"
 msgstr ""
 
-#. first name
-#. optional information
 msgid "First Name"
 msgstr "სახელი"
 
@@ -3083,9 +3026,6 @@ msgstr ""
 msgid "Unable to read from socket"
 msgstr ""
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
 msgid "Connected"
 msgstr "შეერთებული"
 
@@ -3098,7 +3038,6 @@ msgstr ""
 msgid "Chat _name:"
 msgstr "ჩატის _სახელი:"
 
-#. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "დაკავშირება"
@@ -3815,8 +3754,6 @@ msgstr "პროფესია"
 msgid "Role"
 msgstr "როლი"
 
-#. birthday
-#. birthday (required)
 msgid "Birthday"
 msgstr "დაბადების დღე"
 
@@ -3906,7 +3843,6 @@ msgstr ""
 msgid "JID"
 msgstr ""
 
-#. last name
 msgid "Last Name"
 msgstr "გვარი"
 
@@ -4166,7 +4102,6 @@ msgstr ""
 msgid "None"
 msgstr "არაფერი"
 
-#. subscription type
 msgid "Subscription"
 msgstr ""
 
@@ -4182,12 +4117,6 @@ msgstr ""
 msgid "Mood Comment"
 msgstr ""
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
 msgid "Tune Artist"
 msgstr ""
 
@@ -4430,8 +4359,6 @@ msgid ""
 "buzzes now."
 msgstr ""
 
-#. Yahoo only supports one attention command: the 'buzz'.
-#. This is index number YAHOO_BUZZ.
 msgid "Buzz"
 msgstr ""
 
@@ -4556,8 +4483,6 @@ msgstr ""
 msgid "Connect port"
 msgstr "კავშირის პორტი"
 
-#. TODO: default to automatically try different ports. Make the user be
-#. * able to set the first port to try (like LastConnectedPort in Windows client).
 #. Account options
 msgid "Connect server"
 msgstr "კავშირის სერვერი"
@@ -4568,8 +4493,9 @@ msgstr ""
 msgid "BOSH URL"
 msgstr ""
 
-#. this should probably be part of global smiley theme settings later on,
-#. shared with MSN
+#. this should probably be part of global smiley theme settings
+#. * later on
+#.
 msgid "Show Custom Smileys"
 msgstr ""
 
@@ -4656,7 +4582,6 @@ msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
 "ვერ ვეგზავნი ფაილს %s -თან. მომხმარებლის პროგრამას არ შეუძლია ფაილების მიღება"
 
-#. not success
 msgid "File Send Failed"
 msgstr "ფაილის გაგზავნა ვერ მოხერხდა"
 
@@ -4952,1564 +4877,6 @@ msgstr ""
 msgid "Select an action"
 msgstr ""
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "ვერ ვამატებ \"%s\"-ს"
-
-msgid "Buddy Add error"
-msgstr ""
-
-msgid "The username specified does not exist."
-msgstr ""
-
-msgid "Unable to parse message"
-msgstr ""
-
-msgid "Syntax Error (probably a client bug)"
-msgstr ""
-
-msgid "Invalid email address"
-msgstr "არასწორი email მისამართი"
-
-msgid "User does not exist"
-msgstr "მომხმარებელი არ არსებობს"
-
-msgid "Fully qualified domain name missing"
-msgstr ""
-
-msgid "Already logged in"
-msgstr ""
-
-msgid "Invalid username"
-msgstr ""
-
-msgid "Invalid friendly name"
-msgstr ""
-
-msgid "List full"
-msgstr ""
-
-msgid "Already there"
-msgstr ""
-
-msgid "Not on list"
-msgstr "არარი სიაში"
-
-msgid "User is offline"
-msgstr "მომხმარებელი გასულია ქსელიდან"
-
-msgid "Already in the mode"
-msgstr ""
-
-msgid "Already in opposite list"
-msgstr ""
-
-msgid "Too many groups"
-msgstr ""
-
-msgid "Invalid group"
-msgstr "არასწორი ჯგუფი"
-
-msgid "User not in group"
-msgstr "მომხმარებელი არ არის ჯგუფში"
-
-msgid "Group name too long"
-msgstr "ჯგუფის სახელი ნამეტანი გრძელია"
-
-msgid "Cannot remove group zero"
-msgstr ""
-
-msgid "Tried to add a user to a group that doesn't exist"
-msgstr ""
-
-msgid "Switchboard failed"
-msgstr ""
-
-msgid "Notify transfer failed"
-msgstr ""
-
-msgid "Required fields missing"
-msgstr ""
-
-msgid "Too many hits to a FND"
-msgstr ""
-
-msgid "Not logged in"
-msgstr ""
-
-msgid "Service temporarily unavailable"
-msgstr ""
-
-msgid "Database server error"
-msgstr ""
-
-msgid "Command disabled"
-msgstr "ბრძანება გაუქმებულია"
-
-msgid "File operation error"
-msgstr ""
-
-msgid "Memory allocation error"
-msgstr ""
-
-msgid "Wrong CHL value sent to server"
-msgstr ""
-
-msgid "Server busy"
-msgstr "სერვერი დაკავებულია"
-
-msgid "Server unavailable"
-msgstr "სერვერი მიუწვდომელია"
-
-msgid "Peer notification server down"
-msgstr ""
-
-msgid "Database connect error"
-msgstr ""
-
-msgid "Server is going down (abandon ship)"
-msgstr ""
-
-msgid "Error creating connection"
-msgstr ""
-
-msgid "CVR parameters are either unknown or not allowed"
-msgstr ""
-
-msgid "Unable to write"
-msgstr "ვერ ვწერ"
-
-msgid "Session overload"
-msgstr "სესია გადატვირთულია"
-
-msgid "User is too active"
-msgstr "მომხმარებელი ძალიან აქტიურია"
-
-msgid "Too many sessions"
-msgstr ""
-
-msgid "Passport not verified"
-msgstr ""
-
-msgid "Bad friend file"
-msgstr ""
-
-msgid "Not expected"
-msgstr "მოულოდნელი"
-
-msgid "Friendly name is changing too rapidly"
-msgstr ""
-
-msgid "Server too busy"
-msgstr "სერვერი ძალიან დატვირთულია"
-
-msgid "Authentication failed"
-msgstr "აუტენტიფიკაცია ვერ მოხერხდა"
-
-msgid "Not allowed when offline"
-msgstr ""
-
-msgid "Not accepting new users"
-msgstr ""
-
-msgid "Kids Passport without parental consent"
-msgstr ""
-
-msgid "Passport account not yet verified"
-msgstr ""
-
-msgid "Passport account suspended"
-msgstr ""
-
-msgid "Bad ticket"
-msgstr ""
-
-#, c-format
-msgid "Unknown Error Code %d"
-msgstr "უცნობი შეცდომის კოდი %d"
-
-#, c-format
-msgid "MSN Error: %s\n"
-msgstr "MSN შეცდომა: %s\n"
-
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-
-msgid "Other Contacts"
-msgstr ""
-
-msgid "Non-IM Contacts"
-msgstr ""
-
-#, c-format
-msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
-msgstr ""
-
-#, c-format
-msgid "%s sent a wink, but it could not be saved"
-msgstr ""
-
-#, c-format
-msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
-msgstr ""
-
-#, c-format
-msgid "%s sent a voice clip, but it could not be saved"
-msgstr ""
-
-#, c-format
-msgid "%s sent you a voice chat invite, which is not yet supported."
-msgstr ""
-
-msgid "Nudge"
-msgstr ""
-
-#, c-format
-msgid "%s has nudged you!"
-msgstr ""
-
-#, c-format
-msgid "Nudging %s..."
-msgstr ""
-
-msgid "Email Address..."
-msgstr ""
-
-msgid "Your new MSN friendly name is too long."
-msgstr ""
-
-#, c-format
-msgid "Set friendly name for %s."
-msgstr ""
-
-msgid "Set Friendly Name"
-msgstr ""
-
-msgid "This is the name that other MSN buddies will see you as."
-msgstr ""
-
-msgid "This Location"
-msgstr ""
-
-msgid "This is the name that identifies this location"
-msgstr ""
-
-msgid "Other Locations"
-msgstr ""
-
-msgid "You can sign out from other locations here"
-msgstr ""
-
-#. TODO: Due to limitations in our current request field API, the
-#. following string will show up with a trailing colon.  This should
-#. be fixed either by adding an "include_colon" boolean, or creating
-#. a separate purple_request_field_label_new_without_colon function,
-#. or by never automatically adding the colon and requiring that
-#. callers add the colon themselves.
-msgid "You are not signed in from any other locations."
-msgstr ""
-
-msgid "Allow multiple logins?"
-msgstr ""
-
-msgid ""
-"Do you want to allow or disallow connecting from multiple locations "
-"simultaneously?"
-msgstr ""
-
-msgid "Allow"
-msgstr "დაუშვი"
-
-msgid "Disallow"
-msgstr "არ დაუშვა"
-
-msgid "Set your home phone number."
-msgstr ""
-
-msgid "Set your work phone number."
-msgstr ""
-
-msgid "Set your mobile phone number."
-msgstr ""
-
-msgid "Allow MSN Mobile pages?"
-msgstr ""
-
-msgid ""
-"Do you want to allow or disallow people on your buddy list to send you MSN "
-"Mobile pages to your cell phone or other mobile device?"
-msgstr ""
-
-#, c-format
-msgid "Blocked Text for %s"
-msgstr ""
-
-msgid "No text is blocked for this account."
-msgstr ""
-
-#, c-format
-msgid ""
-"MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr ""
-
-msgid "This account does not have email enabled."
-msgstr ""
-
-msgid "Send a mobile message."
-msgstr ""
-
-msgid "Page"
-msgstr "გვერდი"
-
-msgid "Playing a game"
-msgstr ""
-
-msgid "Working"
-msgstr ""
-
-msgid "Has you"
-msgstr "ხართ მის სიაში"
-
-msgid "Home Phone Number"
-msgstr ""
-
-msgid "Work Phone Number"
-msgstr ""
-
-msgid "Mobile Phone Number"
-msgstr ""
-
-msgid "Be Right Back"
-msgstr "მალე დავბრუნდები"
-
-msgid "Busy"
-msgstr "დაკავებული"
-
-msgid "On the Phone"
-msgstr "ტელეფონზე"
-
-msgid "Out to Lunch"
-msgstr "საჭმელად გასული"
-
-msgid "Game Title"
-msgstr ""
-
-msgid "Office Title"
-msgstr ""
-
-msgid "Set Friendly Name..."
-msgstr "შეიტანე მეტსახელი..."
-
-msgid "View Locations..."
-msgstr ""
-
-msgid "Set Home Phone Number..."
-msgstr "შეიტანე სახლის ტელეფონის ნომერი..."
-
-msgid "Set Work Phone Number..."
-msgstr "შეიტანე სამსახურის ტელეფონის ნომერი..."
-
-msgid "Set Mobile Phone Number..."
-msgstr "შეიტანე მობილური ტელეფონის ნომერი..."
-
-msgid "Enable/Disable Mobile Devices..."
-msgstr ""
-
-msgid "Allow/Disallow Multiple Logins..."
-msgstr ""
-
-msgid "Allow/Disallow Mobile Pages..."
-msgstr ""
-
-msgid "View Blocked Text..."
-msgstr ""
-
-msgid "Open Hotmail Inbox"
-msgstr "Hotmail საფოსტო ყუთის გახსნა"
-
-msgid "Send to Mobile"
-msgstr ""
-
-msgid "SSL support is needed for MSN. Please install a supported SSL library."
-msgstr ""
-
-#, c-format
-msgid ""
-"Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be valid email addresses."
-msgstr ""
-
-msgid "Unable to Add"
-msgstr ""
-
-msgid "Error retrieving profile"
-msgstr "შეცდომა პროფაილის ჩამოტანისას"
-
-msgid "General"
-msgstr "ზოგადი"
-
-msgid "Age"
-msgstr "ასაკი"
-
-msgid "Occupation"
-msgstr "პროფესია"
-
-msgid "Location"
-msgstr "ადგილმდებარეობა"
-
-msgid "Hobbies and Interests"
-msgstr ""
-
-msgid "A Little About Me"
-msgstr "რამოდენიმე ინფორმაცია ჩემს შესახებ"
-
-msgid "Social"
-msgstr ""
-
-msgid "Marital Status"
-msgstr "ოჯახური მდგომარეობა"
-
-msgid "Interests"
-msgstr ""
-
-msgid "Pets"
-msgstr ""
-
-msgid "Hometown"
-msgstr ""
-
-msgid "Places Lived"
-msgstr ""
-
-msgid "Fashion"
-msgstr ""
-
-msgid "Humor"
-msgstr ""
-
-msgid "Music"
-msgstr ""
-
-msgid "Favorite Quote"
-msgstr ""
-
-msgid "Contact Info"
-msgstr ""
-
-msgid "Personal"
-msgstr ""
-
-msgid "Significant Other"
-msgstr ""
-
-msgid "Home Phone"
-msgstr ""
-
-msgid "Home Phone 2"
-msgstr ""
-
-msgid "Home Address"
-msgstr "სახლის მისამართი"
-
-msgid "Personal Mobile"
-msgstr ""
-
-msgid "Home Fax"
-msgstr ""
-
-msgid "Personal Email"
-msgstr ""
-
-msgid "Personal IM"
-msgstr ""
-
-msgid "Anniversary"
-msgstr ""
-
-#. Business
-msgid "Work"
-msgstr ""
-
-msgid "Company"
-msgstr "კომპანია"
-
-msgid "Department"
-msgstr "დეპარტამენტი"
-
-msgid "Profession"
-msgstr ""
-
-msgid "Work Phone"
-msgstr ""
-
-msgid "Work Phone 2"
-msgstr ""
-
-msgid "Work Address"
-msgstr "სამსახურის მისამართი"
-
-msgid "Work Mobile"
-msgstr ""
-
-msgid "Work Pager"
-msgstr ""
-
-msgid "Work Fax"
-msgstr ""
-
-msgid "Work Email"
-msgstr ""
-
-msgid "Work IM"
-msgstr ""
-
-msgid "Start Date"
-msgstr ""
-
-msgid "Favorite Things"
-msgstr ""
-
-msgid "Last Updated"
-msgstr "ბოლო განახლება"
-
-msgid "Homepage"
-msgstr "Homepage"
-
-msgid "The user has not created a public profile."
-msgstr ""
-
-msgid ""
-"MSN reported not being able to find the user's profile. This either means "
-"that the user does not exist, or that the user exists but has not created a "
-"public profile."
-msgstr ""
-
-msgid ""
-"Could not find any information in the user's profile. The user most likely "
-"does not exist."
-msgstr ""
-
-msgid "View web profile"
-msgstr ""
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *< summary
-msgid "Windows Live Messenger Protocol Plugin"
-msgstr ""
-
-msgid "Use HTTP Method"
-msgstr "გამოიყენე HTTP მეთოდი"
-
-msgid "HTTP Method Server"
-msgstr ""
-
-msgid "Show custom smileys"
-msgstr ""
-
-msgid "Allow direct connections"
-msgstr ""
-
-msgid "Allow connecting from multiple locations"
-msgstr ""
-
-msgid "nudge: nudge a user to get their attention"
-msgstr ""
-
-msgid "Windows Live ID authentication:Unable to connect"
-msgstr ""
-
-msgid "Windows Live ID authentication:Invalid response"
-msgstr ""
-
-msgid "The following users are missing from your addressbook"
-msgstr ""
-
-#, c-format
-msgid "Unknown error (%d): %s"
-msgstr ""
-
-msgid "Unable to add user"
-msgstr ""
-
-#. Unknown error!
-#, c-format
-msgid "Unknown error (%d)"
-msgstr ""
-
-msgid "Unable to remove user"
-msgstr ""
-
-msgid "Mobile message was not sent because it was too long."
-msgstr ""
-
-msgid "Mobile message was not sent because an unknown error occurred."
-msgstr ""
-
-#, c-format
-msgid ""
-"The MSN server will shut down for maintenance in %d minute. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgid_plural ""
-"The MSN server will shut down for maintenance in %d minutes. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgstr[0] ""
-
-msgid ""
-"Message was not sent because the system is unavailable. This normally "
-"happens when the user is blocked or does not exist."
-msgstr ""
-
-msgid "Message was not sent because messages are being sent too quickly."
-msgstr ""
-
-msgid "Message was not sent because an unknown encoding error occurred."
-msgstr ""
-
-msgid "Message was not sent because an unknown error occurred."
-msgstr ""
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. Converting the encoding from "
-"%s to UTF-8 failed.)"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was %s, but it "
-"was not valid UTF-8.)"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was missing, but "
-"it was not valid UTF-8.)"
-msgstr ""
-
-msgid "Writing error"
-msgstr "წერის შეცდომა"
-
-msgid "Reading error"
-msgstr "კითხვის შეცდომა"
-
-#, c-format
-msgid ""
-"Connection error from %s server:\n"
-"%s"
-msgstr ""
-
-msgid "Our protocol is not supported by the server"
-msgstr ""
-
-msgid "Error parsing HTTP"
-msgstr ""
-
-msgid "You have signed on from another location"
-msgstr ""
-
-msgid "The MSN servers are temporarily unavailable. Please wait and try again."
-msgstr ""
-
-msgid "The MSN servers are going down temporarily"
-msgstr ""
-
-#, c-format
-msgid "Unable to authenticate: %s"
-msgstr "ავთენტურობის დადგენა ვერ მოხერხდა: %s"
-
-#, c-format
-msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
-
-msgid "Handshaking"
-msgstr "მისალმება"
-
-msgid "Transferring"
-msgstr "გადაგზავნა"
-
-msgid "Starting authentication"
-msgstr "ვიწყებ ავთენტურობის დადგენას"
-
-msgid "Getting cookie"
-msgstr "ბმულის მიღება"
-
-msgid "Sending cookie"
-msgstr "ქუკის გაგზავნა"
-
-msgid "Retrieving buddy list"
-msgstr ""
-
-#, c-format
-msgid "%s requests to view your webcam, but this request is not yet supported."
-msgstr ""
-
-#, c-format
-msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr ""
-
-msgid "Away From Computer"
-msgstr "კომპიუტერისგან გასული"
-
-msgid "On The Phone"
-msgstr "ლაპარაკობს ტელეფონზე"
-
-msgid "Out To Lunch"
-msgstr "საჭმელად გასული"
-
-msgid "Message may have not been sent because a timeout occurred:"
-msgstr ""
-
-msgid "Message could not be sent, not allowed while invisible:"
-msgstr ""
-
-msgid "Message could not be sent because the user is offline:"
-msgstr ""
-
-msgid "Message could not be sent because a connection error occurred:"
-msgstr ""
-
-msgid "Message could not be sent because we are sending too quickly:"
-msgstr ""
-
-msgid ""
-"Message could not be sent because we were unable to establish a session with "
-"the server. This is likely a server problem, try again in a few minutes:"
-msgstr ""
-
-msgid ""
-"Message could not be sent because an error with the switchboard occurred:"
-msgstr ""
-
-msgid "Message may have not been sent because an unknown error occurred:"
-msgstr ""
-
-msgid "Delete Buddy from Address Book?"
-msgstr ""
-
-msgid "Do you want to delete this buddy from your address book as well?"
-msgstr ""
-
-msgid "The username specified is invalid."
-msgstr ""
-
-msgid "The Display Name you entered is invalid."
-msgstr ""
-
-msgid ""
-"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-msgstr ""
-
-#. show error to user
-msgid "Profile Update Error"
-msgstr ""
-
-#. no profile information yet, so we cannot update
-#. (reference: "libpurple/request.h")
-msgid "Profile"
-msgstr ""
-
-msgid "Your profile information is not yet retrieved. Please try again later."
-msgstr ""
-
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr ""
-
-#. about me
-msgid "About Me"
-msgstr ""
-
-#. where I live
-msgid "Where I Live"
-msgstr ""
-
-#. relationship status
-msgid "Relationship Status"
-msgstr ""
-
-#. mobile number
-msgid "Mobile Number"
-msgstr ""
-
-#. is searchable
-msgid "Can be searched"
-msgstr ""
-
-#. is suggestable
-msgid "Can be suggested"
-msgstr ""
-
-msgid "Update your MXit Profile"
-msgstr ""
-
-msgid "The PIN you entered is invalid."
-msgstr ""
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr ""
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
-
-msgid "The two PINs you entered do not match."
-msgstr ""
-
-#. show error to user
-msgid "PIN Update Error"
-msgstr ""
-
-#. pin
-#. pin (required)
-msgid "PIN"
-msgstr ""
-
-#. verify pin
-msgid "Verify PIN"
-msgstr ""
-
-#. (reference: "libpurple/request.h")
-msgid "Change PIN"
-msgstr ""
-
-msgid "Change MXit PIN"
-msgstr ""
-
-msgid "View Splash"
-msgstr ""
-
-msgid "There is no splash-screen currently available"
-msgstr ""
-
-msgid "About"
-msgstr ""
-
-msgid "Search for user"
-msgstr ""
-
-msgid "Search for a MXit contact"
-msgstr ""
-
-msgid "Type search information"
-msgstr ""
-
-msgid "_Search"
-msgstr ""
-
-#. display / change profile
-msgid "Change Profile..."
-msgstr ""
-
-#. change PIN
-msgid "Change PIN..."
-msgstr ""
-
-#. suggested friends
-msgid "Suggested friends..."
-msgstr ""
-
-#. search for contacts
-msgid "Search for contacts..."
-msgstr ""
-
-#. display splash-screen
-msgid "View Splash..."
-msgstr ""
-
-#. display plugin version
-msgid "About..."
-msgstr ""
-
-#. the file is too big
-msgid "The file you are trying to send is too large!"
-msgstr ""
-
-#. file read error
-msgid "Unable to access the local file"
-msgstr ""
-
-#. file write error
-msgid "Unable to save the file"
-msgstr ""
-
-msgid ""
-"Unable to connect to the MXit HTTP server. Please check your server settings."
-msgstr ""
-
-msgid "Logging In..."
-msgstr ""
-
-msgid ""
-"Unable to connect to the MXit server. Please check your server settings."
-msgstr ""
-
-msgid "Connecting..."
-msgstr ""
-
-msgid "The Display Name you entered is too short."
-msgstr ""
-
-msgid "The PIN you entered has an invalid length [7-10]."
-msgstr ""
-
-#. mxit login name
-msgid "MXit ID"
-msgstr ""
-
-#. show the form to the user to complete
-msgid "Register New MXit Account"
-msgstr ""
-
-msgid "Please fill in the following fields:"
-msgstr ""
-
-#. no reply from the WAP site
-msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr ""
-
-#. wapserver error
-#. server could not find the user
-msgid ""
-"MXit is currently unable to process the request. Please try again later."
-msgstr ""
-
-msgid "Wrong security code entered. Please try again later."
-msgstr ""
-
-msgid "Your session has expired. Please try again later."
-msgstr ""
-
-msgid "Invalid country selected. Please try again."
-msgstr ""
-
-msgid "The MXit ID you entered is not registered. Please register first."
-msgstr ""
-
-msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr ""
-
-msgid "Internal error. Please try again later."
-msgstr ""
-
-msgid "You did not enter the security code"
-msgstr ""
-
-msgid "Security Code"
-msgstr ""
-
-#. ask for input (required)
-msgid "Enter Security Code"
-msgstr ""
-
-msgid "Your Country"
-msgstr ""
-
-msgid "Your Language"
-msgstr ""
-
-#. display the form to the user and wait for his/her input
-msgid "MXit Authorization"
-msgstr ""
-
-msgid "MXit account validation"
-msgstr ""
-
-msgid "Retrieving User Information..."
-msgstr ""
-
-msgid "was kicked"
-msgstr ""
-
-msgid "You have been kicked from this MultiMX."
-msgstr ""
-
-msgid "_Room Name:"
-msgstr ""
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr ""
-
-msgid "Loading menu..."
-msgstr ""
-
-msgid "Status Message"
-msgstr ""
-
-msgid "Rejection Message"
-msgstr ""
-
-msgid "No profile available"
-msgstr ""
-
-msgid "This contact does not have a profile."
-msgstr ""
-
-msgid "Your MXit ID..."
-msgstr ""
-
-#. contact is in Deleted, Rejected or None state
-msgid "Re-Invite"
-msgstr ""
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr ""
-
-msgid "Connect via HTTP"
-msgstr ""
-
-msgid "Enable splash-screen popup"
-msgstr ""
-
-msgid "Don't want to say"
-msgstr ""
-
-msgid "Single"
-msgstr ""
-
-msgid "In a relationship"
-msgstr ""
-
-msgid "Engaged"
-msgstr ""
-
-msgid "Married"
-msgstr ""
-
-msgid "It's complicated"
-msgstr ""
-
-msgid "Widowed"
-msgstr ""
-
-msgid "Separated"
-msgstr ""
-
-msgid "Divorced"
-msgstr ""
-
-msgid "Last Online"
-msgstr ""
-
-msgid "Invite Message"
-msgstr ""
-
-msgid "No results"
-msgstr ""
-
-msgid "No contacts found."
-msgstr ""
-
-#. define columns
-msgid "UserId"
-msgstr ""
-
-msgid "Where I live"
-msgstr ""
-
-#, c-format
-msgid "You have %i suggested friend."
-msgid_plural "You have %i suggested friends."
-msgstr[0] ""
-
-#, c-format
-msgid "We found %i contact that matches your search."
-msgid_plural "We found %i contacts that match your search."
-msgstr[0] ""
-
-#. we must have lost the connection, so terminate it so that we can reconnect
-msgid "We have lost the connection to MXit. Please reconnect."
-msgstr ""
-
-#. packet could not be queued for transmission
-msgid "Message Send Error"
-msgstr ""
-
-msgid "Unable to process your request at this time"
-msgstr ""
-
-msgid "Timeout while waiting for a response from the MXit server."
-msgstr ""
-
-msgid "Successfully Logged In..."
-msgstr ""
-
-#, c-format
-msgid ""
-"%s sent you an encrypted message, but it is not supported on this client."
-msgstr ""
-
-msgid "Message Error"
-msgstr ""
-
-#. could not be decrypted
-msgid "An encrypted message was received which could not be decrypted."
-msgstr ""
-
-msgid "Cannot perform redirect using the specified protocol"
-msgstr ""
-
-msgid "An internal MXit server error occurred."
-msgstr ""
-
-#, c-format
-msgid "Login error: %s (%i)"
-msgstr ""
-
-#, c-format
-msgid "Logout error: %s (%i)"
-msgstr ""
-
-msgid "Contact Error"
-msgstr ""
-
-msgid "Message Sending Error"
-msgstr ""
-
-msgid "Status Error"
-msgstr ""
-
-msgid "Mood Error"
-msgstr ""
-
-msgid "Invitation Error"
-msgstr ""
-
-msgid "Contact Removal Error"
-msgstr ""
-
-msgid "Subscription Error"
-msgstr ""
-
-msgid "Contact Update Error"
-msgstr ""
-
-msgid "File Transfer Error"
-msgstr ""
-
-msgid "Cannot create MultiMx room"
-msgstr ""
-
-msgid "MultiMx Invitation Error"
-msgstr ""
-
-msgid "Profile Error"
-msgstr ""
-
-#. bad packet
-msgid "Invalid packet received from MXit."
-msgstr ""
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr ""
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr ""
-
-msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr ""
-
-#. malformed packet length record (too long)
-msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr ""
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr ""
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr ""
-
-msgid "In Love"
-msgstr "შეყვარებული"
-
-msgid "Pending"
-msgstr ""
-
-msgid "Invited"
-msgstr ""
-
-msgid "Rejected"
-msgstr ""
-
-msgid "Deleted"
-msgstr ""
-
-msgid "MXit Advertising"
-msgstr ""
-
-msgid "More Information"
-msgstr ""
-
-#, c-format
-msgid "No such user: %s"
-msgstr ""
-
-msgid "User lookup"
-msgstr ""
-
-msgid "Reading challenge"
-msgstr ""
-
-msgid "Unexpected challenge length from server"
-msgstr ""
-
-msgid "Logging in"
-msgstr ""
-
-msgid "MySpaceIM - No Username Set"
-msgstr ""
-
-msgid "You appear to have no MySpace username."
-msgstr ""
-
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr ""
-
-msgid "Lost connection with server"
-msgstr ""
-
-#. Can't write _()'d strings in array initializers. Workaround.
-#. khc: then use N_() in the array initializer and use _() when they are
-#. used
-msgid "New mail messages"
-msgstr ""
-
-msgid "New blog comments"
-msgstr ""
-
-msgid "New profile comments"
-msgstr ""
-
-msgid "New friend requests!"
-msgstr ""
-
-msgid "New picture comments"
-msgstr ""
-
-msgid "MySpace"
-msgstr ""
-
-msgid "IM Friends"
-msgstr ""
-
-#, c-format
-msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-
-msgid "Add contacts from server"
-msgstr ""
-
-#, c-format
-msgid "Protocol error, code %d: %s"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s Your password is %zu characters, which is longer than the maximum length "
-"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
-"cfm?fuseaction=accountSettings.changePassword and try again."
-msgstr ""
-
-msgid "Incorrect username or password"
-msgstr ""
-
-msgid "MySpaceIM Error"
-msgstr ""
-
-msgid "Invalid input condition"
-msgstr ""
-
-msgid "Failed to add buddy"
-msgstr ""
-
-msgid "'addbuddy' command failed."
-msgstr ""
-
-msgid "persist command failed"
-msgstr ""
-
-msgid "Failed to remove buddy"
-msgstr ""
-
-msgid "'delbuddy' command failed"
-msgstr ""
-
-msgid "blocklist command failed"
-msgstr ""
-
-msgid "Missing Cipher"
-msgstr ""
-
-msgid "The RC4 cipher could not be found"
-msgstr ""
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-
-msgid "Add friends from MySpace.com"
-msgstr ""
-
-msgid "Importing friends failed"
-msgstr ""
-
-#. TODO: find out how
-msgid "Find people..."
-msgstr ""
-
-msgid "Change IM name..."
-msgstr ""
-
-msgid "myim URL handler"
-msgstr ""
-
-msgid "No suitable MySpaceIM account could be found to open this myim URL."
-msgstr ""
-
-msgid "Enable the proper MySpaceIM account and try again."
-msgstr ""
-
-msgid "Show display name in status text"
-msgstr ""
-
-msgid "Show headline in status text"
-msgstr ""
-
-msgid "Send emoticons"
-msgstr ""
-
-msgid "Screen resolution (dots per inch)"
-msgstr ""
-
-msgid "Base font size (points)"
-msgstr ""
-
-msgid "User"
-msgstr ""
-
-msgid "Headline"
-msgstr ""
-
-msgid "Song"
-msgstr ""
-
-msgid "Total Friends"
-msgstr ""
-
-msgid "Client Version"
-msgstr ""
-
-msgid ""
-"An error occurred while trying to set the username.  Please try again, or "
-"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
-"to set your username."
-msgstr ""
-
-msgid "MySpaceIM - Username Available"
-msgstr ""
-
-msgid "This username is available. Would you like to set it?"
-msgstr ""
-
-msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr ""
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr ""
-
-msgid "This username is unavailable."
-msgstr ""
-
-msgid "Please try another username:"
-msgstr ""
-
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr ""
-
-msgid "Please enter a username to check its availability:"
-msgstr ""
-
-#. TODO: icons for each zap
-#. Lots of comments for translators:
-#. Zap means "to strike suddenly and forcefully as if with a
-#. * projectile or weapon."  This term often has an electrical
-#. * connotation, for example, "he was zapped by electricity when
-#. * he put a fork in the toaster."
-msgid "Zap"
-msgstr ""
-
-#, c-format
-msgid "%s has zapped you!"
-msgstr ""
-
-#, c-format
-msgid "Zapping %s..."
-msgstr ""
-
-#. Whack means "to hit or strike someone with a sharp blow"
-msgid "Whack"
-msgstr ""
-
-#, c-format
-msgid "%s has whacked you!"
-msgstr ""
-
-#, c-format
-msgid "Whacking %s..."
-msgstr ""
-
-#. Torch means "to set on fire."  Don't worry, this doesn't
-#. * make a whole lot of sense in English, either.  Feel free
-#. * to translate it literally.
-msgid "Torch"
-msgstr ""
-
-#, c-format
-msgid "%s has torched you!"
-msgstr ""
-
-#, c-format
-msgid "Torching %s..."
-msgstr ""
-
-#. Smooch means "to kiss someone, often enthusiastically"
-msgid "Smooch"
-msgstr ""
-
-#, c-format
-msgid "%s has smooched you!"
-msgstr ""
-
-#, c-format
-msgid "Smooching %s..."
-msgstr ""
-
-#. A hug is a display of affection; wrapping your arms around someone
-msgid "Hug"
-msgstr ""
-
-#, c-format
-msgid "%s has hugged you!"
-msgstr ""
-
-#, c-format
-msgid "Hugging %s..."
-msgstr ""
-
-#. Slap means "to hit someone with an open/flat hand"
-msgid "Slap"
-msgstr ""
-
-#, c-format
-msgid "%s has slapped you!"
-msgstr ""
-
-#, c-format
-msgid "Slapping %s..."
-msgstr ""
-
-#. Goose means "to pinch someone on their butt"
-msgid "Goose"
-msgstr ""
-
-#, c-format
-msgid "%s has goosed you!"
-msgstr ""
-
-#, c-format
-msgid "Goosing %s..."
-msgstr ""
-
-#. A high-five is when two people's hands slap each other
-#. * in the air above their heads.  It is done to celebrate
-#. * something, often a victory, or to congratulate someone.
-msgid "High-five"
-msgstr ""
-
-#, c-format
-msgid "%s has high-fived you!"
-msgstr ""
-
-#, c-format
-msgid "High-fiving %s..."
-msgstr ""
-
-#. We're not entirely sure what the MySpace people mean by
-#. * this... but we think it's the equivalent of "prank."  Or, for
-#. * someone to perform a mischievous trick or practical joke.
-msgid "Punk"
-msgstr ""
-
-#, c-format
-msgid "%s has punk'd you!"
-msgstr ""
-
-#, c-format
-msgid "Punking %s..."
-msgstr ""
-
-#. Raspberry is a slang term for the vibrating sound made
-#. * when you stick your tongue out of your mouth with your
-#. * lips closed and blow.  It is typically done when
-#. * gloating or bragging.  Nowadays it's a pretty silly
-#. * gesture, so it does not carry a harsh negative
-#. * connotation.  It is generally used in a playful tone
-#. * with friends.
-msgid "Raspberry"
-msgstr ""
-
-#, c-format
-msgid "%s has raspberried you!"
-msgstr ""
-
-#, c-format
-msgid "Raspberrying %s..."
-msgstr ""
-
 msgid "Required parameters not passed in"
 msgstr ""
 
@@ -6559,6 +4926,9 @@ msgid "Cannot add yourself"
 msgstr ""
 
 msgid "Master archive is misconfigured"
+msgstr ""
+
+msgid "Incorrect username or password"
 msgstr ""
 
 msgid "Could not recognize the host of the username you entered"
@@ -6674,6 +5044,12 @@ msgstr ""
 msgid "Telephone Number"
 msgstr "ტელეფონის ნომერი"
 
+msgid "Location"
+msgstr "ადგილმდებარეობა"
+
+msgid "Department"
+msgstr "დეპარტამენტი"
+
 msgid "Personal Title"
 msgstr ""
 
@@ -6719,6 +5095,9 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr ""
 
+msgid "You have signed on from another location"
+msgstr ""
+
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
@@ -6731,6 +5110,9 @@ msgstr ""
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr ""
+
+msgid "Busy"
+msgstr "დაკავებული"
 
 #. *< type
 #. *< ui_requirement
@@ -6822,6 +5204,9 @@ msgstr ""
 
 msgid "Invalid error"
 msgstr "უცნობი შეცდომა"
+
+msgid "Not logged in"
+msgstr ""
 
 msgid "Cannot receive IM due to parental controls"
 msgstr ""
@@ -6958,10 +5343,19 @@ msgstr ""
 msgid "Studying"
 msgstr ""
 
+msgid "Working"
+msgstr ""
+
 msgid "In the restroom"
 msgstr ""
 
 msgid "Received invalid data on connection with server"
+msgstr ""
+
+msgid "Error parsing response from authentication server"
+msgstr ""
+
+msgid "Unknown error during authentication"
 msgstr ""
 
 #. *< type
@@ -7085,6 +5479,11 @@ msgid ""
 "supported by your system."
 msgstr ""
 
+msgid ""
+"You required Kerberos authentication but encryption is disabled in your "
+"account settings."
+msgstr ""
+
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -7099,7 +5498,6 @@ msgid "Received authorization"
 msgstr "მივიღე ავტორიზაცია"
 
 #. Unregistered username
-#. the username does not exist
 msgid "Username does not exist"
 msgstr ""
 
@@ -7356,6 +5754,9 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 
+msgid "Unable to Add"
+msgstr ""
+
 msgid "Unable to Retrieve Buddy List"
 msgstr ""
 
@@ -7493,6 +5894,9 @@ msgstr ""
 msgid "Type the email address of the buddy you are searching for."
 msgstr ""
 
+msgid "_Search"
+msgstr ""
+
 msgid "Set User Info (web)..."
 msgstr ""
 
@@ -7529,7 +5933,16 @@ msgstr ""
 msgid "Search for Buddy by Email Address..."
 msgstr ""
 
-msgid "Use clientLogin"
+msgid "clientLogin"
+msgstr ""
+
+msgid "Kerberos"
+msgstr ""
+
+msgid "MD5-based"
+msgstr ""
+
+msgid "Authentication method"
 msgstr ""
 
 msgid ""
@@ -7648,6 +6061,9 @@ msgstr ""
 msgid "Mobile Phone"
 msgstr "მობილური ტელეფონი"
 
+msgid "Age"
+msgstr "ასაკი"
+
 msgid "Personal Web Page"
 msgstr "პირადი ვებ-გვერდი"
 
@@ -7656,11 +6072,20 @@ msgstr "პირადი ვებ-გვერდი"
 msgid "Additional Information"
 msgstr "დამატებითი ინფორმაცია"
 
+msgid "Home Address"
+msgstr "სახლის მისამართი"
+
 msgid "Zip Code"
 msgstr "საფოსტო ინდექსი"
 
+msgid "Work Address"
+msgstr "სამსახურის მისამართი"
+
 msgid "Work Information"
 msgstr "ინფორმაცია სამსახურის შესახებ"
+
+msgid "Company"
+msgstr "კომპანია"
 
 msgid "Division"
 msgstr "დანაყოფი"
@@ -7679,6 +6104,12 @@ msgstr ""
 
 msgid "Capabilities"
 msgstr "შეუძლია"
+
+msgid "Profile"
+msgstr ""
+
+msgid "View web profile"
+msgstr ""
 
 msgid "Invalid SNAC"
 msgstr "არასწორი SNAC"
@@ -7963,6 +6394,9 @@ msgid ""
 "entry has been removed from your buddy list."
 msgstr ""
 
+msgid "Unable to add user"
+msgstr ""
+
 #, c-format
 msgid ""
 "Error reading file %s: \n"
@@ -8218,6 +6652,9 @@ msgstr "ჰიპერ აქტიური"
 
 msgid "Robot"
 msgstr "რობოტი"
+
+msgid "In Love"
+msgstr "შეყვარებული"
 
 msgid "User Modes"
 msgstr ""
@@ -8500,6 +6937,9 @@ msgstr "ორგანიზაცია"
 msgid "Unit"
 msgstr "განყოფილება"
 
+msgid "Homepage"
+msgstr "Homepage"
+
 msgid "Note"
 msgstr "შენიშვნა"
 
@@ -8652,6 +7092,9 @@ msgstr ""
 
 msgid "Key Exchange failed"
 msgstr ""
+
+msgid "Authentication failed"
+msgstr "აუტენტიფიკაცია ვერ მოხერხდა"
 
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
@@ -9137,391 +7580,6 @@ msgstr ""
 msgid "Auth Domain"
 msgstr ""
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr ""
-
-msgid "list: List rooms on the Yahoo network"
-msgstr ""
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr ""
-
-msgid "Yahoo ID..."
-msgstr ""
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! Protocol Plugin"
-msgstr ""
-
-msgid "Pager port"
-msgstr ""
-
-msgid "File transfer server"
-msgstr ""
-
-msgid "File transfer port"
-msgstr ""
-
-msgid "Chat room locale"
-msgstr ""
-
-msgid "Ignore conference and chatroom invitations"
-msgstr ""
-
-msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr ""
-
-msgid "Chat room list URL"
-msgstr ""
-
-msgid "Yahoo JAPAN ID..."
-msgstr ""
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! JAPAN Protocol Plugin"
-msgstr ""
-
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr ""
-
-msgid "Your SMS was not delivered"
-msgstr ""
-
-msgid "Your Yahoo! message did not get sent."
-msgstr "თქვენი Yahoo! შეტყობინება ვერ გაიგზავნა."
-
-#, c-format
-msgid "Yahoo! system message for %s:"
-msgstr ""
-
-msgid "Authorization denied message:"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s has (retroactively) denied your request to add them to your list for the "
-"following reason: %s."
-msgstr ""
-
-#, c-format
-msgid "%s has (retroactively) denied your request to add them to your list."
-msgstr ""
-
-msgid "Add buddy rejected"
-msgstr ""
-
-#. Some error in the received stream
-msgid "Received invalid data"
-msgstr ""
-
-#. security lock from too many failed login attempts
-msgid ""
-"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-"website may fix this."
-msgstr ""
-
-#. indicates a lock of some description
-msgid ""
-"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
-"this."
-msgstr ""
-
-#. indicates a lock due to logging in too frequently
-msgid ""
-"Account locked: You have been logging in too frequently.  Wait a few minutes "
-"before trying to connect again.  Logging into the Yahoo! website may help."
-msgstr ""
-
-#. username or password missing
-msgid "Username or password missing"
-msgstr ""
-
-#, c-format
-msgid ""
-"The Yahoo server has requested the use of an unrecognized authentication "
-"method.  You will probably not be able to successfully sign on to Yahoo.  "
-"Check %s for updates."
-msgstr ""
-
-msgid "Failed Yahoo! Authentication"
-msgstr ""
-
-#, c-format
-msgid ""
-"You have tried to ignore %s, but the user is on your buddy list.  Clicking "
-"\"Yes\" will remove and ignore the buddy."
-msgstr ""
-
-msgid "Ignore buddy?"
-msgstr ""
-
-msgid "Invalid username or password"
-msgstr ""
-
-msgid ""
-"Your account has been locked due to too many failed login attempts.  Please "
-"try logging into the Yahoo! website."
-msgstr ""
-
-msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr ""
-
-msgid ""
-"Error 1013: The username you have entered is invalid.  The most common cause "
-"of this error is entering your email address instead of your Yahoo! ID."
-msgstr ""
-
-#, c-format
-msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
-msgstr ""
-
-#, c-format
-msgid "Unable to add buddy %s to group %s to the server list on account %s."
-msgstr ""
-
-msgid "Unable to add buddy to server list"
-msgstr ""
-
-#, c-format
-msgid "[ Audible %s/%s/%s.swf ] %s"
-msgstr ""
-
-msgid "Received unexpected HTTP response from server"
-msgstr ""
-
-#, c-format
-msgid "Lost connection with %s: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable to establish a connection with %s: %s"
-msgstr ""
-
-msgid "Unable to connect: The server returned an empty response."
-msgstr ""
-
-msgid ""
-"Unable to connect: The server's response did not contain the necessary "
-"information"
-msgstr ""
-
-msgid "Not at Home"
-msgstr ""
-
-msgid "Not at Desk"
-msgstr ""
-
-msgid "Not in Office"
-msgstr ""
-
-msgid "On Vacation"
-msgstr ""
-
-msgid "Stepped Out"
-msgstr ""
-
-msgid "Not on server list"
-msgstr ""
-
-msgid "Appear Permanently Offline"
-msgstr ""
-
-msgid "Presence"
-msgstr ""
-
-msgid "Don't Appear Permanently Offline"
-msgstr ""
-
-msgid "Join in Chat"
-msgstr ""
-
-msgid "Initiate Conference"
-msgstr ""
-
-msgid "Presence Settings"
-msgstr ""
-
-msgid "Start Doodling"
-msgstr ""
-
-msgid "Activate which ID?"
-msgstr ""
-
-msgid "Select the ID you want to activate"
-msgstr ""
-
-msgid "Join whom in chat?"
-msgstr ""
-
-msgid "Activate ID..."
-msgstr ""
-
-msgid "Join User in Chat..."
-msgstr ""
-
-msgid "Open Inbox"
-msgstr ""
-
-msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr ""
-
-msgid "Can't send SMS. Unknown mobile carrier."
-msgstr ""
-
-msgid "Getting mobile carrier to send the SMS."
-msgstr ""
-
-#. Write a local message to this conversation showing that a request for a
-#. * Doodle session has been made
-#.
-msgid "Sent Doodle request."
-msgstr ""
-
-msgid "Unable to connect."
-msgstr "დაკავშირება შეუძლებელია"
-
-msgid "Unable to establish file descriptor."
-msgstr ""
-
-#, c-format
-msgid "%s is trying to send you a group of %d files.\n"
-msgstr ""
-
-msgid "Write Error"
-msgstr ""
-
-msgid "Yahoo! Japan Profile"
-msgstr ""
-
-msgid "Yahoo! Profile"
-msgstr ""
-
-msgid ""
-"Sorry, profiles marked as containing adult content are not supported at this "
-"time."
-msgstr ""
-
-msgid ""
-"If you wish to view this profile, you will need to visit this link in your "
-"web browser:"
-msgstr ""
-
-msgid "Yahoo! ID"
-msgstr "Yahoo! ID"
-
-msgid "Hobbies"
-msgstr ""
-
-msgid "Latest News"
-msgstr ""
-
-msgid "Home Page"
-msgstr ""
-
-msgid "Cool Link 1"
-msgstr "საინტერესო ლინკი 1"
-
-msgid "Cool Link 2"
-msgstr "საინტერესო ლინკი 2"
-
-msgid "Cool Link 3"
-msgstr "საინტერესო ლინკი 3"
-
-msgid "Last Update"
-msgstr "ბოლო განახლება"
-
-msgid ""
-"This profile is in a language or format that is not supported at this time."
-msgstr ""
-
-msgid ""
-"Could not retrieve the user's profile. This most likely is a temporary "
-"server-side problem. Please try again later."
-msgstr ""
-
-msgid ""
-"Could not retrieve the user's profile. This most likely means that the user "
-"does not exist; however, Yahoo! sometimes does fail to find a user's "
-"profile. If you know that the user exists, please try again later."
-msgstr ""
-
-msgid "The user's profile is empty."
-msgstr ""
-
-#, c-format
-msgid "%s has declined to join."
-msgstr ""
-
-msgid "Failed to join chat"
-msgstr ""
-
-#. -6
-msgid "Unknown room"
-msgstr "უცნობი ოთახი"
-
-#. -15
-msgid "Maybe the room is full"
-msgstr ""
-
-#. -35
-msgid "Not available"
-msgstr "ხელმიუწვდომელია"
-
-msgid ""
-"Unknown error. You may need to logout and wait five minutes before being "
-"able to rejoin a chatroom"
-msgstr ""
-
-#, c-format
-msgid "You are now chatting in %s."
-msgstr ""
-
-msgid "Failed to join buddy in chat"
-msgstr ""
-
-msgid "Maybe they're not in a chat?"
-msgstr ""
-
-msgid "Fetching the room list failed."
-msgstr ""
-
-msgid "Voices"
-msgstr "ხმები"
-
-msgid "Webcams"
-msgstr "ვებ კამერები"
-
-msgid "Connection problem"
-msgstr ""
-
-msgid "Unable to fetch room list."
-msgstr ""
-
-msgid "User Rooms"
-msgstr "მომხმარებლის ოთახები"
-
-msgid "Connection problem with the YCHT server"
-msgstr ""
-
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
@@ -9529,6 +7587,12 @@ msgstr ""
 
 #, c-format
 msgid "Unable to send to chat %s,%s,%s"
+msgstr ""
+
+msgid "User is offline"
+msgstr "მომხმარებელი გასულია ქსელიდან"
+
+msgid "User"
 msgstr ""
 
 msgid "Hidden or not logged-in"
@@ -9899,8 +7963,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"This means that you can be chatting with friends on MSN, talking to a friend "
-"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+"This means that you can be chatting with friends on AIM, talking to a friend "
+"on Google Talk, and sitting in an IRC chat room all at the same time."
 msgstr ""
 
 msgid "The buddy list showing friends on different networks."
@@ -9912,8 +7976,7 @@ msgstr ""
 msgid "Internet Messenger"
 msgstr ""
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgid "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, and more"
 msgstr ""
 
 #. Build the login options frame.
@@ -11382,8 +9445,8 @@ msgstr ""
 
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
-"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
-">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"emailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>This "
+"is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
 "support/\">archive</a>)<br/>We can't help with third-party protocols or "
 "plugins!<br/>This list's primary language is <b>English</b>.  You are "
 "welcome to post in another language, but the responses may be less helpful."
@@ -11982,9 +10045,8 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
-#, fuzzy
 msgid "Media error"
-msgstr "კითხვის შეცდომა"
+msgstr ""
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -12140,10 +10202,6 @@ msgid "Select a file"
 msgstr "ფაილის არჩევა"
 
 msgid "Modify Buddy Pounce"
-msgstr ""
-
-#. Create the "Pounce on Whom" frame.
-msgid "Pounce on Whom"
 msgstr ""
 
 msgid "_Account:"
@@ -12802,9 +10860,9 @@ msgstr "_სტატუსი:"
 msgid "Use a _different status for some accounts"
 msgstr ""
 
-#. Save & Use button
-msgid "Sa_ve & Use"
-msgstr "შენახვა და გამოყენება"
+#. Save and Use button
+msgid "Sa_ve and Use"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -12865,9 +10923,6 @@ msgid "Status Selector"
 msgstr ""
 
 msgid "Google Talk"
-msgstr ""
-
-msgid "Facebook (XMPP)"
 msgstr ""
 
 #, c-format
@@ -13147,6 +11202,9 @@ msgstr ""
 #, c-format
 msgid "Select Color for %s"
 msgstr "ამოირჩიეთ ფერი %s-თვის"
+
+msgid "General"
+msgstr "ზოგადი"
 
 msgid "Ignore incoming format"
 msgstr ""
@@ -13508,13 +11566,10 @@ msgstr ""
 msgid "Notify For"
 msgstr ""
 
-msgid "\t_Notify for System messages"
+msgid "\tS_ystem messages"
 msgstr ""
 
 msgid "\t_Only when someone says your username"
-msgstr ""
-
-msgid "\tNotify for _System messages"
 msgstr ""
 
 msgid "_Focused windows"
@@ -13697,7 +11752,7 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr ""
 
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 
@@ -14141,9 +12196,7 @@ msgstr ""
 #. *  description
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
-"the buddy list.\n"
-"\n"
-"* Note: This plugin requires Win2000 or greater."
+"the buddy list."
 msgstr ""
 
 #. Autostart

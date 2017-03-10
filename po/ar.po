@@ -4,7 +4,7 @@
 #
 # Translators:
 # AbdulAziz AlSharif <a.a-a.s@hotmail.com>, 2007
-# abd alrhman aiman <abdo.alrhman.aiman@gmail.com>, 2014
+# aboo amnghr, 2014
 # Afief Halumi <Afief.h@gmail.com>, 2007
 # Ahmad Gharbeia <gharbeia@gmail.com>, 2008
 # Hafid BENHADRIA <ghosn@php4arab.info>, 2003
@@ -12,14 +12,14 @@
 # Mohamed Magdy <alnokta@yahoo.com>, 2006
 # Youssef Chahibi <chahibi@gmail.com>, 2007
 # محمد سعد  Mohamed SAAD <metehyi@free.fr>, 2006
-# محيي الدين <tx99h4@hotmail.com>, 2014-2016
+# محيي الدين <tx99h4@hotmail.com>, 2014-2017
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:12-0500\n"
-"PO-Revision-Date: 2016-06-06 21:09+0000\n"
-"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"POT-Creation-Date: 2017-03-09 18:51-0600\n"
+"PO-Revision-Date: 2017-03-01 15:56+0000\n"
+"Last-Translator: محيي الدين <tx99h4@hotmail.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/pidgin/pidgin/language/ar/)\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -58,7 +58,6 @@ msgstr ""
 "واجه %s أخطاء أثناء نقل إعداداتك من %s إلى %s. من فضلك افحص و استكمل النقل "
 "يدويا. وأبلغ عن هذا الخطأ في http://developer.pidgin.im"
 
-#. the user did not fill in the captcha
 msgid "Error"
 msgstr "عُطل"
 
@@ -230,7 +229,6 @@ msgstr "من فضلك أدخل معلومات الصديق."
 msgid "Chats"
 msgstr "دردشات"
 
-#. Extract their Name and put it in
 msgid "Name"
 msgstr "الاسم"
 
@@ -337,11 +335,9 @@ msgstr "بدّل الوسم"
 msgid "View Log"
 msgstr "اعرض السجِل"
 
-#. General
 msgid "Nickname"
 msgstr "الاسم المستعار"
 
-#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "ساكن"
@@ -769,7 +765,6 @@ msgid "Remaining"
 msgstr "المتبقي"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
-#. presence
 msgid "Status"
 msgstr "الحالة"
 
@@ -1019,8 +1014,9 @@ msgstr "إشعار صديق جديد"
 msgid "Edit Buddy Pounce"
 msgstr "حرِّر إشعار الصديق"
 
-msgid "Pounce Who"
-msgstr "من تُشعر"
+#. Create the "Pounce on Whom" frame.
+msgid "Pounce on Whom"
+msgstr "إشعار على من"
 
 #. Account:
 msgid "Account:"
@@ -1265,8 +1261,8 @@ msgstr "فشل استبداء GStreamer."
 msgid "(default)"
 msgstr "(المبدئي)"
 
-msgid "Select Sound File ..."
-msgstr "اختر ملف صوت..."
+msgid "Select Sound File..."
+msgstr "حدد ملفا صوتيا..."
 
 msgid "Sound Preferences"
 msgstr "تفضيلات الصوت"
@@ -1348,21 +1344,12 @@ msgstr "احذف الحالة"
 msgid "Saved Statuses"
 msgstr "الحالات المحفوظة"
 
-#. title
 msgid "Title"
 msgstr "العنوان"
 
 msgid "Type"
 msgstr "النّوع"
 
-#. Statuses are almost all the same. Define a macro to reduce code repetition.
-#. PurpleStatusPrimitive
-#. id - use default
-#. name - use default
-#. saveable
-#. user_settable
-#. not independent
-#. Attributes - each status can have a message.
 msgid "Message"
 msgstr "رسالة"
 
@@ -1394,12 +1381,12 @@ msgstr "الرسالة:"
 msgid "Edit Status"
 msgstr "حرِّر الحالة"
 
-msgid "Use different status for following accounts"
-msgstr "استخدم حالة مختلفة للحسابات التالية"
+msgid "Use a different status for some accounts"
+msgstr "استخدم وضعا مخالفا لبعض الحسابات"
 
-#. Save & Use
-msgid "Save & Use"
-msgstr "احفظها و استخدمها"
+#. Save and Use
+msgid "Save and Use"
+msgstr "احفظ ثم استخدم"
 
 msgid "Certificates"
 msgstr "الشّهادات"
@@ -1524,8 +1511,8 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr "TinyURL لما هو أسفله : %s"
 
-msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr "يرجى الانتظار إلى حين قيام TinyURL بجلب عنوان أقصر ..."
+msgid "Please wait while TinyURL fetches a shorter URL..."
+msgstr "يُرجى الانتظار ريثما يلتقط TinyURL عنوانا أقصر..."
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "إنشاء TinyURL فقط للعناوين الأطول من هذا"
@@ -1539,13 +1526,12 @@ msgstr "TinyURL"
 msgid "TinyURL plugin"
 msgstr "ملحق TinyURL"
 
-msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-msgstr "عند تلقي رسالة تحوي عنوانا (أو عناوينا)، استخدم TinyURL للنسخ بسهولة"
+msgid "Shorten URLs in messages using TinyURL"
+msgstr ""
 
 msgid "Online"
 msgstr "متصل"
 
-#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "غير متصل"
 
@@ -1777,7 +1763,6 @@ msgstr "(موقَّع ذاتيا)"
 msgid "View Issuer Certificate"
 msgstr "اعرض مُصدر الشهادة"
 
-#. show error to user
 msgid "Registration Error"
 msgstr "خطأ في التسجيل"
 
@@ -1793,7 +1778,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s خرج"
 
 #. Undocumented
-#. Unknown error
 msgid "Unknown error"
 msgstr "عُطل مجهول"
 
@@ -1922,22 +1906,6 @@ msgstr "معالج مسارات \"irc\""
 msgid "The command used to handle \"irc\" URLs, if enabled."
 msgstr "الأمر المستخدم لمعالجة مسارات \"irc\"، في حال تمكينها."
 
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "إذا ما كان الأمر المحدّد سيستخدم لمعالجة مسارات \"msnim\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"صحيح إذا كان الأمر المحدّد في المفتاح \"command\" سيستخدم لمعالجة مسارات "
-"\"msnim\"."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "معالج مسارات \"msnim\""
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "الأمر المستخدم لمعالجة مسارات \"msnim\"، في حال تمكينها."
-
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "إذا ما كان الأمر المحدّد سيستخدم لمعالجة مسارات \"sip\""
 
@@ -1969,22 +1937,6 @@ msgstr "معالج مسارات \"xmpp\""
 
 msgid "The command used to handle \"xmpp\" URLs, if enabled."
 msgstr "الأمر المستخدم لمعالجة مسارات \"xmpp\"، في حال تمكينها."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "إذا ما كان الأمر المحدّد سيستخدم لمعالجة مسارات \"ymsgr\""
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"صحيح إذا كان الأمر المحدّد في المفتاح \"command\" سيستخدم لمعالجة مسارات "
-"\"ymsgr\"."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "معالج مسارات \"ymsgr\""
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "الأمر المستخدم لمعالجة مسارات \"ymsgr\"، في حال تمكينها."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2782,10 +2734,8 @@ msgstr "طور التنبؤ للمحادثة الواردة"
 
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
-"يسبب ظهور نافذة المحادثة عندما يبدأ مستخدم آخر بكتابة رسالة اليك. يعمل مع "
-"بروتوكولات AIM، و ICQ، وXMPP، وSametime، و ياهو!"
 
 msgid "You feel a disturbance in the force..."
 msgstr "تستشعر اضطرابا في القوة..."
@@ -3000,11 +2950,9 @@ msgstr ""
 "ActiveTCL من   http://www.activestate.com\n"
 
 msgid ""
-"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
-"im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
+"developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
-"لم يُعثر على عُدة أدوات \"أبل بونجور لويندوز\"، راجع الأسئلة الشائعة في: "
-"http://d.pidgin.im/BonjourWindows لمزيد من المعلومات."
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "تعذّر الاستماع إلى اتصالات التراسل الفوري الواردة"
@@ -3019,7 +2967,6 @@ msgstr "الاسم الأول"
 msgid "Last name"
 msgstr "اسم العائلة"
 
-#. email
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
@@ -3104,14 +3051,12 @@ msgstr "المدينة"
 msgid "Year of birth"
 msgstr "سنة الميلاد"
 
-#. gender
 msgid "Gender"
 msgstr "الجنس"
 
 msgid "Male or female"
 msgstr "ذكر أو أنثى"
 
-#. 0
 msgid "Male"
 msgstr "ذكر"
 
@@ -3149,22 +3094,16 @@ msgstr "اختر دردشة للصديق: %s"
 msgid "Add to chat..."
 msgstr "أشرك في الدردشة..."
 
-#. 0
 #. Global
 msgid "Available"
 msgstr "متاح"
 
-#. 2
 msgid "Chatty"
 msgstr "ثرثار"
 
-#. 3
 msgid "Do Not Disturb"
 msgstr "الرجاء عدم الإزعاج"
 
-#. 1
-#. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
-#. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
 msgid "Away"
 msgstr "غائب"
@@ -3172,8 +3111,6 @@ msgstr "غائب"
 msgid "UIN"
 msgstr "UIN"
 
-#. first name
-#. optional information
 msgid "First Name"
 msgstr "الاسم الأول"
 
@@ -3198,9 +3135,6 @@ msgstr "لا يوجد مستخدمون يطابقون معيار البحث."
 msgid "Unable to read from socket"
 msgstr "تعذّرت القراءة من المقبس"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
 msgid "Connected"
 msgstr "متَّصل"
 
@@ -3213,7 +3147,6 @@ msgstr "أضف إلى الدردشة"
 msgid "Chat _name:"
 msgstr "ا_سم الدردشة:"
 
-#. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "يتّصل"
@@ -4008,8 +3941,6 @@ msgstr "المسمّى الوظيفي"
 msgid "Role"
 msgstr "الدّور"
 
-#. birthday
-#. birthday (required)
 msgid "Birthday"
 msgstr "تاريخ الميلاد"
 
@@ -4100,7 +4031,6 @@ msgstr "اخرج"
 msgid "JID"
 msgstr "JID"
 
-#. last name
 msgid "Last Name"
 msgstr "اسم العائلة"
 
@@ -4362,7 +4292,6 @@ msgstr "لاشيء (إلى مُرجأ)"
 msgid "None"
 msgstr "لا شيء"
 
-#. subscription type
 msgid "Subscription"
 msgstr "الاشتراك"
 
@@ -4378,12 +4307,6 @@ msgstr "إسم المزاج"
 msgid "Mood Comment"
 msgstr "تعليق المزاج"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
 msgid "Tune Artist"
 msgstr "اسم الموسيقيّ"
 
@@ -4626,8 +4549,6 @@ msgid ""
 "buzzes now."
 msgstr ""
 
-#. Yahoo only supports one attention command: the 'buzz'.
-#. This is index number YAHOO_BUZZ.
 msgid "Buzz"
 msgstr "رن"
 
@@ -4770,8 +4691,6 @@ msgstr "اسمح بالاستيثاق بالنص الصريح عبر تيارا�
 msgid "Connect port"
 msgstr "منفذ الاتصال"
 
-#. TODO: default to automatically try different ports. Make the user be
-#. * able to set the first port to try (like LastConnectedPort in Windows client).
 #. Account options
 msgid "Connect server"
 msgstr "اتصل بالخادوم"
@@ -4782,8 +4701,9 @@ msgstr "وسطاء نقل الملفات"
 msgid "BOSH URL"
 msgstr ""
 
-#. this should probably be part of global smiley theme settings later on,
-#. shared with MSN
+#. this should probably be part of global smiley theme settings
+#. * later on
+#.
 msgid "Show Custom Smileys"
 msgstr "اعرض البسمات المخصصة"
 
@@ -4869,7 +4789,6 @@ msgstr "خطأ مجهول في التواجد"
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "تعذّر إرسال ملف إلى %s، المستخدم لا يدعم نقل الملفات"
 
-#. not success
 msgid "File Send Failed"
 msgstr "فشل إرسال ملف"
 
@@ -5165,1639 +5084,6 @@ msgstr "أفعال"
 msgid "Select an action"
 msgstr "اختر فعلا"
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "تعذّرت إضافة \"%s\"."
-
-msgid "Buddy Add error"
-msgstr "عطل أثناء إضافة الصديق"
-
-msgid "The username specified does not exist."
-msgstr "اسم المستخدم المحدد غير موجود."
-
-msgid "Unable to parse message"
-msgstr "تعذّر تحليل الرسالة"
-
-msgid "Syntax Error (probably a client bug)"
-msgstr "خطأ نحوي (غالبا علة في العميل)"
-
-msgid "Invalid email address"
-msgstr "عنوان بريد إلكترونى غير صالح"
-
-msgid "User does not exist"
-msgstr "المستخدم غير موجود"
-
-msgid "Fully qualified domain name missing"
-msgstr "يفتقد اسم نطاق كامل"
-
-msgid "Already logged in"
-msgstr "والج بالفعل"
-
-msgid "Invalid username"
-msgstr "اسم مستخدم غير صالح"
-
-msgid "Invalid friendly name"
-msgstr "اسم ودّي غير صالح"
-
-msgid "List full"
-msgstr "القائمة ممتلئة"
-
-msgid "Already there"
-msgstr "هنا بالفعل"
-
-msgid "Not on list"
-msgstr "ليس في القائمة"
-
-msgid "User is offline"
-msgstr "المستخدم غير متصل"
-
-msgid "Already in the mode"
-msgstr "في هذا الطور بالفعل"
-
-msgid "Already in opposite list"
-msgstr "بالفعل في القائمة المقابلة"
-
-msgid "Too many groups"
-msgstr "مجموعات كثيرة جدا"
-
-msgid "Invalid group"
-msgstr "المجموعة غير صالحة"
-
-msgid "User not in group"
-msgstr "المستخدم ليس في المجموعة"
-
-msgid "Group name too long"
-msgstr "اسم المجموعة طويل جدًا"
-
-msgid "Cannot remove group zero"
-msgstr "لايمكن إزالة المجموعة صفر"
-
-msgid "Tried to add a user to a group that doesn't exist"
-msgstr "حاولت إضافة مستخدم إلى مجموعة لا وجود لها"
-
-msgid "Switchboard failed"
-msgstr "عطل في لوحة التحويل"
-
-msgid "Notify transfer failed"
-msgstr "فشل تنبيه النقل"
-
-msgid "Required fields missing"
-msgstr "حقول مطلوبة خاوية"
-
-msgid "Too many hits to a FND"
-msgstr ""
-
-msgid "Not logged in"
-msgstr "لم يلج"
-
-msgid "Service temporarily unavailable"
-msgstr "الخدمة غير متوفّرة مُؤقّتًا"
-
-msgid "Database server error"
-msgstr "خطأ في خادوم قاعدة البيانات"
-
-msgid "Command disabled"
-msgstr "عُطِّل الأمر"
-
-msgid "File operation error"
-msgstr "خطأ في عملية الملف"
-
-msgid "Memory allocation error"
-msgstr "خطأ في تخصيص الذاكرة"
-
-msgid "Wrong CHL value sent to server"
-msgstr "أُرسِلت قيمة CHL خطأ للخادوم"
-
-msgid "Server busy"
-msgstr "الخادوم مشغول"
-
-msgid "Server unavailable"
-msgstr "الخادوم غير متاح"
-
-msgid "Peer notification server down"
-msgstr "خادوم تنبيهات الأنداد مطفأ"
-
-msgid "Database connect error"
-msgstr "خطأ في الاتصال بقاعدة البيانات"
-
-msgid "Server is going down (abandon ship)"
-msgstr "الخادوم سيُطفأ (سنفروا بحياتكم)"
-
-msgid "Error creating connection"
-msgstr "خطأ في إنشاء الاتصال"
-
-msgid "CVR parameters are either unknown or not allowed"
-msgstr "معاملات CVR إما مجهولة أو ممنوعة"
-
-msgid "Unable to write"
-msgstr "تعذّرت الكتابة"
-
-msgid "Session overload"
-msgstr "تحميل زائد في الجلسة"
-
-msgid "User is too active"
-msgstr "المستخدم نشط أكثر من اللازم"
-
-msgid "Too many sessions"
-msgstr "جلسات أكثر من المحتمل"
-
-msgid "Passport not verified"
-msgstr "جواز مرور غير مُوثّق"
-
-msgid "Bad friend file"
-msgstr "ملف صديق سيء"
-
-msgid "Not expected"
-msgstr "غير متوقع"
-
-msgid "Friendly name is changing too rapidly"
-msgstr "الاسم الودّي يتغير أسرع من اللازم"
-
-msgid "Server too busy"
-msgstr "الخادوم مشغول جدًا"
-
-msgid "Authentication failed"
-msgstr "فشل الاستيثاق"
-
-msgid "Not allowed when offline"
-msgstr "غير مسموح عندم لا تكون متصلا"
-
-msgid "Not accepting new users"
-msgstr "لا يقبل المستخدمين الجدد"
-
-msgid "Kids Passport without parental consent"
-msgstr "جواز مرور أطفال بدون موافقة الأبوين"
-
-msgid "Passport account not yet verified"
-msgstr "حساب جواز المرور لم يُوثّق"
-
-msgid "Passport account suspended"
-msgstr "عُلّق حساب جواز المرور"
-
-msgid "Bad ticket"
-msgstr "تذكرة سيّئة"
-
-#, c-format
-msgid "Unknown Error Code %d"
-msgstr "رمز خطأ مجهول %d"
-
-#, c-format
-msgid "MSN Error: %s\n"
-msgstr "خطأ MSN: %s\n"
-
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "مشكلة في مزامنة قائمة الأصدقاء في %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"‏%s مدرج في مجموعة \"%s\" على القائمة المحلية لكن ليس على قائمة الخادوم. هل "
-"تريد أن يضاف هذا الصديق؟"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"‏%s مدرج في القائمة المحلية لكن ليس على قائمة الخادوم. هل تريد أن يضاف هذا "
-"الصديق؟"
-
-msgid "Other Contacts"
-msgstr "مراسلون آخرون"
-
-msgid "Non-IM Contacts"
-msgstr "مراسلين غير التراسل الفوري"
-
-#, c-format
-msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
-msgstr ""
-
-#, c-format
-msgid "%s sent a wink, but it could not be saved"
-msgstr ""
-
-#, c-format
-msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
-msgstr ""
-
-#, c-format
-msgid "%s sent a voice clip, but it could not be saved"
-msgstr ""
-
-#, c-format
-msgid "%s sent you a voice chat invite, which is not yet supported."
-msgstr ""
-
-msgid "Nudge"
-msgstr "لكزة"
-
-#, c-format
-msgid "%s has nudged you!"
-msgstr "لكزك %s"
-
-#, c-format
-msgid "Nudging %s..."
-msgstr "تلكز %s..."
-
-msgid "Email Address..."
-msgstr "عناوين البريد الإلكتروني..."
-
-msgid "Your new MSN friendly name is too long."
-msgstr "اسمك الودّي في MSN أطول من المسموح."
-
-#, c-format
-msgid "Set friendly name for %s."
-msgstr ""
-
-msgid "Set Friendly Name"
-msgstr ""
-
-msgid "This is the name that other MSN buddies will see you as."
-msgstr "هذا هو الاسم الذي سيراك أصدقاؤك على MSN "
-
-msgid "This Location"
-msgstr ""
-
-msgid "This is the name that identifies this location"
-msgstr ""
-
-msgid "Other Locations"
-msgstr ""
-
-msgid "You can sign out from other locations here"
-msgstr ""
-
-#. TODO: Due to limitations in our current request field API, the
-#. following string will show up with a trailing colon.  This should
-#. be fixed either by adding an "include_colon" boolean, or creating
-#. a separate purple_request_field_label_new_without_colon function,
-#. or by never automatically adding the colon and requiring that
-#. callers add the colon themselves.
-msgid "You are not signed in from any other locations."
-msgstr ""
-
-msgid "Allow multiple logins?"
-msgstr ""
-
-msgid ""
-"Do you want to allow or disallow connecting from multiple locations "
-"simultaneously?"
-msgstr ""
-
-msgid "Allow"
-msgstr "اسمح"
-
-msgid "Disallow"
-msgstr "لا تسمح"
-
-msgid "Set your home phone number."
-msgstr "أدخل رقم هاتف منزلك."
-
-msgid "Set your work phone number."
-msgstr "أدخل رقم هاتف عملك."
-
-msgid "Set your mobile phone number."
-msgstr "أدخل رقم هاتفك المحمول."
-
-msgid "Allow MSN Mobile pages?"
-msgstr "أأسمح بصفحات MSN للمحمول؟"
-
-msgid ""
-"Do you want to allow or disallow people on your buddy list to send you MSN "
-"Mobile pages to your cell phone or other mobile device?"
-msgstr ""
-"هل تريد أن تسمح لمن في قائمة أصدقائك بأن يرسلوا صفحات MSN المحمول إلى هاتفك "
-"أو أجهزتك النقالة الاخرى؟"
-
-#, c-format
-msgid "Blocked Text for %s"
-msgstr "النص المحجوب ل %s"
-
-msgid "No text is blocked for this account."
-msgstr "لا نص محجوب من هذا الحساب."
-
-#, c-format
-msgid ""
-"MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr "خواديم MSN تحظر حاليا هذه التعابير النمطية:<br/>%s"
-
-msgid "This account does not have email enabled."
-msgstr "ليس لهذا الحساب بريد مفعّل."
-
-msgid "Send a mobile message."
-msgstr "أرسل رسالة إلى محمول."
-
-msgid "Page"
-msgstr "صفحة"
-
-msgid "Playing a game"
-msgstr "يلهو بلعبة"
-
-msgid "Working"
-msgstr "يعمل"
-
-msgid "Has you"
-msgstr "أنت لديه"
-
-msgid "Home Phone Number"
-msgstr "رقم هاتف المنزل"
-
-msgid "Work Phone Number"
-msgstr "رقم هاتف العمل"
-
-msgid "Mobile Phone Number"
-msgstr "رقم الهاتف المحمول"
-
-msgid "Be Right Back"
-msgstr "سأعود حالًا"
-
-msgid "Busy"
-msgstr "مشغول"
-
-msgid "On the Phone"
-msgstr "على الهاتف"
-
-msgid "Out to Lunch"
-msgstr "خرجت للغداء"
-
-msgid "Game Title"
-msgstr "عنوان اللعبة"
-
-msgid "Office Title"
-msgstr "عنوان المكتب"
-
-msgid "Set Friendly Name..."
-msgstr "أدخل اسما ودّيا..."
-
-msgid "View Locations..."
-msgstr "عرض المواقع..."
-
-msgid "Set Home Phone Number..."
-msgstr "أدخل رقم هاتف المنزل..."
-
-msgid "Set Work Phone Number..."
-msgstr "أدخل رقم هاتف العمل..."
-
-msgid "Set Mobile Phone Number..."
-msgstr "أدخل رقم الهاتف المحمول..."
-
-msgid "Enable/Disable Mobile Devices..."
-msgstr "فعّل/عطّل الأجهزة المحمولة..."
-
-msgid "Allow/Disallow Multiple Logins..."
-msgstr "السماح أو رفض الولوج المتعدد..."
-
-msgid "Allow/Disallow Mobile Pages..."
-msgstr "اسمح/ارفض الصفحات المتنقلة..."
-
-msgid "View Blocked Text..."
-msgstr "اعرض النص المحجوب..."
-
-msgid "Open Hotmail Inbox"
-msgstr "افتح وارد هوتميل"
-
-msgid "Send to Mobile"
-msgstr "أرسل إلى محمول"
-
-msgid "SSL support is needed for MSN. Please install a supported SSL library."
-msgstr "MSN تتطلب دعم SSL. رجاءً ثبت مكتبة SSL مدعومة."
-
-#, c-format
-msgid ""
-"Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be valid email addresses."
-msgstr ""
-"تعذرت إضافة الصديق %s لأن اسم المستخدم غير صالح. يجب أن تكون العناوين "
-"الإلكترونية لاسماء المستخدمين .صالحة."
-
-msgid "Unable to Add"
-msgstr "تعذرت الإضافة"
-
-msgid "Error retrieving profile"
-msgstr "عطل في جلب اللاحة"
-
-msgid "General"
-msgstr "عام"
-
-msgid "Age"
-msgstr "العمر"
-
-msgid "Occupation"
-msgstr "المهنة"
-
-msgid "Location"
-msgstr "الموضع"
-
-msgid "Hobbies and Interests"
-msgstr "الهوايات و الاهتمامات"
-
-msgid "A Little About Me"
-msgstr "القليل عني"
-
-msgid "Social"
-msgstr "اجتماعيات"
-
-msgid "Marital Status"
-msgstr "الحالة الزوجية"
-
-msgid "Interests"
-msgstr "الاهتمامات"
-
-msgid "Pets"
-msgstr "الحيوانات الأليفة"
-
-msgid "Hometown"
-msgstr "البلدة"
-
-msgid "Places Lived"
-msgstr "أماكن الإقامة"
-
-msgid "Fashion"
-msgstr "الموضة"
-
-msgid "Humor"
-msgstr "الدعابات"
-
-msgid "Music"
-msgstr "موسيقا"
-
-msgid "Favorite Quote"
-msgstr "مقولة أثيرة"
-
-msgid "Contact Info"
-msgstr "معلومات الاتصال"
-
-msgid "Personal"
-msgstr "شخصي"
-
-msgid "Significant Other"
-msgstr "نصفي الآخر"
-
-msgid "Home Phone"
-msgstr "هاتف المنزل"
-
-msgid "Home Phone 2"
-msgstr "هاتف المنزل 2"
-
-msgid "Home Address"
-msgstr "عنوان المنزل"
-
-msgid "Personal Mobile"
-msgstr "المحمول الشخصي"
-
-msgid "Home Fax"
-msgstr "فاكس المنزل"
-
-msgid "Personal Email"
-msgstr "البريد الإلكتروني الشخصي"
-
-msgid "Personal IM"
-msgstr "التراسل الفوري الشخصي"
-
-msgid "Anniversary"
-msgstr "الذكرى السنويّة"
-
-#. Business
-msgid "Work"
-msgstr "العمل"
-
-msgid "Company"
-msgstr "الشركة"
-
-msgid "Department"
-msgstr "القِسْم"
-
-msgid "Profession"
-msgstr "الحرفة"
-
-msgid "Work Phone"
-msgstr "هاتف العمل"
-
-msgid "Work Phone 2"
-msgstr "هاتف العمل 2"
-
-msgid "Work Address"
-msgstr "عنوان العمل"
-
-msgid "Work Mobile"
-msgstr "محمول العمل"
-
-msgid "Work Pager"
-msgstr "جهاز استدعاء العمل"
-
-msgid "Work Fax"
-msgstr "فاكس العمل"
-
-msgid "Work Email"
-msgstr "البريد الإلكتروني للعمل"
-
-msgid "Work IM"
-msgstr "تراسل العمل الفوري"
-
-msgid "Start Date"
-msgstr "تاريخ البدء"
-
-msgid "Favorite Things"
-msgstr "أشياء مفضلة"
-
-msgid "Last Updated"
-msgstr "التحديث الأخير"
-
-msgid "Homepage"
-msgstr "الصفحة الأولى"
-
-msgid "The user has not created a public profile."
-msgstr "لم ينشئ المستخدم لاحة علنيّة."
-
-msgid ""
-"MSN reported not being able to find the user's profile. This either means "
-"that the user does not exist, or that the user exists but has not created a "
-"public profile."
-msgstr ""
-"أبلغ MSN بعدم تمكنه من العثور على لاحة المستخدم. قد يعني هذا أن المستخدم غير "
-"موجود أو أنه موجود لكنه لم يُنشئ لاحة علنية."
-
-msgid ""
-"Could not find any information in the user's profile. The user most likely "
-"does not exist."
-msgstr ""
-"تعذّر العثور على أية معلومات في لاحة المستخدم. المستخدم غالبًا لا وجود له."
-
-msgid "View web profile"
-msgstr ""
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *< summary
-msgid "Windows Live Messenger Protocol Plugin"
-msgstr "ملحقة بروتوكول Windows Live Messenger"
-
-msgid "Use HTTP Method"
-msgstr "استخدم طريقة HTTP"
-
-msgid "HTTP Method Server"
-msgstr "خادوم اختبار  HTTP"
-
-msgid "Show custom smileys"
-msgstr "اعرض البسمات المخصصة"
-
-msgid "Allow direct connections"
-msgstr "السماح بالاتصالات المباشرة"
-
-msgid "Allow connecting from multiple locations"
-msgstr "السماح بالاتصال من مواقع متعددة"
-
-msgid "nudge: nudge a user to get their attention"
-msgstr ""
-"الكز مستخدما لتستدعي انتباههnudge:\n"
-"أوكز شخص من اجل الحصول على انتباهه."
-
-msgid "Windows Live ID authentication:Unable to connect"
-msgstr "استيثاق هويّة Windows Live: تعذّر الاتصال"
-
-msgid "Windows Live ID authentication:Invalid response"
-msgstr "استيثاق هويّة Windows Live: رد غير سليم"
-
-msgid "The following users are missing from your addressbook"
-msgstr "المستخدمين التاليين ناقصين في دفتر عناوينك"
-
-#, c-format
-msgid "Unknown error (%d): %s"
-msgstr "خطأ مجهول (%d)‏ : %s"
-
-msgid "Unable to add user"
-msgstr "تعذّرت إضافة مستخدم"
-
-#. Unknown error!
-#, c-format
-msgid "Unknown error (%d)"
-msgstr "عُطل مجهول (%d)"
-
-msgid "Unable to remove user"
-msgstr "تعذرت إزالة المستخدم"
-
-msgid "Mobile message was not sent because it was too long."
-msgstr "لم تُرسل رسالة المحمول لأنها طويلة جدا."
-
-msgid "Mobile message was not sent because an unknown error occurred."
-msgstr "لم تُرسَل الرسالة المحمولة بسبب حدوث خطأ مجهول."
-
-#, c-format
-msgid ""
-"The MSN server will shut down for maintenance in %d minute. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgid_plural ""
-"The MSN server will shut down for maintenance in %d minutes. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgstr[0] ""
-"سيغلق خادوم MSN للصيانة حالًا، و عندها ستُخرج تلقائيا. من فضلك انه أية محادثات "
-"جارية.\n"
-"\n"
-"بعد انتهاء الصيانة، سيمكنك الولوج مجددا."
-msgstr[1] ""
-"سيغلق خادوم MSN للصيانة بعد دقيقة واحدة، و عندها ستُخرج تلقائيا. من فضلك انه "
-"أية محادثات جارية.\n"
-"\n"
-"بعد انتهاء الصيانة، سيمكنك الولوج مجددا."
-msgstr[2] ""
-"سيغلق خادوم MSN للصيانة خلال دقيقتين، و عندها ستُخرج تلقائيا. من فضلك انه أية "
-"محادثات جارية.\n"
-"\n"
-"بعد انتهاء الصيانة، سيمكنك الولوج مجددا."
-msgstr[3] ""
-"سيغلق خادوم MSN للصيانة خلال %d دقائق، و عندها ستُخرج تلقائيا. من فضلك انه "
-"أية محادثات جارية.\n"
-"\n"
-"بعد انتهاء الصيانة، سيمكنك الولوج مجددا."
-msgstr[4] ""
-"سيغلق خادوم MSN للصيانة خلال %d دقيقة، و عندها ستُخرج تلقائيا. من فضلك انه "
-"أية محادثات جارية.\n"
-"\n"
-"بعد انتهاء الصيانة، سيمكنك الولوج مجددا."
-msgstr[5] ""
-"سيغلق خادوم MSN للصيانة خلال %d دقيقة، و عندها ستُخرج تلقائيا. من فضلك انه "
-"أية محادثات جارية.\n"
-"\n"
-"بعد انتهاء الصيانة، سيمكنك الولوج مجددا."
-
-msgid ""
-"Message was not sent because the system is unavailable. This normally "
-"happens when the user is blocked or does not exist."
-msgstr ""
-"لم ترسل الرسالة لأن النظام غير متاح. يحدث هذا طبيعيا إذا كان المستخدم محظورا "
-"أو لا وجود له."
-
-msgid "Message was not sent because messages are being sent too quickly."
-msgstr "تعذّر إرسال الرسالة لأننا نرسل بسرعة جدًا."
-
-msgid "Message was not sent because an unknown encoding error occurred."
-msgstr "الرسالة ربما تكون لم ترسل لحدوث عطل ترميز مجهول."
-
-msgid "Message was not sent because an unknown error occurred."
-msgstr "الرسالة ربما تكون لم ترسل لحدوث عطل مجهول."
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. Converting the encoding from "
-"%s to UTF-8 failed.)"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was %s, but it "
-"was not valid UTF-8.)"
-msgstr ""
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was missing, but "
-"it was not valid UTF-8.)"
-msgstr ""
-
-msgid "Writing error"
-msgstr "عطل في الكتابة"
-
-msgid "Reading error"
-msgstr "عطل في القراءة"
-
-#, c-format
-msgid ""
-"Connection error from %s server:\n"
-"%s"
-msgstr ""
-"خطأ اتصال من خادوم %s:\n"
-"%s"
-
-msgid "Our protocol is not supported by the server"
-msgstr ""
-
-msgid "Error parsing HTTP"
-msgstr ""
-
-msgid "You have signed on from another location"
-msgstr ""
-
-msgid "The MSN servers are temporarily unavailable. Please wait and try again."
-msgstr "خواديم MSN غير متاحة مؤقتًا. من فضلك انتظر و حاول مرة ثانية."
-
-msgid "The MSN servers are going down temporarily"
-msgstr ""
-
-#, c-format
-msgid "Unable to authenticate: %s"
-msgstr "تعذّر الاستيثاق: %s"
-
-#, c-format
-msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr ""
-
-msgid "Handshaking"
-msgstr "المصافحة"
-
-msgid "Transferring"
-msgstr "نقل"
-
-msgid "Starting authentication"
-msgstr "يجري بدء الاستيثاق"
-
-msgid "Getting cookie"
-msgstr "يجري جلب الكوكي"
-
-msgid "Sending cookie"
-msgstr "يجري إرسال الكوكي"
-
-msgid "Retrieving buddy list"
-msgstr "يجري جلب قائمة الأصدقاء"
-
-#, c-format
-msgid "%s requests to view your webcam, but this request is not yet supported."
-msgstr ""
-
-#, c-format
-msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr ""
-
-msgid "Away From Computer"
-msgstr "بعيد عن الحاسوب"
-
-msgid "On The Phone"
-msgstr "على الهاتف"
-
-msgid "Out To Lunch"
-msgstr "على الغداء"
-
-msgid "Message may have not been sent because a timeout occurred:"
-msgstr "الرسالة قد تكون لم ترسل بسبب انتهاء المهلة:"
-
-msgid "Message could not be sent, not allowed while invisible:"
-msgstr "تعذّر إرسال الرسالة، غير مسموح أثناء الاختفاء:"
-
-msgid "Message could not be sent because the user is offline:"
-msgstr "تعذّر إرسال الرسالة لأن المستخدم غير متصل:"
-
-msgid "Message could not be sent because a connection error occurred:"
-msgstr "تعذّر إرسال الرسالة لحدوث عطل في الاتصال:"
-
-msgid "Message could not be sent because we are sending too quickly:"
-msgstr "تعذّر إرسال الرسالة لأننا نرسل بسرعة جدًا:"
-
-msgid ""
-"Message could not be sent because we were unable to establish a session with "
-"the server. This is likely a server problem, try again in a few minutes:"
-msgstr ""
-"تعذّر إرسال الرسالة لتعذّر الإتصال بالخادوم. في الأغلب هذه مشكلة في الخادوم، "
-"حاول مجددا بعد بضع دقائق:"
-
-msgid ""
-"Message could not be sent because an error with the switchboard occurred:"
-msgstr "تعذّر إرسال الرسالة لحدوث عطل في لوحة التحويل:"
-
-msgid "Message may have not been sent because an unknown error occurred:"
-msgstr "الرسالة ربما تكون لم ترسل لحدوث عطل مجهول:"
-
-msgid "Delete Buddy from Address Book?"
-msgstr "أأحذف الصديق من دفتر العناوين؟"
-
-msgid "Do you want to delete this buddy from your address book as well?"
-msgstr "أتريد حذف هذا الصديق من دفتر عناوينك أيضا؟"
-
-msgid "The username specified is invalid."
-msgstr "اسم المستخدم المحدد غير صالح."
-
-msgid "The Display Name you entered is invalid."
-msgstr ""
-
-msgid ""
-"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-msgstr ""
-
-#. show error to user
-msgid "Profile Update Error"
-msgstr ""
-
-#. no profile information yet, so we cannot update
-#. (reference: "libpurple/request.h")
-msgid "Profile"
-msgstr "لاحة"
-
-msgid "Your profile information is not yet retrieved. Please try again later."
-msgstr ""
-
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "الاسم المعروض"
-
-#. about me
-msgid "About Me"
-msgstr "من أنا"
-
-#. where I live
-msgid "Where I Live"
-msgstr "أين أقيم"
-
-#. relationship status
-msgid "Relationship Status"
-msgstr "حالة علاقتي"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "رقم الهاتف الجوال"
-
-#. is searchable
-msgid "Can be searched"
-msgstr "يمكن العثور علي"
-
-#. is suggestable
-msgid "Can be suggested"
-msgstr "يمكن اقتراحي للآخرين"
-
-msgid "Update your MXit Profile"
-msgstr ""
-
-msgid "The PIN you entered is invalid."
-msgstr ""
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr ""
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
-
-msgid "The two PINs you entered do not match."
-msgstr ""
-
-#. show error to user
-msgid "PIN Update Error"
-msgstr ""
-
-#. pin
-#. pin (required)
-msgid "PIN"
-msgstr ""
-
-#. verify pin
-msgid "Verify PIN"
-msgstr ""
-
-#. (reference: "libpurple/request.h")
-msgid "Change PIN"
-msgstr ""
-
-msgid "Change MXit PIN"
-msgstr ""
-
-msgid "View Splash"
-msgstr ""
-
-msgid "There is no splash-screen currently available"
-msgstr ""
-
-msgid "About"
-msgstr "حول"
-
-msgid "Search for user"
-msgstr "ابحث عن مستخدم"
-
-msgid "Search for a MXit contact"
-msgstr ""
-
-msgid "Type search information"
-msgstr ""
-
-msgid "_Search"
-msgstr "ا_بحث"
-
-#. display / change profile
-msgid "Change Profile..."
-msgstr ""
-
-#. change PIN
-msgid "Change PIN..."
-msgstr ""
-
-#. suggested friends
-msgid "Suggested friends..."
-msgstr "الأصدقاء المُقترَحين...‏"
-
-#. search for contacts
-msgid "Search for contacts..."
-msgstr "البحث عن جهات الاتصال...‏"
-
-#. display splash-screen
-msgid "View Splash..."
-msgstr ""
-
-#. display plugin version
-msgid "About..."
-msgstr "حول..."
-
-#. the file is too big
-msgid "The file you are trying to send is too large!"
-msgstr "الملف الذي تريد إرساله كبير جدا !"
-
-#. file read error
-msgid "Unable to access the local file"
-msgstr "تعذر الوصول إلى الملف المحلي"
-
-#. file write error
-msgid "Unable to save the file"
-msgstr "تعذر حفظ الملف"
-
-msgid ""
-"Unable to connect to the MXit HTTP server. Please check your server settings."
-msgstr "تعذّر الاتصال بالخادم HTTP ل MXit. رجاءً تحقق من إعدادات خادمك."
-
-msgid "Logging In..."
-msgstr "يجري الولوج...‏"
-
-msgid ""
-"Unable to connect to the MXit server. Please check your server settings."
-msgstr ""
-
-msgid "Connecting..."
-msgstr "يجري الاتصال...‏"
-
-msgid "The Display Name you entered is too short."
-msgstr "الاسم المعروض الذي أدخلته قصير جدا."
-
-msgid "The PIN you entered has an invalid length [7-10]."
-msgstr ""
-
-#. mxit login name
-msgid "MXit ID"
-msgstr ""
-
-#. show the form to the user to complete
-msgid "Register New MXit Account"
-msgstr ""
-
-msgid "Please fill in the following fields:"
-msgstr ""
-
-#. no reply from the WAP site
-msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr ""
-
-#. wapserver error
-#. server could not find the user
-msgid ""
-"MXit is currently unable to process the request. Please try again later."
-msgstr ""
-
-msgid "Wrong security code entered. Please try again later."
-msgstr ""
-
-msgid "Your session has expired. Please try again later."
-msgstr ""
-
-msgid "Invalid country selected. Please try again."
-msgstr ""
-
-msgid "The MXit ID you entered is not registered. Please register first."
-msgstr ""
-
-msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr ""
-
-msgid "Internal error. Please try again later."
-msgstr ""
-
-msgid "You did not enter the security code"
-msgstr ""
-
-msgid "Security Code"
-msgstr ""
-
-#. ask for input (required)
-msgid "Enter Security Code"
-msgstr ""
-
-msgid "Your Country"
-msgstr ""
-
-msgid "Your Language"
-msgstr ""
-
-#. display the form to the user and wait for his/her input
-msgid "MXit Authorization"
-msgstr ""
-
-msgid "MXit account validation"
-msgstr ""
-
-msgid "Retrieving User Information..."
-msgstr ""
-
-msgid "was kicked"
-msgstr ""
-
-msgid "You have been kicked from this MultiMX."
-msgstr ""
-
-msgid "_Room Name:"
-msgstr ""
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr ""
-
-msgid "Loading menu..."
-msgstr ""
-
-msgid "Status Message"
-msgstr ""
-
-msgid "Rejection Message"
-msgstr ""
-
-msgid "No profile available"
-msgstr ""
-
-msgid "This contact does not have a profile."
-msgstr ""
-
-msgid "Your MXit ID..."
-msgstr ""
-
-#. contact is in Deleted, Rejected or None state
-msgid "Re-Invite"
-msgstr ""
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr ""
-
-msgid "Connect via HTTP"
-msgstr ""
-
-msgid "Enable splash-screen popup"
-msgstr ""
-
-msgid "Don't want to say"
-msgstr ""
-
-msgid "Single"
-msgstr "عازب"
-
-msgid "In a relationship"
-msgstr ""
-
-msgid "Engaged"
-msgstr "خاطب"
-
-msgid "Married"
-msgstr "متزوج"
-
-msgid "It's complicated"
-msgstr "الأمر معقد"
-
-msgid "Widowed"
-msgstr "أرمل"
-
-msgid "Separated"
-msgstr "هاجِرٌ"
-
-msgid "Divorced"
-msgstr "مطلق"
-
-msgid "Last Online"
-msgstr "آخر اتصال"
-
-msgid "Invite Message"
-msgstr "رسالة الدعوة"
-
-msgid "No results"
-msgstr "لا وجود للنتائج"
-
-msgid "No contacts found."
-msgstr "لم يُعثَر على أي جهة اتصال."
-
-#. define columns
-msgid "UserId"
-msgstr "معرف المستخدم"
-
-msgid "Where I live"
-msgstr "أين أقيم"
-
-#, c-format
-msgid "You have %i suggested friend."
-msgid_plural "You have %i suggested friends."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
-
-#, c-format
-msgid "We found %i contact that matches your search."
-msgid_plural "We found %i contacts that match your search."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
-
-#. we must have lost the connection, so terminate it so that we can reconnect
-msgid "We have lost the connection to MXit. Please reconnect."
-msgstr ""
-
-#. packet could not be queued for transmission
-msgid "Message Send Error"
-msgstr ""
-
-msgid "Unable to process your request at this time"
-msgstr ""
-
-msgid "Timeout while waiting for a response from the MXit server."
-msgstr ""
-
-msgid "Successfully Logged In..."
-msgstr "ولج بنجاج...‏"
-
-#, c-format
-msgid ""
-"%s sent you an encrypted message, but it is not supported on this client."
-msgstr "أرسل إليك %s رسالة مُعمَّاة، لكنها ليست مدعومة من طرف هذا الزبون.‏"
-
-msgid "Message Error"
-msgstr "خطأ في الرسالة"
-
-#. could not be decrypted
-msgid "An encrypted message was received which could not be decrypted."
-msgstr "لم يُتمكَّن من فك تعمية الرسالة المُعمَّاة التي تلقيتها.‏"
-
-msgid "Cannot perform redirect using the specified protocol"
-msgstr ""
-
-msgid "An internal MXit server error occurred."
-msgstr ""
-
-#, c-format
-msgid "Login error: %s (%i)"
-msgstr ""
-
-#, c-format
-msgid "Logout error: %s (%i)"
-msgstr ""
-
-msgid "Contact Error"
-msgstr ""
-
-msgid "Message Sending Error"
-msgstr ""
-
-msgid "Status Error"
-msgstr ""
-
-msgid "Mood Error"
-msgstr ""
-
-msgid "Invitation Error"
-msgstr ""
-
-msgid "Contact Removal Error"
-msgstr ""
-
-msgid "Subscription Error"
-msgstr ""
-
-msgid "Contact Update Error"
-msgstr ""
-
-msgid "File Transfer Error"
-msgstr ""
-
-msgid "Cannot create MultiMx room"
-msgstr ""
-
-msgid "MultiMx Invitation Error"
-msgstr ""
-
-msgid "Profile Error"
-msgstr ""
-
-#. bad packet
-msgid "Invalid packet received from MXit."
-msgstr ""
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr ""
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr ""
-
-msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr ""
-
-#. malformed packet length record (too long)
-msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr ""
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr ""
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr ""
-
-msgid "In Love"
-msgstr "واقع في الحب"
-
-msgid "Pending"
-msgstr ""
-
-msgid "Invited"
-msgstr ""
-
-msgid "Rejected"
-msgstr ""
-
-msgid "Deleted"
-msgstr ""
-
-msgid "MXit Advertising"
-msgstr ""
-
-msgid "More Information"
-msgstr ""
-
-#, c-format
-msgid "No such user: %s"
-msgstr "لا مستخدِم باسم: %s"
-
-msgid "User lookup"
-msgstr "البحث عن مستخدمين"
-
-msgid "Reading challenge"
-msgstr "تجري قراءة التحدي"
-
-msgid "Unexpected challenge length from server"
-msgstr "طول تحدٍ غير متوقع من الخادوم"
-
-msgid "Logging in"
-msgstr "يجري الولوج"
-
-msgid "MySpaceIM - No Username Set"
-msgstr "‏MySpaceIM - لم تحدد اسم مستخدم"
-
-msgid "You appear to have no MySpace username."
-msgstr "يظهر أنك لا تملك اسم مستخدم MySpace."
-
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr "أتريد عمل واحد الآن؟ (ملحوظة: هذا لا يمكن تغييره!)"
-
-msgid "Lost connection with server"
-msgstr ""
-
-#. Can't write _()'d strings in array initializers. Workaround.
-#. khc: then use N_() in the array initializer and use _() when they are
-#. used
-msgid "New mail messages"
-msgstr "رسالة بريد جديدة"
-
-msgid "New blog comments"
-msgstr "تعليق مدوّنة جديد"
-
-msgid "New profile comments"
-msgstr "تعليقات لاحة جديدة"
-
-msgid "New friend requests!"
-msgstr "!طلبات صداقة جديدة"
-
-msgid "New picture comments"
-msgstr "تعليقات صورة جديدة"
-
-msgid "MySpace"
-msgstr "MySpace"
-
-msgid "IM Friends"
-msgstr "أصدقاء التراسل الفوري"
-
-#, c-format
-msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"تمت إضافة أو تحديث %d صديق من الخادوم (بمن فيهم أصدقاء من قائمة الأصدقاء على "
-"الخادوم)"
-msgstr[1] ""
-"تمت إضافة أو تحديث صديق من الخادوم (بمن فيهم أصدقاء من قائمة الأصدقاء على "
-"الخادوم)"
-msgstr[2] ""
-"تمت إضافة أو تحديث صديقين من الخادوم (بمن فيهم أصدقاء من قائمة الأصدقاء على "
-"الخادوم)"
-msgstr[3] ""
-"تمت إضافة أو تحديث %d أصدقاء من الخادوم (بمن فيهم أصدقاء من قائمة الأصدقاء "
-"على الخادوم)"
-msgstr[4] ""
-"تمت إضافة أو تحديث %d صديقا من الخادوم (بمن فيهم أصدقاء من قائمة الأصدقاء "
-"على الخادوم)"
-msgstr[5] ""
-"تمت إضافة أو تحديث %d صديق من الخادوم (بمن فيهم أصدقاء من قائمة الأصدقاء على "
-"الخادوم)"
-
-msgid "Add contacts from server"
-msgstr "أضف معارف من الخادوم"
-
-#, c-format
-msgid "Protocol error, code %d: %s"
-msgstr "عطل بروتوكول، رمز %d: %s"
-
-#, c-format
-msgid ""
-"%s Your password is %zu characters, which is longer than the maximum length "
-"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
-"cfm?fuseaction=accountSettings.changePassword and try again."
-msgstr ""
-
-msgid "Incorrect username or password"
-msgstr "اسم شاشة أو كلمة سر غير صحيحة"
-
-msgid "MySpaceIM Error"
-msgstr "عطل في MySpaceIM"
-
-msgid "Invalid input condition"
-msgstr "حالة دخل غير صحيحة"
-
-msgid "Failed to add buddy"
-msgstr "فشلت إضافة صديق"
-
-msgid "'addbuddy' command failed."
-msgstr "فشل أمر 'addbuddy'"
-
-msgid "persist command failed"
-msgstr "فشل أمر persist"
-
-msgid "Failed to remove buddy"
-msgstr "فشلت إزالة الصديق"
-
-msgid "'delbuddy' command failed"
-msgstr "فشل أمر 'delbuddy' "
-
-msgid "blocklist command failed"
-msgstr "فشل أمر blocklist"
-
-msgid "Missing Cipher"
-msgstr "شفرة مفقودة"
-
-msgid "The RC4 cipher could not be found"
-msgstr "لم يُعثر على شفرة RC4"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr "رقِّ إلى libpurple تدعم RC4 (>= 2.0.1). لن يُحمّل ملحق  MySpaceIM."
-
-msgid "Add friends from MySpace.com"
-msgstr "أضف أصدقاء من MySpaces.com"
-
-msgid "Importing friends failed"
-msgstr "فشل استيراد الأصدقاء"
-
-#. TODO: find out how
-msgid "Find people..."
-msgstr "ابحث عن الناس..."
-
-msgid "Change IM name..."
-msgstr "غيّر اسم التراسل الفوري..."
-
-msgid "myim URL handler"
-msgstr "معالج مسارات myim"
-
-msgid "No suitable MySpaceIM account could be found to open this myim URL."
-msgstr "تعذّر إيجاد حساب MySpaceIM مناسب لفتح مسار myim هذا."
-
-msgid "Enable the proper MySpaceIM account and try again."
-msgstr "فعّل حساب MySpaveIM الصحيح و حاول مجددا."
-
-msgid "Show display name in status text"
-msgstr "أظهر اسم العرض في نصّ الحالة"
-
-msgid "Show headline in status text"
-msgstr "أظهر سطر الترويسة في نصّ الحالة"
-
-msgid "Send emoticons"
-msgstr "أرسل التعقونات"
-
-msgid "Screen resolution (dots per inch)"
-msgstr "مَيْزُ الشاشةِ (نقطة في البوصة)"
-
-msgid "Base font size (points)"
-msgstr "حجم الخط الأساس (نقاط)"
-
-msgid "User"
-msgstr "مستخدم"
-
-msgid "Headline"
-msgstr "عنوان رئيسي"
-
-msgid "Song"
-msgstr "أغنية"
-
-msgid "Total Friends"
-msgstr "مجموع الأصدقاء"
-
-msgid "Client Version"
-msgstr "إصدارة العميل"
-
-msgid ""
-"An error occurred while trying to set the username.  Please try again, or "
-"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
-"to set your username."
-msgstr ""
-
-msgid "MySpaceIM - Username Available"
-msgstr "‏MySpaceIM - الاسم غير مُتاح"
-
-msgid "This username is available. Would you like to set it?"
-msgstr "اسم المستخدم متاح. أتريد استخدامه؟"
-
-msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr "بمجرّد تحديده، لا يُمكن تغييره!"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "‏MySpaceIM - من فضلك ضع اسم مُستخدم"
-
-msgid "This username is unavailable."
-msgstr "اسم المستخدم هذا غير متاح."
-
-msgid "Please try another username:"
-msgstr "من فضلك جرّب اسم مستخدم آخر:"
-
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "لم تحدد اسم مستخدم"
-
-msgid "Please enter a username to check its availability:"
-msgstr "من فضلك أدخِل اسم مُستخدم لتحقق من وجوده:"
-
-#. TODO: icons for each zap
-#. Lots of comments for translators:
-#. Zap means "to strike suddenly and forcefully as if with a
-#. * projectile or weapon."  This term often has an electrical
-#. * connotation, for example, "he was zapped by electricity when
-#. * he put a fork in the toaster."
-msgid "Zap"
-msgstr "صعقة"
-
-#, c-format
-msgid "%s has zapped you!"
-msgstr "صعقك %s!"
-
-#, c-format
-msgid "Zapping %s..."
-msgstr "تصعق %s..."
-
-#. Whack means "to hit or strike someone with a sharp blow"
-msgid "Whack"
-msgstr "طاخ"
-
-#, c-format
-msgid "%s has whacked you!"
-msgstr "لطمك %s!"
-
-#, c-format
-msgid "Whacking %s..."
-msgstr "تلطم %s..."
-
-#. Torch means "to set on fire."  Don't worry, this doesn't
-#. * make a whole lot of sense in English, either.  Feel free
-#. * to translate it literally.
-msgid "Torch"
-msgstr "السع"
-
-#, c-format
-msgid "%s has torched you!"
-msgstr "لسعك %s!"
-
-#, c-format
-msgid "Torching %s..."
-msgstr "تلسع %s..."
-
-#. Smooch means "to kiss someone, often enthusiastically"
-msgid "Smooch"
-msgstr "موااه"
-
-#, c-format
-msgid "%s has smooched you!"
-msgstr "لثمك %s!"
-
-#, c-format
-msgid "Smooching %s..."
-msgstr "تلثم %s..."
-
-#. A hug is a display of affection; wrapping your arms around someone
-msgid "Hug"
-msgstr "حضن"
-
-#, c-format
-msgid "%s has hugged you!"
-msgstr "حضنك %s!"
-
-#, c-format
-msgid "Hugging %s..."
-msgstr "تحضن %s..."
-
-#. Slap means "to hit someone with an open/flat hand"
-msgid "Slap"
-msgstr "صفعة"
-
-#, c-format
-msgid "%s has slapped you!"
-msgstr "صفعك %s!"
-
-#, c-format
-msgid "Slapping %s..."
-msgstr "تصفع %s..."
-
-#. Goose means "to pinch someone on their butt"
-msgid "Goose"
-msgstr "قرص المؤخرة"
-
-#, c-format
-msgid "%s has goosed you!"
-msgstr "‏%s قرص مؤخرتك!"
-
-#, c-format
-msgid "Goosing %s..."
-msgstr "تقرص مؤخرة %s..."
-
-#. A high-five is when two people's hands slap each other
-#. * in the air above their heads.  It is done to celebrate
-#. * something, often a victory, or to congratulate someone.
-msgid "High-five"
-msgstr "سلام عالِ"
-
-#, c-format
-msgid "%s has high-fived you!"
-msgstr "‏%s سلم عليك عاليا"
-
-#, c-format
-msgid "High-fiving %s..."
-msgstr "تُسلِّم عاليا على %s..."
-
-#. We're not entirely sure what the MySpace people mean by
-#. * this... but we think it's the equivalent of "prank."  Or, for
-#. * someone to perform a mischievous trick or practical joke.
-msgid "Punk"
-msgstr "مقلب"
-
-#, c-format
-msgid "%s has punk'd you!"
-msgstr "‏%s عمل مقلب فيك!"
-
-#, c-format
-msgid "Punking %s..."
-msgstr "تعمل مقلب في %s..."
-
-#. Raspberry is a slang term for the vibrating sound made
-#. * when you stick your tongue out of your mouth with your
-#. * lips closed and blow.  It is typically done when
-#. * gloating or bragging.  Nowadays it's a pretty silly
-#. * gesture, so it does not carry a harsh negative
-#. * connotation.  It is generally used in a playful tone
-#. * with friends.
-msgid "Raspberry"
-msgstr "إخراج اللسان"
-
-#, c-format
-msgid "%s has raspberried you!"
-msgstr "‏%s أخرج لك لسانه!"
-
-#, c-format
-msgid "Raspberrying %s..."
-msgstr "تخرج لسانك لـ %s..."
-
 msgid "Required parameters not passed in"
 msgstr "لم تُمرر المعاملات المطلوبة"
 
@@ -6848,6 +5134,9 @@ msgstr "لا يمكنك إضافة نفسك"
 
 msgid "Master archive is misconfigured"
 msgstr "الأرشيف الرئيسي غير مضبوط"
+
+msgid "Incorrect username or password"
+msgstr "اسم شاشة أو كلمة سر غير صحيحة"
 
 msgid "Could not recognize the host of the username you entered"
 msgstr " لا يمكن تعرُّف خادوم اسم المستخدم المدخل"
@@ -6965,6 +5254,12 @@ msgstr "خطأ أثناء التواصل مع الخادوم. سيُغلق ال�
 msgid "Telephone Number"
 msgstr "رقم الهاتف"
 
+msgid "Location"
+msgstr "الموضع"
+
+msgid "Department"
+msgstr "القِسْم"
+
 msgid "Personal Title"
 msgstr "اللقب الشخصي"
 
@@ -7013,6 +5308,9 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "هل تود الانضمام للمحادثة؟"
 
+msgid "You have signed on from another location"
+msgstr ""
+
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
@@ -7025,6 +5323,9 @@ msgstr ""
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "لقد فُضَّ هذا الاجتماع. لا يمكن إرسال المزيد من الرسائل."
+
+msgid "Busy"
+msgstr "مشغول"
 
 #. *< type
 #. *< ui_requirement
@@ -7123,6 +5424,9 @@ msgstr "اسم غرفة دردشة غير صالح"
 
 msgid "Invalid error"
 msgstr "عطل غير صحيح"
+
+msgid "Not logged in"
+msgstr "لم يلج"
 
 msgid "Cannot receive IM due to parental controls"
 msgstr ""
@@ -7259,10 +5563,19 @@ msgstr "يستمع إلى الموسيقى"
 msgid "Studying"
 msgstr ""
 
+msgid "Working"
+msgstr "يعمل"
+
 msgid "In the restroom"
 msgstr ""
 
 msgid "Received invalid data on connection with server"
+msgstr ""
+
+msgid "Error parsing response from authentication server"
+msgstr ""
+
+msgid "Unknown error during authentication"
 msgstr ""
 
 #. *< type
@@ -7388,6 +5701,11 @@ msgid ""
 "supported by your system."
 msgstr ""
 
+msgid ""
+"You required Kerberos authentication but encryption is disabled in your "
+"account settings."
+msgstr ""
+
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -7402,7 +5720,6 @@ msgid "Received authorization"
 msgstr "استُقبِل الاستيثاق"
 
 #. Unregistered username
-#. the username does not exist
 msgid "Username does not exist"
 msgstr ""
 
@@ -7727,6 +6044,9 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 
+msgid "Unable to Add"
+msgstr "تعذرت الإضافة"
+
 msgid "Unable to Retrieve Buddy List"
 msgstr ""
 
@@ -7871,6 +6191,9 @@ msgstr "ابحث عن صديق بواسطة عنوان بريده الإلكتر
 msgid "Type the email address of the buddy you are searching for."
 msgstr "أدخل عنوان البريد الإلكتروني للصديق الذي تبحث عنه."
 
+msgid "_Search"
+msgstr "ا_بحث"
+
 msgid "Set User Info (web)..."
 msgstr "ضع معلومات المستخدم (وِب)..."
 
@@ -7907,7 +6230,16 @@ msgstr "اعرض الأصدقاء الذين ينتظرون تصريحات"
 msgid "Search for Buddy by Email Address..."
 msgstr "ابحث عن صديق بواسطة عنوان البريد الإلكتروني..."
 
-msgid "Use clientLogin"
+msgid "clientLogin"
+msgstr ""
+
+msgid "Kerberos"
+msgstr ""
+
+msgid "MD5-based"
+msgstr ""
+
+msgid "Authentication method"
 msgstr ""
 
 msgid ""
@@ -8031,6 +6363,9 @@ msgstr "معلومات المستخدم غير متوفرة: %s"
 msgid "Mobile Phone"
 msgstr "الهاتف المحمول"
 
+msgid "Age"
+msgstr "العمر"
+
 msgid "Personal Web Page"
 msgstr "صفحة وِب الشخصية"
 
@@ -8039,11 +6374,20 @@ msgstr "صفحة وِب الشخصية"
 msgid "Additional Information"
 msgstr "معلومات إضافية"
 
+msgid "Home Address"
+msgstr "عنوان المنزل"
+
 msgid "Zip Code"
 msgstr "الرمز البريدي"
 
+msgid "Work Address"
+msgstr "عنوان العمل"
+
 msgid "Work Information"
 msgstr "معلومات العمل"
+
+msgid "Company"
+msgstr "الشركة"
 
 msgid "Division"
 msgstr "القسم"
@@ -8062,6 +6406,12 @@ msgstr "عضو منذ"
 
 msgid "Capabilities"
 msgstr "الإمكانات"
+
+msgid "Profile"
+msgstr "لاحة"
+
+msgid "View web profile"
+msgstr ""
 
 msgid "Invalid SNAC"
 msgstr "SNAC غير صالح"
@@ -8352,6 +6702,9 @@ msgstr ""
 "لم يطابق المعرف '%s' أي مستخدم في مجتمعك في Sametime. حذُف هذا العنصر من "
 "قائمة أصدقائك."
 
+msgid "Unable to add user"
+msgstr "تعذّرت إضافة مستخدم"
+
 #, c-format
 msgid ""
 "Error reading file %s: \n"
@@ -8629,6 +6982,9 @@ msgstr "فائق النشاط"
 
 msgid "Robot"
 msgstr "روبوت"
+
+msgid "In Love"
+msgstr "واقع في الحب"
 
 msgid "User Modes"
 msgstr "أطوار المستخدم"
@@ -8916,6 +7272,9 @@ msgstr "المنظّمة"
 msgid "Unit"
 msgstr "الوحدة"
 
+msgid "Homepage"
+msgstr "الصفحة الأولى"
+
 msgid "Note"
 msgstr "ملاحظة"
 
@@ -9085,6 +7444,9 @@ msgstr ""
 
 msgid "Key Exchange failed"
 msgstr "فشل تبادل المفتاح"
+
+msgid "Authentication failed"
+msgstr "فشل الاستيثاق"
 
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
@@ -9633,409 +7995,6 @@ msgstr "استوثق من المستخدم"
 msgid "Auth Domain"
 msgstr "استوثق من النطاق"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr ""
-"join &lt;room&gt;: \n"
-"انضم إلي غرفة دردشة في شبكة ياهو"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr ""
-"list: \n"
-"اسرد الغرف في شبكة ياهو"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr ""
-"doodle: \n"
-"اطلب من المستخدم أن يبدأ جلسة Doodle"
-
-msgid "Yahoo ID..."
-msgstr "هويّة ياهو..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! Protocol Plugin"
-msgstr ""
-
-msgid "Pager port"
-msgstr "منفذ الاستدعاء"
-
-msgid "File transfer server"
-msgstr "خادوم نقل الملفات"
-
-msgid "File transfer port"
-msgstr "منفذ نقل الملفات"
-
-msgid "Chat room locale"
-msgstr "محليّة غرفة الدردشة"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "تجاهل دعوات الاجتماعات و غرف الدردشة"
-
-msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr ""
-
-msgid "Chat room list URL"
-msgstr "مسار قائمة غرفة المحادثة."
-
-msgid "Yahoo JAPAN ID..."
-msgstr ""
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! JAPAN Protocol Plugin"
-msgstr ""
-
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "أرسل إليك %s دعوة كاميرا وب، لكنها ليست مدعومة بعد."
-
-msgid "Your SMS was not delivered"
-msgstr ""
-
-msgid "Your Yahoo! message did not get sent."
-msgstr "لم تُرسل رسالة ياهوو!"
-
-#, c-format
-msgid "Yahoo! system message for %s:"
-msgstr "رسالة نظام ياهو! لأجل %s:"
-
-msgid "Authorization denied message:"
-msgstr "رسالة منع التصريح:"
-
-#, c-format
-msgid ""
-"%s has (retroactively) denied your request to add them to your list for the "
-"following reason: %s."
-msgstr "رفض %s (بأثر رجعي) قبول طلبك إضافته إلى قائمتك للسبب التالي: %s."
-
-#, c-format
-msgid "%s has (retroactively) denied your request to add them to your list."
-msgstr "رفض %s (بأثر رجعي) طلبك إضافته إلى قائمتك."
-
-msgid "Add buddy rejected"
-msgstr "رفضت إضافة صديق"
-
-#. Some error in the received stream
-msgid "Received invalid data"
-msgstr ""
-
-#. security lock from too many failed login attempts
-msgid ""
-"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-"website may fix this."
-msgstr ""
-
-#. indicates a lock of some description
-msgid ""
-"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
-"this."
-msgstr ""
-
-#. indicates a lock due to logging in too frequently
-msgid ""
-"Account locked: You have been logging in too frequently.  Wait a few minutes "
-"before trying to connect again.  Logging into the Yahoo! website may help."
-msgstr ""
-
-#. username or password missing
-msgid "Username or password missing"
-msgstr ""
-
-#, c-format
-msgid ""
-"The Yahoo server has requested the use of an unrecognized authentication "
-"method.  You will probably not be able to successfully sign on to Yahoo.  "
-"Check %s for updates."
-msgstr ""
-"لقد طلب خادوم ياهو استخدام طريقة استيثاق غير معروفة لنا. قد لا تتمكن من "
-"الولوج إلى ياهو بنجاح. راجع %s بحثا عن تحديثات."
-
-msgid "Failed Yahoo! Authentication"
-msgstr "فشل استيثاق ياهو!"
-
-#, c-format
-msgid ""
-"You have tried to ignore %s, but the user is on your buddy list.  Clicking "
-"\"Yes\" will remove and ignore the buddy."
-msgstr ""
-"حاولتَ تجاهل %s، لكنه موجود في قائمة اصدقائك. الضغط على \"نعم\" سيحذف و "
-"يتجاهل الصديق."
-
-msgid "Ignore buddy?"
-msgstr "أأتجاهل الصديق؟"
-
-msgid "Invalid username or password"
-msgstr ""
-
-msgid ""
-"Your account has been locked due to too many failed login attempts.  Please "
-"try logging into the Yahoo! website."
-msgstr ""
-
-msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr ""
-
-msgid ""
-"Error 1013: The username you have entered is invalid.  The most common cause "
-"of this error is entering your email address instead of your Yahoo! ID."
-msgstr ""
-
-#, c-format
-msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
-msgstr "خطأ مجهول رقم %d. الولوج في موقع ياهوو! على الوب قد يصحح هذه المشكلة."
-
-#, c-format
-msgid "Unable to add buddy %s to group %s to the server list on account %s."
-msgstr ""
-
-msgid "Unable to add buddy to server list"
-msgstr ""
-
-#, c-format
-msgid "[ Audible %s/%s/%s.swf ] %s"
-msgstr "[ %s/%s/%s.swf مسموع] %s"
-
-msgid "Received unexpected HTTP response from server"
-msgstr ""
-
-#, c-format
-msgid "Lost connection with %s: %s"
-msgstr ""
-
-#, c-format
-msgid "Unable to establish a connection with %s: %s"
-msgstr ""
-
-msgid "Unable to connect: The server returned an empty response."
-msgstr ""
-
-msgid ""
-"Unable to connect: The server's response did not contain the necessary "
-"information"
-msgstr ""
-
-msgid "Not at Home"
-msgstr "ليس بالمنزل"
-
-msgid "Not at Desk"
-msgstr "ليس على المكتب"
-
-msgid "Not in Office"
-msgstr "ليس في المكتب"
-
-msgid "On Vacation"
-msgstr "في إجازة"
-
-msgid "Stepped Out"
-msgstr "خرج"
-
-msgid "Not on server list"
-msgstr "ليس على قائمة الخادوم"
-
-msgid "Appear Permanently Offline"
-msgstr "ابد غير متصل للأبد"
-
-msgid "Presence"
-msgstr "التواجد"
-
-msgid "Don't Appear Permanently Offline"
-msgstr "لا تظهر غير متصل للأبد"
-
-msgid "Join in Chat"
-msgstr "انضم إلى دردشة"
-
-msgid "Initiate Conference"
-msgstr "ابدأ اجتماعا"
-
-msgid "Presence Settings"
-msgstr "خصائص التواجد"
-
-msgid "Start Doodling"
-msgstr "إبدأ Doodling"
-
-msgid "Activate which ID?"
-msgstr ""
-
-msgid "Select the ID you want to activate"
-msgstr ""
-
-msgid "Join whom in chat?"
-msgstr "من أضم إلى الدردشة؟"
-
-msgid "Activate ID..."
-msgstr "نشّط هوية..."
-
-msgid "Join User in Chat..."
-msgstr "ضمّ مستخدما إلى الدردشة..."
-
-msgid "Open Inbox"
-msgstr "افتح صندوق الوارد"
-
-msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr ""
-
-msgid "Can't send SMS. Unknown mobile carrier."
-msgstr ""
-
-msgid "Getting mobile carrier to send the SMS."
-msgstr ""
-
-#. Write a local message to this conversation showing that a request for a
-#. * Doodle session has been made
-#.
-msgid "Sent Doodle request."
-msgstr "أُرسِل طلب Doodle."
-
-msgid "Unable to connect."
-msgstr "تعذّر الاتصال."
-
-msgid "Unable to establish file descriptor."
-msgstr "تعذّر إنشاء موصّف ملف."
-
-#, c-format
-msgid "%s is trying to send you a group of %d files.\n"
-msgstr "‏%s يحاول أن يرسل لك مجموعة من %d ملفات.\n"
-
-msgid "Write Error"
-msgstr "عطل في الكتابة"
-
-msgid "Yahoo! Japan Profile"
-msgstr "لاحة ياهو! اليابان"
-
-msgid "Yahoo! Profile"
-msgstr "لاحة ياهو!"
-
-msgid ""
-"Sorry, profiles marked as containing adult content are not supported at this "
-"time."
-msgstr ""
-"عذرا، اللاحات المؤشرة بأنها محتواها للبالغين فقط غير مدعومة في الوقت الحالي."
-
-msgid ""
-"If you wish to view this profile, you will need to visit this link in your "
-"web browser:"
-msgstr "إذا كنت تريد استعراض هذه اللاحة فعليك فتح الرابط التالي في متصفح الوب:"
-
-msgid "Yahoo! ID"
-msgstr "هويّة ياهو!"
-
-msgid "Hobbies"
-msgstr "الهوايات"
-
-msgid "Latest News"
-msgstr "آخر الأخبار"
-
-msgid "Home Page"
-msgstr "الصفحة الرئيسيّة"
-
-msgid "Cool Link 1"
-msgstr "رابط رائع 1"
-
-msgid "Cool Link 2"
-msgstr "رابط رائع 2"
-
-msgid "Cool Link 3"
-msgstr "رابط رائع 3"
-
-msgid "Last Update"
-msgstr "التحديث الأخير"
-
-msgid ""
-"This profile is in a language or format that is not supported at this time."
-msgstr ""
-
-msgid ""
-"Could not retrieve the user's profile. This most likely is a temporary "
-"server-side problem. Please try again later."
-msgstr ""
-"تعذر جلب لاحة المستخدم. هذه المشكلة سببها على الأرجح عطل مؤقت في الخادوم.من "
-"فضلك حاول مرة أخرى لاحقًا."
-
-msgid ""
-"Could not retrieve the user's profile. This most likely means that the user "
-"does not exist; however, Yahoo! sometimes does fail to find a user's "
-"profile. If you know that the user exists, please try again later."
-msgstr ""
-"تعذر جلب لاحة المستخدم. هذا المستخدم على الأرجح غير موجود، ولكن من المعروف "
-"أن ياهو يفشل في إيجاد المستخدمين أحيانًا. إذا كنت متأكدا أن هذا المستخدم "
-"موجود حاول مرة أخرى لاحقًا."
-
-msgid "The user's profile is empty."
-msgstr "لاحة المستخدم خالية."
-
-#, c-format
-msgid "%s has declined to join."
-msgstr ""
-
-msgid "Failed to join chat"
-msgstr "فشل الانضمام إلى لدردشة"
-
-#. -6
-msgid "Unknown room"
-msgstr "غرفة مجهولة"
-
-#. -15
-msgid "Maybe the room is full"
-msgstr "ربما تكون الغرفة ممتلئة"
-
-#. -35
-msgid "Not available"
-msgstr "غير متاح"
-
-msgid ""
-"Unknown error. You may need to logout and wait five minutes before being "
-"able to rejoin a chatroom"
-msgstr ""
-"خطأ مجهول. قد تحتاج إلى الخروج من الحساب و الانتظار خمس دقائق قبل الولوج "
-"مجددا و محاولة دخول غرفة الدردشة مرة أخرى"
-
-#, c-format
-msgid "You are now chatting in %s."
-msgstr "تُدَردِش الآن في %s."
-
-msgid "Failed to join buddy in chat"
-msgstr "فشل ضم صديق للدردشة"
-
-msgid "Maybe they're not in a chat?"
-msgstr "ربما ليسوا في دردشة؟"
-
-msgid "Fetching the room list failed."
-msgstr "فشل الحصول على قائمة الغرف."
-
-msgid "Voices"
-msgstr "الأصوات"
-
-msgid "Webcams"
-msgstr "كاميرا وِب"
-
-msgid "Connection problem"
-msgstr "مشكلة في الاتصال"
-
-msgid "Unable to fetch room list."
-msgstr "تعذّر احضار قائمة الغرف."
-
-msgid "User Rooms"
-msgstr "غرف المستخدمين"
-
-msgid "Connection problem with the YCHT server"
-msgstr ""
-
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
@@ -10045,6 +8004,12 @@ msgstr ""
 #, c-format
 msgid "Unable to send to chat %s,%s,%s"
 msgstr "تعذّر الإرسال للدردشة %s،%s،%s"
+
+msgid "User is offline"
+msgstr "المستخدم غير متصل"
+
+msgid "User"
+msgstr "مستخدم"
 
 msgid "Hidden or not logged-in"
 msgstr "مختفي أو غير والج"
@@ -10464,8 +8429,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"This means that you can be chatting with friends on MSN, talking to a friend "
-"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+"This means that you can be chatting with friends on AIM, talking to a friend "
+"on Google Talk, and sitting in an IRC chat room all at the same time."
 msgstr ""
 
 msgid "The buddy list showing friends on different networks."
@@ -10477,8 +8442,7 @@ msgstr "مرسال الإنترنت بِدْجِن"
 msgid "Internet Messenger"
 msgstr "مرسال إنترنت"
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+msgid "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, and more"
 msgstr ""
 
 #. Build the login options frame.
@@ -11982,8 +9946,8 @@ msgstr ""
 
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
-"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
-">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"emailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>This "
+"is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
 "support/\">archive</a>)<br/>We can't help with third-party protocols or "
 "plugins!<br/>This list's primary language is <b>English</b>.  You are "
 "welcome to post in another language, but the responses may be less helpful."
@@ -12777,10 +10741,6 @@ msgstr "اختر ملفًا"
 msgid "Modify Buddy Pounce"
 msgstr ""
 
-#. Create the "Pounce on Whom" frame.
-msgid "Pounce on Whom"
-msgstr "إشعار على من"
-
 msgid "_Account:"
 msgstr "_حساب:"
 
@@ -13441,9 +11401,9 @@ msgstr "ال_حالة:"
 msgid "Use a _different status for some accounts"
 msgstr "استخدم حالات _مختلفة لبعض الحسابات"
 
-#. Save & Use button
-msgid "Sa_ve & Use"
-msgstr "احف_ظ و استخدم"
+#. Save and Use button
+msgid "Sa_ve and Use"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -13505,9 +11465,6 @@ msgstr ""
 
 msgid "Google Talk"
 msgstr "Google Talk"
-
-msgid "Facebook (XMPP)"
-msgstr "فيسبوك (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -13789,6 +11746,9 @@ msgstr "الرسائل الواردة"
 #, c-format
 msgid "Select Color for %s"
 msgstr "اختر لون %s"
+
+msgid "General"
+msgstr "عام"
 
 msgid "Ignore incoming format"
 msgstr "تجاهل التنسيق الوارد"
@@ -14158,14 +12118,11 @@ msgstr ""
 msgid "Notify For"
 msgstr "نبّه عن"
 
-msgid "\t_Notify for System messages"
+msgid "\tS_ystem messages"
 msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_فقط عندما يقول شخص ما اسمك"
-
-msgid "\tNotify for _System messages"
-msgstr ""
 
 msgid "_Focused windows"
 msgstr "_نوافذ مركز عليها"
@@ -14351,11 +12308,9 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "يتيح لك إرسال دخْل خام للبروتوكولات النصّية."
 
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"يمكنك من إرسال دخْل خام في البروتوكولات النصية (XMPP, MSN, IRC, TOC). اضغط "
-"'Enter' في صندوق الإدخال للإرسال. راقب نافذة التنقيح."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -14799,14 +12754,8 @@ msgstr "شفافية متغيرة لقائمة الأصدقاء والمحادث
 #. *  description
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
-"the buddy list.\n"
-"\n"
-"* Note: This plugin requires Win2000 or greater."
+"the buddy list."
 msgstr ""
-"تمكن هذه الملحقة من استعمال شفافية متغيّرة في نافذة المحادثة و قائمة "
-"الأصدقاء.\n"
-"\n"
-"* ملاحظة: تتطلب هذه الملحقة ويندوز 2000 أو أحدث."
 
 #. Autostart
 msgid "Startup"
