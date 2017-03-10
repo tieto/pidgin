@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Mohamad Hasan Al Banna <se7entime@protonmail.com>, 2013
+# Mohamad Hasan Al Banna <se7entime@openmailbox.org>, 2013
 # Rai S. Regawa <raireg@yahoo.com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-09 18:53-0600\n"
-"PO-Revision-Date: 2016-06-06 21:08+0000\n"
-"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Indonesian (http://www.transifex.com/pidgin/pidgin/language/"
 "id/)\n"
 "Language: id\n"
@@ -1253,9 +1253,8 @@ msgstr "GStreamer gagal untuk inisilisasi."
 msgid "(default)"
 msgstr "(standar)"
 
-#, fuzzy
 msgid "Select Sound File..."
-msgstr "Pilih Arsip Suara..."
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr "Preferensi Suara"
@@ -1374,14 +1373,12 @@ msgstr "Pesan:"
 msgid "Edit Status"
 msgstr "Ubah Status"
 
-#, fuzzy
 msgid "Use a different status for some accounts"
-msgstr "Gunakan status yang _berbeda untuk sebagian akun"
+msgstr ""
 
 #. Save and Use
-#, fuzzy
 msgid "Save and Use"
-msgstr "Simpan & Gunakan"
+msgstr ""
 
 msgid "Certificates"
 msgstr "Sertifikat-sertifikat"
@@ -2736,13 +2733,10 @@ msgstr "Mode Ramalan"
 msgid "Psychic mode for incoming conversation"
 msgstr "Mode Ramalan untuk percakapan masuk"
 
-#, fuzzy
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
 "This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
-"Menyebabkan jendela percakapan muncul ketika pengguna lain mulai mengirim "
-"pesan pada anda. Ini berfungsi untuk AIM, ICQ, XKPP, Sametime, dan Yahoo!"
 
 msgid "You feel a disturbance in the force..."
 msgstr "Anda mendapatkan penglihatan..."
@@ -5565,9 +5559,8 @@ msgstr ""
 msgid "Error parsing response from authentication server"
 msgstr ""
 
-#, fuzzy
 msgid "Unknown error during authentication"
-msgstr "Memulai otentikasi"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -6180,9 +6173,8 @@ msgstr "Tampilkan Teman yang Menunggu Otorisasi"
 msgid "Search for Buddy by Email Address..."
 msgstr "Cari Teman berdasarkan Alamat Email..."
 
-#, fuzzy
 msgid "clientLogin"
-msgstr "Memaksakan Login"
+msgstr ""
 
 msgid "Kerberos"
 msgstr ""
@@ -6190,9 +6182,8 @@ msgstr ""
 msgid "MD5-based"
 msgstr ""
 
-#, fuzzy
 msgid "Authentication method"
-msgstr "Otentikasi gagal"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -11265,9 +11256,8 @@ msgid "Use a _different status for some accounts"
 msgstr "Gunakan status yang _berbeda untuk sebagian akun"
 
 #. Save and Use button
-#, fuzzy
 msgid "Sa_ve and Use"
-msgstr "Si_mpan & Gunakan"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -11996,9 +11986,8 @@ msgstr ""
 msgid "Notify For"
 msgstr "Beritahu untuk"
 
-#, fuzzy
 msgid "\tS_ystem messages"
-msgstr "Pesan-pesan Sistem"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr ""
@@ -12188,14 +12177,10 @@ msgstr "Mentah"
 msgid "Lets you send raw input to text-based protocols."
 msgstr "Membiarkan anda mengirim input mentah ke protokol berbasis teks."
 
-#, fuzzy
 msgid ""
 "Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Membiarkan anda mengirim input mentah ke protokol berbasis teks (XMPP, MSN, "
-"IRC, TOC). Tekan 'Enter' dalam kotak tempat memasukkan untuk mengirim. "
-"Perhatikan jendela debug."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -12641,15 +12626,10 @@ msgid "Variable Transparency for the buddy list and conversations."
 msgstr "Variabel Transparansi untuk daftar teman dan percakapan."
 
 #. *  description
-#, fuzzy
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
 "the buddy list."
 msgstr ""
-"Plugin ini mengaktifkan variabel transparansi alpha pada jendela percakapan "
-"dan daftar teman.\n"
-"\n"
-"* Catatan: Plugin ini memerlukan Win2000 atau di atasnya."
 
 #. Autostart
 msgid "Startup"
@@ -12832,1006 +12812,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
-
-#~ msgid "Pounce Who"
-#~ msgstr "Tos Siapa"
-
-#~ msgid "Use different status for following accounts"
-#~ msgstr "Gunakan status yang berbeda untuk akun-akun berikut"
-
-#~ msgid "Whether the specified command should handle \"msnim\" URLs"
-#~ msgstr "Perlukah perintah yang ditetapkan menangani URL \"msnim\" "
-
-#~ msgid ""
-#~ "True if the command specified in the \"command\" key should handle \"msnim"
-#~ "\" URLs."
-#~ msgstr ""
-#~ "Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu "
-#~ "menangani URL\"msnim\" ."
-
-#~ msgid "The handler for \"msnim\" URLs"
-#~ msgstr "Penanganan untuk URL \"msnim\" "
-
-#~ msgid "The command used to handle \"msnim\" URLs, if enabled."
-#~ msgstr ""
-#~ "Perintah yang digunakan untuk menangani URL \"msnim\" , jika diaktifkan."
-
-#~ msgid "Whether the specified command should handle \"ymsgr\" URLs"
-#~ msgstr "Perlukah perintah yang ditetapkan menangani URL \"ymsgr\" "
-
-#~ msgid ""
-#~ "True if the command specified in the \"command\" key should handle \"ymsgr"
-#~ "\" URLs."
-#~ msgstr ""
-#~ "Benar jika perintah yang ditetapkan dalam kunci \"command\" perlu "
-#~ "menangani URL\"ymsgr\" ."
-
-#~ msgid "The handler for \"ymsgr\" URLs"
-#~ msgstr "Penanganan untuk URL \"ymsgr\" "
-
-#~ msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-#~ msgstr ""
-#~ "Perintah yang digunakan untuk menangani URL \"ymsgr\" , jika diaktifkan."
-
-#~ msgid "Unable to add \"%s\"."
-#~ msgstr "Tidak dapat menambahkan \"%s\"."
-
-#~ msgid "Unable to parse message"
-#~ msgstr "Tidak dapat mem-parse pesan"
-
-#~ msgid "Syntax Error (probably a client bug)"
-#~ msgstr "Kesalahan Syntax (kemungkinan bug klien)"
-
-#~ msgid "Invalid email address"
-#~ msgstr "Alamat email tidak valid"
-
-#~ msgid "User does not exist"
-#~ msgstr "Pengguna tidak pernah ada"
-
-#~ msgid "Fully qualified domain name missing"
-#~ msgstr "Nama domain yang berkulifikasi penuh tidak ada"
-
-#~ msgid "Already logged in"
-#~ msgstr "Sudah ter-login"
-
-#~ msgid "Invalid friendly name"
-#~ msgstr "Nama bersahabat tidak valid"
-
-#~ msgid "List full"
-#~ msgstr "Daftar penuh"
-
-#~ msgid "Already there"
-#~ msgstr "Sudah di sana"
-
-#~ msgid "Not on list"
-#~ msgstr "Tidak ada dalam daftar"
-
-#~ msgid "Already in the mode"
-#~ msgstr "Sudah dalam mode"
-
-#~ msgid "Already in opposite list"
-#~ msgstr "Sudah dalam daftar berlawanan"
-
-#~ msgid "Too many groups"
-#~ msgstr "Terlalu banyak kelompok"
-
-#~ msgid "Invalid group"
-#~ msgstr "Kelompok tidak valid"
-
-#~ msgid "User not in group"
-#~ msgstr "Pengguna tidak dalam kelompok"
-
-#~ msgid "Group name too long"
-#~ msgstr "Nama Kelompok terlalu panjang"
-
-#~ msgid "Cannot remove group zero"
-#~ msgstr "Tidak dapat menghilangkan nol kelompok"
-
-#~ msgid "Tried to add a user to a group that doesn't exist"
-#~ msgstr "Mencoba menambahkan pengguna ke kelompok yang tidak ada"
-
-#~ msgid "Switchboard failed"
-#~ msgstr "Switchboard gagal"
-
-#~ msgid "Notify transfer failed"
-#~ msgstr "Pemberitahuan transfer gagal"
-
-#~ msgid "Required fields missing"
-#~ msgstr "Bagian yang diwajibkan tidak ada"
-
-#~ msgid "Too many hits to a FND"
-#~ msgstr "Terlalu banyak hit pada FND"
-
-#~ msgid "Service temporarily unavailable"
-#~ msgstr "Layanan sementara tidak tersedia"
-
-#~ msgid "Database server error"
-#~ msgstr "Kesalahan server Database"
-
-#~ msgid "Command disabled"
-#~ msgstr "Perintah dimatikan"
-
-#~ msgid "File operation error"
-#~ msgstr "Kesalahan operasional file"
-
-#~ msgid "Memory allocation error"
-#~ msgstr "Kesalahan alokasi memori"
-
-#~ msgid "Wrong CHL value sent to server"
-#~ msgstr "Nilai CHL salah dikirim ke server"
-
-#~ msgid "Server busy"
-#~ msgstr "Server sibuk"
-
-#~ msgid "Server unavailable"
-#~ msgstr "Server tidak tersedia"
-
-#~ msgid "Peer notification server down"
-#~ msgstr "Server pemberitahuan pencarian mati"
-
-#~ msgid "Database connect error"
-#~ msgstr "Kesalahan sambungan database"
-
-#~ msgid "Server is going down (abandon ship)"
-#~ msgstr "Server akan segera mati (tinggalkan kapal)"
-
-#~ msgid "Error creating connection"
-#~ msgstr "Kesalahan membuat sambungan"
-
-#~ msgid "CVR parameters are either unknown or not allowed"
-#~ msgstr "Parameter CVR tidak dikenal atau tidak diijinkan"
-
-#~ msgid "Unable to write"
-#~ msgstr "Tidak dapat menulis"
-
-#~ msgid "Session overload"
-#~ msgstr "Sesi overload"
-
-#~ msgid "User is too active"
-#~ msgstr "Pengguna terlalu aktif"
-
-#~ msgid "Too many sessions"
-#~ msgstr "Terlalu banyak sesi"
-
-#~ msgid "Passport not verified"
-#~ msgstr "Kata sandi tidak diverifikasi"
-
-#~ msgid "Bad friend file"
-#~ msgstr "File teman buruk"
-
-#~ msgid "Not expected"
-#~ msgstr "Tidak diharapkan"
-
-#~ msgid "Server too busy"
-#~ msgstr "Server terlalu sibuk"
-
-#~ msgid "Not allowed when offline"
-#~ msgstr "Tidak diijinkan saat offline"
-
-#~ msgid "Not accepting new users"
-#~ msgstr "Tidak menerima pengguna baru"
-
-#~ msgid "Kids Passport without parental consent"
-#~ msgstr "Paspor Anak tanpa ijin orang tua"
-
-#~ msgid "Passport account not yet verified"
-#~ msgstr "Akun paspor belum diverifikasi"
-
-#~ msgid "Bad ticket"
-#~ msgstr "Tiket buruk"
-
-#~ msgid "Unknown Error Code %d"
-#~ msgstr "Kesalahan Kode Tidak Dikenal %d"
-
-#~ msgid "MSN Error: %s\n"
-#~ msgstr "Kesalahan MSN: %s\n"
-
-#~ msgid "Buddy list synchronization issue in %s (%s)"
-#~ msgstr "Isu sinkronisasi daftar teman dalam %s (%s)"
-
-#~ msgid ""
-#~ "%s on the local list is inside the group \"%s\" but not on the server "
-#~ "list. Do you want this buddy to be added?"
-#~ msgstr ""
-#~ "%s pada daftar lokal ada dalam kelompok \"%s\" Tetapi tidak pada daftar "
-#~ "server. Apakah anda ingin teman ini ditambahkan?"
-
-#~ msgid ""
-#~ "%s is on the local list but not on the server list. Do you want this "
-#~ "buddy to be added?"
-#~ msgstr ""
-#~ "%s ada pada daftar lokal tetapi tidak pada daftar server. Apakah anda "
-#~ "ingin teman ini ditambahkan?"
-
-#~ msgid "Nudge"
-#~ msgstr "Senggol"
-
-#~ msgid "%s has nudged you!"
-#~ msgstr "%s telah menyenggol anda!"
-
-#~ msgid "Nudging %s..."
-#~ msgstr "Menyenggol %s..."
-
-#~ msgid "Your new MSN friendly name is too long."
-#~ msgstr "Nama bersahabat MSN anda terlalu panjang."
-
-#~ msgid "This is the name that other MSN buddies will see you as."
-#~ msgstr "Ini adalah nama dengan yang mana teman-teman MSN anda melihat anda."
-
-#~ msgid "Allow"
-#~ msgstr "Ijinkan"
-
-#~ msgid "Disallow"
-#~ msgstr "Tidak Mengijinkan"
-
-#~ msgid "Set your home phone number."
-#~ msgstr "Atur nomor telepon rumah anda."
-
-#~ msgid "Set your work phone number."
-#~ msgstr "Atur nomor telepon kantor anda."
-
-#~ msgid "Set your mobile phone number."
-#~ msgstr "Atur nomor telepon seluler anda."
-
-#~ msgid "Allow MSN Mobile pages?"
-#~ msgstr "Ijinkan halaman MSN Mobile?"
-
-#~ msgid ""
-#~ "Do you want to allow or disallow people on your buddy list to send you "
-#~ "MSN Mobile pages to your cell phone or other mobile device?"
-#~ msgstr ""
-#~ "Apakah anda ingin mengijinkan atau sebaliknya orang-orang pada daftar "
-#~ "teman anda untuk mengirim halaman MSN Mobile ke telpon seluler atau "
-#~ "perangkat mobile anda lainnya?"
-
-#~ msgid "Send a mobile message."
-#~ msgstr "Simpan pesan mobile."
-
-#~ msgid "Page"
-#~ msgstr "Halaman"
-
-#~ msgid "Has you"
-#~ msgstr "Memiliki anda"
-
-#~ msgid "Be Right Back"
-#~ msgstr "Segera Kembali"
-
-#~ msgid "On the Phone"
-#~ msgstr "Pada telepon"
-
-#~ msgid "Out to Lunch"
-#~ msgstr "Sedang Makan Siang"
-
-#~ msgid "Set Friendly Name..."
-#~ msgstr "Atur Nama Bersahabat..."
-
-#~ msgid "Set Home Phone Number..."
-#~ msgstr "Atur Nomor Telepon Rumah..."
-
-#~ msgid "Set Work Phone Number..."
-#~ msgstr "Atur Nomor Telepon Kantor..."
-
-#~ msgid "Set Mobile Phone Number..."
-#~ msgstr "Atur Nomor Telepon Seluler..."
-
-#~ msgid "Enable/Disable Mobile Devices..."
-#~ msgstr "Aktifkan/Matikan Perangkat Mobile..."
-
-#~ msgid "Allow/Disallow Mobile Pages..."
-#~ msgstr "Aktifkan/Matikan Halaman Mobile..."
-
-#~ msgid "Open Hotmail Inbox"
-#~ msgstr "Buka Inbox Hotmail"
-
-#~ msgid "Send to Mobile"
-#~ msgstr "Kirim ke Mobile"
-
-#~ msgid ""
-#~ "SSL support is needed for MSN. Please install a supported SSL library."
-#~ msgstr ""
-#~ "Dukungan SSL diperlukan untuk MSN. Mohon instal pustaka SSL yang "
-#~ "didukung. "
-
-#~ msgid "Error retrieving profile"
-#~ msgstr "Kesalahan pemanggilan profil"
-
-#~ msgid "Occupation"
-#~ msgstr "Pekerjaan"
-
-#~ msgid "Hobbies and Interests"
-#~ msgstr "Hoby dan Minat"
-
-#~ msgid "A Little About Me"
-#~ msgstr "Sedikit Tentang Saya"
-
-#~ msgid "Social"
-#~ msgstr "Sosial"
-
-#~ msgid "Marital Status"
-#~ msgstr "Status Pernikahan"
-
-#~ msgid "Interests"
-#~ msgstr "Minat"
-
-#~ msgid "Pets"
-#~ msgstr "Binatang Peliharaan"
-
-#~ msgid "Hometown"
-#~ msgstr "Kota Kelahiran"
-
-#~ msgid "Places Lived"
-#~ msgstr "Pernah Tinggal"
-
-#~ msgid "Fashion"
-#~ msgstr "Gaya Berpakaian"
-
-#~ msgid "Humor"
-#~ msgstr "Humor"
-
-#~ msgid "Music"
-#~ msgstr "Musik"
-
-#~ msgid "Favorite Quote"
-#~ msgstr "Kutipan Favorit"
-
-#~ msgid "Contact Info"
-#~ msgstr "Info Kontak"
-
-#~ msgid "Personal"
-#~ msgstr "Pribadi"
-
-#~ msgid "Significant Other"
-#~ msgstr "Pasangan"
-
-#~ msgid "Home Phone"
-#~ msgstr "Telepone Rumah"
-
-#~ msgid "Home Phone 2"
-#~ msgstr "Telepone Rumah 2"
-
-#~ msgid "Personal Mobile"
-#~ msgstr "Ponsel Pribadi"
-
-#~ msgid "Home Fax"
-#~ msgstr "Faksimili Rumah"
-
-#~ msgid "Personal Email"
-#~ msgstr "Email Pribadi"
-
-#~ msgid "Personal IM"
-#~ msgstr "PI Pribadi"
-
-#~ msgid "Anniversary"
-#~ msgstr "Ulang Tahun"
-
-#~ msgid "Work"
-#~ msgstr "Pekerjaan"
-
-#~ msgid "Profession"
-#~ msgstr "Profesi"
-
-#~ msgid "Work Phone"
-#~ msgstr "Telepone Kantor"
-
-#~ msgid "Work Phone 2"
-#~ msgstr "Telepone Kantor 2"
-
-#~ msgid "Work Mobile"
-#~ msgstr "Ponsel Kantor"
-
-#~ msgid "Work Pager"
-#~ msgstr "Penyeranta Kantor"
-
-#~ msgid "Work Fax"
-#~ msgstr "Faksimili Kantor"
-
-#~ msgid "Work Email"
-#~ msgstr "Email Kantor"
-
-#~ msgid "Work IM"
-#~ msgstr "PI Kantor"
-
-#~ msgid "Start Date"
-#~ msgstr "Tanggal Bergabung"
-
-#~ msgid "Favorite Things"
-#~ msgstr "Hal-hal Favorit"
-
-#~ msgid "Last Updated"
-#~ msgstr "Teakhir Diperbaharui"
-
-#~ msgid "The user has not created a public profile."
-#~ msgstr "Pengguna belum membuat profil publik."
-
-#~ msgid ""
-#~ "MSN reported not being able to find the user's profile. This either means "
-#~ "that the user does not exist, or that the user exists but has not created "
-#~ "a public profile."
-#~ msgstr ""
-#~ "MSN mealporkan tidak dapat menemukan profil pengguna. Ini berarti "
-#~ "pengguna tidak ada, ataupun pengguna ada tetapi belum membuat profil "
-#~ "pribadi."
-
-#~ msgid ""
-#~ "Could not find any information in the user's profile. The user most "
-#~ "likely does not exist."
-#~ msgstr ""
-#~ "Tidak dapat menemukan informasi dalam profil pengguna. Pengguna "
-#~ "kemungkinan besar tidak ada."
-
-#~ msgid "Windows Live Messenger Protocol Plugin"
-#~ msgstr "Plugin Protokol Windows Live Messenger"
-
-#~ msgid "Use HTTP Method"
-#~ msgstr "Gunakan Metode HTTP"
-
-#~ msgid "HTTP Method Server"
-#~ msgstr "Sever Method HTTP"
-
-#~ msgid "Show custom smileys"
-#~ msgstr "Tampilkan senyuman kustom"
-
-#~ msgid "nudge: nudge a user to get their attention"
-#~ msgstr "sikut: sikut pengguna untuk mendapatkan perhatiannya"
-
-#~ msgid "Windows Live ID authentication:Unable to connect"
-#~ msgstr "Otentikasi Windows Live ID:Tidak dapat tersambung"
-
-#~ msgid "Unknown error (%d)"
-#~ msgstr "Kesalahan Tidak Dikenal (%d)"
-
-#~ msgid "Writing error"
-#~ msgstr "Kesalahan penulisan"
-
-#~ msgid "Reading error"
-#~ msgstr "Keslahan Pembacaan"
-
-#~ msgid ""
-#~ "Connection error from %s server:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Kesalahan sambungan dari server %s:\n"
-#~ "%s"
-
-#~ msgid ""
-#~ "The MSN servers are temporarily unavailable. Please wait and try again."
-#~ msgstr ""
-#~ "Server-server MSN sementara tidak tersedia. Mohon tunggu dan coba lagi."
-
-#~ msgid "Unable to authenticate: %s"
-#~ msgstr "Tidak dapat mengotentikasi: %s"
-
-#~ msgid "Handshaking"
-#~ msgstr "Jabat Tangan"
-
-#~ msgid "Transferring"
-#~ msgstr "Mentransfer"
-
-#~ msgid "Getting cookie"
-#~ msgstr "Mendapatkan cookie"
-
-#~ msgid "Sending cookie"
-#~ msgstr "Mengirim cookie"
-
-#~ msgid "Retrieving buddy list"
-#~ msgstr "Mengambil daftar teman"
-
-#~ msgid "Away From Computer"
-#~ msgstr "Menjauh Dari Komputer"
-
-#~ msgid "On The Phone"
-#~ msgstr "Sedang Menelepon"
-
-#~ msgid "Out To Lunch"
-#~ msgstr "Pergi Makan Siang"
-
-#~ msgid "Message may have not been sent because a timeout occurred:"
-#~ msgstr "Pesan mungkin tidak terkirim karena terjadi timeout:"
-
-#~ msgid "Message could not be sent, not allowed while invisible:"
-#~ msgstr "Pesan tidak dapat dikirim, tidak diijinkan saat tidak terlihat:"
-
-#~ msgid "Message could not be sent because the user is offline:"
-#~ msgstr "Pesan tidak dapat dikirim karena pengguna sedang offline:"
-
-#~ msgid "Message could not be sent because a connection error occurred:"
-#~ msgstr "Pesan tidak dapat dikirim karena kesalahan sambungan terjadi:"
-
-#~ msgid "Message could not be sent because we are sending too quickly:"
-#~ msgstr "Pesan tidak dapat dikirim karena kami mengirim terlalu cepat:"
-
-#~ msgid ""
-#~ "Message could not be sent because we were unable to establish a session "
-#~ "with the server. This is likely a server problem, try again in a few "
-#~ "minutes:"
-#~ msgstr ""
-#~ "Pesan tidak dapat dikirim karena kami tidak dapat menjalin sambungan "
-#~ "dengan server. Ini kemugnkinan masalah pada server, coba lagi dalam "
-#~ "beberapa menit:"
-
-#~ msgid ""
-#~ "Message could not be sent because an error with the switchboard occurred:"
-#~ msgstr ""
-#~ "Pesan tidak dapat dikirim karena kesalahan dengan switchboard terjadi:"
-
-#~ msgid "Message may have not been sent because an unknown error occurred:"
-#~ msgstr ""
-#~ "Pesan mungkin tidak terkirim karena kesalahan tidak dikenal terjadi:"
-
-#~ msgid "No such user: %s"
-#~ msgstr "Tidak ada pengguna: %s"
-
-#~ msgid "User lookup"
-#~ msgstr "Pencarian pengguna"
-
-#~ msgid "Reading challenge"
-#~ msgstr "Tantangan Pembacaan"
-
-#~ msgid "Unexpected challenge length from server"
-#~ msgstr "Tantangan panjang tak terduga dari dari server"
-
-#~ msgid "Logging in"
-#~ msgstr "Logging masuk"
-
-#~ msgid "New mail messages"
-#~ msgstr "Pesan surat baru"
-
-#~ msgid "New blog comments"
-#~ msgstr "Komentar blog baru"
-
-#~ msgid "New profile comments"
-#~ msgstr "Komentar profil baru"
-
-#~ msgid "New friend requests!"
-#~ msgstr "Permohonan teman baru!"
-
-#~ msgid "New picture comments"
-#~ msgstr "Komentar gambar baru"
-
-#~ msgid "MySpace"
-#~ msgstr "MySpace"
-
-#~ msgid "IM Friends"
-#~ msgstr "Teman-teman PI"
-
-#~ msgid "Add contacts from server"
-#~ msgstr "Tambahkan kontak dari server"
-
-#~ msgid "Protocol error, code %d: %s"
-#~ msgstr "Kesalahan protokol, kode %d: %s"
-
-#~ msgid "MySpaceIM Error"
-#~ msgstr "Kesalahan MySpaceIM"
-
-#~ msgid "Invalid input condition"
-#~ msgstr "Kondisi input tidak valid"
-
-#~ msgid "Failed to add buddy"
-#~ msgstr "Gagal menambahkan teman"
-
-#~ msgid "'addbuddy' command failed."
-#~ msgstr "Perintah addbuddy' gagal."
-
-#~ msgid "persist command failed"
-#~ msgstr "perintah bertahan gagal"
-
-#~ msgid "Failed to remove buddy"
-#~ msgstr "Gagal menghapus teman"
-
-#~ msgid "'delbuddy' command failed"
-#~ msgstr "perintah delbuddy' gagal"
-
-#~ msgid "blocklist command failed"
-#~ msgstr "perintah blocklist gagal"
-
-#~ msgid "Missing Cipher"
-#~ msgstr "Cipher Kurang"
-
-#~ msgid "The RC4 cipher could not be found"
-#~ msgstr "Cipher RC$ tidak dapat ditemukan"
-
-#~ msgid ""
-#~ "Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-#~ "not be loaded."
-#~ msgstr ""
-#~ "Perbaharui ke libpurple dengan dukungan RC4 (>= 2.0.1). Plugin MySpaceIM "
-#~ "tidak akan dimuat."
-
-#~ msgid "Add friends from MySpace.com"
-#~ msgstr "Tambahkan teman dari MySpace.com"
-
-#~ msgid "Importing friends failed"
-#~ msgstr "Mengimpor teman gagal"
-
-#~ msgid "Find people..."
-#~ msgstr "Cari orang..."
-
-#~ msgid "Change IM name..."
-#~ msgstr "Ganti nama PI..."
-
-#~ msgid "myim URL handler"
-#~ msgstr "pengatur myim URL"
-
-#~ msgid "No suitable MySpaceIM account could be found to open this myim URL."
-#~ msgstr ""
-#~ "Akun MySpaceIM yang cocok tidak ditemukan untuk membuka URL myim ini."
-
-#~ msgid "Enable the proper MySpaceIM account and try again."
-#~ msgstr "Mungkinkan akun MySpaceIM yang tepat dan coba lagi."
-
-#~ msgid "Show display name in status text"
-#~ msgstr "Tampilkan nama tampilan dalam teks status"
-
-#~ msgid "Show headline in status text"
-#~ msgstr "Tampilkan judul dalam teks status"
-
-#~ msgid "Send emoticons"
-#~ msgstr "Kirim emotikon"
-
-#~ msgid "Screen resolution (dots per inch)"
-#~ msgstr "Resolusi layar (titik per inchi)"
-
-#~ msgid "Base font size (points)"
-#~ msgstr "Ukuran huruf dasar (point)r"
-
-#~ msgid "Headline"
-#~ msgstr "Judul"
-
-#~ msgid "Song"
-#~ msgstr "Lagu"
-
-#~ msgid "Total Friends"
-#~ msgstr "Total Teman"
-
-#~ msgid "Client Version"
-#~ msgstr "Versi Klien"
-
-#~ msgid "No username set"
-#~ msgstr "Nama pengguan tidak diatur"
-
-#~ msgid "Zap"
-#~ msgstr "Zap"
-
-#~ msgid "%s has zapped you!"
-#~ msgstr "%s telah men-sap anda!"
-
-#~ msgid "Zapping %s..."
-#~ msgstr "Men-zap %s..."
-
-#~ msgid "Whack"
-#~ msgstr "Hantam"
-
-#~ msgid "%s has whacked you!"
-#~ msgstr "%s telah mengantam anda!"
-
-#~ msgid "Whacking %s..."
-#~ msgstr "Menghantam %s..."
-
-#~ msgid "Torch"
-#~ msgstr "Obor"
-
-#~ msgid "%s has torched you!"
-#~ msgstr "%s telah membakar anda!"
-
-#~ msgid "Torching %s..."
-#~ msgstr "Membakar %s..."
-
-#~ msgid "Smooch"
-#~ msgstr "Cipok"
-
-#~ msgid "%s has smooched you!"
-#~ msgstr "%s telah mencipok anda!"
-
-#~ msgid "Smooching %s..."
-#~ msgstr "Mencipok %s..."
-
-#~ msgid "Hug"
-#~ msgstr "Peluk"
-
-#~ msgid "%s has hugged you!"
-#~ msgstr "%s telah memeluk anda!"
-
-#~ msgid "Hugging %s..."
-#~ msgstr "Memeluk %s..."
-
-#~ msgid "Slap"
-#~ msgstr "Tampar"
-
-#~ msgid "%s has slapped you!"
-#~ msgstr "%s telah menampar anda!"
-
-#~ msgid "Slapping %s..."
-#~ msgstr "Menampar %s..."
-
-#~ msgid "Goose"
-#~ msgstr "Meneriaki"
-
-#~ msgid "%s has goosed you!"
-#~ msgstr "%s telah meneriaki anda!"
-
-#~ msgid "Goosing %s..."
-#~ msgstr "Meneriaki %s..."
-
-#~ msgid "High-five"
-#~ msgstr "Tos"
-
-#~ msgid "%s has high-fived you!"
-#~ msgstr "%s telah mentos anda!"
-
-#~ msgid "High-fiving %s..."
-#~ msgstr "Men-tos %s..."
-
-#~ msgid "Punk"
-#~ msgstr "Mengerjai"
-
-#~ msgid "%s has punk'd you!"
-#~ msgstr "%s telah mengerjai anda!"
-
-#~ msgid "Punking %s..."
-#~ msgstr "Mengerjai %s..."
-
-#~ msgid "Raspberry"
-#~ msgstr "Mencoret"
-
-#~ msgid "%s has raspberried you!"
-#~ msgstr "%s telah mencoret anda!"
-
-#~ msgid "Raspberrying %s..."
-#~ msgstr "Mencoret-coret %s..."
-
-#~ msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-#~ msgstr "join &lt;room&gt;:  Gabung kamar percakapan pada jaringan Yahoo"
-
-#~ msgid "list: List rooms on the Yahoo network"
-#~ msgstr "daftar:  Daftar kamar pada jaringan Yahoo"
-
-#~ msgid "doodle: Request user to start a Doodle session"
-#~ msgstr "doodle: Minta pengguna untuk memulasi sesi Doodle"
-
-#~ msgid "Pager port"
-#~ msgstr "Port Penyeranta"
-
-#~ msgid "File transfer server"
-#~ msgstr "Server transfer file"
-
-#~ msgid "File transfer port"
-#~ msgstr "Port Transfer File"
-
-#~ msgid "Chat room locale"
-#~ msgstr "Kamar Pengguna Lokal"
-
-#~ msgid "Ignore conference and chatroom invitations"
-#~ msgstr "Abaikan undangan konferensi dan kamar percakapan"
-
-#~ msgid "Chat room list URL"
-#~ msgstr "Daftar URL kamar percakapan"
-
-#~ msgid "%s has sent you a webcam invite, which is not yet supported."
-#~ msgstr "%s telah mengirimkan anda undangan webcam yang belum didukung."
-
-#~ msgid "Your Yahoo! message did not get sent."
-#~ msgstr "Pesan Yahoo! anda tidak terkirim."
-
-#~ msgid "Yahoo! system message for %s:"
-#~ msgstr "Pesan sistem Yahoo! untuk %s:"
-
-#~ msgid "Authorization denied message:"
-#~ msgstr "Otorisasi menolak pesan:"
-
-#~ msgid ""
-#~ "%s has (retroactively) denied your request to add them to your list for "
-#~ "the following reason: %s."
-#~ msgstr ""
-#~ "%s telah (secara retroaktif) menolak permohonan anda untuk menambahkan "
-#~ "mereka ke daftar anda dengan alasan sebagai berikut: %s."
-
-#~ msgid "%s has (retroactively) denied your request to add them to your list."
-#~ msgstr ""
-#~ "%s telah (secara retroaktif) menolak permohonan andan untuk menambahkan "
-#~ "mereka ke daftar anda."
-
-#~ msgid "Add buddy rejected"
-#~ msgstr "Penambahan teman ditolak"
-
-#~ msgid ""
-#~ "The Yahoo server has requested the use of an unrecognized authentication "
-#~ "method.  You will probably not be able to successfully sign on to Yahoo.  "
-#~ "Check %s for updates."
-#~ msgstr ""
-#~ "Server Yahoo telah mengajukan penggunaan metode otentikasi yang tidak "
-#~ "dikenal. Kemungkinan anda tidak akan dapat tersambung dengan sukses ke "
-#~ "Yahoo. Periksa %s untuk pembaharuan."
-
-#~ msgid "Failed Yahoo! Authentication"
-#~ msgstr "Otentikasi Yahoo! Gagal"
-
-#~ msgid ""
-#~ "You have tried to ignore %s, but the user is on your buddy list.  "
-#~ "Clicking \"Yes\" will remove and ignore the buddy."
-#~ msgstr ""
-#~ "Anda mencoba mengasuhkan %s, tetapi pengguna ada pada daftar teman adan. "
-#~ "Dengan mengklik \"Iya\" akan menghilangkan dan mengacuhkan teman."
-
-#~ msgid "Ignore buddy?"
-#~ msgstr "Acuhkan teman?"
-
-#~ msgid ""
-#~ "Unknown error number %d. Logging into the Yahoo! website may fix this."
-#~ msgstr ""
-#~ "Kesalahan nomor tidak dikenal %d. Login ke situs Yahoo! dapat memperbaiki "
-#~ "ini."
-
-#~ msgid "[ Audible %s/%s/%s.swf ] %s"
-#~ msgstr "[ %s/%s/%s.swf dengan suara ] %s"
-
-#~ msgid "Not at Home"
-#~ msgstr "Tidak ada di Rumah"
-
-#~ msgid "Not at Desk"
-#~ msgstr "Tidak ada di Meja"
-
-#~ msgid "Not in Office"
-#~ msgstr "Tidak ada di Kantor"
-
-#~ msgid "On Vacation"
-#~ msgstr "Berlibur"
-
-#~ msgid "Stepped Out"
-#~ msgstr "Keluar"
-
-#~ msgid "Not on server list"
-#~ msgstr "Tidak ada pada daftar server"
-
-#~ msgid "Appear Permanently Offline"
-#~ msgstr "Tampak Offline Secara Permanen"
-
-#~ msgid "Presence"
-#~ msgstr "Kehadiran"
-
-#~ msgid "Don't Appear Permanently Offline"
-#~ msgstr "Jangan Tampak Offline Secara Permanen"
-
-#~ msgid "Join in Chat"
-#~ msgstr "Gabung ke Percakapan"
-
-#~ msgid "Initiate Conference"
-#~ msgstr "Memulai Konferensi"
-
-#~ msgid "Presence Settings"
-#~ msgstr "Pengaturan Kehadiran"
-
-#~ msgid "Start Doodling"
-#~ msgstr "Mulai Doodling"
-
-#~ msgid "Join whom in chat?"
-#~ msgstr "Gabung siapa dalam percakapan?"
-
-#~ msgid "Activate ID..."
-#~ msgstr "Aktifkan ID..."
-
-#~ msgid "Join User in Chat..."
-#~ msgstr "Gabung Pengguna dalam Percakapan..."
-
-#~ msgid "Open Inbox"
-#~ msgstr "Buka Inbox"
-
-#~ msgid "Sent Doodle request."
-#~ msgstr "Mengirim permohonan Doodle."
-
-#~ msgid "Unable to connect."
-#~ msgstr "Tidak dapat menyambung."
-
-#~ msgid "Unable to establish file descriptor."
-#~ msgstr "Gagal menetapkan deskriptor file."
-
-#~ msgid "Write Error"
-#~ msgstr "Kesalahan Penulisan"
-
-#~ msgid "Yahoo! Japan Profile"
-#~ msgstr "Profil Yahoo! Jepang"
-
-#~ msgid "Yahoo! Profile"
-#~ msgstr "Profil Yahoo!"
-
-#~ msgid ""
-#~ "Sorry, profiles marked as containing adult content are not supported at "
-#~ "this time."
-#~ msgstr ""
-#~ "Maaf, profil yang ditandai berisi materi untuk orang dewasa tidak "
-#~ "didukung pada saat ini."
-
-#~ msgid ""
-#~ "If you wish to view this profile, you will need to visit this link in "
-#~ "your web browser:"
-#~ msgstr ""
-#~ "Apabila anda ingin melihat profil ini, anda harus mengunjungi link ini "
-#~ "pada browser web anda:"
-
-#~ msgid "Yahoo! ID"
-#~ msgstr "ID Yahoo!"
-
-#~ msgid "Hobbies"
-#~ msgstr "Hoby"
-
-#~ msgid "Latest News"
-#~ msgstr "Berita Terakhir"
-
-#~ msgid "Home Page"
-#~ msgstr "Homepage"
-
-#~ msgid "Cool Link 1"
-#~ msgstr "Link Keren 1"
-
-#~ msgid "Cool Link 2"
-#~ msgstr "Link Keren 2"
-
-#~ msgid "Cool Link 3"
-#~ msgstr "Link Keren 3"
-
-#~ msgid "Last Update"
-#~ msgstr "Pembaharuan Terakhir"
-
-#~ msgid ""
-#~ "Could not retrieve the user's profile. This most likely is a temporary "
-#~ "server-side problem. Please try again later."
-#~ msgstr ""
-#~ "Tidak dapat memanggil profil pengguna. Kemungkian ini masalah sementara "
-#~ "di sisi server. Mohon coba lagi nanti."
-
-#~ msgid ""
-#~ "Could not retrieve the user's profile. This most likely means that the "
-#~ "user does not exist; however, Yahoo! sometimes does fail to find a user's "
-#~ "profile. If you know that the user exists, please try again later."
-#~ msgstr ""
-#~ "Tidak dapat memanggil profil pengguna. Kemungkinan ini berarti bahwa "
-#~ "pengguna tidak ada; namun, Yahoo! kadang-kadang gagal untuk menemukan "
-#~ "profil pengguna. Apabila anda yakin pengguna ada, mohon coba lagi nanti."
-
-#~ msgid "The user's profile is empty."
-#~ msgstr "Profil Pengguna Kosong."
-
-#~ msgid "Failed to join chat"
-#~ msgstr "Gagal bergabung ke percakapan"
-
-#~ msgid "Unknown room"
-#~ msgstr "Kamar tidak dikenal"
-
-#~ msgid "Maybe the room is full"
-#~ msgstr "Mungkin kamar penuh"
-
-#~ msgid "Not available"
-#~ msgstr "Tidak tersedia"
-
-#~ msgid ""
-#~ "Unknown error. You may need to logout and wait five minutes before being "
-#~ "able to rejoin a chatroom"
-#~ msgstr ""
-#~ "Kesalahan tidak dikenal. Anda mungkin perlu logout dan menunggu lima "
-#~ "menit sebelum dapat bergabung kembali ke kamar percakapan"
-
-#~ msgid "You are now chatting in %s."
-#~ msgstr "Anda sekarang bercakap-cakap dalam %s."
-
-#~ msgid "Failed to join buddy in chat"
-#~ msgstr "Gagal menggabungkan teman dlam percakapan"
-
-#~ msgid "Maybe they're not in a chat?"
-#~ msgstr "Mungkin mereka tidak ada dalam percakapan?"
-
-#~ msgid "Fetching the room list failed."
-#~ msgstr "Pemanggilan daftar kamar gagal."
-
-#~ msgid "Voices"
-#~ msgstr "Suara-suara"
-
-#~ msgid "Webcams"
-#~ msgstr "Webcam"
-
-#~ msgid "Connection problem"
-#~ msgstr "Masalah sambungan"
-
-#~ msgid "Unable to fetch room list."
-#~ msgstr "Tidak dapat memanggil daftar kamar."
-
-#~ msgid "User Rooms"
-#~ msgstr "Kamar Pengguna"

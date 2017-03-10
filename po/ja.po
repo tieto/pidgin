@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-09 18:54-0600\n"
-"PO-Revision-Date: 2016-06-06 21:09+0000\n"
-"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Japanese (http://www.transifex.com/pidgin/pidgin/language/"
 "ja/)\n"
 "Language: ja\n"
@@ -1258,9 +1258,8 @@ msgstr "GStreamer の初期化に失敗しました"
 msgid "(default)"
 msgstr "(デフォルト)"
 
-#, fuzzy
 msgid "Select Sound File..."
-msgstr "サウンドファイルの選択 ..."
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr "サウンドの設定"
@@ -1379,14 +1378,12 @@ msgstr "メッセージ"
 msgid "Edit Status"
 msgstr "状態の編集"
 
-#, fuzzy
 msgid "Use a different status for some accounts"
-msgstr "同じアカウントで別の状態を利用する(_D)"
+msgstr ""
 
 #. Save and Use
-#, fuzzy
 msgid "Save and Use"
-msgstr "保存して使う"
+msgstr ""
 
 msgid "Certificates"
 msgstr ""
@@ -1513,9 +1510,8 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr "上記 URL の TinyURL: %s"
 
-#, fuzzy
 msgid "Please wait while TinyURL fetches a shorter URL..."
-msgstr "TinyURL が短い URL を取得するまでお待ちください ..."
+msgstr ""
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "この長さ以上の URL にのみ TinyURL を作成する"
@@ -2756,13 +2752,10 @@ msgstr "サイキック・モード"
 msgid "Psychic mode for incoming conversation"
 msgstr "受信した会話をサイキック・モードで表示します"
 
-#, fuzzy
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
 "This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
-"他の仲間がメッセージ入力し始めたら会話ウィンドウを表示します (AIM、ICQ、"
-"XMPP、Sametime、Yahoo!で動作します)。"
 
 msgid "You feel a disturbance in the force..."
 msgstr "フォースによって混乱させられた気分になります..."
@@ -5575,9 +5568,8 @@ msgstr "サーバとの接続で不正なデータを受け取りました"
 msgid "Error parsing response from authentication server"
 msgstr ""
 
-#, fuzzy
 msgid "Unknown error during authentication"
-msgstr "認証を開始しています"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -6190,9 +6182,8 @@ msgstr "承認を待っている仲間を表示"
 msgid "Search for Buddy by Email Address..."
 msgstr "E-メールで仲間の検索..."
 
-#, fuzzy
 msgid "clientLogin"
-msgstr "強制的にログインしています"
+msgstr ""
 
 msgid "Kerberos"
 msgstr ""
@@ -6200,9 +6191,8 @@ msgstr ""
 msgid "MD5-based"
 msgstr ""
 
-#, fuzzy
 msgid "Authentication method"
-msgstr "認証に失敗しました"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -9852,7 +9842,6 @@ msgstr ""
 "ト</A><BR>\t<A HREF=\"%s\">よくある質問と答え</A><BR>\tIRC チャンネル: "
 "#pidgin on irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, fuzzy
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "emailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>This "
@@ -9862,12 +9851,6 @@ msgid ""
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\"><b>他の Pidgin ユーザからの助け</b></font> は <a href="
-"\"mailto:support@pidgin.im\">support@pidgin.im</a> にメールすれば得られます。"
-"<br/>これは<b>公開された</b>メーリングリストです! (<a href=\"http://pidgin."
-"im/pipermail/support/\">アーカイブ</a>)<br/>サードパーティのプロトコルやプラ"
-"グインについては手助けできません!<br/>このリストの第一言語は<b>英語</b>です。"
-"他の言語での投稿も歓迎はしますが、反応は役立たないかもしれません。<br/>"
 
 #, c-format
 msgid "About %s"
@@ -11305,9 +11288,8 @@ msgid "Use a _different status for some accounts"
 msgstr "同じアカウントで別の状態を利用する(_D)"
 
 #. Save and Use button
-#, fuzzy
 msgid "Sa_ve and Use"
-msgstr "保存して使う(_V)"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -12033,9 +12015,8 @@ msgstr ""
 msgid "Notify For"
 msgstr "通知先"
 
-#, fuzzy
 msgid "\tS_ystem messages"
-msgstr "システムのメッセージ"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t誰かがあなたのユーザ名を呼んだ時だけ(_O)"
@@ -12223,14 +12204,10 @@ msgstr "生データ"
 msgid "Lets you send raw input to text-based protocols."
 msgstr "生データをテキスト形式のプロトコルに送信できます"
 
-#, fuzzy
 msgid ""
 "Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"入力した生データをテキスト形式のプロトコル (XMPP, MSN, IRC, TOC) へ送信できま"
-"す。送信する際は入力ボックスの中で [ENTER] キーを押してください。デバッグ・"
-"ウィンドウで送信内容を監視してください。"
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -12673,15 +12650,10 @@ msgid "Variable Transparency for the buddy list and conversations."
 msgstr "仲間リストと会話ウィンドウを段階的に透明化します"
 
 #. *  description
-#, fuzzy
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
 "the buddy list."
 msgstr ""
-"このプラグインは可変式α透過を使って仲間リストと会話ウィンドウを透明にしま"
-"す。\n"
-"\n"
-"* 注記: このプラグインは Windows 2000 以上で動作します。"
 
 #. Autostart
 msgid "Startup"
@@ -12869,1010 +12841,3 @@ msgstr ""
 msgid "You do not have permission to uninstall this application."
 msgstr ""
 "あなたはこのアプリケーションをアンインストールする権限を持っていません。"
-
-#~ msgid "Pounce Who"
-#~ msgstr "誰をつかむか..."
-
-#~ msgid "Use different status for following accounts"
-#~ msgstr "次のアカウントで別の状態を使用する"
-
-#~ msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-#~ msgstr ""
-#~ "URL 付きのメッセージを受信した時、TinyURL を使ってコピーしやすくしましょう"
-
-#~ msgid "Whether the specified command should handle \"msnim\" URLs"
-#~ msgstr "指定したコマンドで \"msnim\" の URL を処理するかどうか"
-
-#~ msgid ""
-#~ "True if the command specified in the \"command\" key should handle \"msnim"
-#~ "\" URLs."
-#~ msgstr ""
-#~ "\"command\" キーで指定したコマンドで \"msnim\" の URL を処理する場合は "
-#~ "TRUE です。"
-
-#~ msgid "The handler for \"msnim\" URLs"
-#~ msgstr "\"msnim\" 向けのハンドラ"
-
-#~ msgid "The command used to handle \"msnim\" URLs, if enabled."
-#~ msgstr ""
-#~ "\"msnim\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
-
-#~ msgid "Whether the specified command should handle \"ymsgr\" URLs"
-#~ msgstr "指定したコマンドで \"ymsgr\" の URL を処理するかどうか"
-
-#~ msgid ""
-#~ "True if the command specified in the \"command\" key should handle \"ymsgr"
-#~ "\" URLs."
-#~ msgstr ""
-#~ "\"command\" キーで指定したコマンドで \"ymsgr\" の URL を処理する場合は "
-#~ "TRUE です。"
-
-#~ msgid "The handler for \"ymsgr\" URLs"
-#~ msgstr "\"ymsgr\" 向けのハンドラ"
-
-#~ msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-#~ msgstr ""
-#~ "\"ymsgr\" の URL を処理する際に使用するコマンドです (利用可能であれば)。"
-
-#~ msgid "Unable to add \"%s\"."
-#~ msgstr "\"%s\" さんを追加できません"
-
-#~ msgid "Buddy Add error"
-#~ msgstr "仲間を追加しようとしてエラー"
-
-#~ msgid "The username specified does not exist."
-#~ msgstr "指定したユーザ名が存在しません。"
-
-#~ msgid "Unable to parse message"
-#~ msgstr "メッセージを解読できません"
-
-#~ msgid "Syntax Error (probably a client bug)"
-#~ msgstr "文法エラー (おそらくクライアント側のバグ)"
-
-#~ msgid "Invalid email address"
-#~ msgstr "E-メール・アドレスが間違っています"
-
-#~ msgid "User does not exist"
-#~ msgstr "ユーザがいません"
-
-#~ msgid "Fully qualified domain name missing"
-#~ msgstr "FQDN (完全修飾ドメイン名) がありません"
-
-#~ msgid "Already logged in"
-#~ msgstr "既にサインインしています"
-
-#~ msgid "Invalid username"
-#~ msgstr "ユーザ名が違っています"
-
-#~ msgid "Invalid friendly name"
-#~ msgstr "無効な公開名です"
-
-#~ msgid "List full"
-#~ msgstr "リストがいっぱいです"
-
-#~ msgid "Already there"
-#~ msgstr "既にそこにいます"
-
-#~ msgid "Not on list"
-#~ msgstr "リストにありません"
-
-#~ msgid "Already in the mode"
-#~ msgstr "既にそのモードにいます"
-
-#~ msgid "Already in opposite list"
-#~ msgstr "既にリストの反対にいます"
-
-#~ msgid "Too many groups"
-#~ msgstr "グループが多すぎます"
-
-#~ msgid "Invalid group"
-#~ msgstr "無効なグループ名"
-
-#~ msgid "User not in group"
-#~ msgstr "ユーザがグループにありません"
-
-#~ msgid "Group name too long"
-#~ msgstr "グループ名が長すぎます"
-
-#~ msgid "Cannot remove group zero"
-#~ msgstr "グループ 0 は削除できません"
-
-#~ msgid "Tried to add a user to a group that doesn't exist"
-#~ msgstr "存在しないグループにユーザを追加しようとしました"
-
-#~ msgid "Switchboard failed"
-#~ msgstr "スイッチボードに失敗しました"
-
-#~ msgid "Notify transfer failed"
-#~ msgstr "通知の転送に失敗しました"
-
-#~ msgid "Required fields missing"
-#~ msgstr "必要なフィールドがありません"
-
-#~ msgid "Too many hits to a FND"
-#~ msgstr "FND にヒットしすぎです"
-
-#~ msgid "Service temporarily unavailable"
-#~ msgstr "一時的にサービスを利用できません"
-
-#~ msgid "Database server error"
-#~ msgstr "データベース・サーバのエラー"
-
-#~ msgid "Command disabled"
-#~ msgstr "コマンドが無効です"
-
-#~ msgid "File operation error"
-#~ msgstr "ファイル操作のエラー"
-
-#~ msgid "Memory allocation error"
-#~ msgstr "メモリ確保のエラー"
-
-#~ msgid "Wrong CHL value sent to server"
-#~ msgstr "間違った CHL 値がサーバに送信されました"
-
-#~ msgid "Server busy"
-#~ msgstr "サーバがビジーです"
-
-#~ msgid "Server unavailable"
-#~ msgstr "サーバを利用できません"
-
-#~ msgid "Peer notification server down"
-#~ msgstr "ピア通知サーバがダウンしています"
-
-#~ msgid "Database connect error"
-#~ msgstr "データベース接続エラーです"
-
-#~ msgid "Server is going down (abandon ship)"
-#~ msgstr "サーバがダウンしています (見捨てましょう)"
-
-#~ msgid "Error creating connection"
-#~ msgstr "接続を開始する際にエラー"
-
-#~ msgid "CVR parameters are either unknown or not allowed"
-#~ msgstr "CVR パラメータが不明または許可されていません"
-
-#~ msgid "Unable to write"
-#~ msgstr "書き込めません"
-
-#~ msgid "Session overload"
-#~ msgstr "セッションの負荷が過剰です"
-
-#~ msgid "User is too active"
-#~ msgstr "ユーザがアクティブすぎます"
-
-#~ msgid "Too many sessions"
-#~ msgstr "セッションが多すぎです"
-
-#~ msgid "Passport not verified"
-#~ msgstr "パスポートは確認されていません"
-
-#~ msgid "Bad friend file"
-#~ msgstr "おかしな仲間ファイル"
-
-#~ msgid "Not expected"
-#~ msgstr "予想していないデータ"
-
-#~ msgid "Server too busy"
-#~ msgstr "サーバがとてもビジーです"
-
-#~ msgid "Not allowed when offline"
-#~ msgstr "オフラインの時は許可できません"
-
-#~ msgid "Not accepting new users"
-#~ msgstr "新しいユーザを受け入れていません"
-
-#~ msgid "Kids Passport without parental consent"
-#~ msgstr "親の承諾がない Kids パスポートです"
-
-#~ msgid "Passport account not yet verified"
-#~ msgstr "まだパスポートのアカウントは確認されていません"
-
-#~ msgid "Bad ticket"
-#~ msgstr "おかしなチケットです"
-
-#~ msgid "Unknown Error Code %d"
-#~ msgstr "不明なエラー・コード %d"
-
-#~ msgid "MSN Error: %s\n"
-#~ msgstr "MSN エラー: %s\n"
-
-#~ msgid "Buddy list synchronization issue in %s (%s)"
-#~ msgstr "%s (%s) で仲間リストの同期が発生しました"
-
-#~ msgid ""
-#~ "%s on the local list is inside the group \"%s\" but not on the server "
-#~ "list. Do you want this buddy to be added?"
-#~ msgstr ""
-#~ "ローカルの仲間リストに記述されている %s さんはグループ \"%s\" に所属してい"
-#~ "ますが、サーバ上のリストではそうなっていません。サーバ上のリストで、この仲"
-#~ "間を追加してよろしいですか?"
-
-#~ msgid ""
-#~ "%s is on the local list but not on the server list. Do you want this "
-#~ "buddy to be added?"
-#~ msgstr ""
-#~ "ローカルの仲間リストに記述されている %s さんはサーバ上のリストに存在しませ"
-#~ "ん。サーバ上のリストで、この仲間を追加してもよろしいですか?"
-
-#~ msgid "Other Contacts"
-#~ msgstr "他の連絡先"
-
-#~ msgid "Non-IM Contacts"
-#~ msgstr "IM 以外の連絡先"
-
-#~ msgid "Email Address..."
-#~ msgstr "E-メール・アドレス..."
-
-#~ msgid "Your new MSN friendly name is too long."
-#~ msgstr "新しい MSN の公開名が長すぎます"
-
-#~ msgid "This is the name that other MSN buddies will see you as."
-#~ msgstr "MSN の他の仲間があなたを見るときに表示される名前です:"
-
-#~ msgid "Allow"
-#~ msgstr "許可する"
-
-#~ msgid "Disallow"
-#~ msgstr "許可しない"
-
-#~ msgid "Set your home phone number."
-#~ msgstr "自宅の電話番号を設定してください"
-
-#~ msgid "Set your work phone number."
-#~ msgstr "オフィスの電話番号を設定してください"
-
-#~ msgid "Set your mobile phone number."
-#~ msgstr "携帯電話の番号を設定してください"
-
-#~ msgid "Allow MSN Mobile pages?"
-#~ msgstr "MSN モバイル・ページを許可しますか?"
-
-#~ msgid ""
-#~ "Do you want to allow or disallow people on your buddy list to send you "
-#~ "MSN Mobile pages to your cell phone or other mobile device?"
-#~ msgstr ""
-#~ "仲間が携帯電話などのモバイル機器へ MSN モバイル・ページを送信することを許"
-#~ "可しますか?"
-
-#~ msgid "Send a mobile message."
-#~ msgstr "モバイル・メッセージを送信します。"
-
-#~ msgid "Page"
-#~ msgstr "ページ"
-
-#~ msgid "Has you"
-#~ msgstr "あなたを仲間リストに登録しているか"
-
-#~ msgid "Home Phone Number"
-#~ msgstr "自宅の電話番号"
-
-#~ msgid "Work Phone Number"
-#~ msgstr "オフィスの電話番号"
-
-#~ msgid "Mobile Phone Number"
-#~ msgstr "携帯の電話番号"
-
-#~ msgid "Be Right Back"
-#~ msgstr "もうすぐ帰ってきます"
-
-#~ msgid "On the Phone"
-#~ msgstr "電話中です"
-
-#~ msgid "Out to Lunch"
-#~ msgstr "食事に出かけています"
-
-#~ msgid "Set Friendly Name..."
-#~ msgstr "公開する名前の設定..."
-
-#~ msgid "View Locations..."
-#~ msgstr "場所を表示..."
-
-#~ msgid "Set Home Phone Number..."
-#~ msgstr "自宅の電話番号の設定..."
-
-#~ msgid "Set Work Phone Number..."
-#~ msgstr "オフィスの電話番号の設定..."
-
-#~ msgid "Set Mobile Phone Number..."
-#~ msgstr "携帯の電話番号の設定..."
-
-#~ msgid "Enable/Disable Mobile Devices..."
-#~ msgstr "モバイル機器の有効/無効..."
-
-#~ msgid "Allow/Disallow Mobile Pages..."
-#~ msgstr "モバイル・ページの許可/非許可...."
-
-#~ msgid "Open Hotmail Inbox"
-#~ msgstr "Hotmail の受信箱を開く"
-
-#~ msgid "Send to Mobile"
-#~ msgstr "モバイル機器へ送信"
-
-#~ msgid ""
-#~ "SSL support is needed for MSN. Please install a supported SSL library."
-#~ msgstr ""
-#~ "MSN では SSL サポートが必要です (サポートする SSL ライブラリをインストール"
-#~ "してください)"
-
-#~ msgid "Error retrieving profile"
-#~ msgstr "プロフィールを取得する際にエラー"
-
-#~ msgid "Occupation"
-#~ msgstr "職業"
-
-#~ msgid "Hobbies and Interests"
-#~ msgstr "趣味と興味のあること"
-
-#~ msgid "A Little About Me"
-#~ msgstr "ちょっとしたプロフィール"
-
-#~ msgid "Social"
-#~ msgstr "パーティ"
-
-#~ msgid "Marital Status"
-#~ msgstr "既婚/未婚"
-
-#~ msgid "Interests"
-#~ msgstr "趣味"
-
-#~ msgid "Pets"
-#~ msgstr "ペット"
-
-#~ msgid "Hometown"
-#~ msgstr "出身地"
-
-#~ msgid "Places Lived"
-#~ msgstr "現住所"
-
-#~ msgid "Fashion"
-#~ msgstr "ファッション"
-
-#~ msgid "Humor"
-#~ msgstr "ユーモア"
-
-#~ msgid "Music"
-#~ msgstr "音楽"
-
-#~ msgid "Favorite Quote"
-#~ msgstr "座右の銘"
-
-#~ msgid "Contact Info"
-#~ msgstr "連絡先の情報"
-
-#~ msgid "Personal"
-#~ msgstr "個人"
-
-#~ msgid "Significant Other"
-#~ msgstr "大切な人"
-
-#~ msgid "Home Phone"
-#~ msgstr "ホームページ"
-
-#~ msgid "Home Phone 2"
-#~ msgstr "ホームページ2"
-
-#~ msgid "Personal Mobile"
-#~ msgstr "携帯 (個人)"
-
-#~ msgid "Home Fax"
-#~ msgstr "自宅の FAX"
-
-#~ msgid "Personal Email"
-#~ msgstr "個人の E-メール"
-
-#~ msgid "Personal IM"
-#~ msgstr "個人の IM"
-
-#~ msgid "Anniversary"
-#~ msgstr "記念日"
-
-#~ msgid "Work"
-#~ msgstr "職種"
-
-#~ msgid "Profession"
-#~ msgstr "職業"
-
-#~ msgid "Work Phone"
-#~ msgstr "勤務先の電話番号"
-
-#~ msgid "Work Phone 2"
-#~ msgstr "勤務先の電話番号2"
-
-#~ msgid "Work Mobile"
-#~ msgstr "携帯 (仕事)"
-
-#~ msgid "Work Pager"
-#~ msgstr "Work Pager"
-
-#~ msgid "Work Fax"
-#~ msgstr "勤務先の FAX"
-
-#~ msgid "Work Email"
-#~ msgstr "勤務先の E-メール"
-
-#~ msgid "Work IM"
-#~ msgstr "勤務先の IM"
-
-#~ msgid "Start Date"
-#~ msgstr "開始日"
-
-#~ msgid "Favorite Things"
-#~ msgstr "お気に入りのもの"
-
-#~ msgid "Last Updated"
-#~ msgstr "最終更新日"
-
-#~ msgid "The user has not created a public profile."
-#~ msgstr "このユーザはプロフィールを公開していません"
-
-#~ msgid ""
-#~ "MSN reported not being able to find the user's profile. This either means "
-#~ "that the user does not exist, or that the user exists but has not created "
-#~ "a public profile."
-#~ msgstr ""
-#~ "そのユーザのプロフィールが見つからないと MSN が報告してきました。これは、"
-#~ "そのユーザが存在しないか、あるいはユーザは存在しますがプロフィールは公開し"
-#~ "ていないかのどちらかです。"
-
-#~ msgid ""
-#~ "Could not find any information in the user's profile. The user most "
-#~ "likely does not exist."
-#~ msgstr ""
-#~ "ユーザのプロフィールから情報を取得できませんでした。そのユーザはおそらく存"
-#~ "在していないと思われます。"
-
-#~ msgid "Use HTTP Method"
-#~ msgstr "HTTP メソッドを利用する"
-
-#~ msgid "Show custom smileys"
-#~ msgstr "独自のスマイリーを表示する"
-
-#~ msgid "Allow direct connections"
-#~ msgstr "直接接続を許可"
-
-#~ msgid "Allow connecting from multiple locations"
-#~ msgstr "複数の場所からの接続を許可"
-
-#~ msgid "nudge: nudge a user to get their attention"
-#~ msgstr "合図: ユーザに向けて警告音を鳴らす"
-
-#~ msgid "Windows Live ID authentication:Unable to connect"
-#~ msgstr "Windows live ID 認証:接続できませんでした"
-
-#~ msgid "Windows Live ID authentication:Invalid response"
-#~ msgstr "Windows live ID 認証:不正な応答"
-
-#~ msgid "The following users are missing from your addressbook"
-#~ msgstr "以下のユーザは、あなたのアドレス悵に載っていません"
-
-#~ msgid "Unknown error (%d): %s"
-#~ msgstr "原因不明のエラー (%d): %s"
-
-#~ msgid "Unknown error (%d)"
-#~ msgstr "原因不明のエラー (%d)"
-
-#~ msgid "Unable to remove user"
-#~ msgstr "ユーザを削除できません"
-
-#~ msgid ""
-#~ "The MSN server will shut down for maintenance in %d minute. You will "
-#~ "automatically be signed out at that time.  Please finish any "
-#~ "conversations in progress.\n"
-#~ "\n"
-#~ "After the maintenance has been completed, you will be able to "
-#~ "successfully sign in."
-#~ msgid_plural ""
-#~ "The MSN server will shut down for maintenance in %d minutes. You will "
-#~ "automatically be signed out at that time.  Please finish any "
-#~ "conversations in progress.\n"
-#~ "\n"
-#~ "After the maintenance has been completed, you will be able to "
-#~ "successfully sign in."
-#~ msgstr[0] ""
-#~ "MSN サーバがメンテナンスのために %d分間停止しています。自動的にサイン・ア"
-#~ "ウトされる予定なので、現在行っている会話を終了してください。\n"
-#~ "\n"
-#~ "メンテナンスが完了したら、またサイン・インできるようになります。"
-
-#~ msgid "Writing error"
-#~ msgstr "書き込み時にエラー"
-
-#~ msgid "Reading error"
-#~ msgstr "読み込み時にエラー"
-
-#~ msgid ""
-#~ "Connection error from %s server:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "サーバ %s で接続エラー:\n"
-#~ "%s"
-
-#~ msgid ""
-#~ "The MSN servers are temporarily unavailable. Please wait and try again."
-#~ msgstr ""
-#~ "MSN サーバが一時的に利用不可になっています。時間をあけて後で試してみてくだ"
-#~ "さい。"
-
-#~ msgid "Unable to authenticate: %s"
-#~ msgstr "認証できません: %s"
-
-#~ msgid "Handshaking"
-#~ msgstr "通信を接続しています"
-
-#~ msgid "Transferring"
-#~ msgstr "転送しています"
-
-#~ msgid "Getting cookie"
-#~ msgstr "クッキーを取得しています"
-
-#~ msgid "Sending cookie"
-#~ msgstr "クッキーを送信しています"
-
-#~ msgid "Retrieving buddy list"
-#~ msgstr "仲間リストを受信しています"
-
-#~ msgid "Away From Computer"
-#~ msgstr "コンピュータから離れてます"
-
-#~ msgid "On The Phone"
-#~ msgstr "電話中です"
-
-#~ msgid "Out To Lunch"
-#~ msgstr "食事に出かけています"
-
-#~ msgid "Message may have not been sent because a timeout occurred:"
-#~ msgstr "タイムアウトになったので、メッセージは送信されませんでした:"
-
-#~ msgid "Message could not be sent, not allowed while invisible:"
-#~ msgstr "隠れている間はメッセージを送信できません:"
-
-#~ msgid "Message could not be sent because the user is offline:"
-#~ msgstr "送信先のユーザがオフラインなので、メッセージを送信できませんでした:"
-
-#~ msgid "Message could not be sent because a connection error occurred:"
-#~ msgstr "接続エラーが発生したので、メッセージを送信できませんでした:"
-
-#~ msgid "Message could not be sent because we are sending too quickly:"
-#~ msgstr "送信するタイミングが早過ぎたので、メッセージを送信できませんでした:"
-
-#~ msgid ""
-#~ "Message could not be sent because an error with the switchboard occurred:"
-#~ msgstr ""
-#~ "交換機系の接続エラーが発生したので、メッセージを送信できませんでした:"
-
-#~ msgid "Message may have not been sent because an unknown error occurred:"
-#~ msgstr "不明なエラーの発生により、メッセージは送信されませんでした:"
-
-#~ msgid "About..."
-#~ msgstr "情報..."
-
-#~ msgid "Connecting..."
-#~ msgstr "接続中..."
-
-#~ msgid "MXit ID"
-#~ msgstr "MXit ID"
-
-#~ msgid "Register New MXit Account"
-#~ msgstr "新しい MXit アカウントの登録"
-
-#~ msgid "Please fill in the following fields:"
-#~ msgstr "次の欄を埋めてください:"
-
-#~ msgid "Error contacting the MXit WAP site. Please try again later."
-#~ msgstr ""
-#~ "MXit WAP サイトにコンタクト中にエラーが発生しました。あとで再度試してくだ"
-#~ "さい。"
-
-#~ msgid "Security Code"
-#~ msgstr "セキュリティコード"
-
-#~ msgid "Enter Security Code"
-#~ msgstr "セキュリティコードの入力"
-
-#~ msgid "Your Country"
-#~ msgstr "国"
-
-#~ msgid "Your Language"
-#~ msgstr "言語"
-
-#~ msgid "MXit Authorization"
-#~ msgstr "MXit の承認"
-
-#~ msgid "MXit account validation"
-#~ msgstr "MXit アカントの検証"
-
-#~ msgid "Retrieving User Information..."
-#~ msgstr "ユーザ情報の取得中..."
-
-#~ msgid "_Room Name:"
-#~ msgstr "ルーム名(_R):"
-
-#~ msgid "You have invited"
-#~ msgstr "招待されました"
-
-#~ msgid "Loading menu..."
-#~ msgstr "メニューの読み込み中..."
-
-#~ msgid "Status Message"
-#~ msgstr "状態メッセージ"
-
-#~ msgid "Rejection Message"
-#~ msgstr "拒否メッセージ"
-
-#~ msgid "Your MXit ID..."
-#~ msgstr "MXit ID..."
-
-#~ msgid "WAP Server"
-#~ msgstr "WAP サーバ"
-
-#~ msgid "Connect via HTTP"
-#~ msgstr "HTTP で接続"
-
-#~ msgid "Enable splash-screen popup"
-#~ msgstr "スプラッシュ・スクリーンを有効にする"
-
-#~ msgid "Lost connection with server"
-#~ msgstr "サーバとの接続が切れました"
-
-#~ msgid "MySpace"
-#~ msgstr "MySpace"
-
-#~ msgid "IM Friends"
-#~ msgstr "IM フレンド"
-
-#~ msgid "Headline"
-#~ msgstr "ヘッドライン"
-
-#~ msgid "Song"
-#~ msgstr "歌"
-
-#~ msgid "Total Friends"
-#~ msgstr "フレンドの数"
-
-#~ msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-#~ msgstr "join &lt;ルーム&gt;: Yahoo ネットワーク上にあるチャットへ参加する"
-
-#~ msgid "list: List rooms on the Yahoo network"
-#~ msgstr "list: Yahoo ネットワーク上にあるルームを一覧表示します"
-
-#~ msgid "doodle: Request user to start a Doodle session"
-#~ msgstr "doodle: いたずら書きを始めることをユーザに要求する"
-
-#~ msgid "Pager port"
-#~ msgstr "ページャのポート番号"
-
-#~ msgid "File transfer server"
-#~ msgstr "ファイル転送サーバ"
-
-#~ msgid "File transfer port"
-#~ msgstr "ファイル転送のポート番号"
-
-#~ msgid "Chat room locale"
-#~ msgstr "チャット・ルームの場所"
-
-#~ msgid "Ignore conference and chatroom invitations"
-#~ msgstr "会議とチャットルームの招待を無視する"
-
-#~ msgid "Use account proxy for HTTP and HTTPS connections"
-#~ msgstr "HTTP や HTTPS 接続でアカウントのプロキシを使用する"
-
-#~ msgid "Chat room list URL"
-#~ msgstr "チャット・ルームの URL リスト"
-
-#~ msgid "Yahoo JAPAN ID..."
-#~ msgstr "Yahoo! JAPAN ID..."
-
-#~ msgid "Yahoo! JAPAN Protocol Plugin"
-#~ msgstr "Yahoo! JAPAN プロトコル・プラグイン"
-
-#~ msgid "Your Yahoo! message did not get sent."
-#~ msgstr "Yahoo! メッセージを送ることができませんでした。"
-
-#~ msgid "Yahoo! system message for %s:"
-#~ msgstr "%s の Yahoo! システム・メッセージ:"
-
-#~ msgid "Authorization denied message:"
-#~ msgstr "承認を拒否する旨のメッセージ:"
-
-#~ msgid ""
-#~ "%s has (retroactively) denied your request to add them to your list for "
-#~ "the following reason: %s."
-#~ msgstr ""
-#~ "%s は次の理由のため仲間リストに追加するあなたの要求を (以前にさかのぼっ"
-#~ "て) 拒否しました\" %s"
-
-#~ msgid "%s has (retroactively) denied your request to add them to your list."
-#~ msgstr ""
-#~ "%s は仲間リストに追加するあなたの要求を (以前にさかのぼって) 拒否しまし"
-#~ "た。"
-
-#~ msgid "Add buddy rejected"
-#~ msgstr "拒否する仲間の追加"
-
-#~ msgid "Received invalid data"
-#~ msgstr "不正なデータを受け取りました"
-
-#~ msgid ""
-#~ "Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-#~ "website may fix this."
-#~ msgstr ""
-#~ "アカウントがロックされています: ログインに失敗しすぎてしましました。 "
-#~ "Yahoo! のウェブサイトにログインすることで修正できるかもしれません。"
-
-#~ msgid ""
-#~ "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
-#~ "this."
-#~ msgstr ""
-#~ "アカウントがロックされています: 理由は不明です。Yahoo! のウェブサイトへロ"
-#~ "グインすると修正されるかもしれません。"
-
-#~ msgid ""
-#~ "Account locked: You have been logging in too frequently.  Wait a few "
-#~ "minutes before trying to connect again.  Logging into the Yahoo! website "
-#~ "may help."
-#~ msgstr ""
-#~ "アカウントがロックされています: あまりに頻繁にログインしすぎてしまいした。"
-#~ "再度接続を試みる前に数分待ってください。Yahoo! のウェブサイトへログインす"
-#~ "ると修正されるかもしれません。"
-
-#~ msgid "Username or password missing"
-#~ msgstr "ユーザ名またはパスワードが入力されえいません"
-
-#~ msgid ""
-#~ "The Yahoo server has requested the use of an unrecognized authentication "
-#~ "method.  You will probably not be able to successfully sign on to Yahoo.  "
-#~ "Check %s for updates."
-#~ msgstr ""
-#~ "Yahoo サーバが認識できない認証方法の使用を要求してきました。このバージョン"
-#~ "の pidgin ではおそらく Yahoo にサイン・インできないでしょう。%s にアップ"
-#~ "デートできるか確認してみてください。"
-
-#~ msgid "Failed Yahoo! Authentication"
-#~ msgstr "Yahoo! 認証に失敗"
-
-#~ msgid ""
-#~ "You have tried to ignore %s, but the user is on your buddy list.  "
-#~ "Clicking \"Yes\" will remove and ignore the buddy."
-#~ msgstr ""
-#~ "%s を無視しようとしましたが、ユーザが仲間リストにあります。そのユーザを仲"
-#~ "間リストから削除して無視する場合は、\"はい\" をクリックしてください。"
-
-#~ msgid "Ignore buddy?"
-#~ msgstr "仲間を無視しますか?"
-
-#~ msgid "Invalid username or password"
-#~ msgstr "ユーザ名またはパスワードが間違っています"
-
-#~ msgid ""
-#~ "Your account has been locked due to too many failed login attempts.  "
-#~ "Please try logging into the Yahoo! website."
-#~ msgstr ""
-#~ "ログインに失敗しすぎたため、アカウントがロックされてしまいました。 Yahoo! "
-#~ "のウェブサイトにログインしてみてください。"
-
-#~ msgid "Unknown error 52.  Reconnecting should fix this."
-#~ msgstr "不明なエラー 52 です。再接続すると修正されるかもしれません。"
-
-#~ msgid ""
-#~ "Error 1013: The username you have entered is invalid.  The most common "
-#~ "cause of this error is entering your email address instead of your Yahoo! "
-#~ "ID."
-#~ msgstr ""
-#~ "エラー 1013: 入力したユーザ名が間違っています。このエラーのよくある原因は "
-#~ "Yahoo! ID ではなくメールアドレスを入力してしまったというものです。"
-
-#~ msgid ""
-#~ "Unknown error number %d. Logging into the Yahoo! website may fix this."
-#~ msgstr ""
-#~ "不明なエラー番号 %d です。Yahoo! ウェブサイトへログインすると修正されるか"
-#~ "もしれません。"
-
-#~ msgid "Unable to add buddy %s to group %s to the server list on account %s."
-#~ msgstr ""
-#~ "グループ %2$s の仲間 %1$s をアカウント %3$s でサーバ・リストに追加できませ"
-#~ "んでした。"
-
-#~ msgid "Unable to add buddy to server list"
-#~ msgstr "仲間をサーバ・リストに追加できませんでした"
-
-#~ msgid "[ Audible %s/%s/%s.swf ] %s"
-#~ msgstr "[ 再生可能 %s/%s/%s.swf ] %s"
-
-#~ msgid "Received unexpected HTTP response from server"
-#~ msgstr "サーバから想定外の HTTP 応答を受け取りました"
-
-#~ msgid "Lost connection with %s: %s"
-#~ msgstr "%s との接続を失いました: %s"
-
-#~ msgid "Unable to establish a connection with %s: %s"
-#~ msgstr "%s との接続を確立できませんでした: %s"
-
-#~ msgid "Unable to connect: The server returned an empty response."
-#~ msgstr "接続できません: サーバが空の応答を返しました。"
-
-#~ msgid "Not at Home"
-#~ msgstr "家に居ません"
-
-#~ msgid "Not at Desk"
-#~ msgstr "在席していません"
-
-#~ msgid "Not in Office"
-#~ msgstr "オフィスに居ません"
-
-#~ msgid "On Vacation"
-#~ msgstr "休暇中です"
-
-#~ msgid "Stepped Out"
-#~ msgstr "ちょっとそこまで"
-
-#~ msgid "Not on server list"
-#~ msgstr "サーバ・リストにありません"
-
-#~ msgid "Appear Permanently Offline"
-#~ msgstr "一時的にオフラインのようです"
-
-#~ msgid "Presence"
-#~ msgstr "在席"
-
-#~ msgid "Don't Appear Permanently Offline"
-#~ msgstr "Don't Appear Permanently Offline"
-
-#~ msgid "Join in Chat"
-#~ msgstr "チャットへ参加"
-
-#~ msgid "Initiate Conference"
-#~ msgstr "会議に招待"
-
-#~ msgid "Presence Settings"
-#~ msgstr "在席状態の設定"
-
-#~ msgid "Start Doodling"
-#~ msgstr "いたずら書きする"
-
-#~ msgid "Join whom in chat?"
-#~ msgstr "どのチャットへ参加しますか?"
-
-#~ msgid "Activate ID..."
-#~ msgstr "ID の有効化..."
-
-#~ msgid "Join User in Chat..."
-#~ msgstr "チャットに参加する..."
-
-#~ msgid "Open Inbox"
-#~ msgstr "受信箱を開く"
-
-#~ msgid "Sent Doodle request."
-#~ msgstr "Doodle 要求を送信する"
-
-#~ msgid "Unable to connect."
-#~ msgstr "接続できません"
-
-#~ msgid "Unable to establish file descriptor."
-#~ msgstr "ファイル・デスクリプタを取得できません"
-
-#~ msgid "%s is trying to send you a group of %d files.\n"
-#~ msgstr "%s さんが %d 個のファイルを送信しようとしています。\n"
-
-#~ msgid "Write Error"
-#~ msgstr "書き込みエラー"
-
-#~ msgid "Yahoo! Japan Profile"
-#~ msgstr "Yahoo! Japan プロファイル"
-
-#~ msgid "Yahoo! Profile"
-#~ msgstr "Yahoo! プロファイル"
-
-#~ msgid ""
-#~ "Sorry, profiles marked as containing adult content are not supported at "
-#~ "this time."
-#~ msgstr ""
-#~ "すみません、このバージョンでは、アダルト向けコンテンツを含んでいるとマーク"
-#~ "が付けられたプロファイルは利用いただけません."
-
-#~ msgid ""
-#~ "If you wish to view this profile, you will need to visit this link in "
-#~ "your web browser:"
-#~ msgstr ""
-#~ "このプロフィールの閲覧を希望する場合は、お使いのウェブ・ブラウザから次のリ"
-#~ "ンクを訪問してください:"
-
-#~ msgid "Yahoo! ID"
-#~ msgstr "Yahoo! ID"
-
-#~ msgid "Hobbies"
-#~ msgstr "趣味"
-
-#~ msgid "Latest News"
-#~ msgstr "最新ニュース"
-
-#~ msgid "Home Page"
-#~ msgstr "ホームページ"
-
-#~ msgid "Cool Link 1"
-#~ msgstr "クールなリンク1"
-
-#~ msgid "Cool Link 2"
-#~ msgstr "クールなリンク2"
-
-#~ msgid "Cool Link 3"
-#~ msgstr "クールなリンク3"
-
-#~ msgid "Last Update"
-#~ msgstr "最終更新日"
-
-#~ msgid ""
-#~ "This profile is in a language or format that is not supported at this "
-#~ "time."
-#~ msgstr "このプロファイルは現時点ではサポートされていない言語や書式です。"
-
-#~ msgid ""
-#~ "Could not retrieve the user's profile. This most likely is a temporary "
-#~ "server-side problem. Please try again later."
-#~ msgstr ""
-#~ "ユーザのプロフィールを取得できませんでした。これは、おそらく一時的なサーバ"
-#~ "側の問題でしょう。後で再試行してみてください。"
-
-#~ msgid ""
-#~ "Could not retrieve the user's profile. This most likely means that the "
-#~ "user does not exist; however, Yahoo! sometimes does fail to find a user's "
-#~ "profile. If you know that the user exists, please try again later."
-#~ msgstr ""
-#~ "ユーザのプロフィールを取得できませんでした。これは、おそらくそのユーザが存"
-#~ "在しないと思われます。ただし、時々 Yahoo! はユーザのプロフィールの取得に失"
-#~ "敗することがあります。そのユーザが存在していることが確かならば、後で再試行"
-#~ "してみてください。"
-
-#~ msgid "The user's profile is empty."
-#~ msgstr "ユーザのプロフィールが空です。"
-
-#~ msgid "Failed to join chat"
-#~ msgstr "チャットへの参加が失敗しました"
-
-#~ msgid "Unknown room"
-#~ msgstr "不明なルーム"
-
-#~ msgid "Maybe the room is full"
-#~ msgstr "おそらくルームが一杯かも?"
-
-#~ msgid "Not available"
-#~ msgstr "利用不可"
-
-#~ msgid ""
-#~ "Unknown error. You may need to logout and wait five minutes before being "
-#~ "able to rejoin a chatroom"
-#~ msgstr ""
-#~ "原因不明のエラーです (ログアウトし 5秒ほど待機してから、もう一度チャトルー"
-#~ "ムへ参加してください)"
-
-#~ msgid "You are now chatting in %s."
-#~ msgstr "あなたは %s でチャットしています"
-
-#~ msgid "Failed to join buddy in chat"
-#~ msgstr "チャットの仲間に参加できません"
-
-#~ msgid "Maybe they're not in a chat?"
-#~ msgstr "おそらくチャットには誰もいないかも?"
-
-#~ msgid "Fetching the room list failed."
-#~ msgstr "部屋一覧の取得に失敗しました"
-
-#~ msgid "Voices"
-#~ msgstr "音声"
-
-#~ msgid "Webcams"
-#~ msgstr "ウェブカム"
-
-#~ msgid "Connection problem"
-#~ msgstr "接続エラー"
-
-#~ msgid "Unable to fetch room list."
-#~ msgstr "部屋一覧を取得できません"
-
-#~ msgid "User Rooms"
-#~ msgstr "ユーザの部屋"
-
-#~ msgid "Connection problem with the YCHT server"
-#~ msgstr "YCHT サーバを使った接続に問題があります"
-
-#~ msgid "Facebook (XMPP)"
-#~ msgstr "Facebook (XMPP)"

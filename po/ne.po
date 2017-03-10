@@ -16,8 +16,8 @@ msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-09 18:55-0600\n"
-"PO-Revision-Date: 2016-06-06 21:08+0000\n"
-"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"PO-Revision-Date: 2017-01-09 07:25+0000\n"
+"Last-Translator: Saroj Dhakal <lotusnagarkot@gmail.com>\n"
 "Language-Team: Nepali (http://www.transifex.com/pidgin/pidgin/language/ne/)\n"
 "Language: ne\n"
 "MIME-Version: 1.0\n"
@@ -1237,9 +1237,8 @@ msgstr "GStreamer सुरुहुन असफल भयो"
 msgid "(default)"
 msgstr "(पूर्वनिर्धारित)"
 
-#, fuzzy
 msgid "Select Sound File..."
-msgstr "एक आवाज फाइल छान्नुहोस..."
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr "आवास प्राथमिकताहरू"
@@ -1362,9 +1361,8 @@ msgid "Use a different status for some accounts"
 msgstr ""
 
 #. Save and Use
-#, fuzzy
 msgid "Save and Use"
-msgstr "बचत गर्नुहोस् र प्रयोग गर्नुहोस्"
+msgstr ""
 
 msgid "Certificates"
 msgstr "सर्टिफिकेटहरू"
@@ -5461,9 +5459,8 @@ msgstr ""
 msgid "Error parsing response from authentication server"
 msgstr ""
 
-#, fuzzy
 msgid "Unknown error during authentication"
-msgstr "प्रमाणीकरण सुरू हुँदैछ"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -6081,9 +6078,8 @@ msgstr ""
 msgid "MD5-based"
 msgstr ""
 
-#, fuzzy
 msgid "Authentication method"
-msgstr "प्रमाणीकरण असफल भयो"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -11113,9 +11109,8 @@ msgid "Use a _different status for some accounts"
 msgstr ""
 
 #. Save and Use button
-#, fuzzy
 msgid "Sa_ve and Use"
-msgstr "बचत गर्नुहोस् र प्रयोग गर्नुहोस्"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -11823,9 +11818,8 @@ msgstr ""
 msgid "Notify For"
 msgstr "...का लागि सूचित गर्नुहोस्"
 
-#, fuzzy
 msgid "\tS_ystem messages"
-msgstr "सन्देश पठाउनुहोस्"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr ""
@@ -12646,490 +12640,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
-
-#~ msgid "Pounce Who"
-#~ msgstr "कसलाई पाउन्स गर्नुहुन्छ"
-
-#~ msgid "Unable to add \"%s\"."
-#~ msgstr "\"%s\" लाई थप गर्न अक्षम छ ।"
-
-#~ msgid "Unable to parse message"
-#~ msgstr "यो सन्देश पद वर्णन गर्न अक्षम छ"
-
-#~ msgid "User does not exist"
-#~ msgstr "प्रयोगकर्ता अवस्थित छैन"
-
-#~ msgid "Already there"
-#~ msgstr "तिनीहरू पहिलेकै हुन्"
-
-#~ msgid "Not on list"
-#~ msgstr "सूचीमा छैन"
-
-#~ msgid "Already in the mode"
-#~ msgstr "पहिलेनै मोडमा छ"
-
-#~ msgid "Already in opposite list"
-#~ msgstr "पहिलेनै विपक्ष सूचीमा छ"
-
-#~ msgid "Too many groups"
-#~ msgstr "अति धेरै समूहहरू"
-
-#~ msgid "Invalid group"
-#~ msgstr "अवैध समूह"
-
-#~ msgid "User not in group"
-#~ msgstr "समूहमा प्रयोगकर्ता छैन"
-
-#~ msgid "Group name too long"
-#~ msgstr "समूह नाम अति लामो भयो"
-
-#~ msgid "Cannot remove group zero"
-#~ msgstr "समूह शून्य हटाउन सकिदैन"
-
-#~ msgid "Switchboard failed"
-#~ msgstr "स्विच बोर्ड असफल भयो"
-
-#~ msgid "Required fields missing"
-#~ msgstr "आवश्यक फाँटहरू हराइरहेका छन्"
-
-#~ msgid "Too many hits to a FND"
-#~ msgstr "FNDमा धेरै हिटहरू छन्"
-
-#~ msgid "Database server error"
-#~ msgstr "डेटावे सर्भर त्रुटि"
-
-#~ msgid "Command disabled"
-#~ msgstr "आदेश निस्क्रिय भयो"
-
-#~ msgid "File operation error"
-#~ msgstr "फाइल सञ्चालन त्रुटि"
-
-#~ msgid "Memory allocation error"
-#~ msgstr "स्मृति बाँडफाडमा त्रुटि"
-
-#~ msgid "Wrong CHL value sent to server"
-#~ msgstr "गलत CHLमान सर्भरमा पठाइयो"
-
-#~ msgid "Server busy"
-#~ msgstr "सर्भर ब्यस्त छ"
-
-#~ msgid "Server unavailable"
-#~ msgstr "सर्भर उपलब्ध छैन"
-
-#~ msgid "Database connect error"
-#~ msgstr "डाटावेस जडान त्रुटि"
-
-#~ msgid "Server is going down (abandon ship)"
-#~ msgstr "सर्भर बन्द भैरहेको छ (अबान्दन सीप)"
-
-#~ msgid "Error creating connection"
-#~ msgstr "जडान सिर्जना गर्दा त्रुटि"
-
-#~ msgid "CVR parameters are either unknown or not allowed"
-#~ msgstr "CVR पारामितिहरू कित अज्ञात छन् या त अनुमति दिएको छैन"
-
-#~ msgid "Unable to write"
-#~ msgstr "लेख्न अक्षम छ"
-
-#~ msgid "Session overload"
-#~ msgstr "सत्र ओभरलोड भयो"
-
-#~ msgid "User is too active"
-#~ msgstr "प्रयोगकर्ता अति सक्रिय छ"
-
-#~ msgid "Too many sessions"
-#~ msgstr "अति धेरै सत्रहरू"
-
-#~ msgid "Passport not verified"
-#~ msgstr "पासपोर्ट प्रमाणीत भएको छैन"
-
-#~ msgid "Bad friend file"
-#~ msgstr "खराव मित्र फाइल"
-
-#~ msgid "Not expected"
-#~ msgstr "अपेक्षा गरिएको छैन"
-
-#~ msgid "Server too busy"
-#~ msgstr "सर्भर धेरै ब्यस्त छ"
-
-#~ msgid "Not allowed when offline"
-#~ msgstr "जब अफ लाइन मा हुन्छ अनुमति दिइदैन"
-
-#~ msgid "Not accepting new users"
-#~ msgstr "नयाँ प्रयोगकर्ताहरू स्विकारिदैन"
-
-#~ msgid "Kids Passport without parental consent"
-#~ msgstr "पैत्रिक सहमति बिनाका किड्को पासपोर्ट"
-
-#~ msgid "Passport account not yet verified"
-#~ msgstr "पासवर्ड खाता अहिले सम्म प्रमाणीत भएको छैन"
-
-#~ msgid "Bad ticket"
-#~ msgstr "खराव टिकेट"
-
-#~ msgid "Unknown Error Code %d"
-#~ msgstr "अज्ञात त्रुटि कोड %d"
-
-#~ msgid "MSN Error: %s\n"
-#~ msgstr "MSN त्रुटि: %s\n"
-
-#~ msgid "Buddy list synchronization issue in %s (%s)"
-#~ msgstr "%s (%s)मा साथी सूची गुप्तिकरण निस्कासन्"
-
-#~ msgid ""
-#~ "%s on the local list is inside the group \"%s\" but not on the server "
-#~ "list. Do you want this buddy to be added?"
-#~ msgstr ""
-#~ "स्थानीय सूचीमा %s समूह\"%s\"को भित्र पटि छ तर सर्भर सूचीमा हैन । के तपाईँ यो "
-#~ "साथीमा थप्न चाहानुहुन्छ?"
-
-#~ msgid ""
-#~ "%s is on the local list but not on the server list. Do you want this "
-#~ "buddy to be added?"
-#~ msgstr "स्थानीय सूचीमा %s छ तर सर्भर सूचीमा हैन । के तपाईँ यो साथीमा थप्न चाहानुहुन्छ?"
-
-#~ msgid "Your new MSN friendly name is too long."
-#~ msgstr "तपाईँको नयाँ MSN मित्रता नाम धेरै लामो भयो ।"
-
-#~ msgid "This is the name that other MSN buddies will see you as."
-#~ msgstr "यो त्यो नाम हो जसमा MSN साथीहरू तपाईँले देख्न सक्नुहुन्छ ।"
-
-#~ msgid "Allow"
-#~ msgstr "अनुमति दिनुहोस्"
-
-#~ msgid "Disallow"
-#~ msgstr "अनुमति नदिनुहोस्"
-
-#~ msgid "Set your home phone number."
-#~ msgstr "तपाईँको घरको फोन नम्बर सेट गर्नुहोस् ।"
-
-#~ msgid "Set your work phone number."
-#~ msgstr "तपाईँको कार्यस्थलको फोन नम्बर सेट गर्नुहोस् ।"
-
-#~ msgid "Set your mobile phone number."
-#~ msgstr "तपाईँको मोवाइल नम्बर सेट गर्नुहोस् ।"
-
-#~ msgid "Allow MSN Mobile pages?"
-#~ msgstr "MSN मोवाइल पृष्ठहरू अनुमति दिनुहुन्छ?"
-
-#~ msgid ""
-#~ "Do you want to allow or disallow people on your buddy list to send you "
-#~ "MSN Mobile pages to your cell phone or other mobile device?"
-#~ msgstr ""
-#~ "के तापई आफ्नो साथी सूचीमा भएका मानिसलाई MSN मोबाइल पृष्ठहरू तपाईँको सेल फोन वा अरु "
-#~ "मोवाइल यन्त्रमा अनुमति दिन वा नदिन चाहानुहुन्छ ?"
-
-#~ msgid "Send a mobile message."
-#~ msgstr "मोवाइल सन्देश पठाउनुहोस् ।"
-
-#~ msgid "Page"
-#~ msgstr "पृष्ठ"
-
-#~ msgid "Has you"
-#~ msgstr "तपाईँ सँग  छ"
-
-#~ msgid "Home Phone Number"
-#~ msgstr "घरको फोन नम्बर"
-
-#~ msgid "Work Phone Number"
-#~ msgstr "कार्यस्थलको फोन नम्बर"
-
-#~ msgid "Mobile Phone Number"
-#~ msgstr "मोवाइल नम्बर"
-
-#~ msgid "Be Right Back"
-#~ msgstr "पछाडि छु"
-
-#~ msgid "On the Phone"
-#~ msgstr "फोनमा छु"
-
-#~ msgid "Out to Lunch"
-#~ msgstr "खानाका लागि बाहिर "
-
-#~ msgid "Send to Mobile"
-#~ msgstr "मोबाइलमा पठाउनुहोस्"
-
-#~ msgid "Error retrieving profile"
-#~ msgstr "प्रोफाइल पुन: प्राप्त गर्दा त्रुटि"
-
-#~ msgid "Occupation"
-#~ msgstr "पेशा"
-
-#~ msgid "Hobbies and Interests"
-#~ msgstr "सोखहरू र रुचिहरू"
-
-#~ msgid "A Little About Me"
-#~ msgstr "मेरो बारेमा छोटो जानकारी"
-
-#~ msgid "Marital Status"
-#~ msgstr "बैवाहिक स्थिति"
-
-#~ msgid "Favorite Quote"
-#~ msgstr "मनपरेको उद्दरण चिन्ह"
-
-#~ msgid "Favorite Things"
-#~ msgstr "मनपर्ने चीजहरू"
-
-#~ msgid "Last Updated"
-#~ msgstr "अन्तिम अद्यावधिक"
-
-#~ msgid "The user has not created a public profile."
-#~ msgstr "प्रयोगकर्ताले सार्वजनिक प्रोफाइल सिर्जना गरेको छैन ।"
-
-#~ msgid ""
-#~ "MSN reported not being able to find the user's profile. This either means "
-#~ "that the user does not exist, or that the user exists but has not created "
-#~ "a public profile."
-#~ msgstr ""
-#~ "MSN प्रतिवेदनले प्रयोगकर्ताको प्रोफाइल हालसालै भेटाउन अक्षम छ । यसको अर्थ कि त त्यो "
-#~ "प्रयोगकर्ता अवस्थित छैन या त्यो प्रयोगकर्ता अवस्थित छ तर सार्वजनिक प्रोफाइलमा "
-#~ "सिर्जना गरेको छैन ।"
-
-#~ msgid "Use HTTP Method"
-#~ msgstr "HTTP विधि प्रयोग गर्नुहोस्"
-
-#~ msgid ""
-#~ "The MSN server will shut down for maintenance in %d minute. You will "
-#~ "automatically be signed out at that time.  Please finish any "
-#~ "conversations in progress.\n"
-#~ "\n"
-#~ "After the maintenance has been completed, you will be able to "
-#~ "successfully sign in."
-#~ msgid_plural ""
-#~ "The MSN server will shut down for maintenance in %d minutes. You will "
-#~ "automatically be signed out at that time.  Please finish any "
-#~ "conversations in progress.\n"
-#~ "\n"
-#~ "After the maintenance has been completed, you will be able to "
-#~ "successfully sign in."
-#~ msgstr[0] ""
-#~ "%d मिनेटमा मर्मतका लागि MSN सर्भर  बन्द गरिने छ । त्यो समयमा तपाईँ स्वचालित रुपले "
-#~ "साइन आउट हुनुहुने छ । कृपया, कुनै बार्तालापहरू भइरहेको छ भने सकाउनुहोस् ।\n"
-#~ "\n"
-#~ "मर्मत समाप्त भएपछि तपाईँ सफलतापूर्वक साइनइन गर्न सक्नुहुन्छ ।"
-#~ msgstr[1] ""
-#~ "%d मिनेटमा मर्मतका लागि MSN सर्भर  बन्द गरिने छ । त्यो समयमा तपाईँ स्वचालित रुपले "
-#~ "साइन आउट हुनुहुने छ । कृपया, कुनै बार्तालापहरू भइरहेको छ भने समाप्त गर्नुहोस् ।\n"
-#~ "\n"
-#~ "मर्मत समाप्त भएपछि तपाईँ सफलतापूर्वक साइनइन गर्न सक्नुहुन्छ ।"
-
-#~ msgid "Writing error"
-#~ msgstr "लेखन त्रुटि"
-
-#~ msgid "Reading error"
-#~ msgstr "पढाइ त्रुटि"
-
-#~ msgid ""
-#~ "The MSN servers are temporarily unavailable. Please wait and try again."
-#~ msgstr ""
-#~ "MSN सर्भरहरू अस्थायी रुपमा उपलब्ध छैनन् । कृपया प्रतिक्षा गर्नुहोस् र फेरी प्रयास गर्नुहोस् "
-#~ "।"
-
-#~ msgid "Unable to authenticate: %s"
-#~ msgstr "प्रमाणित गर्न अक्षम भयो: %s"
-
-#~ msgid "Handshaking"
-#~ msgstr "ह्यान्डसेक गर्दैछ"
-
-#~ msgid "Transferring"
-#~ msgstr "स्थानान्तरण हुँर्दैछ"
-
-#~ msgid "Getting cookie"
-#~ msgstr "कुकी प्राप्त गर्दैछ"
-
-#~ msgid "Sending cookie"
-#~ msgstr "कुकी पठाउँदैछ"
-
-#~ msgid "Retrieving buddy list"
-#~ msgstr "साथी सूची पुन:प्राप्ति गर्दैछ"
-
-#~ msgid "Away From Computer"
-#~ msgstr "कम्प्युटरबाट टाढा छ"
-
-#~ msgid "On The Phone"
-#~ msgstr "फोनमा छु"
-
-#~ msgid "Out To Lunch"
-#~ msgstr "खानाका लागि बाहिर "
-
-#~ msgid "Message may have not been sent because a timeout occurred:"
-#~ msgstr "सम्भवत समय समाप्ति भइसकेकाले सन्देश पठाउन सकिएन:"
-
-#~ msgid "Message could not be sent, not allowed while invisible:"
-#~ msgstr "अदृश्य भएको बेलामा अनुमति नभएकाले गर्दा सन्देश पठाउन सकिदैन:"
-
-#~ msgid "Message could not be sent because the user is offline:"
-#~ msgstr "प्रयोगकर्ता अफलाइन भएका कारण सन्देश पठाउन सकिएन:"
-
-#~ msgid "Message could not be sent because a connection error occurred:"
-#~ msgstr "जडानमा त्रुटि आएकाले सन्देश पठाउन सकिएन:"
-
-#~ msgid ""
-#~ "Message could not be sent because an error with the switchboard occurred:"
-#~ msgstr "स्विचबोर्डमा त्रुटि आएकाले सन्देश पठाउन सकिएन ।"
-
-#~ msgid "Message may have not been sent because an unknown error occurred:"
-#~ msgstr "सन्देश नगएको पनि हुनसक्छ किनभने अज्ञात त्रुटि आएको छ :"
-
-#~ msgid "Logging in"
-#~ msgstr "लगइन प्रक्रिया"
-
-#~ msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-#~ msgstr "join &lt;room&gt;:  याहू सञ्झ्यालमा कुराकानी कोठा जडान गर्नुहोस्"
-
-#~ msgid "Pager port"
-#~ msgstr "पेजर पोर्ट"
-
-#~ msgid "File transfer port"
-#~ msgstr "फाइल स्थान्तरण पोर्ट"
-
-#~ msgid "Your Yahoo! message did not get sent."
-#~ msgstr "तपाईँको याहू! सन्देश पठाउन पठाइएन ।"
-
-#~ msgid "Yahoo! system message for %s:"
-#~ msgstr "याहू! %s का लागि प्रणालीाली सन्देश :"
-
-#~ msgid ""
-#~ "%s has (retroactively) denied your request to add them to your list for "
-#~ "the following reason: %s."
-#~ msgstr ""
-#~ "%s ले (रिट्रोएक्टिभ्ली) तरिकाले तपाईँको सूचीमा जोड्न तलका निम्न कारण का लागि "
-#~ "तपाईँको अनुरोधलाई अस्विकार गरिएको छ: %s ।"
-
-#~ msgid "%s has (retroactively) denied your request to add them to your list."
-#~ msgstr ""
-#~ "तपाईँको सूचीमा जोड्न %s ले (रिट्रोएक्टिभ्ली) तरिकाले तपाईँको अनुरोधलाई अस्विकार गरेको "
-#~ "छ ।"
-
-#~ msgid "Add buddy rejected"
-#~ msgstr "साथी थप्न अस्वीकार गरियो"
-
-#~ msgid "Failed Yahoo! Authentication"
-#~ msgstr "याहू! प्रमाणीकरण असफल"
-
-#~ msgid ""
-#~ "You have tried to ignore %s, but the user is on your buddy list.  "
-#~ "Clicking \"Yes\" will remove and ignore the buddy."
-#~ msgstr ""
-#~ "तपाईँले %s लाई उपेक्षा गर्ने प्रयास गर्नुभयो, तर प्रयोगकर्ता तपाईँको साथी सूचीमा छ ।  "
-#~ "\"Yes\" क्लिक गर्नाले साथी हटाउँछ र उपेक्षा गर्दछ ।"
-
-#~ msgid "Ignore buddy?"
-#~ msgstr "साथीलाई उपेक्षा गर्नुहुन्छ ?"
-
-#~ msgid ""
-#~ "Unknown error number %d. Logging into the Yahoo! website may fix this."
-#~ msgstr "अज्ञात त्रुटि सङ्ख्या %d । याहू! वेबसाइटमा लगइन गर्नाले यसलाई स्थिर गर्न सक्छ ।"
-
-#~ msgid "On Vacation"
-#~ msgstr "बिदामा छ"
-
-#~ msgid "Stepped Out"
-#~ msgstr "बाहिर चरण राखियो"
-
-#~ msgid "Not on server list"
-#~ msgstr "सर्भर सूचीमा छैन"
-
-#~ msgid "Join in Chat"
-#~ msgstr "कुराकानीमा जडान गर्नुहोस्"
-
-#~ msgid "Initiate Conference"
-#~ msgstr "सम्मेलन थालनी गर्नुहोस्"
-
-#~ msgid "Join whom in chat?"
-#~ msgstr "जडान गर्नुहोस् को कुराकानीमा छ?"
-
-#~ msgid "Activate ID..."
-#~ msgstr "ID सक्रिय पार्नुहोस्..."
-
-#~ msgid "Unable to connect."
-#~ msgstr "जडान गर्न अक्षम ।"
-
-#~ msgid "Unable to establish file descriptor."
-#~ msgstr "फाइल वर्णनकर्ता स्थापना गर्न अक्षम ।"
-
-#~ msgid "Yahoo! Japan Profile"
-#~ msgstr "याहू! जापान प्रोफाइल"
-
-#~ msgid "Yahoo! Profile"
-#~ msgstr "याहू! प्रोफाइल"
-
-#~ msgid ""
-#~ "Sorry, profiles marked as containing adult content are not supported at "
-#~ "this time."
-#~ msgstr ""
-#~ "माफ गर्नुहोस्, एडल्ट सामग्री समाविष्टको रुपमा चिन्ह लगाइएका प्रोफाइलहरू यो समयमा "
-#~ "समर्थित छैनन् ।"
-
-#~ msgid "Yahoo! ID"
-#~ msgstr "याहू! ID"
-
-#~ msgid "Hobbies"
-#~ msgstr "रूचीहरू"
-
-#~ msgid "Latest News"
-#~ msgstr "हालका समाचारहरू"
-
-#~ msgid "Home Page"
-#~ msgstr "गृह पृष्ठ"
-
-#~ msgid "Cool Link 1"
-#~ msgstr "कूल लिङ्क १"
-
-#~ msgid "Cool Link 2"
-#~ msgstr "कूल लिङ्क २"
-
-#~ msgid "Cool Link 3"
-#~ msgstr "कूल लिङ्क ३"
-
-#~ msgid "Last Update"
-#~ msgstr "अन्तिम अद्यावधिक"
-
-#~ msgid ""
-#~ "Could not retrieve the user's profile. This most likely is a temporary "
-#~ "server-side problem. Please try again later."
-#~ msgstr ""
-#~ "प्रयोगकर्ताको प्रोफाइल पुन:प्राप्त गर्न सकिएन । यसको प्रमुख समस्या अस्थायी सर्भर-साइड "
-#~ "हुनसक्छ ।कृपया पछि फेरि प्रयास गर्नुहोस् ।"
-
-#~ msgid ""
-#~ "Could not retrieve the user's profile. This most likely means that the "
-#~ "user does not exist; however, Yahoo! sometimes does fail to find a user's "
-#~ "profile. If you know that the user exists, please try again later."
-#~ msgstr ""
-#~ "प्रयोगकर्ताको प्रोफाइल पुन: प्राप्त गर्न सकिएन । यसको प्रमुख कारण प्रयोगकर्ता अवस्थित "
-#~ "छैन जस्तो छ,  तथापि, याहू! ले कहिलेकाँही प्रयोगकर्ताको प्रोफाइल प्राप्त गर्न असफल हुन्छ "
-#~ "। यदि तपाईँलाई प्रयोगकर्ता अवस्थित छ भन्ने थाहा छ भने, कृपया फेरि प्रयास गर्नुहोस् ।"
-
-#~ msgid "The user's profile is empty."
-#~ msgstr "प्रयोगकर्ताको प्रोफाइल खाली छ ।"
-
-#~ msgid "Failed to join chat"
-#~ msgstr "कुराकानी जडान गर्न असफल"
-
-#~ msgid "You are now chatting in %s."
-#~ msgstr "तपाईँ अहिले %s मा कुराकानी गर्दै हुनुहुन्छ ।"
-
-#~ msgid "Failed to join buddy in chat"
-#~ msgstr "कुराकानीमा साथी जडान गर्न असफल"
-
-#~ msgid "Maybe they're not in a chat?"
-#~ msgstr "तिनीहरू कुराकानीमा नहुन सक्छन् ?"
-
-#~ msgid "Fetching the room list failed."
-#~ msgstr "कोठा तान्न सकिएन।"
-
-#~ msgid "Voices"
-#~ msgstr "स्वरहरू"
-
-#~ msgid "Webcams"
-#~ msgstr "वेबक्यामहरू"
-
-#~ msgid "Connection problem"
-#~ msgstr "जडान समस्या"
-
-#~ msgid "Unable to fetch room list."
-#~ msgstr "कोठा सूची तान्न अक्षम ।"
-
-#~ msgid "User Rooms"
-#~ msgstr "प्रयोगकर्ता कोठाहरू"

@@ -18,9 +18,9 @@ msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-09 18:52-0600\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Estonian (http://www.transifex.com/projects/p/pidgin/language/"
+"Language-Team: Estonian (http://www.transifex.com/pidgin/pidgin/language/"
 "et/)\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
@@ -1287,9 +1287,8 @@ msgstr "Tõrge GStreamer'i lähtestamisel."
 msgid "(default)"
 msgstr "(vaikimisi)"
 
-#, fuzzy
 msgid "Select Sound File..."
-msgstr "Helifaili valimine..."
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr "Helide eelistused"
@@ -1408,14 +1407,12 @@ msgstr "Sõnum:"
 msgid "Edit Status"
 msgstr "Oleku redigeerimine"
 
-#, fuzzy
 msgid "Use a different status for some accounts"
-msgstr "Teistsu_guse oleku kasutamine mõne konto jaoks"
+msgstr ""
 
 #. Save and Use
-#, fuzzy
 msgid "Save and Use"
-msgstr "Salvesta ja kasuta"
+msgstr ""
 
 msgid "Certificates"
 msgstr "Sertifikaadid"
@@ -1543,9 +1540,8 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr "TinyURL kõrvaloleva jaoks: %s"
 
-#, fuzzy
 msgid "Please wait while TinyURL fetches a shorter URL..."
-msgstr "Palun oota kuni TinyURL leiab lühema URL-i..."
+msgstr ""
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Loo ainult TinyURL-i nii pikkade URL-ide jaoks nagu see"
@@ -2213,9 +2209,8 @@ msgid ""
 "of GStreamer or Farsight."
 msgstr ""
 
-#, fuzzy
 msgid "Network error."
-msgstr "Võrk"
+msgstr ""
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
@@ -2235,9 +2230,8 @@ msgstr ""
 "Rohkem koodekeid ei ole. Sinu koodekieelistused (failis fs-codecs.conf) on "
 "liiga ranged."
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "Puudub ühendus serveriga"
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Juhtus parandamatu Farsight2 viga."
@@ -2805,13 +2799,10 @@ msgstr "Ekstrasensi režiim"
 msgid "Psychic mode for incoming conversation"
 msgstr "Sissetuleva vestluse korral ekstrasensi režiim"
 
-#, fuzzy
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
 "This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
-"Kuvab vestlusakna siis, kui teised kasutajad alustavad sinuga vestlust.  See "
-"töötab järgmiste teenustega: AIM, ICQ, XMPP, Sametime ja Yahoo!"
 
 msgid "You feel a disturbance in the force..."
 msgstr "Tunnetad jõuväljas toimuvat tõuget..."
@@ -3028,13 +3019,10 @@ msgstr ""
 "kasutada, siis pead sa paigaldama ActiveTCL'i aadressilt http://www."
 "activestate.com\n"
 
-#, fuzzy
 msgid ""
 "Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
 "developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
-"Ei suudetud leida Apple \"Bonjour for Windows\" tööriista, mine http://d."
-"pidgin.im/BonjourWindows leheküljele, et leida rohkem infot."
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "Ei suuda sisenevaid IM ühendusi kuulata"
@@ -5630,13 +5618,11 @@ msgstr ""
 msgid "Received invalid data on connection with server"
 msgstr ""
 
-#, fuzzy
 msgid "Error parsing response from authentication server"
-msgstr "Autentimisserveriga pole võimalik ühenduda: %s"
+msgstr ""
 
-#, fuzzy
 msgid "Unknown error during authentication"
-msgstr "Autentimise alustamine"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -6254,9 +6240,8 @@ msgstr ""
 msgid "MD5-based"
 msgstr ""
 
-#, fuzzy
 msgid "Authentication method"
-msgstr "Tõrge autentimisel"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -9054,13 +9039,11 @@ msgstr "A_lias:"
 msgid "_Group:"
 msgstr "_Grupp:"
 
-#, fuzzy
 msgid "Automatically _join when account connects"
-msgstr "Liitu automaatselt konto ühendamisel."
+msgstr ""
 
-#, fuzzy
 msgid "_Remain in chat after window is closed"
-msgstr "_Jää jututuppa peale akna sulgemist."
+msgstr ""
 
 msgid "Please enter the name of the group to be added."
 msgstr "Palun sisesta lisatava grupi nimi."
@@ -9099,9 +9082,8 @@ msgstr ""
 msgid "SSL Servers"
 msgstr "SSL-serverid"
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "Toetatud silumisvalikud on: plugins version"
+msgstr ""
 
 msgid "Unknown command."
 msgstr "Tundmatu käsk."
@@ -10458,9 +10440,8 @@ msgstr ""
 msgid "_Hangup"
 msgstr "_Lahuta"
 
-#, fuzzy
 msgid "Media error"
-msgstr "Viga lugemisel"
+msgstr ""
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -11286,9 +11267,8 @@ msgid "Use a _different status for some accounts"
 msgstr "Teistsu_guse oleku kasutamine mõne konto jaoks"
 
 #. Save and Use button
-#, fuzzy
 msgid "Sa_ve and Use"
-msgstr "Sal_vesta ja kasuta"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -12013,9 +11993,8 @@ msgstr ""
 msgid "Notify For"
 msgstr "Teavitused kehtivad"
 
-#, fuzzy
 msgid "\tS_ystem messages"
-msgstr "Süsteemsed sõnumid"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "Ainult ju_hul, kui keegi ütleb Sinu kasutajanime"
@@ -12203,13 +12182,10 @@ msgstr "Toorsisend"
 msgid "Lets you send raw input to text-based protocols."
 msgstr "Toorsisendi saatmise lubamine tekstipõhistele protokollidele."
 
-#, fuzzy
 msgid ""
 "Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Lubab sul saata töötlemata sisendit tekstipõhistele protokollidele (XMPP, "
-"MSN, IRC, TOC). Saatmiseks vajuta sisendkastis 'Enter'. Jälgi silumisakent."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -12659,15 +12635,10 @@ msgid "Variable Transparency for the buddy list and conversations."
 msgstr "Muutuv läbipaistvus sõbranimekirjale ja vestlustele."
 
 #. *  description
-#, fuzzy
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
 "the buddy list."
 msgstr ""
-"See plugin võimaldab määrata muutuvat läbipaistvust vestlusakendele ja "
-"sõbranimekirjale.\n"
-"\n"
-"* Märkus: Selle plugina jaoks on vajalik Windows 2000 või mõni uuem Windows."
 
 #. Autostart
 msgid "Startup"
@@ -12854,1332 +12825,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Sul pole õigust seda rakendust eemaldada."
-
-#~ msgid "Pounce Who"
-#~ msgstr "Kellest märku antakse"
-
-#~ msgid "Use different status for following accounts"
-#~ msgstr "Järgnevate kontode jaoks kasutatakse teistsugust olekut"
-
-#~ msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-#~ msgstr ""
-#~ "Saadud URLi(de) lihtsamaks kopeerimiseks vestlusakendelt, kasutage "
-#~ "TinyURLi."
-
-#~ msgid "Whether the specified command should handle \"msnim\" URLs"
-#~ msgstr "Kas määratud käsk peaks käsitlema \"msnim\" URL-e või mitte"
-
-#~ msgid ""
-#~ "True if the command specified in the \"command\" key should handle \"msnim"
-#~ "\" URLs."
-#~ msgstr ""
-#~ "Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema "
-#~ "\"msnim\" URL-e."
-
-#~ msgid "The handler for \"msnim\" URLs"
-#~ msgstr "\"msnim\" URL-ide käsitleja"
-
-#~ msgid "The command used to handle \"msnim\" URLs, if enabled."
-#~ msgstr "\"msnim\" URL-ide käsitlemise käsk (kui on lubatud)."
-
-#~ msgid "Whether the specified command should handle \"ymsgr\" URLs"
-#~ msgstr "Kas määratud käsk peaks käsitlema \"ymsgr\" URL-e või mitte"
-
-#~ msgid ""
-#~ "True if the command specified in the \"command\" key should handle \"ymsgr"
-#~ "\" URLs."
-#~ msgstr ""
-#~ "Kui märgitud, siis peaks \"command\" võtmes määratud käsk käsitlema "
-#~ "\"ymsgr\" URL-e."
-
-#~ msgid "The handler for \"ymsgr\" URLs"
-#~ msgstr "\"ymsgr\" URL-ide käsitleja"
-
-#~ msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-#~ msgstr "\"ymsgr\" URL-ide käsitlemise käsk (kui on lubatud)."
-
-#~ msgid "Unable to add \"%s\"."
-#~ msgstr "\"%s\" pole võimalik lisada."
-
-#~ msgid "Buddy Add error"
-#~ msgstr "Viga sõbra lisamisel"
-
-#~ msgid "The username specified does not exist."
-#~ msgstr "Määratud kasutajanime pole olemas."
-
-#~ msgid "Unable to parse message"
-#~ msgstr "Sõnumit pole võimalik parsida"
-
-#~ msgid "Syntax Error (probably a client bug)"
-#~ msgstr "Süntaksi viga (arvatavasti kliendi viga)"
-
-#~ msgid "Invalid email address"
-#~ msgstr "Vigane e-posti aadress"
-
-#~ msgid "User does not exist"
-#~ msgstr "Kasutajat pole olemas"
-
-#~ msgid "Fully qualified domain name missing"
-#~ msgstr "Puudub täielik domeeninimi"
-
-#~ msgid "Already logged in"
-#~ msgstr "Juba sisse logitud"
-
-#~ msgid "Invalid username"
-#~ msgstr "Vigane kasutajanimi"
-
-#~ msgid "Invalid friendly name"
-#~ msgstr "Vigane sõbralik nimi"
-
-#~ msgid "List full"
-#~ msgstr "Nimekiri on täis"
-
-#~ msgid "Already there"
-#~ msgstr "Juba olemas"
-
-#~ msgid "Not on list"
-#~ msgstr "Pole nimekirjas"
-
-#~ msgid "Too many groups"
-#~ msgstr "Liiga palju gruppe"
-
-#~ msgid "Invalid group"
-#~ msgstr "Vigane grupp"
-
-#~ msgid "User not in group"
-#~ msgstr "Kasutaja pole grupis"
-
-#~ msgid "Group name too long"
-#~ msgstr "Grupinimi on liiga pikk"
-
-#~ msgid "Cannot remove group zero"
-#~ msgstr "Nullgruppi pole võimalik eemaldada"
-
-#~ msgid "Tried to add a user to a group that doesn't exist"
-#~ msgstr "Kasutajat prooviti lisada olematusse gruppi"
-
-#~ msgid "Switchboard failed"
-#~ msgstr "Kommutaatori tõrge"
-
-#~ msgid "Notify transfer failed"
-#~ msgstr "Tõrge teavituse ülekandmisel"
-
-#~ msgid "Required fields missing"
-#~ msgstr "Nõutud väljad on puudu"
-
-#~ msgid "Service temporarily unavailable"
-#~ msgstr "Teenus pole ajutiselt kättesaadav"
-
-#~ msgid "Database server error"
-#~ msgstr "Andmebaasiserveri viga"
-
-#~ msgid "Command disabled"
-#~ msgstr "Käsk on keelatud"
-
-#~ msgid "File operation error"
-#~ msgstr "Viga failioperatsioonil"
-
-#~ msgid "Memory allocation error"
-#~ msgstr "Viga mälu eraldamisel"
-
-#~ msgid "Wrong CHL value sent to server"
-#~ msgstr "Serverile saadeti vale CHL-väärtus"
-
-#~ msgid "Server busy"
-#~ msgstr "Server on hõivatud"
-
-#~ msgid "Server unavailable"
-#~ msgstr "Server pole saadaval"
-
-#~ msgid "Database connect error"
-#~ msgstr "Viga andmebaasiühenduses"
-
-#~ msgid "Server is going down (abandon ship)"
-#~ msgstr "Server läheb maha (lahkuge laevalt)"
-
-#~ msgid "Error creating connection"
-#~ msgstr "Viga ühenduse loomisel"
-
-#~ msgid "Unable to write"
-#~ msgstr "Kirjutamine pole võimalik"
-
-#~ msgid "Session overload"
-#~ msgstr "Seanss on ülekoormatud"
-
-#~ msgid "User is too active"
-#~ msgstr "Kasutaja on liiga aktiivne"
-
-#~ msgid "Too many sessions"
-#~ msgstr "Liiga palju seansse"
-
-#~ msgid "Passport not verified"
-#~ msgstr "Passporti pole veel üle vaadatud"
-
-#~ msgid "Bad friend file"
-#~ msgstr "Vigane sõbrafail"
-
-#~ msgid "Not expected"
-#~ msgstr "Ootamatu"
-
-#~ msgid "Server too busy"
-#~ msgstr "Server on liiga hõivatud"
-
-#~ msgid "Not allowed when offline"
-#~ msgstr "Võrku ühendamata kasutajale pole see lubatud"
-
-#~ msgid "Not accepting new users"
-#~ msgstr "Uusi kasutajaid vastu ei võeta"
-
-#~ msgid "Passport account not yet verified"
-#~ msgstr "Passporti kontot pole veel üle vaadatud"
-
-#~ msgid "Bad ticket"
-#~ msgstr "Halb pilet"
-
-#~ msgid "Unknown Error Code %d"
-#~ msgstr "Tundmatu veakood %d"
-
-#~ msgid "MSN Error: %s\n"
-#~ msgstr "MSN-i viga: %s\n"
-
-#~ msgid "Buddy list synchronization issue in %s (%s)"
-#~ msgstr "Küsimus konto %s sõbranimekirja sünkroniseerimise kohta (%s)"
-
-#~ msgid ""
-#~ "%s on the local list is inside the group \"%s\" but not on the server "
-#~ "list. Do you want this buddy to be added?"
-#~ msgstr ""
-#~ "%s on kohalikus nimekirjas grupis \"%s\", kuid mitte serveri nimekirjas. "
-#~ "Kas sa soovid sõpra sinna nimekirja lisada?"
-
-#~ msgid ""
-#~ "%s is on the local list but not on the server list. Do you want this "
-#~ "buddy to be added?"
-#~ msgstr ""
-#~ "%s on kohalikus nimekirjas, serveri nimekirjas aga mitte. Kas soovid seda "
-#~ "sõpra ka serveri nimekirja lisada?"
-
-#~ msgid "Other Contacts"
-#~ msgstr "Muud kontaktid"
-
-#~ msgid "Nudge"
-#~ msgstr "Müks"
-
-#~ msgid "%s has nudged you!"
-#~ msgstr "%s müksas sind!"
-
-#~ msgid "Nudging %s..."
-#~ msgstr "Kasutaja %s müksamine..."
-
-#~ msgid "Email Address..."
-#~ msgstr "E-posti aadress..."
-
-#~ msgid "Your new MSN friendly name is too long."
-#~ msgstr "Sinu MSN-i sõbralik nimi on liiga pikk."
-
-#~ msgid "This is the name that other MSN buddies will see you as."
-#~ msgstr "Selle nimega näevad sind MSN-is olevad sõbrad."
-
-#~ msgid "This Location"
-#~ msgstr "See asukoht"
-
-#~ msgid "Other Locations"
-#~ msgstr "Muud asukohad"
-
-#~ msgid "Allow"
-#~ msgstr "Luba"
-
-#~ msgid "Disallow"
-#~ msgstr "Ära luba"
-
-#~ msgid "Set your home phone number."
-#~ msgstr "Oma kodutelefoni numbri määramine."
-
-#~ msgid "Set your work phone number."
-#~ msgstr "Oma töötelefoni numbri määramine."
-
-#~ msgid "Set your mobile phone number."
-#~ msgstr "Oma mobiiltelefoni numbri määramine."
-
-#~ msgid ""
-#~ "MSN servers are currently blocking the following regular expressions:<br/>"
-#~ "%s"
-#~ msgstr ""
-#~ "MSN-serverid blokeerivad praegu järgnevaid regulaaravaldisi: <br/>%s"
-
-#~ msgid "This account does not have email enabled."
-#~ msgstr "Selle konto jaoks pole e-post lubatud."
-
-#~ msgid "Send a mobile message."
-#~ msgstr "Mobiilisõnumi saatmine."
-
-#~ msgid "Page"
-#~ msgstr "Lehekülg"
-
-#~ msgid "Playing a game"
-#~ msgstr "Mängib mängu"
-
-#~ msgid "Has you"
-#~ msgstr "Sina tema loendis"
-
-#~ msgid "Home Phone Number"
-#~ msgstr "Kodutelefoni number"
-
-#~ msgid "Work Phone Number"
-#~ msgstr "Töötelefoni number"
-
-#~ msgid "Mobile Phone Number"
-#~ msgstr "Mobiiltelefoni number"
-
-#~ msgid "Be Right Back"
-#~ msgstr "Tulen kohe tagasi"
-
-#~ msgid "On the Phone"
-#~ msgstr "Räägin telefoniga"
-
-#~ msgid "Out to Lunch"
-#~ msgstr "Lõunal"
-
-#~ msgid "Game Title"
-#~ msgstr "Mängu pealkiri"
-
-#~ msgid "Office Title"
-#~ msgstr "Kontori nimi"
-
-#~ msgid "Set Friendly Name..."
-#~ msgstr "Määra sõbralik nimi..."
-
-#~ msgid "Set Home Phone Number..."
-#~ msgstr "Määra kodutelefoni number..."
-
-#~ msgid "Set Work Phone Number..."
-#~ msgstr "Määra töötelefoni number..."
-
-#~ msgid "Set Mobile Phone Number..."
-#~ msgstr "Määra mobiiltelefoni number..."
-
-#~ msgid "Enable/Disable Mobile Devices..."
-#~ msgstr "Mobiilseadmete lubamine/keelamine"
-
-#~ msgid "Open Hotmail Inbox"
-#~ msgstr "Ava Hotmaili postkast"
-
-#~ msgid "Send to Mobile"
-#~ msgstr "Saada mobiilile"
-
-#~ msgid ""
-#~ "SSL support is needed for MSN. Please install a supported SSL library."
-#~ msgstr "MSN-ile on vaja SSL-i tuge. Palun paigalda toetatud SSL-teek."
-
-#~ msgid "Error retrieving profile"
-#~ msgstr "Viga profiili vastuvõtmisel"
-
-#~ msgid "Occupation"
-#~ msgstr "Amet"
-
-#~ msgid "Hobbies and Interests"
-#~ msgstr "Hobid ja huvid"
-
-#~ msgid "A Little About Me"
-#~ msgstr "Väheke minust"
-
-#~ msgid "Marital Status"
-#~ msgstr "Perekonnaseis"
-
-#~ msgid "Interests"
-#~ msgstr "Huvid"
-
-#~ msgid "Pets"
-#~ msgstr "Lemmikloomad"
-
-#~ msgid "Hometown"
-#~ msgstr "Kodulinn"
-
-#~ msgid "Places Lived"
-#~ msgstr "Endised elukohad"
-
-#~ msgid "Fashion"
-#~ msgstr "Mood"
-
-#~ msgid "Humor"
-#~ msgstr "Huumor"
-
-#~ msgid "Music"
-#~ msgstr "Muusika"
-
-#~ msgid "Favorite Quote"
-#~ msgstr "Lemmiktsitaat"
-
-#~ msgid "Contact Info"
-#~ msgstr "Kontaktandmed"
-
-#~ msgid "Personal"
-#~ msgstr "Isiklik"
-
-#~ msgid "Home Phone"
-#~ msgstr "Kodutelefon"
-
-#~ msgid "Home Phone 2"
-#~ msgstr "Kodutelefon 2"
-
-#~ msgid "Personal Mobile"
-#~ msgstr "Isiklik mobiiltelefon"
-
-#~ msgid "Home Fax"
-#~ msgstr "Kodufaks"
-
-#~ msgid "Personal Email"
-#~ msgstr "Isiklik e-post"
-
-#~ msgid "Personal IM"
-#~ msgstr "Isiklikud välksõnumid"
-
-#~ msgid "Anniversary"
-#~ msgstr "Tähtpäev"
-
-#~ msgid "Work"
-#~ msgstr "Tööl"
-
-#~ msgid "Profession"
-#~ msgstr "Ametikoht"
-
-#~ msgid "Work Phone"
-#~ msgstr "Töötelefon"
-
-#~ msgid "Work Phone 2"
-#~ msgstr "Töötelefon 2"
-
-#~ msgid "Work Mobile"
-#~ msgstr "Töö-mobiiltelefon"
-
-#~ msgid "Work Pager"
-#~ msgstr "Tööpeiler"
-
-#~ msgid "Work Fax"
-#~ msgstr "Tööfaks"
-
-#~ msgid "Work Email"
-#~ msgstr "Töö e-post"
-
-#~ msgid "Start Date"
-#~ msgstr "Alguskuupäev"
-
-#~ msgid "Favorite Things"
-#~ msgstr "Lemmikasjad"
-
-#~ msgid "Last Updated"
-#~ msgstr "Viimati uuendatud"
-
-#~ msgid "The user has not created a public profile."
-#~ msgstr "Kasutaja pole loonud avalikku profiili."
-
-#~ msgid ""
-#~ "MSN reported not being able to find the user's profile. This either means "
-#~ "that the user does not exist, or that the user exists but has not created "
-#~ "a public profile."
-#~ msgstr ""
-#~ "MSN teatas, et kasutaja profiili pole võimalik leida. See võib tähendada, "
-#~ "et kasutajat pole olemas või pole ta omale avalikku profiili loonud."
-
-#~ msgid ""
-#~ "Could not find any information in the user's profile. The user most "
-#~ "likely does not exist."
-#~ msgstr ""
-#~ "Kasutajaprofiili kohta pole võimalik mingeid andmeid leida. Kõige "
-#~ "tõenäolisemalt pole seda kasutajat olemas."
-
-#~ msgid "Windows Live Messenger Protocol Plugin"
-#~ msgstr "Windows Live Messenger'i protokolli plugin"
-
-#~ msgid "Use HTTP Method"
-#~ msgstr "Kasutatakse HTTP meetodit"
-
-#~ msgid "HTTP Method Server"
-#~ msgstr "HTTP-meetodi server"
-
-#~ msgid "Show custom smileys"
-#~ msgstr "Kasutatakse kohandatud tujunägusid"
-
-#~ msgid "nudge: nudge a user to get their attention"
-#~ msgstr "nudge: kasutaja müksamine tema tähelepanu võitmiseks"
-
-#~ msgid "Windows Live ID authentication:Unable to connect"
-#~ msgstr "Windows Live ID autentimine: Ühendumine pole võimalik"
-
-#~ msgid "Windows Live ID authentication:Invalid response"
-#~ msgstr "Windows Live ID autentimine:Vigane vastus"
-
-#~ msgid "Unknown error (%d): %s"
-#~ msgstr "Tundmatu viga (%d): %s"
-
-#~ msgid "Unknown error (%d)"
-#~ msgstr "Tundmatu viga (%d)"
-
-#~ msgid "Unable to remove user"
-#~ msgstr "Kasutajat pole võimalik eemaldada"
-
-#~ msgid "Mobile message was not sent because it was too long."
-#~ msgstr "Mobiilisõnumit ei saadetud, kuna see oli liiga pikk."
-
-#~ msgid "Message was not sent because messages are being sent too quickly."
-#~ msgstr "Sõnumit ei saadetud, kuna sõnumeid saadetakse liiga kiiresti."
-
-#~ msgid "Message was not sent because an unknown encoding error occurred."
-#~ msgstr ""
-#~ "Sõnumit ei saadetud, kuna saatmisel tekkis kooditabeliga seotud tundmatu "
-#~ "viga."
-
-#~ msgid "Message was not sent because an unknown error occurred."
-#~ msgstr "Sõnumit ei saadetud, kuna saatmisel tekkis tundmatu viga."
-
-#~ msgid "Writing error"
-#~ msgstr "Viga kirjutamisel"
-
-#~ msgid "Reading error"
-#~ msgstr "Viga lugemisel"
-
-#~ msgid ""
-#~ "Connection error from %s server:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Ühenduse viga %s serverist:\n"
-#~ "%s"
-
-#~ msgid "Our protocol is not supported by the server"
-#~ msgstr "Meie protokoll pole serveri poolt toetatud"
-
-#~ msgid "Error parsing HTTP"
-#~ msgstr "Viga HTTP analüüsimisel"
-
-#~ msgid ""
-#~ "The MSN servers are temporarily unavailable. Please wait and try again."
-#~ msgstr ""
-#~ "MSN-serverid pole ajutiselt kättesaadavad. Palun oota ja proovi uuesti."
-
-#~ msgid "The MSN servers are going down temporarily"
-#~ msgstr "MSN-serverid võetakse ajutiselt maha"
-
-#~ msgid "Unable to authenticate: %s"
-#~ msgstr "Pole võimalik autentida: %s"
-
-#~ msgid "Handshaking"
-#~ msgstr "Käepigistus"
-
-#~ msgid "Transferring"
-#~ msgstr "Ülekandmine"
-
-#~ msgid "Getting cookie"
-#~ msgstr "Küpsise võtmine"
-
-#~ msgid "Sending cookie"
-#~ msgstr "Küpsise saatmine"
-
-#~ msgid "Retrieving buddy list"
-#~ msgstr "Sõbranimekirja vastuvõtmine"
-
-#~ msgid "Away From Computer"
-#~ msgstr "Arvutist eemal"
-
-#~ msgid "On The Phone"
-#~ msgstr "Räägin telefoniga"
-
-#~ msgid "Out To Lunch"
-#~ msgstr "Lõunal"
-
-#~ msgid "Message may have not been sent because a timeout occurred:"
-#~ msgstr "Võib-olla jäi sõnum ajapiirangu ületamise tõttu saatmata:"
-
-#~ msgid "Message could not be sent, not allowed while invisible:"
-#~ msgstr "Nähtamatu olles pole võimalik sõnumit saata:"
-
-#~ msgid "Message could not be sent because the user is offline:"
-#~ msgstr "Võrku ühendumata kasutajale pole võimalik sõnumit saata:"
-
-#~ msgid "Message could not be sent because a connection error occurred:"
-#~ msgstr "Ühenduse vea tõttu pole võimalik sõnumit saata:"
-
-#~ msgid "Message could not be sent because we are sending too quickly:"
-#~ msgstr "Sõnumit pole võimalik saata, kuna me saadame liiga kiiresti:"
-
-#~ msgid ""
-#~ "Message could not be sent because we were unable to establish a session "
-#~ "with the server. This is likely a server problem, try again in a few "
-#~ "minutes:"
-#~ msgstr ""
-#~ "Sõnumit pole võimalik saata, kuna serveriga pole võimalik ühendusseanssi "
-#~ "luua. Tõenäoliselt on see serveri probleem ja mõne minuti pärast tasub "
-#~ "ühendumist uuesti proovida:"
-
-#~ msgid ""
-#~ "Message could not be sent because an error with the switchboard occurred:"
-#~ msgstr "Sõnumit pole kommutaatori vea tõttu võimalik saata:"
-
-#~ msgid "Message may have not been sent because an unknown error occurred:"
-#~ msgstr "Sõnumit pole võimlik saata, kuna leidis aset tundmatu viga:"
-
-#~ msgid "Delete Buddy from Address Book?"
-#~ msgstr "Kas kustutada sõber aadressiraamatust?"
-
-#~ msgid "Do you want to delete this buddy from your address book as well?"
-#~ msgstr "Kas soovid kustutada sõbra ka enda aadressiraamatust?"
-
-#~ msgid "The username specified is invalid."
-#~ msgstr "Määratud kasutajanimi on vigane."
-
-#~ msgid ""
-#~ "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-#~ msgstr ""
-#~ "Sisestatud sünnipäev on vigases vormingus. Õige vorming on 'AAAA-KK-PP'."
-
-#~ msgid "Profile Update Error"
-#~ msgstr "Profiili uuendamise viga"
-
-#~ msgid "Display Name"
-#~ msgstr "Kuvamisnimi"
-
-#~ msgid "About Me"
-#~ msgstr "Minu andmed"
-
-#~ msgid "The PIN you entered is invalid."
-#~ msgstr "Sa sisestasid vigase PIN-i."
-
-#~ msgid "The PIN you entered has an invalid length [4-10]."
-#~ msgstr "Sinu sisestatud PIN on vale pikkusega [4-10]."
-
-#~ msgid "The PIN is invalid. It should only consist of digits [0-9]."
-#~ msgstr "PIN on vigane. See peaks sisaldama ainult numbreid [0-9]."
-
-#~ msgid "The two PINs you entered do not match."
-#~ msgstr "Sinu sisestatud PIN-id ei klapi omavahel."
-
-#~ msgid "PIN Update Error"
-#~ msgstr "PIN-i uuendamise viga"
-
-#~ msgid "PIN"
-#~ msgstr "PIN-kood"
-
-#~ msgid "Verify PIN"
-#~ msgstr "PIN-koodi kontroll"
-
-#~ msgid "Change PIN"
-#~ msgstr "PIN-koodi muutmine"
-
-#~ msgid "Change MXit PIN"
-#~ msgstr "MXit PIN-koodi muutmine"
-
-#~ msgid "About"
-#~ msgstr "Programmist"
-
-#~ msgid "Search for user"
-#~ msgstr "Kasutaja otsimine"
-
-#~ msgid "Type search information"
-#~ msgstr "Sisesta otsingu andmed"
-
-#~ msgid "Change Profile..."
-#~ msgstr "Muuda profiili..."
-
-#~ msgid "Change PIN..."
-#~ msgstr "Muuda PIN-koodi..."
-
-#~ msgid "Search for contacts..."
-#~ msgstr "Kontaktide otsimine..."
-
-#~ msgid "View Splash..."
-#~ msgstr "Näita avaekraani..."
-
-#~ msgid "About..."
-#~ msgstr "Programmist"
-
-#~ msgid "The file you are trying to send is too large!"
-#~ msgstr "Saatmiseks määratud fail on liiga suur!"
-
-#~ msgid "Logging In..."
-#~ msgstr "Sisselogimine"
-
-#~ msgid "Connecting..."
-#~ msgstr "Ühendumine..."
-
-#~ msgid "The PIN you entered has an invalid length [7-10]."
-#~ msgstr "Sinu sisestatud PIN on vale pikkusega [7-10]."
-
-#~ msgid "MXit ID"
-#~ msgstr "MXit ID"
-
-#~ msgid "Register New MXit Account"
-#~ msgstr "Uue MXit konto registreerimine"
-
-#~ msgid "Please fill in the following fields:"
-#~ msgstr "Palun täida järgnevad väljad:"
-
-#~ msgid "Wrong security code entered. Please try again later."
-#~ msgstr "Vale turvakood. Proovi hiljem uuesti."
-
-#~ msgid "Your session has expired. Please try again later."
-#~ msgstr "Sinu seanss on aegunud. Proovi hiljem uuesti."
-
-#~ msgid "Invalid country selected. Please try again."
-#~ msgstr "Riik on vigaselt valitud. Palun proovi uuesti."
-
-#~ msgid "Internal error. Please try again later."
-#~ msgstr "Sisemine viga. Palun proovi hiljem uuesti."
-
-#~ msgid "You did not enter the security code"
-#~ msgstr "Sa ei sisestanud turvakoodi"
-
-#~ msgid "Security Code"
-#~ msgstr "Turvakood"
-
-#~ msgid "Enter Security Code"
-#~ msgstr "Sisesta turvakood"
-
-#~ msgid "Your Country"
-#~ msgstr "Sinu asukohariik"
-
-#~ msgid "Your Language"
-#~ msgstr "Sinu keel"
-
-#~ msgid "MXit Authorization"
-#~ msgstr "MXit autoriseerimine"
-
-#~ msgid "MXit account validation"
-#~ msgstr "MXit konto valideerimine"
-
-#~ msgid "Retrieving User Information..."
-#~ msgstr "Kasutaja andmete vastuvõtmine..."
-
-#~ msgid "was kicked"
-#~ msgstr "löödi välja"
-
-#~ msgid "You have been kicked from this MultiMX."
-#~ msgstr "Sind löödi selle MultiMX pealt välja."
-
-#~ msgid "_Room Name:"
-#~ msgstr "_Toa nimi:"
-
-#~ msgid "You have invited"
-#~ msgstr "Sind on kutsutud"
-
-#~ msgid "Loading menu..."
-#~ msgstr "Menüü laadimine..."
-
-#~ msgid "Status Message"
-#~ msgstr "Oleku teade"
-
-#~ msgid "Rejection Message"
-#~ msgstr "Keeldumise teade"
-
-#~ msgid "No profile available"
-#~ msgstr "Profiil pole saadaval"
-
-#~ msgid "This contact does not have a profile."
-#~ msgstr "Sellel kontaktil puudub profiil."
-
-#~ msgid "Your MXit ID..."
-#~ msgstr "Sinu MXit ID..."
-
-#~ msgid "WAP Server"
-#~ msgstr "WAP-server"
-
-#~ msgid "Connect via HTTP"
-#~ msgstr "Ühendutakse HTTP abil"
-
-#~ msgid "Enable splash-screen popup"
-#~ msgstr "Luba avaekraani näitamine"
-
-#~ msgid "Last Online"
-#~ msgstr "Viimati ühendatud"
-
-#~ msgid "Invite Message"
-#~ msgstr "Kutse teade"
-
-#~ msgid "No results"
-#~ msgstr "Tulemus puudub"
-
-#~ msgid "No contacts found."
-#~ msgstr "Kontakte ei leitud."
-
-#~ msgid "Where I live"
-#~ msgstr "Kus ma elan"
-
-#~ msgid "We found %i contact that matches your search."
-#~ msgid_plural "We found %i contacts that match your search."
-#~ msgstr[0] "Leidsime %i otsingule vastava kontakti."
-#~ msgstr[1] "Leidsime %i otsingule vastavat kontakti."
-
-#~ msgid "Message Send Error"
-#~ msgstr "Sõnumi saatmise viga"
-
-#~ msgid "Unable to process your request at this time"
-#~ msgstr "Sinu päringut pole võimalik hetkel töödelda"
-
-#~ msgid "Message Error"
-#~ msgstr "Sõnumi viga"
-
-#~ msgid "Cannot perform redirect using the specified protocol"
-#~ msgstr "Määratud protokolli abil pole võimalik ümbersuunamist läbi viia"
-
-#~ msgid "An internal MXit server error occurred."
-#~ msgstr "Tekkis MXit serveri sisemine viga."
-
-#~ msgid "Login error: %s (%i)"
-#~ msgstr "Viga sisselogimisel: %s (%i)"
-
-#~ msgid "Logout error: %s (%i)"
-#~ msgstr "Viga väljalogimisel: %s (%i)"
-
-#~ msgid "Message Sending Error"
-#~ msgstr "Sõnumi saatmise viga"
-
-#~ msgid "Contact Removal Error"
-#~ msgstr "Kontakti eemaldamise viga"
-
-#~ msgid "File Transfer Error"
-#~ msgstr "Viga faili ülekandmisel"
-
-#~ msgid "Profile Error"
-#~ msgstr "Profiili viga"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x01)"
-#~ msgstr "MXit-ga ühenduses tekkis viga. (Lugemise samm 0x01)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x02)"
-#~ msgstr "MXit-ga ühenduses tekkis viga. (Lugemise samm 0x02)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x03)"
-#~ msgstr "MXit-ga ühenduses tekkis viga. (Lugemise samm 0x03)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x04)"
-#~ msgstr "MXit-ga ühenduses tekkis viga. (Lugemise samm 0x04)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x05)"
-#~ msgstr "MXit-ga ühenduses tekkis viga. (Lugemise samm 0x05)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x06)"
-#~ msgstr "MXit-ga ühenduses tekkis viga. (Lugemise samm 0x06)"
-
-#~ msgid "Deleted"
-#~ msgstr "Kustutatud"
-
-#~ msgid "More Information"
-#~ msgstr "Rohkem andmeid"
-
-#~ msgid "No such user: %s"
-#~ msgstr "Sellist kasutajat pole: %s"
-
-#~ msgid "User lookup"
-#~ msgstr "Kasutaja otsimine"
-
-#~ msgid "Logging in"
-#~ msgstr "Sisselogimine"
-
-#~ msgid "MySpaceIM - No Username Set"
-#~ msgstr "MySpaceIM - Kasutajanimi on määramata"
-
-#~ msgid "You appear to have no MySpace username."
-#~ msgstr "Sul ei paista MySpace kasutajanime olevat."
-
-#~ msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-#~ msgstr ""
-#~ "Kas sa soovid praegu ühe määrata? (Märkus: SEDA POLE VÕIMALIK HILJEM "
-#~ "MUUTA!)"
-
-#~ msgid "Lost connection with server"
-#~ msgstr "Ühendus serveriga on katkenud"
-
-#~ msgid "New mail messages"
-#~ msgstr "Uued e-posti sõnumid"
-
-#~ msgid "New blog comments"
-#~ msgstr "Uued blogikommentaarid"
-
-#~ msgid "New profile comments"
-#~ msgstr "Uued profiilikommentaarid"
-
-#~ msgid "New friend requests!"
-#~ msgstr "Uued sõbrakutsed!"
-
-#~ msgid "New picture comments"
-#~ msgstr "Uued pildikommentaarid"
-
-#~ msgid "MySpace"
-#~ msgstr "MySpace"
-
-#~ msgid "IM Friends"
-#~ msgstr "Välksõnumi-sõbrad"
-
-#~ msgid ""
-#~ "%d buddy was added or updated from the server (including buddies already "
-#~ "on the server-side list)"
-#~ msgid_plural ""
-#~ "%d buddies were added or updated from the server (including buddies "
-#~ "already on the server-side list)"
-#~ msgstr[0] ""
-#~ "Serverist lisati või uuendati %d sõber (kaasa arvatud sõbrad, kes on juba "
-#~ "serveripoolses nimekirjas)"
-#~ msgstr[1] ""
-#~ "Serverist lisati või uuendati %d sõpra (kaasa arvatud sõbrad, kes on juba "
-#~ "serveripoolses nimekirjas)"
-
-#~ msgid "Add contacts from server"
-#~ msgstr "Serverist kontaktide lisamine"
-
-#~ msgid "Protocol error, code %d: %s"
-#~ msgstr "Protkolli viga, veakood %d: %s"
-
-#~ msgid ""
-#~ "%s Your password is %zu characters, which is longer than the maximum "
-#~ "length of %d.  Please shorten your password at http://profileedit.myspace."
-#~ "com/index.cfm?fuseaction=accountSettings.changePassword and try again."
-#~ msgstr ""
-#~ "%s Sinu parool on %zu tähemärki pikk, mis on pikem kui suurim lubatud "
-#~ "pikkus %d. Palun lühenda oma parooli aadressil http://profileedit.myspace."
-#~ "com/index.cfm?fuseaction=accountSettings.changePassword ja proovi uuesti."
-
-#~ msgid "MySpaceIM Error"
-#~ msgstr "MySpaceIM viga"
-
-#~ msgid "Failed to add buddy"
-#~ msgstr "Tõrge sõbra lisamisel"
-
-#~ msgid "'addbuddy' command failed."
-#~ msgstr "Tõrge 'addbuddy' käsu täitmisel."
-
-#~ msgid "Failed to remove buddy"
-#~ msgstr "Tõrge sõbra eemaldamisel"
-
-#~ msgid "'delbuddy' command failed"
-#~ msgstr "Tõrge 'delbuddy' käsu täitmisel."
-
-#~ msgid "Missing Cipher"
-#~ msgstr "Šiffer on puudu"
-
-#~ msgid "The RC4 cipher could not be found"
-#~ msgstr "RC4 šifrit pole võimalik leida"
-
-#~ msgid ""
-#~ "Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-#~ "not be loaded."
-#~ msgstr ""
-#~ "Uuenda oma libpurple teeki nii, et see toetakse RC4u šifrit (>= 2.0.1). "
-#~ "MySpaceIM jäetakse laadimata."
-
-#~ msgid "Add friends from MySpace.com"
-#~ msgstr "Sõprade lisamine MySpace.com'ist"
-
-#~ msgid "Importing friends failed"
-#~ msgstr "Tõrge sõprade importimisel"
-
-#~ msgid "Find people..."
-#~ msgstr "Otsi inimesi..."
-
-#~ msgid "Change IM name..."
-#~ msgstr "Muuda välksõnumi nime..."
-
-#~ msgid "myim URL handler"
-#~ msgstr "myim URL-ikäsitleja"
-
-#~ msgid "Show display name in status text"
-#~ msgstr "Kuvamisnime näitamine olekutekstis"
-
-#~ msgid "Send emoticons"
-#~ msgstr "Tujunägude saatmine"
-
-#~ msgid "Screen resolution (dots per inch)"
-#~ msgstr "Ekraani eraldusvõime (punkti tollile)"
-
-#~ msgid "Base font size (points)"
-#~ msgstr "Aluskirjatüübi suurus (punktides)"
-
-#~ msgid "Headline"
-#~ msgstr "Pealkiri"
-
-#~ msgid "Song"
-#~ msgstr "Laul"
-
-#~ msgid "Total Friends"
-#~ msgstr "Sõpru kokku"
-
-#~ msgid "Client Version"
-#~ msgstr "Kliendi versioon"
-
-#~ msgid ""
-#~ "An error occurred while trying to set the username.  Please try again, or "
-#~ "visit http://editprofile.myspace.com/index.cfm?fuseaction=profile."
-#~ "username to set your username."
-#~ msgstr ""
-#~ "Viga kasutajanime määramisel. Palun proovi uuesti või külasta "
-#~ "kasutajanime määramiseks aadressi http://editprofile.myspace.com/index."
-#~ "cfm?fuseaction=profile.username"
-
-#~ msgid "MySpaceIM - Username Available"
-#~ msgstr "MySpaceIM - Kasutajanimi on saadaval"
-
-#~ msgid "This username is available. Would you like to set it?"
-#~ msgstr "Kasutajanimi on vaba. Kas sa soovid seda pruukida?"
-
-#~ msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-#~ msgstr "KUI SEE ON JUBA MÄÄRATUD, POLE SEDA ENAM VÕIMALIK MUUTA!"
-
-#~ msgid "MySpaceIM - Please Set a Username"
-#~ msgstr "MySpaceIM - Palun määra kasutajanimi"
-
-#~ msgid "This username is unavailable."
-#~ msgstr "See kasutajanimi pole saadaval."
-
-#~ msgid "Please try another username:"
-#~ msgstr "Palun proovi mõnda muud kasutajanime:"
-
-#~ msgid "No username set"
-#~ msgstr "Kasutajanimi on määramata"
-
-#~ msgid "Please enter a username to check its availability:"
-#~ msgstr ""
-#~ "Palun sisesta kasutajanimi, et kontrollida selle kasutamise võimalikkust:"
-
-#~ msgid "Zap"
-#~ msgstr "Osuta tähelepanu"
-
-#~ msgid "%s has zapped you!"
-#~ msgstr "%s osutas sulle tähelepanu!"
-
-#~ msgid "Zapping %s..."
-#~ msgstr "Kasutajale %s tähelepanu osutamine..."
-
-#~ msgid "Whack"
-#~ msgstr "Anna kõrvakiil"
-
-#~ msgid "%s has whacked you!"
-#~ msgstr "%s andis sulle kõrvakiilu!"
-
-#~ msgid "Whacking %s..."
-#~ msgstr "Kasutajale %s kõrvakiilu andmine..."
-
-#~ msgid "Torch"
-#~ msgstr "Pane põlema"
-
-#~ msgid "%s has torched you!"
-#~ msgstr "%s pani sind põlema!"
-
-#~ msgid "Torching %s..."
-#~ msgstr "Kasutaja %s põlemapanemine..."
-
-#~ msgid "Smooch"
-#~ msgstr "Anna musi"
-
-#~ msgid "%s has smooched you!"
-#~ msgstr "%s andis sulle musi!"
-
-#~ msgid "Smooching %s..."
-#~ msgstr "Kasutajale %s musi andmine..."
-
-#~ msgid "Hug"
-#~ msgstr "Kallista"
-
-#~ msgid "%s has hugged you!"
-#~ msgstr "%s kallistas sind!"
-
-#~ msgid "Hugging %s..."
-#~ msgstr "Kasutaja %s kallistamine..."
-
-#~ msgid "Slap"
-#~ msgstr "Anna laksu"
-
-#~ msgid "%s has slapped you!"
-#~ msgstr "%s andis sulle laksu!"
-
-#~ msgid "Slapping %s..."
-#~ msgstr "Kasutajale %s laksu andmine..."
-
-#~ msgid "Goose"
-#~ msgstr "Torgi"
-
-#~ msgid "%s has goosed you!"
-#~ msgstr "%s torkis sind!"
-
-#~ msgid "Goosing %s..."
-#~ msgstr "Kasutaja %s torkimine..."
-
-#~ msgid "High-five"
-#~ msgstr "Viska viis"
-
-#~ msgid "%s has high-fived you!"
-#~ msgstr "%s lõi sinuga plaksu!"
-
-#~ msgid "High-fiving %s..."
-#~ msgstr "Kasutajale %s plaksu löömine..."
-
-#~ msgid "Punk"
-#~ msgstr "Tünga"
-
-#~ msgid "%s has punk'd you!"
-#~ msgstr "%s tüngas sind!"
-
-#~ msgid "Punking %s..."
-#~ msgstr "Kasutaja %s tüngamine..."
-
-#~ msgid "Raspberry"
-#~ msgstr "Purista suud"
-
-#~ msgid "%s has raspberried you!"
-#~ msgstr "%s puristas sinu poole suud!"
-
-#~ msgid "Raspberrying %s..."
-#~ msgstr "Kasutaja %s poole puristamine..."
-
-#~ msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-#~ msgstr "join &lt;tuba&gt;:  Yahoo võrgus oleva jututoaga ühinemine"
-
-#~ msgid "list: List rooms on the Yahoo network"
-#~ msgstr "list: Yahoo võrgu jututubade nimekirja kuvamine"
-
-#~ msgid "doodle: Request user to start a Doodle session"
-#~ msgstr "doodle: Kasutajaga Doodle seansi algatamine"
-
-#~ msgid "Yahoo ID..."
-#~ msgstr "Yahoo ID..."
-
-#~ msgid "Yahoo! Protocol Plugin"
-#~ msgstr "Yahoo! protokolli plugin"
-
-#~ msgid "File transfer server"
-#~ msgstr "Failiülekande server"
-
-#~ msgid "File transfer port"
-#~ msgstr "Failiülekande port"
-
-#~ msgid "Chat room locale"
-#~ msgstr "Jututoa lokaat"
-
-#~ msgid "Ignore conference and chatroom invitations"
-#~ msgstr "Konverentside ja jututubade kutseid eiratakse"
-
-#~ msgid "Use account proxy for HTTP and HTTPS connections"
-#~ msgstr "Konto proksit kasutatakse HTTP- ja HTTPS-ühendusteks"
-
-#~ msgid "Chat room list URL"
-#~ msgstr "Jututubade nimekirja URL"
-
-#~ msgid "Yahoo! JAPAN Protocol Plugin"
-#~ msgstr "Yahoo! Jaapani protokolli plugin"
-
-#~ msgid "%s has sent you a webcam invite, which is not yet supported."
-#~ msgstr "%s saatis sulle veebikaamera kutse, mis pole aga veel toetatud."
-
-#~ msgid "Your SMS was not delivered"
-#~ msgstr "Sinu SMS-i ei edastatud"
-
-#~ msgid "Yahoo! system message for %s:"
-#~ msgstr "Yahoo! süsteemne sõnum %s jaoks:"
-
-#~ msgid "Authorization denied message:"
-#~ msgstr "Volituste andmisest keeldumise sõnum:"
-
-#~ msgid ""
-#~ "Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-#~ "website may fix this."
-#~ msgstr ""
-#~ "Konto on lukus: Liiga palju nurjunud sisselogimiskatseid.  Probleemi "
-#~ "lahendamiseks võib olla kasu Yahoo! veebilehele sisselogimisest."
-
-#~ msgid ""
-#~ "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
-#~ "this."
-#~ msgstr ""
-#~ "Konto on lukus: Põhjus teadmata.  Selle probleemi võib lahendada Yahoo! "
-#~ "veebisaidile sisselogimine."
-
-#~ msgid ""
-#~ "Account locked: You have been logging in too frequently.  Wait a few "
-#~ "minutes before trying to connect again.  Logging into the Yahoo! website "
-#~ "may help."
-#~ msgstr ""
-#~ "Konto on lukus: Sa oled liiga tihti sisse loginud.  Enne uuesti "
-#~ "ühendumist proovi paar minutit oodata.  Võib-olla aitab ka see, kui Sa "
-#~ "Yahoo! veebisaidile sisse logid."
-
-#~ msgid "Username or password missing"
-#~ msgstr "Kasutajanimi või parool on puudu"
-
-#~ msgid "Failed Yahoo! Authentication"
-#~ msgstr "Tõrge Yahoo! autentimisel"
-
-#~ msgid "Ignore buddy?"
-#~ msgstr "Kas eirata sõpra?"
-
-#~ msgid "Invalid username or password"
-#~ msgstr "Vigane kasutajanimi või parool"
-
-#~ msgid ""
-#~ "Error 1013: The username you have entered is invalid.  The most common "
-#~ "cause of this error is entering your email address instead of your Yahoo! "
-#~ "ID."
-#~ msgstr ""
-#~ "Viga 1013: Sisestatud kasutajanimi on vigane.  Harilikult tuleb see viga "
-#~ "siis, kui Yahoo! ID asemel sisestatakse e-posti aadress."
-
-#~ msgid ""
-#~ "Unknown error number %d. Logging into the Yahoo! website may fix this."
-#~ msgstr ""
-#~ "Tundmatu veanumber %d. Yahoo! veebisaiti sisselogimine võib selle "
-#~ "parandada."
-
-#~ msgid "Unable to add buddy to server list"
-#~ msgstr "Sõpra pole võimalik serveri nimekirja lisada"
-
-#~ msgid "Unable to connect: The server returned an empty response."
-#~ msgstr "Ühendumine pole võimalik: Server tagastas tühja vastuse."
-
-#~ msgid ""
-#~ "Unable to connect: The server's response did not contain the necessary "
-#~ "information"
-#~ msgstr "Ühendumine pole võimalik: Server ei tagastanud vajalikke andmeid"
-
-#~ msgid "Not at Home"
-#~ msgstr "Pole kodus"
-
-#~ msgid "Not at Desk"
-#~ msgstr "Pole töölaua taga"
-
-#~ msgid "Not in Office"
-#~ msgstr "Pole kontoris"
-
-#~ msgid "On Vacation"
-#~ msgstr "Puhkusel"
-
-#~ msgid "Not on server list"
-#~ msgstr "Pole serveri loendis"
-
-#~ msgid "Join in Chat"
-#~ msgstr "Ühine vestlusega"
-
-#~ msgid "Initiate Conference"
-#~ msgstr "Algata konverents"
-
-#~ msgid "Activate ID..."
-#~ msgstr "Aktiveeri ID..."
-
-#~ msgid "Join User in Chat..."
-#~ msgstr "Ühine kasutajaga vestluses..."
-
-#~ msgid "Open Inbox"
-#~ msgstr "Ava sisendkast"
-
-#~ msgid "Sent Doodle request."
-#~ msgstr "Doodle päringu saatmine."
-
-#~ msgid "Unable to connect."
-#~ msgstr "Ühendumine pole võimalik."
-
-#~ msgid "%s is trying to send you a group of %d files.\n"
-#~ msgstr "%s proovib sulle saata %d-failist koosnevat gruppi.\n"
-
-#~ msgid "Write Error"
-#~ msgstr "Viga kirjutamisel"
-
-#~ msgid "Yahoo! Japan Profile"
-#~ msgstr "Jaapani Yahoo! profiil"
-
-#~ msgid "Yahoo! Profile"
-#~ msgstr "Yahoo! profiil"
-
-#~ msgid ""
-#~ "Sorry, profiles marked as containing adult content are not supported at "
-#~ "this time."
-#~ msgstr ""
-#~ "Vabandust, täiskasvanutele mõeldud materjali sisaldavad profiilid pole "
-#~ "hetkel toetatud."
-
-#~ msgid ""
-#~ "If you wish to view this profile, you will need to visit this link in "
-#~ "your web browser:"
-#~ msgstr ""
-#~ "Kui sa soovid seda profiili vaadata, siis pead sa oma veebisirvija abil "
-#~ "külastama seda aadressi:"
-
-#~ msgid "Yahoo! ID"
-#~ msgstr "Yahoo! ID"
-
-#~ msgid "Hobbies"
-#~ msgstr "Hobid"
-
-#~ msgid "Latest News"
-#~ msgstr "Viimased uudised"
-
-#~ msgid "Home Page"
-#~ msgstr "Koduleht"
-
-#~ msgid "Cool Link 1"
-#~ msgstr "Lahe viit nr 1"
-
-#~ msgid "Cool Link 2"
-#~ msgstr "Lahe viit nr 2"
-
-#~ msgid "Cool Link 3"
-#~ msgstr "Lahe viit nr 3"
-
-#~ msgid "Last Update"
-#~ msgstr "Viimane uuendus"
-
-#~ msgid ""
-#~ "This profile is in a language or format that is not supported at this "
-#~ "time."
-#~ msgstr "Selle profiili keel või vorming pole hetkel toetatud."
-
-#~ msgid ""
-#~ "Could not retrieve the user's profile. This most likely is a temporary "
-#~ "server-side problem. Please try again later."
-#~ msgstr ""
-#~ "Kasutajaprofiili pole võimalik vastu võtta. Kõige tõenäolisemalt on "
-#~ "tegemist serveripoolse probleemiga. Palun proovi hiljem uuesti."
-
-#~ msgid "The user's profile is empty."
-#~ msgstr "Kasutajaprofiil on tühi."
-
-#~ msgid "Failed to join chat"
-#~ msgstr "Tõrge vestlusega ühinemisel"
-
-#~ msgid "Unknown room"
-#~ msgstr "Tundmatu tuba"
-
-#~ msgid "Maybe the room is full"
-#~ msgstr "Võibolla on tuba täis"
-
-#~ msgid "Not available"
-#~ msgstr "Pole saadaval"
-
-#~ msgid ""
-#~ "Unknown error. You may need to logout and wait five minutes before being "
-#~ "able to rejoin a chatroom"
-#~ msgstr ""
-#~ "Tundmatu viga. Võib-olla pead sa välja logima ja enne jututoaga "
-#~ "taasliitumist 5 minutit ootama"
-
-#~ msgid "You are now chatting in %s."
-#~ msgstr "Sa vestled nüüd jututoas %s."
-
-#~ msgid "Failed to join buddy in chat"
-#~ msgstr "Tõrge sõbraga jututoas ühinemisel"
-
-#~ msgid "Maybe they're not in a chat?"
-#~ msgstr "Võibolla pole nad jututoas?"
-
-#~ msgid "Fetching the room list failed."
-#~ msgstr "Tõrge jututubade nimekirja hankimisel."
-
-#~ msgid "Webcams"
-#~ msgstr "Veebikaamerad"
-
-#~ msgid "Connection problem"
-#~ msgstr "Ühendumisprobleem"
-
-#~ msgid "Unable to fetch room list."
-#~ msgstr "Tubade nimekirja pole võimalik hankida."
-
-#, fuzzy
-#~ msgid "\t_Notify for System messages"
-#~ msgstr "Süsteemsed sõnumid"
-
-#, fuzzy
-#~ msgid "\tNotify for _System messages"
-#~ msgstr "Süsteemsed sõnumid"

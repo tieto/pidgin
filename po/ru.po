@@ -4,15 +4,18 @@
 #
 # Translators:
 # Alexandre Prokoudine <avp@altlinux.ru>, 2003-2004
+# AlexL <loginov.alex.valer@gmail.com>, 2016
+# Arkadiy Illarionov, 2016
 # Sergey Volozhanin <svo@asplinux.ru>, 2001
+# Simple88, 2016
 # Самохвалов Антон <samant.ua@mail.ru>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-09 18:56-0600\n"
-"PO-Revision-Date: 2016-06-06 21:09+0000\n"
-"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"PO-Revision-Date: 2016-10-30 21:01+0000\n"
+"Last-Translator: AlexL <loginov.alex.valer@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/pidgin/pidgin/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -1288,7 +1291,6 @@ msgstr "Не удалось инициализировать GStreamer."
 msgid "(default)"
 msgstr "(по умолчанию)"
 
-#, fuzzy
 msgid "Select Sound File..."
 msgstr "Выбрать звуковой файл..."
 
@@ -1409,12 +1411,10 @@ msgstr "Сообщение:"
 msgid "Edit Status"
 msgstr "Изменить статус"
 
-#, fuzzy
 msgid "Use a different status for some accounts"
-msgstr "Использовать _отличающийся статус для некоторых учётных записей"
+msgstr "Использовать отличающийся статус для некоторых учётных записей"
 
 #. Save and Use
-#, fuzzy
 msgid "Save and Use"
 msgstr "Сохранить и применить"
 
@@ -1545,9 +1545,8 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr "TinyURL для вышеуказанного: %s"
 
-#, fuzzy
 msgid "Please wait while TinyURL fetches a shorter URL..."
-msgstr "Пожалуйста, подождите пока TinyURL получает короткий адрес ..."
+msgstr "Пожалуйста, подождите пока TinyURL получает короткий адрес..."
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Создайте TinyURL для адресов только с такой длиной или больше"
@@ -1562,7 +1561,7 @@ msgid "TinyURL plugin"
 msgstr "Модуль TinyURL"
 
 msgid "Shorten URLs in messages using TinyURL"
-msgstr ""
+msgstr "Короткие адреса в сообщениях при использовании TinyURL"
 
 msgid "Online"
 msgstr "В сети"
@@ -2826,13 +2825,12 @@ msgstr "Экстрасенсорный режим"
 msgid "Psychic mode for incoming conversation"
 msgstr "Экстрасенсорный режим для бесед, инициируемых другой стороной"
 
-#, fuzzy
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
 "This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
 "Вызывает появление окон общения, когда другие пользователи начинают вам  "
-"писать.  Это работает для AIM, ICQ, XMPP, Sametime и Yahoo!"
+"писать.  Это работает для AIM, ICQ, XMPP, и Sametime"
 
 msgid "You feel a disturbance in the force..."
 msgstr "Вы чувствуете нарушение равновесия в Силе..."
@@ -3048,13 +3046,12 @@ msgstr ""
 "Невозможно обнаружить установку ActiveTCL. Если вы хотите использовать "
 "модули TCL, установите ActiveTCL из http://www.activestate.com\n"
 
-#, fuzzy
 msgid ""
 "Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
 "developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
 "Не могу найти набор инструментов Apple \"Bonjour для Windows\", смотрите "
-"http://d.pidgin.im/BonjourWindows для дополнительной информации."
+"https://developer.pidgin.im/BonjourWindows для дополнительной информации."
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "Не удаётся прослушивать входящие соединения мгновенных сообщений"
@@ -5681,13 +5678,11 @@ msgstr "В уборной"
 msgid "Received invalid data on connection with server"
 msgstr "При соединении с сервером получены неверные данные"
 
-#, fuzzy
 msgid "Error parsing response from authentication server"
-msgstr "Истекло время во время ожидания ответа от сервера MXit."
+msgstr "Ошибка при разборе ответа от сервера аутентификации"
 
-#, fuzzy
 msgid "Unknown error during authentication"
-msgstr "Запуск аутентификации"
+msgstr "Неизвестная ошибка при аутентификации"
 
 #. *< type
 #. *< ui_requirement
@@ -5817,13 +5812,12 @@ msgstr ""
 "Вы запросили шифрование настройками учётной записи, но ваша система не "
 "поддерживает его."
 
-#, fuzzy
 msgid ""
 "You required Kerberos authentication but encryption is disabled in your "
 "account settings."
 msgstr ""
-"Вы запросили шифрование настройками учётной записи, но ваша система не "
-"поддерживает его."
+"Вы запросили аутентификацию Kerberos, но шифрование отключено в настройках "
+"вашей учётной записи."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -6400,19 +6394,17 @@ msgstr "Показать собеседников без авторизации"
 msgid "Search for Buddy by Email Address..."
 msgstr "Искать собеседника по адресу email..."
 
-#, fuzzy
 msgid "clientLogin"
-msgstr "Использовать clientLogin"
+msgstr "clientLogin"
 
 msgid "Kerberos"
-msgstr ""
+msgstr "Kerberos"
 
 msgid "MD5-based"
-msgstr ""
+msgstr "На основе MD5"
 
-#, fuzzy
 msgid "Authentication method"
-msgstr "Аутентификация завершилась неудачно"
+msgstr "Метод аутентификации"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -8585,13 +8577,12 @@ msgstr ""
 "Пиджин - программа, позволяющая вам вести переписку по нескольким сетям "
 "общения одновременно."
 
-#, fuzzy
 msgid ""
 "This means that you can be chatting with friends on AIM, talking to a friend "
 "on Google Talk, and sitting in an IRC chat room all at the same time."
 msgstr ""
-"Это означает, что вы можете общаться с друзьями по MSN, говорить по Google "
-"Talk и сидеть в комнате Yahoo в одно и то же время."
+"Это означает, что вы можете общаться с друзьями по AIM, говорить по Google "
+"Talk и сидеть в комнате IRC в одно и то же время."
 
 msgid "The buddy list showing friends on different networks."
 msgstr "Список, отображающий друзей из разных сетей."
@@ -9345,10 +9336,10 @@ msgid "_Group:"
 msgstr "_Группа:"
 
 msgid "Automatically _join when account connects"
-msgstr ""
+msgstr "Автоматически _присоединиться, когда подключится учётная запись"
 
 msgid "_Remain in chat after window is closed"
-msgstr ""
+msgstr "_Остаться в чате после закрытия окна"
 
 msgid "Please enter the name of the group to be added."
 msgstr "Введите имя добавляемой группы."
@@ -9388,7 +9379,7 @@ msgid "SSL Servers"
 msgstr "SSL-серверы"
 
 msgid "Supported debug options are: plugins, version"
-msgstr ""
+msgstr "Поддерживаемые параметры отладки: плагины, версии"
 
 msgid "Unknown command."
 msgstr "Неизвестная команда."
@@ -10135,7 +10126,6 @@ msgstr ""
 "сайт</A><BR>\t<A HREF=\"%s\">Часто задаваемые вопросы</A><BR>\tIRC канал: "
 "#pidgin на irc.freenode.net<BR>\tXMPP MUC: devel@conference.pidgin.im<BR><BR>"
 
-#, fuzzy
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "emailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>This "
@@ -11631,7 +11621,6 @@ msgid "Use a _different status for some accounts"
 msgstr "Использовать _отличающийся статус для некоторых учётных записей"
 
 #. Save and Use button
-#, fuzzy
 msgid "Sa_ve and Use"
 msgstr "Сохранить _и применить"
 
@@ -11696,7 +11685,7 @@ msgid "Status Selector"
 msgstr "Выбор статуса"
 
 msgid "Google Talk"
-msgstr "Google-общение"
+msgstr "Google Talk"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -12380,9 +12369,8 @@ msgstr ""
 msgid "Notify For"
 msgstr "Уведомление для"
 
-#, fuzzy
 msgid "\tS_ystem messages"
-msgstr "Системные сообщения"
+msgstr "\tСис_темные сообщения"
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_Только тогда, когда кто-то произносит ваше имя пользователя"
@@ -12575,14 +12563,13 @@ msgstr ""
 "Позволяет вам отправлять необработанный ввод, используя протоколы, "
 "основывающиеся на тексте."
 
-#, fuzzy
 msgid ""
 "Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Позволяет вам отправлять необработанный ввод, используя протоколы, "
-"основывающиеся на тексте (XMPP, MSN, IRC, TOC). Для отправки нажмите 'Enter' "
-"в области ввода. Смотрите за окном отладки."
+"основывающиеся на тексте (XMPP, IRC, TOC). Для отправки нажмите 'Enter' в "
+"области ввода. Смотрите за окном отладки."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -13033,15 +13020,12 @@ msgid "Variable Transparency for the buddy list and conversations."
 msgstr "Варьируемая прозрачность для списка собеседников и бесед."
 
 #. *  description
-#, fuzzy
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
 "the buddy list."
 msgstr ""
 "Этот модуль включает варьируемую альфа-прозрачность окон бесед и списка "
-"собеседников.\n"
-"\n"
-"* Замечание: Этот модуль требует Win2000 или выше."
+"собеседников."
 
 #. Autostart
 msgid "Startup"
@@ -13188,6 +13172,8 @@ msgid ""
 "Pidgin requires a compatible GTK+ Runtime (which does not appear to be "
 "installed).$\\rAre you sure you want to skip installing the GTK+ Runtime?"
 msgstr ""
+"Pidgin требует совместимой среды GTK+ (которая, по-видимому, не установлена)."
+"$\\rВы уверены, что хотите пропустить установку среды GTK+?"
 
 #. Installer Subsection Text
 msgid "URI Handlers"
@@ -13242,1883 +13228,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "У Вас нет прав на удаление этого приложения."
-
-#~ msgid "Pounce Who"
-#~ msgstr "За кем следить"
-
-#~ msgid "Use different status for following accounts"
-#~ msgstr "Использовать отличающийся статус для следующих учётных записей"
-
-#~ msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-#~ msgstr ""
-#~ "При получении сообщения с адресами URL, использовать TinyURL для "
-#~ "облегчения копирования"
-
-#~ msgid "Whether the specified command should handle \"msnim\" URLs"
-#~ msgstr "Должна ли указанная команда обрабатывать \"msnim\" URL"
-
-#~ msgid ""
-#~ "True if the command specified in the \"command\" key should handle \"msnim"
-#~ "\" URLs."
-#~ msgstr ""
-#~ "Верно, если команде, объявленной в ключе \"command\", нужно обращаться по "
-#~ "\"msnim\" адресам."
-
-#~ msgid "The handler for \"msnim\" URLs"
-#~ msgstr "Обработчик для \"msnim\" URL"
-
-#~ msgid "The command used to handle \"msnim\" URLs, if enabled."
-#~ msgstr "Команда, используемая для обработки \"msnim\" URL, если включено."
-
-#~ msgid "Whether the specified command should handle \"ymsgr\" URLs"
-#~ msgstr "Должна ли указанная команда обрабатывать \"ymsgr\" URL"
-
-#~ msgid ""
-#~ "True if the command specified in the \"command\" key should handle \"ymsgr"
-#~ "\" URLs."
-#~ msgstr ""
-#~ "Верно, если команде, объявленной в ключе \"command\", нужно обращаться по "
-#~ "\"ymsgr\" адресам."
-
-#~ msgid "The handler for \"ymsgr\" URLs"
-#~ msgstr "Обработчик для \"ymsgr\" URL"
-
-#~ msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-#~ msgstr "Команда, используемая для обработки \"ymsgr\" URL, если включено."
-
-#~ msgid "Unable to add \"%s\"."
-#~ msgstr "Не удаётся добавить \"%s\"."
-
-#~ msgid "Buddy Add error"
-#~ msgstr "Ошибка добавления собеседника"
-
-#~ msgid "The username specified does not exist."
-#~ msgstr "Указанное имя пользователя не существует."
-
-#~ msgid "Unable to parse message"
-#~ msgstr "Не удаётся сделать разбор сообщения"
-
-#~ msgid "Syntax Error (probably a client bug)"
-#~ msgstr "Синтаксическая ошибка (вероятно, ошибка в клиенте)"
-
-#~ msgid "Invalid email address"
-#~ msgstr "Неверный адрес email"
-
-#~ msgid "User does not exist"
-#~ msgstr "Пользователь не существует"
-
-#~ msgid "Fully qualified domain name missing"
-#~ msgstr "Пропущено полное доменное имя"
-
-#~ msgid "Already logged in"
-#~ msgstr "Уже в сети"
-
-#~ msgid "Invalid username"
-#~ msgstr "Неверное имя пользователя"
-
-#~ msgid "Invalid friendly name"
-#~ msgstr "Неверное дружеское имя"
-
-#~ msgid "List full"
-#~ msgstr "Список полон"
-
-#~ msgid "Already there"
-#~ msgstr "Уже там"
-
-#~ msgid "Not on list"
-#~ msgstr "Отсутствует в списке"
-
-#~ msgid "Already in the mode"
-#~ msgstr "Уже в этом режиме"
-
-#~ msgid "Already in opposite list"
-#~ msgstr "Уже в противоположном списке"
-
-#~ msgid "Too many groups"
-#~ msgstr "Слишком много групп"
-
-#~ msgid "Invalid group"
-#~ msgstr "Неверная группа"
-
-#~ msgid "User not in group"
-#~ msgstr "Пользователь не в группе"
-
-#~ msgid "Group name too long"
-#~ msgstr "Имя группы слишком велико"
-
-#~ msgid "Cannot remove group zero"
-#~ msgstr "Нельзя удалить нулевую группу"
-
-#~ msgid "Tried to add a user to a group that doesn't exist"
-#~ msgstr "Попытка добавления пользователя в несуществующую группу"
-
-#~ msgid "Switchboard failed"
-#~ msgstr "Ошибка коммутационной панели"
-
-#~ msgid "Notify transfer failed"
-#~ msgstr "Не удалось передать уведомление"
-
-#~ msgid "Required fields missing"
-#~ msgstr "Пропущены обязательные поля"
-
-#~ msgid "Too many hits to a FND"
-#~ msgstr "Слишком много попаданий в FND"
-
-#~ msgid "Service temporarily unavailable"
-#~ msgstr "Служба временно недоступна"
-
-#~ msgid "Database server error"
-#~ msgstr "Ошибка сервера базы данных"
-
-#~ msgid "Command disabled"
-#~ msgstr "Команда отключена"
-
-#~ msgid "File operation error"
-#~ msgstr "Ошибка файловой операции"
-
-#~ msgid "Memory allocation error"
-#~ msgstr "Ошибка выделения памяти"
-
-#~ msgid "Wrong CHL value sent to server"
-#~ msgstr "На сервер отправлено неверное значение CHL"
-
-#~ msgid "Server busy"
-#~ msgstr "Сервер занят"
-
-#~ msgid "Server unavailable"
-#~ msgstr "Сервер недоступен"
-
-#~ msgid "Peer notification server down"
-#~ msgstr "Оповещение простоя, сервер упал"
-
-#~ msgid "Database connect error"
-#~ msgstr "Ошибка соединения с базой данных"
-
-#~ msgid "Server is going down (abandon ship)"
-#~ msgstr "Сервер выключается (остановка передачи)"
-
-#~ msgid "Error creating connection"
-#~ msgstr "Ошибка создания соединения"
-
-#~ msgid "CVR parameters are either unknown or not allowed"
-#~ msgstr "Параметры CVR неизвестны или недопустимы"
-
-#~ msgid "Unable to write"
-#~ msgstr "Не удаётся записать"
-
-#~ msgid "Session overload"
-#~ msgstr "Перегрузка сессии"
-
-#~ msgid "User is too active"
-#~ msgstr "Пользователь слишком активен"
-
-#~ msgid "Too many sessions"
-#~ msgstr "Слишком много сессий"
-
-#~ msgid "Passport not verified"
-#~ msgstr "Паспорт не проверен"
-
-#~ msgid "Bad friend file"
-#~ msgstr "Плохой файл друга"
-
-#~ msgid "Not expected"
-#~ msgstr "Не предусмотрено"
-
-#~ msgid "Friendly name is changing too rapidly"
-#~ msgstr "Дружественное имя меняется слишком быстро"
-
-#~ msgid "Server too busy"
-#~ msgstr "Сервер слишком занят"
-
-#~ msgid "Not allowed when offline"
-#~ msgstr "Не разрешено не в сети"
-
-#~ msgid "Not accepting new users"
-#~ msgstr "Новые пользователи не принимаются"
-
-#~ msgid "Kids Passport without parental consent"
-#~ msgstr "Паспорт детей без согласия родителей"
-
-#~ msgid "Passport account not yet verified"
-#~ msgstr "Паспортная учётная запись ещё не проверена"
-
-#~ msgid "Passport account suspended"
-#~ msgstr "Паспортная запись приостановлена"
-
-#~ msgid "Bad ticket"
-#~ msgstr "Неверный билет"
-
-#~ msgid "Unknown Error Code %d"
-#~ msgstr "Неизвестный код ошибки %d"
-
-#~ msgid "MSN Error: %s\n"
-#~ msgstr "Ошибка MSN: %s\n"
-
-#~ msgid "Buddy list synchronization issue in %s (%s)"
-#~ msgstr "Проблема с синхронизацией списка собеседников в %s (%s)"
-
-#~ msgid ""
-#~ "%s on the local list is inside the group \"%s\" but not on the server "
-#~ "list. Do you want this buddy to be added?"
-#~ msgstr ""
-#~ "%s в локальном списке в группе \"%s\", но не в списке на сервере. Хотите "
-#~ "добавить этого собеседника?"
-
-#~ msgid ""
-#~ "%s is on the local list but not on the server list. Do you want this "
-#~ "buddy to be added?"
-#~ msgstr ""
-#~ "%s в локальном списке, но не в списке на сервере. Хотите добавить этого "
-#~ "собеседника?"
-
-#~ msgid "Other Contacts"
-#~ msgstr "Другие контакты"
-
-#~ msgid "Non-IM Contacts"
-#~ msgstr "Не-IM контакты"
-
-#~ msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
-#~ msgstr ""
-#~ "%s подмигнул. <a href='msn-wink://%s'>Щёлкните здесь, чтобы воспроизвести "
-#~ "это</a>"
-
-#~ msgid "%s sent a wink, but it could not be saved"
-#~ msgstr "%s подмигнул, но это не может быть сохранено"
-
-#~ msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
-#~ msgstr ""
-#~ "%s послал голосовую запись. <a href='audio://%s'>Щёлкните здесь для "
-#~ "воспроизведения</a>"
-
-#~ msgid "%s sent a voice clip, but it could not be saved"
-#~ msgstr "%s послал вам голосовую запись, но её не удалось сохранить"
-
-#~ msgid "%s sent you a voice chat invite, which is not yet supported."
-#~ msgstr ""
-#~ "%s послал вам приглашение к голосовому общению, что ещё не поддерживается."
-
-#~ msgid "Nudge"
-#~ msgstr "Подтолкнуть"
-
-#~ msgid "%s has nudged you!"
-#~ msgstr "%s подтолкнул вас!"
-
-#~ msgid "Nudging %s..."
-#~ msgstr "Подталкивание %s..."
-
-#~ msgid "Email Address..."
-#~ msgstr "Адрес эл.почты..."
-
-#~ msgid "Your new MSN friendly name is too long."
-#~ msgstr "Ваше новое дружеское имя MSN слишком велико."
-
-#~ msgid "Set friendly name for %s."
-#~ msgstr "Установите дружеское имя для %s."
-
-#~ msgid "Set Friendly Name"
-#~ msgstr "Установить дружеское имя"
-
-#~ msgid "This is the name that other MSN buddies will see you as."
-#~ msgstr "Это имя, под которым вас будут видеть другие пользователи MSN."
-
-#~ msgid "This Location"
-#~ msgstr "Это место"
-
-#~ msgid "This is the name that identifies this location"
-#~ msgstr "Это имя, отождествляющееся с этим местом"
-
-#~ msgid "Other Locations"
-#~ msgstr "Другие места"
-
-#~ msgid "You can sign out from other locations here"
-#~ msgstr "Здесь Вы можете отключиться из других мест"
-
-#~ msgid "You are not signed in from any other locations."
-#~ msgstr "Вы ниоткуда не вошли в сеть."
-
-#~ msgid "Allow multiple logins?"
-#~ msgstr "Разрешить одновременные входы с разных мест?"
-
-#~ msgid ""
-#~ "Do you want to allow or disallow connecting from multiple locations "
-#~ "simultaneously?"
-#~ msgstr "Вы разрешаете одновременный вход в сеть из разных мест или нет?"
-
-#~ msgid "Allow"
-#~ msgstr "Разрешить"
-
-#~ msgid "Disallow"
-#~ msgstr "Не разрешать"
-
-#~ msgid "Set your home phone number."
-#~ msgstr "Введите номер вашего домашнего телефона."
-
-#~ msgid "Set your work phone number."
-#~ msgstr "Введите номер вашего рабочего телефона."
-
-#~ msgid "Set your mobile phone number."
-#~ msgstr "Введите номер вашего мобильного телефона."
-
-#~ msgid "Allow MSN Mobile pages?"
-#~ msgstr "Разрешить страницы MSN Mobile"
-
-#~ msgid ""
-#~ "Do you want to allow or disallow people on your buddy list to send you "
-#~ "MSN Mobile pages to your cell phone or other mobile device?"
-#~ msgstr ""
-#~ "Вы разрешаете или нет людям из вашего списка отсылать вам страницы MSN "
-#~ "Mobile на ваш сотовый или другое переносное устройство?"
-
-#~ msgid "Blocked Text for %s"
-#~ msgstr "Заблокированный текст для %s"
-
-#~ msgid "No text is blocked for this account."
-#~ msgstr "Для этой учётной записи нет заблокированного текста."
-
-#~ msgid ""
-#~ "MSN servers are currently blocking the following regular expressions:<br/>"
-#~ "%s"
-#~ msgstr "Сервера MSN сейчас блокируют следующие регулярные выражения:<br/>%s"
-
-#~ msgid "This account does not have email enabled."
-#~ msgstr "Эл.почта для этой учётной записи не включена."
-
-#~ msgid "Send a mobile message."
-#~ msgstr "Отправить мобильное сообщение."
-
-#~ msgid "Page"
-#~ msgstr "Страница"
-
-#~ msgid "Playing a game"
-#~ msgstr "Играть в игру"
-
-#~ msgid "Has you"
-#~ msgstr "Имеет тебя"
-
-#~ msgid "Home Phone Number"
-#~ msgstr "Номер домашнего телефона"
-
-#~ msgid "Work Phone Number"
-#~ msgstr "Номер рабочего телефона"
-
-#~ msgid "Mobile Phone Number"
-#~ msgstr "Номер мобильного телефона"
-
-#~ msgid "Be Right Back"
-#~ msgstr "Скоро вернусь"
-
-#~ msgid "On the Phone"
-#~ msgstr "Разговариваю по телефону"
-
-#~ msgid "Out to Lunch"
-#~ msgstr "Пошёл перекусить"
-
-#~ msgid "Game Title"
-#~ msgstr "Название игры"
-
-#~ msgid "Office Title"
-#~ msgstr "Название офиса"
-
-#~ msgid "Set Friendly Name..."
-#~ msgstr "Ввести дружеское имя..."
-
-#~ msgid "View Locations..."
-#~ msgstr "Просмотреть места..."
-
-#~ msgid "Set Home Phone Number..."
-#~ msgstr "Ввести номер домашнего телефона..."
-
-#~ msgid "Set Work Phone Number..."
-#~ msgstr "Ввести номер рабочего телефона..."
-
-#~ msgid "Set Mobile Phone Number..."
-#~ msgstr "Ввести номер мобильного телефона..."
-
-#~ msgid "Enable/Disable Mobile Devices..."
-#~ msgstr "Разрешить/запретить мобильные устройства..."
-
-#~ msgid "Allow/Disallow Multiple Logins..."
-#~ msgstr "Разрешить/запретить множественные входы..."
-
-#~ msgid "Allow/Disallow Mobile Pages..."
-#~ msgstr "Разрешить/запретить мобильные страницы..."
-
-#~ msgid "View Blocked Text..."
-#~ msgstr "Показать заблокированный текст..."
-
-#~ msgid "Open Hotmail Inbox"
-#~ msgstr "Открыть входящие горячей почты"
-
-#~ msgid "Send to Mobile"
-#~ msgstr "Послать на мобильный"
-
-#~ msgid ""
-#~ "SSL support is needed for MSN. Please install a supported SSL library."
-#~ msgstr ""
-#~ "Поддержка SSL необходима для MSN. Установите поддерживаемую библиотеку "
-#~ "SSL."
-
-#~ msgid ""
-#~ "Unable to add the buddy %s because the username is invalid.  Usernames "
-#~ "must be valid email addresses."
-#~ msgstr ""
-#~ "Не могу добавить собеседника %s, потому что имя пользователя "
-#~ "некорректное.  Имена пользователей должны быть действительными адресами "
-#~ "эл.почты."
-
-#~ msgid "Error retrieving profile"
-#~ msgstr "Ошибка загрузки профиля"
-
-#~ msgid "Occupation"
-#~ msgstr "Занятость"
-
-#~ msgid "Hobbies and Interests"
-#~ msgstr "Хобби и интересы"
-
-#~ msgid "A Little About Me"
-#~ msgstr "Немного о себе"
-
-#~ msgid "Social"
-#~ msgstr "Общественный"
-
-#~ msgid "Marital Status"
-#~ msgstr "Брачный статус"
-
-#~ msgid "Interests"
-#~ msgstr "Интересы"
-
-#~ msgid "Pets"
-#~ msgstr "Домашние животные"
-
-#~ msgid "Hometown"
-#~ msgstr "Родной город"
-
-#~ msgid "Places Lived"
-#~ msgstr "Места проживания"
-
-#~ msgid "Fashion"
-#~ msgstr "Мода"
-
-#~ msgid "Humor"
-#~ msgstr "Юмор"
-
-#~ msgid "Music"
-#~ msgstr "Музыка"
-
-#~ msgid "Favorite Quote"
-#~ msgstr "Любимая цитата"
-
-#~ msgid "Contact Info"
-#~ msgstr "Контактная информация"
-
-#~ msgid "Personal"
-#~ msgstr "Персональное"
-
-#~ msgid "Significant Other"
-#~ msgstr "Укажите другое"
-
-#~ msgid "Home Phone"
-#~ msgstr "Домашний телефон"
-
-#~ msgid "Home Phone 2"
-#~ msgstr "Домашний телефон 2"
-
-#~ msgid "Personal Mobile"
-#~ msgstr "Персональный мобильный телефон"
-
-#~ msgid "Home Fax"
-#~ msgstr "Домашний факс"
-
-#~ msgid "Personal Email"
-#~ msgstr "Персональный email"
-
-#~ msgid "Personal IM"
-#~ msgstr "Личный IM"
-
-#~ msgid "Anniversary"
-#~ msgstr "Годовщина"
-
-#~ msgid "Work"
-#~ msgstr "Работа"
-
-#~ msgid "Profession"
-#~ msgstr "Профессия"
-
-#~ msgid "Work Phone"
-#~ msgstr "Рабочий телефон"
-
-#~ msgid "Work Phone 2"
-#~ msgstr "Рабочий телефон 2"
-
-#~ msgid "Work Mobile"
-#~ msgstr "Рабочий мобильный телефон"
-
-#~ msgid "Work Pager"
-#~ msgstr "Рабочий пейджер"
-
-#~ msgid "Work Fax"
-#~ msgstr "Рабочий факс"
-
-#~ msgid "Work Email"
-#~ msgstr "Рабочий email"
-
-#~ msgid "Work IM"
-#~ msgstr "Рабочий IM"
-
-#~ msgid "Start Date"
-#~ msgstr "Дата начала"
-
-#~ msgid "Favorite Things"
-#~ msgstr "Любимые вещи"
-
-#~ msgid "Last Updated"
-#~ msgstr "Последнее обновление"
-
-#~ msgid "The user has not created a public profile."
-#~ msgstr "Пользователь не создал публичного профиля."
-
-#~ msgid ""
-#~ "MSN reported not being able to find the user's profile. This either means "
-#~ "that the user does not exist, or that the user exists but has not created "
-#~ "a public profile."
-#~ msgstr ""
-#~ "MSN говорит, что не может найти профиль пользователя. Это значит, что или "
-#~ "пользователь не существует, или что он существует, но не создал "
-#~ "публичного профиля."
-
-#~ msgid ""
-#~ "Could not find any information in the user's profile. The user most "
-#~ "likely does not exist."
-#~ msgstr ""
-#~ "Не могу найти какую-либо информацию в пользовательском профиле. Больше "
-#~ "всего похоже на то, что такого пользователя вообще не существует."
-
-#~ msgid "Windows Live Messenger Protocol Plugin"
-#~ msgstr "Модуль протокола Windows Live Messenger"
-
-#~ msgid "Use HTTP Method"
-#~ msgstr "Использовать метод HTTP"
-
-#~ msgid "HTTP Method Server"
-#~ msgstr "Сервер методов HTTP"
-
-#~ msgid "Show custom smileys"
-#~ msgstr "Показать свои смайлики"
-
-#~ msgid "Allow direct connections"
-#~ msgstr "Разрешить прямые соединения"
-
-#~ msgid "Allow connecting from multiple locations"
-#~ msgstr "Разрешить соединения из нескольких мест"
-
-#~ msgid "nudge: nudge a user to get their attention"
-#~ msgstr ""
-#~ "подталкивание: подтолкнуть пользователя, чтобы привлечь его внимание"
-
-#~ msgid "Windows Live ID authentication:Unable to connect"
-#~ msgstr "Аутентификация Windows Live ID: не могу соединиться"
-
-#~ msgid "Windows Live ID authentication:Invalid response"
-#~ msgstr "Аутентификация Windows Live ID:некорректный ответ"
-
-#~ msgid "The following users are missing from your addressbook"
-#~ msgstr "Следующие пользователи из вашей адресной книги отсутствуют"
-
-#~ msgid "Unknown error (%d): %s"
-#~ msgstr "Неизвестная ошибка (%d): %s"
-
-#~ msgid "Unknown error (%d)"
-#~ msgstr "Неизвестная ошибка (%d)"
-
-#~ msgid "Unable to remove user"
-#~ msgstr "Не удаётся удалить пользователя"
-
-#~ msgid "Mobile message was not sent because it was too long."
-#~ msgstr ""
-#~ "Мобильное сообщение не было отправлено, потому что оно слишком длинное."
-
-#~ msgid "Mobile message was not sent because an unknown error occurred."
-#~ msgstr "Мобильное сообщение не отправлено - произошла неизвестная ошибка."
-
-#~ msgid ""
-#~ "The MSN server will shut down for maintenance in %d minute. You will "
-#~ "automatically be signed out at that time.  Please finish any "
-#~ "conversations in progress.\n"
-#~ "\n"
-#~ "After the maintenance has been completed, you will be able to "
-#~ "successfully sign in."
-#~ msgid_plural ""
-#~ "The MSN server will shut down for maintenance in %d minutes. You will "
-#~ "automatically be signed out at that time.  Please finish any "
-#~ "conversations in progress.\n"
-#~ "\n"
-#~ "After the maintenance has been completed, you will be able to "
-#~ "successfully sign in."
-#~ msgstr[0] ""
-#~ "Сервер MSN закроется по нужде на %d минуту. Вы будете автоматически "
-#~ "выброшены из сети на это время. Пожалуйста, завершите все текущие "
-#~ "беседы.\n"
-#~ "\n"
-#~ "После того, как работы на сервере будут завершены, вы снова сможете войти "
-#~ "в сеть."
-#~ msgstr[1] ""
-#~ "Сервер MSN закроется по нужде на %d минут. Вы будете автоматически "
-#~ "выброшены из сети на это время. Пожалуйста, завершите все текущие "
-#~ "беседы.\n"
-#~ "\n"
-#~ "После того, как работы на сервере будут завершены, вы снова сможете войти "
-#~ "в сеть."
-#~ msgstr[2] ""
-#~ "Сервер MSN закроется по нужде на %d минуты. Вы будете автоматически "
-#~ "выброшены из сети на это время. Пожалуйста, завершите все текущие "
-#~ "беседы.\n"
-#~ "\n"
-#~ "После того, как работы на сервере будут завершены, вы снова сможете войти "
-#~ "в сеть."
-#~ msgstr[3] ""
-#~ "Сервер MSN закроется по нужде на %d минуты. Вы будете автоматически "
-#~ "выброшены из сети на это время. Пожалуйста, завершите все текущие "
-#~ "беседы.\n"
-#~ "\n"
-#~ "После того, как работы на сервере будут завершены, вы снова сможете войти "
-#~ "в сеть."
-
-#~ msgid ""
-#~ "Message was not sent because the system is unavailable. This normally "
-#~ "happens when the user is blocked or does not exist."
-#~ msgstr ""
-#~ "Сообщение не было отправлено, потому что система недоступна. Это обычно "
-#~ "происходит, когда пользователь заблокирован или не существует."
-
-#~ msgid "Message was not sent because messages are being sent too quickly."
-#~ msgstr ""
-#~ "Сообщение не отправлено, потому что вы отправляли их слишком быстро."
-
-#~ msgid "Message was not sent because an unknown encoding error occurred."
-#~ msgstr "Сообщение не отправлено - произошла неизвестная ошибка кодирования."
-
-#~ msgid "Message was not sent because an unknown error occurred."
-#~ msgstr "Сообщение не отправлено - произошла неизвестная ошибка."
-
-#~ msgid ""
-#~ "%s (There was an error receiving this message. Converting the encoding "
-#~ "from %s to UTF-8 failed.)"
-#~ msgstr ""
-#~ "%s (При получении этого сообщения произошла ошибка. Не получилось сменить "
-#~ "кодировку из %s в UTF-8.)"
-
-#~ msgid ""
-#~ "%s (There was an error receiving this message. The charset was %s, but it "
-#~ "was not valid UTF-8.)"
-#~ msgstr ""
-#~ "%s (При получении этого сообщения произошла ошибка. Была кодировка %s, но "
-#~ "она не была корректной UTF-8.)"
-
-#~ msgid ""
-#~ "%s (There was an error receiving this message. The charset was missing, "
-#~ "but it was not valid UTF-8.)"
-#~ msgstr ""
-#~ "%s (При получении этого сообщения произошла ошибка. Кодировка не стояла, "
-#~ "но она не была корректной UTF-8.)"
-
-#~ msgid "Writing error"
-#~ msgstr "Ошибка записи"
-
-#~ msgid "Reading error"
-#~ msgstr "Ошибка чтения"
-
-#~ msgid ""
-#~ "Connection error from %s server:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Ошибка соединения от сервера %s:\n"
-#~ "%s"
-
-#~ msgid "Our protocol is not supported by the server"
-#~ msgstr "Наш протокол не поддерживается сервером"
-
-#~ msgid "Error parsing HTTP"
-#~ msgstr "Ошибка разбора HTTP"
-
-#~ msgid ""
-#~ "The MSN servers are temporarily unavailable. Please wait and try again."
-#~ msgstr "Серверы MSN временно недоступны. Повторите попытку позже."
-
-#~ msgid "The MSN servers are going down temporarily"
-#~ msgstr "Серверы MSN временно будут выключены"
-
-#~ msgid "Unable to authenticate: %s"
-#~ msgstr "Не удаётся аутентифицировать: %s"
-
-#~ msgid "Your MSN buddy list is temporarily unavailable: %s"
-#~ msgstr "Ваш список собеседников MSN временно недоступен: %s"
-
-#~ msgid "Handshaking"
-#~ msgstr "Согласование"
-
-#~ msgid "Transferring"
-#~ msgstr "Передача"
-
-#~ msgid "Getting cookie"
-#~ msgstr "Получение данных"
-
-#~ msgid "Sending cookie"
-#~ msgstr "Отправка данных"
-
-#~ msgid "Retrieving buddy list"
-#~ msgstr "Загрузка списка собеседников"
-
-#~ msgid ""
-#~ "%s requests to view your webcam, but this request is not yet supported."
-#~ msgstr "%s просит увидеть вашу веб-камеру, но это ещё не поддерживается."
-
-#~ msgid ""
-#~ "%s invited you to view his/her webcam, but this is not yet supported."
-#~ msgstr ""
-#~ "%s пригласил вас увидеть свою веб-камеру, но это ещё не поддерживается."
-
-#~ msgid "Away From Computer"
-#~ msgstr "Отошёл от компьютера"
-
-#~ msgid "On The Phone"
-#~ msgstr "Разговариваю по телефону"
-
-#~ msgid "Out To Lunch"
-#~ msgstr "Пошёл перекусить"
-
-#~ msgid "Message may have not been sent because a timeout occurred:"
-#~ msgstr "Сообщение могло быть не отправлено, так как истекло время ожидания:"
-
-#~ msgid "Message could not be sent, not allowed while invisible:"
-#~ msgstr ""
-#~ "Сообщение не может быть отправлено, не разрешено при статусе \"Невидимый"
-#~ "\":"
-
-#~ msgid "Message could not be sent because the user is offline:"
-#~ msgstr "Сообщение не может быть отправлено, так как пользователь не в сети:"
-
-#~ msgid "Message could not be sent because a connection error occurred:"
-#~ msgstr ""
-#~ "Сообщение не может быть отправлено, так как произошла ошибка соединения:"
-
-#~ msgid "Message could not be sent because we are sending too quickly:"
-#~ msgstr ""
-#~ "Сообщение не может быть отправлено, так как отправка происходит слишком "
-#~ "быстро:"
-
-#~ msgid ""
-#~ "Message could not be sent because we were unable to establish a session "
-#~ "with the server. This is likely a server problem, try again in a few "
-#~ "minutes:"
-#~ msgstr ""
-#~ "Сообщение не может быть отправлено, потому что мы не можем установить "
-#~ "соединение с сервером. Похоже, что это ошибка на сервере, попробуйте ещё "
-#~ "раз чуть позже:"
-
-#~ msgid ""
-#~ "Message could not be sent because an error with the switchboard occurred:"
-#~ msgstr ""
-#~ "Сообщение не может быть отправлено, так как произошла ошибка "
-#~ "коммутационной панели:"
-
-#~ msgid "Message may have not been sent because an unknown error occurred:"
-#~ msgstr ""
-#~ "Сообщение могло быть не отправлено, так как произошла неизвестная ошибка:"
-
-#~ msgid "Delete Buddy from Address Book?"
-#~ msgstr "Удалить собеседника из адресной книги?"
-
-#~ msgid "Do you want to delete this buddy from your address book as well?"
-#~ msgstr ""
-#~ "Вы хотите удалить также и этого собеседника из вашей адресной книги?"
-
-#~ msgid "The username specified is invalid."
-#~ msgstr "Указанное имя пользователя некорректно."
-
-#~ msgid "The Display Name you entered is invalid."
-#~ msgstr "Введённое Вами имя отображения некорректно."
-
-#~ msgid ""
-#~ "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-#~ msgstr ""
-#~ "Введённая вами дата рождения неправильная. Формат такой: 'ГГГГ-ММ-ДД'."
-
-#~ msgid "Profile Update Error"
-#~ msgstr "Ошибка Обновления Профиля"
-
-#~ msgid ""
-#~ "Your profile information is not yet retrieved. Please try again later."
-#~ msgstr ""
-#~ "Информация о вашем профиле ещё не получена. Пожалуйста, попробуйте позже."
-
-#~ msgid "Display Name"
-#~ msgstr "Показать имя"
-
-#~ msgid "About Me"
-#~ msgstr "Обо мне"
-
-#~ msgid "Where I Live"
-#~ msgstr "Где я живу"
-
-#~ msgid "Relationship Status"
-#~ msgstr "Статус отношений"
-
-#~ msgid "Mobile Number"
-#~ msgstr "Номер мобильного"
-
-#~ msgid "Can be searched"
-#~ msgstr "Можно искать"
-
-#~ msgid "Can be suggested"
-#~ msgstr "Можно рекомендовать"
-
-#~ msgid "Update your MXit Profile"
-#~ msgstr "Обновить ваш MXit профиль"
-
-#~ msgid "The PIN you entered is invalid."
-#~ msgstr "Введённый PIN-код неправильный."
-
-#~ msgid "The PIN you entered has an invalid length [4-10]."
-#~ msgstr "Введённый PIN-код неправильной длины [4-10]."
-
-#~ msgid "The PIN is invalid. It should only consist of digits [0-9]."
-#~ msgstr "PIN-код неправильный. Он должен содержать только цифры [0-9]."
-
-#~ msgid "The two PINs you entered do not match."
-#~ msgstr "Два введённых PIN-кода не совпадают."
-
-#~ msgid "PIN Update Error"
-#~ msgstr "Ошибка обновления PIN"
-
-#~ msgid "PIN"
-#~ msgstr "PIN"
-
-#~ msgid "Verify PIN"
-#~ msgstr "Проверьте PIN"
-
-#~ msgid "Change PIN"
-#~ msgstr "Изменить PIN"
-
-#~ msgid "Change MXit PIN"
-#~ msgstr "Изменить MXit PIN"
-
-#~ msgid "View Splash"
-#~ msgstr "Показать заставку"
-
-#~ msgid "There is no splash-screen currently available"
-#~ msgstr "Сейчас нет доступных экранов-заставок"
-
-#~ msgid "About"
-#~ msgstr "Про"
-
-#~ msgid "Search for user"
-#~ msgstr "Искать пользователя"
-
-#~ msgid "Search for a MXit contact"
-#~ msgstr "Искать MXit контакт"
-
-#~ msgid "Type search information"
-#~ msgstr "Ввести информацию поиска"
-
-#~ msgid "Change Profile..."
-#~ msgstr "Изменить профиль..."
-
-#~ msgid "Change PIN..."
-#~ msgstr "Изменить PIN..."
-
-#~ msgid "Suggested friends..."
-#~ msgstr "Предлагаемые друзья..."
-
-#~ msgid "Search for contacts..."
-#~ msgstr "Поиск контактов..."
-
-#~ msgid "View Splash..."
-#~ msgstr "Показать заставку..."
-
-#~ msgid "About..."
-#~ msgstr "О модуле..."
-
-#~ msgid "The file you are trying to send is too large!"
-#~ msgstr "Файл, которые вы пытаетесь отправить слишком велик!"
-
-#~ msgid "Unable to access the local file"
-#~ msgstr "Не удаётся получить доступ к локальному файлу"
-
-#~ msgid "Unable to save the file"
-#~ msgstr "Не удаётся сохранить файл"
-
-#~ msgid ""
-#~ "Unable to connect to the MXit HTTP server. Please check your server "
-#~ "settings."
-#~ msgstr ""
-#~ "Не удаётся соединиться с сервером HTTP MXit. Пожалуйста, проверьте ваши "
-#~ "настройки сервера."
-
-#~ msgid "Logging In..."
-#~ msgstr "Входит в сеть..."
-
-#~ msgid ""
-#~ "Unable to connect to the MXit server. Please check your server settings."
-#~ msgstr ""
-#~ "Не удаётся соединиться с сервером MXit. Пожалуйста, проверьте настройки "
-#~ "вашего сервера."
-
-#~ msgid "Connecting..."
-#~ msgstr "Соединение..."
-
-#~ msgid "The Display Name you entered is too short."
-#~ msgstr "Введённое Вами имя отображения очень короткое."
-
-#~ msgid "The PIN you entered has an invalid length [7-10]."
-#~ msgstr "Введённый Вами PIN-код неправильной длины [7-10]."
-
-#~ msgid "MXit ID"
-#~ msgstr "MXit ID"
-
-#~ msgid "Register New MXit Account"
-#~ msgstr "Зарегистрировать новую учётную запись MXit"
-
-#~ msgid "Please fill in the following fields:"
-#~ msgstr "Пожалуйста, заполните следующие поля:"
-
-#~ msgid "Error contacting the MXit WAP site. Please try again later."
-#~ msgstr "Ошибка связи с сайтом MXit WAP. Пожалуйста, попробуйте позже."
-
-#~ msgid ""
-#~ "MXit is currently unable to process the request. Please try again later."
-#~ msgstr ""
-#~ "MXit не может сейчас обработать апрос. Пожалуйста, попробуйте позже."
-
-#~ msgid "Wrong security code entered. Please try again later."
-#~ msgstr "Введён ошибочный код безопасности. Пожалуйста, попробуйте позже."
-
-#~ msgid "Your session has expired. Please try again later."
-#~ msgstr "Ваш сеанс истёк. Пожалуйста, попробуйте позже."
-
-#~ msgid "Invalid country selected. Please try again."
-#~ msgstr "Выбрана неправильная страна. Пожалуйста, попробуйте ещё раз."
-
-#~ msgid "The MXit ID you entered is not registered. Please register first."
-#~ msgstr ""
-#~ "Введённый MXit ID не зарегистрирован. Пожалуйста, сначала "
-#~ "зарегистрируйтесь."
-
-#~ msgid ""
-#~ "The MXit ID you entered is already registered. Please choose another."
-#~ msgstr "Введённый MXit ID не зарегистрирован. Пожалуйста, выберите другой."
-
-#~ msgid "Internal error. Please try again later."
-#~ msgstr "Внутренняя ошибка. Пожалуйста, попробуйте позже."
-
-#~ msgid "You did not enter the security code"
-#~ msgstr "Вы не ввели код безопасности"
-
-#~ msgid "Security Code"
-#~ msgstr "Код безопасности"
-
-#~ msgid "Enter Security Code"
-#~ msgstr "Введите код безопасности"
-
-#~ msgid "Your Country"
-#~ msgstr "Ваша страна"
-
-#~ msgid "Your Language"
-#~ msgstr "Ваш язык"
-
-#~ msgid "MXit Authorization"
-#~ msgstr "Авторизация MXit"
-
-#~ msgid "MXit account validation"
-#~ msgstr "Подтверждение учётной записи MXit"
-
-#~ msgid "Retrieving User Information..."
-#~ msgstr "Получение информации о пользователе..."
-
-#~ msgid "was kicked"
-#~ msgstr "выгнали"
-
-#~ msgid "You have been kicked from this MultiMX."
-#~ msgstr "Вас выгнали из этого MultiMX."
-
-#~ msgid "_Room Name:"
-#~ msgstr "_Имя комнаты:"
-
-#~ msgid "You have invited"
-#~ msgstr "Вы приглашены"
-
-#~ msgid "Loading menu..."
-#~ msgstr "Загрузка меню..."
-
-#~ msgid "Status Message"
-#~ msgstr "Сообщения статуса"
-
-#~ msgid "Rejection Message"
-#~ msgstr "Сообщения отказа"
-
-#~ msgid "No profile available"
-#~ msgstr "Нет доступных профилей"
-
-#~ msgid "This contact does not have a profile."
-#~ msgstr "У этого контакта нет профиля."
-
-#~ msgid "Your MXit ID..."
-#~ msgstr "Ваш MXit ID..."
-
-#~ msgid "Re-Invite"
-#~ msgstr "Пригласить повторно"
-
-#~ msgid "WAP Server"
-#~ msgstr "WAP-сервер"
-
-#~ msgid "Connect via HTTP"
-#~ msgstr "Соединение через HTTP"
-
-#~ msgid "Enable splash-screen popup"
-#~ msgstr "Включить контекстное меню экрана-заставки"
-
-#~ msgid "Don't want to say"
-#~ msgstr "Не хочу говорить"
-
-#~ msgid "Single"
-#~ msgstr "Не замужем/не женат"
-
-#~ msgid "In a relationship"
-#~ msgstr "Есть отношения"
-
-#~ msgid "Engaged"
-#~ msgstr "Помолвлен (-а)"
-
-#~ msgid "Married"
-#~ msgstr "Женат/Замужем"
-
-#~ msgid "It's complicated"
-#~ msgstr "Всё сложно"
-
-#~ msgid "Widowed"
-#~ msgstr "Вдовец (-а)"
-
-#~ msgid "Separated"
-#~ msgstr "Разошлись"
-
-#~ msgid "Divorced"
-#~ msgstr "Развелись"
-
-#~ msgid "Last Online"
-#~ msgstr "Последний раз в сети"
-
-#~ msgid "Invite Message"
-#~ msgstr "Пригласительное"
-
-#~ msgid "No results"
-#~ msgstr "Нет результатов"
-
-#~ msgid "No contacts found."
-#~ msgstr "Контактов не найдено."
-
-#~ msgid "UserId"
-#~ msgstr "№ пользователя"
-
-#~ msgid "Where I live"
-#~ msgstr "Где я живу"
-
-#~ msgid "You have %i suggested friend."
-#~ msgid_plural "You have %i suggested friends."
-#~ msgstr[0] "Вам предложен %i друг."
-#~ msgstr[1] "Вам предложено %i друга."
-#~ msgstr[2] "Вам предложено %i друзей."
-#~ msgstr[3] "Вам предложено %i друзей."
-
-#~ msgid "We found %i contact that matches your search."
-#~ msgid_plural "We found %i contacts that match your search."
-#~ msgstr[0] "Мы нашли %i контакт, отвечающий условиям вашего поиска."
-#~ msgstr[1] "Мы нашли %i контакта, отвечающих условиям вашего поиска."
-#~ msgstr[2] "Мы нашли %i контактов, отвечающих условиям вашего поиска."
-#~ msgstr[3] "Мы нашли %i контактов, отвечающих условиям вашего поиска."
-
-#~ msgid "We have lost the connection to MXit. Please reconnect."
-#~ msgstr "Мы потеряли соединение с MXit. Пожалуйста, пересоединитесь."
-
-#~ msgid "Message Send Error"
-#~ msgstr "Ошибка отправки сообщения"
-
-#~ msgid "Unable to process your request at this time"
-#~ msgstr "Не удаётся сейчас обработать ваш запрос"
-
-#~ msgid "Successfully Logged In..."
-#~ msgstr "Успешно вошёл в сеть..."
-
-#~ msgid ""
-#~ "%s sent you an encrypted message, but it is not supported on this client."
-#~ msgstr ""
-#~ "%s послал вам зашифрованное сообщение, но данный клиент это не "
-#~ "поддерживает."
-
-#~ msgid "Message Error"
-#~ msgstr "Сообщение об ошибке"
-
-#~ msgid "An encrypted message was received which could not be decrypted."
-#~ msgstr "Получено зашифрованное сообщение, которое нельзя расшифровать."
-
-#~ msgid "Cannot perform redirect using the specified protocol"
-#~ msgstr "Не могу осуществить перенаправление используя указанный протокол"
-
-#~ msgid "An internal MXit server error occurred."
-#~ msgstr "Произошла внутренняя ошибка сервера MXit."
-
-#~ msgid "Login error: %s (%i)"
-#~ msgstr "Ошибка входа: %s (%i)"
-
-#~ msgid "Logout error: %s (%i)"
-#~ msgstr "Ошибка выхода: %s (%i)"
-
-#~ msgid "Contact Error"
-#~ msgstr "Ошибка контакта"
-
-#~ msgid "Message Sending Error"
-#~ msgstr "Ошибка отправки сообщения"
-
-#~ msgid "Status Error"
-#~ msgstr "Ошибка статуса"
-
-#~ msgid "Mood Error"
-#~ msgstr "Ошибка настроения"
-
-#~ msgid "Invitation Error"
-#~ msgstr "Ошибка приглашения"
-
-#~ msgid "Contact Removal Error"
-#~ msgstr "Ошибка удаления контакта"
-
-#~ msgid "Subscription Error"
-#~ msgstr "Ошибка подписки"
-
-#~ msgid "Contact Update Error"
-#~ msgstr "Ошибка обновления контакта"
-
-#~ msgid "File Transfer Error"
-#~ msgstr "Ошибка передачи файла"
-
-#~ msgid "Cannot create MultiMx room"
-#~ msgstr "Не удаётся создать комнату MultiMx"
-
-#~ msgid "MultiMx Invitation Error"
-#~ msgstr "Ошибка приглашения MultiMx"
-
-#~ msgid "Profile Error"
-#~ msgstr "Ошибка профиля"
-
-#~ msgid "Invalid packet received from MXit."
-#~ msgstr "Получен неправильный пакет от MXit."
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x01)"
-#~ msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x01)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x02)"
-#~ msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x02)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x03)"
-#~ msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x03)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x04)"
-#~ msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x04)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x05)"
-#~ msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x05)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x06)"
-#~ msgstr "Возникла ошибка соединения с MXit. (этап чтения 0x06)"
-
-#~ msgid "Pending"
-#~ msgstr "На рассмотрении"
-
-#~ msgid "Invited"
-#~ msgstr "Приглашены"
-
-#~ msgid "Rejected"
-#~ msgstr "Отклонено"
-
-#~ msgid "Deleted"
-#~ msgstr "Удалено"
-
-#~ msgid "MXit Advertising"
-#~ msgstr "Реклама MXit"
-
-#~ msgid "More Information"
-#~ msgstr "Больше информации"
-
-#~ msgid "No such user: %s"
-#~ msgstr "Нет такого пользователя: %s"
-
-#~ msgid "User lookup"
-#~ msgstr "Наведение справки пользователя"
-
-#~ msgid "Reading challenge"
-#~ msgstr "Чтение пробы"
-
-#~ msgid "Unexpected challenge length from server"
-#~ msgstr "Неожиданная длина пробы с сервера"
-
-#~ msgid "Logging in"
-#~ msgstr "Входит в сеть"
-
-#~ msgid "MySpaceIM - No Username Set"
-#~ msgstr "MySpaceIM - Не указано имя пользователя"
-
-#~ msgid "You appear to have no MySpace username."
-#~ msgstr "Похоже у вас нет имени пользователя MySpace."
-
-#~ msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-#~ msgstr "Хотите указать сейчас? (Примечание: ЭТО НЕЛЬЗЯ БУДЕТ ИЗМЕНИТЬ!)"
-
-#~ msgid "Lost connection with server"
-#~ msgstr "Соединение с сервером потеряно"
-
-#~ msgid "New mail messages"
-#~ msgstr "Новые сообщения почты"
-
-#~ msgid "New blog comments"
-#~ msgstr "Новые комментарии блога"
-
-#~ msgid "New profile comments"
-#~ msgstr "Новые комментарии профиля"
-
-#~ msgid "New friend requests!"
-#~ msgstr "Новые запросы друга!"
-
-#~ msgid "New picture comments"
-#~ msgstr "Новые комментарии картинки"
-
-#~ msgid "MySpace"
-#~ msgstr "MySpace"
-
-#~ msgid "IM Friends"
-#~ msgstr "IM друзья"
-
-#~ msgid ""
-#~ "%d buddy was added or updated from the server (including buddies already "
-#~ "on the server-side list)"
-#~ msgid_plural ""
-#~ "%d buddies were added or updated from the server (including buddies "
-#~ "already on the server-side list)"
-#~ msgstr[0] ""
-#~ "Собеседник %d был добавлен или обновлён с сервера (включая собеседников, "
-#~ "которые уже в списке на стороне сервера)"
-#~ msgstr[1] ""
-#~ "Собеседники %d были добавлены или обновлены с сервера (включая "
-#~ "собеседников, которые уже в списке на стороне сервера)"
-#~ msgstr[2] ""
-#~ "Собеседники %d были добавлены или обновлены с сервера (включая "
-#~ "собеседников, которые уже в списке на стороне сервера)"
-#~ msgstr[3] ""
-#~ "Собеседники %d были добавлены или обновлены с сервера (включая "
-#~ "собеседников, которые уже в списке на стороне сервера)"
-
-#~ msgid "Add contacts from server"
-#~ msgstr "Добавить контакты с сервера"
-
-#~ msgid "Protocol error, code %d: %s"
-#~ msgstr "Ошибка протокола, код %d: %s"
-
-#~ msgid ""
-#~ "%s Your password is %zu characters, which is longer than the maximum "
-#~ "length of %d.  Please shorten your password at http://profileedit.myspace."
-#~ "com/index.cfm?fuseaction=accountSettings.changePassword and try again."
-#~ msgstr ""
-#~ "%s Ваш пароль - %zu символов, что превышает максимальную длину %d. "
-#~ "Пожалуйста, укоротите ваш пароль на http://profileedit.myspace.com/index."
-#~ "cfm?fuseaction=accountSettings.changePassword и попробуйте снова."
-
-#~ msgid "MySpaceIM Error"
-#~ msgstr "Ошибка MySpaceIM"
-
-#~ msgid "Invalid input condition"
-#~ msgstr "Неверное входное условие"
-
-#~ msgid "Failed to add buddy"
-#~ msgstr "Не удалось добавить собеседника"
-
-#~ msgid "'addbuddy' command failed."
-#~ msgstr "команда 'addbuddy' не удалась."
-
-#~ msgid "persist command failed"
-#~ msgstr "команда продолжения не удалась"
-
-#~ msgid "Failed to remove buddy"
-#~ msgstr "Не удалось удалить собеседника"
-
-#~ msgid "'delbuddy' command failed"
-#~ msgstr "команда 'delbuddy' не удалась"
-
-#~ msgid "blocklist command failed"
-#~ msgstr "команда блокировки списка не удалась"
-
-#~ msgid "Missing Cipher"
-#~ msgstr "Отсутствует шифр"
-
-#~ msgid "The RC4 cipher could not be found"
-#~ msgstr "Шифр RC4 не может быть найден"
-
-#~ msgid ""
-#~ "Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-#~ "not be loaded."
-#~ msgstr ""
-#~ "Улучшитесь до libpurple с поддержкой RC4 (>= 2.0.1). Модуль MySpaceIM не "
-#~ "будет загружен"
-
-#~ msgid "Add friends from MySpace.com"
-#~ msgstr "Добавить друзей с MySpace.com"
-
-#~ msgid "Importing friends failed"
-#~ msgstr "Импорт друзей не удался"
-
-#~ msgid "Find people..."
-#~ msgstr "Найти людей..."
-
-#~ msgid "Change IM name..."
-#~ msgstr "Изменить IM имя..."
-
-#~ msgid "myim URL handler"
-#~ msgstr "Ссылка на адрес myim"
-
-#~ msgid "No suitable MySpaceIM account could be found to open this myim URL."
-#~ msgstr ""
-#~ "Подходящая учётная запись MySpaceIM не может быть найдена, чтобы открыть "
-#~ "этот адрес myim."
-
-#~ msgid "Enable the proper MySpaceIM account and try again."
-#~ msgstr "Включите правильную учётную запись MySpaceIM и попробуйте снова."
-
-#~ msgid "Show display name in status text"
-#~ msgstr "Показывать отображаемое имя в тексте статуса"
-
-#~ msgid "Show headline in status text"
-#~ msgstr "Показывать заголовочную строку в тексте статуса"
-
-#~ msgid "Send emoticons"
-#~ msgstr "Посылать эмоции"
-
-#~ msgid "Screen resolution (dots per inch)"
-#~ msgstr "Разрешение экрана (точек на дюйм)"
-
-#~ msgid "Base font size (points)"
-#~ msgstr "Основной размер шрифта (единиц)"
-
-#~ msgid "Headline"
-#~ msgstr "Заголовок"
-
-#~ msgid "Song"
-#~ msgstr "Песня"
-
-#~ msgid "Total Friends"
-#~ msgstr "Всего друзей"
-
-#~ msgid "Client Version"
-#~ msgstr "Версия клиента"
-
-#~ msgid ""
-#~ "An error occurred while trying to set the username.  Please try again, or "
-#~ "visit http://editprofile.myspace.com/index.cfm?fuseaction=profile."
-#~ "username to set your username."
-#~ msgstr ""
-#~ "При попытке установить имя пользователя произошла ошибка.  Пожалуйста, "
-#~ "попробуйте снова или, чтобы установить ваше имя пользователя, посетите "
-#~ "http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
-
-#~ msgid "MySpaceIM - Username Available"
-#~ msgstr "MySpaceIM - Имя пользователя доступно"
-
-#~ msgid "This username is available. Would you like to set it?"
-#~ msgstr "Это имя пользователя доступно. Вы хотите установить его?"
-
-#~ msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-#~ msgstr "ОДНАЖДЫ УСТАНОВИВ ЕГО, ВЫ НЕ СМОЖЕТЕ ЭТО ИЗМЕНИТЬ!"
-
-#~ msgid "MySpaceIM - Please Set a Username"
-#~ msgstr "MySpaceIM - Пожалуйста, укажите имя пользователя"
-
-#~ msgid "This username is unavailable."
-#~ msgstr "Это имя пользователя недоступно."
-
-#~ msgid "Please try another username:"
-#~ msgstr "Попробуйте другое имя пользователя:"
-
-#~ msgid "No username set"
-#~ msgstr "Не задано имя пользователя"
-
-#~ msgid "Please enter a username to check its availability:"
-#~ msgstr ""
-#~ "Пожалуйста, введите имя пользователя, чтобы проверить его доступность."
-
-#~ msgid "Zap"
-#~ msgstr "Укокошить"
-
-#~ msgid "%s has zapped you!"
-#~ msgstr "%s укокошил вас!"
-
-#~ msgid "Zapping %s..."
-#~ msgstr "Бью %s..."
-
-#~ msgid "Whack"
-#~ msgstr "Тюкнуть по бошке"
-
-#~ msgid "%s has whacked you!"
-#~ msgstr "%s тюкнул вас по бошке!"
-
-#~ msgid "Whacking %s..."
-#~ msgstr "Ударяю %s..."
-
-#~ msgid "Torch"
-#~ msgstr "Подпалить"
-
-#~ msgid "%s has torched you!"
-#~ msgstr "%s поджарил вас!"
-
-#~ msgid "Torching %s..."
-#~ msgstr "Жарю %s..."
-
-#~ msgid "Smooch"
-#~ msgstr "Чмокнуть"
-
-#~ msgid "%s has smooched you!"
-#~ msgstr "%s чмокнул вас!"
-
-#~ msgid "Smooching %s..."
-#~ msgstr "Радостно целую %s..."
-
-#~ msgid "Hug"
-#~ msgstr "Обнять"
-
-#~ msgid "%s has hugged you!"
-#~ msgstr "%s обнял вас!"
-
-#~ msgid "Hugging %s..."
-#~ msgstr "Обнимаю %s..."
-
-#~ msgid "Slap"
-#~ msgstr "Пощёчина"
-
-#~ msgid "%s has slapped you!"
-#~ msgstr "%s дал вам пощёчину!"
-
-#~ msgid "Slapping %s..."
-#~ msgstr "Шлёпаю %s..."
-
-#~ msgid "Goose"
-#~ msgstr "Щипок"
-
-#~ msgid "%s has goosed you!"
-#~ msgstr "%s ущипнул вас!"
-
-#~ msgid "Goosing %s..."
-#~ msgstr "Щипаю %s..."
-
-#~ msgid "High-five"
-#~ msgstr "Дай пять!"
-
-#~ msgid "%s has high-fived you!"
-#~ msgstr "%s одобрил вас пожатием рук над головой!"
-
-#~ msgid "High-fiving %s..."
-#~ msgstr "Даю пять для %s!.."
-
-#~ msgid "Punk"
-#~ msgstr "Пошутить"
-
-#~ msgid "%s has punk'd you!"
-#~ msgstr "%s пошутил над вами!"
-
-#~ msgid "Punking %s..."
-#~ msgstr "Шучу над %s..."
-
-#~ msgid "Raspberry"
-#~ msgstr "Показать язык"
-
-#~ msgid "%s has raspberried you!"
-#~ msgstr "%s показывает вам язык"
-
-#~ msgid "Raspberrying %s..."
-#~ msgstr "Показываю язык %s..."
-
-#~ msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-#~ msgstr "join &lt;комната&gt;:  Присоединиться к чату в сети Yahoo"
-
-#~ msgid "list: List rooms on the Yahoo network"
-#~ msgstr "list: Вывести список комнат в сети Yahoo"
-
-#~ msgid "doodle: Request user to start a Doodle session"
-#~ msgstr "безделье: Запросите пользователя, чтобы начать сеанс безделья"
-
-#~ msgid "Yahoo ID..."
-#~ msgstr "Yahoo ID..."
-
-#~ msgid "Yahoo! Protocol Plugin"
-#~ msgstr "Модуль протокола Yahoo!"
-
-#~ msgid "Pager port"
-#~ msgstr "Порт пейджера"
-
-#~ msgid "File transfer server"
-#~ msgstr "Сервер передачи файлов"
-
-#~ msgid "File transfer port"
-#~ msgstr "Порт передачи файлов"
-
-#~ msgid "Chat room locale"
-#~ msgstr "Языковой формат чата"
-
-#~ msgid "Ignore conference and chatroom invitations"
-#~ msgstr "Игнорировать приглашения в конференции и чаты"
-
-#~ msgid "Use account proxy for HTTP and HTTPS connections"
-#~ msgstr "Используйте прокси учётной записи для HTTP и HTTPS соединений"
-
-#~ msgid "Chat room list URL"
-#~ msgstr "URL списка чатов"
-
-#~ msgid "Yahoo JAPAN ID..."
-#~ msgstr "Yahoo JAPAN ID..."
-
-#~ msgid "Yahoo! JAPAN Protocol Plugin"
-#~ msgstr "Модуль протокола Yahoo! JAPAN"
-
-#~ msgid "%s has sent you a webcam invite, which is not yet supported."
-#~ msgstr ""
-#~ "%s послал вам приглашение к веб-камере, которое ещё не поддерживается."
-
-#~ msgid "Your SMS was not delivered"
-#~ msgstr "Ваше SMS не было доставлено"
-
-#~ msgid "Your Yahoo! message did not get sent."
-#~ msgstr "Ваше сообщение Yahoo! не отправлено."
-
-#~ msgid "Yahoo! system message for %s:"
-#~ msgstr "Системное сообщение Yahoo! для %s:"
-
-#~ msgid "Authorization denied message:"
-#~ msgstr "Сообщение отказа в авторизации:"
-
-#~ msgid ""
-#~ "%s has (retroactively) denied your request to add them to your list for "
-#~ "the following reason: %s."
-#~ msgstr ""
-#~ "%s (повторно) не разрешил добавить его в ваш список по следующей причине: "
-#~ "%s."
-
-#~ msgid "%s has (retroactively) denied your request to add them to your list."
-#~ msgstr "%s (повторно) не разрешил добавить его в ваш список."
-
-#~ msgid "Add buddy rejected"
-#~ msgstr "В добавлении собеседника отказано"
-
-#~ msgid "Received invalid data"
-#~ msgstr "Получены некорректные данные"
-
-#~ msgid ""
-#~ "Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-#~ "website may fix this."
-#~ msgstr ""
-#~ "Учётная запись заблокирована: слишком много неудачных попыток входа.  "
-#~ "Вход на веб-сайт Yahoo!, возможно, исправит это."
-
-#~ msgid ""
-#~ "Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
-#~ "this."
-#~ msgstr ""
-#~ "Учётная запись заблокирована: неизвестная причина.  Вход на веб-сайт "
-#~ "Yahoo!, возможно, исправит это."
-
-#~ msgid ""
-#~ "Account locked: You have been logging in too frequently.  Wait a few "
-#~ "minutes before trying to connect again.  Logging into the Yahoo! website "
-#~ "may help."
-#~ msgstr ""
-#~ "Учётная запись заблокирована: вы слишком часто входили.  Подождите пару "
-#~ "минут и попробуйте снова.  Вход на веб-сайт Yahoo!, возможно, исправит "
-#~ "это."
-
-#~ msgid "Username or password missing"
-#~ msgstr "Нет имени пользователя или пароля"
-
-#~ msgid ""
-#~ "The Yahoo server has requested the use of an unrecognized authentication "
-#~ "method.  You will probably not be able to successfully sign on to Yahoo.  "
-#~ "Check %s for updates."
-#~ msgstr ""
-#~ "Сервер Yahoo запросил использование неопознанного метода авторизации.  "
-#~ "Вы, возможно, не сможете успешно провериться на Yahoo. Проверьте %s на "
-#~ "обновления."
-
-#~ msgid "Failed Yahoo! Authentication"
-#~ msgstr "Аутентификация Yahoo! завершилась неудачно"
-
-#~ msgid ""
-#~ "You have tried to ignore %s, but the user is on your buddy list.  "
-#~ "Clicking \"Yes\" will remove and ignore the buddy."
-#~ msgstr ""
-#~ "Вы попытались не обратить внимание на %s, но пользователь в вашем списке "
-#~ "собеседников. Щелчок \"Да\" удалит и проигнорирует собеседника."
-
-#~ msgid "Ignore buddy?"
-#~ msgstr "Игнорировать собеседника?"
-
-#~ msgid "Invalid username or password"
-#~ msgstr "Некорректное имя пользователя или пароль"
-
-#~ msgid ""
-#~ "Your account has been locked due to too many failed login attempts.  "
-#~ "Please try logging into the Yahoo! website."
-#~ msgstr ""
-#~ "Ваша учётная запись была заблокирована из-за слишком большого количества "
-#~ "неверных попыток входа.  Пожалуйста, попробуйте войти на веб-сайт Yahoo!."
-
-#~ msgid "Unknown error 52.  Reconnecting should fix this."
-#~ msgstr "Неизвестная ошибка 52.  Пересоединение должно исправить это."
-
-#~ msgid ""
-#~ "Error 1013: The username you have entered is invalid.  The most common "
-#~ "cause of this error is entering your email address instead of your Yahoo! "
-#~ "ID."
-#~ msgstr ""
-#~ "Ошибка 1013: введённое вами имя пользователя некорректно.  Скорее всего "
-#~ "это произошло из-за того, что вы ввели ваш e-mail адрес вместо вашего "
-#~ "Yahoo! ID."
-
-#~ msgid ""
-#~ "Unknown error number %d. Logging into the Yahoo! website may fix this."
-#~ msgstr ""
-#~ "Неизвестная ошибка номер %d. Вход с web-сайта Yahoo! может исправить это."
-
-#~ msgid "Unable to add buddy %s to group %s to the server list on account %s."
-#~ msgstr ""
-#~ "Не удалось добавить собеседника %s в группу %s в список на сервере "
-#~ "учётной записи %s."
-
-#~ msgid "Unable to add buddy to server list"
-#~ msgstr "Не удалось добавить собеседника в список на сервере"
-
-#~ msgid "[ Audible %s/%s/%s.swf ] %s"
-#~ msgstr "[ Слышимый %s/%s/%s.swf ] %s"
-
-#~ msgid "Received unexpected HTTP response from server"
-#~ msgstr "Получен неожиданный HTTP ответ от сервера"
-
-#~ msgid "Lost connection with %s: %s"
-#~ msgstr "Соединение с %s потеряно: %s"
-
-#~ msgid "Unable to establish a connection with %s: %s"
-#~ msgstr "Не удаётся установить соединение с %s: %s"
-
-#~ msgid "Unable to connect: The server returned an empty response."
-#~ msgstr "Не удаётся соединиться: сервер вернул пустой ответ."
-
-#~ msgid ""
-#~ "Unable to connect: The server's response did not contain the necessary "
-#~ "information"
-#~ msgstr "Не удаётся соединиться: в ответе сервера нет нужной информации"
-
-#~ msgid "Not at Home"
-#~ msgstr "Не дома"
-
-#~ msgid "Not at Desk"
-#~ msgstr "Не за столом"
-
-#~ msgid "Not in Office"
-#~ msgstr "Не в офисе"
-
-#~ msgid "On Vacation"
-#~ msgstr "В отпуске"
-
-#~ msgid "Stepped Out"
-#~ msgstr "Вышел"
-
-#~ msgid "Not on server list"
-#~ msgstr "Не в списке на сервере"
-
-#~ msgid "Appear Permanently Offline"
-#~ msgstr "Постоянно появляется не в сети"
-
-#~ msgid "Presence"
-#~ msgstr "Присутствие"
-
-#~ msgid "Don't Appear Permanently Offline"
-#~ msgstr "Не всегда не в сети"
-
-#~ msgid "Join in Chat"
-#~ msgstr "Присоединиться в чате"
-
-#~ msgid "Initiate Conference"
-#~ msgstr "Создать конференцию"
-
-#~ msgid "Presence Settings"
-#~ msgstr "Настройки присутствия"
-
-#~ msgid "Start Doodling"
-#~ msgstr "Начать бездельничать"
-
-#~ msgid "Activate which ID?"
-#~ msgstr "Какой ID активировать?"
-
-#~ msgid "Select the ID you want to activate"
-#~ msgstr "Выберите ID, который вы хотите активировать"
-
-#~ msgid "Join whom in chat?"
-#~ msgstr "К кому присоединиться в чате?"
-
-#~ msgid "Activate ID..."
-#~ msgstr "Активировать ID..."
-
-#~ msgid "Join User in Chat..."
-#~ msgstr "Присоединиться к пользователю в чате..."
-
-#~ msgid "Open Inbox"
-#~ msgstr "Открыть входящие"
-
-#~ msgid "Can't send SMS. Unable to obtain mobile carrier."
-#~ msgstr "Не могу отправить SMS. Не могу определить мобильного оператора."
-
-#~ msgid "Can't send SMS. Unknown mobile carrier."
-#~ msgstr "Не могу отправить SMS. Неизвестный мобильный оператор."
-
-#~ msgid "Getting mobile carrier to send the SMS."
-#~ msgstr "Определение мобильного оператора для отправки SMS."
-
-#~ msgid "Sent Doodle request."
-#~ msgstr "Послан запрос безделья."
-
-#~ msgid "Unable to connect."
-#~ msgstr "Не удаётся установить соединение."
-
-#~ msgid "Unable to establish file descriptor."
-#~ msgstr "Не удаётся установить дескриптор файла."
-
-#~ msgid "%s is trying to send you a group of %d files.\n"
-#~ msgstr "%s пытается отправить вам группу из %d файлов.\n"
-
-#~ msgid "Write Error"
-#~ msgstr "Ошибка записи"
-
-#~ msgid "Yahoo! Japan Profile"
-#~ msgstr "Профиль Yahoo! Japan"
-
-#~ msgid "Yahoo! Profile"
-#~ msgstr "Профиль Yahoo!"
-
-#~ msgid ""
-#~ "Sorry, profiles marked as containing adult content are not supported at "
-#~ "this time."
-#~ msgstr ""
-#~ "Извините, профили отмеченные, как \"только для взрослых\" в настоящее "
-#~ "время не поддерживаются."
-
-#~ msgid ""
-#~ "If you wish to view this profile, you will need to visit this link in "
-#~ "your web browser:"
-#~ msgstr ""
-#~ "Если вы хотите просмотреть этот профиль, вам придётся открыть эту ссылку "
-#~ "в вашем проводнике:"
-
-#~ msgid "Yahoo! ID"
-#~ msgstr "Yahoo! ID"
-
-#~ msgid "Hobbies"
-#~ msgstr "Хобби"
-
-#~ msgid "Latest News"
-#~ msgstr "Последние новости"
-
-#~ msgid "Home Page"
-#~ msgstr "Домашняя страница"
-
-#~ msgid "Cool Link 1"
-#~ msgstr "Ссылка 1"
-
-#~ msgid "Cool Link 2"
-#~ msgstr "Ссылка 2"
-
-#~ msgid "Cool Link 3"
-#~ msgstr "Ссылка 3"
-
-#~ msgid "Last Update"
-#~ msgstr "Последнее обновление"
-
-#~ msgid ""
-#~ "This profile is in a language or format that is not supported at this "
-#~ "time."
-#~ msgstr ""
-#~ "Этот профиль на таком языке или в таком формате, которые сейчас не "
-#~ "поддерживаются."
-
-#~ msgid ""
-#~ "Could not retrieve the user's profile. This most likely is a temporary "
-#~ "server-side problem. Please try again later."
-#~ msgstr ""
-#~ "Не могу получить профиль пользователя. Скорее всего временная проблема на "
-#~ "стороне сервера. Пожалуйста, попробуйте ещё раз попозже."
-
-#~ msgid ""
-#~ "Could not retrieve the user's profile. This most likely means that the "
-#~ "user does not exist; however, Yahoo! sometimes does fail to find a user's "
-#~ "profile. If you know that the user exists, please try again later."
-#~ msgstr ""
-#~ "Не могу получить профиль пользователя. Скорее всего это значит, что "
-#~ "такого пользователя нет; однако, Yahoo! иногда так делает, чтобы найти "
-#~ "профиль пользователя. Если вы уверены, что такой пользователь существует, "
-#~ "пожалуйста, попробуйте ещё раз попозже."
-
-#~ msgid "The user's profile is empty."
-#~ msgstr "Профиль пользователя пуст."
-
-#~ msgid "%s has declined to join."
-#~ msgstr "%s отказался присоединениться."
-
-#~ msgid "Failed to join chat"
-#~ msgstr "Не удалось присоединиться к чату"
-
-#~ msgid "Unknown room"
-#~ msgstr "Неизвестная комната"
-
-#~ msgid "Maybe the room is full"
-#~ msgstr "Может быть комната полна?"
-
-#~ msgid "Not available"
-#~ msgstr "Недоступен"
-
-#~ msgid ""
-#~ "Unknown error. You may need to logout and wait five minutes before being "
-#~ "able to rejoin a chatroom"
-#~ msgstr ""
-#~ "Неизвестная ошибка. Возможно вам нужно выйти из сети и подождать 5 минут "
-#~ "перед тем как пробовать переподключиться к комнате чата"
-
-#~ msgid "You are now chatting in %s."
-#~ msgstr "Вы сейчас разговариваете в %s."
-
-#~ msgid "Failed to join buddy in chat"
-#~ msgstr "Не удалось присоединиться к собеседнику в чате"
-
-#~ msgid "Maybe they're not in a chat?"
-#~ msgstr "Может быть, он не в чате?"
-
-#~ msgid "Fetching the room list failed."
-#~ msgstr "Не удалось загрузить список комнат."
-
-#~ msgid "Voices"
-#~ msgstr "Голоса"
-
-#~ msgid "Webcams"
-#~ msgstr "Веб-камеры"
-
-#~ msgid "Connection problem"
-#~ msgstr "Проблема с соединением"
-
-#~ msgid "Unable to fetch room list."
-#~ msgstr "Не удаётся загрузить список комнат."
-
-#~ msgid "User Rooms"
-#~ msgstr "Комнаты пользователя"
-
-#~ msgid "Connection problem with the YCHT server"
-#~ msgstr "Проблема соединения с сервером YCHT"
-
-#~ msgid "Facebook (XMPP)"
-#~ msgstr "Facebook (XMPP)"

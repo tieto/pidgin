@@ -9,9 +9,9 @@ msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-09 18:54-0600\n"
-"PO-Revision-Date: 2014-11-22 05:36+0000\n"
-"Last-Translator: Haval Abdulkarim <haval.abdulkarim@gmail.com>\n"
-"Language-Team: Kurdish (Iraq) (http://www.transifex.com/projects/p/pidgin/"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
+"Language-Team: Kurdish (Iraq) (http://www.transifex.com/pidgin/pidgin/"
 "language/ku_IQ/)\n"
 "Language: ku_IQ\n"
 "MIME-Version: 1.0\n"
@@ -1207,9 +1207,8 @@ msgstr ""
 msgid "(default)"
 msgstr ""
 
-#, fuzzy
 msgid "Select Sound File..."
-msgstr "پاشەکەوتکردنی پەڕگە..."
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr ""
@@ -1330,9 +1329,8 @@ msgid "Use a different status for some accounts"
 msgstr ""
 
 #. Save and Use
-#, fuzzy
 msgid "Save and Use"
-msgstr "ڕەوشە پاشەکەوتکراوەکان"
+msgstr ""
 
 msgid "Certificates"
 msgstr ""
@@ -11579,9 +11577,8 @@ msgstr ""
 msgid "Notify For"
 msgstr ""
 
-#, fuzzy
 msgid "\tS_ystem messages"
-msgstr "نامەکانی سیستەم"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr ""
@@ -12394,11 +12391,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
-
-#, fuzzy
-#~ msgid "\t_Notify for System messages"
-#~ msgstr "نامەکانی سیستەم"
-
-#, fuzzy
-#~ msgid "\tNotify for _System messages"
-#~ msgstr "نامەکانی سیستەم"

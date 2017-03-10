@@ -11,9 +11,9 @@ msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-09 18:51-0600\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Asturian (http://www.transifex.com/projects/p/pidgin/language/"
+"Language-Team: Asturian (http://www.transifex.com/pidgin/pidgin/language/"
 "ast/)\n"
 "Language: ast\n"
 "MIME-Version: 1.0\n"
@@ -1283,9 +1283,8 @@ msgstr "Fallu al aniciase GStreamer."
 msgid "(default)"
 msgstr "(per defeutu)"
 
-#, fuzzy
 msgid "Select Sound File..."
-msgstr "Esbillar ficheru de soníu ..."
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr "Preferencies de soníu"
@@ -1404,14 +1403,12 @@ msgstr "Mensax:"
 msgid "Edit Status"
 msgstr "Editar estáu"
 
-#, fuzzy
 msgid "Use a different status for some accounts"
-msgstr "Usa un estáu xebráu pa les cuentes que siguen darréu"
+msgstr ""
 
 #. Save and Use
-#, fuzzy
 msgid "Save and Use"
-msgstr "Atroxar ya usar"
+msgstr ""
 
 msgid "Certificates"
 msgstr "Certificaos"
@@ -1538,9 +1535,8 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr ""
 
-#, fuzzy
 msgid "Please wait while TinyURL fetches a shorter URL..."
-msgstr "Por favor, aspera mentanto TinyURL gueta un acurtiador d'enllaces ..."
+msgstr ""
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Solo crear TinyURL pa enllaces d'esti anchor o meyor"
@@ -2201,21 +2197,19 @@ msgstr "<font color=\"red\"><b>Nun pue lleese'l ficheru: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <AUTO-REPLY>: %s⏎\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "Mensax de %s"
+msgstr ""
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
 
-#, fuzzy
 msgid "Network error."
-msgstr "Rede"
+msgstr ""
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
@@ -2235,9 +2229,8 @@ msgstr ""
 "Nun s'empresten codecs. Les tos preferencies de codec en fs-codecs.conf son "
 "abondo estrictes"
 
-#, fuzzy
 msgid "Could not connect to the remote party"
-msgstr "Non coneutáu col sirvidor"
+msgstr ""
 
 msgid "A non-recoverable Farsight2 error has occurred."
 msgstr "Asocedió un erru Farsight2 non recuperable."
@@ -2807,13 +2800,10 @@ msgstr "Mou síquicu"
 msgid "Psychic mode for incoming conversation"
 msgstr "Mou síquicu pa conversación entrantes"
 
-#, fuzzy
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
 "This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
-"Fai que'l ventanu de conversación apaeza cuando otros usuarios entamen a "
-"escribite. Esto furrula con AIM, ICQ, XMPP, Sametime, y Yahoo!"
 
 msgid "You feel a disturbance in the force..."
 msgstr "Sientes un trestornu na fuerza..."
@@ -3029,13 +3019,10 @@ msgstr ""
 "Nun pue deteutase la instalación d'ActiveTCL. Si deseyes usar plugins TCL, "
 "instala ActiveTCL dende http://www.activestate.com\n"
 
-#, fuzzy
 msgid ""
 "Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
 "developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
-"Nun pue alcontrase la caja de ferramientes \"Bonjour for Windows\" d'Appel, "
-"écha-y un güeyu a http://d.pidgin.im/BonjourWindows pa más información"
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "Nun puen escuchase conexones entrantes de mensaxeros nel intre"
@@ -5621,13 +5608,11 @@ msgstr ""
 msgid "Received invalid data on connection with server"
 msgstr "Recibíos datos non válidos na conexón col sirvidor"
 
-#, fuzzy
 msgid "Error parsing response from authentication server"
-msgstr "un pue coneutase col sirvidor d'autenticación: %s"
+msgstr ""
 
-#, fuzzy
 msgid "Unknown error during authentication"
-msgstr "Aniciando autenticación"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -6224,9 +6209,8 @@ msgstr ""
 msgid "MD5-based"
 msgstr ""
 
-#, fuzzy
 msgid "Authentication method"
-msgstr "Autenticación fallida"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -9013,9 +8997,8 @@ msgstr ""
 msgid "SSL Servers"
 msgstr ""
 
-#, fuzzy
 msgid "Supported debug options are: plugins, version"
-msgstr "Les opciones sofitaes na depuración son: versión de los plugins"
+msgstr ""
 
 msgid "Unknown command."
 msgstr ""
@@ -10349,9 +10332,8 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
-#, fuzzy
 msgid "Media error"
-msgstr "Erru de llectura"
+msgstr ""
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -11168,9 +11150,8 @@ msgid "Use a _different status for some accounts"
 msgstr ""
 
 #. Save and Use button
-#, fuzzy
 msgid "Sa_ve and Use"
-msgstr "Atroxar ya usar"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -11868,9 +11849,8 @@ msgstr ""
 msgid "Notify For"
 msgstr "Notificar por"
 
-#, fuzzy
 msgid "\tS_ystem messages"
-msgstr "Mensaxes de corréu nuevos"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_Solo cuando daquién diga'l to nome"
@@ -12683,1208 +12663,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Nun tienes permisu pa desinstala esta aplicación"
-
-#~ msgid "Pounce Who"
-#~ msgstr "Avisar a"
-
-#~ msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-#~ msgstr ""
-#~ "Cuando recibas un mensax con un enllaz(es), usa TinyURL pa un copiáu "
-#~ "cenciellu"
-
-#~ msgid "Whether the specified command should handle \"msnim\" URLs"
-#~ msgstr "Si'l comandu especificáu debería remanar enllaces \"msnim\""
-
-#~ msgid ""
-#~ "True if the command specified in the \"command\" key should handle \"msnim"
-#~ "\" URLs."
-#~ msgstr ""
-#~ "Marcar si'l comandu especificáu na clave \"command\" deberá remanar "
-#~ "enllaces \"msnim\"."
-
-#~ msgid "The handler for \"msnim\" URLs"
-#~ msgstr "El controlador pa enllaces \"msnim\""
-
-#~ msgid "The command used to handle \"msnim\" URLs, if enabled."
-#~ msgstr "El comandu usáu pa remanar enllaces \"msnim\", si ta habilitáu."
-
-#~ msgid "Whether the specified command should handle \"ymsgr\" URLs"
-#~ msgstr "Si'l comandu especificáu debería remanar enllaces \"ymsgr\""
-
-#~ msgid ""
-#~ "True if the command specified in the \"command\" key should handle \"ymsgr"
-#~ "\" URLs."
-#~ msgstr ""
-#~ "Marcar si'l comandu especificáu na clave \"command\" deberá remanar "
-#~ "enllaces \"ymsgr\"."
-
-#~ msgid "The handler for \"ymsgr\" URLs"
-#~ msgstr "El controlador pa enllaces \"ymsgr\""
-
-#~ msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-#~ msgstr "El comandu usáu pa remanar enllaces \"ymsgr\", si ta habilitáu."
-
-#~ msgid "Unable to add \"%s\"."
-#~ msgstr "Nun pue añadese \"%s\"."
-
-#~ msgid "Buddy Add error"
-#~ msgstr "Erru añadiendo collaciu/a"
-
-#~ msgid "The username specified does not exist."
-#~ msgstr "El viesu d'usuariu especificáu nun esiste."
-
-#~ msgid "Unable to parse message"
-#~ msgstr "Nun pue analizase'l mensax"
-
-#~ msgid "Syntax Error (probably a client bug)"
-#~ msgstr "Erru de sintaxis (fo posible un erru del veceru)"
-
-#~ msgid "Invalid email address"
-#~ msgstr "Direición de corréu inválida"
-
-#~ msgid "User does not exist"
-#~ msgstr "L'usuariu nun esiste"
-
-#~ msgid "Already logged in"
-#~ msgstr "Xá coneutáu"
-
-#~ msgid "Invalid username"
-#~ msgstr "Viesu d'usuariu inválidu"
-
-#~ msgid "List full"
-#~ msgstr "Llista enllena"
-
-#~ msgid "Already there"
-#~ msgstr "Xá ta ende"
-
-#~ msgid "Not on list"
-#~ msgstr "Nun ta na llista"
-
-#~ msgid "Already in the mode"
-#~ msgstr "Xá ta nel mou"
-
-#~ msgid "Already in opposite list"
-#~ msgstr "Yá na llista opuesta"
-
-#~ msgid "Too many groups"
-#~ msgstr "Abondos grupos"
-
-#~ msgid "Invalid group"
-#~ msgstr "Grupu non válidu"
-
-#~ msgid "User not in group"
-#~ msgstr "L'usuariu nun ta nel grupu"
-
-#~ msgid "Group name too long"
-#~ msgstr "El viesu'l grupu ye abondu llargu"
-
-#~ msgid "Cannot remove group zero"
-#~ msgstr "Nun pue esniciase'l grupu cero"
-
-#~ msgid "Tried to add a user to a group that doesn't exist"
-#~ msgstr "Intentóse añader un usuariu a un grupu que nun esiste"
-
-#~ msgid "Notify transfer failed"
-#~ msgstr "Tresferencia de notificación fallida"
-
-#~ msgid "Required fields missing"
-#~ msgstr "Hay campos lluellos requeríos"
-
-#~ msgid "Too many hits to a FND"
-#~ msgstr "Resultaos abondos d'un FND"
-
-#~ msgid "Service temporarily unavailable"
-#~ msgstr "Serviciu non disponible temporalmente"
-
-#~ msgid "Database server error"
-#~ msgstr "Erru de la bas de datos"
-
-#~ msgid "Command disabled"
-#~ msgstr "Comandu deshabilitáu"
-
-#~ msgid "File operation error"
-#~ msgstr "Erru d'operación de ficheru"
-
-#~ msgid "Memory allocation error"
-#~ msgstr "Erru d'asignación de memoria"
-
-#~ msgid "Server busy"
-#~ msgstr "Sirvidor ocupáu"
-
-#~ msgid "Server unavailable"
-#~ msgstr "Sirvidor non disponible"
-
-#~ msgid "Database connect error"
-#~ msgstr "Erru de conexón a la bas de datos"
-
-#~ msgid "Server is going down (abandon ship)"
-#~ msgstr "El sirvidor cayerá (abandonando)"
-
-#~ msgid "Error creating connection"
-#~ msgstr "Erru creando conexón"
-
-#~ msgid "Unable to write"
-#~ msgstr "Nun pue escribise"
-
-#~ msgid "Session overload"
-#~ msgstr "Sesión sobrecargada"
-
-#~ msgid "User is too active"
-#~ msgstr "L'usuariu ta peractivu"
-
-#~ msgid "Too many sessions"
-#~ msgstr "Abondes sesiones"
-
-#~ msgid "Passport not verified"
-#~ msgstr "Pasaporte non verficáu"
-
-#~ msgid "Bad friend file"
-#~ msgstr "Ficheru de collaciu/a erroneu"
-
-#~ msgid "Not expected"
-#~ msgstr "Non asperao"
-
-#~ msgid "Server too busy"
-#~ msgstr "Servidor perocupáu"
-
-#~ msgid "Not allowed when offline"
-#~ msgstr "Non almitío fuera de llinia"
-
-#~ msgid "Not accepting new users"
-#~ msgstr "Nun s'aceuten nuevos usuarios"
-
-#~ msgid "Kids Passport without parental consent"
-#~ msgstr "Pasaporte de neños ensin consentimientu parental"
-
-#~ msgid "Passport account not yet verified"
-#~ msgstr "Pasaporte de cuenta nun verificáu tá"
-
-#~ msgid "Passport account suspended"
-#~ msgstr "Pasaporte de cuenta suspendíu"
-
-#~ msgid "Bad ticket"
-#~ msgstr "Billete erroneu"
-
-#~ msgid "Unknown Error Code %d"
-#~ msgstr "Códigu d'erru desconocíu %d"
-
-#~ msgid "MSN Error: %s\n"
-#~ msgstr "Erru de MSN: %s\n"
-
-#~ msgid ""
-#~ "%s on the local list is inside the group \"%s\" but not on the server "
-#~ "list. Do you want this buddy to be added?"
-#~ msgstr ""
-#~ "%s ta na llista llocal dientro'l grupu \"%s\" pero non na llista'l "
-#~ "sirvidor. ¿Quies qué esti collaciu/a seya añadíu?"
-
-#~ msgid ""
-#~ "%s is on the local list but not on the server list. Do you want this "
-#~ "buddy to be added?"
-#~ msgstr ""
-#~ "%s ta na llista llocal pero non na llista'l sirvidor. ¿Quies qué esti "
-#~ "collaciu/a seya añadíu?"
-
-#~ msgid "Other Contacts"
-#~ msgstr "Otros contautos"
-
-#~ msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
-#~ msgstr ""
-#~ "%s dunvió un archivu de voz. <a href='audio://%s'>Primir equí pa "
-#~ "entamalu</a>"
-
-#~ msgid "%s sent a voice clip, but it could not be saved"
-#~ msgstr "%s dunvió un archivu de voz, pero nun pudo ser atroxáu"
-
-#~ msgid "%s sent you a voice chat invite, which is not yet supported."
-#~ msgstr ""
-#~ "%s dunvió un convidáu pa una charra con voz que nun ta soportada tá."
-
-#~ msgid "Email Address..."
-#~ msgstr "Direición de corréu..."
-
-#~ msgid "This is the name that other MSN buddies will see you as."
-#~ msgstr "Esti ye'l nome col qu'otros collacios/es de MSN te verán."
-
-#~ msgid "This Location"
-#~ msgstr "Esti llugar"
-
-#~ msgid "This is the name that identifies this location"
-#~ msgstr "Esti ye'l nome qu'identifica esti llugar"
-
-#~ msgid "Other Locations"
-#~ msgstr "Otros llugares"
-
-#~ msgid "You can sign out from other locations here"
-#~ msgstr "Pequí pues desconeutate dende otros llugares"
-
-#~ msgid "You are not signed in from any other locations."
-#~ msgstr "Nun tas coneutáu dende otros llugares."
-
-#~ msgid "Allow multiple logins?"
-#~ msgstr "¿Almitir rexistros múltiples?"
-
-#~ msgid "Allow"
-#~ msgstr "Almitir"
-
-#~ msgid "Disallow"
-#~ msgstr "Non almitir"
-
-#~ msgid "Set your home phone number."
-#~ msgstr "Pon el to teléfonu fixu."
-
-#~ msgid "Set your work phone number."
-#~ msgstr "Pon el to teléfonu del trabayu."
-
-#~ msgid "Set your mobile phone number."
-#~ msgstr "Pon el to teléfonu móvil"
-
-#~ msgid "Blocked Text for %s"
-#~ msgstr "Testu bloquiáu por %s"
-
-#~ msgid "No text is blocked for this account."
-#~ msgstr "Nun hai testu bloquiáu pa esta cuenta."
-
-#~ msgid ""
-#~ "MSN servers are currently blocking the following regular expressions:<br/>"
-#~ "%s"
-#~ msgstr ""
-#~ "Los sirvidores tan anguaño bloquiando les espresiones regulares que "
-#~ "siguen:<br/>%s"
-
-#~ msgid "This account does not have email enabled."
-#~ msgstr "Esta cuenta nun tien el corréu habilitáu."
-
-#~ msgid "Send a mobile message."
-#~ msgstr "Dunviar mensax de móvil."
-
-#~ msgid "Page"
-#~ msgstr "Páxina"
-
-#~ msgid "Playing a game"
-#~ msgstr "Xugando un xuegu"
-
-#~ msgid "Home Phone Number"
-#~ msgstr "Teléfonu fixu"
-
-#~ msgid "Work Phone Number"
-#~ msgstr "Teléfonu de trabayu"
-
-#~ msgid "Mobile Phone Number"
-#~ msgstr "Teléfonu móvil"
-
-#~ msgid "On the Phone"
-#~ msgstr "Nel teléfonu"
-
-#~ msgid "Game Title"
-#~ msgstr "Títulu del xuegu"
-
-#~ msgid "View Locations..."
-#~ msgstr "Ver llugares..."
-
-#~ msgid "Set Home Phone Number..."
-#~ msgstr "Poner teléfonu fixu..."
-
-#~ msgid "Set Work Phone Number..."
-#~ msgstr "Poner teléfonu del trabayu..."
-
-#~ msgid "Set Mobile Phone Number..."
-#~ msgstr "Poner teléfonu móvil..."
-
-#~ msgid "Enable/Disable Mobile Devices..."
-#~ msgstr "Habilitar/ deshabilitar preseos móviles..."
-
-#~ msgid "Allow/Disallow Multiple Logins..."
-#~ msgstr "Almitir/ non almitir conexones múltiples..."
-
-#~ msgid "Allow/Disallow Mobile Pages..."
-#~ msgstr "Habilitar/ deshabilitar págines pa móviles..."
-
-#~ msgid "View Blocked Text..."
-#~ msgstr "Goyar testu bloquiáu..."
-
-#~ msgid "Open Hotmail Inbox"
-#~ msgstr "Abrir la bandexa d'entrada Hotmail"
-
-#~ msgid "Send to Mobile"
-#~ msgstr "Dunviar al móvil"
-
-#~ msgid ""
-#~ "SSL support is needed for MSN. Please install a supported SSL library."
-#~ msgstr ""
-#~ "El soporte SSL ye necesariu por MSN, Por favor, instala una llibrería SSL "
-#~ "soportada."
-
-#~ msgid ""
-#~ "Unable to add the buddy %s because the username is invalid.  Usernames "
-#~ "must be valid email addresses."
-#~ msgstr ""
-#~ "Nun pue añadese'l collaciu/a %s porque'l viesu d'usuariu nun ye válidu. "
-#~ "Los viesos d'usuariu tienen de tener unes direiciones de corréu válides."
-
-#~ msgid "Error retrieving profile"
-#~ msgstr "Erru recibiendo'l perfil"
-
-#~ msgid "Occupation"
-#~ msgstr "Ocupación"
-
-#~ msgid "Hobbies and Interests"
-#~ msgstr "Aficiones ya intereses"
-
-#~ msgid "A Little About Me"
-#~ msgstr "Daqué alrodiu de mio"
-
-#~ msgid "Social"
-#~ msgstr "Social"
-
-#~ msgid "Marital Status"
-#~ msgstr "Estáu civil"
-
-#~ msgid "Interests"
-#~ msgstr "Intereses"
-
-#~ msgid "Pets"
-#~ msgstr "Animales"
-
-#~ msgid "Hometown"
-#~ msgstr "Llugar d'orixe"
-
-#~ msgid "Places Lived"
-#~ msgstr "Llugares vivíos"
-
-#~ msgid "Fashion"
-#~ msgstr "Fashion"
-
-#~ msgid "Humor"
-#~ msgstr "Humor"
-
-#~ msgid "Music"
-#~ msgstr "Música"
-
-#~ msgid "Favorite Quote"
-#~ msgstr "Cita favorita"
-
-#~ msgid "Contact Info"
-#~ msgstr "Información de contáutu"
-
-#~ msgid "Personal"
-#~ msgstr "Personal"
-
-#~ msgid "Home Phone"
-#~ msgstr "Teléfonu fixu"
-
-#~ msgid "Home Phone 2"
-#~ msgstr "Segundu teléfonu fixu"
-
-#~ msgid "Personal Mobile"
-#~ msgstr "Móvil personal"
-
-#~ msgid "Home Fax"
-#~ msgstr "Fax del llar"
-
-#~ msgid "Personal Email"
-#~ msgstr "Corréu personal"
-
-#~ msgid "Anniversary"
-#~ msgstr "Aniversariu"
-
-#~ msgid "Work"
-#~ msgstr "Trabayu"
-
-#~ msgid "Profession"
-#~ msgstr "Profesión"
-
-#~ msgid "Work Phone"
-#~ msgstr "Teléfonu del trabayu"
-
-#~ msgid "Work Phone 2"
-#~ msgstr "Segundu teléfonu del trabayu"
-
-#~ msgid "Work Mobile"
-#~ msgstr "Móvil del trabayu"
-
-#~ msgid "Work Fax"
-#~ msgstr "Fax del trabayu"
-
-#~ msgid "Work Email"
-#~ msgstr "Corréu del trabayu"
-
-#~ msgid "Favorite Things"
-#~ msgstr "Coses favorites"
-
-#~ msgid "Last Updated"
-#~ msgstr "Cabero anovao"
-
-#~ msgid "The user has not created a public profile."
-#~ msgstr "Esti usuariu nun creó un perfil públicu."
-
-#~ msgid ""
-#~ "Could not find any information in the user's profile. The user most "
-#~ "likely does not exist."
-#~ msgstr ""
-#~ "Nun pudo alcontrase información dala nel perfil d'usuariu. L'usuariu pue "
-#~ "nun esistir."
-
-#~ msgid "Windows Live Messenger Protocol Plugin"
-#~ msgstr "Plugin de protocolu Windows Live Messenger"
-
-#~ msgid "Use HTTP Method"
-#~ msgstr "Usar métodu HTTP"
-
-#~ msgid "HTTP Method Server"
-#~ msgstr "Métodu HTTP del sirvidor"
-
-#~ msgid "Show custom smileys"
-#~ msgstr "Amosar fustaxes customizaos"
-
-#~ msgid "Allow direct connections"
-#~ msgstr "Almitir conexones direutes"
-
-#~ msgid "Allow connecting from multiple locations"
-#~ msgstr "Almitir conexón desde llugares múltiples"
-
-#~ msgid "Windows Live ID authentication:Unable to connect"
-#~ msgstr "Autenticación de Windows live ID: Nun pue coneutase"
-
-#~ msgid "Windows Live ID authentication:Invalid response"
-#~ msgstr "Autenticación de Windows live ID: Rempuesta non válida"
-
-#~ msgid "The following users are missing from your addressbook"
-#~ msgstr "Los usuarios que siguen falten nel to llibru de direiciones"
-
-#~ msgid "Unknown error (%d): %s"
-#~ msgstr "Erru desconocíu (%d): %s"
-
-#~ msgid "Unknown error (%d)"
-#~ msgstr "Erru desconocíu (%d)"
-
-#~ msgid "Unable to remove user"
-#~ msgstr "Nun pue esniciase l'usuariu"
-
-#~ msgid "Mobile message was not sent because it was too long."
-#~ msgstr "El mensax de móvil nun fo dunviáu porque yera perllargu."
-
-#~ msgid "Mobile message was not sent because an unknown error occurred."
-#~ msgstr ""
-#~ "El mensax de móvil nun fo dunviáu porque asocedió un erru desconocíu."
-
-#~ msgid ""
-#~ "Message was not sent because the system is unavailable. This normally "
-#~ "happens when the user is blocked or does not exist."
-#~ msgstr ""
-#~ "El mensax nun fo dunviáu porque el sistema nun ta disponible. Esto "
-#~ "normalmente pasa cuando l'usuariu ye bloquiáu o nun esiste."
-
-#~ msgid "Message was not sent because messages are being sent too quickly."
-#~ msgstr "El mensax nun fo dunviáu porque tan siendo dunviaos peraina."
-
-#~ msgid "Message was not sent because an unknown encoding error occurred."
-#~ msgstr ""
-#~ "El mensax nun fo dunviáu porque asocedió un erru de cifráu desconocíu."
-
-#~ msgid "Message was not sent because an unknown error occurred."
-#~ msgstr "El mensax nun fo dunviáu porque asocedió un erru desconocíu."
-
-#~ msgid ""
-#~ "%s (There was an error receiving this message. Converting the encoding "
-#~ "from %s to UTF-8 failed.)"
-#~ msgstr ""
-#~ "%s (Hebo un erru recibiendo esti mensax. Falló a conversión de %s a "
-#~ "UTF-8.)"
-
-#~ msgid ""
-#~ "%s (There was an error receiving this message. The charset was %s, but it "
-#~ "was not valid UTF-8.)"
-#~ msgstr ""
-#~ "%s (Hebo un erru recibiendo esti mensax. El mapa de carauteres fo %s, "
-#~ "pero nun fo un UTF-8 válidu.)"
-
-#~ msgid "Writing error"
-#~ msgstr "Erru d'escritura"
-
-#~ msgid "Reading error"
-#~ msgstr "Erru de llectura"
-
-#~ msgid ""
-#~ "Connection error from %s server:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Erru de conexón dende'l sirvidor %s:\n"
-#~ "%s"
-
-#~ msgid "Our protocol is not supported by the server"
-#~ msgstr "El nuesu protocolu nun ta soportáu pol sirividor"
-
-#~ msgid "Error parsing HTTP"
-#~ msgstr "Erru al analizar HTTP"
-
-#~ msgid ""
-#~ "The MSN servers are temporarily unavailable. Please wait and try again."
-#~ msgstr ""
-#~ "Los sirvidores MSN nun tan disponibles tenporalmente. Por favor, aspera "
-#~ "ya prueba bis más sero."
-
-#~ msgid "The MSN servers are going down temporarily"
-#~ msgstr "Los sirividores MSN zarraranse temporalmente"
-
-#~ msgid "Unable to authenticate: %s"
-#~ msgstr "Nun pue autenticase: %s"
-
-#~ msgid "Transferring"
-#~ msgstr "Tresfiriendo"
-
-#~ msgid "Getting cookie"
-#~ msgstr "Consiguiendo cookie"
-
-#~ msgid "Sending cookie"
-#~ msgstr "Dunviando cookie"
-
-#~ msgid "Retrieving buddy list"
-#~ msgstr "Recibiendo llistáu de collacios/es"
-
-#~ msgid ""
-#~ "%s requests to view your webcam, but this request is not yet supported."
-#~ msgstr ""
-#~ "%s pidi ver la to cámara web, pero esta petición nun ta soportada tá."
-
-#~ msgid ""
-#~ "%s invited you to view his/her webcam, but this is not yet supported."
-#~ msgstr "%s convidote a ver la so cámara web, pero esto nun ta soportao tá."
-
-#~ msgid "On The Phone"
-#~ msgstr "Nel teléfonu"
-
-#~ msgid "Message may have not been sent because a timeout occurred:"
-#~ msgstr ""
-#~ "El mensax pudo nun ser dunviáu porque asocedió un tiempu d'aspera altu:"
-
-#~ msgid "Message could not be sent, not allowed while invisible:"
-#~ msgstr ""
-#~ "El mensax nun pudo ser dunviáu, nun ta almitío mentato tea non visible:"
-
-#~ msgid "Message could not be sent because the user is offline:"
-#~ msgstr "El mensax nun pudo dunviase porque l'usuariu ta fuera de llinia:"
-
-#~ msgid "Message could not be sent because a connection error occurred:"
-#~ msgstr "El mensax nun pudo dunviase porque asocedió un erru de conexón."
-
-#~ msgid "Message could not be sent because we are sending too quickly:"
-#~ msgstr "El mensax nun pudo dunviase porque ta dunviándolu peraina:"
-
-#~ msgid ""
-#~ "Message could not be sent because we were unable to establish a session "
-#~ "with the server. This is likely a server problem, try again in a few "
-#~ "minutes:"
-#~ msgstr ""
-#~ "El mensax nun pudo dunviase porque nun pudo establecese una sesión pa col "
-#~ "sirivdor. Esto paez una torga'l sirividor, prueba bis nos prósimos "
-#~ "minutos:"
-
-#~ msgid ""
-#~ "Message could not be sent because an error with the switchboard occurred:"
-#~ msgstr ""
-#~ "El mensax nun pudo ser dunviáu porque asocedió un erru col panel de "
-#~ "distribución:"
-
-#~ msgid "Message may have not been sent because an unknown error occurred:"
-#~ msgstr "El mensax pudo nun ser dunviáu porque asocedió un erru desconocíu:"
-
-#~ msgid "Delete Buddy from Address Book?"
-#~ msgstr "¿Esniciar collaciu/a del llibru de direiciones?"
-
-#~ msgid "Do you want to delete this buddy from your address book as well?"
-#~ msgstr ""
-#~ "¿Quies esniciar tamién esti collaciu/a del to llibru de direiciones?"
-
-#~ msgid "The username specified is invalid."
-#~ msgstr "El viesu d'usuariu especificáu nun ye válidu."
-
-#~ msgid ""
-#~ "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-#~ msgstr ""
-#~ "La data de cumpleaños que punxisti nun ye válida. El formatu correutu ye: "
-#~ "'AAAA-MM-DD'."
-
-#~ msgid "Profile Update Error"
-#~ msgstr "Erru d'anovación de perfil"
-
-#~ msgid ""
-#~ "Your profile information is not yet retrieved. Please try again later."
-#~ msgstr ""
-#~ "La información del to perfil nun fo recibida. Por favor, prueba bis más "
-#~ "sero."
-
-#~ msgid "About Me"
-#~ msgstr "Alredor mio"
-
-#~ msgid "Where I Live"
-#~ msgstr "U vivo"
-
-#~ msgid "Mobile Number"
-#~ msgstr "Númberu de teléfonu"
-
-#~ msgid "Can be searched"
-#~ msgstr "Pue ser guetáu"
-
-#~ msgid "Can be suggested"
-#~ msgstr "Pue ser suxeríu"
-
-#~ msgid "Update your MXit Profile"
-#~ msgstr "Anovar el to perfil MXit"
-
-#~ msgid "The PIN you entered is invalid."
-#~ msgstr "El PIN que punxisti nun ye válidu."
-
-#~ msgid "The PIN you entered has an invalid length [4-10]."
-#~ msgstr "El PIN que punxisti nun tien una llonxitú válida [4-10]."
-
-#~ msgid "The PIN is invalid. It should only consist of digits [0-9]."
-#~ msgstr "El PIN nun ye válidu. Tiende tener numái díxitos [0-9]."
-
-#~ msgid "The two PINs you entered do not match."
-#~ msgstr "Los dos PINS que punxisti nun coinciden."
-
-#~ msgid "PIN Update Error"
-#~ msgstr "Erru d'anovación de PIN"
-
-#~ msgid "PIN"
-#~ msgstr "PIN"
-
-#~ msgid "Verify PIN"
-#~ msgstr "Verificar PIN"
-
-#~ msgid "Change PIN"
-#~ msgstr "Camudar PIN"
-
-#~ msgid "Change MXit PIN"
-#~ msgstr "Camudar PIN MXit"
-
-#~ msgid "About"
-#~ msgstr "Alredor"
-
-#~ msgid "Search for user"
-#~ msgstr "Guetar per usuariu"
-
-#~ msgid "Search for a MXit contact"
-#~ msgstr "Guetar per un contautu MXit"
-
-#~ msgid "Type search information"
-#~ msgstr "Pon la información de gueta"
-
-#~ msgid "Change Profile..."
-#~ msgstr "Camudar perfil..."
-
-#~ msgid "Change PIN..."
-#~ msgstr "Camudar PIN..."
-
-#~ msgid "Suggested friends..."
-#~ msgstr "Collacios suxeríos..."
-
-#~ msgid "Search for contacts..."
-#~ msgstr "Guetar per conautos..."
-
-#~ msgid "About..."
-#~ msgstr "Alredor..."
-
-#~ msgid "The file you are trying to send is too large!"
-#~ msgstr "¡El ficheru qu'intentes dunviar ye perllargu!"
-
-#~ msgid ""
-#~ "Unable to connect to the MXit HTTP server. Please check your server "
-#~ "settings."
-#~ msgstr ""
-#~ "Nun pue coneutase col sirvidor HTTP MXit. Por favor, comprueba los "
-#~ "axustes del sirividor"
-
-#~ msgid ""
-#~ "Unable to connect to the MXit server. Please check your server settings."
-#~ msgstr ""
-#~ "Nun pue coneutase col sirvidor MXit. Por favor, comprueba los axustes del "
-#~ "sirividor"
-
-#~ msgid "The PIN you entered has an invalid length [7-10]."
-#~ msgstr "El PIN que punxisti tien una llonxitú non válida [7-10]."
-
-#~ msgid "MXit ID"
-#~ msgstr "MXit ID"
-
-#~ msgid "Register New MXit Account"
-#~ msgstr "Rexistrar un cuenta MXit nueva"
-
-#~ msgid "Please fill in the following fields:"
-#~ msgstr "Por favor, enllena los campos que siguen:"
-
-#~ msgid "Error contacting the MXit WAP site. Please try again later."
-#~ msgstr ""
-#~ "Erru contautando col sitiu MXit WAP. Por favor, prueba bis más sero."
-
-#~ msgid ""
-#~ "MXit is currently unable to process the request. Please try again later."
-#~ msgstr ""
-#~ "MXit nun pue anguaño procesar la to petición. Por favor, prueba bis más "
-#~ "sero"
-
-#~ msgid "Wrong security code entered. Please try again later."
-#~ msgstr ""
-#~ "Incorreutu'l códigu de seguridá introducíu. Por favor, prueba bis más "
-#~ "sero."
-
-#~ msgid "Your session has expired. Please try again later."
-#~ msgstr "La to sesión finó. Por favor, prueba bis más sero."
-
-#~ msgid "Invalid country selected. Please try again."
-#~ msgstr "El país esbilláu nun ye válidu. Por favor, prueba bis."
-
-#~ msgid "The MXit ID you entered is not registered. Please register first."
-#~ msgstr ""
-#~ "La ID MXit que punxisti nun ta rexistrada. Por favor, rexístrala primero."
-
-#~ msgid ""
-#~ "The MXit ID you entered is already registered. Please choose another."
-#~ msgstr "La ID MXit que punxisti yá ta rexistrada. Por favor, esbilla otra."
-
-#~ msgid "Internal error. Please try again later."
-#~ msgstr "Erru internu. Por favor, prueba bis más sero."
-
-#~ msgid "You did not enter the security code"
-#~ msgstr "Nun punxisti un códigu de seguridá"
-
-#~ msgid "Security Code"
-#~ msgstr "Códigu de seguridá"
-
-#~ msgid "Enter Security Code"
-#~ msgstr "Poner códigu de seguridá"
-
-#~ msgid "Your Country"
-#~ msgstr "El to país"
-
-#~ msgid "Your Language"
-#~ msgstr "La to llingua"
-
-#~ msgid "MXit Authorization"
-#~ msgstr "Autorización MXit"
-
-#~ msgid "MXit account validation"
-#~ msgstr "Validación de cuenta MXit"
-
-#~ msgid "Retrieving User Information..."
-#~ msgstr "Recibiendo información d'usuariu..."
-
-#~ msgid "was kicked"
-#~ msgstr "fo espulsáu"
-
-#~ msgid "You have been kicked from this MultiMX."
-#~ msgstr "Fosti espuksáu d'esti  MultiMX"
-
-#~ msgid "_Room Name:"
-#~ msgstr "_Viesu de sala:"
-
-#~ msgid "You have invited"
-#~ msgstr "Fosti convidáu"
-
-#~ msgid "Loading menu..."
-#~ msgstr "Cargando menú..."
-
-#~ msgid "Status Message"
-#~ msgstr "Estáu'l mensax"
-
-#~ msgid "Rejection Message"
-#~ msgstr "Mensax de refugu"
-
-#~ msgid "No profile available"
-#~ msgstr "Nun hai disponible perfil dalu"
-
-#~ msgid "This contact does not have a profile."
-#~ msgstr "Esti contautu nun tien un perfil."
-
-#~ msgid "Your MXit ID..."
-#~ msgstr "La to ID MXit..."
-
-#~ msgid "Re-Invite"
-#~ msgstr "Convidar bis"
-
-#~ msgid "WAP Server"
-#~ msgstr "Sirvidor WAP"
-
-#~ msgid "Connect via HTTP"
-#~ msgstr "Coneutar vía HTTP"
-
-#~ msgid "Invite Message"
-#~ msgstr "Mensax de convidáu"
-
-#~ msgid "No results"
-#~ msgstr "Nun hai resultaos"
-
-#~ msgid "No contacts found."
-#~ msgstr "Nun s'alcontraron contautos."
-
-#~ msgid "UserId"
-#~ msgstr "ID d'usuariu"
-
-#~ msgid "Where I live"
-#~ msgstr "U vivo"
-
-#~ msgid "We have lost the connection to MXit. Please reconnect."
-#~ msgstr "Perdimos la conexón con MXit. Por favor, conéutate bis."
-
-#~ msgid "Message Send Error"
-#~ msgstr "Erru d'unviu de mensax"
-
-#~ msgid "Unable to process your request at this time"
-#~ msgstr "Desta nun pue procesase la to petición"
-
-#~ msgid "Successfully Logged In..."
-#~ msgstr "Coneutáu dafechu..."
-
-#~ msgid ""
-#~ "%s sent you an encrypted message, but it is not supported on this client."
-#~ msgstr "%s dunviote un mensax cifráu, peru nun ta soportáu por esti veceru."
-
-#~ msgid "Message Error"
-#~ msgstr "Mensax d'erru"
-
-#~ msgid "Cannot perform redirect using the specified protocol"
-#~ msgstr ""
-#~ "Nun pue realizase'l redireicionamientu usando'l protocolu especificáu"
-
-#~ msgid "An internal MXit server error occurred."
-#~ msgstr "Asocedió un erru internu nel sirvidor MXit."
-
-#~ msgid "Login error: %s (%i)"
-#~ msgstr "Erru d'ingresu: %s (%i)"
-
-#~ msgid "Logout error: %s (%i)"
-#~ msgstr "Erru de desconexón: %s (%i)"
-
-#~ msgid "Contact Error"
-#~ msgstr "Erru de contautu"
-
-#~ msgid "Message Sending Error"
-#~ msgstr "Erru de dunviu de mensax"
-
-#~ msgid "Status Error"
-#~ msgstr "Erru d'estáu"
-
-#~ msgid "Mood Error"
-#~ msgstr "Erru d'estáu d'ánimu"
-
-#~ msgid "Invitation Error"
-#~ msgstr "Erru de convidáu"
-
-#~ msgid "Contact Removal Error"
-#~ msgstr "Erru d'esniciu de contautu"
-
-#~ msgid "Subscription Error"
-#~ msgstr "Erru de soscripción"
-
-#~ msgid "Contact Update Error"
-#~ msgstr "Erru d'anovación de contautu"
-
-#~ msgid "File Transfer Error"
-#~ msgstr "Erru de tresferencia de ficheru"
-
-#~ msgid "Cannot create MultiMx room"
-#~ msgstr "Nun pue crease la sala MutiMX"
-
-#~ msgid "MultiMx Invitation Error"
-#~ msgstr "Erru de convidáu MutiMX"
-
-#~ msgid "Profile Error"
-#~ msgstr "Erru de perfil"
-
-#~ msgid "Invalid packet received from MXit."
-#~ msgstr "Recibíu paquete non válidu dende MXit."
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x01)"
-#~ msgstr "Asocedió un erru de conexón a MXit. (lleer etapa 0x01)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x02)"
-#~ msgstr "Asocedió un erru de conexón a MXit. (lleer etapa 0x02)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x03)"
-#~ msgstr "Asocedió un erru de conexón a MXit. (lleer etapa 0x03)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x04)"
-#~ msgstr "Asocedió un erru de conexón a MXit. (lleer etapa 0x04)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x05)"
-#~ msgstr "Asocedió un erru de conexón a MXit. (lleer etapa 0x05)"
-
-#~ msgid "A connection error occurred to MXit. (read stage 0x06)"
-#~ msgstr "Asocedió un erru de conexón a MXit. (lleer etapa 0x06)"
-
-#~ msgid "Invited"
-#~ msgstr "Convidáu"
-
-#~ msgid "Rejected"
-#~ msgstr "Refugáu"
-
-#~ msgid "Deleted"
-#~ msgstr "Esniciáu"
-
-#~ msgid "MXit Advertising"
-#~ msgstr "Avisu MXit"
-
-#~ msgid "More Information"
-#~ msgstr "Más información"
-
-#~ msgid "No such user: %s"
-#~ msgstr "Nun hai usuariu: %s"
-
-#~ msgid "You appear to have no MySpace username."
-#~ msgstr "Paez que nun tienes un viesu d'usuariu MySpace dalu."
-
-#~ msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-#~ msgstr "¿Prestariate amestar unu agora? (Nota: ¡ESTO NUN PODRÁ CAMUDASE!)"
-
-#~ msgid "Lost connection with server"
-#~ msgstr "Conexón perdida col sirvidor"
-
-#~ msgid "New blog comments"
-#~ msgstr "Comentarios de blogue nuevos"
-
-#~ msgid "New profile comments"
-#~ msgstr "Comentarios de perfil nuevos"
-
-#~ msgid "New friend requests!"
-#~ msgstr "¡Nueves peticiones d'amistá!"
-
-#~ msgid "New picture comments"
-#~ msgstr "Nuevos comentarios en semeyes"
-
-#~ msgid "MySpace"
-#~ msgstr "MySpace"
-
-#~ msgid "Add contacts from server"
-#~ msgstr "Añader contautos del sirividor"
-
-#~ msgid "Protocol error, code %d: %s"
-#~ msgstr "Erru de protocolu, códigu %d: %s"
-
-#~ msgid "Failed to add buddy"
-#~ msgstr "Fallo al añader collaciu/a"
-
-#~ msgid "Failed to remove buddy"
-#~ msgstr "Fallo al esniciar collaciu/a"
-
-#~ msgid "Add friends from MySpace.com"
-#~ msgstr "Añader amigos de MySpace.com"
-
-#~ msgid "Importing friends failed"
-#~ msgstr "Falló mportación de collacios/es"
-
-#~ msgid "Find people..."
-#~ msgstr "Alcontrar xente..."
-
-#~ msgid "Send emoticons"
-#~ msgstr "Dunviar fustaxes"
-
-#~ msgid "Screen resolution (dots per inch)"
-#~ msgstr "Resolución de pantalla (puntos por pulgada)"
-
-#~ msgid "Base font size (points)"
-#~ msgstr "Grandor bas de fonte (puntos)"
-
-#~ msgid "Song"
-#~ msgstr "Son"
-
-#~ msgid "Total Friends"
-#~ msgstr "Amigos totales"
-
-#~ msgid "Client Version"
-#~ msgstr "Versión del veceru"
-
-#~ msgid "This username is unavailable."
-#~ msgstr "Esti viesu d'usuariu nun ta disponible."
-
-#~ msgid "Please try another username:"
-#~ msgstr "Por favor, prueba otru viesu d'usuariu:"
-
-#~ msgid "Please enter a username to check its availability:"
-#~ msgstr ""
-#~ "Por favor, introduz un viesu d'usuariu ya comprueba la so disponibilidá:"
-
-#~ msgid "Zap"
-#~ msgstr "Zas"
-
-#~ msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-#~ msgstr "join &lt;sala&gt;:  Xúnese a una sala de charra na rede Yahoo!"
-
-#~ msgid "list: List rooms on the Yahoo network"
-#~ msgstr "list: Llista les sales nun rede Yahoo!"
-
-#~ msgid "doodle: Request user to start a Doodle session"
-#~ msgstr "doodle: Pídi-y al usuariu entamar una sesión Doodle"
-
-#~ msgid "Yahoo ID..."
-#~ msgstr "Yahoo! ID..."
-
-#~ msgid "Yahoo! Protocol Plugin"
-#~ msgstr "Plugin de protocolu Yahoo!"
-
-#~ msgid "File transfer server"
-#~ msgstr "Sirvidor de tresferencia de ficheru"
-
-#~ msgid "File transfer port"
-#~ msgstr "Puertu de tresferencia de ficheru"
-
-#~ msgid "Use account proxy for HTTP and HTTPS connections"
-#~ msgstr "Cuenta d'usuariu pa conexones HTTP y HTTPS"
-
-#~ msgid "Yahoo JAPAN ID..."
-#~ msgstr "ID Yahoo! JAPAN"
-
-#~ msgid "Yahoo! JAPAN Protocol Plugin"
-#~ msgstr "Plugin de protocolu Yahoo! JAPAN"
-
-#~ msgid "%s has sent you a webcam invite, which is not yet supported."
-#~ msgstr "%s dunviote un convidáu de cámara web que nun ta sofitáu ta."
-
-#~ msgid "Your Yahoo! message did not get sent."
-#~ msgstr "El to mensax Yahoo! nun se dunvió."
-
-#~ msgid "Received invalid data"
-#~ msgstr "Recibíos datos non válidos"
-
-#~ msgid "Failed Yahoo! Authentication"
-#~ msgstr "Falló l'autenticación en Yahoo!"
-
-#~ msgid "Ignore buddy?"
-#~ msgstr "¿Inorar collaciu/a?"
-
-#~ msgid "Invalid username or password"
-#~ msgstr "Viesu d'usuariu o conseña non válidos"
-
-#~ msgid "Unknown error 52.  Reconnecting should fix this."
-#~ msgstr "Erru 52 desconocíu. Reconeutase pues arreglar esto."
-
-#~ msgid ""
-#~ "Unknown error number %d. Logging into the Yahoo! website may fix this."
-#~ msgstr ""
-#~ "Nunberu d'erru %d desconocíu. Coneutase na páxina web de Yahoo! pue "
-#~ "arreglar esto."
-
-#~ msgid "Unable to add buddy %s to group %s to the server list on account %s."
-#~ msgstr ""
-#~ "Nun pue añadise'l collaciu %s al grupu %s a la llista'l sirvidor na "
-#~ "cuenta %s."
-
-#~ msgid "Unable to add buddy to server list"
-#~ msgstr "Nun pue añadese'l collaciu/a a la llista'l sirvidor"
-
-#~ msgid "Lost connection with %s: %s"
-#~ msgstr "Conexón perdida con %s: %s"
-
-#~ msgid "Unable to establish a connection with %s: %s"
-#~ msgstr "Nun pue establecese conexón con %s: %s"
-
-#~ msgid "Unable to connect: The server returned an empty response."
-#~ msgstr "Nun pue coneutase: El sirvidor dió una rempuesta lluella."
-
-#~ msgid "Not at Home"
-#~ msgstr "Non nel llar"
-
-#~ msgid "Not at Desk"
-#~ msgstr "Non nel escritoriu"
-
-#~ msgid "Not in Office"
-#~ msgstr "Non na oficina"
-
-#~ msgid "On Vacation"
-#~ msgstr "De vacaciones"
-
-#~ msgid "Not on server list"
-#~ msgstr "Non na llista del sirividor"
-
-#~ msgid "Appear Permanently Offline"
-#~ msgstr "Apaecer siempres en llinia"
-
-#~ msgid "Presence"
-#~ msgstr "Presencia"
-
-#~ msgid "Don't Appear Permanently Offline"
-#~ msgstr "Nun apaecer siempres en llinia"
-
-#~ msgid "Join in Chat"
-#~ msgstr "Xunise a la charra"
-
-#~ msgid "Initiate Conference"
-#~ msgstr "Entamar conferencia"
-
-#~ msgid "Presence Settings"
-#~ msgstr "Axustes de presencia"
-
-#~ msgid "Select the ID you want to activate"
-#~ msgstr "Esbilla la ID que quieras activar"
-
-#~ msgid "Activate ID..."
-#~ msgstr "Activar ID..."
-
-#~ msgid "Open Inbox"
-#~ msgstr "Abrir caxa d'entrada"
-
-#~ msgid "Unable to connect."
-#~ msgstr "Nun pue coneutase."
-
-#~ msgid "Write Error"
-#~ msgstr "Erru d'escritura"
-
-#~ msgid "Yahoo! Profile"
-#~ msgstr "Perfil Yahoo!"
-
-#~ msgid "Yahoo! ID"
-#~ msgstr "Yahoo! ID"
-
-#~ msgid "Hobbies"
-#~ msgstr "Aficiones"
-
-#~ msgid "Latest News"
-#~ msgstr "Caberes anuncies"
-
-#~ msgid "Home Page"
-#~ msgstr "Páxina d'aniciu"
-
-#~ msgid "Last Update"
-#~ msgstr "Cabera anovación"
-
-#~ msgid "The user's profile is empty."
-#~ msgstr "El perfil l'usuariu ta lluellu."
-
-#~ msgid "%s has declined to join."
-#~ msgstr "%s refugó xunise."
-
-#~ msgid "Failed to join chat"
-#~ msgstr "Fallu al xunise a la charra"
-
-#~ msgid "Unknown room"
-#~ msgstr "Sala desconocida"
-
-#~ msgid "Maybe the room is full"
-#~ msgstr "Quiciabes la sala tea completa"
-
-#~ msgid "Not available"
-#~ msgstr "Non disponible"
-
-#~ msgid "You are now chatting in %s."
-#~ msgstr "Tas charrando en %s."
-
-#~ msgid "Failed to join buddy in chat"
-#~ msgstr "Fallu al xunir al collaciu/a a la charra"
-
-#~ msgid "Maybe they're not in a chat?"
-#~ msgstr "¿Quiciabes nun tean nuna charra?"
-
-#~ msgid "Voices"
-#~ msgstr "Voces"
-
-#~ msgid "Webcams"
-#~ msgstr "Cámeres web"
-
-#~ msgid "Connection problem"
-#~ msgstr "Torgues de conexón"
-
-#~ msgid "User Rooms"
-#~ msgstr "Usuarios de la sala"
-
-#~ msgid "Connection problem with the YCHT server"
-#~ msgstr "Torga de conexón col sirvidor YCHT"

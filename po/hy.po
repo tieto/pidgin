@@ -4,14 +4,14 @@
 #
 # Translators:
 # David Avsharyan <avsharyan@gmail.com>, 2009
-# Վահե Գրիգորյան <vahe554@inbox.ru>, 2016
+# Վահե Գրիգորյան <vahe@keemail.me>, 2016-2017
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-09 18:51-0600\n"
-"PO-Revision-Date: 2016-06-06 21:08+0000\n"
-"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"PO-Revision-Date: 2017-02-07 04:32+0000\n"
+"Last-Translator: Վահե Գրիգորյան <vahe@keemail.me>\n"
 "Language-Team: Armenian (http://www.transifex.com/pidgin/pidgin/language/"
 "hy/)\n"
 "Language: hy\n"
@@ -329,7 +329,7 @@ msgid "Place tagged"
 msgstr ""
 
 msgid "Toggle Tag"
-msgstr ""
+msgstr "Անցնել"
 
 msgid "View Log"
 msgstr "Ցույց տալ լոգը"
@@ -339,10 +339,10 @@ msgstr "Անուն"
 
 #. Idle stuff
 msgid "Idle"
-msgstr ""
+msgstr "Սպասում"
 
 msgid "On Mobile"
-msgstr ""
+msgstr "Բջջային"
 
 msgid "New..."
 msgstr "Նոր..."
@@ -436,7 +436,7 @@ msgid "By Status"
 msgstr "Ըստ "
 
 msgid "Alphabetically"
-msgstr ""
+msgstr "Այբբենական կարգով"
 
 msgid "By Log Size"
 msgstr ""
@@ -597,7 +597,7 @@ msgid "Send To"
 msgstr "Ուղարկել "
 
 msgid "Conversation"
-msgstr ""
+msgstr "Խոսակցություն"
 
 msgid "Clear Scrollback"
 msgstr ""
@@ -709,7 +709,7 @@ msgstr ""
 #. * it doesn't make sense. The bug is likely in the packing in gntbox.c.
 #.
 msgid "Clear"
-msgstr ""
+msgstr "Հասկանալի է"
 
 msgid "Filter:"
 msgstr "Ֆիլտրել․"
@@ -731,20 +731,20 @@ msgid "Progress"
 msgstr ""
 
 msgid "Filename"
-msgstr ""
+msgstr "Ֆայլանուն"
 
 msgid "Size"
-msgstr ""
+msgstr "Չափ"
 
 msgid "Speed"
-msgstr ""
+msgstr "Արագություն"
 
 msgid "Remaining"
 msgstr ""
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
 msgid "Status"
-msgstr ""
+msgstr "Կարգավիճակ"
 
 msgid "Close this window when all transfers finish"
 msgstr ""
@@ -831,20 +831,20 @@ msgid "Conversations with %s"
 msgstr ""
 
 msgid "All Conversations"
-msgstr ""
+msgstr "Բոլոր Զրույցները"
 
 msgid "System Log"
-msgstr ""
+msgstr "Համակարգային Լոգ"
 
 msgid "Calling..."
-msgstr ""
+msgstr "Կանչում..."
 
 msgid "Hangup"
 msgstr ""
 
 #. Number of actions
 msgid "Accept"
-msgstr ""
+msgstr "Ընդունել"
 
 msgid "Reject"
 msgstr ""
@@ -870,10 +870,10 @@ msgid "call: Make an audio call."
 msgstr ""
 
 msgid "Emails"
-msgstr ""
+msgstr "Նամակներ"
 
 msgid "You have mail!"
-msgstr ""
+msgstr "Դու՛ք ունեք փոստ"
 
 msgid "Sender"
 msgstr ""
@@ -888,26 +888,26 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgid "New Mail"
-msgstr ""
+msgstr "Նոր Նամակ "
 
 #, c-format
 msgid "Info for %s"
-msgstr ""
+msgstr "Տեղեկատվություն  %s համար"
 
 msgid "Buddy Information"
 msgstr ""
 
 msgid "Continue"
-msgstr ""
+msgstr "Շարունակել"
 
 msgid "IM"
 msgstr ""
 
 msgid "Invite"
-msgstr ""
+msgstr "Հրավիրում"
 
 msgid "(none)"
-msgstr ""
+msgstr "(ոչինչ)"
 
 #. XXX: The following expects that finch_notify_message gets called. This
 #. * may not always happen, e.g. when another plugin sets its own
@@ -916,7 +916,7 @@ msgid "URI"
 msgstr ""
 
 msgid "ERROR"
-msgstr ""
+msgstr "Սխալ"
 
 msgid "loading plugin failed"
 msgstr ""
@@ -960,7 +960,7 @@ msgid "Install Plugin..."
 msgstr ""
 
 msgid "Configure Plugin"
-msgstr ""
+msgstr "Կարգավորում փլագին"
 
 #. copy the preferences to tmp values...
 #. * I liked "take affect immediately" Oh well :-(
@@ -985,10 +985,10 @@ msgstr ""
 
 #. Account:
 msgid "Account:"
-msgstr ""
+msgstr "Հաշիվ:"
 
 msgid "Buddy name:"
-msgstr ""
+msgstr "Զրուցակցի անուն։"
 
 #. Create the "Pounce When Buddy..." frame.
 msgid "Pounce When Buddy..."
@@ -1115,7 +1115,7 @@ msgid "From last sent message"
 msgstr ""
 
 msgid "Never"
-msgstr ""
+msgstr "Երբեք"
 
 msgid "Show Idle Time"
 msgstr ""
@@ -1127,13 +1127,13 @@ msgid "Notify buddies when you are typing"
 msgstr ""
 
 msgid "Log format"
-msgstr ""
+msgstr "Ձևաչափ Լոգ"
 
 msgid "Log IMs"
 msgstr ""
 
 msgid "Log chats"
-msgstr ""
+msgstr "Զրույցի Լոգ"
 
 msgid "Log status change events"
 msgstr ""
@@ -1166,13 +1166,13 @@ msgid "Not implemented yet."
 msgstr ""
 
 msgid "Save File..."
-msgstr ""
+msgstr "Պահպանել Ֆայլը..."
 
 msgid "Open File..."
-msgstr ""
+msgstr "Բացել Ֆայլը..."
 
 msgid "Choose Location..."
-msgstr ""
+msgstr "Ընտրել Տեղանքը..."
 
 msgid "Hit 'Enter' to find more rooms of this category."
 msgstr ""
@@ -1191,13 +1191,13 @@ msgid "Buddy logs out"
 msgstr ""
 
 msgid "Message received"
-msgstr ""
+msgstr "Հաղորդագրությունը ստացել է"
 
 msgid "Message received begins conversation"
 msgstr ""
 
 msgid "Message sent"
-msgstr ""
+msgstr "Հաղորդագրությունը ուղարկվել է"
 
 msgid "Person enters chat"
 msgstr ""
@@ -1226,9 +1226,8 @@ msgstr ""
 msgid "(default)"
 msgstr ""
 
-#, fuzzy
 msgid "Select Sound File..."
-msgstr "Ուղարկել ֆայլ "
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr ""

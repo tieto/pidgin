@@ -5,14 +5,15 @@
 # Translators:
 # Gwenn M <tornoz@laposte.net>, 2015
 # Gwenn M <tornoz@laposte.net>, 2015-2016
-# Pierre Morvan <allannkorh@yahoo.fr>, 2016
+# Irriep Nala Novram <allannkorh@yahoo.fr>, 2016
+# Irriep Nala Novram <allannkorh@yahoo.fr>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-09 18:51-0600\n"
-"PO-Revision-Date: 2016-06-08 11:16+0000\n"
-"Last-Translator: Gwenn M <tornoz@laposte.net>\n"
+"POT-Creation-Date: 2017-03-09 18:52-0600\n"
+"PO-Revision-Date: 2016-12-18 20:46+0000\n"
+"Last-Translator: Irriep Nala Novram <allannkorh@yahoo.fr>\n"
 "Language-Team: Breton (http://www.transifex.com/pidgin/pidgin/language/br/)\n"
 "Language: br\n"
 "MIME-Version: 1.0\n"
@@ -1035,7 +1036,7 @@ msgstr "Embann ar galv-diwall"
 
 #. Create the "Pounce on Whom" frame.
 msgid "Pounce on Whom"
-msgstr ""
+msgstr "Galv-diwall evit Piv"
 
 #. Account:
 msgid "Account:"
@@ -1280,9 +1281,8 @@ msgstr "C'hwitet deraouadur GStreamer"
 msgid "(default)"
 msgstr "(dre ziouer)"
 
-#, fuzzy
 msgid "Select Sound File..."
-msgstr "Diuzit ur restr son..."
+msgstr "Diuzit ur Restr Son ..."
 
 msgid "Sound Preferences"
 msgstr "Gwellvezioù son"
@@ -1401,14 +1401,12 @@ msgstr "Kemennadenn :"
 msgid "Edit Status"
 msgstr "Embann ar statud"
 
-#, fuzzy
 msgid "Use a different status for some accounts"
 msgstr "Ober gant ur statud disheñvel evit ul lodenn eus ar c'hontoù"
 
 #. Save and Use
-#, fuzzy
 msgid "Save and Use"
-msgstr "Enrollan hag arveriñ"
+msgstr "Enrollan hag Arveriñ"
 
 msgid "Certificates"
 msgstr "Testenioù"
@@ -1541,9 +1539,8 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr "TinyURL evit a-us : %s"
 
-#, fuzzy
 msgid "Please wait while TinyURL fetches a shorter URL..."
-msgstr "Gortozit p'emañ TinyURL o kerc'hat un URL berroc'h..."
+msgstr ""
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Krouiñ TinyURL evit an URLoù eus ar ment-mañ pe berroc'h"
@@ -2824,13 +2821,10 @@ msgstr "Mod diougan"
 msgid "Psychic mode for incoming conversation"
 msgstr "Mod diougan evit ar c'haozeadennoù o tont"
 
-#, fuzzy
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
 "This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
-"Lak ar prenestroù kaozeadennoù da vont war-wel pa grog arveriaded all da "
-"skrivañ deoc'h. Mont a ra en-dro gant AIM, ICQ, CMPP, Sametime ha Yahoo!"
 
 msgid "You feel a disturbance in the force..."
 msgstr "Santout a rit ur strafuilh en Nerzh..."
@@ -3047,13 +3041,10 @@ msgstr ""
 "N'haller ket dinoiñ staliadurioù ActiveTcl. Ma fell deoc'h arverañ "
 "enlugelladoù TCL, stailhit ActiveTCL adalek http://www.activestate.com\n"
 
-#, fuzzy
 msgid ""
 "Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
 "developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
-"N'haller ket kavout boest ostilhoù \"Bonjour for Windows\" Apple. Gwelet  "
-"http://d.pidgin.im/BonjourWindows evit kaout titouroù ouzhpenn."
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "N'haller ket selaou kennaskadurioù postelerezh prim oc'h erruout"
@@ -4914,7 +4905,7 @@ msgid "Anxious"
 msgstr "Nec'het"
 
 msgid "Aroused"
-msgstr ""
+msgstr "Atizet"
 
 msgid "Ashamed"
 msgstr "Mezhus"
@@ -4929,76 +4920,76 @@ msgid "Calm"
 msgstr "Seder"
 
 msgid "Cautious"
-msgstr ""
+msgstr "Evezhiek"
 
 msgid "Cold"
 msgstr "Yen"
 
 msgid "Confident"
-msgstr ""
+msgstr "Fizius"
 
 msgid "Confused"
-msgstr ""
+msgstr "Abafet"
 
 msgid "Contemplative"
-msgstr ""
+msgstr "Arvester-ez"
 
 msgid "Contented"
-msgstr ""
+msgstr "Gwalc'het"
 
 msgid "Cranky"
-msgstr ""
+msgstr "Tagnous"
 
 msgid "Crazy"
 msgstr "Sod"
 
 msgid "Creative"
-msgstr ""
+msgstr "Krouer-ez"
 
 msgid "Curious"
-msgstr ""
+msgstr "Fri-furch"
 
 msgid "Dejected"
-msgstr ""
+msgstr "Digalonekaet"
 
 msgid "Depressed"
-msgstr ""
+msgstr "Diwasket"
 
 msgid "Disappointed"
-msgstr ""
+msgstr "Disouezhet"
 
 msgid "Disgusted"
 msgstr "Heuget"
 
 msgid "Dismayed"
-msgstr ""
+msgstr "Mantret"
 
 msgid "Distracted"
-msgstr ""
+msgstr "Dievezh"
 
 msgid "Embarrassed"
-msgstr ""
+msgstr "Strobet"
 
 msgid "Envious"
 msgstr "C'hoantaus"
 
 msgid "Excited"
-msgstr ""
+msgstr "Birvilhet"
 
 msgid "Flirtatious"
-msgstr ""
+msgstr "Hoaler-ez"
 
 msgid "Frustrated"
-msgstr ""
+msgstr "Laeret"
 
 msgid "Grateful"
-msgstr ""
+msgstr "Anaoudek"
 
 msgid "Grieving"
-msgstr ""
+msgstr "Dic'hoanag"
 
 msgid "Grumpy"
-msgstr ""
+msgstr "Grignous"
 
 msgid "Guilty"
 msgstr "Kablus"
@@ -5007,16 +4998,16 @@ msgid "Happy"
 msgstr "Laouen"
 
 msgid "Hopeful"
-msgstr ""
+msgstr "Goanagus"
 
 msgid "Hot"
 msgstr "Tomm"
 
 msgid "Humbled"
-msgstr ""
+msgstr "Fromet"
 
 msgid "Humiliated"
-msgstr ""
+msgstr "Dismegañset"
 
 msgid "Hungry"
 msgstr "Naonek"
@@ -5028,13 +5019,13 @@ msgid "Impressed"
 msgstr "Sebezet"
 
 msgid "In awe"
-msgstr ""
+msgstr "Estlammet"
 
 msgid "In love"
 msgstr "e karantez"
 
 msgid "Indignant"
-msgstr ""
+msgstr "Brouezet"
 
 msgid "Interested"
 msgstr "Dedennet"
@@ -5043,7 +5034,7 @@ msgid "Intoxicated"
 msgstr "Mouget"
 
 msgid "Invincible"
-msgstr ""
+msgstr "DIdrec'hus"
 
 msgid "Jealous"
 msgstr "Gwarizius"
@@ -5061,52 +5052,52 @@ msgid "Mean"
 msgstr "Drouk"
 
 msgid "Moody"
-msgstr ""
+msgstr "Imoret fall"
 
 msgid "Nervous"
-msgstr ""
+msgstr "Fuloret"
 
 msgid "Neutral"
 msgstr "Neptu"
 
 msgid "Offended"
-msgstr ""
+msgstr "Anaozet"
 
 msgid "Outraged"
-msgstr ""
+msgstr "Dismegañset"
 
 msgid "Playful"
-msgstr ""
+msgstr "Sigodiezhet"
 
 msgid "Proud"
 msgstr "Loc'hus"
 
 msgid "Relaxed"
-msgstr ""
+msgstr "Sioul"
 
 msgid "Relieved"
 msgstr "Disammet"
 
 msgid "Remorseful"
-msgstr ""
+msgstr "Leun a vorc'hed"
 
 msgid "Restless"
-msgstr ""
+msgstr "Kabalet"
 
 msgid "Sad"
 msgstr "Trist"
 
 msgid "Sarcastic"
-msgstr ""
+msgstr "Goapaus"
 
 msgid "Satisfied"
-msgstr ""
+msgstr "Sevenet"
 
 msgid "Serious"
 msgstr "Sirius"
 
 msgid "Shocked"
-msgstr ""
+msgstr "Feuket"
 
 msgid "Shy"
 msgstr "Lentik"
@@ -5119,10 +5110,10 @@ msgid "Sleepy"
 msgstr "Kouskus"
 
 msgid "Spontaneous"
-msgstr ""
+msgstr "Trummet"
 
 msgid "Stressed"
-msgstr ""
+msgstr "Ankeniet"
 
 msgid "Strong"
 msgstr "Kreñv"
@@ -5134,7 +5125,7 @@ msgid "Thankful"
 msgstr "Trugarekaus"
 
 msgid "Thirsty"
-msgstr ""
+msgstr "Itiket"
 
 msgid "Tired"
 msgstr "Skuizh"
@@ -5146,7 +5137,7 @@ msgid "Weak"
 msgstr "Gwan"
 
 msgid "Worried"
-msgstr ""
+msgstr "Ankeniet"
 
 msgid "Set User Nickname"
 msgstr "Arventennañ lesanv an arveriad"
@@ -5174,16 +5165,16 @@ msgid "Select an action"
 msgstr "Dibabit un oberenn"
 
 msgid "Required parameters not passed in"
-msgstr ""
+msgstr "An arventenn azgoulennet n'eo ket bet tremenet e"
 
 msgid "Unable to write to network"
-msgstr ""
+msgstr "N'haller ket skrivañ d'ar rouedad"
 
 msgid "Unable to read from network"
-msgstr ""
+msgstr "N'haller ket lenn eus ar rouedad"
 
 msgid "Error communicating with server"
-msgstr ""
+msgstr "Fazi en ur c'hehentiñ gant an dafariad"
 
 msgid "Conference not found"
 msgstr ""
@@ -5192,119 +5183,130 @@ msgid "Conference does not exist"
 msgstr ""
 
 msgid "A folder with that name already exists"
-msgstr ""
+msgstr "Un teuliad gant an anv-mañ a zo dioutañ endeo"
 
 msgid "Not supported"
-msgstr ""
+msgstr "N'eo ket skoret"
 
 msgid "Password has expired"
-msgstr ""
+msgstr "Diamzeret eo ar ger-tremen"
 
 msgid "Incorrect password"
-msgstr ""
+msgstr "Ger-tremen direizh"
 
 msgid "Account has been disabled"
-msgstr ""
+msgstr "Diweredekaet eo bet ar gont"
 
 msgid "The server could not access the directory"
-msgstr ""
+msgstr "N'hall ket an dafariad haeziñ ar c'havlec'h"
 
 msgid "Your system administrator has disabled this operation"
-msgstr ""
+msgstr "Diweredekaet eo bet ar gwezhiadur gant ho ardoer reizhiad"
 
 msgid "The server is unavailable; try again later"
-msgstr ""
+msgstr "Dihegerz eo an dafariad; klaskit en-dro diwezhatoc'h"
 
 msgid "Cannot add a contact to the same folder twice"
-msgstr ""
+msgstr "N'haller ket ouzhpennañ un darempred d'un teuliad div wech"
 
 msgid "Cannot add yourself"
-msgstr ""
+msgstr "N'hallit ket ho ouzhpennañ ho-unan"
 
 msgid "Master archive is misconfigured"
-msgstr ""
+msgstr "Kefluniet fal eo an diell vestrez   "
 
 msgid "Incorrect username or password"
-msgstr ""
+msgstr "Anv arveriad pe ger-tremen didalvoudek"
 
 msgid "Could not recognize the host of the username you entered"
-msgstr ""
+msgstr "N'haller ket adanavezout ostiz an anv arveriad enanket ganeoc'h "
 
 msgid ""
 "Your account has been disabled because too many incorrect passwords were "
 "entered"
 msgstr ""
+"Diweredekaet eo bet ho kont peogwir eo bet enanket re a ger-tremen direizh"
 
 msgid "You cannot add the same person twice to a conversation"
-msgstr ""
+msgstr "N'halit ket ouzhpennañ an hevelep den div wech d'an hevelep kaozeadenn"
 
 msgid "You have reached your limit for the number of contacts allowed"
-msgstr ""
+msgstr "Tizhet ho peus ar vevenn evit an niver a zarempredoù aotreet"
 
 msgid "You have entered an incorrect username"
-msgstr ""
+msgstr "Un anv arveriad direizh a zo bet enanket ganeoc'h"
 
 msgid "An error occurred while updating the directory"
-msgstr ""
+msgstr "Ur fazi a zo c'hoarvezet en ur hizivaat ar c'havlec'h"
 
 msgid "Incompatible protocol version"
-msgstr ""
+msgstr "Handelv komenad digeverlec'h"
 
 msgid "The user has blocked you"
-msgstr ""
+msgstr "Stanket oc'h bet gant an arveriad"
 
 msgid ""
 "This evaluation version does not allow more than ten users to log in at one "
 "time"
 msgstr ""
+"An handelv amprouiñ-mañ ne aotre ket ac'hanoc'h da gennaskañ gant ouzhpenn "
+"dek arveriad d'ar memes mare"
 
 msgid "The user is either offline or you are blocked"
-msgstr ""
+msgstr "Ezlinenn eo an arveriad pe stanket oc'h bet"
 
 #, c-format
 msgid "Unknown error: 0x%X"
-msgstr ""
+msgstr "Fazi dianav: 0x%X"
 
 #, c-format
 msgid "Unable to login: %s"
-msgstr ""
+msgstr "N'haller ket kennaskañ: %s"
 
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
 msgstr ""
+"N'haller ket kas ar gemennadenn. N'haller ket kaout munudoù an arveriad (%s)."
 
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
-msgstr ""
+msgstr "N'haller ket ouzhpennañ %s da roll an darempredoù (%s)."
 
 #. TODO: Improve this! message to who or for what conference?
 #, c-format
 msgid "Unable to send message (%s)."
-msgstr ""
+msgstr "N'haller ket kas ar gemennadenn (%s)."
 
 #, c-format
 msgid "Unable to invite user (%s)."
-msgstr ""
+msgstr "N'haller ket pediñ an arveriad (%s)."
 
 #, c-format
 msgid "Unable to send message to %s. Could not create the conference (%s)."
 msgstr ""
+"N'haller ket kas ar gemennadenn da %s. N'haller ket krouiñ ar saloñs kaozeal "
+"(%s)."
 
 #, c-format
 msgid "Unable to send message. Could not create the conference (%s)."
 msgstr ""
+"N'haller ket kas ar gemennadenn. N'haller ket krouiñ ar saloñs kaozeal (%s)."
 
 #, c-format
 msgid ""
 "Unable to move user %s to folder %s in the server side list. Error while "
 "creating folder (%s)."
 msgstr ""
+"N'haller ket dilec'hiañ an arveriad %s d'an teuliad %s e roll an dafariad. "
+"Fazi en ur grouiñ an teuliad (%s)."
 
 #, c-format
 msgid ""
 "Unable to add %s to your buddy list. Error creating folder in server side "
 "list (%s)."
 msgstr ""
+"N'haller ket ouzhpennañ %s d'ho roll darempredoù. Fazi en ur grouiñ an "
+"teuliad eus tu an dafariad (%s)."
 
 #, c-format
 msgid "Could not get details for user %s (%s)."
@@ -5651,9 +5653,8 @@ msgstr ""
 msgid "Error parsing response from authentication server"
 msgstr ""
 
-#, fuzzy
 msgid "Unknown error during authentication"
-msgstr "O kregiñ gant an dilesa"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -6251,9 +6252,8 @@ msgstr ""
 msgid "MD5-based"
 msgstr ""
 
-#, fuzzy
 msgid "Authentication method"
-msgstr "C'hwitadenn zilesa"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -7907,7 +7907,7 @@ msgid "User is offline"
 msgstr "Ezlinenn eo an arveriad"
 
 msgid "User"
-msgstr ""
+msgstr "Implijer"
 
 msgid "Hidden or not logged-in"
 msgstr ""
@@ -8291,14 +8291,10 @@ msgstr ""
 "Ur meziant kaozeal eo Pidgin, a laosk ac'hanoc'h da gennaskañ d'ho kontoù "
 "war meur a rouedad kaozeal er memes mare."
 
-#, fuzzy
 msgid ""
 "This means that you can be chatting with friends on AIM, talking to a friend "
 "on Google Talk, and sitting in an IRC chat room all at the same time."
 msgstr ""
-"Kement-se a dalv oc'h gouest da gaozeal d'ho mignoned war MSN, eskemm gant "
-"ur mignon war Google Talk, en ur vezañ en ur saloñs kaozeal Yahoo er memes "
-"mare."
 
 msgid "The buddy list showing friends on different networks."
 msgstr "Roll an darempredoù o tiskouez mignoned war rouedadoù disheñvel."
@@ -9834,7 +9830,6 @@ msgid ""
 "im<BR><BR>"
 msgstr ""
 
-#, fuzzy
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
 "emailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>This "
@@ -9844,13 +9839,6 @@ msgid ""
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\"><b>Skoazell a-berzh implijerien Pidgin all</b></font> a zo "
-"tu da gaout en ur gas ur postel da <a href=\"mailto:support@pidgin.im"
-"\">support@pidgin.im</a><br/>Ul listenn postel <b>foran</b> an hini eo ! (<a "
-"href=\"http://pidgin.im/pipermail/support/\">archive</a>)<br/>N'eus ket tu "
-"deomp skoazell gant komenadoù pe enlugadelloù !<br/>Yezh pennañ al listenn "
-"posteloù-mañ a zo <b>Saozneg</b>.  Tu 'zo deoc'h ober gant ur yezh all, met "
-"moarvat ne vo ket ken talvoudus ar respontoù.<br/>"
 
 #, c-format
 msgid "About %s"
@@ -11295,9 +11283,8 @@ msgid "Use a _different status for some accounts"
 msgstr "Ober gant ur statud disheñvel evit ul lodenn eus ar c'hontoù"
 
 #. Save and Use button
-#, fuzzy
 msgid "Sa_ve and Use"
-msgstr "Enrollan hag arveriñ"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -12004,9 +11991,8 @@ msgstr ""
 msgid "Notify For"
 msgstr ""
 
-#, fuzzy
 msgid "\tS_ystem messages"
-msgstr "Kemennadennoù reizhad"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr ""
@@ -12828,794 +12814,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "N'ho 'peus ket ar gwirioù dleet evit distaliañ an arload-mañ."
-
-#~ msgid "Pounce Who"
-#~ msgstr "Galv-diwall evit"
-
-#~ msgid "Use different status for following accounts"
-#~ msgstr "Arverañ statudoù disheñvel evit ar c'hontoù da heul"
-
-#~ msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-#~ msgstr ""
-#~ "Pa vez degemeret ur gemennadenn gant URL(où), arverañ TinyURL evit aesaat "
-#~ "an eilañ"
-
-#~ msgid "Whether the specified command should handle \"msnim\" URLs"
-#~ msgstr "Penaos e rank an arc'had dornata URLoù \"msnim\""
-
-#~ msgid ""
-#~ "True if the command specified in the \"command\" key should handle \"msnim"
-#~ "\" URLs."
-#~ msgstr ""
-#~ "Gwir ma rank an arc'had erspizet gant an alc'hwez \"arc'had\" dornata "
-#~ "URLoù \"msnim\"."
-
-#~ msgid "The handler for \"msnim\" URLs"
-#~ msgstr "Dornataour an URLoù \"msnim\""
-
-#~ msgid "The command used to handle \"msnim\" URLs, if enabled."
-#~ msgstr ""
-#~ "An arc'had arveret evit dornata an URLoù \"msnim\", m'eo gweredekaet."
-
-#~ msgid "Whether the specified command should handle \"ymsgr\" URLs"
-#~ msgstr "Ma rank an arc'had erspizet dornata URLoù \"ymsgr\""
-
-#~ msgid ""
-#~ "True if the command specified in the \"command\" key should handle \"ymsgr"
-#~ "\" URLs."
-#~ msgstr ""
-#~ "Gwir ma rank an arc'had erspizet en alc'hwez \"arc'had\" dornata URLoù "
-#~ "\"ymsgr\"."
-
-#~ msgid "The handler for \"ymsgr\" URLs"
-#~ msgstr "Dornataour URLoù \"ymsgr\""
-
-#~ msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-#~ msgstr "An arc'had arveret evit dornata URLoù \"ymsgr\", m'eo gweredekaet."
-
-#~ msgid "Unable to add \"%s\"."
-#~ msgstr "N'haller ket ouzhpennañ \"%s\"."
-
-#~ msgid "Buddy Add error"
-#~ msgstr "Fazi ouzhpennadenn darempred"
-
-#~ msgid "The username specified does not exist."
-#~ msgstr "N'eus ket eus al lesanv erspizet"
-
-#~ msgid "Unable to parse message"
-#~ msgstr "N'haller ket dezrannañ ar gemennadenn"
-
-#~ msgid "Syntax Error (probably a client bug)"
-#~ msgstr "Fazi kevreadur (ur beug arval, moarvat)"
-
-#~ msgid "Invalid email address"
-#~ msgstr "Chomlec'h postel didalvoudek"
-
-#~ msgid "User does not exist"
-#~ msgstr "N'eus ket eus an arveriad"
-
-#~ msgid "Fully qualified domain name missing"
-#~ msgstr "Mankout a ra un anv domani peur-perzhek"
-
-#~ msgid "Already logged in"
-#~ msgstr "Kennasket endeo"
-
-#~ msgid "Invalid username"
-#~ msgstr "Anv arveriad didalvoudek"
-
-#~ msgid "Invalid friendly name"
-#~ msgstr "Anv mignon didalvoudek"
-
-#~ msgid "List full"
-#~ msgstr "Leun eo ar roll"
-
-#~ msgid "Already there"
-#~ msgstr "Amañ eo endeo"
-
-#~ msgid "Not on list"
-#~ msgstr "N'eo ket er roll"
-
-#~ msgid "Already in the mode"
-#~ msgstr "Er mod endeo"
-
-#~ msgid "Already in opposite list"
-#~ msgstr "Er roll all endeo"
-
-#~ msgid "Too many groups"
-#~ msgstr "Re a strolladoù"
-
-#~ msgid "Invalid group"
-#~ msgstr "Strollad didalvoudek"
-
-#~ msgid "User not in group"
-#~ msgstr "An arveriad n'emañ ket er strollad"
-
-#~ msgid "Group name too long"
-#~ msgstr "Re hir eo anv ar strollad"
-
-#~ msgid "Cannot remove group zero"
-#~ msgstr "N'haller ket dilemel ar strollad zero"
-
-#~ msgid "Tried to add a user to a group that doesn't exist"
-#~ msgstr ""
-#~ "Klasket eo bet ouzhpennañ un arveriad d'ur strollad ha n'eus ket dioutañ"
-
-#~ msgid "Required fields missing"
-#~ msgstr "Mankout a ra ar maeziennoù goulennet"
-
-#~ msgid "Service temporarily unavailable"
-#~ msgstr "Gwazerezh dihegerz evit ur mare"
-
-#~ msgid "Database server error"
-#~ msgstr "Fazi dafariad stlennvon"
-
-#~ msgid "Command disabled"
-#~ msgstr "Diweredekaet eo an arc'had"
-
-#~ msgid "File operation error"
-#~ msgstr "Fazi oberatadenn restr"
-
-#~ msgid "Memory allocation error"
-#~ msgstr "Fazi derannañ memor"
-
-#~ msgid "Server busy"
-#~ msgstr "Dafariad ac'hubet"
-
-#~ msgid "Server unavailable"
-#~ msgstr "Dafariad dihegerz"
-
-#~ msgid "Database connect error"
-#~ msgstr "Fazi kennask stlennvon"
-
-#~ msgid "Error creating connection"
-#~ msgstr "Fazi un ur grouiñ ar c'hennask"
-
-#~ msgid "Unable to write"
-#~ msgstr "N'haller ket skrivañ"
-
-#~ msgid "Session overload"
-#~ msgstr "Dreistkarg an estez"
-
-#~ msgid "User is too active"
-#~ msgstr "Re oberiant eo an arveriad"
-
-#~ msgid "Too many sessions"
-#~ msgstr "Re a estezioù"
-
-#~ msgid "Passport not verified"
-#~ msgstr "Paseporzh nann-gwiriet"
-
-#~ msgid "Bad friend file"
-#~ msgstr "Restr mignon fall"
-
-#~ msgid "Not expected"
-#~ msgstr "Dic'hortoz"
-
-#~ msgid "Server too busy"
-#~ msgstr "Re ac'hubet eo an dafariad"
-
-#~ msgid "Not allowed when offline"
-#~ msgstr "N'eo ket aotreet ezlinenn"
-
-#~ msgid "Not accepting new users"
-#~ msgstr "Ne vez ket asantet arveriaded nevez"
-
-#~ msgid "Bad ticket"
-#~ msgstr "Bilhed fall"
-
-#~ msgid "Unknown Error Code %d"
-#~ msgstr "Boneg fazi dianav %d"
-
-#~ msgid "MSN Error: %s\n"
-#~ msgstr "Fazi MSN : %s\n"
-
-#~ msgid "Buddy list synchronization issue in %s (%s)"
-#~ msgstr "Fazi goubredañ ar roll darempredoù e %s (%s)"
-
-#~ msgid "Other Contacts"
-#~ msgstr "Darempredoù all"
-
-#~ msgid "Non-IM Contacts"
-#~ msgstr "Darempredoù nann postelerezh prim"
-
-#~ msgid "Email Address..."
-#~ msgstr "Chomlec'h postel..."
-
-#~ msgid "Your new MSN friendly name is too long."
-#~ msgstr "Re hir eo ho anv mignon MSN nevez"
-
-#~ msgid "This Location"
-#~ msgstr "Al lec'hiadur-mañ"
-
-#~ msgid "Other Locations"
-#~ msgstr "Lec'hiadurioù all"
-
-#~ msgid "You can sign out from other locations here"
-#~ msgstr "Gallout a rit digennaskañ eus lec'hiadurioù all amañ"
-
-#~ msgid "You are not signed in from any other locations."
-#~ msgstr "N'hoc'h kennasket e lec'hiadur all ebet."
-
-#~ msgid "Allow multiple logins?"
-#~ msgstr "Aotren meur a gennaskadur"
-
-#~ msgid ""
-#~ "Do you want to allow or disallow connecting from multiple locations "
-#~ "simultaneously?"
-#~ msgstr ""
-#~ "Fellout a ra deoc'h aotren pe nac'h kennaskañ adalek meur a lec'h er "
-#~ "memes mare ?"
-
-#~ msgid "Allow"
-#~ msgstr "Aotren"
-
-#~ msgid "Disallow"
-#~ msgstr "Nac'h"
-
-#~ msgid "Set your home phone number."
-#~ msgstr "Lakait niverenn bellgomz ho ti."
-
-#~ msgid "Set your work phone number."
-#~ msgstr "Lakait niverenn bellgomz ho labour."
-
-#~ msgid "Set your mobile phone number."
-#~ msgstr "Lakait ho niverenn bellgomz hezoug."
-
-#~ msgid "Allow MSN Mobile pages?"
-#~ msgstr "Aotren pajennoù MSN Mobile ?"
-
-#~ msgid ""
-#~ "Do you want to allow or disallow people on your buddy list to send you "
-#~ "MSN Mobile pages to your cell phone or other mobile device?"
-#~ msgstr ""
-#~ "Fellout a ra deoc'h aotren pe nac'hañ pajennoù MSN Mobile kaset gant tud "
-#~ "en ho roll darempredoù d'ho pellgomzer hezoug pe trevnadoù hezoug all ?"
-
-#~ msgid "Blocked Text for %s"
-#~ msgstr "Testenn stanket evit %s"
-
-#~ msgid "No text is blocked for this account."
-#~ msgstr "N'eus testenn ebet stanket evit ar gont-mañ."
-
-#~ msgid ""
-#~ "MSN servers are currently blocking the following regular expressions:<br/>"
-#~ "%s"
-#~ msgstr "Stanket eo gant dafariadoù MSN ar bommoù reol da heul :<br>%s "
-
-#~ msgid "This account does not have email enabled."
-#~ msgstr "N'eo ket gweredekaet ar postel war ar gont-mañ."
-
-#~ msgid "Send a mobile message."
-#~ msgstr "Kas ur gemennadenn hezoug"
-
-#~ msgid "Page"
-#~ msgstr "Pajenn"
-
-#~ msgid "Playing a game"
-#~ msgstr "O c'hoari"
-
-#~ msgid "Has you"
-#~ msgstr "War e/he roll emaoc'h"
-
-#~ msgid "Home Phone Number"
-#~ msgstr "Niverenn bellgomz an ti"
-
-#~ msgid "Work Phone Number"
-#~ msgstr "Niverenn bellgomz labour"
-
-#~ msgid "Mobile Phone Number"
-#~ msgstr "Niverenn bellgomz hezoug"
-
-#~ msgid "Be Right Back"
-#~ msgstr "Dont 'ran en-dro"
-
-#~ msgid "On the Phone"
-#~ msgstr "O pellgomz"
-
-#~ msgid "Out to Lunch"
-#~ msgstr "O tebriñ"
-
-#~ msgid "Game Title"
-#~ msgstr "Titl ar c'hoari"
-
-#~ msgid "Office Title"
-#~ msgstr "Titl ar burev"
-
-#~ msgid "Set Friendly Name..."
-#~ msgstr "Lakaat an anv mignon..."
-
-#~ msgid "View Locations..."
-#~ msgstr "Gwelout ar lec'hiadurioù..."
-
-#~ msgid "Set Home Phone Number..."
-#~ msgstr "Lakaat niverenn bellgomz an ti..."
-
-#~ msgid "Set Work Phone Number..."
-#~ msgstr "Lakaat an niverenn bellgomz labour..."
-
-#~ msgid "Set Mobile Phone Number..."
-#~ msgstr "Lakaat an niverenn bellgomz hezoug..."
-
-#~ msgid "Enable/Disable Mobile Devices..."
-#~ msgstr "Gweredekaat/Diweredekaat an trevnadoù hezoug..."
-
-#~ msgid "Allow/Disallow Multiple Logins..."
-#~ msgstr "Aotren/Nac'h meur a gennaskadur"
-
-#~ msgid "Allow/Disallow Mobile Pages..."
-#~ msgstr "Aotren/Nac'h pajennoù hezoug..."
-
-#~ msgid "View Blocked Text..."
-#~ msgstr "Gwelout an destenn stanket"
-
-#~ msgid "Open Hotmail Inbox"
-#~ msgstr "Digeriñ boest degemer Hotmal"
-
-#~ msgid "Send to Mobile"
-#~ msgstr "Kas d'an hezougell"
-
-#~ msgid ""
-#~ "SSL support is needed for MSN. Please install a supported SSL library."
-#~ msgstr ""
-#~ "Skor SSL a zo azgoulennet gant MSN. Staliit ul levraoueg SSL skoret."
-
-#~ msgid ""
-#~ "Unable to add the buddy %s because the username is invalid.  Usernames "
-#~ "must be valid email addresses."
-#~ msgstr ""
-#~ "N'haller ket ouzhpennañ an darempred %s dre m'eo didalvoudek e anv "
-#~ "arveriad. An anvioù arveriad a rank bezañ chomlec'hioù postel."
-
-#~ msgid "Error retrieving profile"
-#~ msgstr "Fazi en ur adkavout an aelad"
-
-#~ msgid "Occupation"
-#~ msgstr "Obererezh"
-
-#~ msgid "Hobbies and Interests"
-#~ msgstr "Dudioù"
-
-#~ msgid "A Little About Me"
-#~ msgstr "Traoù diwar ma fenn"
-
-#~ msgid "Social"
-#~ msgstr "Kevredadel"
-
-#~ msgid "Marital Status"
-#~ msgstr "Saviad tiegezh"
-
-#~ msgid "Interests"
-#~ msgstr "Dudiadennoù"
-
-#~ msgid "Pets"
-#~ msgstr "Loened"
-
-#~ msgid "Hometown"
-#~ msgstr "Kêr ganedigezh"
-
-#~ msgid "Places Lived"
-#~ msgstr "Lec'hiadurioù bevet enno"
-
-#~ msgid "Fashion"
-#~ msgstr "Giz"
-
-#~ msgid "Humor"
-#~ msgstr "Fent"
-
-#~ msgid "Music"
-#~ msgstr "Sonerezh"
-
-#~ msgid "Favorite Quote"
-#~ msgstr "Meneg karetañ"
-
-#~ msgid "Contact Info"
-#~ msgstr "TItouroù daremprediñ"
-
-#~ msgid "Personal"
-#~ msgstr "Personel"
-
-#~ msgid "Significant Other"
-#~ msgstr "Karedig"
-
-#~ msgid "Home Phone"
-#~ msgstr "Pellgomz an ti"
-
-#~ msgid "Home Phone 2"
-#~ msgstr "Pellgomz an ti 2"
-
-#~ msgid "Personal Mobile"
-#~ msgstr "Hezougell bersonel"
-
-#~ msgid "Home Fax"
-#~ msgstr "Kaks ti"
-
-#~ msgid "Personal Email"
-#~ msgstr "Postel personel"
-
-#~ msgid "Personal IM"
-#~ msgstr "Postelerezh prim personel"
-
-#~ msgid "Anniversary"
-#~ msgstr "Deiz-ha-bloaz"
-
-#~ msgid "Work"
-#~ msgstr "Labour"
-
-#~ msgid "Profession"
-#~ msgstr "Micher"
-
-#~ msgid "Work Phone"
-#~ msgstr "Pellgomz labour"
-
-#~ msgid "Work Phone 2"
-#~ msgstr "Pellgomz labour 2"
-
-#~ msgid "Work Mobile"
-#~ msgstr "Hezougell labour"
-
-#~ msgid "Work Pager"
-#~ msgstr "Pajennerez labour"
-
-#~ msgid "Work Fax"
-#~ msgstr "Faks labour"
-
-#~ msgid "Work Email"
-#~ msgstr "Postel labour"
-
-#~ msgid "Work IM"
-#~ msgstr "Postelerezh prim labour"
-
-#~ msgid "Start Date"
-#~ msgstr "Deiziad kregiñ"
-
-#~ msgid "Favorite Things"
-#~ msgstr "Traoù karetañ"
-
-#~ msgid "Last Updated"
-#~ msgstr "Hizivaet evit ar wech diwezhañ"
-
-#~ msgid "The user has not created a public profile."
-#~ msgstr "N'eo ket bet krouet un aelad foran gant an arveriad."
-
-#~ msgid ""
-#~ "MSN reported not being able to find the user's profile. This either means "
-#~ "that the user does not exist, or that the user exists but has not created "
-#~ "a public profile."
-#~ msgstr ""
-#~ "Danevellet eo bet gant MSN n'eo ket bet gouest da gavout aelad an "
-#~ "arveriad. Kement-se a dalv n'eus ket eus an arveriad pe n'eo ket bet "
-#~ "krouet un aelad foran gantañ pe ganti."
-
-#~ msgid ""
-#~ "Could not find any information in the user's profile. The user most "
-#~ "likely does not exist."
-#~ msgstr ""
-#~ "N'haller kavout titour ebet e aelad an arveriad. Moarvat n'eus ket outañ/"
-#~ "outi."
-
-#~ msgid "Windows Live Messenger Protocol Plugin"
-#~ msgstr "Enlugellad komenad "
-
-#~ msgid "Use HTTP Method"
-#~ msgstr "Arverañ an hentenn HTTP"
-
-#~ msgid "HTTP Method Server"
-#~ msgstr "Dafariad hentenn HTTP"
-
-#~ msgid "Show custom smileys"
-#~ msgstr "Diskouez fromlunioù personelaet"
-
-#~ msgid "Allow direct connections"
-#~ msgstr "Aotren kennaskadurioù war-eeun"
-
-#~ msgid "Allow connecting from multiple locations"
-#~ msgstr "Aotren kennaskadurioù adalek meur a lec'h"
-
-#~ msgid "The following users are missing from your addressbook"
-#~ msgstr "Mankout a ra an arveriaded-mañ eus ho levr chomlec'hioù"
-
-#~ msgid "Unknown error (%d): %s"
-#~ msgstr "Fazi dianav (%d) : %s"
-
-#~ msgid "Unknown error (%d)"
-#~ msgstr "Fazi dianav (%d)"
-
-#~ msgid "Unable to remove user"
-#~ msgstr "N'haller ket dilemel an arveriad"
-
-#~ msgid "Mobile message was not sent because it was too long."
-#~ msgstr "N'eo ket bet kaset ar gemennadenn hezoug dre m'eo re hir"
-
-#~ msgid "Mobile message was not sent because an unknown error occurred."
-#~ msgstr ""
-#~ "N'eo ket bet kaset ar gemennadenn hezoug abalamour d'ur gudenn dianav"
-
-#~ msgid "Writing error"
-#~ msgstr "Fazi skrivañ"
-
-#~ msgid "Reading error"
-#~ msgstr "Fazi lenn"
-
-#~ msgid ""
-#~ "Connection error from %s server:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Fazi kennaskañ adalek an dafariad %s :\n"
-#~ "%s"
-
-#~ msgid "Our protocol is not supported by the server"
-#~ msgstr "N'eo ket skoret hor c'homenad gant an dafariad"
-
-#~ msgid "Error parsing HTTP"
-#~ msgstr "Fazi dezrannañ HTTP"
-
-#~ msgid ""
-#~ "The MSN servers are temporarily unavailable. Please wait and try again."
-#~ msgstr ""
-#~ "Dihegerz eo dafariadoù MSN evit ar mare. Gortozit mar plij ha klaskit en-"
-#~ "dro."
-
-#~ msgid "The MSN servers are going down temporarily"
-#~ msgstr "Lazhet eo dafariadoù MSN evit ur pennad."
-
-#~ msgid "Unable to authenticate: %s"
-#~ msgstr "N'haller ket dilesa : %s"
-
-#~ msgid "Your MSN buddy list is temporarily unavailable: %s"
-#~ msgstr "Ho roll darempredoù MSN a zo dihegerz evit ar mare : %s"
-
-#~ msgid "Handshaking"
-#~ msgstr "O seveniñ ar c'hennask"
-
-#~ msgid "Transferring"
-#~ msgstr "O treuzkas"
-
-#~ msgid "Getting cookie"
-#~ msgstr "O tapout an toupin"
-
-#~ msgid "Sending cookie"
-#~ msgstr "O kas an toupin"
-
-#~ msgid "Retrieving buddy list"
-#~ msgstr "Oc'h adkavout roll an darempredoù"
-
-#~ msgid ""
-#~ "%s requests to view your webcam, but this request is not yet supported."
-#~ msgstr "Goulenn a ra %s gwelet ho kamera, met n'eo ket skoret c'hoazh."
-
-#~ msgid ""
-#~ "%s invited you to view his/her webcam, but this is not yet supported."
-#~ msgstr ""
-#~ "Pedet hoc'h bet gant %s da welet e/he c'hamera, met n'eo ket skoret "
-#~ "c'hoazh."
-
-#~ msgid "Away From Computer"
-#~ msgstr "Pell eus an urzhiataer"
-
-#~ msgid "On The Phone"
-#~ msgstr "Er pellgomz"
-
-#~ msgid "Out To Lunch"
-#~ msgstr "Aet da zebriñ"
-
-#~ msgid "Message may have not been sent because a timeout occurred:"
-#~ msgstr ""
-#~ "Marteze n'eo ket bet kaset ar gemennadenn dre m'eo c'hoarvezet un "
-#~ "diamzeradenn."
-
-#~ msgid "Message could not be sent, not allowed while invisible:"
-#~ msgstr ""
-#~ "N'haller ket  kas ar gemennadenn, n'eo ket aotreet pa vezer diwelus :"
-
-#~ msgid "Message could not be sent because the user is offline:"
-#~ msgstr "N'haller ket kas ar gemennadenn dre m'eo ezlinenn an arveriad :"
-
-#~ msgid "Message could not be sent because a connection error occurred:"
-#~ msgstr ""
-#~ "N'haller ket kas ar gemennadenn dre m'eo c'hoarvezhet ur fazi kennaskañ :"
-
-#~ msgid "Message could not be sent because we are sending too quickly:"
-#~ msgstr "N'haller ket kas ar gemennadenn dre ma gaser re vuan :"
-
-#~ msgid ""
-#~ "Message could not be sent because we were unable to establish a session "
-#~ "with the server. This is likely a server problem, try again in a few "
-#~ "minutes:"
-#~ msgstr ""
-#~ "N'haller ket kas ar gemennadenn dre ma n'haller ket sevel un estez gant "
-#~ "an dafariad. Moarvat eo ur gudenn dafariad, klaskit en-dro a-benn un "
-#~ "nebeut munutennoù :"
-
-#~ msgid ""
-#~ "Message could not be sent because an error with the switchboard occurred:"
-#~ msgstr ""
-#~ "N'haller ket kas ar gemennadenn dre m'eo c'hoarvezet ur fazi gant ar "
-#~ "switchboard :"
-
-#~ msgid "Message may have not been sent because an unknown error occurred:"
-#~ msgstr ""
-#~ "Marteze n'eo ket bet kaset ar gemennadenn dre m'eo c'hoarvezet ur gudenn "
-#~ "dianav :"
-
-#~ msgid "Delete Buddy from Address Book?"
-#~ msgstr "Dilemel an darempred eus ar c'harned chomlec'hioù ?"
-
-#~ msgid "Do you want to delete this buddy from your address book as well?"
-#~ msgstr ""
-#~ "Fellout a ra deoc'h dilemel an darempred-mañ eus ho karned chomlec'h "
-#~ "ivez ?"
-
-#~ msgid "The username specified is invalid."
-#~ msgstr "Didalvoudek eo an anv arveriad erspizet."
-
-#~ msgid "The Display Name you entered is invalid."
-#~ msgstr "Didalvoudek eo an Anv Skrammañ enanket ganeoc'h."
-
-#~ msgid ""
-#~ "The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-#~ msgstr ""
-#~ "Didalvoudek eo an devezh ganedigezh enanket ganeoc'h. Ar 'BBBB-MM-DD' eo "
-#~ "ar mentrezh reizh."
-
-#~ msgid "Profile Update Error"
-#~ msgstr "Fazi hizivadur an aelad"
-
-#~ msgid ""
-#~ "Your profile information is not yet retrieved. Please try again later."
-#~ msgstr ""
-#~ "N'eo ket bet adkavet ho titouroù aelad c'hoazh. Klaskit en-dro "
-#~ "diwezhatoc'h."
-
-#~ msgid "Display Name"
-#~ msgstr "Anv skrammañ"
-
-#~ msgid "About Me"
-#~ msgstr "Diwar ma fenn"
-
-#~ msgid "Where I Live"
-#~ msgstr "Pelec'h on o chom"
-
-#~ msgid "Mobile Number"
-#~ msgstr "Niverenn hezougell"
-
-#~ msgid "Can be searched"
-#~ msgstr "A c'hell bezañ klasket"
-
-#~ msgid "Can be suggested"
-#~ msgstr "A c'hell bezañ kinniget"
-
-#~ msgid "Update your MXit Profile"
-#~ msgstr "Hizivaat ho aelad MXit"
-
-#~ msgid "The PIN you entered is invalid."
-#~ msgstr "Didalvoudek eo ar PIN enanket ganeoc'h."
-
-#~ msgid "The PIN you entered has an invalid length [4-10]."
-#~ msgstr "Un hirder didalvoudek [4-10] a zo gant ar PIN bet enanket ganeoc'h."
-
-#~ msgid "The PIN is invalid. It should only consist of digits [0-9]."
-#~ msgstr "Didalvoudek eo ar PIN. Gant niverennoù [0-9] e rank bezañ savet."
-
-#~ msgid "The two PINs you entered do not match."
-#~ msgstr "Ne glot ket an daou PIN bet enanket ganeoc'h."
-
-#~ msgid "PIN Update Error"
-#~ msgstr "Fazi hizivadur PIN"
-
-#~ msgid "PIN"
-#~ msgstr "PIN"
-
-#~ msgid "Verify PIN"
-#~ msgstr "Gwiriañ ar PIN"
-
-#~ msgid "Change PIN"
-#~ msgstr "Kemmañ ar PIN"
-
-#~ msgid "Change MXit PIN"
-#~ msgstr "Kemmañ PIN MXit"
-
-#~ msgid "View Splash"
-#~ msgstr "Gwelout ar Splash"
-
-#~ msgid "There is no splash-screen currently available"
-#~ msgstr "N'eus skeudenn ginnig hegerz ebet evit ar mare"
-
-#~ msgid "About"
-#~ msgstr "A-zivout"
-
-#~ msgid "Search for user"
-#~ msgstr "Klask an arveriad"
-
-#~ msgid "Search for a MXit contact"
-#~ msgstr "Klask un darempred MXit"
-
-#~ msgid "Type search information"
-#~ msgstr "Biziatait titouroù klask"
-
-#~ msgid "Change Profile..."
-#~ msgstr "Kemmañ an aelad..."
-
-#~ msgid "Change PIN..."
-#~ msgstr "Kemmañ ar PIN..."
-
-#~ msgid "Suggested friends..."
-#~ msgstr "Mignoned kinniget..."
-
-#~ msgid "Search for contacts..."
-#~ msgstr "Klask war lec'h darempredoù..."
-
-#~ msgid "View Splash..."
-#~ msgstr "Gwelout Splash..."
-
-#~ msgid "About..."
-#~ msgstr "A-zivout..."
-
-#~ msgid "The file you are trying to send is too large!"
-#~ msgstr "Re vras eo ar restr a glaskit kas !"
-
-#~ msgid "Unable to access the local file"
-#~ msgstr "N'haller ket haeziñ ar restr lec'hel"
-
-#~ msgid "Unable to save the file"
-#~ msgstr "N'haller ket enrollañ ar restr"
-
-#~ msgid ""
-#~ "Unable to connect to the MXit HTTP server. Please check your server "
-#~ "settings."
-#~ msgstr ""
-#~ "N'haller ket kennaskañ d'an dafariad HTTP MXit. Gwiriekait hoc'h "
-#~ "arventennoù dafariad."
-
-#~ msgid "Logging In..."
-#~ msgstr "O kennaskañ..."
-
-#~ msgid ""
-#~ "Unable to connect to the MXit server. Please check your server settings."
-#~ msgstr ""
-#~ "N'haller ket kennaskañ d'an dafariad MXit. Gwiriekait arventennoù ho "
-#~ "tafariad. "
-
-#~ msgid "Connecting..."
-#~ msgstr "O kennaskañ..."
-
-#~ msgid "The Display Name you entered is too short."
-#~ msgstr "Re verr eo an Anv Skrammañ enanket ganeoc'h."
-
-#~ msgid "The PIN you entered has an invalid length [7-10]."
-#~ msgstr "Un hirder didalvoudek [7-10] a zo gant ar PIN enanket ganeoc'h."
-
-#~ msgid "MXit ID"
-#~ msgstr "Naoudi MXit"
-
-#~ msgid "Where I live"
-#~ msgstr "Pelec'h emaon o chom"
-
-#~ msgid "Status Error"
-#~ msgstr "Fazi statud"
-
-#~ msgid "Invitation Error"
-#~ msgstr "Fazi pedadenn"
-
-#~ msgid "Yahoo ID..."
-#~ msgstr "Naoudi Yahoo..."
-
-#~ msgid "Yahoo! Protocol Plugin"
-#~ msgstr "Enlugellad komenad Yahoo!"
-
-#~ msgid "Latest News"
-#~ msgstr "Nevezadennoù ziwezhañ"
-
-#~ msgid "Home Page"
-#~ msgstr "Pajenn degemer"
-
-#~ msgid "Last Update"
-#~ msgstr "Hizivadenn ziwezhañ"
-
-#~ msgid "Unknown room"
-#~ msgstr "Sal dianav"
-
-#~ msgid "Maybe the room is full"
-#~ msgstr "Marteze eo leun ar sal"
-
-#~ msgid "Facebook (XMPP)"
-#~ msgstr "Facebook (XMPP)"

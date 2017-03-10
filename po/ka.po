@@ -9,9 +9,9 @@ msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-09 18:53-0600\n"
-"PO-Revision-Date: 2014-11-20 10:22+0000\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
 "Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
-"Language-Team: Georgian (http://www.transifex.com/projects/p/pidgin/language/"
+"Language-Team: Georgian (http://www.transifex.com/pidgin/pidgin/language/"
 "ka/)\n"
 "Language: ka\n"
 "MIME-Version: 1.0\n"
@@ -1206,9 +1206,8 @@ msgstr ""
 msgid "(default)"
 msgstr ""
 
-#, fuzzy
 msgid "Select Sound File..."
-msgstr "ფაილის არჩევა"
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr ""
@@ -1329,9 +1328,8 @@ msgid "Use a different status for some accounts"
 msgstr ""
 
 #. Save and Use
-#, fuzzy
 msgid "Save and Use"
-msgstr "შენახვა და გამოყენება"
+msgstr ""
 
 msgid "Certificates"
 msgstr ""
@@ -2065,21 +2063,19 @@ msgstr ""
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <ავტო-პასუხი>: %s\n"
 
-#, fuzzy
 msgid ""
 "\n"
 "\n"
 "Message from Farsight: "
-msgstr "შეტყობინება %s -გან"
+msgstr ""
 
 msgid ""
 "Error initializing the call. This probably denotes problem in installation "
 "of GStreamer or Farsight."
 msgstr ""
 
-#, fuzzy
 msgid "Network error."
-msgstr "ქსელი"
+msgstr ""
 
 msgid ""
 "Codec negotiation failed. This problem might be resolved by installing more "
@@ -5359,9 +5355,8 @@ msgstr ""
 msgid "Error parsing response from authentication server"
 msgstr ""
 
-#, fuzzy
 msgid "Unknown error during authentication"
-msgstr "ვიწყებ ავთენტურობის დადგენას"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -5947,9 +5942,8 @@ msgstr ""
 msgid "MD5-based"
 msgstr ""
 
-#, fuzzy
 msgid "Authentication method"
-msgstr "აუტენტიფიკაცია ვერ მოხერხდა"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -10051,9 +10045,8 @@ msgstr ""
 msgid "_Hangup"
 msgstr ""
 
-#, fuzzy
 msgid "Media error"
-msgstr "კითხვის შეცდომა"
+msgstr ""
 
 #, c-format
 msgid "%s wishes to start an audio/video session with you."
@@ -10868,9 +10861,8 @@ msgid "Use a _different status for some accounts"
 msgstr ""
 
 #. Save and Use button
-#, fuzzy
 msgid "Sa_ve and Use"
-msgstr "შენახვა და გამოყენება"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -11574,9 +11566,8 @@ msgstr ""
 msgid "Notify For"
 msgstr ""
 
-#, fuzzy
 msgid "\tS_ystem messages"
-msgstr "შეტყობინების გაგზავნა"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr ""
@@ -12389,174 +12380,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr ""
-
-#~ msgid "Unable to add \"%s\"."
-#~ msgstr "ვერ ვამატებ \"%s\"-ს"
-
-#~ msgid "Invalid email address"
-#~ msgstr "არასწორი email მისამართი"
-
-#~ msgid "User does not exist"
-#~ msgstr "მომხმარებელი არ არსებობს"
-
-#~ msgid "Not on list"
-#~ msgstr "არარი სიაში"
-
-#~ msgid "Invalid group"
-#~ msgstr "არასწორი ჯგუფი"
-
-#~ msgid "User not in group"
-#~ msgstr "მომხმარებელი არ არის ჯგუფში"
-
-#~ msgid "Group name too long"
-#~ msgstr "ჯგუფის სახელი ნამეტანი გრძელია"
-
-#~ msgid "Command disabled"
-#~ msgstr "ბრძანება გაუქმებულია"
-
-#~ msgid "Server busy"
-#~ msgstr "სერვერი დაკავებულია"
-
-#~ msgid "Server unavailable"
-#~ msgstr "სერვერი მიუწვდომელია"
-
-#~ msgid "Unable to write"
-#~ msgstr "ვერ ვწერ"
-
-#~ msgid "Session overload"
-#~ msgstr "სესია გადატვირთულია"
-
-#~ msgid "User is too active"
-#~ msgstr "მომხმარებელი ძალიან აქტიურია"
-
-#~ msgid "Not expected"
-#~ msgstr "მოულოდნელი"
-
-#~ msgid "Server too busy"
-#~ msgstr "სერვერი ძალიან დატვირთულია"
-
-#~ msgid "Unknown Error Code %d"
-#~ msgstr "უცნობი შეცდომის კოდი %d"
-
-#~ msgid "MSN Error: %s\n"
-#~ msgstr "MSN შეცდომა: %s\n"
-
-#~ msgid "Allow"
-#~ msgstr "დაუშვი"
-
-#~ msgid "Disallow"
-#~ msgstr "არ დაუშვა"
-
-#~ msgid "Page"
-#~ msgstr "გვერდი"
-
-#~ msgid "Has you"
-#~ msgstr "ხართ მის სიაში"
-
-#~ msgid "Be Right Back"
-#~ msgstr "მალე დავბრუნდები"
-
-#~ msgid "On the Phone"
-#~ msgstr "ტელეფონზე"
-
-#~ msgid "Out to Lunch"
-#~ msgstr "საჭმელად გასული"
-
-#~ msgid "Set Friendly Name..."
-#~ msgstr "შეიტანე მეტსახელი..."
-
-#~ msgid "Set Home Phone Number..."
-#~ msgstr "შეიტანე სახლის ტელეფონის ნომერი..."
-
-#~ msgid "Set Work Phone Number..."
-#~ msgstr "შეიტანე სამსახურის ტელეფონის ნომერი..."
-
-#~ msgid "Set Mobile Phone Number..."
-#~ msgstr "შეიტანე მობილური ტელეფონის ნომერი..."
-
-#~ msgid "Open Hotmail Inbox"
-#~ msgstr "Hotmail საფოსტო ყუთის გახსნა"
-
-#~ msgid "Error retrieving profile"
-#~ msgstr "შეცდომა პროფაილის ჩამოტანისას"
-
-#~ msgid "Occupation"
-#~ msgstr "პროფესია"
-
-#~ msgid "A Little About Me"
-#~ msgstr "რამოდენიმე ინფორმაცია ჩემს შესახებ"
-
-#~ msgid "Marital Status"
-#~ msgstr "ოჯახური მდგომარეობა"
-
-#~ msgid "Last Updated"
-#~ msgstr "ბოლო განახლება"
-
-#~ msgid "Use HTTP Method"
-#~ msgstr "გამოიყენე HTTP მეთოდი"
-
-#~ msgid "Writing error"
-#~ msgstr "წერის შეცდომა"
-
-#~ msgid "Reading error"
-#~ msgstr "კითხვის შეცდომა"
-
-#~ msgid "Unable to authenticate: %s"
-#~ msgstr "ავთენტურობის დადგენა ვერ მოხერხდა: %s"
-
-#~ msgid "Handshaking"
-#~ msgstr "მისალმება"
-
-#~ msgid "Transferring"
-#~ msgstr "გადაგზავნა"
-
-#~ msgid "Getting cookie"
-#~ msgstr "ბმულის მიღება"
-
-#~ msgid "Sending cookie"
-#~ msgstr "ქუკის გაგზავნა"
-
-#~ msgid "Away From Computer"
-#~ msgstr "კომპიუტერისგან გასული"
-
-#~ msgid "On The Phone"
-#~ msgstr "ლაპარაკობს ტელეფონზე"
-
-#~ msgid "Out To Lunch"
-#~ msgstr "საჭმელად გასული"
-
-#~ msgid "Your Yahoo! message did not get sent."
-#~ msgstr "თქვენი Yahoo! შეტყობინება ვერ გაიგზავნა."
-
-#~ msgid "Unable to connect."
-#~ msgstr "დაკავშირება შეუძლებელია"
-
-#~ msgid "Yahoo! ID"
-#~ msgstr "Yahoo! ID"
-
-#~ msgid "Cool Link 1"
-#~ msgstr "საინტერესო ლინკი 1"
-
-#~ msgid "Cool Link 2"
-#~ msgstr "საინტერესო ლინკი 2"
-
-#~ msgid "Cool Link 3"
-#~ msgstr "საინტერესო ლინკი 3"
-
-#~ msgid "Last Update"
-#~ msgstr "ბოლო განახლება"
-
-#~ msgid "Unknown room"
-#~ msgstr "უცნობი ოთახი"
-
-#~ msgid "Not available"
-#~ msgstr "ხელმიუწვდომელია"
-
-#~ msgid "Voices"
-#~ msgstr "ხმები"
-
-#~ msgid "Webcams"
-#~ msgstr "ვებ კამერები"
-
-#~ msgid "User Rooms"
-#~ msgstr "მომხმარებლის ოთახები"

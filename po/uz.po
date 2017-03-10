@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-09 18:58-0600\n"
-"PO-Revision-Date: 2016-06-06 21:08+0000\n"
-"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Uzbek (http://www.transifex.com/pidgin/pidgin/language/uz/)\n"
 "Language: uz\n"
 "MIME-Version: 1.0\n"
@@ -1254,9 +1254,8 @@ msgstr "GStreamer’ni ishga tushirib bo‘lmadi."
 msgid "(default)"
 msgstr "(standart)"
 
-#, fuzzy
 msgid "Select Sound File..."
-msgstr "Tovush faylini tanlash"
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr "Ovozni moslash"
@@ -1377,9 +1376,8 @@ msgid "Use a different status for some accounts"
 msgstr ""
 
 #. Save and Use
-#, fuzzy
 msgid "Save and Use"
-msgstr "Tasvirni saqlash"
+msgstr ""
 
 msgid "Certificates"
 msgstr ""
@@ -5401,9 +5399,8 @@ msgstr ""
 msgid "Received invalid data on connection with server"
 msgstr ""
 
-#, fuzzy
 msgid "Error parsing response from authentication server"
-msgstr "Tasdiqdan o‘tkazish serveriga ulana olmadi: %s"
+msgstr ""
 
 msgid "Unknown error during authentication"
 msgstr ""
@@ -5992,9 +5989,8 @@ msgstr ""
 msgid "MD5-based"
 msgstr ""
 
-#, fuzzy
 msgid "Authentication method"
-msgstr "SASL yordamida tasdiqdan o‘tish"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -11611,9 +11607,8 @@ msgstr ""
 msgid "Notify For"
 msgstr ""
 
-#, fuzzy
 msgid "\tS_ystem messages"
-msgstr "Xabar jo‘natish"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr ""
@@ -12244,15 +12239,10 @@ msgid "Variable Transparency for the buddy list and conversations."
 msgstr "Do‘stlar ro‘yxati va suhbatlar uchun o‘zgaruvchan shaffoflik."
 
 #. *  description
-#, fuzzy
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
 "the buddy list."
 msgstr ""
-"Ushbu plagin do‘stlar ro‘yxati va suhbat oynalaridagi o‘zgaruvchan alfa "
-"shaffoflikni yoqadi.\n"
-"\n"
-"* Eslatma: ushbu plagin Win2000 yoki yangiroq versiyalarda ishlaydi."
 
 #. Autostart
 msgid "Startup"
@@ -12443,120 +12433,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "Ushbu ilovani o‘chirish uchun sizga huquq berilmagan."
-
-#~ msgid "Unable to add \"%s\"."
-#~ msgstr "\"%s\"ni qo‘shib bo‘lmadi."
-
-#~ msgid "Buddy Add error"
-#~ msgstr "Do‘stlarni qo‘shishda xatolik"
-
-#~ msgid "The username specified does not exist."
-#~ msgstr "Ko‘rsatilgan foydalanuvchi nomi mavjud emas."
-
-#~ msgid "Unable to parse message"
-#~ msgstr "Xabarni ajratib olib bo‘lmadi"
-
-#~ msgid "Syntax Error (probably a client bug)"
-#~ msgstr "Sintaktik xato (balki mijoz xatosi)"
-
-#~ msgid "Invalid email address"
-#~ msgstr "Noto‘g‘ri e-pochta manzili"
-
-#~ msgid "This is the name that identifies this location"
-#~ msgstr "Bu ushbu manzilni tasdiqlaydigan nom"
-
-#~ msgid "Other Locations"
-#~ msgstr "Boshqa manzillar"
-
-#~ msgid "You can sign out from other locations here"
-#~ msgstr "Siz bu yerda boshqa manzillardan chiqa olasiz"
-
-#~ msgid "You are not signed in from any other locations."
-#~ msgstr "Siz boshqa birorta manzildan kirmagansiz."
-
-#~ msgid "Allow multiple logins?"
-#~ msgstr "Bir necha hisoblardan kirishga ruxsat berilsinmi?"
-
-#~ msgid "Allow"
-#~ msgstr "Ruxsat berish"
-
-#~ msgid "Disallow"
-#~ msgstr "Rad qilish"
-
-#~ msgid "Set your home phone number."
-#~ msgstr "Uy telefoningiz raqamini o‘rnating."
-
-#~ msgid "Set your work phone number."
-#~ msgstr "Ish telefoningiz raqamini o‘rnating."
-
-#~ msgid "Set your mobile phone number."
-#~ msgstr "Mobil telefoningiz raqamini o‘rnating."
-
-#~ msgid "Allow MSN Mobile pages?"
-#~ msgstr "MSN mobil sahifalrga ruxsat berilsinmi?"
-
-#~ msgid "Allow/Disallow Mobile Pages..."
-#~ msgstr "Mobil sahifalarga ruxsat berish/rad qilish"
-
-#~ msgid "View Blocked Text..."
-#~ msgstr "Bloklangan matnni ko‘rish..."
-
-#~ msgid "Open Hotmail Inbox"
-#~ msgstr "Hotmail kiruvchi xabarlarini ochish"
-
-#~ msgid "Send to Mobile"
-#~ msgstr "Mobil telefonga jo‘natish"
-
-#~ msgid ""
-#~ "SSL support is needed for MSN. Please install a supported SSL library."
-#~ msgstr "MSN uchun mos SSL kerak. Mos keladigan SSL kutubxonasini o‘rnating."
-
-#~ msgid ""
-#~ "Unable to add the buddy %s because the username is invalid.  Usernames "
-#~ "must be valid email addresses."
-#~ msgstr ""
-#~ "%s suhbatdoshni qo‘shib bo‘lmadi, chunki foydalanuvchi nomi xato, chunki "
-#~ "foydalanuvchi nomi xato. Foydalanuvchi nomlari to‘g‘ri e-pochta "
-#~ "manzillari bo‘lishi kerak."
-
-#~ msgid "Start Date"
-#~ msgstr "Boshlanish sanasi"
-
-#~ msgid "Favorite Things"
-#~ msgstr "Yoqimli narsalar"
-
-#~ msgid "Relationship Status"
-#~ msgstr "Qarindoshlik holati"
-
-#~ msgid "Don't want to say"
-#~ msgstr "Aytishni xohlamayman"
-
-#~ msgid "Single"
-#~ msgstr "Yolg‘iz"
-
-#~ msgid "In a relationship"
-#~ msgstr "Qarindoshligi"
-
-#~ msgid "Engaged"
-#~ msgstr "Unashtirilgan"
-
-#~ msgid "Married"
-#~ msgstr "Turmush qurgan"
-
-#~ msgid "It's complicated"
-#~ msgstr "Bu qiyin"
-
-#~ msgid "Widowed"
-#~ msgstr "Ajrashgan"
-
-#~ msgid "Add contacts from server"
-#~ msgstr "Serverdan kontrast qo‘shish"
-
-#~ msgid "Protocol error, code %d: %s"
-#~ msgstr "Protokol xatosi, kod %d: %s"
-
-#~ msgid "MySpaceIM Error"
-#~ msgstr "MySpaceIM xatosi"
-
-#~ msgid "Activate which ID?"
-#~ msgstr "Qaysi ID nomingiz faollashtirilsinmi?"

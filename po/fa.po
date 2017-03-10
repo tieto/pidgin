@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-09 18:56-0600\n"
-"PO-Revision-Date: 2016-06-06 21:08+0000\n"
-"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Persian (http://www.transifex.com/pidgin/pidgin/language/"
 "fa/)\n"
 "Language: fa\n"
@@ -1263,9 +1263,8 @@ msgstr "راه‌اندازی GStreamer شکست خورد."
 msgid "(default)"
 msgstr "(پیش‌فرض)"
 
-#, fuzzy
 msgid "Select Sound File..."
-msgstr "انتخاب پرونده صوتی..."
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr "ترجیحات صدا"
@@ -1384,14 +1383,12 @@ msgstr "پیغام:"
 msgid "Edit Status"
 msgstr "ویرایش وضعیت"
 
-#, fuzzy
 msgid "Use a different status for some accounts"
-msgstr "استفاده از وضعیت _متفاوت برای بعضی از حساب‌ها"
+msgstr ""
 
 #. Save and Use
-#, fuzzy
 msgid "Save and Use"
-msgstr "ذخیره و استفاده"
+msgstr ""
 
 msgid "Certificates"
 msgstr "گواهی‌ها"
@@ -5524,9 +5521,8 @@ msgstr ""
 msgid "Error parsing response from authentication server"
 msgstr ""
 
-#, fuzzy
 msgid "Unknown error during authentication"
-msgstr "در حال آغاز تأیید هویت"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -5651,13 +5647,10 @@ msgstr ""
 "شما در تنظیمات حساب‌تان درخواست رمزنگاری کرده‌اید ولی سیستم شما از آن پشتیبانی "
 "نمی‌کند."
 
-#, fuzzy
 msgid ""
 "You required Kerberos authentication but encryption is disabled in your "
 "account settings."
 msgstr ""
-"شما در تنظیمات حساب‌تان درخواست رمزنگاری کرده‌اید ولی سیستم شما از آن پشتیبانی "
-"نمی‌کند."
 
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
@@ -6142,9 +6135,8 @@ msgstr "نمایش رفقای در انتظار اجازه"
 msgid "Search for Buddy by Email Address..."
 msgstr "جستجو به دنبال رفیق از روی پست الکترونیکی..."
 
-#, fuzzy
 msgid "clientLogin"
-msgstr "اجبار ورود به سیستم"
+msgstr ""
 
 msgid "Kerberos"
 msgstr ""
@@ -6152,9 +6144,8 @@ msgstr ""
 msgid "MD5-based"
 msgstr ""
 
-#, fuzzy
 msgid "Authentication method"
-msgstr "تأیید هویت شکست خورد"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -11194,9 +11185,8 @@ msgid "Use a _different status for some accounts"
 msgstr "استفاده از وضعیت _متفاوت برای بعضی از حساب‌ها"
 
 #. Save and Use button
-#, fuzzy
 msgid "Sa_ve and Use"
-msgstr "_ذخیره و استفاده"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -11915,9 +11905,8 @@ msgstr ""
 msgid "Notify For"
 msgstr "اطلاع دادنِ"
 
-#, fuzzy
 msgid "\tS_ystem messages"
-msgstr "پیغام‌های سیستم"
+msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_فقط وقتی کسی نام کاربری شما را در گپ می‌گوید"
@@ -12557,15 +12546,10 @@ msgid "Variable Transparency for the buddy list and conversations."
 msgstr "شفافیت متغیر برای فهرست رفقا و گفتگوها."
 
 #. *  description
-#, fuzzy
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
 "the buddy list."
 msgstr ""
-"این متصل شونده شفافیت آلفای متغیر در پنجره‌های گفتگو و فهرست رفقا را به کار "
-"می‌اندازد.\n"
-"\n"
-"* توجه: این متصل شونده نیازمند ویندوز 2000 یا بالاتر است."
 
 #. Autostart
 msgid "Startup"
@@ -12756,838 +12740,3 @@ msgstr ""
 
 msgid "You do not have permission to uninstall this application."
 msgstr "شما اجازه لازم براى حذف اين برنامه را نداريد."
-
-#~ msgid "Pounce Who"
-#~ msgstr "کمین برای"
-
-#~ msgid "Use different status for following accounts"
-#~ msgstr "استفاده از وضعیت متفاوت برای حساب‌های زیر"
-
-#~ msgid "The handler for \"msnim\" URLs"
-#~ msgstr "متصدی نشانی اینترنتی «msnim»"
-
-#~ msgid "The handler for \"ymsgr\" URLs"
-#~ msgstr "متصدی نشانی اینترنتی «ymsgr»"
-
-#~ msgid "Unable to add \"%s\"."
-#~ msgstr "نمی‌توان «%s» را اضافه کرد."
-
-#~ msgid "Buddy Add error"
-#~ msgstr "خطای اضافه کردن رفیق"
-
-#~ msgid "Unable to parse message"
-#~ msgstr "نمی‌توان پیغام را تجزیه کرد"
-
-#~ msgid "Syntax Error (probably a client bug)"
-#~ msgstr "خطای نحوی (احتمالاً اشکالی در کارگیر)"
-
-#~ msgid "Invalid email address"
-#~ msgstr "نشانی پست الکترونیکی نامعتبر"
-
-#~ msgid "User does not exist"
-#~ msgstr "کاربر وجود ندارد"
-
-#~ msgid "Already logged in"
-#~ msgstr "قبلاً وارد سیستم شده است"
-
-#~ msgid "Invalid username"
-#~ msgstr "نام کاربر نامعتبر"
-
-#~ msgid "Invalid friendly name"
-#~ msgstr "نام دوستانهٔ نامعتبر"
-
-#~ msgid "List full"
-#~ msgstr "فهرست پر"
-
-#~ msgid "Already there"
-#~ msgstr "از قبل هست"
-
-#~ msgid "Not on list"
-#~ msgstr "در فهرست نیست"
-
-#~ msgid "Already in the mode"
-#~ msgstr "از قبل در همین حالت است"
-
-#~ msgid "Already in opposite list"
-#~ msgstr "از قبل در فهرست مخالف است"
-
-#~ msgid "Too many groups"
-#~ msgstr "تعداد گروه‌ها زیاد است"
-
-#~ msgid "Invalid group"
-#~ msgstr "گروه نامعتبر"
-
-#~ msgid "User not in group"
-#~ msgstr "کاربر در گروه نیست"
-
-#~ msgid "Group name too long"
-#~ msgstr "نام گروه خیلی طولانی است"
-
-#~ msgid "Cannot remove group zero"
-#~ msgstr "نمی‌توان گروه صفر را حذف کرد"
-
-#~ msgid "Tried to add a user to a group that doesn't exist"
-#~ msgstr "سعی شد اطلاعات تماس به گروهی اضافه شود که وجود ندارد"
-
-#~ msgid "Notify transfer failed"
-#~ msgstr "اطلاع دادن شکست انتقال"
-
-#~ msgid "Required fields missing"
-#~ msgstr "فیلدهای ضروری موجود نیستند"
-
-#~ msgid "Service temporarily unavailable"
-#~ msgstr "سرویس موقتاً موجود نیست"
-
-#~ msgid "Database server error"
-#~ msgstr "خطای کارگزار پایگاه‌داده"
-
-#~ msgid "Command disabled"
-#~ msgstr "فرمان از کار انداخته شد"
-
-#~ msgid "File operation error"
-#~ msgstr "خطای عملیات پرونده"
-
-#~ msgid "Memory allocation error"
-#~ msgstr "خطای تخصیص حافظه"
-
-#~ msgid "Wrong CHL value sent to server"
-#~ msgstr "مقدار CHL ارسالی به کارگزار نادرست بود"
-
-#~ msgid "Server busy"
-#~ msgstr "کارگزار مشغول است"
-
-#~ msgid "Server unavailable"
-#~ msgstr "کارگزار قابل دسترسی نیست"
-
-#~ msgid "Database connect error"
-#~ msgstr "خطای اتصال پایگاه‌داده"
-
-#~ msgid "Server is going down (abandon ship)"
-#~ msgstr "کارگزار در حال فروپاشی است (فرار کنید)"
-
-#~ msgid "Error creating connection"
-#~ msgstr "خطای هنگام ایجاد اتصال"
-
-#~ msgid "CVR parameters are either unknown or not allowed"
-#~ msgstr "پارامترهای CVR یا نامعلومند یا مجاز نیستند"
-
-#~ msgid "Unable to write"
-#~ msgstr "نوشتن ممکن نیست"
-
-#~ msgid "Session overload"
-#~ msgstr "بار اضافی نشست"
-
-#~ msgid "User is too active"
-#~ msgstr "کاربر بیش از حد فعال است"
-
-#~ msgid "Too many sessions"
-#~ msgstr "تعداد نشست‌ها زیاد است"
-
-#~ msgid "Passport not verified"
-#~ msgstr "‏passport تأیید نشد"
-
-#~ msgid "Bad friend file"
-#~ msgstr "پروندهٔ دوست بد"
-
-#~ msgid "Not expected"
-#~ msgstr "غیرمنتظره"
-
-#~ msgid "Server too busy"
-#~ msgstr "کارگزار خیلی مشغول است"
-
-#~ msgid "Not allowed when offline"
-#~ msgstr "هنگام انفصال ممکن نیست"
-
-#~ msgid "Not accepting new users"
-#~ msgstr "کاربران جدید پذیرفته نمی‌شوند"
-
-#~ msgid "Kids Passport without parental consent"
-#~ msgstr "بچه‌ها بدون رضایت والدینشان passport می‌کنند"
-
-#~ msgid "Passport account not yet verified"
-#~ msgstr "حساب passport هنوز تأیید نشده است"
-
-#~ msgid "Bad ticket"
-#~ msgstr "بلیت بد"
-
-#~ msgid "Unknown Error Code %d"
-#~ msgstr "کد خطای نامعلوم %Id"
-
-#~ msgid "MSN Error: %s\n"
-#~ msgstr "خطای MSN: %s\n"
-
-#~ msgid "Buddy list synchronization issue in %s (%s)"
-#~ msgstr "مسئله در همگام‌سازی فهرست رفقا در %s ‏(%s) "
-
-#~ msgid ""
-#~ "%s on the local list is inside the group \"%s\" but not on the server "
-#~ "list. Do you want this buddy to be added?"
-#~ msgstr ""
-#~ "‏%s در فهرست محلی داخل گروه «%s» است اما در فهرست کارگزار نیست. آیا مایلید "
-#~ "این رفیقتان اضافه شود؟"
-
-#~ msgid ""
-#~ "%s is on the local list but not on the server list. Do you want this "
-#~ "buddy to be added?"
-#~ msgstr ""
-#~ "‏%s در فهرست محلی هست اما در فهرست کارگزار نیست. آیا مایلید این رفیقتان "
-#~ "اضافه شود؟"
-
-#~ msgid "Email Address..."
-#~ msgstr "نشانی پست الکترونیکی..."
-
-#~ msgid "Your new MSN friendly name is too long."
-#~ msgstr "نام دوستانهٔ MSN جدید شما خیلی بلند است."
-
-#~ msgid "Set Friendly Name"
-#~ msgstr "تنظیم نام دوستانه"
-
-#~ msgid "This is the name that other MSN buddies will see you as."
-#~ msgstr "این نامی است که سایر رفقای MSN شما را با آن می‌شناسند."
-
-#~ msgid "Allow"
-#~ msgstr "مجاز"
-
-#~ msgid "Disallow"
-#~ msgstr "غیرمجاز"
-
-#~ msgid "Set your home phone number."
-#~ msgstr "شمارهٔ تلفن منزل‌تان را تنظیم کنید."
-
-#~ msgid "Set your work phone number."
-#~ msgstr "شمارهٔ تلفن محل کارتان را تنظیم کنید."
-
-#~ msgid "Set your mobile phone number."
-#~ msgstr "شمارهٔ تلفن همراه‌تان را تنظیم کنید."
-
-#~ msgid "Allow MSN Mobile pages?"
-#~ msgstr "پی‌جویی تلفن همراه MSN مجاز باشد؟"
-
-#~ msgid ""
-#~ "Do you want to allow or disallow people on your buddy list to send you "
-#~ "MSN Mobile pages to your cell phone or other mobile device?"
-#~ msgstr ""
-#~ "می‌خواهید کسانی که در فهرست رفقایتان هستند بتوانند به تلفن همراه یا دیگر "
-#~ "دستگاه‌های ارتباطی همراهتان پی‌جویی تلفن همراه MSN بفرستند یا نه؟"
-
-#~ msgid "Send a mobile message."
-#~ msgstr "فرستادن پیغام همراه."
-
-#~ msgid "Page"
-#~ msgstr "پی‌جویی"
-
-#~ msgid "Has you"
-#~ msgstr "شما را دارد"
-
-#~ msgid "Home Phone Number"
-#~ msgstr "شمارهٔ تلفن خانه"
-
-#~ msgid "Work Phone Number"
-#~ msgstr "شمارهٔ تلفن محل کار"
-
-#~ msgid "Mobile Phone Number"
-#~ msgstr "شمارهٔ تلفن همراه"
-
-#~ msgid "Be Right Back"
-#~ msgstr "الان برمی‌گردم"
-
-#~ msgid "On the Phone"
-#~ msgstr "پای تلفن"
-
-#~ msgid "Out to Lunch"
-#~ msgstr "بیرون برای ناهار"
-
-#~ msgid "Game Title"
-#~ msgstr "عنوان بازی"
-
-#~ msgid "Set Friendly Name..."
-#~ msgstr "تنظیم نام دوستانه..."
-
-#~ msgid "Set Home Phone Number..."
-#~ msgstr "تنظیم شمارهٔ تلفن منزل..."
-
-#~ msgid "Set Work Phone Number..."
-#~ msgstr "تنظیم شمارهٔ تلفن محل کار..."
-
-#~ msgid "Set Mobile Phone Number..."
-#~ msgstr "تنظیم شمارهٔ تلفن همراه..."
-
-#~ msgid "Enable/Disable Mobile Devices..."
-#~ msgstr "به کار انداختن/از کار انداختن دستگاه‌های همراه..."
-
-#~ msgid "Allow/Disallow Mobile Pages..."
-#~ msgstr "اجازه دادن/ندادن پی‌جویی روی دستگاه‌های همراه..."
-
-#~ msgid "Open Hotmail Inbox"
-#~ msgstr "صندوق نامهٔ هات‌مِیل باز شود"
-
-#~ msgid "Send to Mobile"
-#~ msgstr "فرستادن به تلفن همراه"
-
-#~ msgid ""
-#~ "SSL support is needed for MSN. Please install a supported SSL library."
-#~ msgstr ""
-#~ "پشتیبانی SSL برای MSN لازم است. لطفاً یک کتابخانهٔ SSL پشتیبانی شده نصب "
-#~ "کنید. "
-
-#~ msgid "Error retrieving profile"
-#~ msgstr "خطا هنگام بازیابی شرح حال"
-
-#~ msgid "Occupation"
-#~ msgstr "شغل"
-
-#~ msgid "Hobbies and Interests"
-#~ msgstr "سرگرمی‌ها و علایق"
-
-#~ msgid "A Little About Me"
-#~ msgstr "کمی دربارهٔ خودتان"
-
-#~ msgid "Marital Status"
-#~ msgstr "وضعیت تأهل"
-
-#~ msgid "Interests"
-#~ msgstr "علایق"
-
-#~ msgid "Pets"
-#~ msgstr "حیوانات خانگی"
-
-#~ msgid "Hometown"
-#~ msgstr "زادگاه"
-
-#~ msgid "Places Lived"
-#~ msgstr "شهرهای دیگری که در آنها زندگی کرده‌اید"
-
-#~ msgid "Fashion"
-#~ msgstr "مُد"
-
-#~ msgid "Humor"
-#~ msgstr "خُلق"
-
-#~ msgid "Music"
-#~ msgstr "موسیقی"
-
-#~ msgid "Favorite Quote"
-#~ msgstr "نقل قول محبوب"
-
-#~ msgid "Contact Info"
-#~ msgstr "اطلاعات حساب"
-
-#~ msgid "Personal"
-#~ msgstr "شخصی"
-
-#~ msgid "Significant Other"
-#~ msgstr "مطالب مهم دیگر"
-
-#~ msgid "Home Phone"
-#~ msgstr "تلفن خانه"
-
-#~ msgid "Home Phone 2"
-#~ msgstr "تلفن خانه ۲"
-
-#~ msgid "Personal Mobile"
-#~ msgstr "همراه شخصی"
-
-#~ msgid "Home Fax"
-#~ msgstr "نمابر خانه"
-
-#~ msgid "Personal Email"
-#~ msgstr "پست الکترونیکی شخصی"
-
-#~ msgid "Personal IM"
-#~ msgstr "پیغام اینترنتی شخصی"
-
-#~ msgid "Anniversary"
-#~ msgstr "سالگرد ازدواج"
-
-#~ msgid "Work"
-#~ msgstr "کاری"
-
-#~ msgid "Profession"
-#~ msgstr "حرفه"
-
-#~ msgid "Work Phone"
-#~ msgstr "تلفن محل کار"
-
-#~ msgid "Work Phone 2"
-#~ msgstr "تلفن محل کار ۲"
-
-#~ msgid "Work Mobile"
-#~ msgstr "تلفن همراه کاری"
-
-#~ msgid "Work Pager"
-#~ msgstr "پی‌جوی محل کار"
-
-#~ msgid "Work Fax"
-#~ msgstr "نمابر محل کار"
-
-#~ msgid "Work Email"
-#~ msgstr "پست الکترونیکی کاری"
-
-#~ msgid "Work IM"
-#~ msgstr "پیغام اینترنتی کاری"
-
-#~ msgid "Start Date"
-#~ msgstr "تاریخ شروع"
-
-#~ msgid "Favorite Things"
-#~ msgstr "چیزهای مورد علاقه"
-
-#~ msgid "Last Updated"
-#~ msgstr "آخرین به‌هنگام‌سازی"
-
-#~ msgid "The user has not created a public profile."
-#~ msgstr "کاربر شرح حال عمومی ایجاد نکرده است."
-
-#~ msgid ""
-#~ "MSN reported not being able to find the user's profile. This either means "
-#~ "that the user does not exist, or that the user exists but has not created "
-#~ "a public profile."
-#~ msgstr ""
-#~ "‏MSN گزارش کرد که نمی‌تواند مجموعه تنظیمات کاربر را پیدا کند. این بدین معنا "
-#~ "است که یا کاربر وجود ندارد یا این که کاربر وجود دارد اما شرح حال عمومی‌ای "
-#~ "ایجاد نکرده است."
-
-#~ msgid ""
-#~ "Could not find any information in the user's profile. The user most "
-#~ "likely does not exist."
-#~ msgstr ""
-#~ "اطلاعاتی در شرح حال کاربر پیدا نشد. به احتمال زیاد این کاربر وجود ندارد."
-
-#~ msgid "Windows Live Messenger Protocol Plugin"
-#~ msgstr "متصل‌شونده قرارداد Live Messenger ویندوز"
-
-#~ msgid "Use HTTP Method"
-#~ msgstr "استفاده از روش HTTP"
-
-#~ msgid "Show custom smileys"
-#~ msgstr "نمایش شکلک‌های سفارشی"
-
-#~ msgid "nudge: nudge a user to get their attention"
-#~ msgstr "nudge: به کاربران سقلمه می‌زند تا حواسشان را جمع کنند"
-
-#~ msgid "Unknown error (%d): %s"
-#~ msgstr "خطای نامعلوم (%d):‏ %s"
-
-#~ msgid "Unknown error (%d)"
-#~ msgstr "خطای نامعلوم (%d)"
-
-#~ msgid ""
-#~ "The MSN server will shut down for maintenance in %d minute. You will "
-#~ "automatically be signed out at that time.  Please finish any "
-#~ "conversations in progress.\n"
-#~ "\n"
-#~ "After the maintenance has been completed, you will be able to "
-#~ "successfully sign in."
-#~ msgid_plural ""
-#~ "The MSN server will shut down for maintenance in %d minutes. You will "
-#~ "automatically be signed out at that time.  Please finish any "
-#~ "conversations in progress.\n"
-#~ "\n"
-#~ "After the maintenance has been completed, you will be able to "
-#~ "successfully sign in."
-#~ msgstr[0] ""
-#~ "تا %Id دقیقهٔ دیگر کارگزار MSN برای تعمیر و نگهداری خاموش خواهد شد. در آن "
-#~ "زمان شما به طور خودکار از سیستم خارج خواهید شد. لطفاً گفتگوهای خود را تمام "
-#~ "کنید.\n"
-#~ "\n"
-#~ "پس از پایان فرایند تعمیر و نگهداری، خواهید توانست وارد سیستم شوید."
-
-#~ msgid "Message was not sent because an unknown encoding error occurred."
-#~ msgstr "پیغام فرستاده نشد چون خطای کدگذاریی نامعلومی رخ داد."
-
-#~ msgid "Writing error"
-#~ msgstr "خطای نوشتن"
-
-#~ msgid "Reading error"
-#~ msgstr "خطای خواندن"
-
-#~ msgid ""
-#~ "Connection error from %s server:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "خطای اتصال از کارگزار %s:\n"
-#~ "‏%s"
-
-#~ msgid "Our protocol is not supported by the server"
-#~ msgstr "کارگزار از قرارداد ما پیشتیبانی نمی‌کند"
-
-#~ msgid "Error parsing HTTP"
-#~ msgstr "خطا هنگام تجزیهٔ‌ HTTP"
-
-#~ msgid ""
-#~ "The MSN servers are temporarily unavailable. Please wait and try again."
-#~ msgstr ""
-#~ "کارگزارهای MSN موقتاً قابل دسترسی نیستند. لطفاً پس از کمی صبر دوباره امتحان "
-#~ "کنید."
-
-#~ msgid "Unable to authenticate: %s"
-#~ msgstr "تأیید هویت ممکن نیست: %s"
-
-#~ msgid "Handshaking"
-#~ msgstr "در حال دست دادن"
-
-#~ msgid "Transferring"
-#~ msgstr "در حال انتقال"
-
-#~ msgid "Getting cookie"
-#~ msgstr "در حال گرفتن کوکی"
-
-#~ msgid "Sending cookie"
-#~ msgstr "در حال فرستادن کوکی"
-
-#~ msgid "Retrieving buddy list"
-#~ msgstr "در حال بازیابی فهرست رفقا"
-
-#~ msgid "Away From Computer"
-#~ msgstr "از کنار کامپیوتر رفته است"
-
-#~ msgid "On The Phone"
-#~ msgstr "پای تلفن"
-
-#~ msgid "Out To Lunch"
-#~ msgstr "بیرون برای ناهار"
-
-#~ msgid "Message may have not been sent because a timeout occurred:"
-#~ msgstr "ممکن است پیغام فرستاده نشده باشد چون مدت انتظار منقضی شد:"
-
-#~ msgid "Message could not be sent, not allowed while invisible:"
-#~ msgstr "نمی‌توان پیغام را فرستاد، ارسال پیغام در حین نامرئی بودن مجاز نیست:"
-
-#~ msgid "Message could not be sent because the user is offline:"
-#~ msgstr "نمی‌توان پیغام را فرستاد چون کاربر برون‌خط است:"
-
-#~ msgid "Message could not be sent because a connection error occurred:"
-#~ msgstr "نمی‌توان پیغام را فرستاد چون اتصال دچار خطا شد:"
-
-#~ msgid "Message could not be sent because we are sending too quickly:"
-#~ msgstr "نمی‌توان پیغام را فرستاد چون سرعت ارسال پیغام‌ها خیلی زیاد است:"
-
-#~ msgid ""
-#~ "Message could not be sent because an error with the switchboard occurred:"
-#~ msgstr "نمی‌توان پیغام را فرستاد چون در جعبه تقسیم خطایی رخ داد:"
-
-#~ msgid "Message may have not been sent because an unknown error occurred:"
-#~ msgstr "ممکن است پیغام فرستاده نشده باشد چون خطایی نامعلوم رخ داد:"
-
-#~ msgid "About Me"
-#~ msgstr "دربارهٔ من"
-
-#~ msgid "Mobile Number"
-#~ msgstr "شمارهٔ همراه"
-
-#~ msgid "About"
-#~ msgstr "درباره"
-
-#~ msgid "About..."
-#~ msgstr "دربارهٔ..."
-
-#~ msgid "Unable to access the local file"
-#~ msgstr "دسترسی به پرونده محلی ممکن نیست"
-
-#~ msgid "Unable to save the file"
-#~ msgstr "ذخیرهٔ پرونده ممکن نیست"
-
-#~ msgid "was kicked"
-#~ msgstr "بیرون انداخته شد"
-
-#~ msgid "You have been kicked from this MultiMX."
-#~ msgstr "شما از این MultiMX بیرون انداخته شدید."
-
-#~ msgid "_Room Name:"
-#~ msgstr "نام _اتاق:"
-
-#~ msgid "Loading menu..."
-#~ msgstr "در حال بارگیری منو..."
-
-#~ msgid "Status Message"
-#~ msgstr "پیغام وضعیت"
-
-#~ msgid "No profile available"
-#~ msgstr "هیچ مجموعه تنظیماتی موجود نیست"
-
-#~ msgid "Single"
-#~ msgstr "مجرد"
-
-#~ msgid "Married"
-#~ msgstr "متأهل"
-
-#~ msgid "It's complicated"
-#~ msgstr "پیچیده است"
-
-#~ msgid "Divorced"
-#~ msgstr "مطلقه"
-
-#~ msgid "Invite Message"
-#~ msgstr "پیغام دعوت‌نامه"
-
-#~ msgid "Status Error"
-#~ msgstr "خطای وضعیت"
-
-#~ msgid "Contact Removal Error"
-#~ msgstr "خطای حذف تماس"
-
-#~ msgid "Subscription Error"
-#~ msgstr "خطای اشتراک"
-
-#~ msgid "File Transfer Error"
-#~ msgstr "خطای انتقال پرونده"
-
-#~ msgid "Profile Error"
-#~ msgstr "خطای مجوعه تنظیمات"
-
-#~ msgid "Deleted"
-#~ msgstr "حذف شد"
-
-#~ msgid "MySpace"
-#~ msgstr "MySpace"
-
-#~ msgid "Failed to add buddy"
-#~ msgstr "اضافه کردن رفیق شکست خورد"
-
-#~ msgid "'addbuddy' command failed."
-#~ msgstr "فرمان «addbuddy» شکست خورد"
-
-#~ msgid "'delbuddy' command failed"
-#~ msgstr "فرمان «delbuddy» شکست خورد"
-
-#~ msgid "Send emoticons"
-#~ msgstr "ارسال شکلک‌ها"
-
-#~ msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-#~ msgstr "‏join &lt;room&gt;‎: پیوستن به اتاق گپ در شبکهٔ Yahoo"
-
-#~ msgid "list: List rooms on the Yahoo network"
-#~ msgstr "list: فهرست کردن اتاق‌های شبکهٔ یاهو"
-
-#~ msgid "Yahoo! Protocol Plugin"
-#~ msgstr "متصل‌شونده قرارداد یاهو!"
-
-#~ msgid "Pager port"
-#~ msgstr "درگاه پِی‌جو"
-
-#~ msgid "File transfer server"
-#~ msgstr "کارگزار انتقال پرونده"
-
-#~ msgid "File transfer port"
-#~ msgstr "درگاه انتقال پرونده"
-
-#~ msgid "Chat room locale"
-#~ msgstr "شرایط محلی اتاق گپ"
-
-#~ msgid "Ignore conference and chatroom invitations"
-#~ msgstr "نادیده گرفتن دعوت به کنفرانس‌ها و اتاق‌های گپ"
-
-#~ msgid "Use account proxy for HTTP and HTTPS connections"
-#~ msgstr "استفاده از پیشکار حساب برای اتصال‌های HTTP و HTTPS"
-
-#~ msgid "Chat room list URL"
-#~ msgstr "نشانی اینترنتی فهرست اتاق‌های گپ"
-
-#~ msgid "Yahoo! JAPAN Protocol Plugin"
-#~ msgstr "متصل‌شونده قرارداد یاهو! ژاپن"
-
-#~ msgid "Your Yahoo! message did not get sent."
-#~ msgstr "پیغام‌های Yahoo!‎ شما فرستاده نشد."
-
-#~ msgid "Yahoo! system message for %s:"
-#~ msgstr "پیغام سیستم Yahoo!‎ برای %s:"
-
-#~ msgid "Authorization denied message:"
-#~ msgstr "پیغام رد اجازه:"
-
-#~ msgid ""
-#~ "%s has (retroactively) denied your request to add them to your list for "
-#~ "the following reason: %s."
-#~ msgstr ""
-#~ "‏%s به این دلیل (مثل دفعهٔ قبل) درخواست شما را برای اضافه کردنشان به "
-#~ "فهرستتان رد کرد: %s."
-
-#~ msgid "%s has (retroactively) denied your request to add them to your list."
-#~ msgstr ""
-#~ "‏%s (مثل دفعهٔ قبل) درخواست شما را برای اضافه کردنشان به فهرستتان رد کرد."
-
-#~ msgid "Add buddy rejected"
-#~ msgstr "اضافه کردن رفیق رد شد"
-
-#~ msgid "Failed Yahoo! Authentication"
-#~ msgstr "تأیید هویت Yahoo!‎ شکست خورد"
-
-#~ msgid ""
-#~ "You have tried to ignore %s, but the user is on your buddy list.  "
-#~ "Clicking \"Yes\" will remove and ignore the buddy."
-#~ msgstr ""
-#~ "شما سعی کردید %s را نادیده بگیرید، اما این کاربر در فهرست رفقای شما هست. "
-#~ "با کلیک روی «بله» رفیقتان را حذف کرده و او را نادیده بگیرید."
-
-#~ msgid "Ignore buddy?"
-#~ msgstr "رفیقتان نادیده گرفته شود؟"
-
-#~ msgid ""
-#~ "Unknown error number %d. Logging into the Yahoo! website may fix this."
-#~ msgstr ""
-#~ "خطای نامعلوم با شمارهٔ %d. ورود به وب‌گاه Yahoo!‎ ممکن است این مشکل را برطرف "
-#~ "کند."
-
-#~ msgid "Unable to add buddy to server list"
-#~ msgstr "اضافه کردن رفیق در فهرست کارگزار ممکن نیست"
-
-#~ msgid "Not at Home"
-#~ msgstr "خانه نیستم"
-
-#~ msgid "Not at Desk"
-#~ msgstr "پشت میز نیستم"
-
-#~ msgid "Not in Office"
-#~ msgstr "در دفتر نیستم"
-
-#~ msgid "On Vacation"
-#~ msgstr "در تعطیلات"
-
-#~ msgid "Stepped Out"
-#~ msgstr "یک دقیقه بیرون رفته‌ام"
-
-#~ msgid "Not on server list"
-#~ msgstr "در فهرست کارگزار نیست"
-
-#~ msgid "Appear Permanently Offline"
-#~ msgstr "همیشه به نظر برون‌خط"
-
-#~ msgid "Presence"
-#~ msgstr "حضور"
-
-#~ msgid "Don't Appear Permanently Offline"
-#~ msgstr "همیشه به نظر برون‌خط نباشد"
-
-#~ msgid "Join in Chat"
-#~ msgstr "پیوستن به گپ"
-
-#~ msgid "Initiate Conference"
-#~ msgstr "راه‌اندازی کنفرانس"
-
-#~ msgid "Presence Settings"
-#~ msgstr "تنظیمات حضور"
-
-#~ msgid "Join whom in chat?"
-#~ msgstr "پیوستن به کی در گپ؟"
-
-#~ msgid "Activate ID..."
-#~ msgstr "فعال‌سازی شناسه..."
-
-#~ msgid "Join User in Chat..."
-#~ msgstr "پیوستن به کاربر در گپ..."
-
-#~ msgid "Unable to connect."
-#~ msgstr "نمی‌توان متصل شد"
-
-#~ msgid "Write Error"
-#~ msgstr "خطای نوشتن"
-
-#~ msgid "Yahoo! Japan Profile"
-#~ msgstr "مجموعه تنظیمات Yahoo!‎ ژاپن"
-
-#~ msgid "Yahoo! Profile"
-#~ msgstr "مجموعه تنظیمات Yahoo!‎"
-
-#~ msgid ""
-#~ "Sorry, profiles marked as containing adult content are not supported at "
-#~ "this time."
-#~ msgstr ""
-#~ "ببخشید، شرح حال‌هایی که حاوی مطالب ۱۸ سال به بالا هستند در حال حاضر "
-#~ "پشتیبانی نمی‌شوند."
-
-#~ msgid ""
-#~ "If you wish to view this profile, you will need to visit this link in "
-#~ "your web browser:"
-#~ msgstr ""
-#~ "اگر مایل به دیدن این شرح حال هستید، باید این پیوند را در مرورگر وب‌تان "
-#~ "بازدید کنید"
-
-#~ msgid "Yahoo! ID"
-#~ msgstr "شناسهٔ Yahoo!‎"
-
-#~ msgid "Hobbies"
-#~ msgstr "سرگرمی‌ها"
-
-#~ msgid "Latest News"
-#~ msgstr "آخرین اخبار"
-
-#~ msgid "Home Page"
-#~ msgstr "صفحهٔ آغازه"
-
-#~ msgid "Cool Link 1"
-#~ msgstr "پیوند باحال ۱"
-
-#~ msgid "Cool Link 2"
-#~ msgstr "پیوند باحال ۲"
-
-#~ msgid "Cool Link 3"
-#~ msgstr "پیوند باحال ۳"
-
-#~ msgid "Last Update"
-#~ msgstr "آخرین به هنگام‌رسانی"
-
-#~ msgid ""
-#~ "Could not retrieve the user's profile. This most likely is a temporary "
-#~ "server-side problem. Please try again later."
-#~ msgstr ""
-#~ "نمی‌توان شرح حال کاربر را بازیابی کرد. به احتمال زیاد این مشکلی موقت از "
-#~ "طرف کارگزار است. لطفاً کمی دیرتر دوباره تلاش کنید."
-
-#~ msgid ""
-#~ "Could not retrieve the user's profile. This most likely means that the "
-#~ "user does not exist; however, Yahoo! sometimes does fail to find a user's "
-#~ "profile. If you know that the user exists, please try again later."
-#~ msgstr ""
-#~ "نمی‌توان شرح حال کاربر را بازیابی کرد. به احتمال زیاد این بدین معنی است که "
-#~ "کاربر وجود ندارد؛ هرچند، یاهو بعضی وقت‌ها در پیدا کردن مجموعه تنظیمات "
-#~ "کاربر شکست می‌خورد. اگر می‌دانید کاربر وجود دارد، لطفاً کمی دیرتر دوباره "
-#~ "تلاش کنید."
-
-#~ msgid "The user's profile is empty."
-#~ msgstr "مجموعه تنظیمات کاربر خالی است."
-
-#~ msgid "Failed to join chat"
-#~ msgstr "پیوستن به گپ شکست خورد"
-
-#~ msgid "Unknown room"
-#~ msgstr "اتاق نامعلوم"
-
-#~ msgid "Maybe the room is full"
-#~ msgstr "شاید اتاق پر است"
-
-#~ msgid "Not available"
-#~ msgstr "موجود نیست"
-
-#~ msgid ""
-#~ "Unknown error. You may need to logout and wait five minutes before being "
-#~ "able to rejoin a chatroom"
-#~ msgstr ""
-#~ "خطای نامعلوم. ممکن است لازم باشد از سیستم خارج شده و پنج دقیقه صبر کنید "
-#~ "تا بتوانید به یک اتاق گپ بپیوندید"
-
-#~ msgid "You are now chatting in %s."
-#~ msgstr "شما در حال گپ زدن در %s هستید."
-
-#~ msgid "Failed to join buddy in chat"
-#~ msgstr "پیوستن به رفیق در گپ شکست خورد"
-
-#~ msgid "Maybe they're not in a chat?"
-#~ msgstr "شاید آن‌ها در گپ نیستند؟"
-
-#~ msgid "Fetching the room list failed."
-#~ msgstr "گرفتن فهرست اتاق‌ها شکست خورد."
-
-#~ msgid "Voices"
-#~ msgstr "صداها"
-
-#~ msgid "Webcams"
-#~ msgstr "دوربین‌های وبی"
-
-#~ msgid "Connection problem"
-#~ msgstr "مشکل اتصال"
-
-#~ msgid "Unable to fetch room list."
-#~ msgstr "نمی‌توان فهرست اتاق‌ها را گرفت."
-
-#~ msgid "User Rooms"
-#~ msgstr "اتاق‌های کاربر"
