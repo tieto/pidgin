@@ -1228,13 +1228,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-<<<<<<< working copy
-	STATIC_PRPLS="bonjour facebook gg irc jabber msn mxit novell oscar sametime silc simple yahoo zephyr"
-||||||| base
-	STATIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar sametime silc simple yahoo zephyr"
-=======
 	STATIC_PRPLS="bonjour gg irc jabber novell oscar sametime silc simple zephyr"
->>>>>>> merge rev
 fi
 if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
@@ -1259,32 +1253,8 @@ extern_unload=
 unload_proto=
 for i in $STATIC_PRPLS ; do
 	dnl Ugly special case for "libsilcpurple.la":
-<<<<<<< working copy
 	if test "x$i" = "xsilc"; then
 		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
-||||||| base
-	dnl ... and Ugly special case for multi-protocol oscar and yahoo
-	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.la"
-		extern_init="$extern_init extern gboolean purple_init_aim_plugin();"
-		extern_init="$extern_init extern gboolean purple_init_icq_plugin();"
-		load_proto="$load_proto purple_init_aim_plugin();"
-		load_proto="$load_proto purple_init_icq_plugin();"
-	elif test "x$i" = "xyahoo"; then
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/yahoo/libymsg.la"
-		extern_init="$extern_init extern gboolean purple_init_yahoo_plugin();"
-		extern_init="$extern_init extern gboolean purple_init_yahoojp_plugin();"
-		load_proto="$load_proto purple_init_yahoo_plugin();"
-		load_proto="$load_proto purple_init_yahoojp_plugin();"
-=======
-	dnl ... and Ugly special case for multi-protocol oscar
-	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.la"
-		extern_init="$extern_init extern gboolean purple_init_aim_plugin();"
-		extern_init="$extern_init extern gboolean purple_init_icq_plugin();"
-		load_proto="$load_proto purple_init_aim_plugin();"
-		load_proto="$load_proto purple_init_icq_plugin();"
->>>>>>> merge rev
 	else
 		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.la"
 	fi
@@ -1299,15 +1269,6 @@ for i in $STATIC_PRPLS ; do
 		gg)			static_gg=yes ;;
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
-<<<<<<< working copy
-		msn)		static_msn=yes ;;
-		mxit)		static_mxit=yes ;;
-||||||| base
-		msn)		static_msn=yes ;;
-		myspace)	static_myspace=yes ;;
-		mxit)		static_mxit=yes ;;
-=======
->>>>>>> merge rev
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
 		aim)		static_oscar=yes ;;
@@ -1324,15 +1285,6 @@ AM_CONDITIONAL(STATIC_FACEBOOK, test "x$static_facebook" = "xyes")
 AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
 AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
-<<<<<<< working copy
-AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
-AM_CONDITIONAL(STATIC_MXIT, test "x$static_mxit" = "xyes")
-||||||| base
-AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
-AM_CONDITIONAL(STATIC_MYSPACE, test "x$static_myspace" = "xyes")
-AM_CONDITIONAL(STATIC_MXIT, test "x$static_mxit" = "xyes")
-=======
->>>>>>> merge rev
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
@@ -1347,13 +1299,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_UNLOAD, $extern_unload static void static_proto_
 
 AC_ARG_WITH(dynamic_prpls, [AS_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-<<<<<<< working copy
-	DYNAMIC_PRPLS="bonjour facebook gg irc jabber msn mxit novell oscar sametime silc simple yahoo zephyr"
-||||||| base
-	DYNAMIC_PRPLS="bonjour gg irc jabber msn myspace mxit novell oscar sametime silc simple yahoo zephyr"
-=======
 	DYNAMIC_PRPLS="bonjour gg irc jabber novell oscar sametime silc simple zephyr"
->>>>>>> merge rev
 fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
@@ -1378,15 +1324,6 @@ for i in $DYNAMIC_PRPLS ; do
 		gg)			dynamic_gg=yes ;;
 		irc)		dynamic_irc=yes ;;
 		jabber)		dynamic_jabber=yes ;;
-<<<<<<< working copy
-		msn)		dynamic_msn=yes ;;
-		mxit)		dynamic_mxit=yes ;;
-||||||| base
-		msn)		dynamic_msn=yes ;;
-		myspace)	dynamic_myspace=yes ;;
-		mxit)		dynamic_mxit=yes ;;
-=======
->>>>>>> merge rev
 		novell)		dynamic_novell=yes ;;
 		null)		dynamic_null=yes ;;
 		oscar)		dynamic_oscar=yes ;;
