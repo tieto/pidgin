@@ -593,7 +593,56 @@ void purple_conversation_set_ui_data(PurpleConversation *conv, gpointer ui_data)
  *         This is a convenience field provided to the UIs--it is not
  *         used by the libpurple core.
  */
+<<<<<<< working copy
 gpointer purple_conversation_get_ui_data(const PurpleConversation *conv);
+||||||| base
+void purple_conv_im_stop_typing_timeout(PurpleConvIm *im);
+
+/**
+ * Returns the IM's typing timeout.
+ *
+ * @param im The IM.
+ *
+ * @return The timeout.
+ */
+guint purple_conv_im_get_typing_timeout(const PurpleConvIm *im);
+
+/**
+ * Sets the quiet-time when no PURPLE_TYPING messages will be sent.
+ * Few protocols need this (maybe only MSN).  If the user is still
+ * typing after this quiet-period, then another PURPLE_TYPING message
+ * will be sent.
+ *
+ * @param im  The IM.
+ * @param val The number of seconds to wait before allowing another
+ *            PURPLE_TYPING message to be sent to the user.  Or 0 to
+ *            not send another PURPLE_TYPING message.
+ */
+void purple_conv_im_set_type_again(PurpleConvIm *im, unsigned int val);
+=======
+void purple_conv_im_stop_typing_timeout(PurpleConvIm *im);
+
+/**
+ * Returns the IM's typing timeout.
+ *
+ * @param im The IM.
+ *
+ * @return The timeout.
+ */
+guint purple_conv_im_get_typing_timeout(const PurpleConvIm *im);
+
+/**
+ * Sets the quiet-time when no PURPLE_TYPING messages will be sent.
+ * Few protocols need this.  If the user is still typing after this
+ * quiet-period, then another PURPLE_TYPING message will be sent.
+ *
+ * @param im  The IM.
+ * @param val The number of seconds to wait before allowing another
+ *            PURPLE_TYPING message to be sent to the user.  Or 0 to
+ *            not send another PURPLE_TYPING message.
+ */
+void purple_conv_im_set_type_again(PurpleConvIm *im, unsigned int val);
+>>>>>>> merge rev
 
 /**
  * purple_conversation_send_confirm:

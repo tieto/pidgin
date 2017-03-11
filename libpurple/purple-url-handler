@@ -252,30 +252,6 @@ def irc(uri):
                    params.get("msg"))
 
 
-def msnim(uri):
-    protocol = "prpl-msn"
-    match = re.match(r"^msnim:([^?]*)(\?(.*))", uri)
-    if not match:
-        print("Invalid msnim URI: %s" % (uri, ))
-        return
-
-    command = unquote_plus(match.group(1))
-    paramstring = match.group(3)
-    params = {}
-    if paramstring:
-        for param in paramstring.split("&"):
-            key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = unquote_plus(value)
-    screenname = params.get("contact", "")
-
-    account = findaccount(protocol)
-
-    if command.lower() == "chat":
-        goim(account, screenname)
-    elif command.lower() == "add":
-        addbuddy(account, screenname)
-
-
 def sip(uri):
     protocol = "prpl-simple"
     match = re.match(r"^sip:(.*)", uri)
@@ -358,32 +334,6 @@ def gtalk(uri):
         goim(account, jid)
 
 
-def ymsgr(uri):
-    protocol = "prpl-yahoo"
-    match = re.match(r"^ymsgr:([^?]*)(\?([^&]*)(&(.*))?)", uri)
-    if not match:
-        print("Invalid ymsgr URI: %s" % (uri, ))
-        return
-
-    command = unquote_plus(match.group(1))
-    screenname = unquote_plus(match.group(3))
-    paramstring = match.group(5)
-    params = {}
-    if paramstring:
-        for param in paramstring.split("&"):
-            key, value = extendlist(param.split("=", 1), 2, "")
-            params[key] = unquote_plus(value)
-
-    account = findaccount(protocol)
-
-    if command.lower() == "sendim":
-        goim(account, screenname, params.get("m"))
-    elif command.lower() == "chat":
-        gochat(account, {"room": screenname})
-    elif command.lower() == "addfriend":
-        addbuddy(account, screenname)
-
-
 def main(argv=sys.argv):
     if len(argv) != 2 or argv[1] == "--help" or argv[1] == "-h":
         print("Usage: %s URI" % (argv[0], ))
@@ -406,16 +356,12 @@ def main(argv=sys.argv):
             icq(uri)
         elif type == "irc":
             irc(uri)
-        elif type == "msnim":
-            msnim(uri)
         elif type == "sip":
             sip(uri)
         elif type == "xmpp":
             xmpp(uri)
         elif type == "gtalk":
             gtalk(uri)
-        elif type == "ymsgr":
-            ymsgr(uri)
         else:
             print("Unknown protocol: %s" % (type, ))
     except dbus.DBusException as e:

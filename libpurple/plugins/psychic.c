@@ -21,7 +21,7 @@
 #define PLUGIN_SUMMARY  N_("Psychic mode for incoming conversation")
 #define PLUGIN_DESC     N_("Causes conversation windows to appear as other" \
 			   " users begin to message you.  This works for" \
-			   " AIM, ICQ, XMPP, Sametime, and Yahoo!")
+			   " AIM, ICQ, XMPP, and Sametime")
 #define PLUGIN_AUTHORS  { "Christopher O'Brien <siege@preoccupied.net>", NULL }
 
 

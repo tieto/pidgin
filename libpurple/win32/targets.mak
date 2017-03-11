@@ -22,7 +22,7 @@ $(PURPLE_VERSION_H): $(PURPLE_VERSION_H).in $(PIDGIN_TREE_TOP)/configure.ac
 
 $(PIDGIN_REVISION_RAW_TXT):
 	@echo -e "  GEN\t$@"
-	@(hg --cwd $(PIDGIN_TREE_TOP) id -i --debug) 2>/dev/null >$@ \
+	@(hg --cwd $(PIDGIN_TREE_TOP) log -r . -T '{node}') 2>/dev/null >$@ \
 	|| rm -f $@
 
 $(PIDGIN_REVISION_H): $(PIDGIN_REVISION_RAW_TXT)

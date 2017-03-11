@@ -1373,18 +1373,29 @@ purple_markup_unescape_entity(const char *text, int *length)
 		pln = "\302\256";      /* or use g_unichar_to_utf8(0xae); */
 	else if(IS_ENTITY("&apos;"))
 		pln = "\'";
-	else if(*(text+1) == '#' &&
-			(sscanf(text, "&#%u%1[;]", &pound, temp) == 2 ||
-			 sscanf(text, "&#x%x%1[;]", &pound, temp) == 2) &&
-			pound != 0) {
+	else if(text[1] == '#' && g_ascii_isxdigit(text[2])) {
 		static char buf[7];
-		int buflen = g_unichar_to_utf8((gunichar)pound, buf);
+		const char *start = text + 2;
+		char *end;
+		guint64 pound;
+		int base = 10;
+		int buflen;
+
+		if (*start == 'x') {
+			base = 16;
+			start++;
+		}
+
+		pound = g_ascii_strtoull(start, &end, base);
+		if (pound == 0 || pound > INT_MAX || *end != ';') {
+			return NULL;
+		}
+
+		len = (end - text) + 1;
+
+		buflen = g_unichar_to_utf8((gunichar)pound, buf);
 		buf[buflen] = '\0';
 		pln = buf;
-
-		len = (*(text+2) == 'x' ? 3 : 2);
-		while(isxdigit((gint) text[len])) len++;
-		if(text[len] == ';') len++;
 	}
 	else
 		return NULL;
@@ -2286,7 +2297,6 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
  * - \n should be converted to a normal space
  * - in addition to <br>, <p> and <div> etc. should also be converted into \n
  * - We want to turn </td>#whitespace<td> sequences into a single tab
- * - We want to turn <td> into a single tab (for msn profile "parsing")
  * - We want to turn </tr>#whitespace<tr> sequences into a single \n
  * - <script>...</script> and <style>...</style> should be completely removed
  */
