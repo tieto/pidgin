@@ -2246,16 +2246,7 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/protocols/gg/Makefile
 		   libpurple/protocols/irc/Makefile
 		   libpurple/protocols/jabber/Makefile
-<<<<<<< working copy
 		   libpurple/protocols/jabber/tests/Makefile
-		   libpurple/protocols/msn/Makefile
-		   libpurple/protocols/mxit/Makefile
-||||||| base
-		   libpurple/protocols/msn/Makefile
-		   libpurple/protocols/myspace/Makefile
-		   libpurple/protocols/mxit/Makefile
-=======
->>>>>>> merge rev
 		   libpurple/protocols/novell/Makefile
 		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile
@@ -2263,13 +2254,6 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/protocols/sametime/Makefile
 		   libpurple/protocols/silc/Makefile
 		   libpurple/protocols/simple/Makefile
-<<<<<<< working copy
-		   libpurple/protocols/yahoo/Makefile
-		   libpurple/protocols/yahoo/tests/Makefile
-||||||| base
-		   libpurple/protocols/yahoo/Makefile
-=======
->>>>>>> merge rev
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
 		   libpurple/purple.h
