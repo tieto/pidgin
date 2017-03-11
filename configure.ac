@@ -1228,7 +1228,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="bonjour gg irc jabber novell oscar sametime silc simple zephyr"
+	STATIC_PRPLS="bonjour facebook gg irc jabber novell oscar sametime silc simple zephyr"
 fi
 if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
@@ -1299,7 +1299,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_UNLOAD, $extern_unload static void static_proto_
 
 AC_ARG_WITH(dynamic_prpls, [AS_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="bonjour gg irc jabber novell oscar sametime silc simple zephyr"
+	DYNAMIC_PRPLS="bonjour facebook gg irc jabber novell oscar sametime silc simple zephyr"
 fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
