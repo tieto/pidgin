@@ -20,7 +20,7 @@ DEB_CONFIGURE_EXTRA_FLAGS = --disable-gevolution --disable-kwallet \
 	    --enable-nss=yes --enable-cyrus-sasl --enable-vv \
 	    --enable-tcl --enable-tk --enable-unity \
 	    --disable-libgadu \
-	    --with-dynamic-prpls=bonjour,gg,irc,jabber,msn,mxit,novell,oscar,sametime,simple,yahoo # disable silc
+	    --with-dynamic-prpls=bonjour,gg,irc,jabber,novell,oscar,sametime,simple # disable silc
 ifeq ($(DEB_BUILD_ARCH_OS),linux)
   DEB_CONFIGURE_EXTRA_FLAGS += --enable-nm
 else
@@ -31,16 +31,14 @@ endif
 DEB_INSTALL_DOCS_ALL := -XAUTHORS -XNEWS -XREADME
 
 DEB_DH_MAKESHLIBS_ARGS_pidgin := -V -X/usr/lib/pidgin
-DEB_DH_SHLIBDEPS_ARGS_pidgin := -X/usr/lib/pidgin/cap.so -- -dSuggests debian/pidgin/usr/lib/pidgin/cap.so -dDepends
 DEB_PERL_INCLUDE_pidgin := -d /usr/lib/pidgin/perl
 
 # finch package
 DEB_DH_MAKESHLIBS_ARGS_finch := -V -X/usr/lib/finch
-DEB_DH_SHLIBDEPS_ARGS_finch := -X/usr/lib/finch/gntclipboard.so -X/usr/lib/finch/gntgf.so -- -dSuggests debian/finch/usr/lib/finch/gntclipboard.so debian/finch/usr/lib/finch/gntgf.so -dDepends
+DEB_DH_SHLIBDEPS_ARGS_finch := -X/usr/lib/finch-3/gntclipboard.so -X/usr/lib/finch-3/gntgf.so -- -dSuggests debian/finch/usr/lib/finch-3/gntclipboard.so debian/finch/usr/lib/finch-3/gntgf.so -dDepends
 
 # libpurple package
 DEB_DH_MAKESHLIBS_ARGS_libpurple0 := -X/usr/lib/purple-2
-DEB_DH_SHLIBDEPS_ARGS_libpurple0 := -X/usr/lib/purple-2/tcl.so -- -dSuggests debian/libpurple0/usr/lib/purple-2/tcl.so -dDepends
 DEB_PERL_INCLUDE_libpurple0 := -d /usr/lib/purple-2/perl
 
 # for pidgin-dev, extra documentation is installed manually below
