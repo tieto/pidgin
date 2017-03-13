@@ -32,7 +32,7 @@ DEB_PERL_INCLUDE_pidgin := -d /usr/lib/pidgin/perl
 
 # finch package
 DEB_DH_MAKESHLIBS_ARGS_finch := -V -X/usr/lib/finch
-DEB_DH_SHLIBDEPS_ARGS_finch := -X/usr/lib/finch/gntclipboard.so -X/usr/lib/finch/gntgf.so -- -dSuggests debian/finch/usr/lib/finch/gntclipboard.so debian/finch/usr/lib/finch/gntgf.so -dDepends
+DEB_DH_SHLIBDEPS_ARGS_finch := -X/usr/lib/finch-3/gntclipboard.so -X/usr/lib/finch-3/gntgf.so -- -dSuggests debian/finch/usr/lib/finch-3/gntclipboard.so debian/finch/usr/lib/finch-3/gntgf.so -dDepends
 
 # libpurple package
 DEB_DH_MAKESHLIBS_ARGS_libpurple0 := -X/usr/lib/purple-2
