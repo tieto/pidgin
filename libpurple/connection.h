@@ -423,9 +423,10 @@ PurpleProtocol *purple_connection_get_protocol(const PurpleConnection *gc);
  * purple_connection_get_password:
  * @gc: The connection.
  *
- * Returns the connection's password.
+ * For legacy support, this fetches the account password when there
+ * is no connection password available and returns that.
  *
- * Returns: The connection's password.
+ * Returns: The connection's password or account's password.
  */
 const char *purple_connection_get_password(const PurpleConnection *gc);
 
