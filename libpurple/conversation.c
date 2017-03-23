@@ -61,7 +61,7 @@ static guint _purple_conversations_hconv_equal(struct _purple_hconv *hc1, struct
 {
 	return (hc1->type == hc2->type &&
 	        hc1->account == hc2->account &&
-	        g_str_equal(hc1->name, hc2->name));
+	        purple_strequal(hc1->name, hc2->name));
 }
 
 static void _purple_conversations_hconv_free_key(struct _purple_hconv *hc)

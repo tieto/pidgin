@@ -448,7 +448,7 @@ add_protocol_options(AccountEditDialog *dialog)
 					PurpleKeyValuePair *kvp = opt_iter->data;
 					gnt_combo_box_add_data(GNT_COMBO_BOX(combo), kvp->value, kvp->key);
 
-					if (g_str_equal(kvp->value, active))
+					if (purple_strequal(kvp->value, active))
 						gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), kvp->value);
 				}
 			}

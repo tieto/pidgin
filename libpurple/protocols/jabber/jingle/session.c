@@ -385,7 +385,7 @@ static gboolean find_by_jid_ghr(gpointer key,
 	gchar *cmp_jid = use_bare ? jabber_get_bare_jid(remote_jid)
 				  : g_strdup(remote_jid);
 	g_free(remote_jid);
-	if (g_str_equal(jid, cmp_jid)) {
+	if (purple_strequal(jid, cmp_jid)) {
 		g_free(cmp_jid);
 		return TRUE;
 	}
@@ -515,7 +515,7 @@ jingle_session_find_content(JingleSession *session, const gchar *name, const gch
 	for (; iter; iter = g_list_next(iter)) {
 		JingleContent *content = iter->data;
 		gchar *cname = jingle_content_get_name(content);
-		gboolean result = g_str_equal(name, cname);
+		gboolean result = purple_strequal(name, cname);
 		g_free(cname);
 
 		if (creator != NULL) {
@@ -542,7 +542,7 @@ jingle_session_find_pending_content(JingleSession *session, const gchar *name, c
 	for (; iter; iter = g_list_next(iter)) {
 		JingleContent *content = iter->data;
 		gchar *cname = jingle_content_get_name(content);
-		gboolean result = g_str_equal(name, cname);
+		gboolean result = purple_strequal(name, cname);
 		g_free(cname);
 
 		if (creator != NULL) {

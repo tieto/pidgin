@@ -8238,7 +8238,7 @@ pidgin_blist_update_sort_methods(void)
 	for (l = pidgin_blist_sort_methods; l; l = l->next) {
 		method = (PidginBlistSortMethod *) l->data;
 		menuitem = gtk_radio_menu_item_new_with_label(sl, _(method->name));
-		if (g_str_equal(m, method->id))
+		if (purple_strequal(m, method->id))
 			activeitem = menuitem;
 		sl = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
 		gtk_menu_shell_append(GTK_MENU_SHELL(sortmenu), menuitem);

@@ -69,7 +69,7 @@ str_to_presence_type(const char *type)
 		return JABBER_PRESENCE_AVAILABLE;
 
 	for (i = 0; i < G_N_ELEMENTS(jabber_presence_types); ++i)
-		if (g_str_equal(type, jabber_presence_types[i].name))
+		if (purple_strequal(type, jabber_presence_types[i].name))
 			return jabber_presence_types[i].type;
 
 	purple_debug_warning("jabber", "Unknown presence type '%s'\n", type);
@@ -591,7 +591,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 		}
 
 		if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(110)) ||
-				g_str_equal(presence->jid_from->resource, chat->handle) ||
+				purple_strequal(presence->jid_from->resource, chat->handle) ||
 				purple_strequal(presence->to, jid))
 			is_our_resource = TRUE;
 
@@ -620,9 +620,9 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 		if (purple_strequal(affiliation, "owner"))
 			flags |= PURPLE_CBFLAGS_FOUNDER;
 		if (role) {
-			if (g_str_equal(role, "moderator"))
+			if (purple_strequal(role, "moderator"))
 				flags |= PURPLE_CBFLAGS_OP;
-			else if (g_str_equal(role, "participant"))
+			else if (purple_strequal(role, "participant"))
 				flags |= PURPLE_CBFLAGS_VOICE;
 		}
 
@@ -669,7 +669,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 			return FALSE;
 		}
 
-		is_our_resource = g_str_equal(presence->jid_from->resource, chat->handle);
+		is_our_resource = purple_strequal(presence->jid_from->resource, chat->handle);
 
 		jabber_buddy_remove_resource(presence->jb, presence->jid_from->resource);
 
@@ -698,7 +698,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 				} else {
 					nick_change = TRUE;
 
-					if (g_str_equal(presence->jid_from->resource, chat->handle)) {
+					if (purple_strequal(presence->jid_from->resource, chat->handle)) {
 						/* Changing our own nickname */
 						g_free(chat->handle);
 						/* TODO: This should be resourceprep'd */
@@ -1051,8 +1051,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 			/* Look it up if we don't already have all this information */
 			if (!jbr || !jbr->caps.info ||
-					!g_str_equal(node, jbr->caps.info->tuple.node) ||
-					!g_str_equal(ver, jbr->caps.info->tuple.ver) ||
+					!purple_strequal(node, jbr->caps.info->tuple.node) ||
+					!purple_strequal(ver, jbr->caps.info->tuple.ver) ||
 					!purple_strequal(hash, jbr->caps.info->tuple.hash) ||
 					!jabber_caps_exts_known(jbr->caps.info, (gchar **)exts)) {
 				JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);

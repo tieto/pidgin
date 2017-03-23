@@ -386,9 +386,9 @@ jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
                  const char *id, xmlnode *child)
 {
 	const char *name = child->name;
-	gboolean data  = g_str_equal(name, "data");
-	gboolean close = g_str_equal(name, "close");
-	gboolean open  = g_str_equal(name, "open");
+	gboolean data  = purple_strequal(name, "data");
+	gboolean close = purple_strequal(name, "close");
+	gboolean open  = purple_strequal(name, "open");
 	const gchar *sid = (data || close) ?
 		xmlnode_get_attrib(child, "sid") : NULL;
 	JabberIBBSession *sess =

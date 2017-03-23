@@ -415,7 +415,7 @@ pref_sound_generate_markup(void)
 		do {
 			gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &iter, 2, &name, -1);
 
-			print_custom = customized && name && g_str_equal(current_theme, name);
+			print_custom = customized && name && purple_strequal(current_theme, name);
 
 			if (!name || *name == '\0') {
 				g_free(name);
@@ -504,7 +504,7 @@ prefs_set_active_theme_combo(GtkWidget *combo_box, GtkListStore *store, const gc
 		do {
 			gtk_tree_model_get(GTK_TREE_MODEL(store), &iter, 2, &theme, -1);
 
-			if (g_str_equal(current_theme, theme)) {
+			if (purple_strequal(current_theme, theme)) {
 				gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo_box), &iter);
 				unset = FALSE;
 			}
@@ -667,7 +667,7 @@ theme_install_theme(char *path, struct theme_info *info)
 	/* Just to be safe */
 	g_strchomp(path);
 
-	if ((is_smiley_theme = g_str_equal(info->type, "smiley")))
+	if ((is_smiley_theme = purple_strequal(info->type, "smiley")))
 		destdir = g_build_filename(purple_user_dir(), "smileys", NULL);
 	else
 		destdir = g_build_filename(purple_user_dir(), "themes", "temp", NULL);
@@ -1016,7 +1016,7 @@ prefs_set_blist_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_blist_themes), &iter, 2, &name, -1);
 
-		if(!name || !g_str_equal(name, ""))
+		if(!name || !purple_strequal(name, ""))
 			theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(name, "blist"));
 
 		g_free(name);
@@ -1037,7 +1037,7 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_status_icon_themes), &iter, 2, &name, -1);
 
-		if(!name || !g_str_equal(name, ""))
+		if(!name || !purple_strequal(name, ""))
 			theme = PIDGIN_STATUS_ICON_THEME(purple_theme_manager_find_theme(name, "status-icon"));
 
 		g_free(name);

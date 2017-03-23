@@ -745,7 +745,7 @@ oscar_login(PurpleAccount *account)
 	}
 
 	gc->flags |= PURPLE_CONNECTION_HTML;
-	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq")) {
+	if (purple_strequal(purple_account_get_protocol_id(account), "prpl-icq")) {
 		od->icq = TRUE;
 	} else {
 		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
@@ -753,7 +753,7 @@ oscar_login(PurpleAccount *account)
 
 	/* Set this flag based on the protocol_id rather than the username,
 	   because that is what's tied to the get_moods prpl callback. */
-	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-icq"))
+	if (purple_strequal(purple_account_get_protocol_id(account), "prpl-icq"))
 		gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS;
 
 	od->default_port = purple_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
@@ -5847,7 +5847,7 @@ void oscar_init(PurplePlugin *plugin, gboolean is_icq)
 		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
-	if (g_str_equal(purple_plugin_get_id(plugin), "prpl-aim")) {
+	if (purple_strequal(purple_plugin_get_id(plugin), "prpl-aim")) {
 		option = purple_account_option_bool_new(_("Allow multiple simultaneous logins"), "allow_multiple_logins",
 												OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
 		prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);

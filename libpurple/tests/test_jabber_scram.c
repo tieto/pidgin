@@ -70,7 +70,7 @@ END_TEST
 	\
 	ret = jabber_scram_feed_parser(data, challenge1, &out); \
 	fail_unless(ret == TRUE); \
-	fail_unless(g_str_equal(out, response1), "Got unexpected response to challenge. Expected %s, got %s", response1, out); \
+	fail_unless(purple_strequal(out, response1), "Got unexpected response to challenge. Expected %s, got %s", response1, out); \
 	g_free(out); \
 	\
 	data->step = 2; \

@@ -228,7 +228,7 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 	 */
 	{
 		const gchar *connection_security = purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS);
-		if (!g_str_equal(connection_security, "none") &&
+		if (!purple_strequal(connection_security, "none") &&
 				purple_ssl_is_supported()) {
 			jabber_send_raw(js,
 					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
@@ -253,7 +253,7 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 		return TRUE;
 	}
 
-	if (g_str_equal("require_tls", purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
+	if (purple_strequal("require_tls", purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
 		purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("You require encryption, but no TLS/SSL support was found."));
@@ -274,7 +274,7 @@ void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 			jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING_ENCRYPTION);
 			return;
 		}
-	} else if (g_str_equal(connection_security, "require_tls") && !jabber_stream_is_ssl(js)) {
+	} else if (purple_strequal(connection_security, "require_tls") && !jabber_stream_is_ssl(js)) {
 		purple_connection_error_reason(js->gc,
 			 PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 			_("You require encryption, but it is not available on this server."));
@@ -348,26 +348,26 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 	} else if(!strcmp((*packet)->name, "message")) {
 		jabber_message_parse(js, *packet);
 	} else if (purple_strequal(xmlns, NS_XMPP_STREAMS)) {
-		if (g_str_equal(name, "features"))
+		if (purple_strequal(name, "features"))
 			jabber_stream_features_parse(js, *packet);
-		else if (g_str_equal(name, "error"))
+		else if (purple_strequal(name, "error"))
 			jabber_stream_handle_error(js, *packet);
 	} else if (purple_strequal(xmlns, NS_XMPP_SASL)) {
 		if (js->state != JABBER_STREAM_AUTHENTICATING)
 			purple_debug_warning("jabber", "Ignoring spurious SASL stanza %s\n", name);
 		else {
-			if (g_str_equal(name, "challenge"))
+			if (purple_strequal(name, "challenge"))
 				jabber_auth_handle_challenge(js, *packet);
-			else if (g_str_equal(name, "success"))
+			else if (purple_strequal(name, "success"))
 				jabber_auth_handle_success(js, *packet);
-			else if (g_str_equal(name, "failure"))
+			else if (purple_strequal(name, "failure"))
 				jabber_auth_handle_failure(js, *packet);
 		}
 	} else if (purple_strequal(xmlns, NS_XMPP_TLS)) {
 		if (js->state != JABBER_STREAM_INITIALIZING_ENCRYPTION || js->gsc)
 			purple_debug_warning("jabber", "Ignoring spurious %s\n", name);
 		else {
-			if (g_str_equal(name, "proceed"))
+			if (purple_strequal(name, "proceed"))
 				tls_init(js);
 			/* TODO: Handle <failure/>, I guess? */
 		}
@@ -602,9 +602,9 @@ void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
 		return;
 
 	if (js->bosh)
-		if (g_str_equal((*packet)->name, "message") ||
-				g_str_equal((*packet)->name, "iq") ||
-				g_str_equal((*packet)->name, "presence"))
+		if (purple_strequal((*packet)->name, "message") ||
+				purple_strequal((*packet)->name, "iq") ||
+				purple_strequal((*packet)->name, "presence"))
 			xmlnode_set_namespace(*packet, NS_XMPP_CLIENT);
 	txt = xmlnode_to_str(*packet, &len);
 	jabber_send_raw(js, txt, len);
@@ -1050,7 +1050,7 @@ jabber_stream_connect(JabberStream *js)
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
-	if (g_str_equal("old_ssl", purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
+	if (purple_strequal("old_ssl", purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
 		if(purple_ssl_is_supported()) {
 			js->gsc = purple_ssl_connect(account, js->certificate_CN,
 					purple_account_get_int(account, "port", 5223),
@@ -1094,7 +1094,7 @@ jabber_login(PurpleAccount *account)
 		return;
 
 	/* TODO: Remove this at some point.  Added 2010-02-14 (v2.6.6) */
-	if (g_str_equal("proxy.jabber.org", purple_account_get_string(account, "ft_proxies", "")))
+	if (purple_strequal("proxy.jabber.org", purple_account_get_string(account, "ft_proxies", "")))
 		purple_account_set_string(account, "ft_proxies", JABBER_DEFAULT_FT_PROXIES);
 
 	/*
@@ -1817,7 +1817,7 @@ void jabber_blocklist_parse_push(JabberStream *js, const char *from,
 	}
 
 	account = purple_connection_get_account(js->gc);
-	is_block = g_str_equal(child->name, "block");
+	is_block = purple_strequal(child->name, "block");
 
 	item = xmlnode_get_child(child, "item");
 	if (!is_block && item == NULL) {
@@ -2055,8 +2055,8 @@ void jabber_add_identity(const gchar *category, const gchar *type,
 	/* Check if this identity is already there... */
 	for (identity = jabber_identities; identity; identity = identity->next) {
 		JabberIdentity *id = identity->data;
-		if (g_str_equal(id->category, category) &&
-			g_str_equal(id->type, type) &&
+		if (purple_strequal(id->category, category) &&
+			purple_strequal(id->type, type) &&
 			purple_strequal(id->lang, lang))
 			return;
 	}

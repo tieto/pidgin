@@ -167,7 +167,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		JabberSaslMech *possible = l->data;
 
 		/* Is this the Cyrus SASL mechanism? */
-		if (g_str_equal(possible->name, "*")) {
+		if (purple_strequal(possible->name, "*")) {
 			js->auth_mech = possible;
 			break;
 		}
@@ -224,7 +224,7 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
 		/* FIXME: Why is this not in jabber_parse_error? */
 		if((error = xmlnode_get_child(packet, "error")) &&
 					(err_code = xmlnode_get_attrib(error, "code")) &&
-					g_str_equal(err_code, "401")) {
+					purple_strequal(err_code, "401")) {
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			/* Clear the pasword if it isn't being saved */
 			if (!purple_account_get_remember_password(account))
@@ -343,7 +343,7 @@ void jabber_auth_start_old(JabberStream *js)
 	 * is requiring SSL/TLS, we need to enforce it.
 	 */
 	if (!jabber_stream_is_ssl(js) &&
-			g_str_equal("require_tls",
+			purple_strequal("require_tls",
 				purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
 		purple_connection_error_reason(js->gc,
 			PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,

@@ -1019,7 +1019,7 @@ static PurpleAccount* check_active_accounts_for_identical_statuses(void)
 		PurpleAccount *acct2 = iter->data;
 		GList *s1, *s2;
 
-		if (!g_str_equal(prpl1, purple_account_get_protocol_id(acct2))) {
+		if (!purple_strequal(prpl1, purple_account_get_protocol_id(acct2))) {
 			acct1 = NULL;
 			break;
 		}
@@ -2383,7 +2383,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 			acct_status_type = find_status_type_by_index(status_box->token_status_account, active);
 			id = purple_status_type_get_id(acct_status_type);
 
-			if (g_str_equal(id, purple_status_get_id(status)) &&
+			if (purple_strequal(id, purple_status_get_id(status)) &&
 				purple_strequal(message, purple_status_get_attr_string(status, "message")))
 			{
 				/* Selected status and previous status is the same */
@@ -2483,7 +2483,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 		status_type = find_status_type_by_index(status_box->account, active);
 		id = purple_status_type_get_id(status_type);
 
-		if (g_str_equal(id, purple_status_get_id(status)) &&
+		if (purple_strequal(id, purple_status_get_id(status)) &&
 			purple_strequal(message, purple_status_get_attr_string(status, "message")))
 		{
 			/* Selected status and previous status is the same */

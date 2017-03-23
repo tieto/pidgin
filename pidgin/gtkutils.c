@@ -2433,10 +2433,10 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 
 				purple_debug_info("buddyicon", "Converting buddy icon to %s\n", prpl_formats[i]);
 
-				if (g_str_equal(prpl_formats[i], "png")) {
+				if (purple_strequal(prpl_formats[i], "png")) {
 					key = "compression";
 					value = "9";
-				} else if (g_str_equal(prpl_formats[i], "jpeg")) {
+				} else if (purple_strequal(prpl_formats[i], "jpeg")) {
 					sprintf(tmp_buf, "%u", quality);
 					key = "quality";
 					value = tmp_buf;
@@ -2477,7 +2477,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 
 				g_free(contents);
 
-				if (!g_str_equal(prpl_formats[i], "jpeg")) {
+				if (!purple_strequal(prpl_formats[i], "jpeg")) {
 					/* File size was too big and we can't lower the quality,
 					   so skip to the next image type. */
 					break;

@@ -228,17 +228,17 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 			continue;
 
 		if(subscription) {
-			if (g_str_equal(subscription, "remove"))
+			if (purple_strequal(subscription, "remove"))
 				jb->subscription = JABBER_SUB_REMOVE;
 			else if (jb == js->user_jb)
 				jb->subscription = JABBER_SUB_BOTH;
-			else if (g_str_equal(subscription, "none"))
+			else if (purple_strequal(subscription, "none"))
 				jb->subscription = JABBER_SUB_NONE;
-			else if (g_str_equal(subscription, "to"))
+			else if (purple_strequal(subscription, "to"))
 				jb->subscription = JABBER_SUB_TO;
-			else if (g_str_equal(subscription, "from"))
+			else if (purple_strequal(subscription, "from"))
 				jb->subscription = JABBER_SUB_FROM;
-			else if (g_str_equal(subscription, "both"))
+			else if (purple_strequal(subscription, "both"))
 				jb->subscription = JABBER_SUB_BOTH;
 		}
 

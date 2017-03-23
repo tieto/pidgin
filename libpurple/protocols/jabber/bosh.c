@@ -505,10 +505,10 @@ static void jabber_bosh_connection_received(PurpleBOSHConnection *conn, xmlnode 
 			 * the right xmlns on these packets.  See #11315.
 			 */
 			if ((xmlns == NULL /* shouldn't happen, but is equally wrong */ ||
-					g_str_equal(xmlns, NS_BOSH)) &&
-				(g_str_equal(child->name, "iq") ||
-				 g_str_equal(child->name, "message") ||
-				 g_str_equal(child->name, "presence"))) {
+					purple_strequal(xmlns, NS_BOSH)) &&
+				(purple_strequal(child->name, "iq") ||
+				 purple_strequal(child->name, "message") ||
+				 purple_strequal(child->name, "presence"))) {
 				xmlnode_set_namespace(child, NS_XMPP_CLIENT);
 			}
 			jabber_process_packet(js, &child);

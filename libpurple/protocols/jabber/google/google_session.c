@@ -638,11 +638,11 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 
 			g_snprintf(n, sizeof(n), "S%d", name++);
 
-			if (g_str_equal(type, "local"))
+			if (purple_strequal(type, "local"))
 				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_HOST;
-			else if (g_str_equal(type, "stun"))
+			else if (purple_strequal(type, "stun"))
 				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX;
-			else if (g_str_equal(type, "relay"))
+			else if (purple_strequal(type, "relay"))
 				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_RELAY;
 			else
 				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_HOST;

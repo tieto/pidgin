@@ -129,7 +129,7 @@ static void handle_chat(JabberMessage *jm)
 
 			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 			                                             jm->from, account);
-			if (conv && !g_str_equal(jm->from,
+			if (conv && !purple_strequal(jm->from,
 			                         purple_conversation_get_name(conv))) {
 				purple_debug_info("jabber", "Binding conversation to %s\n",
 				                  jm->from);
@@ -764,7 +764,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			} else {
 				jm->etc = g_list_append(jm->etc, child);
 			}
-		} else if (g_str_equal(child->name, "query")) {
+		} else if (purple_strequal(child->name, "query")) {
 			const char *node = xmlnode_get_attrib(child, "node");
 			if (purple_strequal(xmlns, NS_DISCO_ITEMS)
 					&& purple_strequal(node, "http://jabber.org/protocol/commands")) {

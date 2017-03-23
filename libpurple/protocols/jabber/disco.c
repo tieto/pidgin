@@ -123,7 +123,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		if(node)
 			xmlnode_set_attrib(query, "node", node);
 
-		if(!node || g_str_equal(node, node_uri)) {
+		if(!node || purple_strequal(node, node_uri)) {
 			GList *features, *identities;
 			for(identities = jabber_identities; identities; identities = identities->next) {
 				JabberIdentity *ident = (JabberIdentity*)identities->data;
@@ -143,7 +143,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 				}
 			}
 #ifdef USE_VV
-		} else if (g_str_equal(node, CAPS0115_NODE "#" "voice-v1")) {
+		} else if (purple_strequal(node, CAPS0115_NODE "#" "voice-v1")) {
 			/*
 			 * HUGE HACK! We advertise this ext (see jabber_presence_create_js
 			 * where we add <c/> to the <presence/>) for the Google Talk
@@ -155,7 +155,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			 */
 			xmlnode *feature = xmlnode_new_child(query, "feature");
 			xmlnode_set_attrib(feature, "var", NS_GOOGLE_VOICE);
-		} else if (g_str_equal(node, CAPS0115_NODE "#" "video-v1")) {
+		} else if (purple_strequal(node, CAPS0115_NODE "#" "video-v1")) {
 			/*
 			 * HUGE HACK! We advertise this ext (see jabber_presence_create_js
 			 * where we add <c/> to the <presence/>) for the Google Talk
@@ -167,7 +167,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			 */
 			xmlnode *feature = xmlnode_new_child(query, "feature");
 			xmlnode_set_attrib(feature, "var", NS_GOOGLE_VIDEO);
-		} else if (g_str_equal(node, CAPS0115_NODE "#" "camera-v1")) {
+		} else if (purple_strequal(node, CAPS0115_NODE "#" "camera-v1")) {
 			/*
 			 * HUGE HACK! We advertise this ext (see jabber_presence_create_js
 			 * where we add <c/> to the <presence/>) for the Google Talk
