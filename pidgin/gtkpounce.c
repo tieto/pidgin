@@ -315,7 +315,7 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 		message = NULL;
 	}
 	if (*command == '\0') command = NULL;
-	if (*sound   == '\0' || !strcmp(sound, _("(default)"))) sound   = NULL;
+	if (*sound   == '\0' || purple_strequal(sound, _("(default)"))) sound   = NULL;
 
 	/* If the pounce has already been triggered, let's pretend it is a new one */
 	if (dialog->pounce != NULL

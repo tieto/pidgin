@@ -833,7 +833,7 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 				const char *def = purple_value_get_string(default_value);
 				if ((cur == NULL && def == NULL)
 				    || (cur != NULL && def != NULL
-					&& !strcmp(cur, def))) {
+					&& purple_strequal(cur, def))) {
 					continue;
 				}
 

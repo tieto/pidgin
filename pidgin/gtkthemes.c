@@ -99,7 +99,7 @@ void pidgin_themes_remove_smiley_theme(const char *file)
 		/* Find theme in themes list and remove it */
 		for (iter = smiley_themes ; iter ; iter = iter->next) {
 			theme = ((struct smiley_theme *)(iter->data));
-			if (!strcmp(theme->path, file))
+			if (purple_strequal(theme->path, file))
 				break ;
 		}
 		if (iter) {
@@ -129,7 +129,7 @@ static void _pidgin_themes_smiley_themeize(GtkWidget *imhtml, gboolean custom)
 	gtk_imhtml_remove_smileys(GTK_IMHTML(imhtml));
 	list = current_smiley_theme->list;
 	while (list) {
-		char *sml = !strcmp(list->sml, "default") ? NULL : list->sml;
+		char *sml = purple_strequal(list->sml, "default") ? NULL : list->sml;
 		GSList *icons = list->smileys;
 		while (icons) {
 			gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), sml, icons->data);
@@ -236,7 +236,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 
 	while (lst) {
 		struct smiley_theme *thm = lst->data;
-		if (!strcmp(thm->path, file)) {
+		if (purple_strequal(thm->path, file)) {
 			theme = thm;
 			break;
 		}
@@ -440,9 +440,9 @@ GSList *pidgin_themes_get_proto_smileys(const char *id) {
 	proto = purple_find_prpl(id);
 
 	while (list) {
-		if (!strcmp(list->sml, "default"))
+		if (purple_strequal(list->sml, "default"))
 			def = list;
-		else if (proto && !strcmp(proto->info->name, list->sml))
+		else if (proto && purple_strequal(proto->info->name, list->sml))
 			break;
 
 		list = list->next;

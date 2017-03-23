@@ -2037,7 +2037,7 @@ int icq_relay_xstatus(OscarData *od, const char *sn, const guchar *cookie)
 	if (!account)
 		return -EINVAL;
 
-	/* if (!strcmp(account->username, sn))
+	/* if (purple_strequal(account->username, sn))
 		icq_im_xstatus_request(od, sn); */
 
 	status = purple_presence_get_active_status(account->presence);

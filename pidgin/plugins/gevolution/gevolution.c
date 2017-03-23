@@ -100,7 +100,7 @@ update_ims_from_contact(EContact *contact, const char *name,
 		for (l2 = ims; l2 != NULL; l2 = l2->next)
 		{
 			if (purple_find_buddy(account, l2->data) != NULL ||
-				!strcmp(me, purple_normalize(account, l2->data)))
+				purple_strequal(me, purple_normalize(account, l2->data)))
 				continue;
 
 			gevo_add_buddy(account, _("Buddies"), l2->data, name);

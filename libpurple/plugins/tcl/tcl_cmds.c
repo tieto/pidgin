@@ -400,9 +400,9 @@ static PurpleBlistNode *tcl_list_to_buddy(Tcl_Interp *interp, int count, Tcl_Obj
 	if ((account = tcl_validate_account(elems[2], interp)) == NULL)
 		return NULL;
 
-	if (!strcmp(type, "buddy")) {
+	if (purple_strequal(type, "buddy")) {
 		node = PURPLE_BLIST_NODE(purple_find_buddy(account, name));
-	} else if (!strcmp(type, "group")) {
+	} else if (purple_strequal(type, "group")) {
 		node = PURPLE_BLIST_NODE(purple_blist_find_chat(account, name));
 	}
 
@@ -485,7 +485,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		break;
 	case CMD_BUDDY_LIST:
 		if (objc == 3) {
-			if (!strcmp("-all", Tcl_GetString(objv[2]))) {
+			if (purple_strequal("-all", Tcl_GetString(objv[2]))) {
 				all = 1;
 			} else {
 				result = Tcl_NewStringObj("",-1);

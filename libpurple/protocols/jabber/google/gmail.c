@@ -95,7 +95,7 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 		sender_node  = xmlnode_get_child(sender_node, "sender");
 
 		while (sender_node && (!xmlnode_get_attrib(sender_node, "unread") ||
-		       !strcmp(xmlnode_get_attrib(sender_node, "unread"),"0")))
+		       purple_strequal(xmlnode_get_attrib(sender_node, "unread"),"0")))
 			sender_node = xmlnode_get_next_twin(sender_node);
 
 		if (!sender_node) {

@@ -727,7 +727,7 @@ create_protocols_menu(const char *default_proto_id)
 		if (pixbuf)
 			g_object_unref(pixbuf);
 
-		if (default_proto_id != NULL && !strcmp(plugin->info->id, default_proto_id))
+		if (default_proto_id != NULL && purple_strequal(plugin->info->id, default_proto_id))
 			aop_menu->default_item = i;
 	}
 
@@ -1136,15 +1136,15 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 
 				protoname = prpl_info->list_icon(account, NULL);
 
-				if (!strcmp(protoname, protocol))
+				if (purple_strequal(protoname, protocol))
 					break;
 
 				account = NULL;
 			}
 
 			/* Special case for AIM and ICQ */
-			if (account == NULL && (!strcmp(protocol, "aim") ||
-									!strcmp(protocol, "icq")))
+			if (account == NULL && (purple_strequal(protocol, "aim") ||
+									purple_strequal(protocol, "icq")))
 			{
 				for (l = list; l != NULL; l = l->next)
 				{
@@ -1178,7 +1178,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 
 					protoname = prpl_info->list_icon(account, NULL);
 
-					if (!strcmp(protoname, "aim") || !strcmp(protoname, "icq"))
+					if (purple_strequal(protoname, "aim") || purple_strequal(protoname, "icq"))
 						break;
 
 					account = NULL;
@@ -3531,7 +3531,7 @@ register_gnome_url_handlers(void)
 				{
 					g_free(err);
 					err = NULL;
-					if (!strcmp(tmp2, "false\n"))
+					if (purple_strequal(tmp2, "false\n"))
 					{
 						g_free(tmp2);
 						g_free(cmd);

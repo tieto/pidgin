@@ -157,7 +157,7 @@ int irc_send_len(struct irc_conn *irc, const char *buf, int buflen)
  	char *tosend= g_strdup(buf);
 
 	purple_signal_emit(_irc_plugin, "irc-sending-text", purple_account_get_connection(irc->account), &tosend);
-	
+
 	if (tosend == NULL)
 		return 0;
 
@@ -591,12 +591,12 @@ static void irc_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	args[0] = NULL;
 
-	if (!strcmp(status_id, "away")) {
+	if (purple_strequal(status_id, "away")) {
 		args[0] = purple_status_get_attr_string(status, "message");
 		if ((args[0] == NULL) || (*args[0] == '\0'))
 			args[0] = _("Away");
 		irc_cmd_away(irc, "away", NULL, args);
-	} else if (!strcmp(status_id, "available")) {
+	} else if (purple_strequal(status_id, "available")) {
 		irc_cmd_away(irc, "back", NULL, args);
 	}
 }

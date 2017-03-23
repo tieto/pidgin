@@ -1609,7 +1609,7 @@ create_chat_menu(PurpleConversation *conv, const char *who, PurpleConnection *gc
 	if (menu)
 		gtk_widget_destroy(menu);
 
-	if (!strcmp(chat->nick, purple_normalize(conv->account, who)))
+	if (purple_strequal(chat->nick, purple_normalize(conv->account, who)))
 		is_me = TRUE;
 
 	menu = gtk_menu_new();
@@ -3157,7 +3157,7 @@ sound_method_pref_changed_cb(const char *name, PurplePrefType type,
 	PidginWindow *win = data;
 	const char *method = value;
 
-	if (!strcmp(method, "none"))
+	if (purple_strequal(method, "none"))
 	{
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
 		                               FALSE);
@@ -3540,7 +3540,7 @@ setup_menubar(PidginWindow *win)
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Options/Enable Sounds"));
 	method = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method");
-	if (method != NULL && !strcmp(method, "none"))
+	if (method != NULL && purple_strequal(method, "none"))
 	{
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
 		                               FALSE);
@@ -4019,7 +4019,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 
 	stock = get_chat_buddy_status_icon(chat, name, flags);
 
-	if (!strcmp(chat->nick, purple_normalize(conv->account, old_name != NULL ? old_name : name)))
+	if (purple_strequal(chat->nick, purple_normalize(conv->account, old_name != NULL ? old_name : name)))
 		is_me = TRUE;
 
 	is_buddy = cb->buddy;
@@ -4414,7 +4414,7 @@ update_chat_alias(PurpleBuddy *buddy, PurpleConversation *conv, PurpleConnection
 
 		gtk_tree_model_get(model, &iter, CHAT_USERS_NAME_COLUMN, &name, -1);
 
-		if (!strcmp(normalized_name, purple_normalize(conv->account, name))) {
+		if (purple_strequal(normalized_name, purple_normalize(conv->account, name))) {
 			const char *alias = name;
 			char *tmp;
 			char *alias_key = NULL;
@@ -4517,7 +4517,7 @@ buddy_cb_common(PurpleBuddy *buddy, PurpleConversation *conv, gboolean is_buddy)
 
 		gtk_tree_model_get(model, &iter, CHAT_USERS_NAME_COLUMN, &name, -1);
 
-		if (!strcmp(normalized_name, purple_normalize(conv->account, name))) {
+		if (purple_strequal(normalized_name, purple_normalize(conv->account, name))) {
 			gtk_list_store_set(GTK_LIST_STORE(model), &iter,
 			                   CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL, -1);
 			g_free(name);
@@ -4820,7 +4820,7 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	gtkchat->list = list;
 
-	gtk_box_pack_start(GTK_BOX(lbox), 
+	gtk_box_pack_start(GTK_BOX(lbox),
 		pidgin_make_scrollable(list, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_IN, -1, -1),
 		TRUE, TRUE, 0);
 }
@@ -6404,7 +6404,7 @@ pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gbool
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	for (list = (struct smiley_list *)current_smiley_theme->list; list; list = list->next) {
-		if (!strcmp(list->sml, conv_sml)) {
+		if (purple_strequal(list->sml, conv_sml)) {
 			sml = list->sml;
 			break;
 		}
@@ -10055,7 +10055,7 @@ get_conv_placement_data(const char *id)
 
 	for (n = conv_placement_fncs; n; n = n->next) {
 		data = n->data;
-		if (!strcmp(data->id, id))
+		if (purple_strequal(data->id, id))
 			return data;
 	}
 

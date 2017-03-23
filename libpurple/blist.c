@@ -2571,7 +2571,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 				g_list_free(parts);
 
 				if (chat->account == account && chat_name != NULL &&
-					normname != NULL && !strcmp(purple_normalize(account, chat_name), normname)) {
+					normname != NULL && purple_strequal(purple_normalize(account, chat_name), normname)) {
 					g_free(normname);
 					return chat;
 				}

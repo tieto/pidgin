@@ -133,7 +133,7 @@ input_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 		gtk_text_buffer_get_start_iter(buffer, &start_iter);
 		gtk_text_buffer_get_end_iter(buffer, &end_iter);
 
-		if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html")))
+		if ((data->u.input.hint != NULL) && (purple_strequal(data->u.input.hint, "html")))
 			multiline_value = gtk_imhtml_get_markup(GTK_IMHTML(data->u.input.entry));
 		else
 			multiline_value = gtk_text_buffer_get_text(buffer, &start_iter, &end_iter,
@@ -289,7 +289,7 @@ destroy_multifield_cb(GtkWidget *dialog, GdkEvent *event,
 
 
 #define STOCK_ITEMIZE(r, l) \
-	if (!strcmp((r), text)) \
+	if (purple_strequal((r), text)) \
 		return (l);
 
 static const char *
@@ -403,7 +403,7 @@ pidgin_request_input(const char *title, const char *primary,
 
 	gtk_widget_show_all(hbox);
 
-	if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html"))) {
+	if ((data->u.input.hint != NULL) && (purple_strequal(data->u.input.hint, "html"))) {
 		GtkWidget *frame;
 
 		/* imhtml */
@@ -435,7 +435,7 @@ pidgin_request_input(const char *title, const char *primary,
 			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
 				pidgin_setup_gtkspell(GTK_TEXT_VIEW(entry));
 
-			gtk_box_pack_start(GTK_BOX(vbox), 
+			gtk_box_pack_start(GTK_BOX(vbox),
 				pidgin_make_scrollable(entry, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, 320, 130),
 				TRUE, TRUE, 0);
 		}
@@ -820,7 +820,7 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 					}
 				}
 			}
-			pidgin_setup_screenname_autocomplete_with_filter(entry, optmenu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(!strcmp(type_hint, "screenname-all")));
+			pidgin_setup_screenname_autocomplete_with_filter(entry, optmenu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(purple_strequal(type_hint, "screenname-all")));
 		}
 	}
 }
@@ -1260,8 +1260,8 @@ pidgin_request_fields(const char *title, const char *primary,
 		GtkWidget *hbox_for_spacing, *vbox_for_spacing;
 
 		hbox_for_spacing = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-		gtk_box_pack_start(GTK_BOX(vbox), 
-			pidgin_make_scrollable(hbox_for_spacing, GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, 200), 
+		gtk_box_pack_start(GTK_BOX(vbox),
+			pidgin_make_scrollable(hbox_for_spacing, GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, 200),
 			TRUE, TRUE, 0);
 		gtk_widget_show(hbox_for_spacing);
 

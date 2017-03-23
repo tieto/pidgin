@@ -311,7 +311,7 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 {
 	const gchar *type = jingle_transport_get_transport_type(transport);
 	GList *ret = NULL;
-	if (!strcmp(type, JINGLE_TRANSPORT_RAWUDP)) {
+	if (purple_strequal(type, JINGLE_TRANSPORT_RAWUDP)) {
 		GList *candidates = jingle_rawudp_get_remote_candidates(JINGLE_RAWUDP(transport));
 
 		for (; candidates; candidates = g_list_delete_link(candidates, candidates)) {
@@ -324,20 +324,20 @@ jingle_rtp_transport_to_candidates(JingleTransport *transport)
 		}
 
 		return ret;
-	} else if (!strcmp(type, JINGLE_TRANSPORT_ICEUDP)) {
+	} else if (purple_strequal(type, JINGLE_TRANSPORT_ICEUDP)) {
 		GList *candidates = jingle_iceudp_get_remote_candidates(JINGLE_ICEUDP(transport));
 
 		for (; candidates; candidates = g_list_delete_link(candidates, candidates)) {
 			JingleIceUdpCandidate *candidate = candidates->data;
 			PurpleMediaCandidate *new_candidate = purple_media_candidate_new(
 					candidate->foundation, candidate->component,
-					!strcmp(candidate->type, "host") ?
+					purple_strequal(candidate->type, "host") ?
 					PURPLE_MEDIA_CANDIDATE_TYPE_HOST :
-					!strcmp(candidate->type, "srflx") ?
+					purple_strequal(candidate->type, "srflx") ?
 					PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX :
-					!strcmp(candidate->type, "prflx") ?
+					purple_strequal(candidate->type, "prflx") ?
 					PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX :
-					!strcmp(candidate->type, "relay") ?
+					purple_strequal(candidate->type, "relay") ?
 					PURPLE_MEDIA_CANDIDATE_TYPE_RELAY : 0,
 					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
 					candidate->ip, candidate->port);

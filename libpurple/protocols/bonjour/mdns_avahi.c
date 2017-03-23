@@ -71,9 +71,9 @@ _find_resolver_data(gconstpointer a, gconstpointer b) {
 
 	if(rd_a->interface == rd_b->interface
 			&& rd_a->protocol == rd_b->protocol
-			&& !strcmp(rd_a->name, rd_b->name)
-			&& !strcmp(rd_a->type, rd_b->type)
-			&& !strcmp(rd_a->domain, rd_b->domain)) {
+			&& purple_strequal(rd_a->name, rd_b->name)
+			&& purple_strequal(rd_a->type, rd_b->type)
+			&& purple_strequal(rd_a->domain, rd_b->domain)) {
 		ret = 0;
 	}
 

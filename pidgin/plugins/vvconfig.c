@@ -93,7 +93,7 @@ get_element_devices(const gchar *element_name)
 	ret = g_list_prepend(ret, (gpointer)_("Default"));
 	ret = g_list_prepend(ret, "");
 
-	if (!strcmp(element_name, "<custom>") || (*element_name == '\0')) {
+	if (purple_strequal(element_name, "<custom>") || (*element_name == '\0')) {
 		return g_list_reverse(ret);
 	}
 
@@ -210,7 +210,7 @@ device_changed_cb(const gchar *name, PurplePrefType type,
 	for (; widgets; widgets = g_slist_next(widgets)) {
 		const gchar *widget_name =
 				gtk_widget_get_name(GTK_WIDGET(widgets->data));
-		if (!strcmp(widget_name, name)) {
+		if (purple_strequal(widget_name, name)) {
 			gchar *temp_str;
 			gchar delimiters[3] = {0, 0, 0};
 			const gchar *text;
@@ -366,7 +366,7 @@ create_video_src(PurpleMedia *media,
 	ret = gst_element_factory_make(plugin, "vvconfig-videosrc");
 	if (device[0] != '\0')
 		g_object_set(G_OBJECT(ret), "device", device, NULL);
-	if (!strcmp(plugin, "videotestsrc"))
+	if (purple_strequal(plugin, "videotestsrc"))
 		g_object_set(G_OBJECT(ret), "is-live", 1, NULL);
 	return ret;
 }
@@ -464,7 +464,7 @@ set_element_info_cond(PurpleMediaElementInfo *old_info,
 		PurpleMediaElementInfo *new_info, const gchar *id)
 {
 	gchar *element_id = purple_media_element_info_get_id(old_info);
-	if (!strcmp(element_id, id))
+	if (purple_strequal(element_id, id))
 		purple_media_manager_set_active_element(
 				purple_media_manager_get(), new_info);
 	g_free(element_id);
@@ -659,7 +659,7 @@ gst_bus_cb(GstBus *bus, GstMessage *msg, BusCbCtx *ctx)
 		GstElement *src = GST_ELEMENT(GST_MESSAGE_SRC(msg));
 		gchar *name = gst_element_get_name(src);
 
-		if (!strcmp(name, "level")) {
+		if (purple_strequal(name, "level")) {
 			gdouble percent;
 			gdouble threshold;
 			GstElement *valve;

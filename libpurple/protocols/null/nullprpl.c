@@ -113,7 +113,7 @@ static void call_if_nullprpl(gpointer data, gpointer userdata) {
   PurpleConnection *gc = (PurpleConnection *)(data);
   GcFuncData *gcfdata = (GcFuncData *)userdata;
 
-  if (!strcmp(gc->account->protocol_id, NULLPRPL_ID))
+  if (purple_strequal(gc->account->protocol_id, NULLPRPL_ID))
     gcfdata->fn(gcfdata->from, gc, gcfdata->userdata);
 }
 
@@ -168,9 +168,9 @@ static void discover_status(PurpleConnection *from, PurpleConnection *to,
     const char *status_id = purple_status_get_id(status);
     const char *message = purple_status_get_attr_string(status, "message");
 
-    if (!strcmp(status_id, NULL_STATUS_ONLINE) ||
-        !strcmp(status_id, NULL_STATUS_AWAY) ||
-        !strcmp(status_id, NULL_STATUS_OFFLINE)) {
+    if (purple_strequal(status_id, NULL_STATUS_ONLINE) ||
+        purple_strequal(status_id, NULL_STATUS_AWAY) ||
+        purple_strequal(status_id, NULL_STATUS_OFFLINE)) {
       purple_debug_info("nullprpl", "%s sees that %s is %s: %s\n",
                         from_username, to_username, status_id, message);
       purple_prpl_got_user_status(from->account, to_username, status_id,
@@ -952,7 +952,7 @@ static void nullprpl_set_chat_topic(PurpleConnection *gc, int id,
 
   last_topic = purple_conv_chat_get_topic(chat);
   if ((!topic && !last_topic) ||
-      (topic && last_topic && !strcmp(topic, last_topic)))
+      (topic && last_topic && purple_strequal(topic, last_topic)))
     return;  /* topic is unchanged, this is a noop */
 
   foreach_gc_in_chat(set_chat_topic_fn, gc, id, (gpointer)topic);

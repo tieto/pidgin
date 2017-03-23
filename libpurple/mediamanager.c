@@ -1269,7 +1269,7 @@ purple_media_manager_get_element_info(PurpleMediaManager *manager,
 	for (; iter; iter = g_list_next(iter)) {
 		gchar *element_id =
 				purple_media_element_info_get_id(iter->data);
-		if (!strcmp(element_id, id)) {
+		if (purple_strequal(element_id, id)) {
 			g_free(element_id);
 			g_object_ref(iter->data);
 			return iter->data;
@@ -1478,9 +1478,9 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 		if (ow->sink == NULL && ow->media == media &&
 				((participant != NULL &&
 				ow->participant != NULL &&
-				!strcmp(participant, ow->participant)) ||
+				purple_strequal(participant, ow->participant)) ||
 				(participant == ow->participant)) &&
-				!strcmp(session_id, ow->session_id)) {
+				purple_strequal(session_id, ow->session_id)) {
 			GstBus *bus;
 			GstElement *queue, *convert, *scale;
 			GstElement *tee = purple_media_get_tee(media,
@@ -1673,10 +1673,10 @@ purple_media_manager_remove_output_windows(PurpleMediaManager *manager,
 
 	if (media == ow->media &&
 			((session_id != NULL && ow->session_id != NULL &&
-			!strcmp(session_id, ow->session_id)) ||
+			purple_strequal(session_id, ow->session_id)) ||
 			(session_id == ow->session_id)) &&
 			((participant != NULL && ow->participant != NULL &&
-			!strcmp(participant, ow->participant)) ||
+			purple_strequal(participant, ow->participant)) ||
 			(participant == ow->participant)))
 		purple_media_manager_remove_output_window(
 				manager, ow->id);

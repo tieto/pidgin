@@ -45,24 +45,24 @@ jingle_get_type(const gchar *type)
 	if (type == NULL)
 		return G_TYPE_NONE;
 
-	if (!strcmp(type, JINGLE_TRANSPORT_RAWUDP))
+	if (purple_strequal(type, JINGLE_TRANSPORT_RAWUDP))
 		return JINGLE_TYPE_RAWUDP;
-	else if (!strcmp(type, JINGLE_TRANSPORT_ICEUDP))
+	else if (purple_strequal(type, JINGLE_TRANSPORT_ICEUDP))
 		return JINGLE_TYPE_ICEUDP;
 #if 0
-	else if (!strcmp(type, JINGLE_TRANSPORT_SOCKS))
+	else if (purple_strequal(type, JINGLE_TRANSPORT_SOCKS))
 		return JINGLE_TYPE_SOCKS;
-	else if (!strcmp(type, JINGLE_TRANSPORT_IBB))
+	else if (purple_strequal(type, JINGLE_TRANSPORT_IBB))
 		return JINGLE_TYPE_IBB;
 #endif
 #ifdef USE_VV
-	else if (!strcmp(type, JINGLE_APP_RTP))
+	else if (purple_strequal(type, JINGLE_APP_RTP))
 		return JINGLE_TYPE_RTP;
 #endif
 #if 0
-	else if (!strcmp(type, JINGLE_APP_FT))
+	else if (purple_strequal(type, JINGLE_APP_FT))
 		return JINGLE_TYPE_FT;
-	else if (!strcmp(type, JINGLE_APP_XML))
+	else if (purple_strequal(type, JINGLE_APP_XML))
 		return JINGLE_TYPE_XML;
 #endif
 	else
@@ -369,7 +369,7 @@ jingle_get_action_type(const gchar *action)
 	/* Start at 1 to skip the unknown-action type */
 	int i = 1;
 	for (; i < num_actions; ++i) {
-		if (!strcmp(action, jingle_actions[i].name))
+		if (purple_strequal(action, jingle_actions[i].name))
 			return i;
 	}
 	return JINGLE_UNKNOWN_TYPE;

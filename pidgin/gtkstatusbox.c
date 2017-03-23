@@ -883,7 +883,7 @@ status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed)
 							TEXT_COLUMN, &name, -1);
 
 					if (!purple_savedstatus_has_substatuses(saved_status)
-						|| !strcmp(name, acct_status_name))
+						|| purple_strequal(name, acct_status_name))
 					{
 						/* Found! */
 						path = gtk_tree_model_get_path(GTK_TREE_MODEL(status_box->dropdown_store), &iter);

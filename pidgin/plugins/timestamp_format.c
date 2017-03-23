@@ -84,8 +84,8 @@ static char *timestamp_cb_common(PurpleConversation *conv,
 	tm = localtime(&t);
 
 	if (show_date ||
-	    !strcmp(dates, "always") ||
-	    (conv != NULL && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT && !strcmp(dates, "chats")))
+	    purple_strequal(dates, "always") ||
+	    (conv != NULL && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT && purple_strequal(dates, "chats")))
 	{
 		if (purple_strequal(force, "force24"))
 			return g_strdup_printf("%s%s%s", parens ? "(" : "", purple_utf8_strftime("%Y-%m-%d %H:%M:%S", tm), parens ? ")" : "");

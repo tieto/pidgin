@@ -2882,7 +2882,7 @@ novell_set_idle(PurpleConnection * gc, int time)
 	id = purple_status_get_id(status);
 
 	/* Only go idle if active status is available  */
-	if (!strcmp(id, NOVELL_STATUS_TYPE_AVAILABLE)) {
+	if (purple_strequal(id, NOVELL_STATUS_TYPE_AVAILABLE)) {
 		if (time > 0) {
 			rc = nm_send_set_status(user, NM_STATUS_AWAY_IDLE, NULL, NULL, NULL, NULL);
 		} else {

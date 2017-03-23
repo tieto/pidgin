@@ -42,7 +42,7 @@ google_session_id_equal(gconstpointer a, gconstpointer b)
 	GoogleSessionId *c = (GoogleSessionId*)a;
 	GoogleSessionId *d = (GoogleSessionId*)b;
 
-	return !strcmp(c->id, d->id) && !strcmp(c->initiator, d->initiator);
+	return purple_strequal(c->id, d->id) && purple_strequal(c->initiator, d->initiator);
 }
 
 static void
@@ -91,7 +91,7 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 	PurpleMediaCandidate *transport;
 	gboolean video = FALSE;
 
-	if (!strcmp(session_id, "google-video"))
+	if (purple_strequal(session_id, "google-video"))
 		video = TRUE;
 
 	for (iter = candidates; iter; iter = iter->next) {
@@ -179,7 +179,7 @@ google_session_ready(GoogleSession *session)
 		JabberIq *iq;
 		xmlnode *sess, *desc, *payload;
 		GList *codecs, *iter;
-		gboolean is_initiator = !strcmp(session->id.initiator, me);
+		gboolean is_initiator = purple_strequal(session->id.initiator, me);
 
 		if (!is_initiator &&
 				!purple_media_accepted(media, NULL, NULL)) {
@@ -512,7 +512,7 @@ jabber_google_relay_response_session_handle_initiate_cb(GoogleSession *session,
 		id = xmlnode_get_attrib(codec_element, "id");
 
 		if (!session_data->video ||
-				(xmlns && !strcmp(xmlns, NS_GOOGLE_SESSION_PHONE))) {
+				(xmlns && purple_strequal(xmlns, NS_GOOGLE_SESSION_PHONE))) {
 			clock_rate = xmlnode_get_attrib(
 					codec_element, "clockrate");
 			video = FALSE;
@@ -709,7 +709,7 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 	GList *codecs = NULL, *video_codecs = NULL;
 	JabberIq *result = NULL;
 	const gchar *xmlns = xmlnode_get_namespace(desc_element);
-	gboolean video = (xmlns && !strcmp(xmlns, NS_GOOGLE_SESSION_VIDEO));
+	gboolean video = (xmlns && purple_strequal(xmlns, NS_GOOGLE_SESSION_VIDEO));
 	GoogleAVSessionData *session_data =
 		(GoogleAVSessionData *) session->session_data;
 
@@ -788,15 +788,15 @@ google_session_parse_iq(JabberStream *js, GoogleSession *session, xmlnode *sess,
 {
 	const char *type = xmlnode_get_attrib(sess, "type");
 
-	if (!strcmp(type, "initiate")) {
+	if (purple_strequal(type, "initiate")) {
 		google_session_handle_initiate(js, session, sess, iq_id);
-	} else if (!strcmp(type, "accept")) {
+	} else if (purple_strequal(type, "accept")) {
 		google_session_handle_accept(js, session, sess, iq_id);
-	} else if (!strcmp(type, "reject")) {
+	} else if (purple_strequal(type, "reject")) {
 		google_session_handle_reject(js, session, sess);
-	} else if (!strcmp(type, "terminate")) {
+	} else if (purple_strequal(type, "terminate")) {
 		google_session_handle_terminate(js, session, sess);
-	} else if (!strcmp(type, "candidates")) {
+	} else if (purple_strequal(type, "candidates")) {
 		google_session_handle_candidates(js, session, sess, iq_id);
 	}
 }

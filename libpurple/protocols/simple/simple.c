@@ -143,7 +143,7 @@ static struct simple_watcher *watcher_find(struct simple_account_data *sip,
 	GSList *entry = sip->watcher;
 	while(entry) {
 		watcher = entry->data;
-		if(!strcmp(name, watcher->name)) return watcher;
+		if(purple_strequal(name, watcher->name)) return watcher;
 		entry = entry->next;
 	}
 	return NULL;
@@ -619,7 +619,7 @@ static struct transaction *transactions_find(struct simple_account_data *sip, st
 	if (cseq) {
 		while(transactions) {
 			trans = transactions->data;
-			if(!strcmp(trans->cseq, cseq)) {
+			if(purple_strequal(trans->cseq, cseq)) {
 				return trans;
 			}
 			transactions = transactions->next;
@@ -642,7 +642,7 @@ static void send_sip_request(PurpleConnection *gc, const gchar *method,
 	gchar *tag = NULL;
 	char *buf;
 
-	if(!strcmp(method, "REGISTER")) {
+	if(purple_strequal(method, "REGISTER")) {
 		if(sip->regcallid) {
 			g_free(callid);
 			callid = g_strdup(sip->regcallid);
@@ -651,7 +651,7 @@ static void send_sip_request(PurpleConnection *gc, const gchar *method,
 	}
 
 	if(addheaders) addh = addheaders;
-	if(sip->registrar.type && !strcmp(method, "REGISTER")) {
+	if(sip->registrar.type && purple_strequal(method, "REGISTER")) {
 		buf = auth_header(sip, &sip->registrar, method, url);
 		auth = g_strdup_printf("Authorization: %s\r\n", buf);
 		g_free(buf);
@@ -1174,9 +1174,9 @@ static gboolean dialog_match(struct sip_dialog *dialog, struct sipmsg *msg)
 	theirtag = find_tag(fromhdr);
 
 	if (ourtag && theirtag &&
-			!strcmp(dialog->callid, callid) &&
-			!strcmp(dialog->ourtag, ourtag) &&
-			!strcmp(dialog->theirtag, theirtag))
+			purple_strequal(dialog->callid, callid) &&
+			purple_strequal(dialog->ourtag, ourtag) &&
+			purple_strequal(dialog->theirtag, theirtag))
 		match = TRUE;
 
 	g_free(ourtag);
@@ -1508,13 +1508,13 @@ privend:
 static void process_input_message(struct simple_account_data *sip, struct sipmsg *msg) {
 	gboolean found = FALSE;
 	if(msg->response == 0) { /* request */
-		if(!strcmp(msg->method, "MESSAGE")) {
+		if(purple_strequal(msg->method, "MESSAGE")) {
 			process_incoming_message(sip, msg);
 			found = TRUE;
-		} else if(!strcmp(msg->method, "NOTIFY")) {
+		} else if(purple_strequal(msg->method, "NOTIFY")) {
 			process_incoming_notify(sip, msg);
 			found = TRUE;
-		} else if(!strcmp(msg->method, "SUBSCRIBE")) {
+		} else if(purple_strequal(msg->method, "SUBSCRIBE")) {
 			process_incoming_subscribe(sip, msg);
 			found = TRUE;
 		} else {
@@ -1548,7 +1548,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 					purple_debug_info("simple", "got trying response\n");
 				} else {
 					sip->proxy.retries = 0;
-					if(!strcmp(trans->msg->method, "REGISTER")) {
+					if(purple_strequal(trans->msg->method, "REGISTER")) {
 
 						/* This is encountered when a REGISTER request was ...
 						 */

@@ -67,31 +67,31 @@ set_bonjour_buddy_value(BonjourBuddy* buddy, const char *record_key, const char 
 
 	g_return_if_fail(record_key != NULL);
 
-	if (!strcmp(record_key, "1st"))
+	if (purple_strequal(record_key, "1st"))
 		fld = &buddy->first;
-	else if(!strcmp(record_key, "email"))
+	else if(purple_strequal(record_key, "email"))
 		fld = &buddy->email;
-	else if(!strcmp(record_key, "ext"))
+	else if(purple_strequal(record_key, "ext"))
 		fld = &buddy->ext;
-	else if(!strcmp(record_key, "jid"))
+	else if(purple_strequal(record_key, "jid"))
 		fld = &buddy->jid;
-	else if(!strcmp(record_key, "last"))
+	else if(purple_strequal(record_key, "last"))
 		fld = &buddy->last;
-	else if(!strcmp(record_key, "msg"))
+	else if(purple_strequal(record_key, "msg"))
 		fld = &buddy->msg;
-	else if(!strcmp(record_key, "nick"))
+	else if(purple_strequal(record_key, "nick"))
 		fld = &buddy->nick;
-	else if(!strcmp(record_key, "node"))
+	else if(purple_strequal(record_key, "node"))
 		fld = &buddy->node;
-	else if(!strcmp(record_key, "phsh"))
+	else if(purple_strequal(record_key, "phsh"))
 		fld = &buddy->phsh;
-	else if(!strcmp(record_key, "status"))
+	else if(purple_strequal(record_key, "status"))
 		fld = &buddy->status;
-	else if(!strcmp(record_key, "vc"))
+	else if(purple_strequal(record_key, "vc"))
 		fld = &buddy->vc;
-	else if(!strcmp(record_key, "ver"))
+	else if(purple_strequal(record_key, "ver"))
 		fld = &buddy->ver;
-	else if(!strcmp(record_key, "AIM"))
+	else if(purple_strequal(record_key, "AIM"))
 		fld = &buddy->AIM;
 
 	if(fld == NULL)

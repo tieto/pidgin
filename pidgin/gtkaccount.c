@@ -277,7 +277,7 @@ username_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *d
 	table = dialog->prpl_info->get_account_text_table(NULL);
 	label = g_hash_table_lookup(table, "login_label");
 
-	if(!strcmp(gtk_entry_get_text(GTK_ENTRY(widget)), label)) {
+	if(purple_strequal(gtk_entry_get_text(GTK_ENTRY(widget)), label)) {
 		gtk_entry_set_text(GTK_ENTRY(widget), "");
 		gtk_widget_modify_text(widget, GTK_STATE_NORMAL,NULL);
 	}
@@ -574,7 +574,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
 		item = gtk_menu_get_active(GTK_MENU(menu));
 		if (value == NULL && g_object_get_data(G_OBJECT(item), "fakegoogle") &&
-			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
+			purple_strequal(purple_account_user_split_get_text(split), _("Domain")))
 			value = "gmail.com";
 
 		if (value != NULL)
@@ -2519,7 +2519,7 @@ get_user_info_cb(GtkWidget   *label,
                  gpointer     data)
 {
 	struct auth_request *ar = data;
-	if (!strcmp(uri, "viewinfo")) {
+	if (purple_strequal(uri, "viewinfo")) {
 		pidgin_retrieve_user_info(purple_account_get_connection(ar->account), ar->username);
 		return TRUE;
 	}

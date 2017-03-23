@@ -98,15 +98,15 @@ silcpurple_set_status(PurpleAccount *account, PurpleStatus *status)
 		  SILC_UMODE_INDISPOSED |
 		  SILC_UMODE_PAGE);
 
-	if (!strcmp(state, "hyper"))
+	if (purple_strequal(state, "hyper"))
 		mode |= SILC_UMODE_HYPER;
-	else if (!strcmp(state, "away"))
+	else if (purple_strequal(state, "away"))
 		mode |= SILC_UMODE_GONE;
-	else if (!strcmp(state, "busy"))
+	else if (purple_strequal(state, "busy"))
 		mode |= SILC_UMODE_BUSY;
-	else if (!strcmp(state, "indisposed"))
+	else if (purple_strequal(state, "indisposed"))
 		mode |= SILC_UMODE_INDISPOSED;
-	else if (!strcmp(state, "page"))
+	else if (purple_strequal(state, "page"))
 		mode |= SILC_UMODE_PAGE;
 
 	/* Send UMODE */
@@ -595,13 +595,13 @@ silcpurple_login(PurpleAccount *account)
 	cipher = purple_account_get_string(account, "cipher",
 					   SILC_DEFAULT_CIPHER);
 	for (i = 0; silc_default_ciphers[i].name; i++)
-		if (!strcmp(silc_default_ciphers[i].name, cipher)) {
+		if (purple_strequal(silc_default_ciphers[i].name, cipher)) {
 			silc_cipher_register(&(silc_default_ciphers[i]));
 			break;
 		}
 	hmac = purple_account_get_string(account, "hmac", SILC_DEFAULT_HMAC);
 	for (i = 0; silc_default_hmacs[i].name; i++)
-		if (!strcmp(silc_default_hmacs[i].name, hmac)) {
+		if (purple_strequal(silc_default_hmacs[i].name, hmac)) {
 			silc_hmac_register(&(silc_default_hmacs[i]));
 			break;
 		}

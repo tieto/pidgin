@@ -479,9 +479,9 @@ finch_sound_play_file(const char *filename)
 
 	method = purple_prefs_get_string(make_pref("/method"));
 
-	if (!strcmp(method, "nosound")) {
+	if (purple_strequal(method, "nosound")) {
 		return;
-	} else if (!strcmp(method, "beep")) {
+	} else if (purple_strequal(method, "beep")) {
 		beep();
 		return;
 	}
@@ -492,7 +492,7 @@ finch_sound_play_file(const char *filename)
 	}
 
 #ifndef _WIN32
-	if (!strcmp(method, "custom")) {
+	if (purple_strequal(method, "custom")) {
 		const char *sound_cmd;
 		char *command;
 		char *esc_filename;
@@ -527,7 +527,7 @@ finch_sound_play_file(const char *filename)
 	if (gst_init_failed)  /* Perhaps do beep instead? */
 		return;
 	volume = (float)(CLAMP(purple_prefs_get_int(make_pref("/volume")), 0, 100)) / 50;
-	if (!strcmp(method, "automatic")) {
+	if (purple_strequal(method, "automatic")) {
 		if (purple_running_gnome()) {
 			sink = gst_element_factory_make("gconfaudiosink", "sink");
 		}
@@ -537,13 +537,13 @@ finch_sound_play_file(const char *filename)
 			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 			return;
 		}
-	} else if (!strcmp(method, "esd")) {
+	} else if (purple_strequal(method, "esd")) {
 		sink = gst_element_factory_make("esdsink", "sink");
 		if (!sink) {
 			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 			return;
 		}
-	} else if (!strcmp(method, "alsa")) {
+	} else if (purple_strequal(method, "alsa")) {
 		sink = gst_element_factory_make("alsasink", "sink");
 		if (!sink) {
 			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
@@ -839,7 +839,7 @@ load_pref_window(const char * profile)
 static void
 reload_pref_window(const char *profile)
 {
-	if (!strcmp(profile, finch_sound_get_active_profile()))
+	if (purple_strequal(profile, finch_sound_get_active_profile()))
 		return;
 	load_pref_window(profile);
 }
@@ -850,19 +850,19 @@ prof_del_cb(GntWidget *button, gpointer null)
 	const char * profile = gnt_entry_get_text(GNT_ENTRY(pref_dialog->new_profile));
 	gchar * pref;
 
-	if (!strcmp(profile, DEFAULT_PROFILE))
+	if (purple_strequal(profile, DEFAULT_PROFILE))
 		return;
 
 	pref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s", profile);
 	purple_prefs_remove(pref);
 	g_free(pref);
 
-	if (!strcmp(pref_dialog->original_profile, profile)) {
+	if (purple_strequal(pref_dialog->original_profile, profile)) {
 		g_free(pref_dialog->original_profile);
 		pref_dialog->original_profile = g_strdup(DEFAULT_PROFILE);
 	}
 
-	if(!strcmp(profile, finch_sound_get_active_profile()))
+	if(purple_strequal(profile, finch_sound_get_active_profile()))
 		reload_pref_window(DEFAULT_PROFILE);
 
 	gnt_tree_remove(GNT_TREE(pref_dialog->profiles), (gchar *) profile);

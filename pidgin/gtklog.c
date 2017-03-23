@@ -82,7 +82,7 @@ static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
 
 	normal = g_strdup(purple_normalize(a->account, a->buddyname));
 	ret = (a->account == b->account) &&
-		!strcmp(normal, purple_normalize(b->account, b->buddyname));
+		purple_strequal(normal, purple_normalize(b->account, b->buddyname));
 	g_free(normal);
 
 	return ret;
@@ -135,7 +135,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 		return;
 	}
 
-	if (lv->search != NULL && !strcmp(lv->search, search_term))
+	if (lv->search != NULL && purple_strequal(lv->search, search_term))
 	{
 		/* Searching for the same term acts as "Find Next" */
 		gtk_imhtml_search_find(GTK_IMHTML(lv->imhtml), lv->search);
@@ -620,7 +620,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	col = gtk_tree_view_column_new_with_attributes ("time", rend, "markup", 0, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(lv->treeview), col);
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (lv->treeview), FALSE);
-	gtk_paned_add1(GTK_PANED(pane), 
+	gtk_paned_add1(GTK_PANED(pane),
 		pidgin_make_scrollable(lv->treeview, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1));
 
 	populate_log_tree(lv);

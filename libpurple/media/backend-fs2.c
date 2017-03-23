@@ -886,8 +886,8 @@ get_stream(PurpleMediaBackendFs2 *self,
 
 	for (; streams; streams = g_list_next(streams)) {
 		PurpleMediaBackendFs2Stream *stream = streams->data;
-		if (!strcmp(stream->session->id, sess_id) &&
-				!strcmp(stream->participant, name))
+		if (purple_strequal(stream->session->id, sess_id) &&
+				purple_strequal(stream->participant, name))
 			return stream;
 	}
 
@@ -1818,7 +1818,7 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	GError *err = NULL;
 	GList *codec_conf = NULL, *iter = NULL;
 	gchar *filename = NULL;
-	gboolean is_nice = !strcmp(transmitter, "nice");
+	gboolean is_nice = purple_strequal(transmitter, "nice");
 
 	session = g_new0(PurpleMediaBackendFs2Session, 1);
 
@@ -1892,14 +1892,14 @@ create_session(PurpleMediaBackendFs2 *self, const gchar *sess_id,
 	 * receiving the src-pad-added signal.
 	 * Only works for non-multicast FsRtpSessions.
 	 */
-	if (!!strcmp(transmitter, "multicast"))
+	if (!purple_strequal(transmitter, "multicast"))
 		g_object_set(G_OBJECT(session->session),
 				"no-rtcp-timeout", 0, NULL);
 
 	/*
 	 * Hack to make x264 work with Gmail video.
 	 */
-	if (is_nice && !strcmp(sess_id, "google-video")) {
+	if (is_nice && purple_strequal(sess_id, "google-video")) {
 		FsElementAddedNotifier *notifier =
 				fs_element_added_notifier_new();
 		g_signal_connect(G_OBJECT(notifier), "element-added",
@@ -2203,7 +2203,7 @@ create_stream(PurpleMediaBackendFs2 *self,
 		++_num_params;
 	}
 
-	if (turn_ip && !strcmp("nice", transmitter) && !got_turn_from_prpl) {
+	if (turn_ip && purple_strequal("nice", transmitter) && !got_turn_from_prpl) {
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		GValueArray *relay_info = g_value_array_new(0);
 G_GNUC_END_IGNORE_DEPRECATIONS
@@ -2219,7 +2219,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 			relay_info = append_relay_info(relay_info, turn_ip, port, username,
 				password, "udp");
 		}
-		
+
 		/* TCP */
 		port = purple_prefs_get_int("/purple/network/turn_port_tcp");
 		if (port > 0) {
@@ -2278,7 +2278,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 	stream->session = session;
 	stream->stream = fsstream;
 #ifndef HAVE_FARSIGHT
-	stream->supports_add = !strcmp(transmitter, "nice");
+	stream->supports_add = purple_strequal(transmitter, "nice");
 #endif
 
 	priv->streams =	g_list_append(priv->streams, stream);
@@ -2437,7 +2437,7 @@ purple_media_backend_fs2_codecs_ready(PurpleMediaBackend *self,
 				PURPLE_MEDIA_SEND_VIDEO)) {
 #ifdef HAVE_FARSIGHT
 			g_object_get(session->session,
-					"codecs-ready", &ret, NULL);	
+					"codecs-ready", &ret, NULL);
 #else
 			GList *codecs = NULL;
 
@@ -2702,7 +2702,7 @@ param_to_sdes_type(const gchar *param)
 	guint i;
 
 	for (i = 0; supported[i] != NULL; ++i) {
-		if (!strcmp(param, supported[i])) {
+		if (purple_strequal(param, supported[i])) {
 			return sdes_types[i];
 		}
 	}

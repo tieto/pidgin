@@ -664,7 +664,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, xmlnode *packet
 		 */
 		if (!presence->jid_from->resource || !chat->conv || chat->left) {
 			if (chat->left &&
-					presence->jid_from->resource && chat->handle && !strcmp(presence->jid_from->resource, chat->handle))
+					presence->jid_from->resource && chat->handle && purple_strequal(presence->jid_from->resource, chat->handle))
 				jabber_chat_destroy(chat);
 			return FALSE;
 		}

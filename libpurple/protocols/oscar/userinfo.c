@@ -252,7 +252,7 @@ oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_i
 				/* Append the status name for online ICQ statuses, away AIM statuses, and for all buddies with no message.
 				 * If the status name and the message are the same, only show one. */
 				const char *status_name = purple_status_get_name(status);
-				if (status_name && message && !strcmp(status_name, message))
+				if (status_name && message && purple_strequal(status_name, message))
 					status_name = NULL;
 
 				tmp = g_strdup_printf("%s%s%s",
@@ -433,7 +433,7 @@ oscar_user_info_display_icq(OscarData *od, struct aim_icq_info *info)
 		tm->tm_mon  = (int)info->birthmonth - 1;
 		tm->tm_year = (int)info->birthyear - 1900;
 
-		/* Ignore dst setting of today to avoid timezone shift between 
+		/* Ignore dst setting of today to avoid timezone shift between
 		 * dates in summer and winter time. */
 		tm->tm_isdst = -1;
 

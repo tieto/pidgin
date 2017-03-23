@@ -783,7 +783,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 				}
 
 				path = g_build_filename(path, name, NULL);
-				if (!strcmp(c, ".xml") &&
+				if (purple_strequal(c, ".xml") &&
 				    g_file_test(path, G_FILE_TEST_EXISTS)) {
 					found = TRUE;
 					g_free(logfile);

@@ -453,7 +453,7 @@ void jabber_roster_group_change(PurpleConnection *gc, const char *name,
 	GSList *buddies, *groups = NULL;
 	PurpleBuddy *b;
 
-	if(!old_group || !new_group || !strcmp(old_group, new_group))
+	if(!old_group || !new_group || purple_strequal(old_group, new_group))
 		return;
 
 	buddies = purple_find_buddies(gc->account, name);

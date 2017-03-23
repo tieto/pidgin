@@ -891,7 +891,7 @@ silcpurple_add_buddy_save(bool success, void *context)
 		silc_free(verifyd);
 	}
 
-	if (serversign.data && !strcmp(serverpk.type, "silc-rsa")) {
+	if (serversign.data && purple_strequal(serverpk.type, "silc-rsa")) {
 		SilcPublicKey public_key;
 		SilcPKCS pkcs;
 		unsigned char *verifyd;
@@ -983,10 +983,10 @@ silcpurple_add_buddy_save(bool success, void *context)
 						      usericon.mime_len);
 			if (m) {
 				const char *type = silc_mime_get_field(m, "Content-Type");
-				if (!strcmp(type, "image/jpeg") ||
-				    !strcmp(type, "image/gif") ||
-				    !strcmp(type, "image/bmp") ||
-				    !strcmp(type, "image/png")) {
+				if (purple_strequal(type, "image/jpeg") ||
+				    purple_strequal(type, "image/gif") ||
+				    purple_strequal(type, "image/bmp") ||
+				    purple_strequal(type, "image/png")) {
 					const unsigned char *data;
 					SilcUInt32 data_len;
 					data = silc_mime_get_data(m, &data_len);
@@ -1727,11 +1727,11 @@ void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 		return;
 
 	t = purple_imgstore_get_extension(img);
-	if (!t || !strcmp(t, "icon")) {
+	if (!t || purple_strequal(t, "icon")) {
 		silc_mime_free(mime);
 		return;
 	}
-	if (!strcmp(t, "jpg"))
+	if (purple_strequal(t, "jpg"))
 		t = "jpeg";
 	g_snprintf(type, sizeof(type), "image/%s", t);
 	silc_mime_add_field(mime, "Content-Type", type);

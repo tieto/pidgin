@@ -2129,7 +2129,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			smsmsg = byte_stream_getstr(&qbs, smslen);
 
 			/* Check if this is an SMS being sent from server */
-			if ((smstype == 0) && (!strcmp(tagstr, "ICQSMS")) && (smsmsg != NULL))
+			if ((smstype == 0) && (purple_strequal(tagstr, "ICQSMS")) && (smsmsg != NULL))
 			{
 				xmlroot = xmlnode_from_str(smsmsg, -1);
 				if (xmlroot != NULL)
@@ -3511,31 +3511,31 @@ oscar_get_extended_status(PurpleConnection *gc)
 	if (purple_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE))
 		data |= AIM_ICQ_STATE_WEBAWARE;
 
-	if (!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE))
+	if (purple_strequal(status_id, OSCAR_STATUS_ID_AVAILABLE))
 		data |= AIM_ICQ_STATE_NORMAL;
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_AWAY))
+	else if (purple_strequal(status_id, OSCAR_STATUS_ID_AWAY))
 		data |= AIM_ICQ_STATE_AWAY;
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_DND))
+	else if (purple_strequal(status_id, OSCAR_STATUS_ID_DND))
 		data |= AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_DND | AIM_ICQ_STATE_BUSY;
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_NA))
+	else if (purple_strequal(status_id, OSCAR_STATUS_ID_NA))
 		data |= AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY;
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_OCCUPIED))
+	else if (purple_strequal(status_id, OSCAR_STATUS_ID_OCCUPIED))
 		data |= AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_BUSY;
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_FREE4CHAT))
+	else if (purple_strequal(status_id, OSCAR_STATUS_ID_FREE4CHAT))
 		data |= AIM_ICQ_STATE_CHAT;
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_INVISIBLE))
+	else if (purple_strequal(status_id, OSCAR_STATUS_ID_INVISIBLE))
 		data |= AIM_ICQ_STATE_INVISIBLE;
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_EVIL))
+	else if (purple_strequal(status_id, OSCAR_STATUS_ID_EVIL))
 		data |= AIM_ICQ_STATE_EVIL;
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_DEPRESSION))
+	else if (purple_strequal(status_id, OSCAR_STATUS_ID_DEPRESSION))
 		data |= AIM_ICQ_STATE_DEPRESSION;
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_ATWORK))
+	else if (purple_strequal(status_id, OSCAR_STATUS_ID_ATWORK))
 		data |= AIM_ICQ_STATE_ATWORK;
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_ATHOME))
+	else if (purple_strequal(status_id, OSCAR_STATUS_ID_ATHOME))
 		data |= AIM_ICQ_STATE_ATHOME;
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_LUNCH))
+	else if (purple_strequal(status_id, OSCAR_STATUS_ID_LUNCH))
 		data |= AIM_ICQ_STATE_LUNCH;
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_CUSTOM))
+	else if (purple_strequal(status_id, OSCAR_STATUS_ID_CUSTOM))
 		data |= AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY;
 
 	return data;
@@ -5686,7 +5686,7 @@ static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
 	} else { /* Otherwise find an active account for the protocol */
 		GList *l = purple_accounts_get_all();
 		while (l) {
-			if (!strcmp(prpl, purple_account_get_protocol_id(l->data))
+			if (purple_strequal(prpl, purple_account_get_protocol_id(l->data))
 					&& purple_account_is_connected(l->data)) {
 				acct = l->data;
 				break;

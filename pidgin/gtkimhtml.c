@@ -1382,9 +1382,9 @@ imhtml_paste_cb(GtkIMHtml *imhtml, const char *str)
 	if (!gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml)))
 		return;
 
-	if (!str || !*str || !strcmp(str, "html"))
+	if (!str || !*str || purple_strequal(str, "html"))
 		g_signal_emit_by_name(imhtml, "paste_clipboard");
-	else if (!strcmp(str, "text"))
+	else if (purple_strequal(str, "text"))
 		paste_unformatted_cb(NULL, imhtml);
 }
 
@@ -4054,7 +4054,7 @@ gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text)
 
 	start_mark = gtk_text_buffer_get_mark(imhtml->text_buffer, "search");
 
-	if (start_mark && imhtml->search_string && !strcmp(text, imhtml->search_string))
+	if (start_mark && imhtml->search_string && purple_strequal(text, imhtml->search_string))
 		new_search = FALSE;
 
 	if (new_search) {

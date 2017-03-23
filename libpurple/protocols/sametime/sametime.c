@@ -945,8 +945,8 @@ static PurpleGroup *group_ensure(PurpleConnection *gc,
 
     DEBUG_INFO("found group named %s, owned by %s\n", NSTR(n), NSTR(o));
 
-    if(n && !strcmp(n, name)) {
-      if(!o || !strcmp(o, owner)) {
+    if(n && purple_strequal(n, name)) {
+      if(!o || purple_strequal(o, owner)) {
 	DEBUG_INFO("that'll work\n");
 	group = (PurpleGroup *) gn;
 	break;
@@ -1177,7 +1177,7 @@ static void blist_sync(PurpleConnection *gc, struct mwSametimeList *stlist) {
 
     /* dynamic group belonging to this account. don't prune contents */
     owner = purple_blist_node_get_string(gn, GROUP_KEY_OWNER);
-    if(owner && !strcmp(owner, acct_n))
+    if(owner && purple_strequal(owner, acct_n))
        continue;
 
     /* we actually are synching by this key as opposed to the group
@@ -1361,7 +1361,7 @@ static void blist_node_menu_cb(PurpleBlistNode *node,
 
   /* check if it's a NAB group for this account */
   owner = purple_blist_node_get_string(node, GROUP_KEY_OWNER);
-  if(owner && !strcmp(owner, purple_account_get_username(acct))) {
+  if(owner && purple_strequal(owner, purple_account_get_username(acct))) {
     act = purple_menu_action_new(_("Get Notes Address Book Info"),
                                PURPLE_CALLBACK(blist_menu_nab), pd, NULL);
     *menu = g_list_append(*menu, act);

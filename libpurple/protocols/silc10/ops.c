@@ -265,8 +265,8 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		    &data_len))
 			return;
 
-		if (!strcmp(type, "application/x-wb") &&
-		    !strcmp(enc, "binary") &&
+		if (purple_strequal(type, "application/x-wb") &&
+		    purple_strequal(enc, "binary") &&
 		    !purple_account_get_bool(sg->account, "block-wb", FALSE))
 			silcpurple_wb_receive_ch(client, conn, sender, channel,
 					       payload, flags, data, data_len);
@@ -368,8 +368,8 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 		    &data_len))
 			return;
 
-		if (!strcmp(type, "application/x-wb") &&
-		    !strcmp(enc, "binary") &&
+		if (purple_strequal(type, "application/x-wb") &&
+		    purple_strequal(enc, "binary") &&
 		    !purple_account_get_bool(sg->account, "block-wb", FALSE))
 			silcpurple_wb_receive(client, conn, sender, payload,
 					    flags, data, data_len);
@@ -588,7 +588,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		client_entry = va_arg(va, SilcClientEntry);
 		client_entry2 = va_arg(va, SilcClientEntry);
 
-		if (!strcmp(client_entry->nickname, client_entry2->nickname))
+		if (purple_strequal(client_entry->nickname, client_entry2->nickname))
 			break;
 
 		/* Change nick on all channels */
@@ -890,7 +890,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 							if (b->account != gc->account)
 								continue;
 							f = purple_blist_node_get_string(bnode, "public-key");
-							if (f && !strcmp(f, buf))
+							if (f && purple_strequal(f, buf))
 								goto cont;
 							b = NULL;
 						}
@@ -976,7 +976,7 @@ silc_command(SilcClient client, SilcClientConnection conn,
 
 	case SILC_COMMAND_CMODE:
 		if (cmd_context->argc == 3 &&
-		    !strcmp((char *)cmd_context->argv[2], "+C"))
+		    purple_strequal((char *)cmd_context->argv[2], "+C"))
 			sg->chpk = TRUE;
 		else
 			sg->chpk = FALSE;

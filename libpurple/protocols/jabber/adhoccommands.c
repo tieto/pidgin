@@ -169,7 +169,7 @@ jabber_adhoc_parse(JabberStream *js, const char *from,
 	if(!status)
 		return;
 
-	if(!strcmp(status,"completed")) {
+	if(purple_strequal(status,"completed")) {
 		/* display result */
 		xmlnode *note = xmlnode_get_child(command,"note");
 
@@ -183,7 +183,7 @@ jabber_adhoc_parse(JabberStream *js, const char *from,
 			jabber_x_data_request(js, xdata, (jabber_x_data_cb)do_adhoc_ignoreme, NULL);
 		return;
 	}
-	if(!strcmp(status,"executing")) {
+	if(purple_strequal(status,"executing")) {
 		/* this command needs more steps */
 		xmlnode *actions, *action;
 		int actionindex = 0;
@@ -207,7 +207,7 @@ jabber_adhoc_parse(JabberStream *js, const char *from,
 					newaction->name = g_strdup(_(action->name));
 					newaction->handle = g_strdup(action->name);
 					actionslist = g_list_append(actionslist, newaction);
-					if(defaultactionhandle && !strcmp(defaultactionhandle, action->name))
+					if(defaultactionhandle && purple_strequal(defaultactionhandle, action->name))
 						actionindex = index;
 				}
 			}

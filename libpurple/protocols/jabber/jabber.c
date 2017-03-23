@@ -341,11 +341,11 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 	name = (*packet)->name;
 	xmlns = xmlnode_get_namespace(*packet);
 
-	if(!strcmp((*packet)->name, "iq")) {
+	if(purple_strequal((*packet)->name, "iq")) {
 		jabber_iq_parse(js, *packet);
-	} else if(!strcmp((*packet)->name, "presence")) {
+	} else if(purple_strequal((*packet)->name, "presence")) {
 		jabber_presence_parse(js, *packet);
-	} else if(!strcmp((*packet)->name, "message")) {
+	} else if(purple_strequal((*packet)->name, "message")) {
 		jabber_message_parse(js, *packet);
 	} else if (purple_strequal(xmlns, NS_XMPP_STREAMS)) {
 		if (purple_strequal(name, "features"))
@@ -772,7 +772,7 @@ txt_resolved_cb(GList *responses, gpointer data)
 		PurpleTxtResponse *resp = responses->data;
 		gchar **token;
 		token = g_strsplit(purple_txt_response_get_content(resp), "=", 2);
-		if (!strcmp(token[0], "_xmpp-client-xbosh")) {
+		if (purple_strequal(token[0], "_xmpp-client-xbosh")) {
 			purple_debug_info("jabber","Found alternative connection method using %s at %s.\n", token[0], token[1]);
 			js->bosh = jabber_bosh_connection_init(js, token[1]);
 			g_strfreev(token);
@@ -1228,7 +1228,7 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 				flds; flds = flds->next) {
 			PurpleRequestField *field = flds->data;
 			const char *id = purple_request_field_get_id(field);
-			if(!strcmp(id,"unregister")) {
+			if(purple_strequal(id,"unregister")) {
 				gboolean value = purple_request_field_bool_get_value(field);
 				if(value) {
 					/* unregister from service. this doesn't include any of the fields, so remove them from the stanza by recreating it
@@ -1253,7 +1253,7 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 				const char *value = purple_request_field_string_get_value(field);
 				int i;
 				for (i = 0; ids[i]; i++) {
-					if (!strcmp(id, ids[i]))
+					if (purple_strequal(id, ids[i]))
 						break;
 				}
 
@@ -1261,11 +1261,11 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 					continue;
 				y = xmlnode_new_child(query, ids[i]);
 				xmlnode_insert_data(y, value, -1);
-				if(cbdata->js->registration && !strcmp(id, "username")) {
+				if(cbdata->js->registration && purple_strequal(id, "username")) {
 					g_free(cbdata->js->user->node);
 					cbdata->js->user->node = g_strdup(value);
 				}
-				if(cbdata->js->registration && !strcmp(id, "password"))
+				if(cbdata->js->registration && purple_strequal(id, "password"))
 					purple_account_set_password(cbdata->js->gc->account, value);
 			}
 		}
@@ -1993,7 +1993,7 @@ void jabber_remove_feature(const char *namespace) {
 	GList *feature;
 	for(feature = jabber_features; feature; feature = feature->next) {
 		JabberFeature *feat = (JabberFeature*)feature->data;
-		if(!strcmp(feat->namespace, namespace)) {
+		if(purple_strequal(feat->namespace, namespace)) {
 			g_free(feat->namespace);
 			g_free(feature->data);
 			jabber_features = g_list_delete_link(jabber_features, feature);
@@ -2724,7 +2724,7 @@ char *jabber_parse_error(JabberStream *js,
 		} else if(xmlnode_get_child(error, "undefined-condition")) {
 			text = _("Unknown Error");
 		}
-	} else if(xmlns && !strcmp(xmlns, NS_XMPP_SASL)) {
+	} else if(xmlns && purple_strequal(xmlns, NS_XMPP_SASL)) {
 		/* Most common reason can be the default */
 		SET_REASON(PURPLE_CONNECTION_ERROR_NETWORK_ERROR);
 		if(xmlnode_get_child(packet, "aborted")) {
@@ -2750,9 +2750,9 @@ char *jabber_parse_error(JabberStream *js,
 			SET_REASON(PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED);
 			text = _("Authentication Failure");
 		}
-	} else if(!strcmp(packet->name, "stream:error") ||
-			 (!strcmp(packet->name, "error") && xmlns &&
-				!strcmp(xmlns, NS_XMPP_STREAMS))) {
+	} else if(purple_strequal(packet->name, "stream:error") ||
+			 (purple_strequal(packet->name, "error") && xmlns &&
+				purple_strequal(xmlns, NS_XMPP_STREAMS))) {
 		/* Most common reason as default: */
 		SET_REASON(PURPLE_CONNECTION_ERROR_NETWORK_ERROR);
 		if(xmlnode_get_child(packet, "bad-format")) {

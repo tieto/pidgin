@@ -432,7 +432,7 @@ static gboolean jabber_bosh_connection_error_check(PurpleBOSHConnection *conn, x
 
 	type = xmlnode_get_attrib(node, "type");
 
-	if (type != NULL && !strcmp(type, "terminate")) {
+	if (type != NULL && purple_strequal(type, "terminate")) {
 		conn->state = BOSH_CONN_OFFLINE;
 		purple_connection_error_reason(conn->js->gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR,

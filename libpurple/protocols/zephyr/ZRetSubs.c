@@ -10,6 +10,7 @@
  */
 
 #include "internal.h"
+#include "util.h"
 
 static Code_t Z_RetSubs(ZNotice_t *notice, int *nsubs, Z_AuthProc auth_routine);
 
@@ -110,7 +111,7 @@ static Code_t Z_RetSubs(notice, nsubs, auth_routine)
 			return(ZERR_VERS);
 		}
 		if (retnotice.z_kind == SERVACK &&
-		    !strcmp(retnotice.z_opcode,notice->z_opcode)) {
+		    purple_strequal(retnotice.z_opcode,notice->z_opcode)) {
 			ZFreeNotice(&retnotice);
 			gimmeack = 1;
 			continue;

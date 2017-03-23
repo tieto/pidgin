@@ -875,7 +875,7 @@ static void jabber_buddy_info_remove_id(JabberBuddyInfo *jbi, const char *id)
 
 	while(l) {
 		comp_id = l->data;
-		if(!strcmp(id, comp_id)) {
+		if(purple_strequal(id, comp_id)) {
 			jbi->ids = g_slist_remove(jbi->ids, comp_id);
 			g_free(comp_id);
 			return;
@@ -1017,12 +1017,12 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 				continue;
 
 			text = xmlnode_get_data(child);
-			if(text && !strcmp(child->name, "FN")) {
+			if(text && purple_strequal(child->name, "FN")) {
 				if (!serverside_alias)
 					serverside_alias = g_strdup(text);
 
 				purple_notify_user_info_add_pair_plaintext(user_info, _("Full Name"), text);
-			} else if(!strcmp(child->name, "N")) {
+			} else if(purple_strequal(child->name, "N")) {
 				for(child2 = child->child; child2; child2 = child2->next)
 				{
 					char *text2;
@@ -1031,16 +1031,16 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 						continue;
 
 					text2 = xmlnode_get_data(child2);
-					if(text2 && !strcmp(child2->name, "FAMILY")) {
+					if(text2 && purple_strequal(child2->name, "FAMILY")) {
 						purple_notify_user_info_add_pair_plaintext(user_info, _("Family Name"), text2);
-					} else if(text2 && !strcmp(child2->name, "GIVEN")) {
+					} else if(text2 && purple_strequal(child2->name, "GIVEN")) {
 						purple_notify_user_info_add_pair_plaintext(user_info, _("Given Name"), text2);
-					} else if(text2 && !strcmp(child2->name, "MIDDLE")) {
+					} else if(text2 && purple_strequal(child2->name, "MIDDLE")) {
 						purple_notify_user_info_add_pair_plaintext(user_info, _("Middle Name"), text2);
 					}
 					g_free(text2);
 				}
-			} else if(text && !strcmp(child->name, "NICKNAME")) {
+			} else if(text && purple_strequal(child->name, "NICKNAME")) {
 				/* Prefer the Nickcname to the Full Name as the serverside alias if it's not just part of the jid.
 				 * Ignore it if it's part of the jid. */
 				if (strstr(bare_jid, text) == NULL) {
@@ -1049,9 +1049,9 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 
 					purple_notify_user_info_add_pair_plaintext(user_info, _("Nickname"), text);
 				}
-			} else if(text && !strcmp(child->name, "BDAY")) {
+			} else if(text && purple_strequal(child->name, "BDAY")) {
 				purple_notify_user_info_add_pair_plaintext(user_info, _("Birthday"), text);
-			} else if(!strcmp(child->name, "ADR")) {
+			} else if(purple_strequal(child->name, "ADR")) {
 				gboolean address_line_added = FALSE;
 
 				for(child2 = child->child; child2; child2 = child2->next)
@@ -1073,7 +1073,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 						address_line_added = TRUE;
 					}
 
-					if(!strcmp(child2->name, "POBOX")) {
+					if(purple_strequal(child2->name, "POBOX")) {
 						purple_notify_user_info_add_pair_plaintext(user_info, _("P.O. Box"), text2);
 					} else if (purple_strequal(child2->name, "EXTADD") || purple_strequal(child2->name, "EXTADR")) {
 						/*
@@ -1082,16 +1082,16 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 						 * EXTADR.
 						 */
 						purple_notify_user_info_add_pair_plaintext(user_info, _("Extended Address"), text2);
-					} else if(!strcmp(child2->name, "STREET")) {
+					} else if(purple_strequal(child2->name, "STREET")) {
 						purple_notify_user_info_add_pair_plaintext(user_info, _("Street Address"), text2);
-					} else if(!strcmp(child2->name, "LOCALITY")) {
+					} else if(purple_strequal(child2->name, "LOCALITY")) {
 						purple_notify_user_info_add_pair_plaintext(user_info, _("Locality"), text2);
-					} else if(!strcmp(child2->name, "REGION")) {
+					} else if(purple_strequal(child2->name, "REGION")) {
 						purple_notify_user_info_add_pair_plaintext(user_info, _("Region"), text2);
-					} else if(!strcmp(child2->name, "PCODE")) {
+					} else if(purple_strequal(child2->name, "PCODE")) {
 						purple_notify_user_info_add_pair_plaintext(user_info, _("Postal Code"), text2);
-					} else if(!strcmp(child2->name, "CTRY")
-								|| !strcmp(child2->name, "COUNTRY")) {
+					} else if(purple_strequal(child2->name, "CTRY")
+								|| purple_strequal(child2->name, "COUNTRY")) {
 						purple_notify_user_info_add_pair_plaintext(user_info, _("Country"), text2);
 					}
 					g_free(text2);
@@ -1100,7 +1100,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 				if (address_line_added)
 					purple_notify_user_info_add_section_break(user_info);
 
-			} else if(!strcmp(child->name, "TEL")) {
+			} else if(purple_strequal(child->name, "TEL")) {
 				char *number;
 				if((child2 = xmlnode_get_child(child, "NUMBER"))) {
 					/* show what kind of number it is */
@@ -1115,7 +1115,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 					purple_notify_user_info_add_pair_plaintext(user_info, _("Telephone"), number);
 					g_free(number);
 				}
-			} else if(!strcmp(child->name, "EMAIL")) {
+			} else if(purple_strequal(child->name, "EMAIL")) {
 				char *userid, *escaped;
 				if((child2 = xmlnode_get_child(child, "USERID"))) {
 					/* show what kind of email it is */
@@ -1143,7 +1143,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 					g_free(escaped);
 					g_free(userid);
 				}
-			} else if(!strcmp(child->name, "ORG")) {
+			} else if(purple_strequal(child->name, "ORG")) {
 				for(child2 = child->child; child2; child2 = child2->next)
 				{
 					char *text2;
@@ -1152,21 +1152,21 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 						continue;
 
 					text2 = xmlnode_get_data(child2);
-					if(text2 && !strcmp(child2->name, "ORGNAME")) {
+					if(text2 && purple_strequal(child2->name, "ORGNAME")) {
 						purple_notify_user_info_add_pair_plaintext(user_info, _("Organization Name"), text2);
-					} else if(text2 && !strcmp(child2->name, "ORGUNIT")) {
+					} else if(text2 && purple_strequal(child2->name, "ORGUNIT")) {
 						purple_notify_user_info_add_pair_plaintext(user_info, _("Organization Unit"), text2);
 					}
 					g_free(text2);
 				}
-			} else if(text && !strcmp(child->name, "TITLE")) {
+			} else if(text && purple_strequal(child->name, "TITLE")) {
 				purple_notify_user_info_add_pair_plaintext(user_info, _("Job Title"), text);
-			} else if(text && !strcmp(child->name, "ROLE")) {
+			} else if(text && purple_strequal(child->name, "ROLE")) {
 				purple_notify_user_info_add_pair_plaintext(user_info, _("Role"), text);
-			} else if(text && !strcmp(child->name, "DESC")) {
+			} else if(text && purple_strequal(child->name, "DESC")) {
 				purple_notify_user_info_add_pair_plaintext(user_info, _("Description"), text);
-			} else if(!strcmp(child->name, "PHOTO") ||
-					!strcmp(child->name, "LOGO")) {
+			} else if(purple_strequal(child->name, "PHOTO") ||
+					purple_strequal(child->name, "LOGO")) {
 				char *bintext = NULL;
 				xmlnode *binval;
 
@@ -1481,12 +1481,12 @@ static gboolean _client_is_blacklisted(JabberBuddyResource *jbr, const char *ns)
 	if(!jbr->client.name)
 		return FALSE;
 
-	if(!strcmp(ns, NS_LAST_ACTIVITY)) {
-		if(!strcmp(jbr->client.name, "Trillian")) {
+	if(purple_strequal(ns, NS_LAST_ACTIVITY)) {
+		if(purple_strequal(jbr->client.name, "Trillian")) {
 			/* verified by nwalp 2007/05/09 */
-			if(!strcmp(jbr->client.version, "3.1.0.121") ||
+			if(purple_strequal(jbr->client.version, "3.1.0.121") ||
 					/* verified by nwalp 2007/09/19 */
-					!strcmp(jbr->client.version, "3.1.7.0")) {
+					purple_strequal(jbr->client.version, "3.1.7.0")) {
 				return TRUE;
 			}
 		}
@@ -1974,7 +1974,7 @@ static void user_search_result_cb(JabberStream *js, const char *from,
 						field = xmlnode_get_next_twin(field))
 				{
 					if ((var = xmlnode_get_attrib(field, "var")) &&
-							!strcmp(var, l->data) &&
+							purple_strequal(var, l->data) &&
 							(valuenode = xmlnode_get_child(field, "value")))
 					{
 						char *value = xmlnode_get_data(valuenode);
@@ -2045,7 +2045,7 @@ static void user_search_x_data_cb(JabberStream *js, xmlnode *result, gpointer da
 	 * just going to get an error if we send
 	 * a cancel, so skip it */
 	type = xmlnode_get_attrib(result, "type");
-	if(type && !strcmp(type, "cancel")) {
+	if(type && purple_strequal(type, "cancel")) {
 		g_free(dir_server);
 		return;
 	}
@@ -2089,7 +2089,7 @@ static void user_search_cb(struct user_search_info *usi, PurpleRequestFields *fi
 			const char *id = purple_request_field_get_id(field);
 			const char *value = purple_request_field_string_get_value(field);
 
-			if(value && (!strcmp(id, "first") || !strcmp(id, "last") || !strcmp(id, "nick") || !strcmp(id, "email"))) {
+			if(value && (purple_strequal(id, "first") || purple_strequal(id, "last") || purple_strequal(id, "nick") || purple_strequal(id, "email"))) {
 				xmlnode *y = xmlnode_new_child(query, id);
 				xmlnode_insert_data(y, value, -1);
 			}
@@ -2232,7 +2232,7 @@ void jabber_user_search(JabberStream *js, const char *directory)
 	/* If the value provided isn't the disco#info default, persist it.  Otherwise,
 	   make sure we aren't persisting an old value */
 	if(js->user_directories && js->user_directories->data &&
-	   !strcmp(directory, js->user_directories->data)) {
+	   purple_strequal(directory, js->user_directories->data)) {
 		purple_account_set_string(js->gc->account, "user_directory", "");
 	}
 	else {

@@ -160,7 +160,7 @@ glmFindGroup(GLMmodel* model, char* name)
 
   group = model->groups;
   while(group) {
-    if (!strcmp(name, group->name))
+    if (purple_strequal(name, group->name))
       break;
     group = group->next;
   }
@@ -200,7 +200,7 @@ glmFindMaterial(GLMmodel* model, char* name)
   /* XXX doing a linear search on a string key'd list is pretty lame,
      but it works and is fast enough for now. */
   for (i = 0; i < model->nummaterials; i++) {
-    if (!strcmp(model->materials[i].name, name))
+    if (purple_strequal(model->materials[i].name, name))
       goto found;
   }
 

@@ -352,17 +352,17 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 		for(info = metadata->child; info; info = info->next) {
 			if(info->type == XMLNODE_TYPE_TAG)
 				has_children = TRUE;
-			if(info->type == XMLNODE_TYPE_TAG && !strcmp(info->name,"info")) {
+			if(info->type == XMLNODE_TYPE_TAG && purple_strequal(info->name,"info")) {
 				const char *type = xmlnode_get_attrib(info,"type");
 				const char *id = xmlnode_get_attrib(info,"id");
 
-				if(checksum && id && !strcmp(id, checksum)) {
+				if(checksum && id && purple_strequal(id, checksum)) {
 					/* we already have that avatar, so we don't have to do anything */
 					goodinfo = NULL;
 					break;
 				}
 				/* We'll only pick the png one for now. It's a very nice image format anyways. */
-				if(type && id && !goodinfo && !strcmp(type, "image/png"))
+				if(type && id && !goodinfo && purple_strequal(type, "image/png"))
 					goodinfo = info;
 			}
 		}

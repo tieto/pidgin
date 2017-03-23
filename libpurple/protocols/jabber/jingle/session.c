@@ -520,7 +520,7 @@ jingle_session_find_content(JingleSession *session, const gchar *name, const gch
 
 		if (creator != NULL) {
 			gchar *ccreator = jingle_content_get_creator(content);
-			result = (result && !strcmp(creator, ccreator));
+			result = (result && purple_strequal(creator, ccreator));
 			g_free(ccreator);
 		}
 
@@ -547,7 +547,7 @@ jingle_session_find_pending_content(JingleSession *session, const gchar *name, c
 
 		if (creator != NULL) {
 			gchar *ccreator = jingle_content_get_creator(content);
-			result = (result && !strcmp(creator, ccreator));
+			result = (result && purple_strequal(creator, ccreator));
 			g_free(ccreator);
 		}
 

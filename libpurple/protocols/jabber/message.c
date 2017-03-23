@@ -182,7 +182,7 @@ static void handle_headline(JabberMessage *jm)
 	for(etc = jm->etc; etc; etc = etc->next) {
 		xmlnode *x = etc->data;
 		const char *xmlns = xmlnode_get_namespace(x);
-		if(xmlns && !strcmp(xmlns, NS_OOB_X_DATA)) {
+		if(xmlns && purple_strequal(xmlns, NS_OOB_X_DATA)) {
 			xmlnode *url, *desc;
 			char *urltxt, *desctxt;
 
@@ -196,7 +196,7 @@ static void handle_headline(JabberMessage *jm)
 			desctxt = xmlnode_get_data(desc);
 
 			/* I'm all about ugly hacks */
-			if(body->len && jm->body && !strcmp(body->str, jm->body))
+			if(body->len && jm->body && purple_strequal(body->str, jm->body))
 				g_string_printf(body, "<a href='%s'>%s</a>",
 						urltxt, desctxt);
 			else
@@ -521,15 +521,15 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	jm->chat_state = JM_STATE_NONE;
 
 	if(type) {
-		if(!strcmp(type, "normal"))
+		if(purple_strequal(type, "normal"))
 			jm->type = JABBER_MESSAGE_NORMAL;
-		else if(!strcmp(type, "chat"))
+		else if(purple_strequal(type, "chat"))
 			jm->type = JABBER_MESSAGE_CHAT;
-		else if(!strcmp(type, "groupchat"))
+		else if(purple_strequal(type, "groupchat"))
 			jm->type = JABBER_MESSAGE_GROUPCHAT;
-		else if(!strcmp(type, "headline"))
+		else if(purple_strequal(type, "headline"))
 			jm->type = JABBER_MESSAGE_HEADLINE;
-		else if(!strcmp(type, "error"))
+		else if(purple_strequal(type, "error"))
 			jm->type = JABBER_MESSAGE_ERROR;
 		else
 			jm->type = JABBER_MESSAGE_OTHER;
@@ -546,7 +546,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		if(child->type != XMLNODE_TYPE_TAG)
 			continue;
 
-		if(!strcmp(child->name, "error")) {
+		if(purple_strequal(child->name, "error")) {
 			const char *code = xmlnode_get_attrib(child, "code");
 			char *code_txt = NULL;
 			char *text = xmlnode_get_data(child);
@@ -571,20 +571,20 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		} else if (xmlns == NULL) {
 			/* QuLogic: Not certain this is correct, but it would have happened
 			   with the previous code. */
-			if(!strcmp(child->name, "x"))
+			if(purple_strequal(child->name, "x"))
 				jm->etc = g_list_append(jm->etc, child);
 			/* The following tests expect xmlns != NULL */
 			continue;
-		} else if(!strcmp(child->name, "subject") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
+		} else if(purple_strequal(child->name, "subject") && purple_strequal(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->subject) {
 				jm->subject = xmlnode_get_data(child);
 				if(!jm->subject)
 					jm->subject = g_strdup("");
 			}
-		} else if(!strcmp(child->name, "thread") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
+		} else if(purple_strequal(child->name, "thread") && purple_strequal(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->thread_id)
 				jm->thread_id = xmlnode_get_data(child);
-		} else if(!strcmp(child->name, "body") && !strcmp(xmlns, NS_XMPP_CLIENT)) {
+		} else if(purple_strequal(child->name, "body") && purple_strequal(xmlns, NS_XMPP_CLIENT)) {
 			if(!jm->body) {
 				char *msg = xmlnode_get_data(child);
 				char *escaped = purple_markup_escape_text(msg, -1);
@@ -592,7 +592,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				g_free(escaped);
 				g_free(msg);
 			}
-		} else if(!strcmp(child->name, "html") && !strcmp(xmlns, NS_XHTML_IM)) {
+		} else if(purple_strequal(child->name, "html") && purple_strequal(xmlns, NS_XHTML_IM)) {
 			if(!jm->xhtml && xmlnode_get_child(child, "body")) {
 				char *c;
 
@@ -691,35 +691,35 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						*c = ' ';
 				}
 			}
-		} else if(!strcmp(child->name, "active") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
+		} else if(purple_strequal(child->name, "active") && purple_strequal(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_ACTIVE;
-		} else if(!strcmp(child->name, "composing") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
+		} else if(purple_strequal(child->name, "composing") && purple_strequal(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_COMPOSING;
-		} else if(!strcmp(child->name, "paused") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
+		} else if(purple_strequal(child->name, "paused") && purple_strequal(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_PAUSED;
-		} else if(!strcmp(child->name, "inactive") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
+		} else if(purple_strequal(child->name, "inactive") && purple_strequal(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_INACTIVE;
-		} else if(!strcmp(child->name, "gone") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
+		} else if(purple_strequal(child->name, "gone") && purple_strequal(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_GONE;
-		} else if(!strcmp(child->name, "event") && !strcmp(xmlns,"http://jabber.org/protocol/pubsub#event")) {
+		} else if(purple_strequal(child->name, "event") && purple_strequal(xmlns,"http://jabber.org/protocol/pubsub#event")) {
 			xmlnode *items;
 			jm->type = JABBER_MESSAGE_EVENT;
 			for(items = xmlnode_get_child(child,"items"); items; items = items->next)
 				jm->eventitems = g_list_append(jm->eventitems, items);
-		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns, NS_ATTENTION)) {
+		} else if(purple_strequal(child->name, "attention") && purple_strequal(xmlns, NS_ATTENTION)) {
 			jm->hasBuzz = TRUE;
-		} else if(!strcmp(child->name, "delay") && !strcmp(xmlns, NS_DELAYED_DELIVERY)) {
+		} else if(purple_strequal(child->name, "delay") && purple_strequal(xmlns, NS_DELAYED_DELIVERY)) {
 			const char *timestamp = xmlnode_get_attrib(child, "stamp");
 			jm->delayed = TRUE;
 			if(timestamp)
 				jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
-		} else if(!strcmp(child->name, "x")) {
-			if(!strcmp(xmlns, NS_DELAYED_DELIVERY_LEGACY)) {
+		} else if(purple_strequal(child->name, "x")) {
+			if(purple_strequal(xmlns, NS_DELAYED_DELIVERY_LEGACY)) {
 				const char *timestamp = xmlnode_get_attrib(child, "stamp");
 				jm->delayed = TRUE;
 				if(timestamp)
 					jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
-			} else if(!strcmp(xmlns, "jabber:x:conference") &&
+			} else if(purple_strequal(xmlns, "jabber:x:conference") &&
 					jm->type != JABBER_MESSAGE_GROUPCHAT_INVITE &&
 					jm->type != JABBER_MESSAGE_ERROR) {
 				const char *jid = xmlnode_get_attrib(child, "jid");
@@ -741,7 +741,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						jm->password = g_strdup(password);
 					}
 				}
-			} else if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user") &&
+			} else if(purple_strequal(xmlns, "http://jabber.org/protocol/muc#user") &&
 					jm->type != JABBER_MESSAGE_ERROR) {
 				xmlnode *invite = xmlnode_get_child(child, "invite");
 				if(invite) {

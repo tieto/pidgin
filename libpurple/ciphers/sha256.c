@@ -110,11 +110,11 @@ sha256_set_opt(PurpleCipherContext *context, const gchar *name, void *value) {
 
 	ctx = purple_cipher_context_get_data(context);
 
-	if(!strcmp(name, "sizeHi")) {
+	if(purple_strequal(name, "sizeHi")) {
 		ctx->sizeHi = GPOINTER_TO_INT(value);
-	} else if(!strcmp(name, "sizeLo")) {
+	} else if(purple_strequal(name, "sizeLo")) {
 		ctx->sizeLo = GPOINTER_TO_INT(value);
-	} else if(!strcmp(name, "lenW")) {
+	} else if(purple_strequal(name, "lenW")) {
 		ctx->lenW = GPOINTER_TO_INT(value);
 	}
 }
@@ -125,11 +125,11 @@ sha256_get_opt(PurpleCipherContext *context, const gchar *name) {
 
 	ctx = purple_cipher_context_get_data(context);
 
-	if(!strcmp(name, "sizeHi")) {
+	if(purple_strequal(name, "sizeHi")) {
 		return GINT_TO_POINTER(ctx->sizeHi);
-	} else if(!strcmp(name, "sizeLo")) {
+	} else if(purple_strequal(name, "sizeLo")) {
 		return GINT_TO_POINTER(ctx->sizeLo);
-	} else if(!strcmp(name, "lenW")) {
+	} else if(purple_strequal(name, "lenW")) {
 		return GINT_TO_POINTER(ctx->lenW);
 	}
 

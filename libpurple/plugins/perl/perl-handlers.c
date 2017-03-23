@@ -419,7 +419,7 @@ find_signal_handler(PurplePlugin *plugin, void *instance, const char *signal)
 
 		if (handler->plugin == plugin &&
 			handler->instance == instance &&
-			!strcmp(handler->signal, signal)) {
+			purple_strequal(handler->signal, signal)) {
 			return handler;
 		}
 	}

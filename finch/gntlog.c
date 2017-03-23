@@ -92,7 +92,7 @@ static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
 	if (a->username && b->username) {
 		normal = g_strdup(purple_normalize(a->account, a->username));
 		ret = (a->account == b->account) &&
-			!strcmp(normal, purple_normalize(b->account, b->username));
+			purple_strequal(normal, purple_normalize(b->account, b->username));
 		g_free(normal);
 	} else {
 		ret = (a == b);
@@ -123,7 +123,7 @@ static void search_cb(GntWidget *button, FinchLogViewer *lv)
 		return;
 	}
 
-	if (lv->search != NULL && !strcmp(lv->search, search_term)) {
+	if (lv->search != NULL && purple_strequal(lv->search, search_term)) {
 		return;
 	}
 

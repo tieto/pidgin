@@ -237,10 +237,10 @@ substitute_word(gchar *word)
 			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, BAD_COLUMN, &val1);
 			bad = g_value_get_string(&val1);
 
-			if ((case_sensitive && !strcmp(bad, word)) ||
-			    (!case_sensitive && (!strcmp(bad, lowerword) ||
+			if ((case_sensitive && purple_strequal(bad, word)) ||
+			    (!case_sensitive && (purple_strequal(bad, lowerword) ||
 			                        (!is_word_lowercase(bad) &&
-			                         !strcmp((tmpbad = g_utf8_casefold(bad, -1)), foldedword)))))
+			                         purple_strequal((tmpbad = g_utf8_casefold(bad, -1)), foldedword)))))
 			{
 				GValue val2;
 				const char *good;
@@ -1947,12 +1947,12 @@ static void list_add_new(void)
 				 * Otherwise, they overlap. */
 				if (g_value_get_boolean(&case_sensitive_val))
 				{
-					match = !strcmp(g_value_get_string(&bad_val), word);
+					match = purple_strequal(g_value_get_string(&bad_val), word);
 				}
 				else
 				{
 					char *bad = g_utf8_casefold(g_value_get_string(&bad_val), -1);
-					match = !strcmp(bad, tmpword);
+					match = purple_strequal(bad, tmpword);
 					g_free(bad);
 				}
 				g_value_unset(&case_sensitive_val);
@@ -1960,7 +1960,7 @@ static void list_add_new(void)
 			else
 			{
 				char *bad = g_utf8_casefold(g_value_get_string(&bad_val), -1);
-				match = !strcmp(bad, tmpword);
+				match = purple_strequal(bad, tmpword);
 				g_free(bad);
 			}
 
@@ -2231,8 +2231,8 @@ get_config_frame(PurplePlugin *plugin)
 
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(tree)),
 		 GTK_SELECTION_MULTIPLE);
-	gtk_box_pack_start(GTK_BOX(vbox), 
-		pidgin_make_scrollable(tree, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1), 
+	gtk_box_pack_start(GTK_BOX(vbox),
+		pidgin_make_scrollable(tree, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1),
 		TRUE, TRUE, 0);
 	gtk_widget_show(tree);
 

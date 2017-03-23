@@ -125,7 +125,7 @@ docklet_update_status(void)
 	/* determine if any ims have unseen messages */
 	convs = get_pending_list(DOCKLET_TOOLTIP_LINE_LIMIT);
 
-	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "pending")) {
+	if (purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "pending")) {
 		if (convs && ui_ops->create && !visible) {
 			g_list_free(convs);
 			ui_ops->create();
@@ -285,7 +285,7 @@ docklet_show_pref_changed_cb(const char *name, PurplePrefType type,
 			     gconstpointer value, gpointer data)
 {
 	const char *val = value;
-	if (!strcmp(val, "always")) {
+	if (purple_strequal(val, "always")) {
 		if (ui_ops->create) {
 			if (!visible)
 				ui_ops->create();
@@ -294,7 +294,7 @@ docklet_show_pref_changed_cb(const char *name, PurplePrefType type,
 				visibility_manager = TRUE;
 			}
 		}
-	} else if (!strcmp(val, "never")) {
+	} else if (purple_strequal(val, "never")) {
 		if (visible && ui_ops->destroy)
 			ui_ops->destroy();
 	} else {
@@ -426,7 +426,7 @@ activate_status_account_cb(GtkMenuItem *menuitem, gpointer user_data)
 				if (sub) {
 					const PurpleStatusType *sub_type = purple_savedstatus_substatus_get_type(sub);
 					const char *subtype_status_id = purple_status_type_get_id(sub_type);
-					if (subtype_status_id && !strcmp(subtype_status_id,
+					if (subtype_status_id && purple_strequal(subtype_status_id,
 							purple_status_type_get_id(status_type)))
 						found = TRUE;
 				}
@@ -727,7 +727,7 @@ docklet_menu(void)
 
 	menuitem = gtk_check_menu_item_new_with_mnemonic(_("Mute _Sounds"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/sound/mute"));
-	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"))
+	if (purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"))
 		gtk_widget_set_sensitive(GTK_WIDGET(menuitem), FALSE);
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -844,7 +844,7 @@ pidgin_docklet_init()
 				    docklet_show_pref_changed_cb, NULL);
 
 	docklet_ui_init();
-	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "always") && ui_ops && ui_ops->create)
+	if (purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "always") && ui_ops && ui_ops->create)
 		ui_ops->create();
 
 	purple_signal_connect(conn_handle, "signed-on",

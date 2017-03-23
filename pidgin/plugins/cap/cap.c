@@ -96,7 +96,7 @@ static double generate_prediction_for(PurpleBuddy *buddy) {
 
 	sta_id = purple_status_get_id(get_status_for(buddy));
 
-	if(sta_id && !strcmp(sta_id, "offline")) {
+	if(sta_id && purple_strequal(sta_id, "offline")) {
 		/* This is kind of stupid, change it. */
 		if(prediction == 1.0f)
 			prediction = 0.0f;

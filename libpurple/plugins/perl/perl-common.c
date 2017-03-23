@@ -304,7 +304,7 @@ purple_perl_value_from_sv(PurpleValue *value, SV *sv)
 			break;
 
 		case PURPLE_TYPE_BOXED:
-			if (!strcmp(purple_value_get_specific_type(value), "SV"))
+			if (purple_strequal(purple_value_get_specific_type(value), "SV"))
 				purple_value_set_boxed(value, (sv == &PL_sv_undef ? NULL : sv));
 			else
 				purple_value_set_boxed(value, sv);
@@ -359,7 +359,7 @@ purple_perl_sv_from_value(const PurpleValue *value, va_list list)
 			break;
 
 		case PURPLE_TYPE_BOXED:
-			if (!strcmp(purple_value_get_specific_type(value), "SV"))
+			if (purple_strequal(purple_value_get_specific_type(value), "SV"))
 			{
 				SV *sv = (SV *)purple_perl_get_boxed(value);
 

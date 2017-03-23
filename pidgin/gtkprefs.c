@@ -262,7 +262,7 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 
 		if ((type == PURPLE_PREF_INT && stored_int == int_value) ||
 			(type == PURPLE_PREF_STRING && stored_str != NULL &&
-			 !strcmp(stored_str, str_value)) ||
+			 purple_strequal(stored_str, str_value)) ||
 			(type == PURPLE_PREF_BOOLEAN &&
 			 (purple_prefs_get_bool(key) == GPOINTER_TO_INT(menuitems->data)))) {
 
@@ -1890,11 +1890,11 @@ get_available_browsers(void)
 			browsers = g_list_prepend(browsers,
 									  possible_browsers[i].command);
 			browsers = g_list_prepend(browsers, (gpointer)_(possible_browsers[i].name));
-			if(browser_setting && !strcmp(possible_browsers[i].command, browser_setting))
+			if(browser_setting && purple_strequal(possible_browsers[i].command, browser_setting))
 				browser_setting = NULL;
 			/* If xdg-open is valid, prefer it over gnome-open and skip forward */
-			if(!strcmp(possible_browsers[i].command, "xdg-open")) {
-				if (browser_setting && !strcmp("gnome-open", browser_setting)) {
+			if(purple_strequal(possible_browsers[i].command, "xdg-open")) {
+				if (browser_setting && purple_strequal("gnome-open", browser_setting)) {
 					purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/browser", possible_browsers[i].command);
 					browser_setting = NULL;
 				}
@@ -1926,7 +1926,7 @@ browser_changed2_cb(const char *name, PurplePrefType type,
 	GtkWidget *hbox = data;
 	const char *browser = value;
 
-	gtk_widget_set_sensitive(hbox, !strcmp(browser, "custom"));
+	gtk_widget_set_sensitive(hbox, purple_strequal(browser, "custom"));
 }
 
 static GtkWidget *
@@ -1999,7 +1999,7 @@ browser_page(void)
 			gtk_size_group_add_widget(sg, label);
 			gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-			if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
+			if (purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
 				gtk_widget_set_sensitive(hbox, FALSE);
 			purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
 										browser_changed1_cb, hbox);
@@ -2236,7 +2236,7 @@ sound_changed1_cb(const char *name, PurplePrefType type,
 	GtkWidget *hbox = data;
 	const char *method = value;
 
-	gtk_widget_set_sensitive(hbox, !strcmp(method, "custom"));
+	gtk_widget_set_sensitive(hbox, purple_strequal(method, "custom"));
 }
 
 static void
@@ -2259,9 +2259,9 @@ sound_changed3_cb(const char *name, PurplePrefType type,
 	const char *method = value;
 
 	gtk_widget_set_sensitive(hbox,
-			!strcmp(method, "automatic") ||
-			!strcmp(method, "alsa") ||
-			!strcmp(method, "esd"));
+			purple_strequal(method, "automatic") ||
+			purple_strequal(method, "alsa") ||
+			purple_strequal(method, "esd"));
 }
 #endif /* USE_GSTREAMER */
 
@@ -2440,7 +2440,7 @@ mute_changed_cb(const char *pref_name,
 	GtkToggleButton *button = data;
 	gboolean muted = GPOINTER_TO_INT(val);
 
-	g_return_if_fail(!strcmp (pref_name, PIDGIN_PREFS_ROOT "/sound/mute"));
+	g_return_if_fail(purple_strequal (pref_name, PIDGIN_PREFS_ROOT "/sound/mute"));
 
 	/* Block the handler that re-sets the preference. */
 	g_signal_handlers_block_matched(button, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, (gpointer)pref_name);
@@ -2509,7 +2509,7 @@ sound_page(void)
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/method",
 								sound_changed1_cb, hbox);
 	gtk_widget_set_sensitive(hbox,
-			!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"),
+			purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"),
 					"custom"));
 #endif /* _WIN32 */
 

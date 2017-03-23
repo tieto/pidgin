@@ -451,14 +451,14 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 
 	to = gtk_entry_get_text(GTK_ENTRY(to_entry));
 	type = gtk_combo_box_get_active_text(GTK_COMBO_BOX(type_combo));
-	if (!strcmp(type, "default"))
+	if (purple_strequal(type, "default"))
 		type = "";
 	show = gtk_combo_box_get_active_text(GTK_COMBO_BOX(show_combo));
-	if (!strcmp(show, "default"))
+	if (purple_strequal(show, "default"))
 		show = "";
 	status = gtk_entry_get_text(GTK_ENTRY(status_entry));
 	priority = gtk_entry_get_text(GTK_ENTRY(priority_entry));
-	if (!strcmp(priority, "0"))
+	if (purple_strequal(priority, "0"))
 		priority = "";
 
 	stanza = g_strdup_printf("<presence %s%s%s id='console%x' %s%s%s>"
@@ -770,7 +770,7 @@ create_console(PurplePluginAction *action)
 	console->dropdown = gtk_combo_box_new_text();
 	for (connections = purple_connections_get_all(); connections; connections = connections->next) {
 		PurpleConnection *gc = connections->data;
-		if (!strcmp(purple_account_get_protocol_id(purple_connection_get_account(gc)), "prpl-jabber")) {
+		if (purple_strequal(purple_account_get_protocol_id(purple_connection_get_account(gc)), "prpl-jabber")) {
 			console->count++;
 			console->accounts = g_list_append(console->accounts, gc);
 			gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown),
@@ -787,7 +787,7 @@ create_console(PurplePluginAction *action)
 	if (console->count == 0)
 		gtk_imhtml_append_text(GTK_IMHTML(console->imhtml),
 				       _("<font color='#777777'>Not connected to XMPP</font>"), 0);
-	gtk_box_pack_start(GTK_BOX(vbox), 
+	gtk_box_pack_start(GTK_BOX(vbox),
 		pidgin_make_scrollable(console->imhtml, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_ETCHED_IN, -1, -1),
 		TRUE, TRUE, 0);
 
