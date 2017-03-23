@@ -77,7 +77,6 @@ static const struct developer developers[] = {
 	{"Ethan 'Paco-Paco' Blanton",          NULL,                  NULL},
 	{"Hylke Bons",                         N_("artist"),          "hylkebons@gmail.com"},
 	{"Sadrul Habib Chowdhury",             NULL,                  NULL},
-	{"Mark 'KingAnt' Doliner",             NULL,                  "mark@kingant.net"},
 	{"Gary 'grim' Kramlich",               NULL,                  "grim@pidgin.im"},
 	{"Richard 'rlaager' Laager",           NULL,                  "rlaager@pidgin.im"},
 	{"Marcus 'malu' Lundblad",             NULL,                  NULL},
@@ -113,6 +112,7 @@ static const struct developer retired_developers[] = {
 	/* Translators: This is a person's name. For most languages we recommend
 	   not translating it. */
 	{N_("Ka-Hing Cheung"),          NULL,                      NULL},
+	{"Mark 'KingAnt' Doliner",      NULL,                      "mark@kingant.net"},
 	{"Jim Duchek",                  N_("maintainer"),          "jim@linuxpimps.com"},
 	{"Sean Egan",                   NULL,                      "sean.egan@gmail.com"},
 	{"Rob Flynn",                   N_("maintainer"),          NULL},
