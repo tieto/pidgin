@@ -409,7 +409,7 @@ create_video_sink(PurpleMedia *media,
 	if (device[0] != '\0')
 		g_object_set(G_OBJECT(ret), "device", device, NULL);
 
-	if (g_strcmp0(plugin, "autovideosink") == 0) {
+	if (purple_strequal(plugin, "autovideosink")) {
 		g_signal_connect(ret, "child-added",
 			G_CALLBACK(autovideosink_child_added_cb), NULL);
 	} else {

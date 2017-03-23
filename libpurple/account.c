@@ -909,9 +909,9 @@ parse_account(xmlnode *node)
 
 		if (keyring_id == NULL || keyring_id[0] == '\0')
 			is_plaintext = TRUE;
-		else if (g_strcmp0(keyring_id, "keyring-internal") != 0)
+		else if (!purple_strequal(keyring_id, "keyring-internal"))
 			is_plaintext = FALSE;
-		else if (mode == NULL || mode[0] == '\0' || g_strcmp0(mode, "cleartext") == 0)
+		else if (mode == NULL || mode[0] == '\0' || purple_strequal(mode, "cleartext"))
 			is_plaintext = TRUE;
 		else
 			is_plaintext = FALSE;

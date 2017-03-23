@@ -627,9 +627,9 @@ get_app_data_info_and_lock (PurpleMediaManager *manager,
 		PurpleMediaAppDataInfo *info = i->data;
 
 		if (info->media == media &&
-			g_strcmp0 (info->session_id, session_id) == 0 &&
+			purple_strequal (info->session_id, session_id) &&
 			(participant == NULL ||
-				g_strcmp0 (info->participant, participant) == 0)) {
+				purple_strequal (info->participant, participant))) {
 			return info;
 		}
 	}

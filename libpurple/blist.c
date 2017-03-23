@@ -279,7 +279,7 @@ group_to_xmlnode(PurpleBlistNode *gnode)
 	group = (PurpleGroup *)gnode;
 
 	node = xmlnode_new("group");
-	if (g_strcmp0(group->name, _("Buddies")) != 0)
+	if (!purple_strequal(group->name, _("Buddies")))
 		xmlnode_set_attrib(node, "name", group->name);
 
 	/* Write settings */

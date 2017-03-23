@@ -633,8 +633,8 @@ purple_find_prpl(const char *id)
 	 * prpl-xmpp isn't used yet (it's prpl-jabber),
 	 * but may be used in the future.
 	 */
-	if (g_strcmp0(id, "prpl-xmpp") == 0 ||
-		g_strcmp0(id, "prpl-gtalk") == 0)
+	if (purple_strequal(id, "prpl-xmpp") ||
+		purple_strequal(id, "prpl-gtalk"))
 	{
 		id = "prpl-jabber";
 	}

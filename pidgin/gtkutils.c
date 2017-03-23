@@ -712,7 +712,7 @@ create_protocols_menu(const char *default_proto_id)
 				g_object_unref(pixbuf);
 
 			/* libpurple3 compatibility */
-			if (g_strcmp0(default_proto_id, "prpl-gtalk") == 0)
+			if (purple_strequal(default_proto_id, "prpl-gtalk"))
 				aop_menu->default_item = i;
 
 			gtalk_name = NULL;

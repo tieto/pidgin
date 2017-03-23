@@ -139,7 +139,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 		 */
 		l = g_slist_find_custom(groups, purple_group_get_name(g),
 			(GCompareFunc)purple_utf8_strcasecmp);
-		if (!l && g_strcmp0(purple_group_get_name(g), _("Buddies")) == 0) {
+		if (!l && purple_strequal(purple_group_get_name(g), _("Buddies"))) {
 			l = g_slist_find_custom(groups, JABBER_ROSTER_DEFAULT_GROUP,
 				(GCompareFunc)purple_utf8_strcasecmp);
 		}
@@ -260,7 +260,7 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 				char *group_name = xmlnode_get_data(group);
 
 				if (group_name == NULL || *group_name == '\0' ||
-					g_strcmp0(group_name, _("Buddies")) == 0)
+					purple_strequal(group_name, _("Buddies")))
 				{
 					/* Changing this string?  Look in add_purple_buddy_to_groups */
 					group_name = g_strdup(JABBER_ROSTER_DEFAULT_GROUP);
@@ -530,7 +530,7 @@ jabber_roster_group_get_global_name(PurpleGroup *group)
 
 	if (name == NULL)
 		name = JABBER_ROSTER_DEFAULT_GROUP;
-	else if (g_strcmp0(name, _("Buddies")) == 0)
+	else if (purple_strequal(name, _("Buddies")))
 		name = JABBER_ROSTER_DEFAULT_GROUP;
 	/* XXX: in 3.0.0 we have localized default name here too */
 
