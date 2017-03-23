@@ -27,7 +27,7 @@
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
-	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
+	fail_unless(purple_strequal((digest), cdigest), NULL); \
 	\
 	purple_cipher_context_destroy(context); \
 }
@@ -90,7 +90,7 @@ END_TEST
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
-	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
+	fail_unless(purple_strequal((digest), cdigest), NULL); \
 	\
 	purple_cipher_context_destroy(context); \
 }
@@ -164,7 +164,7 @@ END_TEST
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
-	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
+	fail_unless(purple_strequal((digest), cdigest), NULL); \
 	\
 	purple_cipher_context_destroy(context); \
 }
@@ -225,7 +225,7 @@ END_TEST
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
-	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
+	fail_unless(purple_strequal((digest), cdigest), NULL); \
 	\
 	purple_cipher_context_destroy(context); \
 }
@@ -495,7 +495,7 @@ END_TEST
 	                                        NULL); \
 	\
 	fail_unless(ret == TRUE, NULL); \
-	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
+	fail_unless(purple_strequal((digest), cdigest), NULL); \
 	\
 	purple_cipher_context_destroy(context); \
 }

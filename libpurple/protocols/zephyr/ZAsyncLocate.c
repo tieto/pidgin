@@ -70,7 +70,7 @@ Code_t ZParseLocations(notice,zald,nlocs,user)
     /* non-matching protocol version numbers means the
        server is probably an older version--must punt */
 
-    if (zald && strcmp(notice->z_version, zald->version))
+    if (zald && !purple_strequal(notice->z_version, zald->version))
       return(ZERR_VERS);
 
     if (notice->z_kind == SERVNAK)

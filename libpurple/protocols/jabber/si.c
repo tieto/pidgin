@@ -881,7 +881,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		}
 
 		/* Include the public IP (assuming that there is a port mapped somehow) */
-		if (!has_public_ip && strcmp(public_ip, "0.0.0.0") != 0) {
+		if (!has_public_ip && !purple_strequal(public_ip, "0.0.0.0")) {
 			streamhost_count++;
 			streamhost = xmlnode_new_child(query, "streamhost");
 			xmlnode_set_attrib(streamhost, "jid", jid);
@@ -1696,7 +1696,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	size_t filesize = 0;
 
 	if(!(profile = xmlnode_get_attrib(si, "profile")) ||
-			strcmp(profile, NS_SI_FILE_TRANSFER))
+			!purple_strequal(profile, NS_SI_FILE_TRANSFER))
 		return;
 
 	if(!(stream_id = xmlnode_get_attrib(si, "id")))

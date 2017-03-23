@@ -422,7 +422,7 @@ jingle_content_to_xml_internal(JingleContent *content, xmlnode *jingle, JingleAc
 	xmlnode_set_attrib(node, "creator", creator);
 	xmlnode_set_attrib(node, "name", name);
 	xmlnode_set_attrib(node, "senders", senders);
-	if (strcmp("session", disposition))
+	if (!purple_strequal("session", disposition))
 		xmlnode_set_attrib(node, "disposition", disposition);
 
 	g_free(disposition);

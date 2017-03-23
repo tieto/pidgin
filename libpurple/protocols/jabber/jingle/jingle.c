@@ -405,7 +405,7 @@ jingle_parse(JabberStream *js, const char *from, JabberIqType type,
 	}
 
 	if (!(session = jingle_session_find_by_sid(js, sid))
-			&& strcmp(action, "session-initiate")) {
+			&& !purple_strequal(action, "session-initiate")) {
 		purple_debug_error("jingle", "jabber_jingle_session_parse couldn't find session\n");
 		/* send iq error here */
 		return;

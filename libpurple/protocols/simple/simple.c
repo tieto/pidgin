@@ -656,7 +656,7 @@ static void send_sip_request(PurpleConnection *gc, const gchar *method,
 		auth = g_strdup_printf("Authorization: %s\r\n", buf);
 		g_free(buf);
 		purple_debug(PURPLE_DEBUG_MISC, "simple", "header %s", auth);
-	} else if(sip->proxy.type && strcmp(method, "REGISTER")) {
+	} else if(sip->proxy.type && !purple_strequal(method, "REGISTER")) {
 		buf = auth_header(sip, &sip->proxy, method, url);
 		auth = g_strdup_printf("Proxy-Authorization: %s\r\n", buf);
 		g_free(buf);

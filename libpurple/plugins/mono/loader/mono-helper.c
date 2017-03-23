@@ -88,7 +88,7 @@ MonoClass* ml_find_plugin_class(MonoImage *image)
 		pklass = mono_class_get_parent(klass);
 		if (pklass) {
 
-			if (strcmp("Plugin", mono_class_get_name(pklass)) == 0)
+			if (purple_strequal("Plugin", mono_class_get_name(pklass)))
 				return klass;
 		}
 	}
@@ -149,8 +149,8 @@ gboolean ml_is_api_dll(MonoImage *image)
 	total = mono_image_get_table_rows (image, MONO_TABLE_TYPEDEF);
 	for (i = 1; i <= total; ++i) {
 		klass = mono_class_get (image, MONO_TOKEN_TYPE_DEF | i);
-		if (strcmp(mono_class_get_name(klass), "Debug") == 0)
-			if (strcmp(mono_class_get_namespace(klass), "Purple") == 0) {
+		if (purple_strequal(mono_class_get_name(klass), "Debug"))
+			if (purple_strequal(mono_class_get_namespace(klass), "Purple")) {
 				ml_set_api_image(image);
 				return TRUE;
 			}

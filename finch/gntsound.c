@@ -1098,7 +1098,7 @@ gboolean finch_sound_is_enabled(void)
 
 	if (!method)
 		return FALSE;
-	if (strcmp(method, "nosound") == 0)
+	if (purple_strequal(method, "nosound"))
 		return FALSE;
 	if (purple_prefs_get_int(make_pref("/volume")) <= 0)
 		return FALSE;

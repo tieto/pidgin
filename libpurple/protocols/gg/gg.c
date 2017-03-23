@@ -1717,7 +1717,7 @@ static void ggp_login_to(PurpleAccount *account, uint32_t server)
 	
 	encryption_type = purple_account_get_string(account, "encryption", "none");
 	purple_debug_info("gg", "Requested encryption type: %s\n", encryption_type);
-	if (strcmp(encryption_type, "opportunistic_tls") == 0)
+	if (purple_strequal(encryption_type, "opportunistic_tls"))
 		glp->tls = 1;
 	else
 		glp->tls = 0;
@@ -2012,19 +2012,19 @@ static int ggp_to_gg_status(PurpleStatus *status, char **msg)
 	purple_debug_info("gg", "ggp_to_gg_status: Requested status = %s\n",
 			status_id);
 
-	if (strcmp(status_id, "available") == 0) {
+	if (purple_strequal(status_id, "available")) {
 		new_status = GG_STATUS_AVAIL;
 		new_status_descr = GG_STATUS_AVAIL_DESCR;
-	} else if (strcmp(status_id, "away") == 0) {
+	} else if (purple_strequal(status_id, "away")) {
 		new_status = GG_STATUS_BUSY;
 		new_status_descr = GG_STATUS_BUSY_DESCR;
-	} else if (strcmp(status_id, "unavailable") == 0) {
+	} else if (purple_strequal(status_id, "unavailable")) {
 		new_status = GG_STATUS_DND;
 		new_status_descr = GG_STATUS_DND_DESCR;
-	} else if (strcmp(status_id, "invisible") == 0) {
+	} else if (purple_strequal(status_id, "invisible")) {
 		new_status = GG_STATUS_INVISIBLE;
 		new_status_descr = GG_STATUS_INVISIBLE_DESCR;
-	} else if (strcmp(status_id, "offline") == 0) {
+	} else if (purple_strequal(status_id, "offline")) {
 		new_status = GG_STATUS_NOT_AVAIL;
 		new_status_descr = GG_STATUS_NOT_AVAIL_DESCR;
 	} else {
@@ -2090,7 +2090,7 @@ static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 	gg_add_notify(info->session, ggp_str_to_uin(name));
 
 	account = purple_connection_get_account(gc);
-	if (strcmp(purple_account_get_username(account), name) == 0) {
+	if (purple_strequal(purple_account_get_username(account), name)) {
 		ggp_status_fake_to_self(account);
 	}
 }

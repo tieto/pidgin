@@ -807,13 +807,13 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 static const gchar *
 jabber_message_get_mimetype_from_ext(const gchar *ext)
 {
-	if (strcmp(ext, "png") == 0) {
+	if (purple_strequal(ext, "png")) {
 		return "image/png";
-	} else if (strcmp(ext, "gif") == 0) {
+	} else if (purple_strequal(ext, "gif")) {
 		return "image/gif";
-	} else if (strcmp(ext, "jpg") == 0) {
+	} else if (purple_strequal(ext, "jpg")) {
 		return "image/jpeg";
-	} else if (strcmp(ext, "tif") == 0) {
+	} else if (purple_strequal(ext, "tif")) {
 		return "image/tif";
 	} else {
 		return "image/x-icon"; /* or something... */

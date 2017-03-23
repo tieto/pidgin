@@ -1115,8 +1115,8 @@ static void
 chat_select_account_cb(GObject *w, PurpleAccount *account,
                        PidginChatData *data)
 {
-	if (strcmp(purple_account_get_protocol_id(data->rq_data.account),
-	           purple_account_get_protocol_id(account)) == 0)
+	if (purple_strequal(purple_account_get_protocol_id(data->rq_data.account),
+	                    purple_account_get_protocol_id(account)))
 	{
 		data->rq_data.account = account;
 	}
@@ -3777,7 +3777,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		 * this alias, so there's no point in showing it in the tooltip. */
 		if (full && c && b->alias != NULL && b->alias[0] != '\0' &&
 		    (c->alias != NULL && c->alias[0] != '\0') &&
-		    strcmp(c->alias, b->alias) != 0)
+		    !purple_strequal(c->alias, b->alias))
 		{
 			tmp = g_markup_escape_text(b->alias, -1);
 			purple_notify_user_info_add_pair(user_info, _("Buddy Alias"), tmp);
@@ -5379,7 +5379,7 @@ update_account_error_state(PurpleAccount *account,
 
 	/* else, new and old are both non-NULL */
 
-	descriptions_differ = strcmp(old->description, new->description);
+	descriptions_differ = !purple_strequal(old->description, new->description);
 	desc = new->description;
 
 	switch (new->type) {
@@ -7652,7 +7652,7 @@ void pidgin_blist_sort_method_set(const char *id){
 	if(!id)
 		id = "none";
 
-	while (l && strcmp(((struct pidgin_blist_sort_method*)l->data)->id, id))
+	while (l && !purple_strequal(((struct pidgin_blist_sort_method*)l->data)->id, id))
 		l = l->next;
 
 	if (l) {

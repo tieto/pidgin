@@ -94,7 +94,7 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 		SilcDList parts = silc_mime_get_multiparts(mime, &mtype);
 
 		/* Only "mixed" type supported */
-		if (strcmp(mtype, "mixed"))
+		if (!purple_strequal(mtype, "mixed"))
 			goto out;
 
 		silc_dlist_start(parts);
@@ -1426,7 +1426,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				if (!convo)
 					continue;
 				oldnick = purple_conv_chat_get_nick(PURPLE_CONV_CHAT(convo));
-				if (strcmp(oldnick, purple_normalize(purple_conversation_get_account(convo), local_entry->nickname))) {
+				if (!purple_strequal(oldnick, purple_normalize(purple_conversation_get_account(convo), local_entry->nickname))) {
 					purple_conv_chat_rename_user(PURPLE_CONV_CHAT(convo),
 							oldnick, local_entry->nickname);
 					purple_conv_chat_set_nick(PURPLE_CONV_CHAT(convo), local_entry->nickname);

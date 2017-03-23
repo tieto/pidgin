@@ -185,7 +185,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			purple_debug_info("bonjour", "_resolve_callback - name:%s ip:%s prev_ip:%s\n",
 				name, ip, rd->ip);
 
-			if (rd->ip == NULL || strcmp(rd->ip, ip) != 0) {
+			if (rd->ip == NULL || !purple_strequal(rd->ip, ip)) {
 				/* We store duplicates in bb->ips, so we always remove the one */
 				if (rd->ip != NULL) {
 					bb->ips = g_slist_remove(bb->ips, rd->ip);

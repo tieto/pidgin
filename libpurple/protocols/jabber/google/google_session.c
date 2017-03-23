@@ -504,7 +504,7 @@ jabber_google_relay_response_session_handle_initiate_cb(GoogleSession *session,
 		const char *id, *encoding_name,  *clock_rate;
 		gboolean video;
 		if (codec_element->name &&
-				strcmp(codec_element->name, "payload-type"))
+				!purple_strequal(codec_element->name, "payload-type"))
 			continue;
 
 		xmlns = xmlnode_get_namespace(codec_element);
@@ -845,7 +845,7 @@ jabber_google_session_parse(JabberStream *js, const char *from,
 	}
 
 	/* If the session doesn't exist, this has to be an initiate message */
-	if (strcmp(xmlnode_get_attrib(session_node, "type"), "initiate"))
+	if (!purple_strequal(xmlnode_get_attrib(session_node, "type"), "initiate"))
 		return;
 	desc_node = xmlnode_get_child(session_node, "description");
 	if (!desc_node)

@@ -1633,7 +1633,7 @@ proxy_changed_cb(const char *name, PurplePrefType type,
 	GtkWidget *frame = data;
 	const char *proxy = value;
 
-	if (strcmp(proxy, "none") && strcmp(proxy, "envvar"))
+	if (!purple_strequal(proxy, "none") && !purple_strequal(proxy, "envvar"))
 		gtk_widget_show_all(frame);
 	else
 		gtk_widget_hide(frame);
@@ -1916,7 +1916,7 @@ browser_changed1_cb(const char *name, PurplePrefType type,
 	GtkWidget *hbox = data;
 	const char *browser = value;
 
-	gtk_widget_set_sensitive(hbox, strcmp(browser, "custom"));
+	gtk_widget_set_sensitive(hbox, !purple_strequal(browser, "custom"));
 }
 
 static void
@@ -2011,7 +2011,7 @@ browser_page(void)
 		g_signal_connect(G_OBJECT(entry), "focus-out-event",
 						 G_CALLBACK(manual_browser_set), NULL);
 		hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Manual:\n(%s for URL)"), sg, entry, TRUE, NULL);
-		if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
+		if (!purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
 			gtk_widget_set_sensitive(hbox, FALSE);
 		purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
 				browser_changed2_cb, hbox);
@@ -2246,7 +2246,7 @@ sound_changed2_cb(const char *name, PurplePrefType type,
 	GtkWidget *vbox = data;
 	const char *method = value;
 
-	gtk_widget_set_sensitive(vbox, strcmp(method, "none"));
+	gtk_widget_set_sensitive(vbox, !purple_strequal(method, "none"));
 }
 #endif /* !_WIN32 */
 
@@ -2545,7 +2545,7 @@ sound_page(void)
 
 #ifndef _WIN32
 	gtk_widget_set_sensitive(vbox,
-			strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"));
+			!purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"));
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/method",
 								sound_changed2_cb, vbox);
 #endif
@@ -2854,7 +2854,7 @@ smiley_theme_pref_cb(const char *name, PurplePrefType type,
 
 	for (themes = smiley_themes; themes; themes = themes->next) {
 		struct smiley_theme *smile = themes->data;
-		if (smile->name && strcmp(themename, smile->name) == 0) {
+		if (smile->name && purple_strequal(themename, smile->name)) {
 			pidgin_themes_load_smiley_theme(smile->path, TRUE);
 			break;
 		}
@@ -2932,7 +2932,7 @@ pidgin_prefs_update_old(void)
 	/* this string pref moved into the core, try to be friendly */
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/idle/reporting_method", "/purple/away/idle_reporting");
 	if ((str = purple_prefs_get_string("/purple/away/idle_reporting")) &&
-			strcmp(str, "gaim") == 0)
+			purple_strequal(str, "gaim"))
 		purple_prefs_set_string("/purple/away/idle_reporting", "purple");
 
 	/* Remove some no-longer-used prefs */

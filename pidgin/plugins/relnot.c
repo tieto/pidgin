@@ -85,7 +85,7 @@ version_fetch_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		}
 	}
 
-	if (strcmp(response_code, "200") != 0) {
+	if (!purple_strequal(response_code, "200")) {
 		purple_debug_error("relnot", "Didn't recieve a HTTP status code of 200.\n");
 		return;
 	}

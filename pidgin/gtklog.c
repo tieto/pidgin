@@ -504,7 +504,7 @@ static void populate_log_tree(PidginLogViewer *lv)
 		month = purple_utf8_strftime(_("%B %Y"),
 		                           log->tm ? log->tm : localtime(&log->time));
 
-		if (strcmp(month, prev_top_month) != 0)
+		if (!purple_strequal(month, prev_top_month))
 		{
 			/* top level */
 			gtk_tree_store_append(lv->treestore, &toplevel, NULL);

@@ -407,7 +407,7 @@ static xmlnode *insert_tag_to_parent_tag(xmlnode *start, const char *parent_tag,
 		const struct vcard_template *vc_tp = vcard_template_data;
 
 		while(vc_tp->label != NULL) {
-			if(strcmp(vc_tp->tag, new_tag) == 0) {
+			if(purple_strequal(vc_tp->tag, new_tag)) {
 				parent_tag = vc_tp->ptag;
 				break;
 			}
@@ -653,7 +653,7 @@ void jabber_setup_set_info(PurplePluginAction *action)
 				cdata = xmlnode_get_data(data_node);
 		}
 
-		if(strcmp(vc_tp->tag, "DESC") == 0) {
+		if(purple_strequal(vc_tp->tag, "DESC")) {
 			field = purple_request_field_string_new(vc_tp->tag,
 												  _(vc_tp->label), cdata,
 												  TRUE);
@@ -1174,7 +1174,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 						(bintext = xmlnode_get_data(binval))) {
 					gsize size;
 					guchar *data;
-					gboolean photo = (strcmp(child->name, "PHOTO") == 0);
+					gboolean photo = purple_strequal(child->name, "PHOTO");
 
 					data = purple_base64_decode(bintext, &size);
 					if (data) {
@@ -2324,7 +2324,7 @@ jabber_resource_get_identity_category_type(const JabberBuddyResource *jbr,
 			const JabberIdentity *identity =
 				(JabberIdentity *) iter->data;
 
-			if (strcmp(identity->category, category) == 0) {
+			if (purple_strequal(identity->category, category)) {
 				return identity->type;
 			}
 		}

@@ -35,7 +35,7 @@ static int get_month(const char *month)
 	const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
 		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec", NULL};
 	for (iter = 0; months[iter]; iter++) {
-		if (strcmp(month, months[iter]) == 0)
+		if (purple_strequal(month, months[iter]))
 			break;
 	}
 	return iter;
@@ -635,7 +635,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_return_val_if_fail(sn != NULL, NULL);
 	g_return_val_if_fail(account != NULL, NULL);
 
-	if (strcmp(account->protocol_id, "prpl-msn"))
+	if (!purple_strequal(account->protocol_id, "prpl-msn"))
 		return NULL;
 
 	logdir = purple_prefs_get_string("/plugins/core/log_reader/msn/log_directory");
@@ -845,7 +845,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			continue;
 		}
 
-		if (strcmp(session_id, old_session_id)) {
+		if (!purple_strequal(session_id, old_session_id)) {
 			/*
 			 * The session ID differs from the last message.
 			 * Thus, this is the start of a new conversation.
@@ -935,7 +935,7 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			break;
 		}
 
-		if (strcmp(new_session_id, data->session_id)) {
+		if (!purple_strequal(new_session_id, data->session_id)) {
 			/* The session ID differs from the first message.
 			 * Thus, this is the start of a new conversation.
 			 */
@@ -1789,7 +1789,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	memset(&tm, 0, sizeof(tm));
 
 	/* QIP only supports ICQ. */
-	if (strcmp(account->protocol_id, "prpl-icq"))
+	if (!purple_strequal(account->protocol_id, "prpl-icq"))
 		return NULL;
 
 	logdir = purple_prefs_get_string("/plugins/core/log_reader/qip/log_directory");
@@ -2261,7 +2261,7 @@ static GList *amsn_logger_list(PurpleLogType type, const char *sn, PurpleAccount
 		return NULL;
 
 	/* aMSN only works with MSN/WLM */
-	if (strcmp(account->protocol_id, "prpl-msn"))
+	if (!purple_strequal(account->protocol_id, "prpl-msn"))
 		return NULL;
 
 	username = g_strdup(purple_normalize(account, account->username));

@@ -90,7 +90,7 @@ update_ims_from_contact(EContact *contact, const char *name,
 		PurpleAccount *account = purple_connection_get_account(gc);
 		char *me;
 
-		if (strcmp(purple_account_get_protocol_id(account), prpl_id))
+		if (!purple_strequal(purple_account_get_protocol_id(account), prpl_id))
 			continue;
 
 		if (!purple_account_get_bool(account, "gevo-autoadd", FALSE))

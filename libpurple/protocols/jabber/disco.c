@@ -72,7 +72,7 @@ jabber_disco_bytestream_server_cb(JabberStream *js, const char *from,
 			const char *port = xmlnode_get_attrib(sh_node, "port");
 
 
-			if (jid == NULL || strcmp(jid, from) != 0)
+			if (jid == NULL || !purple_strequal(jid, from))
 				purple_debug_error("jabber", "Invalid jid(%s) for bytestream.\n",
 						   jid ? jid : "(null)");
 
@@ -498,7 +498,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 {
 	xmlnode *query, *child;
 
-	if (!from || strcmp(from, js->user->domain)) {
+	if (!from || !purple_strequal(from, js->user->domain)) {
 		jabber_disco_finish_server_info_result_cb(js);
 		return;
 	}
@@ -527,9 +527,9 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 			gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS |
 				PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES;
 		}
-		if (!category || strcmp(category, "server"))
+		if (!category || !purple_strequal(category, "server"))
 			continue;
-		if (!type || strcmp(type, "im"))
+		if (!type || !purple_strequal(type, "im"))
 			continue;
 
 		name = xmlnode_get_attrib(child, "name");
@@ -587,7 +587,7 @@ jabber_disco_server_items_result_cb(JabberStream *js, const char *from,
 {
 	xmlnode *query, *child;
 
-	if (!from || strcmp(from, js->user->domain) != 0)
+	if (!from || !purple_strequal(from, js->user->domain))
 		return;
 
 	if (type == JABBER_IQ_ERROR)

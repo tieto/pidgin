@@ -723,7 +723,7 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 	 */
 	if (((button == dialog->saveanduse_button) || (button == dialog->save_button)) &&
 		(purple_savedstatus_find(title) != NULL) &&
-		((dialog->original_title == NULL) || (strcmp(title, dialog->original_title))))
+		((dialog->original_title == NULL) || (!purple_strequal(title, dialog->original_title))))
 	{
 		purple_notify_error(status_window, NULL, _("Title already in use.  You must "
 						  "choose a unique title."), NULL);
@@ -761,7 +761,7 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 	else
 	{
 		/* Modify the old status */
-		if (strcmp(title, dialog->original_title))
+		if (!purple_strequal(title, dialog->original_title))
 			purple_savedstatus_set_title(saved_status, title);
 		purple_savedstatus_set_type(saved_status, type);
 	}

@@ -671,7 +671,7 @@ res_thread(gpointer data)
 
 			for (dr_tmp = dr; dr_tmp != NULL; dr_tmp = dr_tmp->pNext) {
 				/* Discard any incorrect entries. I'm not sure if this is necessary */
-				if (dr_tmp->wType != type || strcmp(dr_tmp->pName, query_data->query) != 0) {
+				if (dr_tmp->wType != type || !purple_strequal(dr_tmp->pName, query_data->query)) {
 					continue;
 				}
 
@@ -699,7 +699,7 @@ res_thread(gpointer data)
 				int i;
 
 				/* Discard any incorrect entries. I'm not sure if this is necessary */
-				if (dr_tmp->wType != type || strcmp(dr_tmp->pName, query_data->query) != 0) {
+				if (dr_tmp->wType != type || !purple_strequal(dr_tmp->pName, query_data->query)) {
 					continue;
 				}
 

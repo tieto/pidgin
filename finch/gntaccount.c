@@ -167,7 +167,7 @@ save_account_cb(AccountEditDialog *dialog)
 		} else {
 			const char *old = purple_account_get_protocol_id(account);
 			char *oldprpl;
-			if (strcmp(old, purple_plugin_get_id(plugin))) {
+			if (!purple_strequal(old, purple_plugin_get_id(plugin))) {
 				purple_notify_error(NULL, _("Error"), _("Account was not modified"),
 						_("The account's protocol cannot be changed while it is connected to the server."));
 				return;

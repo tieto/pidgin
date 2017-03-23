@@ -909,9 +909,9 @@ get_streams(PurpleMediaBackendFs2 *self,
 	for (; streams; streams = g_list_next(streams)) {
 		PurpleMediaBackendFs2Stream *stream = streams->data;
 
-		if (sess_id != NULL && strcmp(stream->session->id, sess_id))
+		if (sess_id != NULL && !purple_strequal(stream->session->id, sess_id))
 			continue;
-		else if (name != NULL && strcmp(stream->participant, name))
+		else if (name != NULL && !purple_strequal(stream->participant, name))
 			continue;
 		else
 			ret = g_list_prepend(ret, stream);

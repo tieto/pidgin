@@ -692,7 +692,7 @@ static void blist_export(PurpleConnection *gc, struct mwSametimeList *stlist) {
 
     /* if the group has an owner and we're not it, skip it */
     owner = purple_blist_node_get_string(gn, GROUP_KEY_OWNER);
-    if(owner && strcmp(owner, purple_account_get_username(acct)))
+    if(owner && !purple_strequal(owner, purple_account_get_username(acct)))
       continue;
 
     /* the group's actual name may be different from the purple group's
@@ -1209,7 +1209,7 @@ static void blist_sync(PurpleConnection *gc, struct mwSametimeList *stlist) {
     gboolean del = TRUE;
 
     owner = purple_blist_node_get_string(gn, GROUP_KEY_OWNER);
-    if(owner && strcmp(owner, acct_n)) {
+    if(owner && !purple_strequal(owner, acct_n)) {
       /* it's a specialty group belonging to another account with some
 	 of our members in it, so don't fully delete it */
       del = FALSE;
@@ -1433,7 +1433,7 @@ static void services_starting(struct mwPurplePluginData *pd) {
     /* if the group is ownerless, or has an owner and we're not it,
        skip it */
     owner = purple_blist_node_get_string(l, GROUP_KEY_OWNER);
-    if(!owner || strcmp(owner, purple_account_get_username(acct)))
+    if(!owner || !purple_strequal(owner, purple_account_get_username(acct)))
       continue;
 
     gt = purple_blist_node_get_int(l, GROUP_KEY_TYPE);
@@ -1473,7 +1473,7 @@ static void session_loginRedirect(struct mwSession *session,
 					 MW_PLUGIN_DEFAULT_HOST);
 
   if(purple_account_get_bool(account, MW_KEY_FORCE, FALSE) ||
-     !host || (! strcmp(current_host, host)) ||
+     !host || purple_strequal(current_host, host) ||
      (purple_proxy_connect(gc, account, host, port, connect_cb, pd) == NULL)) {
 
     /* if we're configured to force logins, or if we're being
@@ -3807,16 +3807,16 @@ static char *im_mime_img_content_type(PurpleStoredImage *img) {
   if(! ct) {
     ct = "image";
 
-  } else if(! strcmp(".png", ct)) {
+  } else if(purple_strequal(".png", ct)) {
     ct = "image/png";
 
-  } else if(! strcmp(".jpg", ct)) {
+  } else if(purple_strequal(".jpg", ct)) {
     ct = "image/jpeg";
 
-  } else if(! strcmp(".jpeg", ct)) {
+  } else if(purple_strequal(".jpeg", ct)) {
     ct = "image/jpeg";
 
-  } else if(! strcmp(".gif", ct)) {
+  } else if(purple_strequal(".gif", ct)) {
     ct = "image/gif";
 
   } else {
@@ -4201,13 +4201,13 @@ static void mw_prpl_set_status(PurpleAccount *acct, PurpleStatus *status) {
   mwUserStatus_clone(&stat, mwSession_getUserStatus(session));
 
   /* determine the state */
-  if(! strcmp(state, MW_STATE_ACTIVE)) {
+  if(purple_strequal(state, MW_STATE_ACTIVE)) {
     stat.status = mwStatus_ACTIVE;
 
-  } else if(! strcmp(state, MW_STATE_AWAY)) {
+  } else if(purple_strequal(state, MW_STATE_AWAY)) {
     stat.status = mwStatus_AWAY;
 
-  } else if(! strcmp(state, MW_STATE_BUSY)) {
+  } else if(purple_strequal(state, MW_STATE_BUSY)) {
     stat.status = mwStatus_BUSY;
   }
 
@@ -4374,7 +4374,7 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
       struct mwResolveMatch *match = res->matches->data;
 
       /* only one? that might be the right one! */
-      if(strcmp(res->name, match->id)) {
+      if(!purple_strequal(res->name, match->id)) {
 	/* uh oh, the single result isn't identical to the search
 	   term, better safe then sorry, so let's make sure it's who
 	   the user meant to add */
@@ -4661,7 +4661,7 @@ static struct mwConference *conf_find(struct mwServiceConference *srvc,
   ll = mwServiceConference_getConferences(srvc);
   for(l = ll; l; l = l->next) {
     struct mwConference *c = l->data;
-    if(! strcmp(name, mwConference_getName(c))) {
+    if(purple_strequal(name, mwConference_getName(c))) {
       conf = c;
       break;
     }

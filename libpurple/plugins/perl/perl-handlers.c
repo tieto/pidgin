@@ -367,7 +367,7 @@ perl_signal_cb(va_list args, void *data)
 
 				case PURPLE_TYPE_STRING:
 					if (!*((char **)copy_args[i]) || !SvPVX(sv_args[i]) ||
-							strcmp(*((char **)copy_args[i]), SvPVX(sv_args[i]))) {
+							!purple_strequal(*((char **)copy_args[i]), SvPVX(sv_args[i]))) {
 						g_free(*((char **)copy_args[i]));
 						*((char **)copy_args[i]) =
 							g_strdup(SvPVutf8_nolen(sv_args[i]));

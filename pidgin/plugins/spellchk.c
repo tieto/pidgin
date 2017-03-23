@@ -1865,7 +1865,7 @@ static void on_edited(GtkCellRendererText *cellrenderertext,
 	val.g_type = 0;
 	gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, GPOINTER_TO_INT(data), &val);
 
-	if (strcmp(arg2, g_value_get_string(&val))) {
+	if (!purple_strequal(arg2, g_value_get_string(&val))) {
 		gtk_list_store_set(model, &iter, GPOINTER_TO_INT(data), arg2, -1);
 		save_list();
 	}

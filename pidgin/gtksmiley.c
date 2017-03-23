@@ -151,7 +151,7 @@ void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
 	for (; list; list = list->next) {
 		gtksmiley = (GtkIMHtmlSmiley*)list->data;
 
-		if (strcmp(gtksmiley->smile, purple_smiley_get_shortcut(smiley)))
+		if (!purple_strequal(gtksmiley->smile, purple_smiley_get_shortcut(smiley)))
 			continue;
 
 		gtk_imhtml_smiley_destroy(gtksmiley);

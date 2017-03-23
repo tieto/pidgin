@@ -44,7 +44,7 @@ gboolean pidgin_themes_smileys_disabled()
 	if (!current_smiley_theme)
 		return 1;
 
-	return strcmp(current_smiley_theme->name, "none") == 0;
+	return purple_strequal(current_smiley_theme->name, "none");
 }
 
 static void
@@ -461,7 +461,7 @@ void pidgin_themes_init()
 
 	for (l = smiley_themes; l; l = l->next) {
 		struct smiley_theme *smile = l->data;
-		if (smile->name && strcmp(current_theme, smile->name) == 0) {
+		if (smile->name && purple_strequal(current_theme, smile->name)) {
 			pidgin_themes_load_smiley_theme(smile->path, TRUE);
 			break;
 		}

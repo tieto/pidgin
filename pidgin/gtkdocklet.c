@@ -789,7 +789,7 @@ void
 pidgin_docklet_embedded()
 {
 	if (!visibility_manager
-	    && strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "pending")) {
+	    && !purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "pending")) {
 		pidgin_blist_visibility_manager_add();
 		visibility_manager = TRUE;
 	}

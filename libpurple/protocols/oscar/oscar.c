@@ -580,7 +580,7 @@ idle_reporting_pref_cb(const char *name, PurplePrefType type,
 
 	gc = data;
 	od = purple_connection_get_protocol_data(gc);
-	report_idle = strcmp((const char *)value, "none") != 0;
+	report_idle = !purple_strequal((const char *)value, "none");
 	presence = aim_ssi_getpresence(od->ssi.local);
 
 	if (report_idle)
@@ -760,14 +760,14 @@ oscar_login(PurpleAccount *account)
 
 	login_type = purple_account_get_string(account, "login_type", OSCAR_DEFAULT_LOGIN);
 	encryption_type = purple_account_get_string(account, "encryption", OSCAR_DEFAULT_ENCRYPTION);
-	if (!purple_ssl_is_supported() && strcmp(encryption_type, OSCAR_REQUIRE_ENCRYPTION) == 0) {
+	if (!purple_ssl_is_supported() && purple_strequal(encryption_type, OSCAR_REQUIRE_ENCRYPTION)) {
 		purple_connection_error_reason(
 			gc,
 			PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 			_("You required encryption in your account settings, but encryption is not supported by your system."));
 		return;
 	}
-	od->use_ssl = purple_ssl_is_supported() && strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0;
+	od->use_ssl = purple_ssl_is_supported() && !purple_strequal(encryption_type, OSCAR_NO_ENCRYPTION);
 
 	/* Connect to core Purple signals */
 	purple_prefs_connect_callback(gc, "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
@@ -1554,7 +1554,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		if (b != NULL)
 			saved_b16 = purple_buddy_icons_get_checksum_for_user(b);
 
-		if (!b16 || !saved_b16 || strcmp(b16, saved_b16)) {
+		if (!b16 || !saved_b16 || !purple_strequal(b16, saved_b16)) {
 			/* Invalidate the old icon for this user */
 			purple_buddy_icons_set_for_user(account, info->bn, NULL, 0, NULL);
 
@@ -2939,7 +2939,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 		serv_set_info(gc, purple_account_get_user_info(account));
 
 	username = purple_account_get_username(account);
-	if (!od->icq && strcmp(username, purple_connection_get_display_name(gc)) != 0) {
+	if (!od->icq && !purple_strequal(username, purple_connection_get_display_name(gc))) {
 		/*
 		 * Format the username for AIM accounts if it's different
 		 * than what's currently set.
@@ -3782,7 +3782,7 @@ void oscar_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g
 void oscar_move_buddy(PurpleConnection *gc, const char *name, const char *old_group, const char *new_group) {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 
-	if (od->ssi.received_data && strcmp(old_group, new_group)) {
+	if (od->ssi.received_data && !purple_strequal(old_group, new_group)) {
 		purple_debug_info("oscar",
 				   "ssi: moving buddy %s from group %s to group %s\n", name, old_group, new_group);
 		aim_ssi_movebuddy(od, old_group, new_group, name);
@@ -4018,7 +4018,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 		gboolean report_idle;
 
 		idle_reporting_pref = purple_prefs_get_string("/purple/away/idle_reporting");
-		report_idle = strcmp(idle_reporting_pref, "none") != 0;
+		report_idle = !purple_strequal(idle_reporting_pref, "none");
 
 		if (report_idle)
 			aim_ssi_setpresence(od, tmp | AIM_SSI_PRESENCE_FLAG_SHOWIDLE);

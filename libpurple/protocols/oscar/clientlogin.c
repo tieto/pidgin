@@ -94,7 +94,7 @@ static gchar *generate_error_message(xmlnode *resp, const char *url)
 		/* We can get 200 OK here if the server omitted something we think it shouldn't have (see #12783).
 		 * No point in showing the "Ok" string to the user.
 		 */
-		if ((status_code = xmlnode_get_data_unescaped(status_code_node)) && strcmp(status_code, "200") == 0) {
+		if ((status_code = xmlnode_get_data_unescaped(status_code_node)) && purple_strequal(status_code, "200")) {
 			have_error_code = FALSE;
 		}
 	}
@@ -258,12 +258,12 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 		return FALSE;
 	}
 
-	if (strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0) {
+	if (!purple_strequal(encryption_type, OSCAR_NO_ENCRYPTION)) {
 		tls_node = xmlnode_get_child(data_node, "tlsCertName");
 		if (tls_node != NULL) {
 			*tls_certname = xmlnode_get_data_unescaped(tls_node);
 		} else {
-			if (strcmp(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION) == 0) {
+			if (purple_strequal(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION)) {
 				purple_debug_warning("oscar", "We haven't received a tlsCertName to use. We will not do SSL to BOS.\n");
 			} else {
 				purple_debug_error("oscar", "startOSCARSession was missing tlsCertName: %s\n", response);
@@ -365,7 +365,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 				od->icq ? ICQ_DEFAULT_DIST_ID : AIM_DEFAULT_DIST_ID),
 			get_client_key(od),
 			hosttime,
-			strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0 ? 1 : 0);
+			(!purple_strequal(encryption_type, OSCAR_NO_ENCRYPTION)) ? 1 : 0);
 	signature = generate_signature("GET", get_start_oscar_session_url(od),
 			query_string, session_key);
 	url = g_strdup_printf("%s?%s&sig_sha256=%s", get_start_oscar_session_url(od),
@@ -453,7 +453,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 	}
 
 	/* Make sure the status code was 200 */
-	if (strcmp(tmp, "200") != 0)
+	if (!purple_strequal(tmp, "200"))
 	{
 		int status_code, status_detail_code = 0;
 

@@ -721,7 +721,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	if (!query)
 		return;
 
-	if(strcmp(type, "set")) {
+	if(!purple_strequal(type, "set")) {
 		purple_debug_info("bonjour", "bytestream offer Message type - Unknown-%s.\n", type);
 		return;
 	}

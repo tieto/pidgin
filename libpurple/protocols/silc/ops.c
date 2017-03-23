@@ -1446,7 +1446,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				if (!convo)
 					continue;
 				oldnick = purple_conv_chat_get_nick(PURPLE_CONV_CHAT(convo));
-				if (strcmp(oldnick, purple_normalize(purple_conversation_get_account(convo), newnick))) {
+				if (!purple_strequal(oldnick, purple_normalize(purple_conversation_get_account(convo), newnick))) {
 					purple_conv_chat_rename_user(PURPLE_CONV_CHAT(convo),
 								     oldnick, newnick);
 					purple_conv_chat_set_nick(PURPLE_CONV_CHAT(convo), newnick);

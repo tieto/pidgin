@@ -844,7 +844,7 @@ silcpurple_create_keypair_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 	else
 		pass2 = "";
 
-	if (strcmp(pass1, pass2)) {
+	if (!purple_strequal(pass1, pass2)) {
 		purple_notify_error(
 		     gc, _("Create New SILC Key Pair"), _("Passphrases do not match"), NULL);
 		return;

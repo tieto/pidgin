@@ -175,7 +175,7 @@ pounce_test_sound(GtkWidget *w, GtkWidget *entry)
 
 	filename = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	if (filename != NULL && *filename != '\0' && strcmp(filename, _("(default)")))
+	if (filename != NULL && *filename != '\0' && !purple_strequal(filename, _("(default)")))
 		purple_sound_play_file(filename, NULL);
 	else
 		purple_sound_play_event(PURPLE_SOUND_POUNCE_DEFAULT, NULL);

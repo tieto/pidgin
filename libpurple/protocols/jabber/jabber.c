@@ -474,7 +474,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	g_return_if_fail(data != NULL);
 
 	/* because printing a tab to debug every minute gets old */
-	if (data && strcmp(data, "\t") != 0) {
+	if (data && !purple_strequal(data, "\t")) {
 		const char *username;
 		char *text = NULL, *last_part = NULL, *tag_start = NULL;
 
@@ -2152,13 +2152,13 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 				jabber_resource_get_identity_category_type(jbr, "client");
 
 			if (client_type) {
-				if (strcmp(client_type, "phone") == 0) {
+				if (purple_strequal(client_type, "phone")) {
 					return "mobile";
-				} else if (strcmp(client_type, "web") == 0) {
+				} else if (purple_strequal(client_type, "web")) {
 					return "external";
-				} else if (strcmp(client_type, "handheld") == 0) {
+				} else if (purple_strequal(client_type, "handheld")) {
 					return "hiptop";
-				} else if (strcmp(client_type, "bot") == 0) {
+				} else if (purple_strequal(client_type, "bot")) {
 					return "bot";
 				}
 				/* the default value "pc" falls through and has no emblem */
@@ -2508,7 +2508,7 @@ static void jabber_password_change_cb(JabberStream *js,
 	p1 = purple_request_fields_get_string(fields, "password1");
 	p2 = purple_request_fields_get_string(fields, "password2");
 
-	if(strcmp(p1, p2)) {
+	if(!purple_strequal(p1, p2)) {
 		purple_notify_error(js->gc, NULL, _("New passwords do not match."), NULL);
 		return;
 	}
@@ -2930,11 +2930,11 @@ static PurpleCmdRet jabber_cmd_chat_affiliate(PurpleConversation *conv,
 	if (!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	if (strcmp(args[0], "owner") != 0 &&
-	    strcmp(args[0], "admin") != 0 &&
-	    strcmp(args[0], "member") != 0 &&
-	    strcmp(args[0], "outcast") != 0 &&
-	    strcmp(args[0], "none") != 0) {
+	if (!purple_strequal(args[0], "owner") &&
+	    !purple_strequal(args[0], "admin") &&
+	    !purple_strequal(args[0], "member") &&
+	    !purple_strequal(args[0], "outcast") &&
+	    !purple_strequal(args[0], "none")) {
 		*error = g_strdup_printf(_("Unknown affiliation: \"%s\""), args[0]);
 		return PURPLE_CMD_RET_FAILED;
 	}
@@ -2966,10 +2966,10 @@ static PurpleCmdRet jabber_cmd_chat_role(PurpleConversation *conv,
 	if (!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	if (strcmp(args[0], "moderator") != 0 &&
-	    strcmp(args[0], "participant") != 0 &&
-	    strcmp(args[0], "visitor") != 0 &&
-	    strcmp(args[0], "none") != 0) {
+	if (!purple_strequal(args[0], "moderator") &&
+	    !purple_strequal(args[0], "participant") &&
+	    !purple_strequal(args[0], "visitor") &&
+	    !purple_strequal(args[0], "none")) {
 		*error = g_strdup_printf(_("Unknown role: \"%s\""), args[0]);
 		return PURPLE_CMD_RET_FAILED;
 	}
@@ -3826,12 +3826,12 @@ jabber_do_init(void)
 
 	ui_type = ui_info ? g_hash_table_lookup(ui_info, "client_type") : NULL;
 	if (ui_type) {
-		if (strcmp(ui_type, "pc") == 0 ||
-			strcmp(ui_type, "console") == 0 ||
-			strcmp(ui_type, "phone") == 0 ||
-			strcmp(ui_type, "handheld") == 0 ||
-			strcmp(ui_type, "web") == 0 ||
-			strcmp(ui_type, "bot") == 0) {
+		if (purple_strequal(ui_type, "pc") ||
+			purple_strequal(ui_type, "console") ||
+			purple_strequal(ui_type, "phone") ||
+			purple_strequal(ui_type, "handheld") ||
+			purple_strequal(ui_type, "web") ||
+			purple_strequal(ui_type, "bot")) {
 			type = ui_type;
 		}
 	}

@@ -106,7 +106,7 @@ static Code_t Z_RetSubs(notice, nsubs, auth_routine)
 		}
 		/* non-matching protocol version numbers means the
 		   server is probably an older version--must punt */
-		if (strcmp(notice->z_version,retnotice.z_version)) {
+		if (!purple_strequal(notice->z_version,retnotice.z_version)) {
 			ZFreeNotice(&retnotice);
 			return(ZERR_VERS);
 		}

@@ -73,8 +73,8 @@ xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
 	if (node->xmlns) {
 		if ((!node->parent ||
 		     !node->parent->xmlns ||
-		     strcmp(node->xmlns, node->parent->xmlns)) &&
-		    strcmp(node->xmlns, "jabber:client"))
+		     !purple_strequal(node->xmlns, node->parent->xmlns)) &&
+		    !purple_strequal(node->xmlns, "jabber:client"))
 		{
 			char *xmlns = g_markup_escape_text(node->xmlns, -1);
 			g_string_append_printf(text,

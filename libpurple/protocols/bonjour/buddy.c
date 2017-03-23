@@ -193,7 +193,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 	/* Deal with the buddy icon */
 	old_hash = purple_buddy_icons_get_checksum_for_user(buddy);
 	new_hash = (bonjour_buddy->phsh && *(bonjour_buddy->phsh)) ? bonjour_buddy->phsh : NULL;
-	if (new_hash && (!old_hash || strcmp(old_hash, new_hash) != 0)) {
+	if (new_hash && (!old_hash || !purple_strequal(old_hash, new_hash))) {
 		/* Look up the new icon data */
 		/* TODO: Make sure the hash assigned to the retrieved buddy icon is the same
 		 * as what we looked up. */

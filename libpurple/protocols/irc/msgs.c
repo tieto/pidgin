@@ -603,7 +603,7 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 	g_free(tmp);
 	if (purple_strequal(name, "topic")) {
 		const char *current_topic = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(convo));
-		if (!(current_topic != NULL && strcmp(tmp2, current_topic) == 0))
+		if (!(current_topic != NULL && purple_strequal(tmp2, current_topic)))
 		{
 			char *nick_esc;
 			nick = irc_mask_nick(from);

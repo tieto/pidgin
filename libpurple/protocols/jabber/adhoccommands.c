@@ -74,7 +74,7 @@ jabber_adhoc_got_buddy_list(JabberStream *js, const char *from, xmlnode *query)
 		JabberAdHocCommands *cmd;
 		if(item->type != XMLNODE_TYPE_TAG)
 			continue;
-		if(strcmp(item->name, "item"))
+		if(!purple_strequal(item->name, "item"))
 			continue;
 		cmd = g_new0(JabberAdHocCommands, 1);
 
@@ -257,7 +257,7 @@ jabber_adhoc_got_server_list(JabberStream *js, const char *from, xmlnode *query)
 		JabberAdHocCommands *cmd;
 		if(item->type != XMLNODE_TYPE_TAG)
 			continue;
-		if(strcmp(item->name, "item"))
+		if(!purple_strequal(item->name, "item"))
 			continue;
 		cmd = g_new0(JabberAdHocCommands, 1);
 		cmd->jid = g_strdup(xmlnode_get_attrib(item,"jid"));

@@ -223,7 +223,7 @@ execute_perl(const char *function, int argc, char **args)
 
 	/* Check for changed arguments */
 	for (i = 0; i < argc; i++) {
-		if (args[i] && strcmp(args[i], SvPVX(sv_args[i]))) {
+		if (args[i] && !purple_strequal(args[i], SvPVX(sv_args[i]))) {
 			/*
 			 * Shizzel.  So the perl script changed one of the parameters,
 			 * and we want this change to affect the original parameters.

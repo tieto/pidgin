@@ -526,7 +526,7 @@ pidgin_sound_play_file(const char *filename)
 		return;
 	}
 
-	if (strcmp(method, "automatic") != 0 && !sink) {
+	if (!purple_strequal(method, "automatic") && !sink) {
 		purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 		return;
 	}

@@ -1030,8 +1030,8 @@ static PurpleAccount* check_active_accounts_for_identical_statuses(void)
 			PurpleStatusType *st1 = s1->data, *st2 = s2->data;
 			/* TODO: Are these enough to consider the statuses identical? */
 			if (purple_status_type_get_primitive(st1) != purple_status_type_get_primitive(st2)
-				|| strcmp(purple_status_type_get_id(st1), purple_status_type_get_id(st2))
-				|| strcmp(purple_status_type_get_name(st1), purple_status_type_get_name(st2))) {
+				|| !purple_strequal(purple_status_type_get_id(st1), purple_status_type_get_id(st2))
+				|| !purple_strequal(purple_status_type_get_name(st1), purple_status_type_get_name(st2))) {
 				acct1 = NULL;
 				break;
 			}

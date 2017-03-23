@@ -87,7 +87,7 @@ jabber_data_create_from_xml(xmlnode *tag)
 	g_return_val_if_fail(tag != NULL, NULL);
 
 	/* check if this is a "data" tag */
-	if (strcmp(tag->name, "data") != 0) {
+	if (!purple_strequal(tag->name, "data")) {
 		purple_debug_error("jabber", "Invalid data element\n");
 		return NULL;
 	}

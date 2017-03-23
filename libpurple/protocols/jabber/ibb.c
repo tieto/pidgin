@@ -396,7 +396,7 @@ jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
 
 	if (sess) {
 
-		if (strcmp(who, jabber_ibb_session_get_who(sess)) != 0) {
+		if (!purple_strequal(who, jabber_ibb_session_get_who(sess))) {
 			/* the iq comes from a different JID than the remote JID of the
 			  session, ignore it */
 			purple_debug_error("jabber",

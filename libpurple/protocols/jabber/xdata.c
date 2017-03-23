@@ -64,7 +64,7 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 				PurpleRequestField *field = flds->data;
 				const char *id = purple_request_field_get_id(field);
 				int handleindex;
-				if(strcmp(id, "libpurple:jabber:xdata:actions"))
+				if(!purple_strequal(id, "libpurple:jabber:xdata:actions"))
 					continue;
 				handleindex = purple_request_field_choice_get_value(field);
 				actionhandle = g_strdup(g_list_nth_data(data->actions, handleindex));
@@ -230,7 +230,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 		if(!type)
 			type = "text-single";
 
-		if(!var && strcmp(type, "fixed"))
+		if(!var && !purple_strequal(type, "fixed"))
 			continue;
 		if(!label)
 			label = var;

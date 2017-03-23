@@ -1952,7 +1952,7 @@ add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, c
 
 	/* There's no sense listing things like: 'xxx "xxx"'
 	   when the name and buddy alias match. */
-	if (buddy_alias && strcmp(buddy_alias, buddyname)) {
+	if (buddy_alias && !purple_strequal(buddy_alias, buddyname)) {
 		char *completion_entry = g_strdup_printf("%s \"%s\"", buddyname, buddy_alias);
 		char *tmp2 = g_utf8_normalize(buddy_alias, -1, G_NORMALIZE_DEFAULT);
 
@@ -1974,9 +1974,9 @@ add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, c
 
 	/* There's no sense listing things like: 'xxx "xxx"'
 	   when the name and contact alias match. */
-	if (contact_alias && strcmp(contact_alias, buddyname)) {
+	if (contact_alias && !purple_strequal(contact_alias, buddyname)) {
 		/* We don't want duplicates when the contact and buddy alias match. */
-		if (!buddy_alias || strcmp(contact_alias, buddy_alias)) {
+		if (!buddy_alias || !purple_strequal(contact_alias, buddy_alias)) {
 			char *completion_entry = g_strdup_printf("%s \"%s\"",
 							buddyname, contact_alias);
 			char *tmp2 = g_utf8_normalize(contact_alias, -1, G_NORMALIZE_DEFAULT);
@@ -3471,9 +3471,9 @@ open_dialog(GtkIMHtml *imhtml, GtkIMHtmlLink *link)
 
 	str = url + sizeof("open://") - 1;
 
-	if (strcmp(str, "accounts") == 0)
+	if (purple_strequal(str, "accounts"))
 		pidgin_accounts_window_show();
-	else if (strcmp(str, "prefs") == 0)
+	else if (purple_strequal(str, "prefs"))
 		pidgin_prefs_show();
 	else
 		return FALSE;

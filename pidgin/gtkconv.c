@@ -472,7 +472,7 @@ check_for_and_do_command(PurpleConversation *conv)
 
 		cmdline = cmd + strlen(prefix);
 
-		if (strcmp(cmdline, "xyzzy") == 0) {
+		if (purple_strequal(cmdline, "xyzzy")) {
 			purple_conversation_write(conv, "", "Nothing happens",
 					PURPLE_MESSAGE_NO_LOG, time(NULL));
 			g_free(cmd);
@@ -788,7 +788,7 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		else
 			return;
 
-		if (strcmp(convprotocol, purple_account_get_protocol_id(buddy->account)))
+		if (!purple_strequal(convprotocol, purple_account_get_protocol_id(buddy->account)))
 		{
 			purple_notify_error(PIDGIN_CONVERSATION(info->conv), NULL,
 							  _("That buddy is not on the same protocol as this "
@@ -815,7 +815,7 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 					_("You are not currently signed on with an account that "
 					  "can invite that buddy."), NULL);
 			}
-			else if (strcmp(convprotocol, purple_account_get_protocol_id(account)))
+			else if (!purple_strequal(convprotocol, purple_account_get_protocol_id(account)))
 			{
 				purple_notify_error(PIDGIN_CONVERSATION(info->conv), NULL,
 								  _("That buddy is not on the same protocol as this "
@@ -3858,7 +3858,7 @@ compare_buddy_presence(PurplePresence *p1, PurplePresence *p2)
 	PurpleBuddy *b1 = purple_presence_get_buddy(p1);
 	PurpleBuddy *b2 = purple_presence_get_buddy(p2);
 	if (purple_buddy_get_account(b1) == purple_buddy_get_account(b2) &&
-			strcmp(purple_buddy_get_name(b1), purple_buddy_get_name(b2)) == 0)
+			purple_strequal(purple_buddy_get_name(b1), purple_buddy_get_name(b2)))
 		return FALSE;
 	return TRUE;
 }
@@ -4234,7 +4234,7 @@ tab_complete(PurpleConversation *conv)
 						   CHAT_USERS_ALIAS_COLUMN, &alias,
 						   -1);
 
-				if (name && alias && strcmp(name, alias))
+				if (name && alias && !purple_strequal(name, alias))
 					tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
 										  &matches, alias);
 				g_free(name);
@@ -4420,7 +4420,7 @@ update_chat_alias(PurpleBuddy *buddy, PurpleConversation *conv, PurpleConnection
 			char *alias_key = NULL;
 			PurpleBuddy *buddy2;
 
-			if (strcmp(chat->nick, purple_normalize(conv->account, name))) {
+			if (!purple_strequal(chat->nick, purple_normalize(conv->account, name))) {
 				/* This user is not me, so look into updating the alias. */
 
 				if ((buddy2 = purple_find_buddy(conv->account, name)) != NULL) {
@@ -5141,8 +5141,8 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		 */
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
 				prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, chat_invite) &&
-				strcmp(purple_account_get_protocol_id(convaccount),
-					purple_account_get_protocol_id(buddyaccount)) == 0) {
+				purple_strequal(purple_account_get_protocol_id(convaccount),
+					purple_account_get_protocol_id(buddyaccount))) {
 		    purple_conv_chat_invite_user(PURPLE_CONV_CHAT(conv), buddyname, NULL, TRUE);
 		} else {
 			/*
@@ -5196,7 +5196,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 				 */
 				if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
 						prpl_info && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, chat_invite) &&
-						strcmp(purple_account_get_protocol_id(convaccount), protocol) == 0) {
+						purple_strequal(purple_account_get_protocol_id(convaccount), protocol)) {
 					purple_conv_chat_invite_user(PURPLE_CONV_CHAT(conv), username, NULL, TRUE);
 				} else {
 					c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, username);
@@ -5482,11 +5482,11 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 	guint timer;
 
 	/* create hidden conv if hide_new pref is always */
-	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always") == 0)
+	if (purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always"))
 		hide = TRUE;
 
 	/* create hidden conv if hide_new pref is away and account is away */
-	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away") == 0 &&
+	if (purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away") &&
 	    !purple_status_is_available(purple_account_get_active_status(account)))
 		hide = TRUE;
 
@@ -6878,7 +6878,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
 		if (pidgin_conv_window_is_active_conversation(conv)) {
 			const char* current_title = gtk_window_get_title(GTK_WINDOW(win->window));
-			if (current_title == NULL || strcmp(current_title, title) != 0)
+			if (current_title == NULL || !purple_strequal(current_title, title))
 				gtk_window_set_title(GTK_WINDOW(win->window), title);
 		}
 
@@ -7471,7 +7471,7 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
 	PurpleConversation *conv = NULL;
 	PidginConversation *gtkconv;
 
-	if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away")!=0)
+	if(!purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away"))
 		return;
 
 	if(purple_status_is_available(oldstatus) || !purple_status_is_available(newstatus))
@@ -7506,10 +7506,10 @@ hide_new_pref_cb(const char *name, PurplePrefType type,
 	if(!hidden_convwin)
 		return;
 
-	if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always")==0)
+	if(purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always"))
 		return;
 
-	if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away")==0)
+	if(purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away"))
 		when_away = TRUE;
 
 	for (l = hidden_convwin->gtkconvs; l; )
@@ -7537,7 +7537,7 @@ conv_placement_pref_cb(const char *name, PurplePrefType type,
 {
 	PidginConvPlacementFunc func;
 
-	if (strcmp(name, PIDGIN_PREFS_ROOT "/conversations/placement"))
+	if (!purple_strequal(name, PIDGIN_PREFS_ROOT "/conversations/placement"))
 		return;
 
 	func = pidgin_conv_placement_get_fnc(value);
@@ -9154,7 +9154,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	pidgin_conv_switch_active_conversation(conv);
 
 	sound_method = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method");
-	if (strcmp(sound_method, "none") != 0)
+	if (!purple_strequal(sound_method, "none"))
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
 		                               gtkconv->make_sound);
 

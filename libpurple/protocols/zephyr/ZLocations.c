@@ -150,8 +150,8 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 	return (ZERR_INTERNAL);
     }
 
-    if (strcmp(retnotice.z_message, ZSRVACK_SENT) &&
-	strcmp(retnotice.z_message, ZSRVACK_NOTSENT)) {
+    if (!purple_strequal(retnotice.z_message, ZSRVACK_SENT) &&
+	!purple_strequal(retnotice.z_message, ZSRVACK_NOTSENT)) {
 	ZFreeNotice(&retnotice);
 	return (ZERR_INTERNAL);
     }

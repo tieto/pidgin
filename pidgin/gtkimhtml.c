@@ -3309,13 +3309,13 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							if (((font->bold && !oldfont->bold) || (oldfont->bold && !font->bold)) && !(options & GTK_IMHTML_NO_FORMATTING))
 							    gtk_imhtml_toggle_bold(imhtml);
 
-							if (font->face && (!oldfont->face || strcmp(font->face, oldfont->face) != 0) && !(options & GTK_IMHTML_NO_FONTS))
+							if (font->face && (!oldfont->face || !purple_strequal(font->face, oldfont->face)) && !(options & GTK_IMHTML_NO_FONTS))
 							    gtk_imhtml_toggle_fontface(imhtml, oldfont->face);
 
-							if (font->fore && (!oldfont->fore || strcmp(font->fore, oldfont->fore) != 0) && !(options & GTK_IMHTML_NO_COLOURS))
+							if (font->fore && (!oldfont->fore || !purple_strequal(font->fore, oldfont->fore)) && !(options & GTK_IMHTML_NO_COLOURS))
 							    gtk_imhtml_toggle_forecolor(imhtml, oldfont->fore);
 
-							if (font->back && (!oldfont->back || strcmp(font->back, oldfont->back) != 0) && !(options & GTK_IMHTML_NO_COLOURS))
+							if (font->back && (!oldfont->back || !purple_strequal(font->back, oldfont->back)) && !(options & GTK_IMHTML_NO_COLOURS))
 							    gtk_imhtml_toggle_backcolor(imhtml, oldfont->back);
 						}
 
@@ -4600,13 +4600,13 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *m
 		GtkTextTag *tag = GTK_TEXT_TAG(l->data);
 
 		if (tag->name) {
-			if (strcmp(tag->name, "BOLD") == 0)
+			if (purple_strequal(tag->name, "BOLD"))
 				imhtml->edit.bold = TRUE;
-			else if (strcmp(tag->name, "ITALICS") == 0)
+			else if (purple_strequal(tag->name, "ITALICS"))
 				imhtml->edit.italic = TRUE;
-			else if (strcmp(tag->name, "UNDERLINE") == 0)
+			else if (purple_strequal(tag->name, "UNDERLINE"))
 				imhtml->edit.underline = TRUE;
-			else if (strcmp(tag->name, "STRIKE") == 0)
+			else if (purple_strequal(tag->name, "STRIKE"))
 				imhtml->edit.strike = TRUE;
 			else if (strncmp(tag->name, "FORECOLOR ", 10) == 0)
 				imhtml->edit.forecolor = g_strdup(&(tag->name)[10]);
@@ -4793,7 +4793,7 @@ static gboolean gtk_imhtml_toggle_str_tag(GtkIMHtml *imhtml, const char *value, 
 	g_free(*edit_field);
 	*edit_field = NULL;
 
-	if (value && strcmp(value, "") != 0)
+	if (value && !purple_strequal(value, ""))
 	{
 		*edit_field = g_strdup(value);
 
@@ -5113,13 +5113,13 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 	name = tag->name;
 	g_return_val_if_fail(name != NULL, "");
 
-	if (strcmp(name, "BOLD") == 0) {
+	if (purple_strequal(name, "BOLD")) {
 		return "<b>";
-	} else if (strcmp(name, "ITALICS") == 0) {
+	} else if (purple_strequal(name, "ITALICS")) {
 		return "<i>";
-	} else if (strcmp(name, "UNDERLINE") == 0) {
+	} else if (purple_strequal(name, "UNDERLINE")) {
 		return "<u>";
-	} else if (strcmp(name, "STRIKE") == 0) {
+	} else if (purple_strequal(name, "STRIKE")) {
 		return "<s>";
 	} else if (strncmp(name, "LINK ", 5) == 0) {
 		char *tmp = g_object_get_data(G_OBJECT(tag), "link_url");
@@ -5220,13 +5220,13 @@ static const gchar *tag_to_html_end(GtkTextTag *tag)
 	name = tag->name;
 	g_return_val_if_fail(name != NULL, "");
 
-	if (strcmp(name, "BOLD") == 0) {
+	if (purple_strequal(name, "BOLD")) {
 		return "</b>";
-	} else if (strcmp(name, "ITALICS") == 0) {
+	} else if (purple_strequal(name, "ITALICS")) {
 		return "</i>";
-	} else if (strcmp(name, "UNDERLINE") == 0) {
+	} else if (purple_strequal(name, "UNDERLINE")) {
 		return "</u>";
-	} else if (strcmp(name, "STRIKE") == 0) {
+	} else if (purple_strequal(name, "STRIKE")) {
 		return "</s>";
 	} else if (strncmp(name, "LINK ", 5) == 0) {
 		return "</a>";
@@ -5583,7 +5583,7 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 				gtk_imhtml_font_set_size(imhtml, size);
 		}
 
-		if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"), "") != 0)
+		if(!purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"), ""))
 		{
 			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"),
 							&fg_color);
@@ -5597,7 +5597,7 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 		gtk_imhtml_toggle_forecolor(imhtml, color);
 
 		if(!(flags & PURPLE_CONNECTION_NO_BGCOLOR) &&
-		   strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"), "") != 0)
+		   !purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"), ""))
 		{
 			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"),
 							&bg_color);

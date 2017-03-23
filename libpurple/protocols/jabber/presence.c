@@ -213,7 +213,7 @@ void jabber_presence_send(JabberStream *js, gboolean force)
 	}
 
 #define CHANGED(a,b) ((!a && b) || (a && a[0] == '\0' && b && b[0] != '\0') || \
-					  (a && !b) || (a && a[0] != '\0' && b && b[0] == '\0') || (a && b && strcmp(a,b)))
+					  (a && !b) || (a && a[0] != '\0' && b && b[0] == '\0') || (a && b && !purple_strequal(a,b)))
 	/* check if there are any differences to the <presence> and send them in that case */
 	if (force || allowBuzz != js->allowBuzz || js->old_state != state ||
 		CHANGED(js->old_msg, stripped) || js->old_priority != priority ||

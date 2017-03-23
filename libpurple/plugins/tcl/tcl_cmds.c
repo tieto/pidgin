@@ -332,7 +332,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 								   Tcl_GetString(objv[3]));
 		} else {
 			PurpleStatusPrimitive primitive;
-			if (strcmp(Tcl_GetString(objv[3]), "-primitive")) {
+			if (!purple_strequal(Tcl_GetString(objv[3]), "-primitive")) {
 				result = Tcl_NewStringObj("bad option \"", -1);
 				Tcl_AppendObjToObj(result, objv[3]);
 				Tcl_AppendToObj(result, "\": should be -primitive", -1);
@@ -469,7 +469,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 						 Tcl_NewStringObj("buddy too short", -1));
 				return TCL_ERROR;
 			}
-			if (strcmp("buddy", Tcl_GetString(elems[0]))) {
+			if (!purple_strequal("buddy", Tcl_GetString(elems[0]))) {
 				Tcl_SetObjResult(interp,
 						 Tcl_NewStringObj("invalid buddy", -1));
 				return TCL_ERROR;
@@ -1229,7 +1229,7 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 										  Tcl_GetString(objv[3]))));
 		} else {
 			PurpleStatusPrimitive primitive;
-			if (strcmp(Tcl_GetString(objv[3]), "-primitive")) {
+			if (!purple_strequal(Tcl_GetString(objv[3]), "-primitive")) {
 				result = Tcl_NewStringObj("bad option \"", -1);
 				Tcl_AppendObjToObj(result, objv[3]);
 				Tcl_AppendToObj(result,

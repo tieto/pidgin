@@ -239,7 +239,7 @@ static void populate_log_tree(FinchLogViewer *lv)
 		pmonth = purple_utf8_strftime(_("%B %Y"),
 		                           log->tm ? log->tm : localtime(&log->time));
 
-		if (strcmp(pmonth, prev_top_month) != 0) {
+		if (!purple_strequal(pmonth, prev_top_month)) {
 			month = g_strdup(pmonth);
 			/* top level */
 			gnt_tree_add_row_last(GNT_TREE(lv->tree),
