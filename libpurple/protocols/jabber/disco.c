@@ -519,6 +519,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 	for (child = xmlnode_get_child(query, "identity"); child;
 	     child = xmlnode_get_next_twin(child)) {
 		const char *category, *type, *name;
+		const char *stun_ip;
 		category = xmlnode_get_attrib(child, "category");
 		type = xmlnode_get_attrib(child, "type");
 		if(purple_strequal(category, "pubsub") && purple_strequal(type, "pep")) {
@@ -538,17 +539,16 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 
 		g_free(js->server_name);
 		js->server_name = g_strdup(name);
+		stun_ip = purple_network_get_stun_ip();
 		if (purple_strequal(name, "Google Talk")) {
 			purple_debug_info("jabber", "Google Talk!\n");
 			js->googletalk = TRUE;
 
 			/* autodiscover stun and relays */
-			if (purple_network_get_stun_ip() == NULL ||
-		    	purple_strequal(purple_network_get_stun_ip(), "")) {
+			if (stun_ip == NULL || stun_ip[0] == '\0') {
 				jabber_google_send_jingle_info(js);
 			}
-		} else if (purple_network_get_stun_ip() == NULL ||
-		    purple_strequal(purple_network_get_stun_ip(), "")) {
+		} else if (stun_ip == NULL || stun_ip[0] == '\0') {
 			js->srv_query_data =
 				purple_srv_resolve_account(
 					purple_connection_get_account(js->gc), "stun", "udp",
