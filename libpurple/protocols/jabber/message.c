@@ -182,7 +182,7 @@ static void handle_headline(JabberMessage *jm)
 	for(etc = jm->etc; etc; etc = etc->next) {
 		xmlnode *x = etc->data;
 		const char *xmlns = xmlnode_get_namespace(x);
-		if(xmlns && purple_strequal(xmlns, NS_OOB_X_DATA)) {
+		if(purple_strequal(xmlns, NS_OOB_X_DATA)) {
 			xmlnode *url, *desc;
 			char *urltxt, *desctxt;
 

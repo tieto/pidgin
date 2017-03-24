@@ -1976,7 +1976,7 @@ add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, c
 	   when the name and contact alias match. */
 	if (contact_alias && !purple_strequal(contact_alias, buddyname)) {
 		/* We don't want duplicates when the contact and buddy alias match. */
-		if (!buddy_alias || !purple_strequal(contact_alias, buddy_alias)) {
+		if (!purple_strequal(contact_alias, buddy_alias)) {
 			char *completion_entry = g_strdup_printf("%s \"%s\"",
 							buddyname, contact_alias);
 			char *tmp2 = g_utf8_normalize(contact_alias, -1, G_NORMALIZE_DEFAULT);

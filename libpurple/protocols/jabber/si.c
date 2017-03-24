@@ -1204,14 +1204,14 @@ static void jabber_si_xfer_send_method_cb(JabberStream *js, const char *from,
 		const char *var = xmlnode_get_attrib(field, "var");
 		JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
 
-		if(var && purple_strequal(var, "stream-method")) {
+		if(purple_strequal(var, "stream-method")) {
 			if((value = xmlnode_get_child(field, "value"))) {
 				char *val = xmlnode_get_data(value);
-				if(val && purple_strequal(val, NS_BYTESTREAMS)) {
+				if(purple_strequal(val, NS_BYTESTREAMS)) {
 					jabber_si_xfer_bytestreams_send_init(xfer);
 					jsx->stream_method |= STREAM_METHOD_BYTESTREAMS;
 					found_method = TRUE;
-				} else if (val && purple_strequal(val, NS_IBB)) {
+				} else if (purple_strequal(val, NS_IBB)) {
 					jsx->stream_method |= STREAM_METHOD_IBB;
 					if (!found_method) {
 						/* we haven't tried to init a bytestream session, yet
@@ -1749,7 +1749,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 
 	for(field = xmlnode_get_child(x, "field"); field; field = xmlnode_get_next_twin(field)) {
 		const char *var = xmlnode_get_attrib(field, "var");
-		if(var && purple_strequal(var, "stream-method")) {
+		if(purple_strequal(var, "stream-method")) {
 			for(option = xmlnode_get_child(field, "option"); option;
 					option = xmlnode_get_next_twin(option)) {
 				if((value = xmlnode_get_child(option, "value"))) {

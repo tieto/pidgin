@@ -2724,7 +2724,7 @@ char *jabber_parse_error(JabberStream *js,
 		} else if(xmlnode_get_child(error, "undefined-condition")) {
 			text = _("Unknown Error");
 		}
-	} else if(xmlns && purple_strequal(xmlns, NS_XMPP_SASL)) {
+	} else if(purple_strequal(xmlns, NS_XMPP_SASL)) {
 		/* Most common reason can be the default */
 		SET_REASON(PURPLE_CONNECTION_ERROR_NETWORK_ERROR);
 		if(xmlnode_get_child(packet, "aborted")) {
@@ -2751,7 +2751,7 @@ char *jabber_parse_error(JabberStream *js,
 			text = _("Authentication Failure");
 		}
 	} else if(purple_strequal(packet->name, "stream:error") ||
-			 (purple_strequal(packet->name, "error") && xmlns &&
+			 (purple_strequal(packet->name, "error") &&
 				purple_strequal(xmlns, NS_XMPP_STREAMS))) {
 		/* Most common reason as default: */
 		SET_REASON(PURPLE_CONNECTION_ERROR_NETWORK_ERROR);

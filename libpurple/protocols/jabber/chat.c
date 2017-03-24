@@ -1226,7 +1226,7 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, const char *from,
 	for(x = xmlnode_get_child(query, "feature"); x; x = xmlnode_get_next_twin(x)) {
 		const char *var = xmlnode_get_attrib(x, "var");
 
-		if(var && purple_strequal(var, NS_XHTML_IM)) {
+		if(purple_strequal(var, NS_XHTML_IM)) {
 			chat->xhtml = TRUE;
 		}
 	}

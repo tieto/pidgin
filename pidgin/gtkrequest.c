@@ -809,7 +809,7 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 						purple_request_field_is_visible(fld))
 				{
 					const char *type_hint = purple_request_field_get_type_hint(fld);
-					if (type_hint != NULL && purple_strequal(type_hint, "account"))
+					if (purple_strequal(type_hint, "account"))
 					{
 						optmenu = GTK_WIDGET(purple_request_field_get_ui_data(fld));
 						if (optmenu == NULL) {

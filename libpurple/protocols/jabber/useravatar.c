@@ -362,7 +362,7 @@ update_buddy_metadata(JabberStream *js, const char *from, xmlnode *items)
 					break;
 				}
 				/* We'll only pick the png one for now. It's a very nice image format anyways. */
-				if(type && id && !goodinfo && purple_strequal(type, "image/png"))
+				if(id && !goodinfo && purple_strequal(type, "image/png"))
 					goodinfo = info;
 			}
 		}

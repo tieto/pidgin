@@ -3309,13 +3309,13 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							if (((font->bold && !oldfont->bold) || (oldfont->bold && !font->bold)) && !(options & GTK_IMHTML_NO_FORMATTING))
 							    gtk_imhtml_toggle_bold(imhtml);
 
-							if (font->face && (!oldfont->face || !purple_strequal(font->face, oldfont->face)) && !(options & GTK_IMHTML_NO_FONTS))
+							if (font->face && !purple_strequal(font->face, oldfont->face) && !(options & GTK_IMHTML_NO_FONTS))
 							    gtk_imhtml_toggle_fontface(imhtml, oldfont->face);
 
-							if (font->fore && (!oldfont->fore || !purple_strequal(font->fore, oldfont->fore)) && !(options & GTK_IMHTML_NO_COLOURS))
+							if (font->fore && !purple_strequal(font->fore, oldfont->fore) && !(options & GTK_IMHTML_NO_COLOURS))
 							    gtk_imhtml_toggle_forecolor(imhtml, oldfont->fore);
 
-							if (font->back && (!oldfont->back || !purple_strequal(font->back, oldfont->back)) && !(options & GTK_IMHTML_NO_COLOURS))
+							if (font->back && !purple_strequal(font->back, oldfont->back) && !(options & GTK_IMHTML_NO_COLOURS))
 							    gtk_imhtml_toggle_backcolor(imhtml, oldfont->back);
 						}
 

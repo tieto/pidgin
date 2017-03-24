@@ -1016,7 +1016,7 @@ prefs_set_blist_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_blist_themes), &iter, 2, &name, -1);
 
-		if(!name || !purple_strequal(name, ""))
+		if(!purple_strequal(name, ""))
 			theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(name, "blist"));
 
 		g_free(name);
@@ -1037,7 +1037,7 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_status_icon_themes), &iter, 2, &name, -1);
 
-		if(!name || !purple_strequal(name, ""))
+		if(!purple_strequal(name, ""))
 			theme = PIDGIN_STATUS_ICON_THEME(purple_theme_manager_find_theme(name, "status-icon"));
 
 		g_free(name);
@@ -1894,7 +1894,7 @@ get_available_browsers(void)
 				browser_setting = NULL;
 			/* If xdg-open is valid, prefer it over gnome-open and skip forward */
 			if(purple_strequal(possible_browsers[i].command, "xdg-open")) {
-				if (browser_setting && purple_strequal("gnome-open", browser_setting)) {
+				if (purple_strequal("gnome-open", browser_setting)) {
 					purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/browser", possible_browsers[i].command);
 					browser_setting = NULL;
 				}

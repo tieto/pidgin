@@ -831,9 +831,7 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 			if (default_value->type == PURPLE_TYPE_STRING) {
 				const char *cur = purple_status_get_attr_string(status, attr->id);
 				const char *def = purple_value_get_string(default_value);
-				if ((cur == NULL && def == NULL)
-				    || (cur != NULL && def != NULL
-					&& purple_strequal(cur, def))) {
+				if (purple_strequal(cur, def)) {
 					continue;
 				}
 

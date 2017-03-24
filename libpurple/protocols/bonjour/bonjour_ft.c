@@ -452,33 +452,37 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 		return;
 
 	if(purple_strequal(type, "set")) {
-		const char *profile;
 		xmlnode *si;
 		gboolean parsed_receive = FALSE;
 
 		si = xmlnode_get_child(packet, "si");
 
 		purple_debug_info("bonjour", "si offer Message type - SET.\n");
-		if (si && (profile = xmlnode_get_attrib(si, "profile"))
-				&& purple_strequal(profile, "http://jabber.org/protocol/si/profile/file-transfer")) {
-			const char *filename = NULL, *filesize_str = NULL;
-			goffset filesize = 0;
-			xmlnode *file;
+		if (si) {
+			const char *profile;
 
-			const char *sid = xmlnode_get_attrib(si, "id");
+			profile = xmlnode_get_attrib(si, "profile");
 
-			if ((file = xmlnode_get_child(si, "file"))) {
-				filename = xmlnode_get_attrib(file, "name");
-				if((filesize_str = xmlnode_get_attrib(file, "size")))
-					filesize = g_ascii_strtoll(filesize_str, NULL, 10);
-			}
+			if (purple_strequal(profile, "http://jabber.org/protocol/si/profile/file-transfer")) {
+				const char *filename = NULL, *filesize_str = NULL;
+				goffset filesize = 0;
+				xmlnode *file;
 
-			/* TODO: Make sure that it is advertising a bytestreams transfer */
+				const char *sid = xmlnode_get_attrib(si, "id");
 
-			if (filename) {
-				bonjour_xfer_receive(pc, id, sid, name, filesize, filename, XEP_BYTESTREAMS);
+				if ((file = xmlnode_get_child(si, "file"))) {
+					filename = xmlnode_get_attrib(file, "name");
+					if((filesize_str = xmlnode_get_attrib(file, "size")))
+						filesize = g_ascii_strtoll(filesize_str, NULL, 10);
+				}
 
-				parsed_receive = TRUE;
+				/* TODO: Make sure that it is advertising a bytestreams transfer */
+
+				if (filename) {
+					bonjour_xfer_receive(pc, id, sid, name, filesize, filename, XEP_BYTESTREAMS);
+
+					parsed_receive = TRUE;
+				}
 			}
 		}
 

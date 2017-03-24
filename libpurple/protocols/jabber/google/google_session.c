@@ -512,7 +512,7 @@ jabber_google_relay_response_session_handle_initiate_cb(GoogleSession *session,
 		id = xmlnode_get_attrib(codec_element, "id");
 
 		if (!session_data->video ||
-				(xmlns && purple_strequal(xmlns, NS_GOOGLE_SESSION_PHONE))) {
+				purple_strequal(xmlns, NS_GOOGLE_SESSION_PHONE)) {
 			clock_rate = xmlnode_get_attrib(
 					codec_element, "clockrate");
 			video = FALSE;
@@ -709,7 +709,7 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, xmlnode *
 	GList *codecs = NULL, *video_codecs = NULL;
 	JabberIq *result = NULL;
 	const gchar *xmlns = xmlnode_get_namespace(desc_element);
-	gboolean video = (xmlns && purple_strequal(xmlns, NS_GOOGLE_SESSION_VIDEO));
+	gboolean video = purple_strequal(xmlns, NS_GOOGLE_SESSION_VIDEO);
 	GoogleAVSessionData *session_data =
 		(GoogleAVSessionData *) session->session_data;
 

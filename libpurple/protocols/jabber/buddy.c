@@ -2045,7 +2045,7 @@ static void user_search_x_data_cb(JabberStream *js, xmlnode *result, gpointer da
 	 * just going to get an error if we send
 	 * a cancel, so skip it */
 	type = xmlnode_get_attrib(result, "type");
-	if(type && purple_strequal(type, "cancel")) {
+	if(purple_strequal(type, "cancel")) {
 		g_free(dir_server);
 		return;
 	}
