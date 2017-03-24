@@ -39,6 +39,48 @@
 
 #include <string.h>
 
+static GString *jm_body_with_oob(JabberMessage *jm) {
+	GList *etc;
+	GString *body = g_string_new("");
+
+	if(jm->xhtml)
+		g_string_append(body, jm->xhtml);
+	else if(jm->body)
+		g_string_append(body, jm->body);
+
+	for(etc = jm->etc; etc; etc = etc->next) {
+		xmlnode *x = etc->data;
+		const char *xmlns = xmlnode_get_namespace(x);
+		if(xmlns && !strcmp(xmlns, NS_OOB_X_DATA)) {
+			xmlnode *url, *desc;
+			char *urltxt, *desctxt;
+
+			url = xmlnode_get_child(x, "url");
+			desc = xmlnode_get_child(x, "desc");
+
+			if(!url)
+				continue;
+
+			urltxt = xmlnode_get_data(url);
+			desctxt = desc ? xmlnode_get_data(desc) : urltxt;
+
+			if(body->len && strcmp(body->str, urltxt))
+				g_string_append_printf(body, "<br/><a href='%s'>%s</a>",
+						urltxt, desctxt);
+			else
+				g_string_printf(body, "<a href='%s'>%s</a>",
+						urltxt, desctxt);
+
+			g_free(urltxt);
+
+			if(desctxt != urltxt)
+				g_free(desctxt);
+		}
+	}
+
+	return body;
+}
+
 void jabber_message_free(JabberMessage *jm)
 {
 	g_free(jm->from);
@@ -64,6 +106,7 @@ static void handle_chat(JabberMessage *jm)
 	PurpleAccount *account;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
+	GString *body;
 
 	if(!jid)
 		return;
@@ -74,15 +117,17 @@ static void handle_chat(JabberMessage *jm)
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
-	if(!jm->xhtml && !jm->body) {
-		if (jbr && jm->chat_state != JM_STATE_NONE)
-			jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
+	if (jbr && jm->chat_state != JM_STATE_NONE)
+		jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
 
-		if(JM_STATE_COMPOSING == jm->chat_state) {
+	switch(jm->chat_state) {
+		case JM_STATE_COMPOSING:
 			serv_got_typing(gc, jm->from, 0, PURPLE_TYPING);
-		} else if(JM_STATE_PAUSED == jm->chat_state) {
+			break;
+		case JM_STATE_PAUSED:
 			serv_got_typing(gc, jm->from, 0, PURPLE_TYPED);
-		} else if(JM_STATE_GONE == jm->chat_state) {
+			break;
+		case JM_STATE_GONE: {
 			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 					jm->from, account);
 			if (conv && jid->node && jid->domain) {
@@ -110,11 +155,21 @@ static void handle_chat(JabberMessage *jm)
 				}
 			}
 			serv_got_typing_stopped(gc, jm->from);
-
-		} else {
-			serv_got_typing_stopped(gc, jm->from);
+			break;
 		}
-	} else {
+		default:
+			serv_got_typing_stopped(gc, jm->from);
+	}
+
+	if (jm->js->googletalk && jm->body && jm->xhtml == NULL) {
+		char *tmp = jm->body;
+		jm->body = jabber_google_format_to_html(jm->body);
+		g_free(tmp);
+	}
+
+	body = jm_body_with_oob(jm);
+
+	if(body && body->len) {
 		if (jid->resource) {
 			/*
 			 * We received a message from a specific resource, so
@@ -151,62 +206,25 @@ static void handle_chat(JabberMessage *jm)
 			jbr->thread_id = g_strdup(jbr->thread_id);
 		}
 
-		if (jm->js->googletalk && jm->xhtml == NULL) {
-			char *tmp = jm->body;
-			jm->body = jabber_google_format_to_html(jm->body);
-			g_free(tmp);
-		}
-		serv_got_im(gc, jm->from, jm->xhtml ? jm->xhtml : jm->body, 0, jm->sent);
+		serv_got_im(gc, jm->from, body->str, 0, jm->sent);
 	}
 
 	jabber_id_free(jid);
+
+	if(body)
+		g_string_free(body, TRUE);
 }
 
 static void handle_headline(JabberMessage *jm)
 {
 	char *title;
 	GString *body;
-	GList *etc;
 
 	if(!jm->xhtml && !jm->body)
 		return; /* ignore headlines without any content */
 
-	body = g_string_new("");
+	body = jm_body_with_oob(jm);
 	title = g_strdup_printf(_("Message from %s"), jm->from);
-
-	if(jm->xhtml)
-		g_string_append(body, jm->xhtml);
-	else if(jm->body)
-		g_string_append(body, jm->body);
-
-	for(etc = jm->etc; etc; etc = etc->next) {
-		xmlnode *x = etc->data;
-		const char *xmlns = xmlnode_get_namespace(x);
-		if(xmlns && !strcmp(xmlns, NS_OOB_X_DATA)) {
-			xmlnode *url, *desc;
-			char *urltxt, *desctxt;
-
-			url = xmlnode_get_child(x, "url");
-			desc = xmlnode_get_child(x, "desc");
-
-			if(!url || !desc)
-				continue;
-
-			urltxt = xmlnode_get_data(url);
-			desctxt = xmlnode_get_data(desc);
-
-			/* I'm all about ugly hacks */
-			if(body->len && jm->body && !strcmp(body->str, jm->body))
-				g_string_printf(body, "<a href='%s'>%s</a>",
-						urltxt, desctxt);
-			else
-				g_string_append_printf(body, "<br/><a href='%s'>%s</a>",
-						urltxt, desctxt);
-
-			g_free(urltxt);
-			g_free(desctxt);
-		}
-	}
 
 	purple_notify_formatted(jm->js->gc, title, jm->subject ? jm->subject : title,
 			NULL, body->str, NULL, NULL);
