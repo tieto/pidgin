@@ -99,9 +99,9 @@ is_native(const char *filename)
 	if (last_period == NULL)
 		return FALSE;
 
-	return !(!purple_strequal(last_period, ".dll") &
-			 !purple_strequal(last_period, ".sl") &
-			 !purple_strequal(last_period, ".so"));
+	return purple_strequal(last_period, ".dll") ||
+			purple_strequal(last_period, ".sl") ||
+			purple_strequal(last_period, ".so");
 }
 
 static char *
