@@ -2023,23 +2023,17 @@ jabber_identity_compare(gconstpointer a, gconstpointer b)
 	ac = a;
 	bc = b;
 
-	if ((cat_cmp = strcmp(ac->category, bc->category)) == 0) {
-		if ((typ_cmp = strcmp(ac->type, bc->type)) == 0) {
-			if (!ac->lang && !bc->lang) {
-				return 0;
-			} else if (ac->lang && !bc->lang) {
-				return 1;
-			} else if (!ac->lang && bc->lang) {
-				return -1;
-			} else {
-				return strcmp(ac->lang, bc->lang);
-			}
-		} else {
-			return typ_cmp;
-		}
-	} else {
+	cat_cmp = strcmp(ac->category, bc->category);
+	if (cat_cmp != 0) {
 		return cat_cmp;
 	}
+
+	typ_cmp = strcmp(ac->type, bc->type);
+	if (typ_cmp != 0) {
+		return typ_cmp;
+	}
+
+	return g_strcmp0(ac->lang, bc->lang);
 }
 
 void jabber_add_identity(const gchar *category, const gchar *type,

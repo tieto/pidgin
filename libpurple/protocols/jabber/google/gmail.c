@@ -116,8 +116,7 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 		urls[i] = url;
 
 		tid = xmlnode_get_attrib(message, "tid");
-		if (tid &&
-		    (js->gmail_last_tid == NULL || strcmp(tid, js->gmail_last_tid) > 0)) {
+		if (g_strcmp0(tid, js->gmail_last_tid) > 0) {
 			g_free(js->gmail_last_tid);
 			js->gmail_last_tid = g_strdup(tid);
 		}

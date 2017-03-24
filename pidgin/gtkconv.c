@@ -4370,16 +4370,15 @@ sort_chat_users(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer us
 	f2 &= PURPLE_CBFLAGS_VOICE | PURPLE_CBFLAGS_HALFOP | PURPLE_CBFLAGS_OP |
 			PURPLE_CBFLAGS_FOUNDER;
 
-	if (user1 == NULL || user2 == NULL) {
-		if (!(user1 == NULL && user2 == NULL))
-			ret = (user1 == NULL) ? -1: 1;
-	} else if (f1 != f2) {
-		/* sort more important users first */
-		ret = (f1 > f2) ? -1 : 1;
-	} else if (buddy1 != buddy2) {
-		ret = (buddy1 > buddy2) ? -1 : 1;
-	} else {
-		ret = strcmp(user1, user2);
+	ret = g_strcmp0(user1, user2);
+
+	if (user1 != NULL && user2 != NULL) {
+		if (f1 != f2) {
+			/* sort more important users first */
+			ret = (f1 > f2) ? -1 : 1;
+		} else if (buddy1 != buddy2) {
+			ret = (buddy1 > buddy2) ? -1 : 1;
+		}
 	}
 
 	g_free(user1);
