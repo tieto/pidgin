@@ -1016,7 +1016,7 @@ prefs_set_blist_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_blist_themes), &iter, 2, &name, -1);
 
-		if(!name || name[0] != '\0')
+		if(!name || *name)
 			theme = PIDGIN_BLIST_THEME(purple_theme_manager_find_theme(name, "blist"));
 
 		g_free(name);
@@ -1037,7 +1037,7 @@ prefs_set_status_icon_theme_cb(GtkComboBox *combo_box, gpointer user_data)
 
 		gtk_tree_model_get(GTK_TREE_MODEL(prefs_status_icon_themes), &iter, 2, &name, -1);
 
-		if(!name || name[0] != '\0')
+		if(!name || *name)
 			theme = PIDGIN_STATUS_ICON_THEME(purple_theme_manager_find_theme(name, "status-icon"));
 
 		g_free(name);

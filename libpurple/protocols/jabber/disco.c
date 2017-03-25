@@ -545,10 +545,10 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 			js->googletalk = TRUE;
 
 			/* autodiscover stun and relays */
-			if (stun_ip == NULL || stun_ip[0] == '\0') {
+			if (!stun_ip || !*stun_ip) {
 				jabber_google_send_jingle_info(js);
 			}
-		} else if (stun_ip == NULL || stun_ip[0] == '\0') {
+		} else if (!stun_ip || !*stun_ip) {
 			js->srv_query_data =
 				purple_srv_resolve_account(
 					purple_connection_get_account(js->gc), "stun", "udp",

@@ -4793,7 +4793,7 @@ static gboolean gtk_imhtml_toggle_str_tag(GtkIMHtml *imhtml, const char *value, 
 	g_free(*edit_field);
 	*edit_field = NULL;
 
-	if (value && value[0] != '\0')
+	if (value && *value)
 	{
 		*edit_field = g_strdup(value);
 

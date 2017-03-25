@@ -113,7 +113,7 @@ make_gtkrc_string(void)
 	if (purple_prefs_get_bool("/plugins/gtk/purplerc/set/gtk-font-name")) {
 		const gchar *pref = purple_prefs_get_string("/plugins/gtk/purplerc/gtk-font-name");
 
-		if (pref != NULL && pref[0] != '\0') {
+		if (pref && *pref) {
 			g_string_append_printf(style_string,
 			                       "gtk-font-name = \"%s\"\n",
 			                       pref);
@@ -123,7 +123,7 @@ make_gtkrc_string(void)
 	if (purple_prefs_get_bool("/plugins/gtk/purplerc/set/gtk-key-theme-name")) {
 		const gchar *pref = purple_prefs_get_string("/plugins/gtk/purplerc/gtk-key-theme-name");
 
-		if (pref != NULL && pref[0] != '\0') {
+		if (pref && *pref) {
 			g_string_append_printf(style_string,
 			                       "gtk-key-theme-name = \"%s\"\n",
 			                       pref);
@@ -141,7 +141,7 @@ make_gtkrc_string(void)
 			const gchar *pref;
 
 			pref = purple_prefs_get_string(color_prefs[i]);
-			if (pref != NULL && pref[0] != '\0') {
+			if (pref && *pref) {
 				prefbase = g_path_get_basename(color_prefs[i]);
 				g_string_append_printf(style_string,
 				                       "\n\t%s = \"%s\"",
@@ -180,7 +180,7 @@ make_gtkrc_string(void)
 			const gchar *pref;
 
 			pref = purple_prefs_get_string(font_prefs[i]);
-			if (pref != NULL && pref[0] != '\0') {
+			if (pref && *pref) {
 				prefbase = g_path_get_basename(font_prefs[i]);
 				g_string_append_printf(style_string,
 				                       "style \"%s_style\"\n{\n"
@@ -276,7 +276,7 @@ purplerc_set_color(GtkWidget *widget, gpointer data)
 
 	pref = purple_prefs_get_string(color_prefs[subscript]);
 
-	if (pref != NULL && pref[0] != '\0') {
+	if (pref && *pref) {
 		if (gdk_color_parse(pref, &color)) {
 #if GTK_CHECK_VERSION(2,14,0)
 			gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(
@@ -337,7 +337,7 @@ purplerc_set_font(GtkWidget *widget, gpointer data)
 
 	pref = purple_prefs_get_string(prefpath);
 
-	if (pref != NULL && pref[0] != '\0') {
+	if (pref && *pref) {
 		gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(font_dialog), pref);
 	}
 
