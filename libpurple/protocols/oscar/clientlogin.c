@@ -367,7 +367,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 				od->icq ? ICQ_DEFAULT_DIST_ID : AIM_DEFAULT_DIST_ID),
 			get_client_key(od),
 			hosttime,
-			(!purple_strequal(encryption_type, OSCAR_NO_ENCRYPTION)) ? 1 : 0);
+			!purple_strequal(encryption_type, OSCAR_NO_ENCRYPTION));
 	signature = generate_signature("GET", get_start_oscar_session_url(od),
 			query_string, session_key);
 	url = g_strdup_printf("%s?%s&sig_sha256=%s", get_start_oscar_session_url(od),
