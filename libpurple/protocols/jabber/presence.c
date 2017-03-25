@@ -212,12 +212,10 @@ void jabber_presence_send(JabberStream *js, gboolean force)
 		stripped = jabber_google_presence_outgoing(tune);
 	}
 
-#define CHANGED(a,b) ((!a && b) || (a && a[0] == '\0' && b && b[0] != '\0') || \
-					  (a && !b) || (a && a[0] != '\0' && b && b[0] == '\0') || (a && b && !purple_strequal(a,b)))
 	/* check if there are any differences to the <presence> and send them in that case */
 	if (force || allowBuzz != js->allowBuzz || js->old_state != state ||
-		CHANGED(js->old_msg, stripped) || js->old_priority != priority ||
-		CHANGED(js->old_avatarhash, js->avatar_hash) || js->old_idle != js->idle) {
+		!purple_strequal(js->old_msg, stripped) || js->old_priority != priority ||
+		!purple_strequal(js->old_avatarhash, js->avatar_hash) || js->old_idle != js->idle) {
 		/* Need to update allowBuzz before creating the presence (with caps) */
 		js->allowBuzz = allowBuzz;
 
@@ -268,8 +266,9 @@ void jabber_presence_send(JabberStream *js, gboolean force)
 				purple_status_get_attr_int(tune, PURPLE_TUNE_TIME);
 	}
 
-	if(CHANGED(artist, js->old_artist) || CHANGED(title, js->old_title) || CHANGED(source, js->old_source) ||
-	   CHANGED(uri, js->old_uri) || CHANGED(track, js->old_track) || (length != js->old_length)) {
+	if(!purple_strequal(artist, js->old_artist) || !purple_strequal(title, js->old_title) ||
+			!purple_strequal(source, js->old_source) || !purple_strequal(uri, js->old_uri) ||
+			!purple_strequal(track, js->old_track) || (length != js->old_length)) {
 		PurpleJabberTuneInfo tuneinfo = {
 			(char*)artist,
 			(char*)title,

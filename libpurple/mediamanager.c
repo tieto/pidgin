@@ -1476,10 +1476,7 @@ purple_media_manager_create_output_window(PurpleMediaManager *manager,
 		PurpleMediaOutputWindow *ow = iter->data;
 
 		if (ow->sink == NULL && ow->media == media &&
-				((participant != NULL &&
-				ow->participant != NULL &&
-				purple_strequal(participant, ow->participant)) ||
-				(participant == ow->participant)) &&
+				purple_strequal(participant, ow->participant) &&
 				purple_strequal(session_id, ow->session_id)) {
 			GstBus *bus;
 			GstElement *queue, *convert, *scale;
@@ -1672,12 +1669,8 @@ purple_media_manager_remove_output_windows(PurpleMediaManager *manager,
 		iter = g_list_next(iter);
 
 	if (media == ow->media &&
-			((session_id != NULL && ow->session_id != NULL &&
-			purple_strequal(session_id, ow->session_id)) ||
-			(session_id == ow->session_id)) &&
-			((participant != NULL && ow->participant != NULL &&
-			purple_strequal(participant, ow->participant)) ||
-			(participant == ow->participant)))
+			purple_strequal(session_id, ow->session_id) &&
+			purple_strequal(participant, ow->participant))
 		purple_media_manager_remove_output_window(
 				manager, ow->id);
 	}

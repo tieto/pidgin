@@ -133,7 +133,7 @@ input_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 		gtk_text_buffer_get_start_iter(buffer, &start_iter);
 		gtk_text_buffer_get_end_iter(buffer, &end_iter);
 
-		if ((data->u.input.hint != NULL) && (purple_strequal(data->u.input.hint, "html")))
+		if (purple_strequal(data->u.input.hint, "html"))
 			multiline_value = gtk_imhtml_get_markup(GTK_IMHTML(data->u.input.entry));
 		else
 			multiline_value = gtk_text_buffer_get_text(buffer, &start_iter, &end_iter,
@@ -403,7 +403,7 @@ pidgin_request_input(const char *title, const char *primary,
 
 	gtk_widget_show_all(hbox);
 
-	if ((data->u.input.hint != NULL) && (purple_strequal(data->u.input.hint, "html"))) {
+	if (purple_strequal(data->u.input.hint, "html")) {
 		GtkWidget *frame;
 
 		/* imhtml */

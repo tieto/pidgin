@@ -951,8 +951,7 @@ static void nullprpl_set_chat_topic(PurpleConnection *gc, int id,
                     gc->account->username, conv->name, topic);
 
   last_topic = purple_conv_chat_get_topic(chat);
-  if ((!topic && !last_topic) ||
-      (topic && last_topic && purple_strequal(topic, last_topic)))
+  if (purple_strequal(topic, last_topic))
     return;  /* topic is unchanged, this is a noop */
 
   foreach_gc_in_chat(set_chat_topic_fn, gc, id, (gpointer)topic);

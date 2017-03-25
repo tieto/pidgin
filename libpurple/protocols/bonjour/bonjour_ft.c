@@ -165,7 +165,7 @@ bonjour_si_xfer_find(BonjourData *bd, const char *sid, const char *from)
 		xf = xfer->data;
 		if(xf == NULL)
 			break;
-		if(xf->sid && xfer->who && purple_strequal(xf->sid, sid) &&
+		if(purple_strequal(xf->sid, sid) &&
 				purple_strequal(xfer->who, from))
 			return xfer;
 	}
