@@ -1577,7 +1577,7 @@ irc_msg_cap(struct irc_conn *irc, const char *name, const char *from, char **arg
 	char *pos;
 	size_t index;
 
-	if (strncmp(args[2], "sasl ", 6))
+	if (strncmp(g_strstrip(args[2]), "sasl", 5))
 		return;
 	if (strncmp(args[1], "ACK", 4)) {
 		const char *tmp = _("SASL authentication failed: Server does not support SASL authentication.");
