@@ -154,12 +154,16 @@ int irc_send(struct irc_conn *irc, const char *buf)
 int irc_send_len(struct irc_conn *irc, const char *buf, int buflen)
 {
 	int ret;
- 	char *tosend= g_strdup(buf);
+ 	char *tosend = g_strdup(buf);
 
 	purple_signal_emit(_irc_plugin, "irc-sending-text", purple_account_get_connection(irc->account), &tosend);
 	
 	if (tosend == NULL)
 		return 0;
+
+	if (!purple_strequal(tosend, buf)) {
+		buflen = strlen(tosend);
+	}
 
 	/* If we're not buffering writes, try to send immediately */
 	if (!irc->writeh)
