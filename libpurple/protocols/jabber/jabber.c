@@ -2023,12 +2023,12 @@ jabber_identity_compare(gconstpointer a, gconstpointer b)
 	ac = a;
 	bc = b;
 
-	cat_cmp = strcmp(ac->category, bc->category);
+	cat_cmp = g_strcmp0(ac->category, bc->category);
 	if (cat_cmp != 0) {
 		return cat_cmp;
 	}
 
-	typ_cmp = strcmp(ac->type, bc->type);
+	typ_cmp = g_strcmp0(ac->type, bc->type);
 	if (typ_cmp != 0) {
 		return typ_cmp;
 	}
