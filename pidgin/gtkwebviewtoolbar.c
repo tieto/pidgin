@@ -134,9 +134,14 @@ pidgin_color_parse(const gchar *str, GdkRGBA *color)
 
 	if (strcmp(str, "inherit") == 0) {
 		return FALSE;
-	} else {
-		return gdk_rgba_parse(color, str);
 	}
+
+	if (!gdk_rgba_parse(color, str)) {
+		return FALSE;
+	}
+
+	/* FALSE for fully transparent color (same behavior as with "inherit") */
+	return color->alpha > 0;
 }
 
 static gchar*
