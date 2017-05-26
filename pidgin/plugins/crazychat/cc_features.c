@@ -347,9 +347,9 @@ static gboolean mydraw(GtkWidget *widget, GdkEventExpose *event,
 	struct cc_features *features = &instance->face;
 
 	char *string = gtk_entry_get_text(GTK_COMBO(instance->model)->entry);
-	if (!strcmp(string, "Dog")) {
+	if (purple_strequal(string, "Dog")) {
 		features->kind = 0;
-	} else if (!strcmp(string, "Shark")) {
+	} else if (purple_strequal(string, "Shark")) {
 		features->kind = 1;
 	}
 
@@ -488,17 +488,17 @@ static void destroy_cb(GtkWidget *widget, struct crazychat *cc)
 static void material_set(GtkWidget *entry, guint8 *material)
 {
 	char *string = gtk_entry_get_text(GTK_ENTRY(entry));
-	if (!strcmp(string, "Red")) {
+	if (purple_strequal(string, "Red")) {
 		*material = 0;
-	} else if (!strcmp(string, "Dark Brown")) {
+	} else if (purple_strequal(string, "Dark Brown")) {
 		*material = 1;
-	} else if (!strcmp(string, "Light Brown")) {
+	} else if (purple_strequal(string, "Light Brown")) {
 		*material = 2;
-	} else if (!strcmp(string, "White")) {
+	} else if (purple_strequal(string, "White")) {
 		*material = 3;
-	} else if (!strcmp(string, "Green")) {
+	} else if (purple_strequal(string, "Green")) {
 		*material = 4;
-	} else if (!strcmp(string, "Black")) {
+	} else if (purple_strequal(string, "Black")) {
 		*material = 5;
 	}
 }

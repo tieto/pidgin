@@ -810,7 +810,7 @@ peer_connection_trynext(PeerConnection *conn)
 				peer_connection_verified_established_cb, conn);
 
 		if ((conn->verifiedip == NULL) ||
-			strcmp(conn->verifiedip, conn->clientip))
+			!purple_strequal(conn->verifiedip, conn->clientip))
 		{
 			conn->client_connect_data = purple_proxy_connect(NULL, account,
 					conn->clientip, conn->port,

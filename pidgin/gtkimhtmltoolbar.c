@@ -704,7 +704,7 @@ smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley)
 {
 	while (list) {
 		GtkIMHtmlSmiley *cur = (GtkIMHtmlSmiley *) list->data;
-		if (!strcmp(cur->file, smiley->file))
+		if (purple_strequal(cur->file, smiley->file))
 			return FALSE;
 		list = list->next;
 	}

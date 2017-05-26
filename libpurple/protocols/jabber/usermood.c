@@ -135,14 +135,14 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 		return;
 	for (moodinfo = mood->child; moodinfo; moodinfo = moodinfo->next) {
 		if (moodinfo->type == XMLNODE_TYPE_TAG) {
-			if (!strcmp(moodinfo->name, "text")) {
+			if (purple_strequal(moodinfo->name, "text")) {
 				if (!moodtext) /* only pick the first one */
 					moodtext = xmlnode_get_data(moodinfo);
 			} else {
 				int i;
 				for (i = 0; moods[i].mood; ++i) {
 					/* verify that the mood is known (valid) */
-					if (!strcmp(moodinfo->name, moods[i].mood)) {
+					if (purple_strequal(moodinfo->name, moods[i].mood)) {
 						newmood = moods[i].mood;
 						break;
 					}

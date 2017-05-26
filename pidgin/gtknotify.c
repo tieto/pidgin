@@ -1308,8 +1308,8 @@ pidgin_notify_uri(const char *uri)
 	} else if (purple_running_osx() == TRUE) {
 		argv = g_slist_append(argv, "open");
 		argv = g_slist_append(argv, uri_escaped);
-	} else if (!strcmp(web_browser, "epiphany") ||
-		!strcmp(web_browser, "galeon"))
+	} else if (purple_strequal(web_browser, "epiphany") ||
+		purple_strequal(web_browser, "galeon"))
 	{
 		argv = g_slist_append(argv, (gpointer)web_browser);
 
@@ -1319,13 +1319,13 @@ pidgin_notify_uri(const char *uri)
 			argv = g_slist_append(argv, "-n");
 
 		argv = g_slist_append(argv, uri_escaped);
-	} else if (!strcmp(web_browser, "xdg-open")) {
+	} else if (purple_strequal(web_browser, "xdg-open")) {
 		argv = g_slist_append(argv, "xdg-open");
 		argv = g_slist_append(argv, uri_escaped);
-	} else if (!strcmp(web_browser, "gnome-open")) {
+	} else if (purple_strequal(web_browser, "gnome-open")) {
 		argv = g_slist_append(argv, "gnome-open");
 		argv = g_slist_append(argv, uri_escaped);
-	} else if (!strcmp(web_browser, "kfmclient")) {
+	} else if (purple_strequal(web_browser, "kfmclient")) {
 		argv = g_slist_append(argv, "kfmclient");
 		argv = g_slist_append(argv, "openURL");
 		argv = g_slist_append(argv, uri_escaped);
@@ -1333,10 +1333,10 @@ pidgin_notify_uri(const char *uri)
 		 * Does Konqueror have options to open in new tab
 		 * and/or current window?
 		 */
-	} else if (!strcmp(web_browser, "mozilla") ||
-		!strcmp(web_browser, "mozilla-firebird") ||
-		!strcmp(web_browser, "firefox") ||
-		!strcmp(web_browser, "seamonkey"))
+	} else if (purple_strequal(web_browser, "mozilla") ||
+		purple_strequal(web_browser, "mozilla-firebird") ||
+		purple_strequal(web_browser, "firefox") ||
+		purple_strequal(web_browser, "seamonkey"))
 	{
 		argv = g_slist_append(argv, (gpointer)web_browser);
 		argv = g_slist_append(argv, uri_escaped);
@@ -1365,7 +1365,7 @@ pidgin_notify_uri(const char *uri)
 			 * should probably be split apart from mozilla-firebird
 			 * and mozilla... but this is good for now.
 			 */
-			if (!strcmp(web_browser, "firefox")) {
+			if (purple_strequal(web_browser, "firefox")) {
 				argv_remote = g_slist_append(argv_remote, "-a");
 				argv_remote = g_slist_append(argv_remote,
 					"firefox");
@@ -1374,7 +1374,7 @@ pidgin_notify_uri(const char *uri)
 			argv_remote = g_slist_append(argv_remote, "-remote");
 			argv_remote = g_slist_append(argv_remote, uri_custom);
 		}
-	} else if (!strcmp(web_browser, "netscape")) {
+	} else if (purple_strequal(web_browser, "netscape")) {
 		argv = g_slist_append(argv, "netscape");
 		argv = g_slist_append(argv, uri_escaped);
 
@@ -1391,7 +1391,7 @@ pidgin_notify_uri(const char *uri)
 			argv_remote = g_slist_append(argv_remote, "-remote");
 			argv_remote = g_slist_append(argv_remote, uri_custom);
 		}
-	} else if (!strcmp(web_browser, "opera")) {
+	} else if (purple_strequal(web_browser, "opera")) {
 		argv = g_slist_append(argv, "opera");
 
 		if (place == PIDGIN_BROWSER_NEW_WINDOW)
@@ -1405,28 +1405,28 @@ pidgin_notify_uri(const char *uri)
 		 */
 
 		argv = g_slist_append(argv, uri_escaped);
-	} else if (!strcmp(web_browser, "google-chrome")) {
+	} else if (purple_strequal(web_browser, "google-chrome")) {
 		/* Google Chrome doesn't have command-line arguments that
 		 * control the opening of links from external calls. This is
 		 * controlled solely from a preference within Google Chrome.
 		 */
 		argv = g_slist_append(argv, "google-chrome");
 		argv = g_slist_append(argv, uri_escaped);
-	} else if (!strcmp(web_browser, "chrome")) {
+	} else if (purple_strequal(web_browser, "chrome")) {
 		/* Chromium doesn't have command-line arguments that control
 		 * the opening of links from external calls. This is controlled
 		 * solely from a preference within Chromium.
 		 */
 		argv = g_slist_append(argv, "chrome");
 		argv = g_slist_append(argv, uri_escaped);
-	} else if (!strcmp(web_browser, "chromium-browser")) {
+	} else if (purple_strequal(web_browser, "chromium-browser")) {
 		/* Chromium doesn't have command-line arguments that control the
 		 * opening of links from external calls. This is controlled
 		 * solely from a preference within Chromium.
 		 */
 		argv = g_slist_append(argv, "chromium-browser");
 		argv = g_slist_append(argv, uri_escaped);
-	} else if (!strcmp(web_browser, "custom")) {
+	} else if (purple_strequal(web_browser, "custom")) {
 		GError *error = NULL;
 		const char *usercmd_command;
 		gint usercmd_argc, i;
@@ -1712,7 +1712,7 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), 
+	gtk_box_pack_start(GTK_BOX(vbox),
 		pidgin_make_scrollable(spec_dialog->treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1),
 		TRUE, TRUE, 2);
 

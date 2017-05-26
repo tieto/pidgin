@@ -3029,12 +3029,7 @@ purple_socket_speaks_ipv4(int fd)
 gboolean
 purple_strequal(const gchar *left, const gchar *right)
 {
-#if GLIB_CHECK_VERSION(2,16,0)
 	return (g_strcmp0(left, right) == 0);
-#else
-	return ((left == NULL && right == NULL) ||
-	        (left != NULL && right != NULL && strcmp(left, right) == 0));
-#endif
 }
 
 const char *
@@ -3434,7 +3429,7 @@ void purple_got_protocol_handler_uri(const char *uri)
 
 	tmp++;
 
-	if (g_str_equal(proto, "xmpp"))
+	if (purple_strequal(proto, "xmpp"))
 		delimiter = ';';
 	else
 		delimiter = '&';
@@ -3751,7 +3746,7 @@ find_header_content(const char *data, gsize data_len, const char *header)
 	return NULL;
 }
 
-static gsize 
+static gsize
 parse_content_len(const char *data, gsize data_len)
 {
 	gsize content_len = 0;

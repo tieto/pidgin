@@ -946,31 +946,31 @@ pidgin_dialogs_ee(const char *ee)
 	gchar *norm = purple_strreplace(ee, "rocksmyworld", "");
 
 	label = gtk_label_new(NULL);
-	if (!strcmp(norm, "zilding"))
+	if (purple_strequal(norm, "zilding"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"purple\">Amazing!  Simply Amazing!</span>");
-	else if (!strcmp(norm, "robflynn"))
+	else if (purple_strequal(norm, "robflynn"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"#1f6bad\">Pimpin\' Penguin Style! *Waddle Waddle*</span>");
-	else if (!strcmp(norm, "flynorange"))
+	else if (purple_strequal(norm, "flynorange"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				      "<span weight=\"bold\" size=\"large\" foreground=\"blue\">You should be me.  I'm so cute!</span>");
-	else if (!strcmp(norm, "ewarmenhoven"))
+	else if (purple_strequal(norm, "ewarmenhoven"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"orange\">Now that's what I like!</span>");
-	else if (!strcmp(norm, "markster97"))
+	else if (purple_strequal(norm, "markster97"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"brown\">Ahh, and excellent choice!</span>");
-	else if (!strcmp(norm, "seanegn"))
+	else if (purple_strequal(norm, "seanegn"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"#009900\">Everytime you click my name, an angel gets its wings.</span>");
-	else if (!strcmp(norm, "chipx86"))
+	else if (purple_strequal(norm, "chipx86"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"red\">This sunflower seed taste like pizza.</span>");
-	else if (!strcmp(norm, "markdoliner"))
+	else if (purple_strequal(norm, "markdoliner"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"#6364B1\">Hey!  I was in that tumbleweed!</span>");
-	else if (!strcmp(norm, "lschiere"))
+	else if (purple_strequal(norm, "lschiere"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"gray\">I'm not anything.</span>");
 	g_free(norm);

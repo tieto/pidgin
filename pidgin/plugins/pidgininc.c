@@ -34,7 +34,7 @@ reverse(PurpleAccount *account, char **who, char **message,
 
 	l = strlen(*message);
 
-	if (!strcmp(*who, purple_account_get_username(account)))
+	if (purple_strequal(*who, purple_account_get_username(account)))
 		return FALSE;
 
 	for (i = 0; i < l/2; i++) {

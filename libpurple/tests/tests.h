@@ -24,7 +24,7 @@ Suite * xmlnode_suite(void);
 
 #define assert_string_equal(expected, actual) { \
 	const gchar *a = actual; \
-	fail_unless(strcmp(expected, a) == 0, "Expected '%s' but got '%s'", expected, a); \
+	fail_unless(purple_strequal(expected, a), "Expected '%s' but got '%s'", expected, a); \
 }
 
 #define assert_string_equal_free(expected, actual) { \

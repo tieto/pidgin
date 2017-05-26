@@ -84,12 +84,12 @@ static char *timestamp_cb_common(PurpleConversation *conv,
 	tm = localtime(&t);
 
 	if (show_date ||
-	    !strcmp(dates, "always") ||
-	    (conv != NULL && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT && !strcmp(dates, "chats")))
+	    purple_strequal(dates, "always") ||
+	    (conv != NULL && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT && purple_strequal(dates, "chats")))
 	{
-		if (g_str_equal(force, "force24"))
+		if (purple_strequal(force, "force24"))
 			return g_strdup_printf("%s%s%s", parens ? "(" : "", purple_utf8_strftime("%Y-%m-%d %H:%M:%S", tm), parens ? ")" : "");
-		else if (g_str_equal(force, "force12")) {
+		else if (purple_strequal(force, "force12")) {
 			char *date = g_strdup_printf("%s", purple_utf8_strftime("%Y-%m-%d ", tm));
 			char *remtime = g_strdup_printf("%s", purple_utf8_strftime(":%M:%S %p", tm));
 			const char *hour = format_12hour_hour(tm);
@@ -107,9 +107,9 @@ static char *timestamp_cb_common(PurpleConversation *conv,
 			return g_strdup_printf("%s%s%s", parens ? "(" : "", purple_date_format_long(tm), parens ? ")" : "");
 	}
 
-	if (g_str_equal(force, "force24"))
+	if (purple_strequal(force, "force24"))
 		return g_strdup_printf("%s%s%s", parens ? "(" : "", purple_utf8_strftime("%H:%M:%S", tm), parens ? ")" : "");
-	else if (g_str_equal(force, "force12")) {
+	else if (purple_strequal(force, "force12")) {
 		const char *hour = format_12hour_hour(tm);
 		char *remtime = g_strdup_printf("%s", purple_utf8_strftime(":%M:%S %p", tm));
 		char *output = g_strdup_printf("%s%s%s%s", parens ? "(" : "", hour, remtime, parens ? ")" : "");

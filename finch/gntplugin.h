@@ -50,7 +50,7 @@ typedef GntWidget* (*FinchPluginFrame) (void);
  */
 #define PURPLE_IS_GNT_PLUGIN(plugin) \
 	((plugin)->info != NULL && (plugin)->info->ui_info != NULL && \
-	 !strcmp((plugin)->info->ui_requirement, FINCH_PLUGIN_TYPE))
+	 purple_strequal((plugin)->info->ui_requirement, FINCH_PLUGIN_TYPE))
 
 /**
  * Get the ui-info from GNT-plugins.

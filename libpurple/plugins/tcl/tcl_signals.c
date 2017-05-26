@@ -118,7 +118,7 @@ void tcl_signal_disconnect(void *instance, const char *signal, Tcl_Interp *inter
 	for (cur = tcl_callbacks; cur != NULL; cur = g_list_next(cur)) {
 		handler = cur->data;
 		if (handler->interp == interp && handler->instance == instance
-		    && !strcmp(signal, Tcl_GetString(handler->signal))) {
+		    && purple_strequal(signal, Tcl_GetString(handler->signal))) {
 			purple_signal_disconnect(instance, signal, handler->interp,
 					       PURPLE_CALLBACK(tcl_signal_callback));
 			cmd = g_string_sized_new(64);

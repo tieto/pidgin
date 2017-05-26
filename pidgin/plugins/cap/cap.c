@@ -96,7 +96,7 @@ static double generate_prediction_for(PurpleBuddy *buddy) {
 
 	sta_id = purple_status_get_id(get_status_for(buddy));
 
-	if(sta_id && !strcmp(sta_id, "offline")) {
+	if(purple_strequal(sta_id, "offline")) {
 		/* This is kind of stupid, change it. */
 		if(prediction == 1.0f)
 			prediction = 0.0f;
@@ -621,7 +621,7 @@ static void insert_status_change_from_purple_status(CapStatistics *statistics, P
 	/* It would seem that some protocols receive periodic updates of the buddies status.
 	 * Check to make sure the last status is not the same as current status to prevent
 	 * to many duplicated useless database entries. */
-	if(strcmp(statistics->last_status_id, purple_status_get_id(status)) == 0)
+	if(purple_strequal(statistics->last_status_id, purple_status_get_id(status)))
 		return;
 
 	status_id = purple_status_get_id(status);

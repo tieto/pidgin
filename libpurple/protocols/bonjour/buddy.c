@@ -67,31 +67,31 @@ set_bonjour_buddy_value(BonjourBuddy* buddy, const char *record_key, const char 
 
 	g_return_if_fail(record_key != NULL);
 
-	if (!strcmp(record_key, "1st"))
+	if (purple_strequal(record_key, "1st"))
 		fld = &buddy->first;
-	else if(!strcmp(record_key, "email"))
+	else if(purple_strequal(record_key, "email"))
 		fld = &buddy->email;
-	else if(!strcmp(record_key, "ext"))
+	else if(purple_strequal(record_key, "ext"))
 		fld = &buddy->ext;
-	else if(!strcmp(record_key, "jid"))
+	else if(purple_strequal(record_key, "jid"))
 		fld = &buddy->jid;
-	else if(!strcmp(record_key, "last"))
+	else if(purple_strequal(record_key, "last"))
 		fld = &buddy->last;
-	else if(!strcmp(record_key, "msg"))
+	else if(purple_strequal(record_key, "msg"))
 		fld = &buddy->msg;
-	else if(!strcmp(record_key, "nick"))
+	else if(purple_strequal(record_key, "nick"))
 		fld = &buddy->nick;
-	else if(!strcmp(record_key, "node"))
+	else if(purple_strequal(record_key, "node"))
 		fld = &buddy->node;
-	else if(!strcmp(record_key, "phsh"))
+	else if(purple_strequal(record_key, "phsh"))
 		fld = &buddy->phsh;
-	else if(!strcmp(record_key, "status"))
+	else if(purple_strequal(record_key, "status"))
 		fld = &buddy->status;
-	else if(!strcmp(record_key, "vc"))
+	else if(purple_strequal(record_key, "vc"))
 		fld = &buddy->vc;
-	else if(!strcmp(record_key, "ver"))
+	else if(purple_strequal(record_key, "ver"))
 		fld = &buddy->ver;
-	else if(!strcmp(record_key, "AIM"))
+	else if(purple_strequal(record_key, "AIM"))
 		fld = &buddy->AIM;
 
 	if(fld == NULL)
@@ -193,7 +193,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 	/* Deal with the buddy icon */
 	old_hash = purple_buddy_icons_get_checksum_for_user(buddy);
 	new_hash = (bonjour_buddy->phsh && *(bonjour_buddy->phsh)) ? bonjour_buddy->phsh : NULL;
-	if (new_hash && (!old_hash || strcmp(old_hash, new_hash) != 0)) {
+	if (new_hash && !purple_strequal(old_hash, new_hash)) {
 		/* Look up the new icon data */
 		/* TODO: Make sure the hash assigned to the retrieved buddy icon is the same
 		 * as what we looked up. */

@@ -68,7 +68,7 @@ void finch_prefs_update_old()
 	purple_prefs_rename("/purple/gnt", "/finch");
 
 	if ((str = purple_prefs_get_string("/purple/away/idle_reporting")) &&
-			strcmp(str, "gaim") == 0)
+			purple_strequal(str, "gaim"))
 		purple_prefs_set_string("/purple/away/idle_reporting", "purple");
 }
 
@@ -167,7 +167,7 @@ get_pref_field(Prefs *prefs)
 						select = TRUE;
 					break;
 				case PURPLE_PREF_STRING:
-					if (strcmp(purple_prefs_get_string(prefs->pref), iter->data) == 0)
+					if (purple_strequal(purple_prefs_get_string(prefs->pref), iter->data))
 						select = TRUE;
 					break;
 				default:

@@ -65,7 +65,7 @@ void silc_say(SilcClient client, SilcClientConnection conn,
 
 	purple_debug_error("silc", "silc_say error: %s\n", tmp);
 
-	if (!strcmp(tmp, "Authentication failed"))
+	if (purple_strequal(tmp, "Authentication failed"))
 		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 
 	if (client != NULL)
@@ -122,7 +122,7 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 		const char *mtype;
 		SilcDList parts = silc_mime_get_multiparts(mime, &mtype);
 
-		if (!strcmp(mtype, "mixed")) {
+		if (purple_strequal(mtype, "mixed")) {
 			/* Contains multiple messages */
 			silc_dlist_start(parts);
 			while ((p = silc_dlist_get(parts)) != SILC_LIST_END) {
@@ -132,7 +132,7 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 			}
 		}
 
-		if (!strcmp(mtype, "alternative")) {
+		if (purple_strequal(mtype, "alternative")) {
 			/* Same message in alternative formats.  Kopete sends
 			   these.  Go in order from last to first. */
 			silc_dlist_end(parts);
@@ -593,7 +593,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		tmp = va_arg(va, char *);      /* Old nick */
 		name = va_arg(va, char *);     /* New nick */
 
-		if (!strcmp(tmp, name))
+		if (purple_strequal(tmp, name))
 			break;
 
 		/* Change nick on all channels */
@@ -955,7 +955,7 @@ silc_command(SilcClient client, SilcClientConnection conn,
 	switch (command) {
 
 	case SILC_COMMAND_CMODE:
-		if (argc == 3 && !strcmp((char *)argv[2], "+C"))
+		if (argc == 3 && purple_strequal((char *)argv[2], "+C"))
 			sg->chpk = TRUE;
 		else
 			sg->chpk = FALSE;
@@ -1446,7 +1446,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				if (!convo)
 					continue;
 				oldnick = purple_conv_chat_get_nick(PURPLE_CONV_CHAT(convo));
-				if (strcmp(oldnick, purple_normalize(purple_conversation_get_account(convo), newnick))) {
+				if (!purple_strequal(oldnick, purple_normalize(purple_conversation_get_account(convo), newnick))) {
 					purple_conv_chat_rename_user(PURPLE_CONV_CHAT(convo),
 								     oldnick, newnick);
 					purple_conv_chat_set_nick(PURPLE_CONV_CHAT(convo), newnick);

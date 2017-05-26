@@ -253,7 +253,7 @@ jingle_iceudp_add_local_candidate(JingleIceUdp *iceudp, JingleIceUdpCandidate *c
 
 	for (; iter; iter = g_list_next(iter)) {
 		JingleIceUdpCandidate *c = iter->data;
-		if (!strcmp(c->id, candidate->id)) {
+		if (purple_strequal(c->id, candidate->id)) {
 			guint generation = c->generation + 1;
 
 			g_boxed_free(JINGLE_TYPE_ICEUDP_CANDIDATE, c);
@@ -285,7 +285,7 @@ jingle_iceudp_get_remote_candidate_by_id(JingleIceUdp *iceudp,
 	GList *iter = iceudp->priv->remote_candidates;
 	for (; iter; iter = g_list_next(iter)) {
 		JingleIceUdpCandidate *candidate = iter->data;
-		if (!strcmp(candidate->id, id)) {
+		if (purple_strequal(candidate->id, id)) {
 			return candidate;
 		}
 	}
@@ -402,7 +402,7 @@ jingle_iceudp_to_xml_internal(JingleTransport *transport, xmlnode *content, Jing
 			xmlnode_set_attrib(xmltransport, "protocol", candidate->protocol);
 
 			if (candidate->reladdr != NULL &&
-					(strcmp(candidate->ip, candidate->reladdr) ||
+					(!purple_strequal(candidate->ip, candidate->reladdr) ||
 					(candidate->port != candidate->relport))) {
 				gchar *relport = g_strdup_printf("%d",
 						candidate->relport);

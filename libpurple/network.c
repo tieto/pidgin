@@ -977,7 +977,7 @@ nm_get_network_state(void)
 static void
 nm_dbus_name_owner_changed_cb(DBusGProxy *proxy, char *service, char *old_owner, char *new_owner, gpointer user_data)
 {
-	if (g_str_equal(service, NM_DBUS_SERVICE)) {
+	if (purple_strequal(service, NM_DBUS_SERVICE)) {
 		gboolean old_owner_good = old_owner && (old_owner[0] != '\0');
 		gboolean new_owner_good = new_owner && (new_owner[0] != '\0');
 

@@ -332,7 +332,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 								   Tcl_GetString(objv[3]));
 		} else {
 			PurpleStatusPrimitive primitive;
-			if (strcmp(Tcl_GetString(objv[3]), "-primitive")) {
+			if (!purple_strequal(Tcl_GetString(objv[3]), "-primitive")) {
 				result = Tcl_NewStringObj("bad option \"", -1);
 				Tcl_AppendObjToObj(result, objv[3]);
 				Tcl_AppendToObj(result, "\": should be -primitive", -1);
@@ -400,9 +400,9 @@ static PurpleBlistNode *tcl_list_to_buddy(Tcl_Interp *interp, int count, Tcl_Obj
 	if ((account = tcl_validate_account(elems[2], interp)) == NULL)
 		return NULL;
 
-	if (!strcmp(type, "buddy")) {
+	if (purple_strequal(type, "buddy")) {
 		node = PURPLE_BLIST_NODE(purple_find_buddy(account, name));
-	} else if (!strcmp(type, "group")) {
+	} else if (purple_strequal(type, "group")) {
 		node = PURPLE_BLIST_NODE(purple_blist_find_chat(account, name));
 	}
 
@@ -469,7 +469,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 						 Tcl_NewStringObj("buddy too short", -1));
 				return TCL_ERROR;
 			}
-			if (strcmp("buddy", Tcl_GetString(elems[0]))) {
+			if (!purple_strequal("buddy", Tcl_GetString(elems[0]))) {
 				Tcl_SetObjResult(interp,
 						 Tcl_NewStringObj("invalid buddy", -1));
 				return TCL_ERROR;
@@ -485,7 +485,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		break;
 	case CMD_BUDDY_LIST:
 		if (objc == 3) {
-			if (!strcmp("-all", Tcl_GetString(objv[2]))) {
+			if (purple_strequal("-all", Tcl_GetString(objv[2]))) {
 				all = 1;
 			} else {
 				result = Tcl_NewStringObj("",-1);
@@ -1229,7 +1229,7 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 										  Tcl_GetString(objv[3]))));
 		} else {
 			PurpleStatusPrimitive primitive;
-			if (strcmp(Tcl_GetString(objv[3]), "-primitive")) {
+			if (!purple_strequal(Tcl_GetString(objv[3]), "-primitive")) {
 				result = Tcl_NewStringObj("bad option \"", -1);
 				Tcl_AppendObjToObj(result, objv[3]);
 				Tcl_AppendToObj(result,
