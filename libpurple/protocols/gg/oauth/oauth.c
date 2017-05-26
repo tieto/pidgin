@@ -40,7 +40,7 @@ static void gg_oauth_generate_nonce(char *buf, int len)
 		return;
 
 	while (len > 1) {
-		*buf++ = charset[(unsigned) (((float) sizeof(charset) - 1.0) * rand() / (RAND_MAX + 1.0))];
+		*buf++ = charset[(unsigned) (((float) sizeof(charset) - 1.0) * g_random_int() / (RAND_MAX + 1.0))];
 		len--;
 	}
 

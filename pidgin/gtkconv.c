@@ -6069,12 +6069,11 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	if (generated_nick_colors == NULL) {
 		GdkColor color;
 		GdkRGBA rgba;
-		/* FIXME: No matter how I ask the GtkStyleContext, it always gives me
-		 * back black instead of the _actual_ background colour. */
 		color = gtk_widget_get_style(gtkconv->webview)->base[GTK_STATE_NORMAL];
 		rgba.red = color.red / 65535.0;
 		rgba.green = color.green / 65535.0;
 		rgba.blue = color.blue / 65535.0;
+		rgba.alpha = 1.0;
 		generated_nick_colors = generate_nick_colors(NICK_COLOR_GENERATE_COUNT, rgba);
 	}
 
@@ -11248,7 +11247,7 @@ generate_nick_colors(guint numcolors, GdkRGBA background)
 	 */
 	while(i < numcolors && time(NULL) < breakout_time)
 	{
-		GdkRGBA color = {rand() % 65536 / 65535.0, rand() % 65536 / 65535.0, rand() % 65536 / 65535.0, 1};
+		GdkRGBA color = {g_random_double_range(0, 1), g_random_double_range(0, 1), g_random_double_range(0, 1), 1};
 
 		if (color_is_visible(color, background,     MIN_LUMINANCE_CONTRAST_RATIO) &&
 			color_is_visible(color, nick_highlight, MIN_LUMINANCE_CONTRAST_RATIO) &&

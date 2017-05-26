@@ -77,7 +77,6 @@ static const struct developer developers[] = {
 	{"Ethan 'Paco-Paco' Blanton",          NULL,                  NULL},
 	{"Hylke Bons",                         N_("artist"),          "hylkebons@gmail.com"},
 	{"Sadrul Habib Chowdhury",             NULL,                  NULL},
-	{"Mark 'KingAnt' Doliner",             NULL,                  "mark@kingant.net"},
 	{"Gary 'grim' Kramlich",               NULL,                  "grim@pidgin.im"},
 	{"Richard 'rlaager' Laager",           NULL,                  "rlaager@pidgin.im"},
 	{"Marcus 'malu' Lundblad",             NULL,                  NULL},
@@ -113,6 +112,7 @@ static const struct developer retired_developers[] = {
 	/* Translators: This is a person's name. For most languages we recommend
 	   not translating it. */
 	{N_("Ka-Hing Cheung"),          NULL,                      NULL},
+	{"Mark 'KingAnt' Doliner",      NULL,                      "mark@kingant.net"},
 	{"Jim Duchek",                  N_("maintainer"),          "jim@linuxpimps.com"},
 	{"Sean Egan",                   NULL,                      "sean.egan@gmail.com"},
 	{"Rob Flynn",                   N_("maintainer"),          NULL},
@@ -180,7 +180,7 @@ static const struct translator translators[] = {
 	{N_("Canadian English"),    "en_CA", "Adam Weinberger", "adamw@gnome.org"},
 	{N_("Esperanto"),           "eo", "Stéphane Fillod", "fillods@users.sourceforge.net"},
 	{N_("Spanish"),             "es", "Javier Fernández-Sanguino Peña", "jfs@debian.org"},
-	{N_("Argentine Spanish"),   "es_AR", "KNTRO", "tskuhn@gmail.com"},
+	{N_("Argentine Spanish"),   "es_AR", "KNTRO", "kntro@msn.com"},
 	{N_("Estonian"),            "et", "Ivar Smolin", "okul@linux.ee"},
 	{N_("Basque"),              "eu", "Mikel Pascual Aldabaldetreku", "mikel.paskual@gmail.com"},
 	{N_("Persian"),             "fa", "Elnaz Sarbar", "elnaz@farsiweb.info"},

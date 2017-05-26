@@ -71,16 +71,11 @@ static GHashTable *finch_ui_get_info(void)
 		g_hash_table_insert(ui_info, "client_type", "console");
 
 		/*
-		 * This is the client key for "Finch."  It is owned by the AIM
-		 * account "markdoliner."  Please don't use this key for other
-		 * applications.  You can either not specify a client key, in
-		 * which case the default "libpurple" key will be used, or you
-		 * can try to register your own at the AIM or ICQ web sites
-		 * (although this functionality was removed at some point, it's
-		 * possible it has been re-added).  AOL's old key management
-		 * page is http://developer.aim.com/manageKeys.jsp
+		 * This is the client key for "Finch." Please don't use this
+		 * key for other applications.  You can not specify a client
+		 * key, in which case the default "libpurple" key will be used
 		 */
-		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma19sqWV9ymU6UYc");
+		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma18nmEklXMR7Cj_");
 
 		/*
 		 * This is the client key for "Pidgin."  It is owned by the AIM
@@ -103,7 +98,7 @@ static GHashTable *finch_ui_get_info(void)
 		 * don't use this for other applications.  You can just not
 		 * specify a distid and libpurple will use a default.
 		 */
-		g_hash_table_insert(ui_info, "prpl-aim-distid", GINT_TO_POINTER(1552));
+		g_hash_table_insert(ui_info, "prpl-aim-distid", GINT_TO_POINTER(1718));
 		g_hash_table_insert(ui_info, "prpl-icq-distid", GINT_TO_POINTER(1552));
 	}
 

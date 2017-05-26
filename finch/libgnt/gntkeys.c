@@ -218,7 +218,7 @@ const char *gnt_key_lookup(const char *key)
  */
 #define SIZE 256
 
-#define IS_END         1 << 0
+#define IS_END         (1 << 0)
 struct _node
 {
 	struct _node *next[SIZE];

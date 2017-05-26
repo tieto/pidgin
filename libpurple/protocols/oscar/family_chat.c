@@ -174,8 +174,13 @@ aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar
 	 * XXX mkcookie should generate the cookie and cache it in one
 	 * operation to preserve uniqueness.
 	 */
-	for (i = 0; i < 8; i++)
-		ckstr[i] = (guint8)rand();
+	for (i = 0; i < 8; i += 4) {
+		gint32 rnd = g_random_int();
+		ckstr[i] = (guint8)((rnd & 0xFF000000) >> 24);
+		ckstr[i+1] = (guint8)((rnd & 0xFF0000) >> 16);
+		ckstr[i+2] = (guint8)((rnd & 0xFF00) >> 8);
+		ckstr[i+3] = (guint8)(rnd & 0xFF);
+	}
 
 	cookie = aim_mkcookie(ckstr, AIM_COOKIETYPE_CHAT, NULL);
 	cookie->data = NULL; /* XXX store something useful here */

@@ -3,7 +3,7 @@ syntax: glob
 clang_output_*
 pidgin-*
 .dirstamp
-
+.DS_Store
 syntax: regexp
 (.*/)?TAGS$
 (.*/)?\.svn
@@ -159,4 +159,3 @@ subinclude:libpurple/protocols/jabber/tests/.hgignore
 subinclude:libpurple/protocols/oscar/tests/.hgignore
 subinclude:libpurple/protocols/yahoo/tests/.hgignore
 subinclude:libpurple/tests/.hgignore
-

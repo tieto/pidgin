@@ -44,21 +44,21 @@
 
 static PurpleProtocol *my_protocol = NULL;
 
-static char *gentag(void) {
-	return g_strdup_printf("%04d%04d", rand() & 0xFFFF, rand() & 0xFFFF);
+static gchar *gentag(void) {
+	return g_strdup_printf("%04d%04d", g_random_int(), g_random_int());
 }
 
 static char *genbranch(void) {
 	return g_strdup_printf("z9hG4bK%04X%04X%04X%04X%04X",
-		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
-		rand() & 0xFFFF, rand() & 0xFFFF);
+		g_random_int(), g_random_int(), g_random_int(),
+		g_random_int(), g_random_int());
 }
 
 static char *gencallid(void) {
 	return g_strdup_printf("%04Xg%04Xa%04Xi%04Xm%04Xt%04Xb%04Xx%04Xx",
-		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
-		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
-		rand() & 0xFFFF, rand() & 0xFFFF);
+		g_random_int(), g_random_int(), g_random_int(),
+		g_random_int(), g_random_int(), g_random_int(),
+		g_random_int(), g_random_int());
 }
 
 static const char *simple_list_icon(PurpleAccount *a, PurpleBuddy *b) {
@@ -858,7 +858,7 @@ static void simple_subscribe_exp(struct simple_account_data *sip, struct simple_
 	/* resubscribe before subscription expires */
 	/* add some jitter */
 	if (expiration > 60)
-		buddy->resubscribe = time(NULL) + (expiration - 60) + (rand() % 50);
+		buddy->resubscribe = time(NULL) + (expiration - 60) + (g_random_int_range(0, 50));
 	else if (expiration > 0)
 		buddy->resubscribe = time(NULL) + ((int) (expiration / 2));
 }
@@ -1752,7 +1752,7 @@ static void login_cb(gpointer data, gint source, const gchar *error_message) {
 
 	conn = connection_create(sip, source);
 
-	sip->registertimeout = purple_timeout_add((rand()%100)+10*1000, (GSourceFunc)subscribe_timeout, sip);
+	sip->registertimeout = purple_timeout_add(g_random_int_range(10000, 100000), (GSourceFunc)subscribe_timeout, sip);
 
 	do_register(sip);
 
@@ -1795,7 +1795,7 @@ static void simple_udp_host_resolved_listen_cb(int listenfd, gpointer data) {
 	sip->listenpa = purple_input_add(sip->fd, PURPLE_INPUT_READ, simple_udp_process, sip->gc);
 
 	sip->resendtimeout = purple_timeout_add(2500, (GSourceFunc) resend_timeout, sip);
-	sip->registertimeout = purple_timeout_add((rand()%100)+10*1000, (GSourceFunc)subscribe_timeout, sip);
+	sip->registertimeout = purple_timeout_add(g_random_int_range(10000, 100000), (GSourceFunc)subscribe_timeout, sip);
 	do_register(sip);
 }
 

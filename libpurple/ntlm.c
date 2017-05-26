@@ -255,7 +255,7 @@ gensesskey(char *buffer)
 	}
 
 	for (i = red; i < 16; i++) {
-		buffer[i] = (char)(rand() & 0xff);
+		buffer[i] = (char)(g_random_int() & 0xff);
 	}
 }
 

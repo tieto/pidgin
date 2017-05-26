@@ -5,7 +5,17 @@ pipelines:
     - step:
         script:
           - set -ex
-          - ./autogen.sh --disable-kwallet --enable-debug --enable-gtk-doc
+          - ./autogen.sh --enable-debug --enable-gtk-doc
           - make -s -j$(nproc)
-          - make -s -j$(nproc) check
+          - make -s -j$(nproc) distcheck
+  branches:
+    release-2.x.y:
+      - step:
+          image: pidgin/release-builder:release-2.x.y
+          script:
+            - set -ex
+            - ./autogen.sh --enable-debug
+            - make -s -j$(nproc)
+            - make -s -j$(nproc) check
+            - make distcheck
 

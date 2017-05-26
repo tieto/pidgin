@@ -190,7 +190,6 @@ purple_core_init(const char *ui)
 	purple_log_init();
 	purple_network_init();
 	purple_pounces_init();
-	_purple_socket_init();
 	purple_proxy_init();
 	purple_sound_init();
 	purple_stun_init();
@@ -254,7 +253,6 @@ purple_core_quit(void)
 	purple_theme_manager_uninit();
 	purple_xfers_uninit();
 	purple_proxy_uninit();
-	_purple_socket_uninit();
 	_purple_image_store_uninit();
 	purple_network_uninit();
 

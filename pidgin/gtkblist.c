@@ -2133,8 +2133,6 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 	char *alias    = NULL;
 	GList *aims    = NULL;
 	GList *icqs    = NULL;
-	GList *yahoos  = NULL;
-	GList *msns    = NULL;
 	GList *jabbers = NULL;
 
 	s = temp_vcard = g_strdup(vcard);
@@ -2174,7 +2172,6 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 		if (!strcmp(field, "FN"))
 			alias = g_strdup(value);
 		else if (!strcmp(field, "X-AIM") || !strcmp(field, "X-ICQ") ||
-				 !strcmp(field, "X-YAHOO") || !strcmp(field, "X-MSN") ||
 				 !strcmp(field, "X-JABBER"))
 		{
 			char **values = g_strsplit(value, ":", 0);
@@ -2186,10 +2183,6 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 					aims = g_list_append(aims, g_strdup(*im));
 				else if (!strcmp(field, "X-ICQ"))
 					icqs = g_list_append(icqs, g_strdup(*im));
-				else if (!strcmp(field, "X-YAHOO"))
-					yahoos = g_list_append(yahoos, g_strdup(*im));
-				else if (!strcmp(field, "X-MSN"))
-					msns = g_list_append(msns, g_strdup(*im));
 				else if (!strcmp(field, "X-JABBER"))
 					jabbers = g_list_append(jabbers, g_strdup(*im));
 			}
@@ -2200,8 +2193,7 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 
 	g_free(temp_vcard);
 
-	if (aims == NULL && icqs == NULL && yahoos == NULL &&
-		msns == NULL && jabbers == NULL)
+	if (aims == NULL && icqs == NULL && jabbers == NULL)
 	{
 		g_free(alias);
 
@@ -2210,8 +2202,6 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 
 	add_buddies_from_vcard("prpl-aim",    group, aims,    alias);
 	add_buddies_from_vcard("prpl-icq",    group, icqs,    alias);
-	add_buddies_from_vcard("prpl-yahoo",  group, yahoos,  alias);
-	add_buddies_from_vcard("prpl-msn",    group, msns,    alias);
 	add_buddies_from_vcard("prpl-jabber", group, jabbers, alias);
 
 	g_free(alias);
@@ -3864,7 +3854,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 
 		/* Nickname/Server Alias */
 		/* I'd like to only show this if there's a contact or buddy
-		 * alias, but many people on MSN set long nicknames, which
+		 * alias, but people often set long nicknames, which
 		 * get ellipsized, so the only way to see the whole thing is
 		 * to look at the tooltip. */
 		if (full && purple_buddy_get_server_alias(b))
@@ -4088,15 +4078,13 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 
 	tune = purple_presence_get_status(p, "tune");
 	if (tune && purple_status_is_active(tune)) {
-		/* Only in MSN.
-		 * TODO: Replace "Tune" with generalized "Media" in 3.0. */
+		/* TODO: Replace "Tune" with generalized "Media" in 3.0. */
 		if (purple_status_get_attr_string(tune, "game") != NULL) {
 			path = g_build_filename(PURPLE_DATADIR, "pixmaps",
 				"pidgin", "emblems", "16", "game.png", NULL);
 			return _pidgin_blist_get_cached_emblem(path);
 		}
-		/* Only in MSN.
-		 * TODO: Replace "Tune" with generalized "Media" in 3.0. */
+		/* TODO: Replace "Tune" with generalized "Media" in 3.0. */
 		if (purple_status_get_attr_string(tune, "office") != NULL) {
 			path = g_build_filename(PURPLE_DATADIR, "pixmaps",
 				"pidgin", "emblems", "16", "office.png", NULL);

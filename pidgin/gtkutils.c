@@ -1189,20 +1189,12 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 	GdkRectangle monitor;
 	gint monitor_num;
 	gint space_left, space_right, space_above, space_below;
-	gint needed_width;
-	gint needed_height;
-	gint xthickness;
-	gint ythickness;
 	gboolean rtl;
 
 	g_return_if_fail(GTK_IS_MENU(menu));
 
 	widget     = GTK_WIDGET(menu);
 	screen     = gtk_widget_get_screen(widget);
-	context    = gtk_widget_get_style_context(widget);
-	gtk_style_context_get(context, gtk_style_context_get_state(context),
-	                      "xthickness", &xthickness,
-	                      "ythickness", &ythickness, NULL);
 	rtl        = (gtk_widget_get_direction(widget) == GTK_TEXT_DIR_RTL);
 
 	/*
@@ -1245,24 +1237,14 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 
 	/* position horizontally */
 
-	/* the amount of space we need to position the menu. Note the
-	 * menu is offset "xthickness" pixels
-	 */
-	needed_width = requisition.width - xthickness;
-
-	if (needed_width <= space_left ||
-	    needed_width <= space_right)
+	if (requisition.width <= space_left ||
+	    requisition.width <= space_right)
 	{
-		if ((rtl  && needed_width <= space_left) ||
-		    (!rtl && needed_width >  space_right))
+		if ((rtl  && requisition.width <= space_left) ||
+		    (!rtl && requisition.width >  space_right))
 		{
 			/* position left */
-			*x = *x + xthickness - requisition.width + 1;
-		}
-		else
-		{
-			/* position right */
-			*x = *x - xthickness;
+			*x = *x - requisition.width + 1;
 		}
 
 		/* x is clamped on-screen further down */
@@ -1301,20 +1283,19 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 	/* Position vertically. The algorithm is the same as above, but
 	 * simpler because we don't have to take RTL into account.
 	 */
-	needed_height = requisition.height - ythickness;
 
-	if (needed_height <= space_above ||
-	    needed_height <= space_below)
+	if (requisition.height <= space_above ||
+	    requisition.height <= space_below)
 	{
-		if (needed_height <= space_below)
-			*y = *y - ythickness;
-		else
-			*y = *y + ythickness - requisition.height + 1;
+		if (requisition.height > space_below) {
+			*y = *y - requisition.height + 1;
+		}
 
 		*y = CLAMP (*y, monitor.y,
 			   monitor.y + monitor.height - requisition.height);
 	}
-	else if (needed_height > space_below && needed_height > space_above)
+	else if (requisition.height > space_below &&
+	         requisition.height > space_above)
 	{
 		if (space_below >= space_above)
 			*y = monitor.y + monitor.height - requisition.height;
@@ -1340,18 +1321,13 @@ pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
 	GtkTreePath *path;
 	GtkTreeViewColumn *col;
 	GdkRectangle rect;
-	GtkStyleContext *context;
-	gint ythickness;
 
-	context = gtk_widget_get_style_context(GTK_WIDGET(menu));
-	gtk_style_context_get(context, gtk_style_context_get_state(context),
-	                      "ythickness", &ythickness, NULL);
 	gdk_window_get_origin (gtk_widget_get_window(widget), x, y);
 	gtk_tree_view_get_cursor (tv, &path, &col);
 	gtk_tree_view_get_cell_area (tv, path, col, &rect);
 
 	*x += rect.x+rect.width;
-	*y += rect.y+rect.height+ythickness;
+	*y += rect.y + rect.height;
 	pidgin_menu_position_func_helper(menu, x, y, push_in, data);
 }
 

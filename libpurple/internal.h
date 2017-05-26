@@ -360,31 +360,6 @@ int
 _purple_fstat(int fd, GStatBuf *st);
 
 /**
- * _purple_socket_cancel_with_connection:
- * @gc The connection.
- *
- * Cancels all #PurpleSocket instances bound with @gc.
- */
-void
-_purple_socket_cancel_with_connection(PurpleConnection *gc);
-
-/**
- * _purple_socket_init: (skip)
- *
- * Initializes the #PurpleSocket subsystem.
- */
-void
-_purple_socket_init(void);
-
-/**
- * _purple_socket_uninit: (skip)
- *
- * Uninitializes the #PurpleSocket subsystem.
- */
-void
-_purple_socket_uninit(void);
-
-/**
  * _purple_message_init: (skip)
  *
  * Initializes the #PurpleMessage subsystem.

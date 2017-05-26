@@ -1228,7 +1228,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="bonjour facebook gg irc jabber msn mxit novell oscar sametime silc simple yahoo zephyr"
+	STATIC_PRPLS="bonjour facebook gg irc jabber novell oscar sametime silc simple zephyr"
 fi
 if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
@@ -1269,8 +1269,6 @@ for i in $STATIC_PRPLS ; do
 		gg)			static_gg=yes ;;
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
-		msn)		static_msn=yes ;;
-		mxit)		static_mxit=yes ;;
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
 		aim)		static_oscar=yes ;;
@@ -1278,7 +1276,6 @@ for i in $STATIC_PRPLS ; do
 		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
 		simple)		static_simple=yes ;;
-		yahoo)		static_yahoo=yes ;;
 		zephyr)		static_zephyr=yes ;;
 		*)			echo "Invalid static protocol $i!!" ; exit 1 ;;
 	esac
@@ -1288,14 +1285,11 @@ AM_CONDITIONAL(STATIC_FACEBOOK, test "x$static_facebook" = "xyes")
 AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
 AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
-AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
-AM_CONDITIONAL(STATIC_MXIT, test "x$static_mxit" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
 AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$have_silc" = "xyes")
 AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
-AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
 AM_CONDITIONAL(STATIC_ZEPHYR, test "x$static_zephyr" = "xyes")
 AC_SUBST(STATIC_LINK_LIBS)
 AC_DEFINE_UNQUOTED(STATIC_PROTO_LOAD, $extern_load static void static_proto_load(void) { $load_proto },
@@ -1305,7 +1299,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_UNLOAD, $extern_unload static void static_proto_
 
 AC_ARG_WITH(dynamic_prpls, [AS_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="bonjour facebook gg irc jabber msn mxit novell oscar sametime silc simple yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour facebook gg irc jabber novell oscar sametime silc simple zephyr"
 fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
@@ -1330,8 +1324,6 @@ for i in $DYNAMIC_PRPLS ; do
 		gg)			dynamic_gg=yes ;;
 		irc)		dynamic_irc=yes ;;
 		jabber)		dynamic_jabber=yes ;;
-		msn)		dynamic_msn=yes ;;
-		mxit)		dynamic_mxit=yes ;;
 		novell)		dynamic_novell=yes ;;
 		null)		dynamic_null=yes ;;
 		oscar)		dynamic_oscar=yes ;;
@@ -1340,7 +1332,6 @@ for i in $DYNAMIC_PRPLS ; do
 		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
 		simple)		dynamic_simple=yes ;;
-		yahoo)		dynamic_yahoo=yes ;;
 		zephyr)		dynamic_zephyr=yes ;;
 		*)			echo "Invalid dynamic protocol $i!!" ; exit 1 ;;
 	esac
@@ -1522,19 +1513,29 @@ dnl #######################################################################
 dnl # Check for Secret Service headers
 dnl #######################################################################
 
-# disabled - see secretservice.c
-#AC_ARG_ENABLE(libsecret, [AC_HELP_STRING([--disable-libsecret], [enable Secret Service support])], enable_secret_service=no, enable_secret_service=yes)
+AC_ARG_ENABLE(libsecret,
+	[AC_HELP_STRING([--disable-libsecret], [enable Secret Service support])],
+	enable_secret_service="$enableval", enable_secret_service="$is_not_win32")
 
-#if test "x$enable_secret_service" = "xyes" ; then
-#	PKG_CHECK_MODULES(SECRETSERVICE, [libsecret-1], [
-#		AC_SUBST(SECRETSERVICE_CFLAGS)
-#		AC_SUBST(SECRETSERVICE_LIBS)
-#		AC_DEFINE(HAVE_SECRETSERVICE, 1, [Define if we have Secret Service.])
-#	])
-#fi
+if test "x$enable_secret_service" = "xyes" ; then
+	PKG_CHECK_MODULES(SECRETSERVICE, [libsecret-1], [
+		AC_SUBST(SECRETSERVICE_CFLAGS)
+		AC_SUBST(SECRETSERVICE_LIBS)
+		AC_DEFINE(HAVE_SECRETSERVICE, 1, [Define if we have Secret Service.])
+	], [
+		AC_MSG_RESULT(no)
+		enable_secret_service="no"
+		if test "x$force_deps" = "xyes" ; then
+			AC_MSG_ERROR([
+Libsecret development headers not found
+Use --disable-libsecret if you do not need it.
+])
+		fi
+	])
 
-#AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x$enable_secret_service" = "xyes")
-AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x1" = "x2")
+fi
+
+AM_CONDITIONAL(ENABLE_SECRETSERVICE, test "x$enable_secret_service" = "xyes")
 
 dnl #######################################################################
 dnl # Check for GNOME Keyring headers
@@ -1876,7 +1877,7 @@ AC_ARG_ENABLE(nss,
 	[enable_nss="$enableval"],
 	[enable_nss="yes"])
 
-msg_ssl="None. MSN, Yahoo!, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
+msg_ssl="None. Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
 looked_for_gnutls="no"
 dnl #
 dnl # Check for GnuTLS if it isn't disabled
@@ -1947,19 +1948,19 @@ elif test "x$looked_for_gnutls" = "xyes" -a "x$looked_for_nss" = "xyes" -a "x$fo
 	AC_MSG_ERROR([
 Neither GnuTLS or NSS SSL development headers found.
 Use --disable-nss --disable-gnutls if you do not need SSL support.
-MSN, Yahoo!, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!
+Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!
 ])
 elif test "x$looked_for_gnutls" = "xyes" -a "x$force_deps" = "xyes" ; then
 	AC_MSG_ERROR([
 GnuTLS SSL development headers not found.
 Use --disable-gnutls if you do not need SSL support.
-MSN, Yahoo!, Novell Groupwise and Google Talk will not work without SSL support.
+Novell Groupwise and Google Talk will not work without SSL support.
 ])
 elif test "x$looked_for_nss" = "xyes" -a "x$force_deps" = "xyes" ; then
 	AC_MSG_ERROR([
 NSS SSL development headers not found.
 Use --disable-nss if you do not need SSL support.
-MSN, Yahoo!, Novell Groupwise and Google Talk will not work without SSL support.
+Novell Groupwise and Google Talk will not work without SSL support.
 ])
 fi
 
@@ -2183,8 +2184,6 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/protocols/irc/Makefile
 		   libpurple/protocols/jabber/Makefile
 		   libpurple/protocols/jabber/tests/Makefile
-		   libpurple/protocols/msn/Makefile
-		   libpurple/protocols/mxit/Makefile
 		   libpurple/protocols/novell/Makefile
 		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile
@@ -2192,8 +2191,6 @@ AC_CONFIG_FILES([Makefile
 		   libpurple/protocols/sametime/Makefile
 		   libpurple/protocols/silc/Makefile
 		   libpurple/protocols/simple/Makefile
-		   libpurple/protocols/yahoo/Makefile
-		   libpurple/protocols/yahoo/tests/Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
 		   libpurple/purple.h
@@ -2254,7 +2251,7 @@ echo Build Unity integration plugin.: $enable_unity
 echo
 echo Build with GNOME Keyring...... : $enable_gnome_keyring
 echo Build with KWallet............ : $enable_kwallet
-#echo Build with Secret Service..... : $enable_secret_service
+echo Build with Secret Service..... : $enable_secret_service
 echo
 echo Build with plugin support..... : $enable_plugins
 echo Enable Introspection...........: $enable_introspection

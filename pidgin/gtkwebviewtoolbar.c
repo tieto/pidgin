@@ -134,9 +134,14 @@ pidgin_color_parse(const gchar *str, GdkRGBA *color)
 
 	if (strcmp(str, "inherit") == 0) {
 		return FALSE;
-	} else {
-		return gdk_rgba_parse(color, str);
 	}
+
+	if (!gdk_rgba_parse(color, str)) {
+		return FALSE;
+	}
+
+	/* FALSE for fully transparent color (same behavior as with "inherit") */
+	return color->alpha > 0;
 }
 
 static gchar*
@@ -1194,17 +1199,10 @@ menu_position_func(GtkMenu  *menu,
                    gpointer data)
 {
 	GtkWidget *widget = GTK_WIDGET(data);
-	GtkRequisition menu_req;
 	GtkAllocation allocation;
-	GtkStyleContext *context;
-	gint ythickness;
 	int savy;
 
-	context = gtk_widget_get_style_context(widget);
-	gtk_style_context_get(context, gtk_style_context_get_state(context),
-	                      "ythickness", &ythickness, NULL);
 	gtk_widget_get_allocation(widget, &allocation);
-	gtk_widget_get_preferred_size(GTK_WIDGET(menu), NULL, &menu_req);
 	gdk_window_get_origin(gtk_widget_get_window(widget), x, y);
 	*x += allocation.x;
 	*y += allocation.y + allocation.height;
@@ -1212,7 +1210,7 @@ menu_position_func(GtkMenu  *menu,
 
 	pidgin_menu_position_func_helper(menu, x, y, push_in, data);
 
-	if (savy > *y + ythickness + 1)
+	if (savy > *y + 1)
 		*y -= allocation.height;
 }
 

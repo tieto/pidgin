@@ -89,8 +89,9 @@ xmpp_protocol_init(PurpleProtocol *protocol)
 	protocol->account_options = g_list_append(protocol->account_options,
 						  option);
 
-	/* this should probably be part of global smiley theme settings later on,
-	  shared with MSN */
+	/* this should probably be part of global smiley theme settings
+	 * later on
+	 */
 	option = purple_account_option_bool_new(_("Show Custom Smileys"),
 		"custom_smileys", TRUE);
 	protocol->account_options = g_list_append(protocol->account_options,

@@ -382,8 +382,6 @@ SectionGroupEnd
 !macroend
 SectionGroup /e $(URIHANDLERSSECTIONTITLE) SecURIHandlers
   !insertmacro URI_SECTION "aim"
-  !insertmacro URI_SECTION "msnim"
-  !insertmacro URI_SECTION "ymsgr"
   !insertmacro URI_SECTION "xmpp"
 SectionGroupEnd
 
@@ -499,10 +497,6 @@ Section Uninstall
     ; I can't think of an easy way to maintain a list in a single place
     Push "aim"
     Call un.UnregisterURIHandler
-    Push "msnim"
-    Call un.UnregisterURIHandler
-    Push "ymsgr"
-    Call un.UnregisterURIHandler
     Push "xmpp"
     Call un.UnregisterURIHandler
 
@@ -558,15 +552,14 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libbonjour.dll"
     Delete "$INSTDIR\plugins\libgg.dll"
     Delete "$INSTDIR\plugins\libirc.dll"
-    Delete "$INSTDIR\plugins\libjabber.dll"
-    Delete "$INSTDIR\plugins\libmsn.dll"
-    Delete "$INSTDIR\plugins\libmxit.dll"
+    Delete "$INSTDIR\plugins\libnapster.dll"
     Delete "$INSTDIR\plugins\libnovell.dll"
     Delete "$INSTDIR\plugins\liboscar.dll"
     Delete "$INSTDIR\plugins\libsametime.dll"
     Delete "$INSTDIR\plugins\libsilc.dll"
     Delete "$INSTDIR\plugins\libsimple.dll"
-    Delete "$INSTDIR\plugins\libyahoo.dll"
+    Delete "$INSTDIR\plugins\libtoc.dll"
+    Delete "$INSTDIR\plugins\libxmpp.dll"
     Delete "$INSTDIR\plugins\log_reader.dll"
     Delete "$INSTDIR\plugins\markerline.dll"
     Delete "$INSTDIR\plugins\newline.dll"

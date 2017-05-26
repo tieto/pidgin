@@ -337,7 +337,7 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 	g_signal_connect(G_OBJECT(window), "destroy",
 					 G_CALLBACK(delete_win_cb), dialog);
 
-	gnt_box_add_widget(GNT_BOX(window), gnt_label_new_with_format(_("Pounce Who"), GNT_TEXT_FLAG_BOLD));
+	gnt_box_add_widget(GNT_BOX(window), gnt_label_new_with_format(_("Pounce on Whom"), GNT_TEXT_FLAG_BOLD));
 
 	/* Account: */
 	gnt_box_add_widget(GNT_BOX(window), gnt_label_new(_("Account:")));

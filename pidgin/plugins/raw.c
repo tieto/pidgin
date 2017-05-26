@@ -34,7 +34,6 @@
 #include "gtkutils.h"
 
 #include "protocols/jabber/jabber.h"
-#include "protocols/msn/session.h"
 
 #ifdef MAX
 # undef MAX
@@ -83,16 +82,9 @@ text_sent_cb(GtkEntry *entry)
 		write(*a, txt, ntohs(len));
 		purple_debug(PURPLE_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
 
-	} else if (strcmp(protocol_id, "prpl-msn") == 0) {
-		MsnSession *session = purple_connection_get_protocol_data(gc);
-		char buf[strlen(txt) + 3];
-
-		g_snprintf(buf, sizeof(buf), "%s\r\n", txt);
-		msn_servconn_write(session->notification->servconn, buf, strlen(buf));
-
-	} else if (strcmp(protocol_id, "prpl-irc") == 0) {
-		write(*(int *)purple_connection_get_protocol_data(gc), txt, strlen(txt));
-		write(*(int *)purple_connection_get_protocol_data(gc), "\r\n", 2);
+	} else if (strcmp(prpl_id, "prpl-irc") == 0) {
+		write(*(int *)gc->proto_data, txt, strlen(txt));
+		write(*(int *)gc->proto_data, "\r\n", 2);
 		purple_debug(PURPLE_DEBUG_MISC, "raw", "IRC C: %s\n", txt);
 
 	} else if (strcmp(protocol_id, "prpl-jabber") == 0) {

@@ -100,8 +100,7 @@ bonjour_login(PurpleAccount *account)
 		purple_connection_error(gc,
 				PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 				_("Unable to find Apple's \"Bonjour for Windows\" toolkit, see "
-				  "https://developer.pidgin.im/BonjourWindows for more "
-				  "information."));
+				  "https://developer.pidgin.im/BonjourWindows for more information."));
 		return;
 	}
 #endif /* _WIN32 */

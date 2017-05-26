@@ -14,6 +14,8 @@ EXTRA_DIST = \
 		m4macros/introspection.m4 \
 		package_revision.h \
 		po/Makefile.mingw \
+		tap-driver.sh \
+		tap-test \
 		valgrind-suppressions
 
 noinst_HEADERS = config.h package_revision.h
@@ -26,6 +28,9 @@ if !ENABLE_GTK_DOC
 endif
 	$(AM_V_at)if [ ! -f "$(top_builddir)libpurple/libpurple.la" ]; then \
 		$(MAKE) -C libpurple libpurple.la; \
+	fi
+	$(AM_V_at)if [ ! -f "$(top_builddir)libpurple/protocols/facebook/libfacebook.la" ]; then \
+		$(MAKE) -C libpurple/protocols/facebook libfacebook.la; \
 	fi
 if ENABLE_GNT
 	$(AM_V_at)if [ ! -f "$(top_builddir)finch/libgnt/libgnt.la" ]; then \
@@ -46,9 +51,6 @@ dist: dist-pre-hook
 dist-hook:
 	rm $(distdir)/config.h
 
-distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/Pidgin.pm
-#	cp libpurple/plugins/perl/common/Gaim.pm $(distdir)/libpurple/plugins/perl/common
-
 commit-check:
 	(cd po ; intltool-update -m 2>&1 | grep -v '^mismatched quotes.*\.py$$' | sed "s|current directory|po directory|" | grep . ; if [ $$? = 0 ] ; then exit 1 ; else exit 0 ; fi)
 
@@ -68,8 +70,8 @@ version-check:
 	head ChangeLog.API | grep "^version $(PACKAGE_VERSION):$$" >/dev/null
 
 # Ensure we're working from a tag...
-	test x`hg log -r "tag($(PACKAGE_VERSION))" --template "{node}"` = x`hg id -i --debug`
-# ... and have no changes in the working copy. (this isn't really necessary with hg because hg id appends a "+")
+	test x`hg log -r "tag($(PACKAGE_VERSION))" --template "{node}"` = x`hg log -r . -T '{node}'`
+# ... and have no changes in the working copy.
 	test "x`hg st -mard`" = x
 
 sign-packages: dist
@@ -100,7 +102,7 @@ endif
 # successfully; the rm -f ensures both
 package_revision_raw.txt: .FORCE
 	$(AM_V_GEN)REAL_BLDDIR=$$PWD/$(top_builddir); \
-	(hg --cwd $(srcdir) id -i --debug) 2>/dev/null >$@.new \
+	(hg --cwd $(srcdir) log -r . -T {node}) 2>/dev/null >$@.new \
 	|| rm -f $@.new
 	$(AM_V_at)if test -f $@.new; then \
 		if ! test -f "$@" || ! diff "$@" "$@".new > /dev/null ; then \
