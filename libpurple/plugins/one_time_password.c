@@ -94,7 +94,7 @@ plugin_unload(PurplePlugin *plugin)
 			options = prpl_info->protocol_options;
 			while (options != NULL) {
 				option = (PurpleAccountOption *) options->data;
-				if (strcmp(PREF_NAME, purple_account_option_get_setting(option)) == 0) {
+				if (purple_strequal(PREF_NAME, purple_account_option_get_setting(option))) {
 					prpl_info->protocol_options = g_list_delete_link(prpl_info->protocol_options, options);
 					purple_account_option_destroy(option);
 					break;

@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.12.1 (??/??/????):
+	libpurple:
+	* Unified string comparison. (PR #186) (Arkadiy Illarionov)
+
 	XMPP:
 	* Show XEP-0066 OOB URLs in any message, not just headlines
 

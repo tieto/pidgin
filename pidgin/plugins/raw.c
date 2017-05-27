@@ -71,7 +71,7 @@ text_sent_cb(GtkEntry *entry)
 
 	purple_debug_misc("raw", "prpl_id = %s\n", prpl_id);
 
-	if (strcmp(prpl_id, "prpl-toc") == 0) {
+	if (purple_strequal(prpl_id, "prpl-toc")) {
 		int *a = (int *)gc->proto_data;
 		unsigned short seqno = htons(a[1]++ & 0xffff);
 		unsigned short len = htons(strlen(txt) + 1);
@@ -81,12 +81,12 @@ text_sent_cb(GtkEntry *entry)
 		write(*a, txt, ntohs(len));
 		purple_debug(PURPLE_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
 
-	} else if (strcmp(prpl_id, "prpl-irc") == 0) {
+	} else if (purple_strequal(prpl_id, "prpl-irc")) {
 		write(*(int *)gc->proto_data, txt, strlen(txt));
 		write(*(int *)gc->proto_data, "\r\n", 2);
 		purple_debug(PURPLE_DEBUG_MISC, "raw", "IRC C: %s\n", txt);
 
-	} else if (strcmp(prpl_id, "prpl-jabber") == 0) {
+	} else if (purple_strequal(prpl_id, "prpl-jabber")) {
 		jabber_send_raw((JabberStream *)gc->proto_data, txt, -1);
 
 	} else {

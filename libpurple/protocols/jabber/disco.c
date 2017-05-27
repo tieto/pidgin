@@ -65,14 +65,14 @@ jabber_disco_bytestream_server_cb(JabberStream *js, const char *from,
 	xmlnode *query = xmlnode_get_child_with_namespace(packet, "query",
 		NS_BYTESTREAMS);
 
-	if (from && !strcmp(from, sh->jid) && query != NULL) {
+	if (from && purple_strequal(from, sh->jid) && query != NULL) {
 		xmlnode *sh_node = xmlnode_get_child(query, "streamhost");
 		if (sh_node) {
 			const char *jid = xmlnode_get_attrib(sh_node, "jid");
 			const char *port = xmlnode_get_attrib(sh_node, "port");
 
 
-			if (jid == NULL || strcmp(jid, from) != 0)
+			if (jid == NULL || !purple_strequal(jid, from))
 				purple_debug_error("jabber", "Invalid jid(%s) for bytestream.\n",
 						   jid ? jid : "(null)");
 
@@ -123,7 +123,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 		if(node)
 			xmlnode_set_attrib(query, "node", node);
 
-		if(!node || g_str_equal(node, node_uri)) {
+		if(!node || purple_strequal(node, node_uri)) {
 			GList *features, *identities;
 			for(identities = jabber_identities; identities; identities = identities->next) {
 				JabberIdentity *ident = (JabberIdentity*)identities->data;
@@ -143,7 +143,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 				}
 			}
 #ifdef USE_VV
-		} else if (g_str_equal(node, CAPS0115_NODE "#" "voice-v1")) {
+		} else if (purple_strequal(node, CAPS0115_NODE "#" "voice-v1")) {
 			/*
 			 * HUGE HACK! We advertise this ext (see jabber_presence_create_js
 			 * where we add <c/> to the <presence/>) for the Google Talk
@@ -155,7 +155,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			 */
 			xmlnode *feature = xmlnode_new_child(query, "feature");
 			xmlnode_set_attrib(feature, "var", NS_GOOGLE_VOICE);
-		} else if (g_str_equal(node, CAPS0115_NODE "#" "video-v1")) {
+		} else if (purple_strequal(node, CAPS0115_NODE "#" "video-v1")) {
 			/*
 			 * HUGE HACK! We advertise this ext (see jabber_presence_create_js
 			 * where we add <c/> to the <presence/>) for the Google Talk
@@ -167,7 +167,7 @@ void jabber_disco_info_parse(JabberStream *js, const char *from,
 			 */
 			xmlnode *feature = xmlnode_new_child(query, "feature");
 			xmlnode_set_attrib(feature, "var", NS_GOOGLE_VIDEO);
-		} else if (g_str_equal(node, CAPS0115_NODE "#" "camera-v1")) {
+		} else if (purple_strequal(node, CAPS0115_NODE "#" "camera-v1")) {
 			/*
 			 * HUGE HACK! We advertise this ext (see jabber_presence_create_js
 			 * where we add <c/> to the <presence/>) for the Google Talk
@@ -245,20 +245,20 @@ static void jabber_disco_info_cb(JabberStream *js, const char *from,
 			if(child->type != XMLNODE_TYPE_TAG)
 				continue;
 
-			if(!strcmp(child->name, "identity")) {
+			if(purple_strequal(child->name, "identity")) {
 				const char *category = xmlnode_get_attrib(child, "category");
 				const char *type = xmlnode_get_attrib(child, "type");
 				if(!category || !type)
 					continue;
 
-				if(!strcmp(category, "conference") && !strcmp(type, "text")) {
+				if(purple_strequal(category, "conference") && purple_strequal(type, "text")) {
 					/* we found a groupchat or MUC server, add it to the list */
 					/* XXX: actually check for protocol/muc or gc-1.0 support */
 					js->chat_servers = g_list_prepend(js->chat_servers, g_strdup(from));
-				} else if(!strcmp(category, "directory") && !strcmp(type, "user")) {
+				} else if(purple_strequal(category, "directory") && purple_strequal(type, "user")) {
 					/* we found a JUD */
 					js->user_directories = g_list_prepend(js->user_directories, g_strdup(from));
-				} else if(!strcmp(category, "proxy") && !strcmp(type, "bytestreams")) {
+				} else if(purple_strequal(category, "proxy") && purple_strequal(type, "bytestreams")) {
 					/* This is a bytestream proxy */
 					JabberIq *iq;
 					JabberBytestreamsStreamhost *sh;
@@ -276,29 +276,29 @@ static void jabber_disco_info_cb(JabberStream *js, const char *from,
 					jabber_iq_send(iq);
 				}
 
-			} else if(!strcmp(child->name, "feature")) {
+			} else if(purple_strequal(child->name, "feature")) {
 				const char *var = xmlnode_get_attrib(child, "var");
 				if(!var)
 					continue;
 
-				if(!strcmp(var, "http://jabber.org/protocol/si"))
+				if(purple_strequal(var, "http://jabber.org/protocol/si"))
 					capabilities |= JABBER_CAP_SI;
-				else if(!strcmp(var, "http://jabber.org/protocol/si/profile/file-transfer"))
+				else if(purple_strequal(var, "http://jabber.org/protocol/si/profile/file-transfer"))
 					capabilities |= JABBER_CAP_SI_FILE_XFER;
-				else if(!strcmp(var, NS_BYTESTREAMS))
+				else if(purple_strequal(var, NS_BYTESTREAMS))
 					capabilities |= JABBER_CAP_BYTESTREAMS;
-				else if(!strcmp(var, "jabber:iq:search"))
+				else if(purple_strequal(var, "jabber:iq:search"))
 					capabilities |= JABBER_CAP_IQ_SEARCH;
-				else if(!strcmp(var, "jabber:iq:register"))
+				else if(purple_strequal(var, "jabber:iq:register"))
 					capabilities |= JABBER_CAP_IQ_REGISTER;
-				else if(!strcmp(var, NS_PING))
+				else if(purple_strequal(var, NS_PING))
 					capabilities |= JABBER_CAP_PING;
-				else if(!strcmp(var, NS_DISCO_ITEMS))
+				else if(purple_strequal(var, NS_DISCO_ITEMS))
 					capabilities |= JABBER_CAP_ITEMS;
-				else if(!strcmp(var, "http://jabber.org/protocol/commands")) {
+				else if(purple_strequal(var, "http://jabber.org/protocol/commands")) {
 					capabilities |= JABBER_CAP_ADHOC;
 				}
-				else if(!strcmp(var, NS_IBB)) {
+				else if(purple_strequal(var, NS_IBB)) {
 					purple_debug_info("jabber", "remote supports IBB\n");
 					capabilities |= JABBER_CAP_IBB;
 				}
@@ -498,7 +498,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 {
 	xmlnode *query, *child;
 
-	if (!from || strcmp(from, js->user->domain)) {
+	if (!from || !purple_strequal(from, js->user->domain)) {
 		jabber_disco_finish_server_info_result_cb(js);
 		return;
 	}
@@ -519,17 +519,18 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 	for (child = xmlnode_get_child(query, "identity"); child;
 	     child = xmlnode_get_next_twin(child)) {
 		const char *category, *type, *name;
+		const char *stun_ip;
 		category = xmlnode_get_attrib(child, "category");
 		type = xmlnode_get_attrib(child, "type");
-		if(category && type && !strcmp(category, "pubsub") && !strcmp(type,"pep")) {
+		if(purple_strequal(category, "pubsub") && purple_strequal(type, "pep")) {
 			PurpleConnection *gc = js->gc;
 			js->pep = TRUE;
 			gc->flags |= PURPLE_CONNECTION_SUPPORT_MOODS |
 				PURPLE_CONNECTION_SUPPORT_MOOD_MESSAGES;
 		}
-		if (!category || strcmp(category, "server"))
+		if (!purple_strequal(category, "server"))
 			continue;
-		if (!type || strcmp(type, "im"))
+		if (!purple_strequal(type, "im"))
 			continue;
 
 		name = xmlnode_get_attrib(child, "name");
@@ -538,17 +539,16 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 
 		g_free(js->server_name);
 		js->server_name = g_strdup(name);
-		if (!strcmp(name, "Google Talk")) {
+		stun_ip = purple_network_get_stun_ip();
+		if (purple_strequal(name, "Google Talk")) {
 			purple_debug_info("jabber", "Google Talk!\n");
 			js->googletalk = TRUE;
 
 			/* autodiscover stun and relays */
-			if (purple_network_get_stun_ip() == NULL ||
-		    	purple_strequal(purple_network_get_stun_ip(), "")) {
+			if (!stun_ip || !*stun_ip) {
 				jabber_google_send_jingle_info(js);
 			}
-		} else if (purple_network_get_stun_ip() == NULL ||
-		    purple_strequal(purple_network_get_stun_ip(), "")) {
+		} else if (!stun_ip || !*stun_ip) {
 			js->srv_query_data =
 				purple_srv_resolve_account(
 					purple_connection_get_account(js->gc), "stun", "udp",
@@ -565,14 +565,14 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 		if (!var)
 			continue;
 
-		if (!strcmp(NS_GOOGLE_MAIL_NOTIFY, var)) {
+		if (purple_strequal(NS_GOOGLE_MAIL_NOTIFY, var)) {
 			js->server_caps |= JABBER_CAP_GMAIL_NOTIFY;
 			jabber_gmail_init(js);
-		} else if (!strcmp(NS_GOOGLE_ROSTER, var)) {
+		} else if (purple_strequal(NS_GOOGLE_ROSTER, var)) {
 			js->server_caps |= JABBER_CAP_GOOGLE_ROSTER;
-		} else if (!strcmp("http://jabber.org/protocol/commands", var)) {
+		} else if (purple_strequal("http://jabber.org/protocol/commands", var)) {
 			js->server_caps |= JABBER_CAP_ADHOC;
-		} else if (!strcmp(NS_SIMPLE_BLOCKING, var)) {
+		} else if (purple_strequal(NS_SIMPLE_BLOCKING, var)) {
 			js->server_caps |= JABBER_CAP_BLOCKING;
 		}
 	}
@@ -587,7 +587,7 @@ jabber_disco_server_items_result_cb(JabberStream *js, const char *from,
 {
 	xmlnode *query, *child;
 
-	if (!from || strcmp(from, js->user->domain) != 0)
+	if (!from || !purple_strequal(from, js->user->domain))
 		return;
 
 	if (type == JABBER_IQ_ERROR)

@@ -559,10 +559,10 @@ static void
 migrate_xmpp_encryption(PurpleAccount *account)
 {
 	/* When this is removed, nuke the "old_ssl" and "require_tls" settings */
-	if (g_str_equal(purple_account_get_protocol_id(account), "prpl-jabber")) {
+	if (purple_strequal(purple_account_get_protocol_id(account), "prpl-jabber")) {
 		const char *sec = purple_account_get_string(account, "connection_security", "");
 
-		if (g_str_equal("", sec)) {
+		if (purple_strequal("", sec)) {
 			const char *val = "require_tls";
 			if (purple_account_get_bool(account, "old_ssl", FALSE))
 				val = "old_ssl";
@@ -909,9 +909,9 @@ parse_account(xmlnode *node)
 
 		if (keyring_id == NULL || keyring_id[0] == '\0')
 			is_plaintext = TRUE;
-		else if (g_strcmp0(keyring_id, "keyring-internal") != 0)
+		else if (!purple_strequal(keyring_id, "keyring-internal"))
 			is_plaintext = FALSE;
-		else if (mode == NULL || mode[0] == '\0' || g_strcmp0(mode, "cleartext") == 0)
+		else if (mode == NULL || mode[0] == '\0' || purple_strequal(mode, "cleartext"))
 			is_plaintext = TRUE;
 		else
 			is_plaintext = FALSE;

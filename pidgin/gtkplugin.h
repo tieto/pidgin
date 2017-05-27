@@ -51,7 +51,7 @@ struct _PidginPluginUiInfo
 
 #define PIDGIN_IS_PIDGIN_PLUGIN(plugin) \
 	((plugin)->info != NULL && (plugin)->info->ui_info != NULL && \
-	 !strcmp((plugin)->info->ui_requirement, PIDGIN_PLUGIN_TYPE))
+	 purple_strequal((plugin)->info->ui_requirement, PIDGIN_PLUGIN_TYPE))
 
 #define PIDGIN_PLUGIN_UI_INFO(plugin) \
 	((PidginPluginUiInfo *)(plugin)->info->ui_info)

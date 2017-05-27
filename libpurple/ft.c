@@ -916,9 +916,10 @@ void
 purple_xfer_set_message(PurpleXfer *xfer, const char *message)
 {
 	g_return_if_fail(xfer != NULL);
-
-	g_free(xfer->message);
-	xfer->message = g_strdup(message);
+	if (message != xfer->message) {
+		g_free(xfer->message);
+		xfer->message = g_strdup(message);
+	}
 }
 
 void
@@ -926,8 +927,10 @@ purple_xfer_set_filename(PurpleXfer *xfer, const char *filename)
 {
 	g_return_if_fail(xfer != NULL);
 
-	g_free(xfer->filename);
-	xfer->filename = g_strdup(filename);
+	if (filename != xfer->filename) {
+		g_free(xfer->filename);
+		xfer->filename = g_strdup(filename);
+	}
 }
 
 void
@@ -935,8 +938,10 @@ purple_xfer_set_local_filename(PurpleXfer *xfer, const char *filename)
 {
 	g_return_if_fail(xfer != NULL);
 
-	g_free(xfer->local_filename);
-	xfer->local_filename = g_strdup(filename);
+	if (filename != xfer->local_filename) {
+		g_free(xfer->local_filename);
+		xfer->local_filename = g_strdup(filename);
+	}
 }
 
 void
@@ -1781,8 +1786,9 @@ purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
 {
 	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
 
-	g_free(priv->thumbnail_data);
-	g_free(priv->thumbnail_mimetype);
+	/* Hold onto these in case they are equal to passed-in pointers */
+	gpointer *old_thumbnail_data = priv->thumbnail_data;
+	const gchar *old_mimetype = priv->thumbnail_mimetype;
 
 	if (thumbnail && size > 0) {
 		priv->thumbnail_data = g_memdup(thumbnail, size);
@@ -1793,6 +1799,10 @@ purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
 		priv->thumbnail_size = 0;
 		priv->thumbnail_mimetype = NULL;
 	}
+
+	/* Now it's safe to free the pointers */
+	g_free(old_thumbnail_data);
+	g_free(old_mimetype);
 }
 
 void

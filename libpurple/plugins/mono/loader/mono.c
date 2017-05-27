@@ -75,13 +75,13 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 
 	while ((m = mono_class_get_methods(mplug->klass, &iter))) {
 		purple_debug_info("mono", "plugin method: %s\n", mono_method_get_name(m));
-		if (strcmp(mono_method_get_name(m), "Load") == 0) {
+		if (purple_strequal(mono_method_get_name(m), "Load")) {
 			mplug->load = m;
 			found_load = TRUE;
-		} else if (strcmp(mono_method_get_name(m), "Unload") == 0) {
+		} else if (purple_strequal(mono_method_get_name(m), "Unload")) {
 			mplug->unload = m;
 			found_unload = TRUE;
-		} else if (strcmp(mono_method_get_name(m), "Destroy") == 0) {
+		} else if (purple_strequal(mono_method_get_name(m), "Destroy")) {
 			mplug->destroy = m;
 			found_destroy = TRUE;
 		}

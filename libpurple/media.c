@@ -482,8 +482,8 @@ purple_media_get_stream(PurpleMedia *media, const gchar *session, const gchar *p
 
 	for (; streams; streams = g_list_next(streams)) {
 		PurpleMediaStream *stream = streams->data;
-		if (!strcmp(stream->session->id, session) &&
-				!strcmp(stream->participant, participant))
+		if (purple_strequal(stream->session->id, session) &&
+				purple_strequal(stream->participant, participant))
 			return stream;
 	}
 
@@ -504,9 +504,9 @@ purple_media_get_streams(PurpleMedia *media, const gchar *session,
 	for (; streams; streams = g_list_next(streams)) {
 		PurpleMediaStream *stream = streams->data;
 		if ((session == NULL ||
-				!strcmp(stream->session->id, session)) &&
+				purple_strequal(stream->session->id, session)) &&
 				(participant == NULL ||
-				!strcmp(stream->participant, participant)))
+				purple_strequal(stream->participant, participant)))
 			ret = g_list_append(ret, stream);
 	}
 
@@ -957,7 +957,7 @@ purple_media_param_is_supported(PurpleMedia *media, const gchar *param)
 
 	params = purple_media_backend_get_available_params(media->priv->backend);
 	for (; *params != NULL; ++params)
-		if (!strcmp(*params, param))
+		if (purple_strequal(*params, param))
 			return TRUE;
 #endif
 	return FALSE;

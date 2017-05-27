@@ -714,7 +714,7 @@ purple_pounce_destroy_all_by_buddy(PurpleBuddy *buddy)
 		pouncer = purple_pounce_get_pouncer(pounce);
 		pouncee = purple_pounce_get_pouncee(pounce);
 
-		if ( (pouncer == bacct) && (strcmp(pouncee, bname) == 0) )
+		if ( (pouncer == bacct) && (purple_strequal(pouncee, bname)) )
 			purple_pounce_destroy(pounce);
 	}
 }

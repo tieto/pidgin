@@ -218,7 +218,7 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 
 			for (l = ims; l != NULL; l = l->next)
 			{
-				if (!strcmp(l->data, dialog->buddy->name))
+				if (purple_strequal(l->data, dialog->buddy->name))
 				{
 					GtkTreeSelection *selection;
 
@@ -430,7 +430,7 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 
 	/* Textview */
 	dialog->imhtml = gtk_imhtml_new(NULL, NULL);
-	gtk_container_add(GTK_CONTAINER(expander), 
+	gtk_container_add(GTK_CONTAINER(expander),
 		pidgin_make_scrollable(dialog->imhtml, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1));
 	gtk_widget_show(dialog->imhtml);
 

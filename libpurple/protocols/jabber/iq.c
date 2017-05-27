@@ -374,13 +374,13 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	}
 
 	if (iq_type) {
-		if (!strcmp(iq_type, "get"))
+		if (purple_strequal(iq_type, "get"))
 			type = JABBER_IQ_GET;
-		else if (!strcmp(iq_type, "set"))
+		else if (purple_strequal(iq_type, "set"))
 			type = JABBER_IQ_SET;
-		else if (!strcmp(iq_type, "result"))
+		else if (purple_strequal(iq_type, "result"))
 			type = JABBER_IQ_RESULT;
-		else if (!strcmp(iq_type, "error"))
+		else if (purple_strequal(iq_type, "error"))
 			type = JABBER_IQ_ERROR;
 	}
 

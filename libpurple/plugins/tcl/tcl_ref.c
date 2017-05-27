@@ -55,7 +55,7 @@ void *purple_tcl_ref_get(Tcl_Interp *interp, Tcl_Obj *obj, PurpleStringref *type
 		if (Tcl_ConvertToType(interp, obj, &purple_tcl_ref) != TCL_OK)
 			return NULL;
 	}
-	if (strcmp(purple_stringref_value(OBJ_REF_TYPE(obj)),
+	if (!purple_strequal(purple_stringref_value(OBJ_REF_TYPE(obj)),
 		   purple_stringref_value(type))) {
 		if (interp) {
 			Tcl_Obj *error = Tcl_NewStringObj("Bad Purple reference type: expected ", -1);

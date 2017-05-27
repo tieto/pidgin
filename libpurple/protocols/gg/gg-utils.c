@@ -129,7 +129,7 @@ void ggp_status_fake_to_self(PurpleAccount *account)
 		msg = NULL;
 
 	status_id = purple_status_get_id(status);
-	if (strcmp(status_id, "invisible") == 0) {
+	if (purple_strequal(status_id, "invisible")) {
 		status_id = "offline";
 	}
 

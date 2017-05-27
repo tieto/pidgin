@@ -712,7 +712,7 @@ create_protocols_menu(const char *default_proto_id)
 				g_object_unref(pixbuf);
 
 			/* libpurple3 compatibility */
-			if (g_strcmp0(default_proto_id, "prpl-gtalk") == 0)
+			if (purple_strequal(default_proto_id, "prpl-gtalk"))
 				aop_menu->default_item = i;
 
 			gtalk_name = NULL;
@@ -727,7 +727,7 @@ create_protocols_menu(const char *default_proto_id)
 		if (pixbuf)
 			g_object_unref(pixbuf);
 
-		if (default_proto_id != NULL && !strcmp(plugin->info->id, default_proto_id))
+		if (default_proto_id != NULL && purple_strequal(plugin->info->id, default_proto_id))
 			aop_menu->default_item = i;
 	}
 
@@ -1136,15 +1136,15 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 
 				protoname = prpl_info->list_icon(account, NULL);
 
-				if (!strcmp(protoname, protocol))
+				if (purple_strequal(protoname, protocol))
 					break;
 
 				account = NULL;
 			}
 
 			/* Special case for AIM and ICQ */
-			if (account == NULL && (!strcmp(protocol, "aim") ||
-									!strcmp(protocol, "icq")))
+			if (account == NULL && (purple_strequal(protocol, "aim") ||
+									purple_strequal(protocol, "icq")))
 			{
 				for (l = list; l != NULL; l = l->next)
 				{
@@ -1178,7 +1178,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 
 					protoname = prpl_info->list_icon(account, NULL);
 
-					if (!strcmp(protoname, "aim") || !strcmp(protoname, "icq"))
+					if (purple_strequal(protoname, "aim") || purple_strequal(protoname, "icq"))
 						break;
 
 					account = NULL;
@@ -1952,7 +1952,7 @@ add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, c
 
 	/* There's no sense listing things like: 'xxx "xxx"'
 	   when the name and buddy alias match. */
-	if (buddy_alias && strcmp(buddy_alias, buddyname)) {
+	if (buddy_alias && !purple_strequal(buddy_alias, buddyname)) {
 		char *completion_entry = g_strdup_printf("%s \"%s\"", buddyname, buddy_alias);
 		char *tmp2 = g_utf8_normalize(buddy_alias, -1, G_NORMALIZE_DEFAULT);
 
@@ -1974,9 +1974,9 @@ add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, c
 
 	/* There's no sense listing things like: 'xxx "xxx"'
 	   when the name and contact alias match. */
-	if (contact_alias && strcmp(contact_alias, buddyname)) {
+	if (contact_alias && !purple_strequal(contact_alias, buddyname)) {
 		/* We don't want duplicates when the contact and buddy alias match. */
-		if (!buddy_alias || strcmp(contact_alias, buddy_alias)) {
+		if (!purple_strequal(contact_alias, buddy_alias)) {
 			char *completion_entry = g_strdup_printf("%s \"%s\"",
 							buddyname, contact_alias);
 			char *tmp2 = g_utf8_normalize(contact_alias, -1, G_NORMALIZE_DEFAULT);
@@ -2433,10 +2433,10 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 
 				purple_debug_info("buddyicon", "Converting buddy icon to %s\n", prpl_formats[i]);
 
-				if (g_str_equal(prpl_formats[i], "png")) {
+				if (purple_strequal(prpl_formats[i], "png")) {
 					key = "compression";
 					value = "9";
-				} else if (g_str_equal(prpl_formats[i], "jpeg")) {
+				} else if (purple_strequal(prpl_formats[i], "jpeg")) {
 					sprintf(tmp_buf, "%u", quality);
 					key = "quality";
 					value = tmp_buf;
@@ -2477,7 +2477,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 
 				g_free(contents);
 
-				if (!g_str_equal(prpl_formats[i], "jpeg")) {
+				if (!purple_strequal(prpl_formats[i], "jpeg")) {
 					/* File size was too big and we can't lower the quality,
 					   so skip to the next image type. */
 					break;
@@ -3471,9 +3471,9 @@ open_dialog(GtkIMHtml *imhtml, GtkIMHtmlLink *link)
 
 	str = url + sizeof("open://") - 1;
 
-	if (strcmp(str, "accounts") == 0)
+	if (purple_strequal(str, "accounts"))
 		pidgin_accounts_window_show();
-	else if (strcmp(str, "prefs") == 0)
+	else if (purple_strequal(str, "prefs"))
 		pidgin_prefs_show();
 	else
 		return FALSE;
@@ -3531,7 +3531,7 @@ register_gnome_url_handlers(void)
 				{
 					g_free(err);
 					err = NULL;
-					if (!strcmp(tmp2, "false\n"))
+					if (purple_strequal(tmp2, "false\n"))
 					{
 						g_free(tmp2);
 						g_free(cmd);

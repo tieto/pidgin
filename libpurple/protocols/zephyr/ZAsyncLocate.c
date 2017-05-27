@@ -9,6 +9,7 @@
  */
 
 #include "internal.h"
+#include "util.h"
 
 Code_t ZRequestLocations(user, zald, kind, auth)
      const char *user;
@@ -69,7 +70,7 @@ Code_t ZParseLocations(notice,zald,nlocs,user)
     /* non-matching protocol version numbers means the
        server is probably an older version--must punt */
 
-    if (zald && strcmp(notice->z_version, zald->version))
+    if (zald && !purple_strequal(notice->z_version, zald->version))
       return(ZERR_VERS);
 
     if (notice->z_kind == SERVNAK)
@@ -77,7 +78,7 @@ Code_t ZParseLocations(notice,zald,nlocs,user)
 
     /* flag ACKs as special */
     if (notice->z_kind == SERVACK &&
-	!strcmp(notice->z_opcode, LOCATE_LOCATE)) {
+	purple_strequal(notice->z_opcode, LOCATE_LOCATE)) {
 	*nlocs = -1;
 	return(ZERR_NONE);
     }
@@ -133,7 +134,7 @@ Code_t ZParseLocations(notice,zald,nlocs,user)
     __locate_next = 0;
     *nlocs = __locate_num;
     if (user) {
-	size_t len;    
+	size_t len;
 	if (zald) {
 	    len = strlen(zald->user) + 1;
 	    if ((*user = (char *) malloc(len)) == NULL)

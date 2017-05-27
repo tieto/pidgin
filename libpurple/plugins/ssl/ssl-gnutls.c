@@ -117,7 +117,7 @@ ssl_gnutls_init_gnutls(void)
 					                               "string for %s\n", host);
 				} else {
 					/* TODO: Validate each of these and complain */
-					if (g_str_equal(host, "*")) {
+					if (purple_strequal(host, "*")) {
 						/* Override the default priority */
 						g_free(default_priority_str);
 						default_priority_str = g_strdup(prio_str);

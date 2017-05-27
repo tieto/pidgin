@@ -22,10 +22,10 @@ purple_accounts_find_ext(const char *name, const char *protocol_id,
 	for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
 		PurpleAccount *account = (PurpleAccount *)l->data;
 
-		if (who && strcmp(purple_normalize(NULL, purple_account_get_username(account)), who))
+		if (who && !purple_strequal(purple_normalize(NULL, purple_account_get_username(account)), who))
 			continue;
 
-		if (protocol_id && strcmp(account->protocol_id, protocol_id))
+		if (protocol_id && !purple_strequal(account->protocol_id, protocol_id))
 			continue;
 
 		if (account_test && !account_test(account))
