@@ -25,12 +25,10 @@
 #include "auth.h"
 #include "auth_scram.h"
 
-#include "ciphers/hmaccipher.h"
-#include "ciphers/sha1hash.h"
 #include "debug.h"
 
 static const JabberScramHash hashes[] = {
-	{ "-SHA-1", purple_sha1_hash_new, 20 },
+	{ "-SHA-1", G_CHECKSUM_SHA1 },
 };
 
 static const JabberScramHash *mech_to_hash(const char *mech)
@@ -80,8 +78,8 @@ static const struct {
 guchar *jabber_scram_hi(const JabberScramHash *hash, const GString *str,
                         GString *salt, guint iterations)
 {
-	PurpleHash *hasher;
-	PurpleCipher *cipher;
+	GHmac *hmac;
+	gsize digest_len;
 	guchar *result;
 	guint i;
 	guchar *prev, *tmp;
@@ -91,40 +89,38 @@ guchar *jabber_scram_hi(const JabberScramHash *hash, const GString *str,
 	g_return_val_if_fail(salt != NULL && salt->len > 0, NULL);
 	g_return_val_if_fail(iterations > 0, NULL);
 
-	prev   = g_new0(guint8, hash->size);
-	tmp    = g_new0(guint8, hash->size);
-	result = g_new0(guint8, hash->size);
+	digest_len = g_checksum_type_get_length(hash->type);
+	prev   = g_new0(guchar, digest_len);
+	tmp    = g_new0(guchar, digest_len);
+	result = g_new0(guchar, digest_len);
 
-	hasher = hash->new_cipher();
-	cipher = purple_hmac_cipher_new(hasher);
-	g_object_unref(G_OBJECT(hasher));
+	hmac = g_hmac_new(hash->type, (guchar *)str->str, str->len);
 
 	/* Append INT(1), a four-octet encoding of the integer 1, most significant
 	 * octet first. */
 	g_string_append_len(salt, "\0\0\0\1", 4);
 
 	/* Compute U0 */
-	purple_cipher_set_key(cipher, (guchar *)str->str, str->len);
-	purple_cipher_append(cipher, (guchar *)salt->str, salt->len);
-	purple_cipher_digest(cipher, result, hash->size);
+	g_hmac_update(hmac, (guchar *)salt->str, salt->len);
+	g_hmac_get_digest(hmac, result, &digest_len);
+	g_hmac_unref(hmac);
 
-	memcpy(prev, result, hash->size);
+	memcpy(prev, result, digest_len);
 
 	/* Compute U1...Ui */
 	for (i = 1; i < iterations; ++i) {
 		guint j;
-		purple_cipher_reset(cipher);
-		purple_cipher_set_key(cipher, (guchar *)str->str, str->len);
-		purple_cipher_append(cipher, prev, hash->size);
-		purple_cipher_digest(cipher, tmp, hash->size);
+		hmac = g_hmac_new(hash->type, (guchar *)str->str, str->len);
+		g_hmac_update(hmac, prev, digest_len);
+		g_hmac_get_digest(hmac, tmp, &digest_len);
+		g_hmac_unref(hmac);
 
-		for (j = 0; j < hash->size; ++j)
+		for (j = 0; j < digest_len; ++j)
 			result[j] ^= tmp[j];
 
-		memcpy(prev, tmp, hash->size);
+		memcpy(prev, tmp, digest_len);
 	}
 
-	g_object_unref(G_OBJECT(cipher));
 	g_free(tmp);
 	g_free(prev);
 	return result;
@@ -142,33 +138,31 @@ guchar *jabber_scram_hi(const JabberScramHash *hash, const GString *str,
 static void
 hmac(const JabberScramHash *hash, guchar *out, const guchar *key, const gchar *str)
 {
-	PurpleHash *hasher;
-	PurpleCipher *cipher;
+	GHmac *hmac;
+	gsize digest_len = g_checksum_type_get_length(hash->type);
 
-	hasher = hash->new_cipher();
-	cipher = purple_hmac_cipher_new(hasher);
-	g_object_unref(G_OBJECT(hasher));
-	purple_cipher_set_key(cipher, key, hash->size);
-	purple_cipher_append(cipher, (guchar *)str, strlen(str));
-	purple_cipher_digest(cipher, out, hash->size);
-	g_object_unref(G_OBJECT(cipher));
+	hmac = g_hmac_new(hash->type, key, digest_len);
+	g_hmac_update(hmac, (guchar *)str, -1);
+	g_hmac_get_digest(hmac, out, &digest_len);
+	g_hmac_unref(hmac);
 }
 
 static void
 hash(const JabberScramHash *hash, guchar *out, const guchar *data)
 {
-	PurpleHash *hasher;
+	GChecksum *checksum;
+	gsize digest_len = g_checksum_type_get_length(hash->type);
 
-	hasher = hash->new_cipher();
-	purple_hash_append(hasher, data, hash->size);
-	purple_hash_digest(hasher, out, hash->size);
-	g_object_unref(G_OBJECT(hasher));
+	checksum = g_checksum_new(hash->type);
+	g_checksum_update(checksum, data, digest_len);
+	g_checksum_get_digest(checksum, out, &digest_len);
+	g_checksum_free(checksum);
 }
 
 gboolean
 jabber_scram_calc_proofs(JabberScramData *data, GString *salt, guint iterations)
 {
-	guint hash_len = data->hash->size;
+	guint hash_len = g_checksum_type_get_length(data->hash->type);
 	guint i;
 
 	GString *pass = g_string_new(data->password);

@@ -44,7 +44,6 @@ purple_coresources = \
 	ciphers/aescipher.c \
 	ciphers/descipher.c \
 	ciphers/des3cipher.c \
-	ciphers/hmaccipher.c \
 	ciphers/md4hash.c \
 	ciphers/md5hash.c \
 	ciphers/pbkdf2cipher.c \
@@ -245,7 +244,6 @@ purple_cipherheaders = \
 	aescipher.h \
 	descipher.h \
 	des3cipher.h \
-	hmaccipher.h \
 	md4hash.h \
 	md5hash.h \
 	pbkdf2cipher.h \

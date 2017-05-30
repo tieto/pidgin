@@ -40,9 +40,6 @@
 #include "oscarcommon.h"
 #include "core.h"
 
-#include "ciphers/hmaccipher.h"
-#include "ciphers/sha256hash.h"
-
 #define AIM_LOGIN_HOST "api.screenname.aol.com"
 #define ICQ_LOGIN_HOST "api.login.icq.net"
 
@@ -122,17 +119,14 @@ static gchar *generate_error_message(PurpleXmlNode *resp, const char *url)
  */
 static gchar *hmac_sha256(const char *key, const char *message)
 {
-	PurpleCipher *cipher;
-	PurpleHash *hash;
+	GHmac *hmac;
 	guchar digest[32];
+	gsize digest_len = 32;
 
-	hash = purple_sha256_hash_new();
-	cipher = purple_hmac_cipher_new(hash);
-	purple_cipher_set_key(cipher, (guchar *)key, strlen(key));
-	purple_cipher_append(cipher, (guchar *)message, strlen(message));
-	purple_cipher_digest(cipher, digest, sizeof(digest));
-	g_object_unref(cipher);
-	g_object_unref(hash);
+	hmac = g_hmac_new(G_CHECKSUM_SHA256, (guchar *)key, strlen(key));
+	g_hmac_update(hmac, (guchar *)message, -1);
+	g_hmac_get_digest(hmac, digest, &digest_len);
+	g_hmac_unref(hmac);
 
 	return purple_base64_encode(digest, sizeof(digest));
 }

@@ -4,9 +4,8 @@
 #include "util.h"
 #include "protocols/jabber/auth_scram.h"
 #include "protocols/jabber/jutil.h"
-#include "ciphers/sha1hash.h"
 
-static JabberScramHash sha1_mech = { "-SHA-1", purple_sha1_hash_new, 20 };
+static JabberScramHash sha1_mech = { "-SHA-1", G_CHECKSUM_SHA1 };
 
 #define assert_pbkdf2_equal(password, salt, count, expected) { \
 	GString *p = g_string_new(password); \

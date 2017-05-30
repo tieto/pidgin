@@ -58,9 +58,9 @@ G_BEGIN_DECLS
 
 GType purple_pbkdf2_cipher_get_type(void);
 
-PurpleCipher *purple_pbkdf2_cipher_new(PurpleHash *hash);
+PurpleCipher *purple_pbkdf2_cipher_new(GChecksumType hash_type);
 
-PurpleHash *purple_pbkdf2_cipher_get_hash(const PurplePBKDF2Cipher *cipher);
+GChecksumType purple_pbkdf2_cipher_get_hash_type(const PurplePBKDF2Cipher *cipher);
 
 G_END_DECLS
 
