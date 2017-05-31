@@ -22,17 +22,6 @@ do
 	if [ "$tag" == "auto" ] && [ "$arg" == "-shared" ]; then
 		tag="CCLD"
 	fi
-	if [ "$tag" == "PERL" ] && [ "${arg%(*}" == "Mkbootstrap" ]; then
-		object="${arg%;}"
-		is_final=1
-		break
-	fi
-	if [ "$tag" == "PERL" ] && [ "${arg%(*}" == "ExtUtils::ParseXS::process_file" ]; then
-		object="${arg#*output => \"}"
-		object="${object%\", *}"
-		is_final=1
-		break
-	fi
 	ext_1=${arg#${arg%??}}
 	if [ "${ext_1}" == ".c" ]; then
 		file_1="$arg"
@@ -49,10 +38,6 @@ done
 
 if [ "$tag" == "auto" ]; then
 	tag="CC"
-fi
-
-if [ "$tag" == "PERL" ] && [ "$is_final" == 0 ]; then
-	object=`echo "$object" | sed -n 's|.*output *=> *"\([^"]*\)".*|\1|p'`
 fi
 
 if [ "$object" == "" ] && [ "${file_1}" != "" ]; then

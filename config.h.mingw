@@ -180,18 +180,6 @@
 /* Define to 1 if you have the <paths.h> header file. */
 /* #define HAVE_PATHS_H 1 */
 
-/* Compile with support for perl */
-#define HAVE_PERL 1
-
-/* Define to 1 if you have the `Perl_eval_pv' function. */
-/* #undef HAVE_PERL_EVAL_PV */
-
-/* Define to 1 if you have the <perl.h> header file. */
-#define HAVE_PERL_H 1
-
-/* Define to 1 if you have the `perl_run' function. */
-/* #define HAVE_PERL_RUN 1 */
-
 /* Define to 1 if you have the <prio.h> header file. */
 /* #undef HAVE_PRIO_H */
 
@@ -320,9 +308,6 @@
 
 /* Define to 1 if you don't have wide-character support. */
 /* #undef NO_WIDECHAR */
-
-/* Define if old perl is installed. */
-/* #undef OLD_PERL */
 
 /* Name of package */
 #define PACKAGE "pidgin"
