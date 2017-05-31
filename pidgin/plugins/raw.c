@@ -119,7 +119,7 @@ plugin_query(GError **error)
 		"category",     N_("Protocol utility"),
 		"summary",      N_("Lets you send raw input to text-based protocols."),
 		"description",  N_("Lets you send raw input to text-based protocols "
-		                   "(XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry "
+		                   "(XMPP, IRC, TOC). Hit 'Enter' in the entry "
 		                   "box to send. Watch the debug window."),
 		"authors",      authors,
 		"website",      PURPLE_WEBSITE,
