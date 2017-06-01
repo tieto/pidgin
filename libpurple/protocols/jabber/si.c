@@ -301,7 +301,8 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 				jsx->js->user->node, jsx->js->user->domain, jsx->js->user->resource);
 
 		/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
-		hash = jabber_calculate_data_hash(dstaddr, strlen(dstaddr), "sha1");
+		hash = g_compute_checksum_for_string(G_CHECKSUM_SHA1,
+				dstaddr, -1);
 
 		account = purple_connection_get_account(jsx->js->gc);
 		jsx->connect_data = purple_proxy_connect_socks5_account(NULL, account,
@@ -478,7 +479,7 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 			jsx->js->user->resource, purple_xfer_get_remote_user(xfer));
 
 	/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
-	hash = jabber_calculate_data_hash(dstaddr, strlen(dstaddr), "sha1");
+	hash = g_compute_checksum_for_string(G_CHECKSUM_SHA1, dstaddr, -1);
 
 	if(strncmp(hash, jsx->rxqueue + 5, 40) ||
 			jsx->rxqueue[45] != 0x00 || jsx->rxqueue[46] != 0x00) {

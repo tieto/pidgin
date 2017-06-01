@@ -1135,10 +1135,10 @@ jabber_login(PurpleAccount *account)
 	 */
 	image = purple_buddy_icons_find_account_icon(account);
 	if (image != NULL) {
-		js->initial_avatar_hash = jabber_calculate_data_hash(
+		js->initial_avatar_hash = g_compute_checksum_for_data(
+			G_CHECKSUM_SHA1,
 			purple_image_get_data(image),
-			purple_image_get_data_size(image),
-			"sha1"
+			purple_image_get_data_size(image)
 		);
 		g_object_unref(image);
 	}
