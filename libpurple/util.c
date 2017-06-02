@@ -4826,9 +4826,9 @@ gchar *purple_http_digest_calculate_session_key(
 	g_return_val_if_fail(hasher != NULL, NULL);
 
 	g_checksum_update(hasher, (guchar *)username, -1);
-	g_checksum_update(hasher, (guchar *)":", 1);
+	g_checksum_update(hasher, (guchar *)":", -1);
 	g_checksum_update(hasher, (guchar *)realm, -1);
-	g_checksum_update(hasher, (guchar *)":", 1);
+	g_checksum_update(hasher, (guchar *)":", -1);
 	g_checksum_update(hasher, (guchar *)password, -1);
 
 	if (algorithm != NULL && !g_ascii_strcasecmp(algorithm, "MD5-sess"))
@@ -4847,9 +4847,9 @@ gchar *purple_http_digest_calculate_session_key(
 
 		g_checksum_reset(hasher);
 		g_checksum_update(hasher, digest, sizeof(digest));
-		g_checksum_update(hasher, (guchar *)":", 1);
+		g_checksum_update(hasher, (guchar *)":", -1);
 		g_checksum_update(hasher, (guchar *)nonce, -1);
-		g_checksum_update(hasher, (guchar *)":", 1);
+		g_checksum_update(hasher, (guchar *)":", -1);
 		g_checksum_update(hasher, (guchar *)client_nonce, -1);
 	}
 
@@ -4894,7 +4894,7 @@ gchar *purple_http_digest_calculate_response(
 	g_return_val_if_fail(hash != NULL, NULL);
 
 	g_checksum_update(hash, (guchar *)method, -1);
-	g_checksum_update(hash, (guchar *)":", 1);
+	g_checksum_update(hash, (guchar *)":", -1);
 	g_checksum_update(hash, (guchar *)digest_uri, -1);
 
 	if (qop != NULL && !g_ascii_strcasecmp(qop, "auth-int"))
@@ -4916,7 +4916,7 @@ gchar *purple_http_digest_calculate_response(
 			g_return_val_if_reached(NULL);
 		}
 
-		g_checksum_update(hash, (guchar *)":", 1);
+		g_checksum_update(hash, (guchar *)":", -1);
 		g_checksum_update(hash, (guchar *)entity_hash, -1);
 		g_free(entity_hash);
 	}
@@ -4930,9 +4930,9 @@ gchar *purple_http_digest_calculate_response(
 	}
 
 	g_checksum_update(hash, (guchar *)session_key, -1);
-	g_checksum_update(hash, (guchar *)":", 1);
+	g_checksum_update(hash, (guchar *)":", -1);
 	g_checksum_update(hash, (guchar *)nonce, -1);
-	g_checksum_update(hash, (guchar *)":", 1);
+	g_checksum_update(hash, (guchar *)":", -1);
 
 	if (qop != NULL && *qop != '\0')
 	{
@@ -4951,13 +4951,13 @@ gchar *purple_http_digest_calculate_response(
 		}
 
 		g_checksum_update(hash, (guchar *)nonce_count, -1);
-		g_checksum_update(hash, (guchar *)":", 1);
+		g_checksum_update(hash, (guchar *)":", -1);
 		g_checksum_update(hash, (guchar *)client_nonce, -1);
-		g_checksum_update(hash, (guchar *)":", 1);
+		g_checksum_update(hash, (guchar *)":", -1);
 
 		g_checksum_update(hash, (guchar *)qop, -1);
 
-		g_checksum_update(hash, (guchar *)":", 1);
+		g_checksum_update(hash, (guchar *)":", -1);
 	}
 
 	g_checksum_update(hash, (guchar *)hash2, -1);

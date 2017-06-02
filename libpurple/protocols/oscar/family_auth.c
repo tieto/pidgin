@@ -99,7 +99,7 @@ aim_encode_password_md5(const char *password, size_t password_len, const char *k
 	g_checksum_reset(hash);
 
 	g_checksum_update(hash, (const guchar *)key, -1);
-	g_checksum_update(hash, passdigest, 16);
+	g_checksum_update(hash, passdigest, digest_len);
 	g_checksum_update(hash, (const guchar *)AIM_MD5_STRING, -1);
 	g_checksum_get_digest(hash, digest, &digest_len);
 	g_checksum_free(hash);

@@ -826,7 +826,7 @@ append_escaped_string(GChecksum *hash, const gchar *str)
 		g_free(tmp);
 	}
 
-	g_checksum_update(hash, (const guchar *)"<", 1);
+	g_checksum_update(hash, (const guchar *)"<", -1);
 }
 
 gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info,
