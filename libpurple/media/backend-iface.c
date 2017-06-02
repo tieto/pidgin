@@ -23,8 +23,6 @@
 
 #include "backend-iface.h"
 
-#include "marshallers.h"
-
 enum {
 	S_ERROR,
 	CANDIDATES_PREPARED,
@@ -67,34 +65,29 @@ purple_media_backend_base_init(gpointer iface)
 			G_PARAM_STATIC_STRINGS));
 	purple_media_backend_signals[S_ERROR] =
 			g_signal_new("error", G_TYPE_FROM_CLASS(iface),
-			G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-			g_cclosure_marshal_VOID__STRING,
+			G_SIGNAL_RUN_LAST, 0, NULL, NULL, NULL,
 			G_TYPE_NONE, 1, G_TYPE_STRING);
 	purple_media_backend_signals[CANDIDATES_PREPARED] =
 			g_signal_new("candidates-prepared",
 			G_TYPE_FROM_CLASS(iface),
-			G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-			purple_smarshal_VOID__STRING_STRING,
+			G_SIGNAL_RUN_LAST, 0, NULL, NULL, NULL,
 			G_TYPE_NONE, 2, G_TYPE_STRING,
 			G_TYPE_STRING);
 	purple_media_backend_signals[CODECS_CHANGED] =
 			g_signal_new("codecs-changed",
 			G_TYPE_FROM_CLASS(iface),
-			G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-			g_cclosure_marshal_VOID__STRING,
+			G_SIGNAL_RUN_LAST, 0, NULL, NULL, NULL,
 			G_TYPE_NONE, 1, G_TYPE_STRING);
 	purple_media_backend_signals[NEW_CANDIDATE] =
 			g_signal_new("new-candidate",
 			G_TYPE_FROM_CLASS(iface),
-			G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-			purple_smarshal_VOID__POINTER_POINTER_OBJECT,
+			G_SIGNAL_RUN_LAST, 0, NULL, NULL, NULL,
 			G_TYPE_NONE, 3, G_TYPE_POINTER,
 			G_TYPE_POINTER, PURPLE_TYPE_MEDIA_CANDIDATE);
 	purple_media_backend_signals[ACTIVE_CANDIDATE_PAIR] =
 			g_signal_new("active-candidate-pair",
 			G_TYPE_FROM_CLASS(iface),
-			G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-			purple_smarshal_VOID__STRING_STRING_OBJECT_OBJECT,
+			G_SIGNAL_RUN_LAST, 0, NULL, NULL, NULL,
 			G_TYPE_NONE, 4, G_TYPE_STRING, G_TYPE_STRING,
 			PURPLE_TYPE_MEDIA_CANDIDATE,
 			PURPLE_TYPE_MEDIA_CANDIDATE);

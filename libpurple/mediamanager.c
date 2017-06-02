@@ -27,7 +27,6 @@
 #include "mediamanager.h"
 
 #ifdef USE_GSTREAMER
-#include "marshallers.h"
 #include "media-gst.h"
 #include <media/backend-fs2.h>
 #endif /* USE_GSTREAMER */
@@ -172,8 +171,7 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 	purple_media_manager_signals[INIT_MEDIA] = g_signal_new ("init-media",
 		G_TYPE_FROM_CLASS (klass),
 		G_SIGNAL_RUN_LAST,
-		0, NULL, NULL,
-		purple_smarshal_BOOLEAN__OBJECT_POINTER_STRING,
+		0, NULL, NULL, NULL,
 		G_TYPE_BOOLEAN, 3, PURPLE_TYPE_MEDIA,
 		G_TYPE_POINTER, G_TYPE_STRING);
 
@@ -181,16 +179,14 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 		g_signal_new ("init-private-media",
 			G_TYPE_FROM_CLASS (klass),
 			G_SIGNAL_RUN_LAST,
-			0, NULL, NULL,
-			purple_smarshal_BOOLEAN__OBJECT_POINTER_STRING,
+			0, NULL, NULL, NULL,
 			G_TYPE_BOOLEAN, 3, PURPLE_TYPE_MEDIA,
 			G_TYPE_POINTER, G_TYPE_STRING);
 
 	purple_media_manager_signals[UI_CAPS_CHANGED] = g_signal_new ("ui-caps-changed",
 		G_TYPE_FROM_CLASS (klass),
 		G_SIGNAL_RUN_LAST,
-		0, NULL, NULL,
-		purple_smarshal_VOID__FLAGS_FLAGS,
+		0, NULL, NULL, NULL,
 		G_TYPE_NONE, 2, PURPLE_MEDIA_TYPE_CAPS,
 		PURPLE_MEDIA_TYPE_CAPS);
 
@@ -198,8 +194,7 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 		g_signal_new("elements-changed",
 			G_TYPE_FROM_CLASS(klass),
 			G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED,
-			0, NULL, NULL,
-			g_cclosure_marshal_VOID__VOID,
+			0, NULL, NULL, NULL,
 			G_TYPE_NONE, 0);
 
 	g_type_class_add_private(klass, sizeof(PurpleMediaManagerPrivate));
