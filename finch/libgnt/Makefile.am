@@ -1,5 +1,3 @@
-EXTRA_DIST=genmarshal
-
 SUBDIRS = . wms
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gnt.pc
@@ -8,10 +6,7 @@ lib_LTLIBRARIES = libgnt.la
 
 noinst_HEADERS = gntinternal.h
 
-BUILT_SOURCES = gntmarshal.h
-
 libgnt_la_SOURCES = \
-	gntmarshal.c \
 	gntwidget.c \
 	gntbindable.c \
 	gntbox.c \
@@ -53,7 +48,6 @@ libgnt_la_headers = \
 	gntkeys.h \
 	gntlabel.h \
 	gntline.h \
-	gntmarshal.h \
 	gntmenu.h \
 	gntmenuitem.h \
 	gntmenuitemcheck.h \
@@ -67,17 +61,6 @@ libgnt_la_headers = \
 	gntwm.h \
 	gntws.h \
 	gnt.h
-
-CLEANFILES = \
-	gntmarshal.h \
-	gntmarshal.c
-
-gntmarshal.c: $(srcdir)/genmarshal gntmarshal.h
-	$(AM_V_GEN)echo "#include \"gntmarshal.h\"" > $@
-	$(AM_V_at)glib-genmarshal --prefix=gnt_closure_marshal --body $(srcdir)/genmarshal >> $@
-
-gntmarshal.h: $(srcdir)/genmarshal
-	$(AM_V_GEN)glib-genmarshal --prefix=gnt_closure_marshal --header $(srcdir)/genmarshal > $@
 
 libgnt_laincludedir=$(includedir)/gnt
 libgnt_lainclude_HEADERS = \
@@ -147,5 +130,5 @@ typelibdir = \
 	$(INTROSPECTION_TYPELIBDIR)
 typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
-CLEANFILES += $(gir_DATA) $(typelib_DATA)
+CLEANFILES = $(gir_DATA) $(typelib_DATA)
 endif

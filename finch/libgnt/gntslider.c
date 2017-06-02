@@ -202,8 +202,7 @@ gnt_slider_class_init(GntSliderClass *klass)
 		             G_TYPE_FROM_CLASS(klass),
 		             G_SIGNAL_RUN_LAST,
 		             G_STRUCT_OFFSET(GntSliderClass, changed),
-		             NULL, NULL,
-		             g_cclosure_marshal_VOID__INT,
+		             NULL, NULL, NULL,
 		             G_TYPE_NONE, 1, G_TYPE_INT);
 
 	gnt_bindable_class_register_action(bindable, "step-backward", step_back, GNT_KEY_LEFT, NULL);

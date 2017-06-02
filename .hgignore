@@ -64,7 +64,6 @@ doc/reference/.*/html/.*
 doc/reference/.*/xml/.*
 doc/reference/.*/version.xml
 finch/finch$
-finch/libgnt/gntmarshal.[ch]
 gtk-doc.make
 install-sh
 intltool-.*

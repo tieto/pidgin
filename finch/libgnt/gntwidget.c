@@ -25,7 +25,6 @@
 #include "gntinternal.h"
 #include "gntwidget.h"
 #include "gntstyle.h"
-#include "gntmarshal.h"
 #include "gntutils.h"
 
 enum
@@ -135,104 +134,91 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, destroy),
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 	signals[SIG_GIVE_FOCUS] =
 		g_signal_new("gained-focus",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, gained_focus),
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 	signals[SIG_LOST_FOCUS] =
 		g_signal_new("lost-focus",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, lost_focus),
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 	signals[SIG_ACTIVATE] =
 		g_signal_new("activate",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, activate),
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 	signals[SIG_MAP] =
 		g_signal_new("map",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, map),
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 	signals[SIG_DRAW] =
 		g_signal_new("draw",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, draw),
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 	signals[SIG_HIDE] =
 		g_signal_new("hide",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, hide),
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 	signals[SIG_EXPOSE] =
 		g_signal_new("expose",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, expose),
-					 NULL, NULL,
-					 gnt_closure_marshal_VOID__INT_INT_INT_INT,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 4, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
 	signals[SIG_POSITION] =
 		g_signal_new("position-set",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, set_position),
-					 NULL, NULL,
-					 gnt_closure_marshal_VOID__INT_INT,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 2, G_TYPE_INT, G_TYPE_INT);
 	signals[SIG_SIZE_REQUEST] =
 		g_signal_new("size_request",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, size_request),
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 	signals[SIG_SIZE_CHANGED] =
 		g_signal_new("size_changed",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, size_changed),
-					 NULL, NULL,
-					 gnt_closure_marshal_VOID__INT_INT,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 2, G_TYPE_INT, G_TYPE_INT);
 	signals[SIG_CONFIRM_SIZE] =
 		g_signal_new("confirm_size",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, confirm_size),
-					 NULL, NULL,
-					 gnt_closure_marshal_BOOLEAN__INT_INT,
+					 NULL, NULL, NULL,
 					 G_TYPE_BOOLEAN, 2, G_TYPE_INT, G_TYPE_INT);
 	signals[SIG_KEY_PRESSED] =
 		g_signal_new("key_pressed",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, key_pressed),
-					 gnt_boolean_handled_accumulator, NULL,
-					 gnt_closure_marshal_BOOLEAN__STRING,
+					 gnt_boolean_handled_accumulator, NULL, NULL,
 					 G_TYPE_BOOLEAN, 1, G_TYPE_STRING);
 
 	signals[SIG_CLICKED] =
@@ -240,8 +226,7 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, clicked),
-					 gnt_boolean_handled_accumulator, NULL,
-					 gnt_closure_marshal_BOOLEAN__INT_INT_INT,
+					 gnt_boolean_handled_accumulator, NULL, NULL,
 					 G_TYPE_BOOLEAN, 3, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
 
 	signals[SIG_CONTEXT_MENU] =
@@ -249,8 +234,7 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 0,
-					 gnt_boolean_handled_accumulator, NULL,
-					 gnt_closure_marshal_BOOLEAN__VOID,
+					 gnt_boolean_handled_accumulator, NULL, NULL,
 					 G_TYPE_BOOLEAN, 0);
 
 	/* This is relevant for all widgets */
