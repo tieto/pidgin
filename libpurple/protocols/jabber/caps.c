@@ -455,11 +455,7 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 	if (userdata->hash) {
 		gchar *hash = NULL;
 		GChecksumType hash_type = G_CHECKSUM_SHA1;
-		/*
-		 * TODO: If you add *any* hash here, make sure the checksum buffer
-		 * size in jabber_caps_calculate_hash is large enough. The cipher API
-		 * doesn't seem to offer a "Get the hash size" function(?).
-		 */
+
 		if (g_str_equal(userdata->hash, "sha-1")) {
 			hash_type = G_CHECKSUM_SHA1;
 		} else if (g_str_equal(userdata->hash, "md5")) {
@@ -832,8 +828,9 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info,
 {
 	GChecksum *hash;
 	GList *node;
-	guint8 checksum[20];
-	gsize checksum_size = 20;
+	guint8 *checksum;
+	gsize checksum_size;
+	gchar *ret;
 
 	if (!info)
 		return NULL;
@@ -915,10 +912,16 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info,
 		}
 	}
 
+	checksum_size = g_checksum_type_get_length(hash_type);
+	checksum = g_new(guint8, checksum_size);
+
 	/* generate hash */
 	g_checksum_get_digest(hash, checksum, &checksum_size);
 
-	return purple_base64_encode(checksum, checksum_size);
+	ret = purple_base64_encode(checksum, checksum_size);
+	g_free(checksum);
+
+	return ret;
 }
 
 void jabber_caps_calculate_own_hash(JabberStream *js) {
