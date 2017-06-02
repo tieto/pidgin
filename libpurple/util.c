@@ -1349,8 +1349,7 @@ const char *
 purple_markup_unescape_entity(const char *text, int *length)
 {
 	const char *pln;
-	int len, pound;
-	char temp[2];
+	int len;
 
 	if (!text || *text != '&')
 		return NULL;
