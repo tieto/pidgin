@@ -454,14 +454,20 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 	/* Only validate if these are v1.5 capabilities */
 	if (userdata->hash) {
 		gchar *hash = NULL;
-		GChecksumType hash_type = G_CHECKSUM_SHA1;
+		GChecksumType hash_type;
+		gboolean supported_hash = TRUE;
 
 		if (g_str_equal(userdata->hash, "sha-1")) {
 			hash_type = G_CHECKSUM_SHA1;
 		} else if (g_str_equal(userdata->hash, "md5")) {
 			hash_type = G_CHECKSUM_MD5;
+		} else {
+			supported_hash = FALSE;
 		}
-		hash = jabber_caps_calculate_hash(info, hash_type);
+
+		if (supported_hash) {
+			hash = jabber_caps_calculate_hash(info, hash_type);
+		}
 
 		if (!hash || !g_str_equal(hash, userdata->ver)) {
 			purple_debug_warning("jabber", "Could not validate caps info from "
