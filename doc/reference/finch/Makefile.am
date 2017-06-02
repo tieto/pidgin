@@ -103,6 +103,7 @@ GTKDOC_CFLAGS = \
 
 GTKDOC_LIBS = \
 	$(top_builddir)/finch/libfinch.la \
+	$(top_builddir)/libpurple/libpurple.la \
 	$(DBUS_LIBS) \
 	$(INTLLIBS) \
 	$(GLIB_LIBS) \
