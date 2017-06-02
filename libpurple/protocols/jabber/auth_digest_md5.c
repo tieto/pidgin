@@ -106,7 +106,6 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		const char *cnonce, const char *a2, const char *realm)
 {
 	GChecksum *hash;
-	size_t a1len;
 	gsize digest_len = 16;
 
 	gchar *a1, *convnode=NULL, *convpasswd = NULL, *ha1, *ha2, *kd, *x, *z;
@@ -126,12 +125,11 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 	g_checksum_update(hash, (const guchar *)x, -1);
 
 	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
-	a1len = strlen(a1);
 
 	g_checksum_get_digest(hash, (guint8 *)a1, &digest_len);
 	g_checksum_free(hash);
 
-	ha1 = g_compute_checksum_for_string(G_CHECKSUM_MD5, a1, a1len);
+	ha1 = g_compute_checksum_for_string(G_CHECKSUM_MD5, a1, -1);
 	ha2 = g_compute_checksum_for_string(G_CHECKSUM_MD5, a2, -1);
 
 	kd = g_strdup_printf("%s:%s:00000001:%s:auth:%s", ha1, nonce, cnonce, ha2);
