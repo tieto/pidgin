@@ -155,6 +155,7 @@ digest_md5_handle_challenge(JabberStream *js, PurpleXmlNode *packet,
 	char *enc_in = purple_xmlnode_get_data(packet);
 	char *dec_in;
 	char *enc_out;
+	gsize size = 0;
 	GHashTable *parts;
 	JabberSaslState state = JABBER_SASL_STATE_CONTINUE;
 
@@ -163,10 +164,10 @@ digest_md5_handle_challenge(JabberStream *js, PurpleXmlNode *packet,
 		return JABBER_SASL_STATE_FAIL;
 	}
 
-	dec_in = (char *)purple_base64_decode(enc_in, NULL);
+	dec_in = (char *)g_base64_decode(enc_in, &size);
 	purple_debug_misc("jabber", "decoded challenge (%"
 			G_GSIZE_FORMAT "): %s\n",
-			strlen(dec_in),
+			size,
 			dec_in);
 
 	parts = jabber_auth_digest_md5_parse(dec_in);
@@ -238,7 +239,7 @@ digest_md5_handle_challenge(JabberStream *js, PurpleXmlNode *packet,
 			g_free(auth_resp);
 			g_free(cnonce);
 
-			enc_out = purple_base64_encode((guchar *)response->str, response->len);
+			enc_out = g_base64_encode((guchar *)response->str, response->len);
 
 			purple_debug_misc("jabber", "decoded response (%"
 					G_GSIZE_FORMAT "): %s\n",

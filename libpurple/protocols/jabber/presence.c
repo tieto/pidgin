@@ -458,7 +458,7 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 
 			if ((binval = purple_xmlnode_get_child(photo, "BINVAL")) &&
 					(text = purple_xmlnode_get_data(binval))) {
-				data = purple_base64_decode(text, &size);
+				data = g_base64_decode(text, &size);
 				g_free(text);
 
 				if (data)

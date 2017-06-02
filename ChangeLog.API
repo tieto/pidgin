@@ -417,6 +417,7 @@ version 3.0.0 (??/??/????):
 		* purple_account_add_buddies_with_invite
 		* purple_account_add_buddy_with_invite
 		* purple_account_set_current_error
+		* purple_base64_*. Use g_base64_* instead
 		* purple_blist_load
 		* purple_blist_new
 		* purple_set_blist

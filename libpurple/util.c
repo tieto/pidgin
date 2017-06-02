@@ -254,34 +254,12 @@ purple_base16_encode_chunked(const guchar *data, gsize len)
 	return ascii;
 }
 
-
 /**************************************************************************
- * Base64 Functions
+ * Quoted Printable Functions (see RFC 2045).
  **************************************************************************/
 static const char xdigits[] =
 	"0123456789abcdef";
 
-gchar *
-purple_base64_encode(const guchar *data, gsize len)
-{
-	return g_base64_encode(data, len);
-}
-
-guchar *
-purple_base64_decode(const char *str, gsize *ret_len)
-{
-	/*
-	 * We want to allow ret_len to be NULL for backward compatibility,
-	 * but g_base64_decode() requires a valid length variable.  So if
-	 * ret_len is NULL then pass in a dummy variable.
-	 */
-	gsize unused;
-	return g_base64_decode(str, ret_len != NULL ? ret_len : &unused);
-}
-
-/**************************************************************************
- * Quoted Printable Functions (see RFC 2045).
- **************************************************************************/
 guchar *
 purple_quotedp_decode(const char *str, gsize *ret_len)
 {
@@ -441,7 +419,7 @@ purple_mime_decode_field(const char *str)
 				if (g_ascii_strcasecmp(encoding, "Q") == 0)
 					decoded = purple_quotedp_decode(encoded_text, &dec_len);
 				else if (g_ascii_strcasecmp(encoding, "B") == 0)
-					decoded = purple_base64_decode(encoded_text, &dec_len);
+					decoded = g_base64_decode(encoded_text, &dec_len);
 				else
 					decoded = NULL;
 				if (decoded) {

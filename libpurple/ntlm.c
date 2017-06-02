@@ -139,7 +139,7 @@ purple_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 	memcpy(msg + host_off, hostname, hostnamelen);
 	memcpy(msg + dom_off, domain, domainlen);
 
-	tmp = purple_base64_encode(msg, sizeof(struct type1_message) + hostnamelen + domainlen);
+	tmp = g_base64_encode(msg, sizeof(struct type1_message) + hostnamelen + domainlen);
 	g_free(msg);
 
 	return tmp;
@@ -153,7 +153,7 @@ purple_ntlm_parse_type2(const gchar *type2, guint32 *flags)
 	struct type2_message tmsg;
 	static guint8 nonce[8];
 
-	buff = purple_base64_decode(type2, &retlen);
+	buff = g_base64_decode(type2, &retlen);
 
 	if (buff != NULL && retlen >= (sizeof(struct type2_message) - 1)) {
 		memcpy(&tmsg, buff, MIN(retlen, sizeof(tmsg)));
@@ -397,7 +397,7 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 	/*tmsg->flags2 = 0x0a280105;
 	tmsg->flags3 = 0x0f000000;*/
 
-	tmp = purple_base64_encode((guchar *)tmsg, msglen);
+	tmp = g_base64_encode((guchar *)tmsg, msglen);
 	g_free(tmsg);
 
 	return tmp;

@@ -56,7 +56,7 @@ static gchar *gg_hmac_sha1(const char *key, const char *message)
 	g_hmac_get_digest(hmac, digest, &digest_len);
 	g_hmac_unref(hmac);
 
-	return purple_base64_encode(digest, sizeof(digest));
+	return g_base64_encode(digest, sizeof(digest));
 }
 
 static char *

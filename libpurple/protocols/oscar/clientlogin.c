@@ -128,7 +128,7 @@ static gchar *hmac_sha256(const char *key, const char *message)
 	g_hmac_get_digest(hmac, digest, &digest_len);
 	g_hmac_unref(hmac);
 
-	return purple_base64_encode(digest, sizeof(digest));
+	return g_base64_encode(digest, sizeof(digest));
 }
 
 /**
@@ -339,7 +339,7 @@ start_oscar_session_cb(PurpleHttpConnection *http_conn,
 	if (!parse_start_oscar_session_response(gc, got_data, got_len, &host, &port, &cookie, &tls_certname))
 		return;
 
-	cookiedata = purple_base64_decode(cookie, &cookiedata_len);
+	cookiedata = g_base64_decode(cookie, &cookiedata_len);
 	oscar_connect_to_bos(gc, od, host, port, cookiedata, cookiedata_len, tls_certname);
 	g_free(cookiedata);
 

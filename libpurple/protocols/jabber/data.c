@@ -109,7 +109,7 @@ jabber_data_create_from_xml(PurpleXmlNode *tag)
 	}
 
 	data = g_new0(JabberData, 1);
-	data->data = purple_base64_decode(raw_data, &data->size);
+	data->data = g_base64_decode(raw_data, &data->size);
 	g_free(raw_data);
 
 	if (data->data == NULL) {
@@ -174,7 +174,7 @@ jabber_data_get_xml_definition(const JabberData *data)
 	g_return_val_if_fail(data != NULL, NULL);
 
 	tag = purple_xmlnode_new("data");
-	base64data = purple_base64_encode(data->data, data->size);
+	base64data = g_base64_encode(data->data, data->size);
 
 	purple_xmlnode_set_namespace(tag, NS_BOB);
 	purple_xmlnode_set_attrib(tag, "cid", data->cid);

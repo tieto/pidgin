@@ -335,7 +335,7 @@ jabber_ibb_session_send_data(JabberIBBSession *sess, gconstpointer data,
 		JabberIq *set = jabber_iq_new(jabber_ibb_session_get_js(sess),
 			JABBER_IQ_SET);
 		PurpleXmlNode *data_element = purple_xmlnode_new("data");
-		char *base64 = purple_base64_encode(data, size);
+		char *base64 = g_base64_encode(data, size);
 		char seq[10];
 		g_snprintf(seq, sizeof(seq), "%u", jabber_ibb_session_get_send_seq(sess));
 
@@ -415,7 +415,7 @@ jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
 				if (sess->data_received_cb) {
 					gchar *base64 = purple_xmlnode_get_data(child);
 					gsize size;
-					gpointer rawdata = purple_base64_decode(base64, &size);
+					gpointer rawdata = g_base64_decode(base64, &size);
 
 					g_free(base64);
 

@@ -924,7 +924,7 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info,
 	/* generate hash */
 	g_checksum_get_digest(hash, checksum, &checksum_size);
 
-	ret = purple_base64_encode(checksum, checksum_size);
+	ret = g_base64_encode(checksum, checksum_size);
 	g_free(checksum);
 
 	return ret;

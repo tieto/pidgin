@@ -246,7 +246,7 @@ parse_server_step1(JabberScramData *data, const char *challenge,
 	if (token[0] != 's' || token[1] != '=')
 		goto err;
 
-	decoded = (gchar *)purple_base64_decode(token + 2, &len);
+	decoded = (gchar *)g_base64_decode(token + 2, &len);
 	if (!decoded || *decoded == '\0') {
 		g_free(decoded);
 		goto err;
@@ -337,7 +337,7 @@ jabber_scram_feed_parser(JabberScramData *data, gchar *in, gchar **out)
 			return FALSE;
 		}
 
-		proof = purple_base64_encode((guchar *)data->client_proof->str, data->client_proof->len);
+		proof = g_base64_encode((guchar *)data->client_proof->str, data->client_proof->len);
 		*out = g_strdup_printf("c=%s,r=%s,p=%s", "biws", nonce, proof);
 		g_free(nonce);
 		g_free(proof);
@@ -349,7 +349,7 @@ jabber_scram_feed_parser(JabberScramData *data, gchar *in, gchar **out)
 		if (!ret)
 			return FALSE;
 
-		server_sig = (gchar *)purple_base64_decode(enc_server_sig, &len);
+		server_sig = (gchar *)g_base64_decode(enc_server_sig, &len);
 		g_free(enc_server_sig);
 
 		if (server_sig == NULL || len != data->server_signature->len) {
@@ -421,7 +421,7 @@ scram_start(JabberStream *js, PurpleXmlNode *mechanisms, PurpleXmlNode **out, ch
 		data->channel_binding = TRUE;
 #endif
 	cnonce = ((guint64)g_random_int() << 32) | g_random_int();
-	data->cnonce = purple_base64_encode((guchar *)&cnonce, sizeof(cnonce));
+	data->cnonce = g_base64_encode((guchar *)&cnonce, sizeof(cnonce));
 
 	data->auth_message = g_string_new(NULL);
 	g_string_printf(data->auth_message, "n=%s,r=%s",
@@ -436,7 +436,7 @@ scram_start(JabberStream *js, PurpleXmlNode *mechanisms, PurpleXmlNode **out, ch
 
 	/* TODO: Channel binding */
 	dec_out = g_strdup_printf("%c,,%s", 'n', data->auth_message->str);
-	enc_out = purple_base64_encode((guchar *)dec_out, strlen(dec_out));
+	enc_out = g_base64_encode((guchar *)dec_out, strlen(dec_out));
 	purple_debug_misc("jabber", "initial SCRAM message '%s'\n", dec_out);
 
 	purple_xmlnode_insert_data(reply, enc_out, -1);
@@ -467,7 +467,7 @@ scram_handle_challenge(JabberStream *js, PurpleXmlNode *challenge, PurpleXmlNode
 		goto out;
 	}
 
-	dec_in = (gchar *)purple_base64_decode(enc_in, &len);
+	dec_in = (gchar *)g_base64_decode(enc_in, &len);
 	if (!dec_in || len != strlen(dec_in)) {
 		/* Danger afoot; SCRAM shouldn't contain NUL bytes */
 		reply = purple_xmlnode_new("abort");
@@ -494,7 +494,7 @@ scram_handle_challenge(JabberStream *js, PurpleXmlNode *challenge, PurpleXmlNode
 
 	purple_debug_misc("jabber", "decoded response: %s\n", dec_out ? dec_out : "(null)");
 	if (dec_out) {
-		enc_out = purple_base64_encode((guchar *)dec_out, strlen(dec_out));
+		enc_out = g_base64_encode((guchar *)dec_out, strlen(dec_out));
 		purple_xmlnode_insert_data(reply, enc_out, -1);
 	}
 
@@ -540,7 +540,7 @@ scram_handle_success(JabberStream *js, PurpleXmlNode *packet, char **error)
 		return JABBER_SASL_STATE_FAIL;
 	}
 
-	dec_in = (gchar *)purple_base64_decode(enc_in, &len);
+	dec_in = (gchar *)g_base64_decode(enc_in, &len);
 	g_free(enc_in);
 	if (!dec_in || len != strlen(dec_in)) {
 		/* Danger afoot; SCRAM shouldn't contain NUL bytes */

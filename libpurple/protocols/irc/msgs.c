@@ -1660,7 +1660,7 @@ irc_msg_auth(struct irc_conn *irc, char *arg)
 		return;
 
 	if (arg[0] != '+')
-		serverin = (char *)purple_base64_decode(arg, &serverinlen);
+		serverin = (char *)g_base64_decode(arg, &serverinlen);
 
 	ret = sasl_client_step(irc->sasl_conn, serverin, serverinlen,
 		NULL, &c_out, &clen);
@@ -1678,7 +1678,7 @@ irc_msg_auth(struct irc_conn *irc, char *arg)
 	}
 
 	if (clen > 0)
-		authinfo = purple_base64_encode((const guchar*)c_out, clen);
+		authinfo = g_base64_encode((const guchar*)c_out, clen);
 	else
 		authinfo = g_strdup("+");
 

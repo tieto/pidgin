@@ -528,7 +528,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		type = purple_xmlnode_new_child(photo, "TYPE");
 		purple_xmlnode_insert_data(type, "image/png", -1);
 		binval = purple_xmlnode_new_child(photo, "BINVAL");
-		enc = purple_base64_encode(avatar_data, avatar_len);
+		enc = g_base64_encode(avatar_data, avatar_len);
 
 		js->avatar_hash = g_compute_checksum_for_data(G_CHECKSUM_SHA1,
 			avatar_data, avatar_len);
@@ -957,7 +957,7 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 		gsize size;
 		char *bintext = purple_xmlnode_get_data(binval);
 		if (bintext) {
-			guchar *data = purple_base64_decode(bintext, &size);
+			guchar *data = g_base64_decode(bintext, &size);
 			g_free(bintext);
 
 			if (data) {
@@ -1201,7 +1201,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 					guchar *data;
 					gboolean photo = (strcmp(child->name, "PHOTO") == 0);
 
-					data = purple_base64_decode(bintext, &size);
+					data = g_base64_decode(bintext, &size);
 					if (data) {
 						PurpleImage *img;
 						guint img_id;

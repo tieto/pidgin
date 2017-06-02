@@ -138,7 +138,7 @@ intkeyring_buff_from_base64(const gchar *base64)
 	guchar *data;
 	gsize len;
 
-	data = purple_base64_decode(base64, &len);
+	data = g_base64_decode(base64, &len);
 
 	return intkeyring_buff_new(data, len);
 }
@@ -278,7 +278,7 @@ intkeyring_encrypt(intkeyring_buff_t *key, const gchar *str)
 	if (encrypted_size < 0)
 		return NULL;
 
-	return purple_base64_encode(encrypted_raw, encrypted_size);
+	return g_base64_encode(encrypted_raw, encrypted_size);
 
 }
 
@@ -300,7 +300,7 @@ intkeyring_decrypt(intkeyring_buff_t *key, const gchar *str)
 	cipher = purple_aes_cipher_new();
 	g_return_val_if_fail(cipher != NULL, NULL);
 
-	encrypted_raw = purple_base64_decode(str, &encrypted_size);
+	encrypted_raw = g_base64_decode(str, &encrypted_size);
 	g_return_val_if_fail(encrypted_raw != NULL, NULL);
 
 	iv_len = purple_cipher_get_block_size(cipher);
@@ -374,7 +374,7 @@ intkeyring_change_masterpw(const gchar *new_password)
 		 * but it's not a problem.
 		 */
 		verifier = intkeyring_encrypt(key, INTKEYRING_VERIFY_STR);
-		salt_b64 = purple_base64_encode(salt->data, salt->len);
+		salt_b64 = g_base64_encode(salt->data, salt->len);
 	}
 
 	if (!verifier || !salt_b64) {
