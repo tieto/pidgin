@@ -10,9 +10,6 @@ test_programs=\
 	test_des3 \
 	test_image \
 	test_md4 \
-	test_md5 \
-	test_sha1 \
-	test_sha256 \
 	test_smiley \
 	test_trie \
 	test_util \
@@ -29,15 +26,6 @@ test_image_LDADD=$(COMMON_LIBS)
 
 test_md4_SOURCES=test_md4.c
 test_md4_LDADD=$(COMMON_LIBS)
-
-test_md5_SOURCES=test_md5.c
-test_md5_LDADD=$(COMMON_LIBS)
-
-test_sha1_SOURCES=test_sha1.c
-test_sha1_LDADD=$(COMMON_LIBS)
-
-test_sha256_SOURCES=test_sha256.c
-test_sha256_LDADD=$(COMMON_LIBS)
 
 test_smiley_SOURCES=test_smiley.c
 test_smiley_LDADD=$(COMMON_LIBS)

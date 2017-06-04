@@ -30,9 +30,6 @@
 #include "util.h"
 #include "xdata.h"
 
-#include "ciphers/md5hash.h"
-#include "ciphers/sha1hash.h"
-
 #define JABBER_CAPS_FILENAME "xmpp-caps.xml"
 
 typedef struct _JabberDataFormField {
@@ -457,19 +454,20 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 	/* Only validate if these are v1.5 capabilities */
 	if (userdata->hash) {
 		gchar *hash = NULL;
-		PurpleHash *hasher = NULL;
-		/*
-		 * TODO: If you add *any* hash here, make sure the checksum buffer
-		 * size in jabber_caps_calculate_hash is large enough. The cipher API
-		 * doesn't seem to offer a "Get the hash size" function(?).
-		 */
+		GChecksumType hash_type;
+		gboolean supported_hash = TRUE;
+
 		if (g_str_equal(userdata->hash, "sha-1")) {
-			hasher = purple_sha1_hash_new();
+			hash_type = G_CHECKSUM_SHA1;
 		} else if (g_str_equal(userdata->hash, "md5")) {
-			hasher = purple_md5_hash_new();
+			hash_type = G_CHECKSUM_MD5;
+		} else {
+			supported_hash = FALSE;
 		}
-		hash = jabber_caps_calculate_hash(info, hasher);
-		g_object_unref(hasher);
+
+		if (supported_hash) {
+			hash = jabber_caps_calculate_hash(info, hash_type);
+		}
 
 		if (!hash || !g_str_equal(hash, userdata->ver)) {
 			purple_debug_warning("jabber", "Could not validate caps info from "
@@ -818,33 +816,41 @@ static GList* jabber_caps_xdata_get_fields(const PurpleXmlNode *x)
 }
 
 static void
-append_escaped_string(PurpleHash *hash, const gchar *str)
+append_escaped_string(GChecksum *hash, const gchar *str)
 {
 	g_return_if_fail(hash != NULL);
 
 	if (str && *str) {
 		char *tmp = g_markup_escape_text(str, -1);
-		purple_hash_append(hash, (const guchar *)tmp, strlen(tmp));
+		g_checksum_update(hash, (const guchar *)tmp, -1);
 		g_free(tmp);
 	}
 
-	purple_hash_append(hash, (const guchar *)"<", 1);
+	g_checksum_update(hash, (const guchar *)"<", -1);
 }
 
-gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleHash *hash)
+gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info,
+	GChecksumType hash_type)
 {
+	GChecksum *hash;
 	GList *node;
-	guint8 checksum[20];
-	gsize checksum_size = 20;
-	gboolean success;
+	guint8 *checksum;
+	gsize checksum_size;
+	gchar *ret;
 
-	if (!info || !hash)
+	if (!info)
 		return NULL;
 
 	/* sort identities, features and x-data forms */
 	info->identities = g_list_sort(info->identities, jabber_identity_compare);
 	info->features = g_list_sort(info->features, (GCompareFunc)strcmp);
 	info->forms = g_list_sort(info->forms, jabber_xdata_compare);
+
+	hash = g_checksum_new(hash_type);
+
+	if (hash == NULL) {
+		return NULL;
+	}
 
 	/* Add identities to the hash data */
 	for (node = info->identities; node; node = node->next) {
@@ -863,7 +869,7 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleHash *hash)
 		tmp = g_strconcat(category, "/", type, "/", lang ? lang : "",
 		                  "/", name ? name : "", "<", NULL);
 
-		purple_hash_append(hash, (const guchar *)tmp, strlen(tmp));
+		g_checksum_update(hash, (const guchar *)tmp, -1);
 
 		g_free(tmp);
 		g_free(category);
@@ -912,16 +918,20 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleHash *hash)
 		}
 	}
 
-	/* generate hash */
-	success = purple_hash_digest(hash, checksum, checksum_size);
-	checksum_size = purple_hash_get_digest_size(hash);
+	checksum_size = g_checksum_type_get_length(hash_type);
+	checksum = g_new(guint8, checksum_size);
 
-	return (success ? purple_base64_encode(checksum, checksum_size) : NULL);
+	/* generate hash */
+	g_checksum_get_digest(hash, checksum, &checksum_size);
+
+	ret = purple_base64_encode(checksum, checksum_size);
+	g_free(checksum);
+
+	return ret;
 }
 
 void jabber_caps_calculate_own_hash(JabberStream *js) {
 	JabberCapsClientInfo info;
-	PurpleHash *hasher;
 	GList *iter = NULL;
 	GList *features = NULL;
 
@@ -952,9 +962,7 @@ void jabber_caps_calculate_own_hash(JabberStream *js) {
 	info.forms = NULL;
 
 	g_free(js->caps_hash);
-	hasher = purple_sha1_hash_new();
-	js->caps_hash = jabber_caps_calculate_hash(&info, hasher);
-	g_object_unref(hasher);
+	js->caps_hash = jabber_caps_calculate_hash(&info, G_CHECKSUM_SHA1);
 	g_list_free(info.identities);
 	g_list_free(info.features);
 }

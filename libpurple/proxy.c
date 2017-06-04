@@ -27,7 +27,6 @@
 #define _PURPLE_PROXY_C_
 
 #include "internal.h"
-#include "ciphers/md5hash.h"
 #include "debug.h"
 #include "http.h"
 #include "notify.h"

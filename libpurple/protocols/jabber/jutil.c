@@ -32,10 +32,6 @@
 #include "presence.h"
 #include "jutil.h"
 
-#include "ciphers/sha1hash.h"
-#include "ciphers/sha256hash.h"
-#include "ciphers/md5hash.h"
-
 #ifdef USE_IDN
 #include <idna.h>
 #include <stringprep.h>
@@ -778,38 +774,5 @@ jabber_buddy_state_get_status_id(JabberBuddyState state)
 			return jabber_statuses[i].status_id;
 
 	return NULL;
-}
-
-char *
-jabber_calculate_data_hash(gconstpointer data, size_t len,
-    const gchar *hash_algo)
-{
-	PurpleHash *hash = NULL;
-	static gchar digest[129]; /* 512 bits hex + \0 */
-
-	if (g_str_equal(hash_algo, "sha1"))
-		hash = purple_sha1_hash_new();
-	else if (g_str_equal(hash_algo, "sha256"))
-		hash = purple_sha256_hash_new();
-	else if (g_str_equal(hash_algo, "md5"))
-		hash = purple_md5_hash_new();
-
-	if (hash == NULL)
-	{
-		purple_debug_error("jabber", "Unexpected hashing algorithm %s requested\n", hash_algo);
-		g_return_val_if_reached(NULL);
-	}
-
-	/* Hash the data */
-	purple_hash_append(hash, data, len);
-	if (!purple_hash_digest_to_str(hash, digest, sizeof(digest)))
-	{
-		purple_debug_error("jabber", "Failed to get digest for %s cipher.\n",
-		    hash_algo);
-		g_return_val_if_reached(NULL);
-	}
-	g_object_unref(G_OBJECT(hash));
-
-	return g_strdup(digest);
 }
 

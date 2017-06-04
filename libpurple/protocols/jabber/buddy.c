@@ -472,10 +472,10 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		g_free(js->initial_avatar_hash);
 		image = purple_buddy_icons_find_account_icon(purple_connection_get_account(gc));
 		if (image != NULL) {
-			js->initial_avatar_hash = jabber_calculate_data_hash(
+			js->initial_avatar_hash = g_compute_checksum_for_data(
+				G_CHECKSUM_SHA1,
 				purple_image_get_data(image),
-				purple_image_get_data_size(image),
-				"sha1"
+				purple_image_get_data_size(image)
 			);
 			g_object_unref(image);
 		} else {
@@ -530,8 +530,8 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		binval = purple_xmlnode_new_child(photo, "BINVAL");
 		enc = purple_base64_encode(avatar_data, avatar_len);
 
-		js->avatar_hash =
-			jabber_calculate_data_hash(avatar_data, avatar_len, "sha1");
+		js->avatar_hash = g_compute_checksum_for_data(G_CHECKSUM_SHA1,
+			avatar_data, avatar_len);
 
 		purple_xmlnode_insert_data(binval, enc, -1);
 		g_free(enc);
@@ -961,7 +961,8 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 			g_free(bintext);
 
 			if (data) {
-				vcard_hash = jabber_calculate_data_hash(data, size, "sha1");
+				vcard_hash = g_compute_checksum_for_data(
+					G_CHECKSUM_SHA1, data, size);
 				g_free(data);
 			}
 		}
@@ -1216,7 +1217,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 
 						purple_notify_user_info_add_pair_html(user_info, (photo ? _("Photo") : _("Logo")), img_text);
 
-						hash = jabber_calculate_data_hash(data, size, "sha1");
+						hash = g_compute_checksum_for_data(G_CHECKSUM_SHA1, data, size);
 						purple_buddy_icons_set_for_user(account, bare_jid, data, size, hash);
 						g_free(hash);
 						g_free(img_text);

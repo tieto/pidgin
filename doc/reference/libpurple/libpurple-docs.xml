@@ -114,9 +114,6 @@
         <xi:include href="xml/pbkdf2cipher.xml" />
         <xi:include href="xml/rc4cipher.xml" />
         <xi:include href="xml/md4hash.xml" />
-        <xi:include href="xml/md5hash.xml" />
-        <xi:include href="xml/sha1hash.xml" />
-        <xi:include href="xml/sha256hash.xml" />
     </chapter>
 
     <chapter id="smiley">
