@@ -7,8 +7,6 @@
 PIDGIN_TREE_TOP := ../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
-PERL_PLUGIN := ./perl
-SSL_PLUGIN := ./ssl
 KEYRING_PLUGIN := ./keyrings
 
 .SUFFIXES:
@@ -45,13 +43,9 @@ LIBS =	\
 .PHONY: all clean plugins install
 
 all: $(PURPLE_DLL).a plugins
-	$(MAKE_at) $(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE)
-	$(MAKE_at) $(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE)
 	$(MAKE_at) $(MAKE) -C $(KEYRING_PLUGIN) -f $(MINGW_MAKEFILE)
 
 install: all $(PURPLE_INSTALL_PLUGINS_DIR)
-	$(MAKE_at) $(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE) install
-	$(MAKE_at) $(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) install
 	$(MAKE_at) $(MAKE) -C $(KEYRING_PLUGIN) -f $(MINGW_MAKEFILE) install
 	cp *.dll $(PURPLE_INSTALL_PLUGINS_DIR)
 
@@ -74,8 +68,6 @@ plugins: \
 ##
 clean:
 	rm -f *.o *.dll
-	$(MAKE_at) $(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE) clean
-	$(MAKE_at) $(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) clean
 	$(MAKE_at) $(MAKE) -C $(KEYRING_PLUGIN) -f $(MINGW_MAKEFILE) clean
 
 include $(PIDGIN_COMMON_TARGETS)

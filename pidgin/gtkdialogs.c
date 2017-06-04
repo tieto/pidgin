@@ -683,25 +683,6 @@ void pidgin_dialogs_buildinfo(void)
 	g_string_append(str, "<dt>Network Security Services (NSS):</dt><dd>Disabled</dd>");
 #endif
 
-#warning TODO: Check for perl.
-	if (purple_plugins_find_plugin("core-perl") != NULL)
-		g_string_append(str, "<dt>Perl:</dt><dd>Enabled</dd>");
-	else
-		g_string_append(str, "<dt>Perl:</dt><dd>Disabled</dd>");
-
-#warning TODO: Check for tcl.
-	if (purple_plugins_find_plugin("core-tcl") != NULL) {
-		g_string_append(str, "<dt>Tcl:</dt><dd>Enabled</dd>");
-#ifdef HAVE_TK
-		g_string_append(str, "<dt>Tk:</dt><dd>Enabled</dd>");
-#else
-		g_string_append(str, "<dt>Tk:</dt><dd>Disabled</dd>");
-#endif
-	} else {
-		g_string_append(str, "<dt>Tcl:</dt><dd>Disabled</dd>");
-		g_string_append(str, "<dt>Tk:</dt><dd>Disabled</dd>");
-	}
-
 #ifdef USE_IDN
 	g_string_append(str, "<dt>UTF-8 DNS (IDN):</dt><dd>Enabled</dd>");
 #else

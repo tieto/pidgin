@@ -520,15 +520,6 @@ text \fIPlugin Details\fR.  If the selected plugin has preferences or
 configuration options, the \fIConfigure Plugin\fR button will present the
 plugin's preferences dialog.
 
-.SH PERL
-Pidgin allows for plugins to be written in the perl scripting language.  See
-\fIPerl Scripting HOWTO\fR in the Pidgin documentation for more information
-about perl scripting.
-
-.SH TCL
-Pidgin allows for plugins to be written in the Tcl scripting language. See
-\fIplugins/tcl/TCL-HOWTO\fR for more information about Tcl scripting.
-
 .SH D-Bus
 Pidgin allows for interaction via D-Bus.  Currently very little documentation
 about this interaction exists.
