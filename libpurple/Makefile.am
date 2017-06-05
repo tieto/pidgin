@@ -498,7 +498,7 @@ AM_CPPFLAGS = \
 
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS =
-INTROSPECTION_SCANNER_ARGS = --add-include-path=$(prefix)/share/gir-1.0 --warn-all
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(prefix)/share/gir-1.0 --warn-all --pkg-export=purple-$(PURPLE_MAJOR_VERSION)
 INTROSPECTION_COMPILER_ARGS = --includedir=$(prefix)/share/gir-1.0
 
 if HAVE_INTROSPECTION
