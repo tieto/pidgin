@@ -32,18 +32,6 @@
 G_BEGIN_DECLS
 
 /**
- * purple_ntlm_gen_type1:
- * @hostname: Your hostname
- * @domain: The domain to authenticate to
- *
- * Generates the base64 encoded type 1 message needed for NTLM authentication
- *
- * Returns: base64 encoded string to send to the server.  This should
- *         be g_free'd by the caller.
- */
-gchar *purple_ntlm_gen_type1(const gchar *hostname, const gchar *domain);
-
-/**
  * purple_ntlm_parse_type2:
  * @type2: String containing the base64 encoded type2 message
  * @flags: If not %NULL, this will store the flags for the message
