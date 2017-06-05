@@ -22,12 +22,6 @@
 
 #ifndef _PURPLE_NTLM_H
 #define _PURPLE_NTLM_H
-/**
- * SECTION:ntlm
- * @section_id: libpurple-ntlm
- * @short_description: <filename>ntlm.h</filename>
- * @title: NTLM Authentication
- */
 
 G_BEGIN_DECLS
 

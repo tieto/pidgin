@@ -4,6 +4,8 @@ EXTRA_DIST = \
 pkgdir = @PURPLE_PLUGINDIR@
 
 SIMPLESOURCES = \
+	ntlm.c \
+	ntlm.h \
 	simple.c \
 	simple.h \
 	sipmsg.c \
