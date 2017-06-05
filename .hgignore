@@ -77,7 +77,6 @@ libpurple/data/purple-url-handler.desktop$
 libpurple/data/purple-url-handler.desktop.in$
 libpurple/marshallers.[ch]
 libpurple/plugins/dbus-example-bindings.c
-libpurple/protocols/facebook/marshal.[ch]
 libpurple/purple-client-bindings.[ch]
 libpurple/purple-client-example
 libpurple/purple.h$
