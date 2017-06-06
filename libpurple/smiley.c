@@ -146,6 +146,7 @@ purple_smiley_new(const gchar *shortcut, const gchar *path)
 
 	smiley = g_object_new(
 		PURPLE_TYPE_SMILEY,
+		"path", path,
 		"contents", bytes,
 		"shortcut", shortcut,
 		NULL
