@@ -11,6 +11,7 @@ test_programs=\
 	test_image \
 	test_md4 \
 	test_smiley \
+	test_smiley_list \
 	test_trie \
 	test_util \
 	test_xmlnode
@@ -29,6 +30,9 @@ test_md4_LDADD=$(COMMON_LIBS)
 
 test_smiley_SOURCES=test_smiley.c
 test_smiley_LDADD=$(COMMON_LIBS)
+
+test_smiley_list_SOURCES=test_smiley_list.c
+test_smiley_list_LDADD=$(COMMON_LIBS)
 
 test_trie_SOURCES=test_trie.c
 test_trie_LDADD=$(COMMON_LIBS)
