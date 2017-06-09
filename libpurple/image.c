@@ -197,7 +197,12 @@ purple_image_new_from_file(const gchar *path, GError **error) {
 
 	bytes = g_bytes_new_take(contents, length);
 
-	image = purple_image_new_from_bytes(bytes);
+	image = g_object_new(
+		PURPLE_TYPE_IMAGE,
+		"contents", bytes,
+		"path", path,
+		NULL
+	);
 
 	g_bytes_unref(bytes);
 
