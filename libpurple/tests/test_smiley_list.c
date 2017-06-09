@@ -41,26 +41,36 @@ test_smiley_list_new(void) {
 static void
 test_smiley_list_add_remove(void) {
 	PurpleSmileyList *list = NULL;
-	PurpleSmiley *smiley = NULL;
+	PurpleSmiley *smiley = NULL, *smiley2 = NULL;
+	PurpleTrie *trie = NULL;
 	gboolean added = FALSE;
 
 	list = purple_smiley_list_new();
 
 	g_assert(purple_smiley_list_is_empty(list));
 
-	// create a smiley
+	/* create a smiley */
 	smiley = purple_smiley_new_from_data("testing", NULL, 0);
 
-	// add the smiley to the list
+	/* add the smiley to the list */
 	added = purple_smiley_list_add(list, smiley);
 	g_assert(added);
 	g_assert(!purple_smiley_list_is_empty(list));
 
-	// add it again (should fail)
+	/* make sure we can get it back out */
+	smiley2 = purple_smiley_list_get_by_shortcut(list, "testing");
+	g_assert(smiley == smiley2);
+
+	/* make sure it returns a valid trie */
+	trie = purple_smiley_list_get_trie(list);
+	g_assert(PURPLE_IS_TRIE(trie));
+	/* don't free the trie, as it's ownership is not transfered to us */
+
+	/* add it again (should fail) */
 	added = purple_smiley_list_add(list, smiley);
 	g_assert(!added);
 
-	// now remove it and make sure the list is empty
+	/* now remove it and make sure the list is empty */
 	purple_smiley_list_remove(list, smiley);
 	g_assert(purple_smiley_list_is_empty(list));
 
