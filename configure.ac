@@ -1189,7 +1189,7 @@ AC_ARG_ENABLE(libgadu,
 if test "x$enable_libgadu" = "xyes"; then
 	PKG_CHECK_MODULES(LIBGADU, [libgadu >= 1.12.0], [
 		have_libgadu=yes
-		AC_CHECK_LIB(gadu, gg_is_gpl_compliant, , [
+		AC_CHECK_LIB(gadu, gg_is_gpl_compliant, [ ], [
 			LIBGADU_LIBS=""
 			LIBGADU_CFLAGS=""
 			have_libgadu=no
