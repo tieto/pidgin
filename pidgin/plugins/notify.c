@@ -614,7 +614,7 @@ method_toggle_cb(GtkWidget *widget, gpointer data)
 
 	purple_prefs_set_bool(pref, on);
 
-	if (!strcmp(data, "method_string")) {
+	if (purple_strequal(data, "method_string")) {
 		GtkWidget *entry = g_object_get_data(G_OBJECT(widget), "title-entry");
 		gtk_widget_set_sensitive(entry, on);
 
@@ -645,7 +645,7 @@ options_entry_cb(GtkWidget *widget, GdkEventFocus *evt, gpointer data)
 	if (data == NULL)
 		return FALSE;
 
-	if (!strcmp(data, "method_string")) {
+	if (purple_strequal(data, "method_string")) {
 		purple_prefs_set_string("/plugins/gtk/X11/notify/title_string",
 		                      gtk_entry_get_text(GTK_ENTRY(widget)));
 	}

@@ -95,7 +95,7 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 		sender_node  = purple_xmlnode_get_child(sender_node, "sender");
 
 		while (sender_node && (!purple_xmlnode_get_attrib(sender_node, "unread") ||
-		       !strcmp(purple_xmlnode_get_attrib(sender_node, "unread"),"0")))
+		       purple_strequal(purple_xmlnode_get_attrib(sender_node, "unread"),"0")))
 			sender_node = purple_xmlnode_get_next_twin(sender_node);
 
 		if (!sender_node) {
@@ -116,8 +116,7 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 		urls[i] = url;
 
 		tid = purple_xmlnode_get_attrib(message, "tid");
-		if (tid &&
-		    (js->gmail_last_tid == NULL || strcmp(tid, js->gmail_last_tid) > 0)) {
+		if (g_strcmp0(tid, js->gmail_last_tid) > 0) {
 			g_free(js->gmail_last_tid);
 			js->gmail_last_tid = g_strdup(tid);
 		}

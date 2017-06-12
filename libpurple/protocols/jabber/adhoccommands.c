@@ -74,7 +74,7 @@ jabber_adhoc_got_buddy_list(JabberStream *js, const char *from, PurpleXmlNode *q
 		JabberAdHocCommands *cmd;
 		if(item->type != PURPLE_XMLNODE_TYPE_TAG)
 			continue;
-		if(strcmp(item->name, "item"))
+		if(!purple_strequal(item->name, "item"))
 			continue;
 		cmd = g_new0(JabberAdHocCommands, 1);
 
@@ -170,7 +170,7 @@ jabber_adhoc_parse(JabberStream *js, const char *from,
 	if(!status)
 		return;
 
-	if(!strcmp(status,"completed")) {
+	if(purple_strequal(status,"completed")) {
 		/* display result */
 		PurpleXmlNode *note = purple_xmlnode_get_child(command,"note");
 
@@ -185,7 +185,7 @@ jabber_adhoc_parse(JabberStream *js, const char *from,
 			jabber_x_data_request(js, xdata, (jabber_x_data_cb)do_adhoc_ignoreme, NULL);
 		return;
 	}
-	if(!strcmp(status,"executing")) {
+	if(purple_strequal(status,"executing")) {
 		/* this command needs more steps */
 		PurpleXmlNode *actions, *action;
 		int actionindex = 0;
@@ -209,7 +209,7 @@ jabber_adhoc_parse(JabberStream *js, const char *from,
 					newaction->name = g_strdup(_(action->name));
 					newaction->handle = g_strdup(action->name);
 					actionslist = g_list_append(actionslist, newaction);
-					if(defaultactionhandle && !strcmp(defaultactionhandle, action->name))
+					if(defaultactionhandle && purple_strequal(defaultactionhandle, action->name))
 						actionindex = index;
 				}
 			}
@@ -260,7 +260,7 @@ jabber_adhoc_got_server_list(JabberStream *js, const char *from, PurpleXmlNode *
 		JabberAdHocCommands *cmd;
 		if(item->type != PURPLE_XMLNODE_TYPE_TAG)
 			continue;
-		if(strcmp(item->name, "item"))
+		if(!purple_strequal(item->name, "item"))
 			continue;
 		cmd = g_new0(JabberAdHocCommands, 1);
 		cmd->jid = g_strdup(purple_xmlnode_get_attrib(item,"jid"));

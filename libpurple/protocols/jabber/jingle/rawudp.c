@@ -220,7 +220,7 @@ jingle_rawudp_add_local_candidate(JingleTransport *transport, const gchar *id, g
 
 	for (iter = rawudp->priv->local_candidates; iter; iter = g_list_next(iter)) {
 		JingleRawUdpCandidate *c = iter->data;
-		if (!strcmp(c->id, id)) {
+		if (purple_strequal(c->id, id)) {
 			generation = c->generation + 1;
 
 			g_boxed_free(JINGLE_TYPE_RAWUDP_CANDIDATE, c);
@@ -269,7 +269,7 @@ jingle_rawudp_get_remote_candidate_by_id(JingleRawUdp *rawudp, gchar *id)
 	GList *iter = rawudp->priv->remote_candidates;
 	for (; iter; iter = g_list_next(iter)) {
 		JingleRawUdpCandidate *candidate = iter->data;
-		if (!strcmp(candidate->id, id)) {
+		if (purple_strequal(candidate->id, id)) {
 			return candidate;
 		}
 	}

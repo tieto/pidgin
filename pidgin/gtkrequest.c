@@ -148,7 +148,7 @@ input_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 		gtk_text_buffer_get_start_iter(buffer, &start_iter);
 		gtk_text_buffer_get_end_iter(buffer, &end_iter);
 
-		if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html")))
+		if (purple_strequal(data->u.input.hint, "html"))
 			multiline_value = pidgin_webview_get_body_html(PIDGIN_WEBVIEW(data->u.input.entry));
 		else
 			multiline_value = gtk_text_buffer_get_text(buffer, &start_iter, &end_iter,
@@ -324,7 +324,7 @@ destroy_multifield_cb(GtkWidget *dialog, GdkEvent *event,
 
 
 #define STOCK_ITEMIZE(r, l) \
-	if (!strcmp((r), text) || !strcmp(_(r), text)) \
+	if (purple_strequal((r), text) || purple_strequal(_(r), text)) \
 		return (l);
 
 static const char *
@@ -607,7 +607,7 @@ pidgin_request_input(const char *title, const char *primary,
 
 	gtk_widget_show_all(hbox);
 
-	if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html"))) {
+	if (purple_strequal(data->u.input.hint, "html")) {
 		GtkWidget *frame;
 
 		/* webview */
@@ -634,7 +634,7 @@ pidgin_request_input(const char *title, const char *primary,
 
 			gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(entry), GTK_WRAP_WORD_CHAR);
 
-			gtk_box_pack_start(GTK_BOX(vbox), 
+			gtk_box_pack_start(GTK_BOX(vbox),
 				pidgin_make_scrollable(entry, GTK_POLICY_NEVER, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, 320, 130),
 				TRUE, TRUE, 0);
 		}
@@ -1131,7 +1131,7 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 						purple_request_field_is_visible(fld))
 				{
 					const char *type_hint = purple_request_field_get_field_type_hint(fld);
-					if (type_hint != NULL && strcmp(type_hint, "account") == 0)
+					if (purple_strequal(type_hint, "account"))
 					{
 						optmenu = GTK_WIDGET(purple_request_field_get_ui_data(fld));
 						if (optmenu == NULL) {
@@ -1142,7 +1142,7 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 					}
 				}
 			}
-			pidgin_setup_screenname_autocomplete(entry, optmenu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(!strcmp(type_hint, "screenname-all")));
+			pidgin_setup_screenname_autocomplete(entry, optmenu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(purple_strequal(type_hint, "screenname-all")));
 		}
 	}
 }
@@ -1601,7 +1601,7 @@ _pidgin_datasheet_stock_icon_get(const gchar *stock_name)
 	id[0] = '\0';
 	id++;
 
-	if (g_strcmp0(domain, "protocol") == 0) {
+	if (purple_strequal(domain, "protocol")) {
 		PurpleAccount *account;
 		gchar *protocol_id, *accountname;
 
@@ -1621,7 +1621,7 @@ _pidgin_datasheet_stock_icon_get(const gchar *stock_name)
 			image = pidgin_create_protocol_icon(account,
 				PIDGIN_PROTOCOL_ICON_SMALL);
 		}
-	} else if (g_strcmp0(domain, "e2ee") == 0) {
+	} else if (purple_strequal(domain, "e2ee")) {
 		image = pidgin_pixbuf_from_image(
 			_pidgin_e2ee_stock_icon_get(id));
 	} else {

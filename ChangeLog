@@ -104,10 +104,22 @@ version 3.0.0 (??/??/????):
 	* A single jabber plugin provides XMPP, GTalk and Facebook protocols.
 	* A single yahoo plugin provides both Yahoo and Yahoo JAPAN protocols.
 
+version 2.12.1 (??/??/????):
+	libpurple:
+	* Unified string comparison. (PR #186) (Arkadiy Illarionov)
+
+	XMPP:
+	* Show XEP-0066 OOB URLs in any message, not just headlines
+
+	IRC:
+	* Fix "Registration timeout" on SASL auth with InspIRCd servers
+	  (and possibly others not based on charybdis/ratbox/ircd-seven)
+	* Fix issues with plugins that modify outgoing messages
+	  (such as the custom PART/QUIT feature of the IRC More plugin)
 
 version 2.12.0 (03/09/2017):
 	libpurple:
-	* Fix an out of bounds memory read in purple_markup_unescape_entity.
+	* Fix an out of bounds memory write in purple_markup_unescape_entity.
 	  CVE-2017-2640
 	* Fix use of uninitialised memory if running non-debug-enabled versions of glib
 	* Updated AIM dev and dist ID's to new ones that were assigned by AOL.

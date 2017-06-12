@@ -670,7 +670,7 @@ jabber_is_own_server(JabberStream *js, const char *str)
 		return FALSE;
 
 	equal = (jid->node == NULL &&
-	         g_str_equal(jid->domain, js->user->domain) &&
+	         purple_strequal(jid->domain, js->user->domain) &&
 	         jid->resource == NULL);
 	jabber_id_free(jid);
 	return equal;
@@ -692,9 +692,9 @@ jabber_is_own_account(JabberStream *js, const char *str)
 		return FALSE;
 
 	equal = (purple_strequal(jid->node, js->user->node) &&
-	         g_str_equal(jid->domain, js->user->domain) &&
+	         purple_strequal(jid->domain, js->user->domain) &&
 	         (jid->resource == NULL ||
-	             g_str_equal(jid->resource, js->user->resource)));
+	             purple_strequal(jid->resource, js->user->resource)));
 	jabber_id_free(jid);
 	return equal;
 }
@@ -733,7 +733,7 @@ jabber_buddy_status_id_get_state(const char *id)
 		return JABBER_BUDDY_STATE_UNKNOWN;
 
 	for (i = 0; i < G_N_ELEMENTS(jabber_statuses); ++i)
-		if (g_str_equal(id, jabber_statuses[i].status_id))
+		if (purple_strequal(id, jabber_statuses[i].status_id))
 			return jabber_statuses[i].state;
 
 	return JABBER_BUDDY_STATE_UNKNOWN;
@@ -746,7 +746,7 @@ JabberBuddyState jabber_buddy_show_get_state(const char *id)
 	g_return_val_if_fail(id != NULL, JABBER_BUDDY_STATE_UNKNOWN);
 
 	for (i = 0; i < G_N_ELEMENTS(jabber_statuses); ++i)
-		if (jabber_statuses[i].show && g_str_equal(id, jabber_statuses[i].show))
+		if (jabber_statuses[i].show && purple_strequal(id, jabber_statuses[i].show))
 			return jabber_statuses[i].state;
 
 	purple_debug_warning("jabber", "Invalid value of presence <show/> "

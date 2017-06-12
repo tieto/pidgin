@@ -294,7 +294,7 @@ _get_details_resp_setup_buddy(NMUser * user, NMERR_T ret_code,
 								nm_user_record_get_display_id(user_record));
 
 		alias = purple_buddy_get_alias(buddy);
-		if (alias == NULL || *alias == '\0' || (strcmp(alias, purple_buddy_get_name(buddy)) == 0)) {
+		if (alias == NULL || *alias == '\0' || purple_strequal(alias, purple_buddy_get_name(buddy))) {
 			purple_buddy_set_local_alias(buddy,
 								   nm_user_record_get_full_name(user_record));
 
@@ -360,7 +360,7 @@ _create_contact_resp_cb(NMUser * user, NMERR_T ret_code,
 			if (display_id == NULL)
 				display_id = nm_contact_get_dn(new_contact);
 
-			if (alias && strcmp(alias, display_id)) {
+			if (alias && !purple_strequal(alias, display_id)) {
 
 				/* The user requested an alias, tell the server about it. */
 				rc = nm_send_rename_contact(user, new_contact, alias,
@@ -1267,7 +1267,7 @@ _remove_purple_buddies(NMUser *user)
 					continue;
 				buddy = (PurpleBuddy *) bnode;
 				if (purple_buddy_get_account(buddy) == user->client_data) {
-					if (strcmp(gname, NM_ROOT_FOLDER_NAME) == 0)
+					if (purple_strequal(gname, NM_ROOT_FOLDER_NAME))
 						gname = "";
 					folder = nm_find_folder(user, gname);
 					if (folder == NULL ||
@@ -1498,19 +1498,19 @@ _map_property_tag(const char *tag)
 {
 	if (tag == NULL) return NULL;
 
-	if (strcmp(tag, "telephoneNumber") == 0)
+	if (purple_strequal(tag, "telephoneNumber"))
 		return _("Telephone Number");
-	else if (strcmp(tag, "L") == 0)
+	else if (purple_strequal(tag, "L"))
 		return _("Location");
-	else if (strcmp(tag, "OU") == 0)
+	else if (purple_strequal(tag, "OU"))
 		return _("Department");
-	else if (strcmp(tag, "personalTitle") == 0)
+	else if (purple_strequal(tag, "personalTitle"))
 		return _("Personal Title");
-	else if (strcmp(tag, "Title") == 0)
+	else if (purple_strequal(tag, "Title"))
 		return _("Job Title");
-	else if (strcmp(tag, "mailstop") == 0)
+	else if (purple_strequal(tag, "mailstop"))
 		return _("Mailstop");
-	else if (strcmp(tag, "Internet EMail Address") == 0)
+	else if (purple_strequal(tag, "Internet EMail Address"))
 		return _("Email Address");
 	else
 		return tag;
@@ -2595,14 +2595,14 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group,
 	 */
 	alias = purple_buddy_get_alias(buddy);
 	bname = purple_buddy_get_name(buddy);
-	if (alias && strcmp(alias, bname))
+	if (alias && !purple_strequal(alias, bname))
 		nm_contact_set_display_name(contact, alias);
 
 	purple_blist_remove_buddy(buddy);
 	buddy = NULL;
 
 	gname = purple_group_get_name(group);
-	if (strcmp(gname, NM_ROOT_FOLDER_NAME) == 0) {
+	if (purple_strequal(gname, NM_ROOT_FOLDER_NAME)) {
 		gname = "";
 	}
 
@@ -2639,7 +2639,7 @@ novell_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 	user = purple_connection_get_protocol_data(gc);
 	if (user && (dn = nm_lookup_dn(user, purple_buddy_get_name(buddy)))) {
 		gname = purple_group_get_name(group);
-		if (strcmp(gname, NM_ROOT_FOLDER_NAME) == 0) {
+		if (purple_strequal(gname, NM_ROOT_FOLDER_NAME)) {
 			gname = "";
 		}
 		folder = nm_find_folder(user, gname);
@@ -2721,7 +2721,7 @@ novell_alias_buddy(PurpleConnection * gc, const char *name, const char *alias)
 					buddy = purple_blist_find_buddy_in_group(user->client_data,
 													 name, group);
 					balias = buddy ? purple_buddy_get_local_alias(buddy) : NULL;
-					if (balias && strcmp(balias, alias))
+					if (balias && !purple_strequal(balias, alias))
 						purple_buddy_set_local_alias(buddy, alias);
 				}
 
@@ -2756,7 +2756,7 @@ novell_group_buddy(PurpleConnection * gc,
 	if (user && (dn = nm_lookup_dn(user, name))) {
 
 		/* Find the old folder */
-		if (strcmp(old_group_name, NM_ROOT_FOLDER_NAME) == 0) {
+		if (purple_strequal(old_group_name, NM_ROOT_FOLDER_NAME)) {
 			old_folder = nm_get_root_folder(user);
 			if (nm_folder_find_contact(old_folder, dn) == NULL)
 				old_folder = nm_find_folder(user, old_group_name);
@@ -2769,7 +2769,7 @@ novell_group_buddy(PurpleConnection * gc,
 			/* Find the new folder */
 			new_folder = nm_find_folder(user, new_group_name);
 			if (new_folder == NULL) {
-				if (strcmp(new_group_name, NM_ROOT_FOLDER_NAME) == 0)
+				if (purple_strequal(new_group_name, NM_ROOT_FOLDER_NAME))
 					new_folder = nm_get_root_folder(user);
 			}
 
@@ -2822,7 +2822,7 @@ novell_rename_group(PurpleConnection * gc, const char *old_name,
 			return;
 		}
 
-		if (strcmp(old_name, NM_ROOT_FOLDER_NAME) == 0) {
+		if (purple_strequal(old_name, NM_ROOT_FOLDER_NAME)) {
 			/* Can't rename the root folder ... need to revisit this */
 			return;
 		}
@@ -2916,7 +2916,7 @@ novell_set_idle(PurpleConnection * gc, int time)
 	id = purple_status_get_id(status);
 
 	/* Only go idle if active status is available  */
-	if (!strcmp(id, NOVELL_STATUS_TYPE_AVAILABLE)) {
+	if (purple_strequal(id, NOVELL_STATUS_TYPE_AVAILABLE)) {
 		if (time > 0) {
 			rc = nm_send_set_status(user, NM_STATUS_AWAY_IDLE, NULL, NULL, NULL, NULL);
 		} else {

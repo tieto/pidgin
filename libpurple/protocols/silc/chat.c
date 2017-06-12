@@ -375,7 +375,7 @@ silcpurple_chat_chauth_ok(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 		set = 0;
 	else if (val && !curpass)
 		set = 1;
-	else if (val && curpass && strcmp(val, curpass))
+	else if (val && curpass && !purple_strequal(val, curpass))
 		set = 1;
 	else
 		set = -1;

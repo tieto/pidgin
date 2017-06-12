@@ -223,18 +223,18 @@ disco_service_type_from_identity(PurpleXmlNode *identity)
 	if (!category)
 		return XMPP_DISCO_SERVICE_TYPE_OTHER;
 
-	if (g_str_equal(category, "conference"))
+	if (purple_strequal(category, "conference"))
 		return XMPP_DISCO_SERVICE_TYPE_CHAT;
-	else if (g_str_equal(category, "directory"))
+	else if (purple_strequal(category, "directory"))
 		return XMPP_DISCO_SERVICE_TYPE_DIRECTORY;
-	else if (g_str_equal(category, "gateway"))
+	else if (purple_strequal(category, "gateway"))
 		return XMPP_DISCO_SERVICE_TYPE_GATEWAY;
-	else if (g_str_equal(category, "pubsub")) {
-		if (!type || g_str_equal(type, "collection"))
+	else if (purple_strequal(category, "pubsub")) {
+		if (!type || purple_strequal(type, "collection"))
 			return XMPP_DISCO_SERVICE_TYPE_PUBSUB_COLLECTION;
-		else if (g_str_equal(type, "leaf"))
+		else if (purple_strequal(type, "leaf"))
 			return XMPP_DISCO_SERVICE_TYPE_PUBSUB_LEAF;
-		else if (g_str_equal(type, "service"))
+		else if (purple_strequal(type, "service"))
 			return XMPP_DISCO_SERVICE_TYPE_OTHER;
 		else {
 			purple_debug_warning("xmppdisco", "Unknown pubsub type '%s'\n", type);
@@ -284,7 +284,7 @@ got_info_cb(PurpleConnection *pc, const char *type, const char *id,
 	if (!list->in_progress)
 		goto out;
 
-	if (g_str_equal(type, "result") &&
+	if (purple_strequal(type, "result") &&
 			(query = purple_xmlnode_get_child(iq, "query"))) {
 		PurpleXmlNode *identity = purple_xmlnode_get_child(query, "identity");
 		XmppDiscoService *service;
@@ -331,11 +331,11 @@ got_info_cb(PurpleConnection *pc, const char *type, const char *id,
 			if (!(var = purple_xmlnode_get_attrib(feature, "var")))
 				continue;
 
-			if (g_str_equal(var, NS_REGISTER))
+			if (purple_strequal(var, NS_REGISTER))
 				service->flags |= XMPP_DISCO_REGISTER;
-			else if (g_str_equal(var, NS_DISCO_ITEMS))
+			else if (purple_strequal(var, NS_DISCO_ITEMS))
 				service->flags |= XMPP_DISCO_BROWSE;
-			else if (g_str_equal(var, NS_MUC)) {
+			else if (purple_strequal(var, NS_MUC)) {
 				service->flags |= XMPP_DISCO_BROWSE;
 				service->type = XMPP_DISCO_SERVICE_TYPE_CHAT;
 			}
@@ -372,7 +372,7 @@ got_items_cb(PurpleConnection *pc, const char *type, const char *id,
 	if (!list->in_progress)
 		goto out;
 
-	if (g_str_equal(type, "result") &&
+	if (purple_strequal(type, "result") &&
 			(query = purple_xmlnode_get_child(iq, "query"))) {
 		PurpleXmlNode *item;
 
@@ -439,7 +439,7 @@ server_items_cb(PurpleConnection *pc, const char *type, const char *id,
 	g_free(cb_data);
 	--list->fetch_count;
 
-	if (g_str_equal(type, "result") &&
+	if (purple_strequal(type, "result") &&
 			(query = purple_xmlnode_get_child(iq, "query"))) {
 		PurpleXmlNode *item;
 
@@ -482,7 +482,7 @@ server_info_cb(PurpleConnection *pc, const char *type, const char *id,
 
 	--list->fetch_count;
 
-	if (g_str_equal(type, "result") &&
+	if (purple_strequal(type, "result") &&
 			(query = purple_xmlnode_get_child(iq, "query"))) {
 		PurpleXmlNode *feature;
 

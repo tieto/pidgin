@@ -171,7 +171,7 @@ pounce_test_sound(GtkWidget *w, GtkWidget *entry)
 
 	filename = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	if (filename != NULL && *filename != '\0' && strcmp(filename, _("(default)")))
+	if (filename != NULL && *filename != '\0' && !purple_strequal(filename, _("(default)")))
 		purple_sound_play_file(filename, NULL);
 	else
 		purple_sound_play_event(PURPLE_SOUND_POUNCE_DEFAULT, NULL);
@@ -311,7 +311,7 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 		message = NULL;
 	}
 	if (*command == '\0') command = NULL;
-	if (*sound   == '\0' || !strcmp(sound, _("(default)"))) sound   = NULL;
+	if (*sound   == '\0' || purple_strequal(sound, _("(default)"))) sound   = NULL;
 
 	/* If the pounce has already been triggered, let's pretend it is a new one */
 	if (dialog->pounce != NULL

@@ -99,15 +99,15 @@ gevo_protocol_get_field(PurpleAccount *account, PurpleBuddy *buddy)
 
 	protocol_id = purple_account_get_protocol_id(account);
 
-	if (!strcmp(protocol_id, "prpl-aim"))
+	if (purple_strequal(protocol_id, "prpl-aim"))
 		protocol_field = E_CONTACT_IM_AIM;
-	else if (!strcmp(protocol_id, "prpl-icq"))
+	else if (purple_strequal(protocol_id, "prpl-icq"))
 		protocol_field = E_CONTACT_IM_ICQ;
-	else if (!strcmp(protocol_id, "prpl-jabber"))
+	else if (purple_strequal(protocol_id, "prpl-jabber"))
 		protocol_field = E_CONTACT_IM_JABBER;
-	else if (!strcmp(protocol_id, "prpl-novell"))
+	else if (purple_strequal(protocol_id, "prpl-novell"))
 		protocol_field = E_CONTACT_IM_GROUPWISE;
-	else if (!strcmp(protocol_id, "prpl-gg"))
+	else if (purple_strequal(protocol_id, "prpl-gg"))
 		protocol_field = E_CONTACT_IM_GADUGADU;
 
 	return protocol_field;

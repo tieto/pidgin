@@ -820,7 +820,7 @@ status_menu_refresh_iter(PidginStatusBox *status_box, gboolean status_changed)
 							TEXT_COLUMN, &name, -1);
 
 					if (!purple_savedstatus_has_substatuses(saved_status)
-						|| !strcmp(name, acct_status_name))
+						|| purple_strequal(name, acct_status_name))
 					{
 						/* Found! */
 						path = gtk_tree_model_get_path(GTK_TREE_MODEL(status_box->dropdown_store), &iter);
@@ -956,7 +956,7 @@ static PurpleAccount* check_active_accounts_for_identical_statuses(void)
 		PurpleAccount *acct2 = iter->data;
 		GList *s1, *s2;
 
-		if (!g_str_equal(proto1, purple_account_get_protocol_id(acct2))) {
+		if (!purple_strequal(proto1, purple_account_get_protocol_id(acct2))) {
 			acct1 = NULL;
 			break;
 		}
@@ -967,8 +967,8 @@ static PurpleAccount* check_active_accounts_for_identical_statuses(void)
 			PurpleStatusType *st1 = s1->data, *st2 = s2->data;
 			/* TODO: Are these enough to consider the statuses identical? */
 			if (purple_status_type_get_primitive(st1) != purple_status_type_get_primitive(st2)
-				|| strcmp(purple_status_type_get_id(st1), purple_status_type_get_id(st2))
-				|| strcmp(purple_status_type_get_name(st1), purple_status_type_get_name(st2))) {
+				|| !purple_strequal(purple_status_type_get_id(st1), purple_status_type_get_id(st2))
+				|| !purple_strequal(purple_status_type_get_name(st1), purple_status_type_get_name(st2))) {
 				acct1 = NULL;
 				break;
 			}
@@ -2341,7 +2341,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 			acct_status_type = find_status_type_by_index(status_box->token_status_account, active);
 			id = purple_status_type_get_id(acct_status_type);
 
-			if (g_str_equal(id, purple_status_get_id(status)) &&
+			if (purple_strequal(id, purple_status_get_id(status)) &&
 				purple_strequal(message, purple_status_get_attr_string(status, "message")))
 			{
 				/* Selected status and previous status is the same */
@@ -2442,7 +2442,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 		status_type = find_status_type_by_index(status_box->account, active);
 		id = purple_status_type_get_id(status_type);
 
-		if (g_str_equal(id, purple_status_get_id(status)) &&
+		if (purple_strequal(id, purple_status_get_id(status)) &&
 			purple_strequal(message, purple_status_get_attr_string(status, "message")))
 		{
 			/* Selected status and previous status is the same */
