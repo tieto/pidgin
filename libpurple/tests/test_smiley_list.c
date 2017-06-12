@@ -36,6 +36,8 @@ test_smiley_list_new(void) {
 	g_assert(purple_smiley_list_is_empty(list));
 	g_assert(purple_smiley_list_get_unique(list) == NULL);
 	g_assert(purple_smiley_list_get_all(list) == NULL);
+
+	g_object_unref(G_OBJECT(list));
 }
 
 static void
