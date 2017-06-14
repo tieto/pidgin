@@ -139,7 +139,6 @@ C_SRC =	\
 			whiteboard.c \
 			xfer.c \
 			xmlnode.c \
-			win32/giowin32.c \
 			win32/libc_interface.c \
 			win32/win32dep.c \
 			$(VV_SRC)
