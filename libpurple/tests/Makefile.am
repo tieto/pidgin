@@ -54,5 +54,5 @@ AM_CPPFLAGS = \
 	$(DBUS_CFLAGS) \
 	$(NSS_CFLAGS)
 
-EXTRA_DIST = \
+EXTRA_DIST += \
 	data/test-image.png
