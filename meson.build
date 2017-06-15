@@ -987,9 +987,8 @@ else
 endif
 
 
-DEFAULT_PRPLS = ['bonjour', 'facebook', 'gg', 'irc', 'jabber', 'msn', 'mxit',
-                 'novell', 'oscar', 'sametime', 'silc', 'simple', 'yahoo',
-                 'zephyr']
+DEFAULT_PRPLS = ['bonjour', 'facebook', 'gg', 'irc', 'jabber', 'novell',
+                 'oscar', 'sametime', 'silc', 'simple', 'zephyr']
 ALL_PRPLS = DEFAULT_PRPLS + ['null']
 
 DISTRIB = get_option('distrib')
@@ -1043,14 +1042,11 @@ STATIC_FACEBOOK = STATIC_PRPLS.contains('facebook')
 STATIC_GG = STATIC_PRPLS.contains('gg')
 STATIC_IRC = STATIC_PRPLS.contains('irc')
 STATIC_JABBER = STATIC_PRPLS.contains('jabber')
-STATIC_MSN = STATIC_PRPLS.contains('msn')
-STATIC_MXIT = STATIC_PRPLS.contains('mxit')
 STATIC_NOVELL = STATIC_PRPLS.contains('novell')
 STATIC_OSCAR = STATIC_PRPLS.contains('oscar') or STATIC_PRPLS.contains('aim') or STATIC_PRPLS.contains('icq')
 STATIC_SAMETIME = STATIC_PRPLS.contains('sametime')
 STATIC_SILC = STATIC_PRPLS.contains('silc')
 STATIC_SIMPLE = STATIC_PRPLS.contains('simple')
-STATIC_YAHOO = STATIC_PRPLS.contains('yahoo')
 STATIC_ZEPHYR = STATIC_PRPLS.contains('zephyr')
 conf.set('STATIC_PROTO_LOAD',
     ' '.join(extern_load) +
@@ -1086,15 +1082,12 @@ DYNAMIC_FACEBOOK = DYNAMIC_PRPLS.contains('facebook')
 DYNAMIC_GG  = DYNAMIC_PRPLS.contains('gg ')
 DYNAMIC_IRC = DYNAMIC_PRPLS.contains('irc')
 DYNAMIC_JABBER = DYNAMIC_PRPLS.contains('jabber')
-DYNAMIC_MSN = DYNAMIC_PRPLS.contains('msn')
-DYNAMIC_MXIT = DYNAMIC_PRPLS.contains('mxit')
 DYNAMIC_NOVELL = DYNAMIC_PRPLS.contains('novell')
 DYNAMIC_NULL = DYNAMIC_PRPLS.contains('null')
 DYNAMIC_OSCAR = DYNAMIC_PRPLS.contains('oscar') or DYNAMIC_PRPLS.contains('aim') or DYNAMIC_PRPLS.contains('icq')
 DYNAMIC_SAMETIME = DYNAMIC_PRPLS.contains('sametime')
 DYNAMIC_SILC = DYNAMIC_PRPLS.contains('silc')
 DYNAMIC_SIMPLE = DYNAMIC_PRPLS.contains('simple')
-DYNAMIC_YAHOO = DYNAMIC_PRPLS.contains('yahoo')
 DYNAMIC_ZEPHYR = DYNAMIC_PRPLS.contains('zephyr')
 
 conf.set('HAVE_SYS_UTSNAME_H',
@@ -1467,7 +1460,7 @@ have_gnutls = false
 enable_nss = get_option('nss')
 have_nss = false
 
-msg_ssl = 'None. MSN, Yahoo!, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!'
+msg_ssl = 'None. Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!'
 msg_gnutls = ''
 msg_nss = ''
 
@@ -1525,19 +1518,19 @@ elif looked_for_gnutls and looked_for_nss and force_deps
 	error('''
 Neither GnuTLS or NSS SSL development headers found.
 Use -Dnss=false -Dgnutls=false if you do not need SSL support.
-MSN, Yahoo!, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!
+Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!
 ''')
 elif looked_for_gnutls and force_deps
 	error('''
 GnuTLS SSL development headers not found.
 Use -Dgnutls=false if you do not need SSL support.
-MSN, Yahoo!, Novell Groupwise and Google Talk will not work without SSL support.
+Novell Groupwise and Google Talk will not work without SSL support.
 ''')
 elif looked_for_nss and force_deps
 	error('''
 NSS SSL development headers not found.
 Use -Dnss=false if you do not need SSL support.
-MSN, Yahoo!, Novell Groupwise and Google Talk will not work without SSL support.
+Novell Groupwise and Google Talk will not work without SSL support.
 ''')
 endif
 
@@ -1750,8 +1743,6 @@ subdir('libpurple')
 #subdir('libpurple/protocols/irc')
 #subdir('libpurple/protocols/jabber')
 #subdir('libpurple/protocols/jabber/tests')
-#subdir('libpurple/protocols/msn')
-#subdir('libpurple/protocols/mxit')
 #subdir('libpurple/protocols/novell')
 #subdir('libpurple/protocols/null')
 #subdir('libpurple/protocols/oscar')
@@ -1759,8 +1750,6 @@ subdir('libpurple')
 #subdir('libpurple/protocols/sametime')
 #subdir('libpurple/protocols/silc')
 #subdir('libpurple/protocols/simple')
-#subdir('libpurple/protocols/yahoo')
-#subdir('libpurple/protocols/yahoo/tests')
 #subdir('libpurple/protocols/zephyr')
 #subdir('libpurple/tests')
 subdir('share/sounds')
