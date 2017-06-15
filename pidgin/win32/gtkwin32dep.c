@@ -247,7 +247,7 @@ static LRESULT CALLBACK message_window_handler(HWND hwnd, UINT msg, WPARAM wpara
 		} else if (wparam == PBT_APMRESUMESUSPEND) {
 			purple_debug_info("winpidgin", "Resuming from system standby.\n");
 			/* TODO: It seems like it'd be wise to use the NLA message, if possible, instead of this. */
-			purple_timeout_add_seconds(1, winpidgin_pwm_reconnect, NULL);
+			g_timeout_add_seconds(1, winpidgin_pwm_reconnect, NULL);
 			return TRUE;
 		}
 	}

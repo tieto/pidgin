@@ -94,7 +94,7 @@ signon_cb(PurpleConnection *gc)
 	PurpleBuddyList *list = purple_blist_get_buddy_list();
 	if (list && !timer) {
 		check_timeout(NULL); /* we want the box to be drawn immediately */
-		timer = purple_timeout_add_seconds(2, check_timeout, NULL);
+		timer = g_timeout_add_seconds(2, check_timeout, NULL);
 	}
 }
 
@@ -103,7 +103,7 @@ signoff_cb(PurpleConnection *gc)
 {
 	PurpleBuddyList *list = purple_blist_get_buddy_list();
 	if ((!list || !PIDGIN_BLIST(list)->vbox) && timer) {
-		purple_timeout_remove(timer);
+		g_source_remove(timer);
 		timer = 0;
 	}
 }
@@ -148,7 +148,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	}
 
 	if (list && PIDGIN_BLIST(list)->vbox)
-		timer = purple_timeout_add_seconds(2, check_timeout, NULL);
+		timer = g_timeout_add_seconds(2, check_timeout, NULL);
 
 	purple_signal_connect(conn_handle, "signed-on",
 						plugin, PURPLE_CALLBACK(signon_cb), NULL);
@@ -162,7 +162,7 @@ static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
 	if (timer)
-		purple_timeout_remove(timer);
+		g_source_remove(timer);
 	timer = 0;
 	if (mail)
 		gtk_widget_destroy(mail);

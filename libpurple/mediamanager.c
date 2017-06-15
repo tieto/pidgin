@@ -581,12 +581,12 @@ free_appdata_info_locked (PurpleMediaAppDataInfo *info)
 	info->writable_cb_token = 0;
 
 	if (info->readable_timer_id) {
-		purple_timeout_remove (info->readable_timer_id);
+		g_source_remove (info->readable_timer_id);
 		info->readable_timer_id = 0;
 	}
 
 	if (info->writable_timer_id) {
-		purple_timeout_remove (info->writable_timer_id);
+		g_source_remove (info->writable_timer_id);
 		info->writable_timer_id = 0;
 	}
 
@@ -811,10 +811,10 @@ call_appsrc_writable_locked (PurpleMediaAppDataInfo *info)
 	/* We can't use writable_timer_id as a token, because the timeout is added
 	 * into libpurple's main event loop, which runs in a different thread than
 	 * from where call_appsrc_writable_locked() was called. Consequently, the
-	 * callback may run even before purple_timeout_add() returns the timer ID
+	 * callback may run even before g_timeout_add() returns the timer ID
 	 * to us. */
 	info->writable_cb_token = ++manager->priv->appdata_cb_token;
-	info->writable_timer_id = purple_timeout_add (0, appsrc_writable, info);
+	info->writable_timer_id = g_timeout_add (0, appsrc_writable, info);
 }
 
 static void
@@ -1001,7 +1001,7 @@ call_appsink_readable_locked (PurpleMediaAppDataInfo *info)
 		return;
 
 	info->readable_cb_token = ++manager->priv->appdata_cb_token;
-	info->readable_timer_id = purple_timeout_add (0, appsink_readable, info);
+	info->readable_timer_id = g_timeout_add (0, appsink_readable, info);
 }
 
 static GstFlowReturn
@@ -1718,12 +1718,12 @@ purple_media_manager_set_application_data_callbacks(PurpleMediaManager *manager,
 		info->notify (info->user_data);
 
 	if (info->readable_cb_token) {
-		purple_timeout_remove (info->readable_timer_id);
+		g_source_remove (info->readable_timer_id);
 		info->readable_cb_token = 0;
 	}
 
 	if (info->writable_cb_token) {
-		purple_timeout_remove (info->writable_timer_id);
+		g_source_remove (info->writable_timer_id);
 		info->writable_cb_token = 0;
 	}
 

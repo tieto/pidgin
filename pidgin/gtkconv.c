@@ -1383,8 +1383,8 @@ hide_conv(PidginConversation *gtkconv, gboolean closetimer)
 		if (closetimer) {
 			guint timer = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "close-timer"));
 			if (timer)
-				purple_timeout_remove(timer);
-			timer = purple_timeout_add_seconds(CLOSE_CONV_TIMEOUT_SECS, close_already, conv);
+				g_source_remove(timer);
+			timer = g_timeout_add_seconds(CLOSE_CONV_TIMEOUT_SECS, close_already, conv);
 			g_object_set_data(G_OBJECT(conv), "close-timer", GINT_TO_POINTER(timer));
 		}
 #if 0
@@ -2003,7 +2003,7 @@ update_typing_deleting(PidginConversation *gtkconv)
 	is_empty = pidgin_webview_is_empty(PIDGIN_WEBVIEW(gtkconv->entry));
 
 	if (!is_empty)
-		purple_timeout_add(0, (GSourceFunc)update_typing_deleting_cb, gtkconv);
+		g_timeout_add(0, (GSourceFunc)update_typing_deleting_cb, gtkconv);
 }
 
 static gboolean
@@ -6132,7 +6132,7 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 	if (conv) {
 		timer = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "close-timer"));
 		if (timer) {
-			purple_timeout_remove(timer);
+			g_source_remove(timer);
 			g_object_set_data(G_OBJECT(conv), "close-timer", GINT_TO_POINTER(0));
 		}
 	}
@@ -8576,7 +8576,7 @@ pidgin_conv_attach(PurpleConversation *conv)
 		private_gtkconv_new(conv, FALSE);
 	timer = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(conv), "close-timer"));
 	if (timer) {
-		purple_timeout_remove(timer);
+		g_source_remove(timer);
 		g_object_set_data(G_OBJECT(conv), "close-timer", NULL);
 	}
 }

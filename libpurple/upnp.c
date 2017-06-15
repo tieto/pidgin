@@ -118,7 +118,7 @@ typedef struct {
 
 typedef struct {
 	guint inpa;	/* purple_input_add handle */
-	guint tima;	/* purple_timeout_add handle */
+	guint tima;	/* g_timeout_add handle */
 	int fd;
 	struct sockaddr_in server;
 	gchar service_type[20];
@@ -134,7 +134,7 @@ struct _PurpleUPnPMappingAddRemove
 	PurpleUPnPCallback cb;
 	gpointer cb_data;
 	gboolean success;
-	guint tima; /* purple_timeout_add handle */
+	guint tima; /* g_timeout_add handle */
 	PurpleHttpConnection *hc;
 };
 
@@ -404,7 +404,7 @@ upnp_parse_description_cb(PurpleHttpConnection *http_conn,
 	if (dd->inpa > 0)
 		purple_input_remove(dd->inpa);
 	if (dd->tima > 0)
-		purple_timeout_remove(dd->tima);
+		g_source_remove(dd->tima);
 
 	g_free(dd);
 }
@@ -417,7 +417,7 @@ purple_upnp_parse_description(const gchar* descriptionURL, UPnPDiscoveryData *dd
 
 	/* Remove the timeout because everything it is waiting for has
 	 * successfully completed */
-	purple_timeout_remove(dd->tima);
+	g_source_remove(dd->tima);
 	dd->tima = 0;
 
 	/* Extract base url out of the descriptionURL.
@@ -494,7 +494,7 @@ purple_upnp_discover_timeout(gpointer data)
 	if (dd->inpa)
 		purple_input_remove(dd->inpa);
 	if (dd->tima > 0)
-		purple_timeout_remove(dd->tima);
+		g_source_remove(dd->tima);
 	dd->inpa = 0;
 	dd->tima = 0;
 
@@ -588,7 +588,7 @@ purple_upnp_discover_send_broadcast(UPnPDiscoveryData *dd)
 		g_free(sendMessage);
 
 		if(sentSuccess) {
-			dd->tima = purple_timeout_add(DISCOVERY_TIMEOUT,
+			dd->tima = g_timeout_add(DISCOVERY_TIMEOUT,
 				purple_upnp_discover_timeout, dd);
 			dd->inpa = purple_input_add(dd->fd, PURPLE_INPUT_READ,
 				purple_upnp_discover_udp_read, dd);
@@ -599,7 +599,7 @@ purple_upnp_discover_send_broadcast(UPnPDiscoveryData *dd)
 
 	/* We have already done all our retries. Make sure that the callback
 	 * doesn't get called before the original function returns */
-	dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
+	dd->tima = g_timeout_add(10, purple_upnp_discover_timeout, dd);
 }
 
 void
@@ -636,7 +636,7 @@ purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
 			"purple_upnp_discover(): Failed In sock creation\n");
 		/* Short circuit the retry attempts */
 		dd->retry_count = NUM_UDP_ATTEMPTS;
-		dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
+		dd->tima = g_timeout_add(10, purple_upnp_discover_timeout, dd);
 		return;
 	}
 
@@ -646,7 +646,7 @@ purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
 			"purple_upnp_discover(): Failed In gethostbyname\n");
 		/* Short circuit the retry attempts */
 		dd->retry_count = NUM_UDP_ATTEMPTS;
-		dd->tima = purple_timeout_add(10, purple_upnp_discover_timeout, dd);
+		dd->tima = g_timeout_add(10, purple_upnp_discover_timeout, dd);
 		return;
 	}
 
@@ -826,7 +826,7 @@ done_port_mapping_cb(PurpleHttpConnection *http_conn,
 		purple_debug_info("upnp", "Successfully completed port mapping operation\n");
 
 	ar->success = success;
-	ar->tima = purple_timeout_add(0, fire_ar_cb_async_and_free, ar);
+	ar->tima = g_timeout_add(0, fire_ar_cb_async_and_free, ar);
 }
 
 static void
@@ -844,7 +844,7 @@ do_port_mapping_cb(gboolean has_control_mapping, gpointer data)
 				purple_debug_error("upnp",
 					"purple_upnp_set_port_mapping(): couldn't get local ip\n");
 				ar->success = FALSE;
-				ar->tima = purple_timeout_add(0, fire_ar_cb_async_and_free, ar);
+				ar->tima = g_timeout_add(0, fire_ar_cb_async_and_free, ar);
 				return;
 			}
 			strncpy(action_name, "AddPortMapping",
@@ -868,7 +868,7 @@ do_port_mapping_cb(gboolean has_control_mapping, gpointer data)
 	}
 
 	ar->success = FALSE;
-	ar->tima = purple_timeout_add(0, fire_ar_cb_async_and_free, ar);
+	ar->tima = g_timeout_add(0, fire_ar_cb_async_and_free, ar);
 }
 
 static gboolean
@@ -903,7 +903,7 @@ void purple_upnp_cancel_port_mapping(PurpleUPnPMappingAddRemove *ar)
 	}
 
 	if (ar->tima > 0)
-		purple_timeout_remove(ar->tima);
+		g_source_remove(ar->tima);
 
 	purple_http_conn_cancel(ar->hc);
 
@@ -944,7 +944,7 @@ purple_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
 	} else if(control_info.status == PURPLE_UPNP_STATUS_UNABLE_TO_DISCOVER) {
 		if (cb) {
 			/* Asynchronously trigger a failed response */
-			ar->tima = purple_timeout_add(10, fire_port_mapping_failure_cb, ar);
+			ar->tima = g_timeout_add(10, fire_port_mapping_failure_cb, ar);
 		} else {
 			/* No need to do anything if nobody expects a response*/
 			g_free(ar);
@@ -989,7 +989,7 @@ purple_upnp_remove_port_mapping(unsigned short portmap, const char* protocol,
 	} else if(control_info.status == PURPLE_UPNP_STATUS_UNABLE_TO_DISCOVER) {
 		if (cb) {
 			/* Asynchronously trigger a failed response */
-			ar->tima = purple_timeout_add(10, fire_port_mapping_failure_cb, ar);
+			ar->tima = g_timeout_add(10, fire_port_mapping_failure_cb, ar);
 		} else {
 			/* No need to do anything if nobody expects a response*/
 			g_free(ar);

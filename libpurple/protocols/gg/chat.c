@@ -610,6 +610,6 @@ PurpleRoomlist * ggp_chat_roomlist_get_list(PurpleConnection *gc)
 	 * purple_roomlist_set_in_progress(roomlist, FALSE);
 	 */
 	g_object_ref(roomlist);
-	purple_timeout_add(1, ggp_chat_roomlist_get_list_finish, roomlist);
+	g_timeout_add(1, ggp_chat_roomlist_get_list_finish, roomlist);
 	return roomlist;
 }

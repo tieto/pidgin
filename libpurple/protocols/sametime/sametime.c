@@ -814,7 +814,7 @@ static gboolean blist_save_cb(gpointer data) {
 static void blist_schedule(struct mwPurpleProtocolData *pd) {
   if(pd->save_event) return;
 
-  pd->save_event = purple_timeout_add_seconds(BLIST_SAVE_SECONDS,
+  pd->save_event = g_timeout_add_seconds(BLIST_SAVE_SECONDS,
 				    blist_save_cb, pd);
 }
 
@@ -3747,7 +3747,7 @@ static void mw_protocol_close(PurpleConnection *gc) {
 
   /* get rid of the blist save timeout */
   if(pd->save_event) {
-    purple_timeout_remove(pd->save_event);
+    g_source_remove(pd->save_event);
     pd->save_event = 0;
     blist_store(pd);
   }

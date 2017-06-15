@@ -117,7 +117,7 @@ oscar_data_destroy(OscarData *od)
 	g_free(od->newp);
 	g_free(od->oldp);
 	if (od->getblisttimer > 0)
-		purple_timeout_remove(od->getblisttimer);
+		g_source_remove(od->getblisttimer);
 	while (od->oscar_connections != NULL)
 		flap_connection_destroy(od->oscar_connections->data,
 				OSCAR_DISCONNECT_DONE, NULL);

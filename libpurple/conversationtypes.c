@@ -258,7 +258,7 @@ purple_im_conversation_start_typing_timeout(PurpleIMConversation *im, int timeou
 	if (priv->typing_timeout > 0)
 		purple_im_conversation_stop_typing_timeout(im);
 
-	priv->typing_timeout = purple_timeout_add_seconds(timeout, reset_typing_cb, im);
+	priv->typing_timeout = g_timeout_add_seconds(timeout, reset_typing_cb, im);
 }
 
 void
@@ -271,7 +271,7 @@ purple_im_conversation_stop_typing_timeout(PurpleIMConversation *im)
 	if (priv->typing_timeout == 0)
 		return;
 
-	purple_timeout_remove(priv->typing_timeout);
+	g_source_remove(priv->typing_timeout);
 	priv->typing_timeout = 0;
 }
 
@@ -315,7 +315,7 @@ purple_im_conversation_start_send_typed_timeout(PurpleIMConversation *im)
 
 	g_return_if_fail(priv != NULL);
 
-	priv->send_typed_timeout = purple_timeout_add_seconds(SEND_TYPED_TIMEOUT_SECONDS,
+	priv->send_typed_timeout = g_timeout_add_seconds(SEND_TYPED_TIMEOUT_SECONDS,
 	                                                    send_typed_cb, im);
 }
 
@@ -329,7 +329,7 @@ purple_im_conversation_stop_send_typed_timeout(PurpleIMConversation *im)
 	if (priv->send_typed_timeout == 0)
 		return;
 
-	purple_timeout_remove(priv->send_typed_timeout);
+	g_source_remove(priv->send_typed_timeout);
 	priv->send_typed_timeout = 0;
 }
 

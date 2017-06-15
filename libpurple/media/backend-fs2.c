@@ -1888,7 +1888,7 @@ src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	gst_pad_link(srcpad, sinkpad);
 	gst_object_unref(sinkpad);
 
-	stream->connected_cb_id = purple_timeout_add(0,
+	stream->connected_cb_id = g_timeout_add(0,
 			(GSourceFunc)src_pad_added_cb_cb, stream);
 }
 
@@ -2071,7 +2071,7 @@ free_stream(PurpleMediaBackendFs2Stream *stream)
 {
 	/* Remove the connected_cb timeout */
 	if (stream->connected_cb_id != 0)
-		purple_timeout_remove(stream->connected_cb_id);
+		g_source_remove(stream->connected_cb_id);
 
 	g_free(stream->participant);
 
@@ -2558,7 +2558,7 @@ purple_media_backend_fs2_send_dtmf(PurpleMediaBackend *self,
 	if (duration <= 50) {
 		fs_session_stop_telephony_event(session->session);
 	} else {
-		purple_timeout_add(duration, send_dtmf_callback,
+		g_timeout_add(duration, send_dtmf_callback,
 				session->session);
 	}
 
