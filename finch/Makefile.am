@@ -130,7 +130,9 @@ INTROSPECTION_SCANNER_ARGS = \
 	--warn-all \
 	--add-include-path=$(prefix)/share/gir-1.0 \
 	--add-include-path=$(builddir)/libgnt \
-	--add-include-path=$(top_builddir)/libpurple
+	--add-include-path=$(top_builddir)/libpurple \
+	--pkg=purple-$(PURPLE_MAJOR_VERSION) \
+	--pkg-export=finch
 
 INTROSPECTION_COMPILER_ARGS = \
 	--includedir=$(prefix)/share/gir-1.0 \
@@ -167,6 +169,7 @@ Finch_3_0_gir_CFLAGS = \
 Finch_3_0_gir_LIBS = $(builddir)/libfinch.la
 Finch_3_0_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Finch-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir
+INTROSPECTION_SCANNER_ENV = PKG_CONFIG_PATH=$(top_builddir)/libpurple/data/
 
 girdir = \
 	 $(prefix)/share/gir-1.0 \
