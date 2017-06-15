@@ -29,7 +29,6 @@
 #include "core.h"
 #include "dbus-maybe.h"
 #include "debug.h"
-#include "eventloop.h"
 #include "glibcompat.h"
 #include "log.h"
 #include "network.h"
@@ -50,7 +49,6 @@
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
 #include "gtkdocklet.h"
-#include "gtkeventloop.h"
 #include "gtkxfer.h"
 #include "gtkidle.h"
 #include "gtklog.h"
@@ -726,7 +724,6 @@ int pidgin_start(int argc, char *argv[])
 #endif
 
 	purple_core_set_ui_ops(pidgin_core_get_ui_ops());
-	purple_eventloop_set_ui_ops(pidgin_eventloop_get_ui_ops());
 
 	if (!purple_core_init(PIDGIN_UI)) {
 		fprintf(stderr,

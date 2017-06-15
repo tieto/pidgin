@@ -71,7 +71,6 @@ PIDGIN_C_SRC =	\
 			gtkdialogs.c \
 			gtkdnd-hints.c \
 			gtkdocklet.c \
-			gtkeventloop.c \
 			gtkicon-theme-loader.c \
 			gtkicon-theme.c \
 			gtkidle.c \
