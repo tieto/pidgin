@@ -483,7 +483,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, const char *from,
 
 	for (child = purple_xmlnode_get_child(query, "identity"); child;
 	     child = purple_xmlnode_get_next_twin(child)) {
-		const char *category, *type, *name;
+		const char *category, *type, *name, *stun_ip;
 		category = purple_xmlnode_get_attrib(child, "category");
 		type = purple_xmlnode_get_attrib(child, "type");
 		if(purple_strequal(category, "pubsub") && purple_strequal(type, "pep")) {

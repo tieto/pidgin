@@ -1638,7 +1638,7 @@ PurpleGroup *purple_blist_find_group(const char *name)
 		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
 	if (purple_strequal(name, "Buddies"))
 		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
-	if (purple_strqual(name, localized_default_group_name))
+	if (purple_strequal(name, localized_default_group_name))
 		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
 
 	key = purple_blist_fold_name(name);

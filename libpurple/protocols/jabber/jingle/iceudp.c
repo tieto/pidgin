@@ -308,7 +308,7 @@ jingle_iceudp_get_remote_candidates(JingleTransport *transport)
 						PURPLE_MEDIA_CANDIDATE_TYPE_HOST :
 						purple_strequal(candidate->type, "srflx") ?
 							PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX :
-							purple_strqual(candidate->type, "prflx") ?
+							purple_strequal(candidate->type, "prflx") ?
 								PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX :
 								purple_strequal(candidate->type, "relay") ?
 									PURPLE_MEDIA_CANDIDATE_TYPE_RELAY : 0,
