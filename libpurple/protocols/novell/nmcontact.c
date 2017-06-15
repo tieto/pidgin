@@ -23,6 +23,7 @@
 #include "nmcontact.h"
 #include "nmfield.h"
 #include "nmuser.h"
+#include "util.h"
 
 struct _NMContact
 {
@@ -83,7 +84,7 @@ nm_create_contact_from_fields(NMField * fields)
 	NMField *field;
 
 	if ( fields == NULL || fields->tag == NULL || fields->ptr_value == 0 ||
-		 strcmp(fields->tag, NM_A_FA_CONTACT) )
+		 !purple_strequal(fields->tag, NM_A_FA_CONTACT) )
 	{
 		return NULL;
 	}

@@ -410,7 +410,7 @@ jingle_content_to_xml_internal(JingleContent *content, PurpleXmlNode *jingle, Ji
 	purple_xmlnode_set_attrib(node, "creator", creator);
 	purple_xmlnode_set_attrib(node, "name", name);
 	purple_xmlnode_set_attrib(node, "senders", senders);
-	if (strcmp("session", disposition))
+	if (!purple_strequal("session", disposition))
 		purple_xmlnode_set_attrib(node, "disposition", disposition);
 
 	g_free(disposition);

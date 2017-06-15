@@ -22,26 +22,8 @@
 
 #ifndef _PURPLE_NTLM_H
 #define _PURPLE_NTLM_H
-/**
- * SECTION:ntlm
- * @section_id: libpurple-ntlm
- * @short_description: <filename>ntlm.h</filename>
- * @title: NTLM Authentication
- */
 
 G_BEGIN_DECLS
-
-/**
- * purple_ntlm_gen_type1:
- * @hostname: Your hostname
- * @domain: The domain to authenticate to
- *
- * Generates the base64 encoded type 1 message needed for NTLM authentication
- *
- * Returns: base64 encoded string to send to the server.  This should
- *         be g_free'd by the caller.
- */
-gchar *purple_ntlm_gen_type1(const gchar *hostname, const gchar *domain);
 
 /**
  * purple_ntlm_parse_type2:

@@ -65,7 +65,7 @@ static gboolean joinpart_key_equal(const struct joinpart_key *a, const struct jo
 	else if (b == NULL)
 		return FALSE;
 
-	return (a->conv == b->conv) && !strcmp(a->user, b->user);
+	return (a->conv == b->conv) && purple_strequal(a->user, b->user);
 }
 
 static void joinpart_key_destroy(struct joinpart_key *key)

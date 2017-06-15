@@ -238,8 +238,8 @@ edit_dialog_save(SmileyEditDialog *edit_dialog)
 	if (edit_dialog->smiley == NULL)
 		shortcut_changed = image_changed = TRUE;
 	else {
-		shortcut_changed = (g_strcmp0(purple_smiley_get_shortcut(
-			edit_dialog->smiley), shortcut) != 0);
+		shortcut_changed = purple_strequal(purple_smiley_get_shortcut(
+			edit_dialog->smiley), shortcut);
 		image_changed = (edit_dialog->new_image != NULL);
 	}
 

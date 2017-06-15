@@ -30,7 +30,6 @@
 #include <string.h>
 #ifdef _WIN32
 #  include <conio.h>
-#  include "win32/win32dep.h"
 #else
 #  include <unistd.h>
 #endif
@@ -86,8 +85,8 @@ static guint glib_input_add(gint fd, PurpleInputCondition condition,
 	if (condition & PURPLE_INPUT_WRITE)
 		cond |= PURPLE_GLIB_WRITE_COND;
 
-#if defined _WIN32 && !defined WINPIDGIN_USE_GLIB_IO_CHANNEL
-	channel = wpurple_g_io_channel_win32_new_socket(fd);
+#ifdef _WIN32
+	channel = g_io_channel_win32_new_socket(fd);
 #else
 	channel = g_io_channel_unix_new(fd);
 #endif

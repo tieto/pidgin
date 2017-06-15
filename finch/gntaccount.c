@@ -162,7 +162,7 @@ save_account_cb(AccountEditDialog *dialog)
 		} else {
 			const char *old = purple_account_get_protocol_id(account);
 			char *oldproto;
-			if (strcmp(old, purple_protocol_get_id(protocol))) {
+			if (!purple_strequal(old, purple_protocol_get_id(protocol))) {
 				purple_notify_error(NULL, _("Error"),
 					_("Account was not modified"),
 					_("The account's protocol cannot be "
@@ -450,7 +450,7 @@ add_account_options(AccountEditDialog *dialog)
 					PurpleKeyValuePair *kvp = opt_iter->data;
 					gnt_combo_box_add_data(GNT_COMBO_BOX(combo), kvp->value, kvp->key);
 
-					if (g_str_equal(kvp->value, active))
+					if (purple_strequal(kvp->value, active))
 						gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), kvp->value);
 				}
 			}

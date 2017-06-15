@@ -38,7 +38,7 @@ aim_module_t *aim__findmodule(OscarData *od, const char *name)
 	aim_module_t *cur;
 
 	for (cur = (aim_module_t *)od->modlistv; cur; cur = cur->next) {
-		if (strcmp(name, cur->name) == 0)
+		if (purple_strequal(name, cur->name))
 			return cur;
 	}
 

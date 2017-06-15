@@ -250,7 +250,7 @@ oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_i
 				/* Append the status name for online ICQ statuses, away AIM statuses, and for all buddies with no message.
 				 * If the status name and the message are the same, only show one. */
 				const char *status_name = purple_status_get_name(status);
-				if (status_name && message && !strcmp(status_name, message))
+				if (status_name && message && purple_strequal(status_name, message))
 					status_name = NULL;
 
 				tmp = g_strdup_printf("%s%s%s",

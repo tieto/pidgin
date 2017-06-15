@@ -216,7 +216,7 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uid)
 
 			for (l = ims; l != NULL; l = l->next)
 			{
-				if (!strcmp(l->data,
+				if (purple_strequal(l->data,
 					purple_buddy_get_name(dialog->buddy)))
 				{
 					GtkTreeSelection *selection;

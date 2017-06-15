@@ -42,7 +42,7 @@ google_session_id_equal(gconstpointer a, gconstpointer b)
 	GoogleSessionId *c = (GoogleSessionId*)a;
 	GoogleSessionId *d = (GoogleSessionId*)b;
 
-	return !strcmp(c->id, d->id) && !strcmp(c->initiator, d->initiator);
+	return purple_strequal(c->id, d->id) && purple_strequal(c->initiator, d->initiator);
 }
 
 static void
@@ -91,7 +91,7 @@ google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 	PurpleMediaCandidate *transport;
 	gboolean video = FALSE;
 
-	if (!strcmp(session_id, "google-video"))
+	if (purple_strequal(session_id, "google-video"))
 		video = TRUE;
 
 	for (iter = candidates; iter; iter = iter->next) {
@@ -179,7 +179,7 @@ google_session_ready(GoogleSession *session)
 		JabberIq *iq;
 		PurpleXmlNode *sess, *desc, *payload;
 		GList *codecs, *iter;
-		gboolean is_initiator = !strcmp(session->id.initiator, me);
+		gboolean is_initiator = purple_strequal(session->id.initiator, me);
 
 		if (!is_initiator &&
 				!purple_media_accepted(media, NULL, NULL)) {
@@ -504,7 +504,7 @@ jabber_google_relay_response_session_handle_initiate_cb(GoogleSession *session,
 		const char *id, *encoding_name,  *clock_rate;
 		gboolean video;
 		if (codec_element->name &&
-				strcmp(codec_element->name, "payload-type"))
+				!purple_strequal(codec_element->name, "payload-type"))
 			continue;
 
 		xmlns = purple_xmlnode_get_namespace(codec_element);
@@ -512,7 +512,7 @@ jabber_google_relay_response_session_handle_initiate_cb(GoogleSession *session,
 		id = purple_xmlnode_get_attrib(codec_element, "id");
 
 		if (!session_data->video ||
-				(xmlns && !strcmp(xmlns, NS_GOOGLE_SESSION_PHONE))) {
+				purple_strequal(xmlns, NS_GOOGLE_SESSION_PHONE)) {
 			clock_rate = purple_xmlnode_get_attrib(
 					codec_element, "clockrate");
 			video = FALSE;
@@ -638,11 +638,11 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, Purp
 
 			g_snprintf(n, sizeof(n), "S%d", name++);
 
-			if (g_str_equal(type, "local"))
+			if (purple_strequal(type, "local"))
 				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_HOST;
-			else if (g_str_equal(type, "stun"))
+			else if (purple_strequal(type, "stun"))
 				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX;
-			else if (g_str_equal(type, "relay"))
+			else if (purple_strequal(type, "relay"))
 				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_RELAY;
 			else
 				candidate_type = PURPLE_MEDIA_CANDIDATE_TYPE_HOST;
@@ -709,7 +709,7 @@ google_session_handle_accept(JabberStream *js, GoogleSession *session, PurpleXml
 	GList *codecs = NULL, *video_codecs = NULL;
 	JabberIq *result = NULL;
 	const gchar *xmlns = purple_xmlnode_get_namespace(desc_element);
-	gboolean video = (xmlns && !strcmp(xmlns, NS_GOOGLE_SESSION_VIDEO));
+	gboolean video = purple_strequal(xmlns, NS_GOOGLE_SESSION_VIDEO);
 	GoogleAVSessionData *session_data =
 		(GoogleAVSessionData *) session->session_data;
 
@@ -788,15 +788,15 @@ google_session_parse_iq(JabberStream *js, GoogleSession *session, PurpleXmlNode 
 {
 	const char *type = purple_xmlnode_get_attrib(sess, "type");
 
-	if (!strcmp(type, "initiate")) {
+	if (purple_strequal(type, "initiate")) {
 		google_session_handle_initiate(js, session, sess, iq_id);
-	} else if (!strcmp(type, "accept")) {
+	} else if (purple_strequal(type, "accept")) {
 		google_session_handle_accept(js, session, sess, iq_id);
-	} else if (!strcmp(type, "reject")) {
+	} else if (purple_strequal(type, "reject")) {
 		google_session_handle_reject(js, session, sess);
-	} else if (!strcmp(type, "terminate")) {
+	} else if (purple_strequal(type, "terminate")) {
 		google_session_handle_terminate(js, session, sess);
-	} else if (!strcmp(type, "candidates")) {
+	} else if (purple_strequal(type, "candidates")) {
 		google_session_handle_candidates(js, session, sess, iq_id);
 	}
 }
@@ -845,7 +845,7 @@ jabber_google_session_parse(JabberStream *js, const char *from,
 	}
 
 	/* If the session doesn't exist, this has to be an initiate message */
-	if (strcmp(purple_xmlnode_get_attrib(session_node, "type"), "initiate"))
+	if (!purple_strequal(purple_xmlnode_get_attrib(session_node, "type"), "initiate"))
 		return;
 	desc_node = purple_xmlnode_get_child(session_node, "description");
 	if (!desc_node)

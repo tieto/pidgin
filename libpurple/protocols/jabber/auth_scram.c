@@ -131,12 +131,12 @@ guchar *jabber_scram_hi(const JabberScramHash *hash, const GString *str,
  * is the hash algorithm.  All buffers must be of the appropriate size
  * according to the JabberScramHash.
  *
- * "str" is a NULL-terminated string for hmac().
+ * "str" is a NULL-terminated string for jabber_scram_hmac().
  *
  * Needless to say, these are fragile.
  */
 static void
-hmac(const JabberScramHash *hash, guchar *out, const guchar *key, const gchar *str)
+jabber_scram_hmac(const JabberScramHash *hash, guchar *out, const guchar *key, const gchar *str)
 {
 	GHmac *hmac;
 	gsize digest_len = g_checksum_type_get_length(hash->type);
@@ -148,7 +148,7 @@ hmac(const JabberScramHash *hash, guchar *out, const guchar *key, const gchar *s
 }
 
 static void
-hash(const JabberScramHash *hash, guchar *out, const guchar *data)
+jabber_scram_hash(const JabberScramHash *hash, guchar *out, const guchar *data)
 {
 	GChecksum *checksum;
 	gsize digest_len = g_checksum_type_get_length(hash->type);
@@ -189,18 +189,18 @@ jabber_scram_calc_proofs(JabberScramData *data, GString *salt, guint iterations)
 	server_key = g_new0(guchar, hash_len);
 
 	/* client_key = HMAC(salted_password, "Client Key") */
-	hmac(data->hash, client_key, salted_password, "Client Key");
+	jabber_scram_hmac(data->hash, client_key, salted_password, "Client Key");
 	/* server_key = HMAC(salted_password, "Server Key") */
-	hmac(data->hash, server_key, salted_password, "Server Key");
+	jabber_scram_hmac(data->hash, server_key, salted_password, "Server Key");
 	g_free(salted_password);
 
 	/* stored_key = HASH(client_key) */
-	hash(data->hash, stored_key, client_key);
+	jabber_scram_hash(data->hash, stored_key, client_key);
 
 	/* client_signature = HMAC(stored_key, auth_message) */
-	hmac(data->hash, client_signature, stored_key, data->auth_message->str);
+	jabber_scram_hmac(data->hash, client_signature, stored_key, data->auth_message->str);
 	/* server_signature = HMAC(server_key, auth_message) */
-	hmac(data->hash, (guchar *)data->server_signature->str, server_key, data->auth_message->str);
+	jabber_scram_hmac(data->hash, (guchar *)data->server_signature->str, server_key, data->auth_message->str);
 
 	/* client_proof = client_key XOR client_signature */
 	for (i = 0; i < hash_len; ++i)

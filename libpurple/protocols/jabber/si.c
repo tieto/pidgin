@@ -89,7 +89,7 @@ jabber_si_xfer_find(JabberStream *js, const char *sid, const char *from)
 		PurpleXfer *xfer = xfers->data;
 		JabberSIXfer *jsx = purple_xfer_get_protocol_data(xfer);
 		if(jsx->stream_id && purple_xfer_get_remote_user(xfer) &&
-				!strcmp(jsx->stream_id, sid) && !strcmp(purple_xfer_get_remote_user(xfer), from))
+				purple_strequal(jsx->stream_id, sid) && purple_strequal(purple_xfer_get_remote_user(xfer), from))
 			return xfer;
 	}
 
@@ -764,7 +764,7 @@ jabber_si_connect_proxy_cb(JabberStream *js, const char *from,
 	{
 		gchar *my_jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node,
 			jsx->js->user->domain, jsx->js->user->resource);
-		if (!strcmp(jid, my_jid)) {
+		if (purple_strequal(jid, my_jid)) {
 			purple_debug_info("jabber", "Got local SOCKS5 streamhost-used.\n");
 			purple_xfer_start(xfer, purple_xfer_get_fd(xfer), NULL, -1);
 		} else {
@@ -870,7 +870,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		}
 
 		/* Include the public IP (assuming that there is a port mapped somehow) */
-		if (!has_public_ip && strcmp(public_ip, "0.0.0.0") != 0) {
+		if (!has_public_ip && !purple_strequal(public_ip, "0.0.0.0")) {
 			streamhost_count++;
 			streamhost = purple_xmlnode_new_child(query, "streamhost");
 			purple_xmlnode_set_attrib(streamhost, "jid", jid);
@@ -1193,14 +1193,14 @@ static void jabber_si_xfer_send_method_cb(JabberStream *js, const char *from,
 		const char *var = purple_xmlnode_get_attrib(field, "var");
 		JabberSIXfer *jsx = purple_xfer_get_protocol_data(xfer);
 
-		if(var && !strcmp(var, "stream-method")) {
+		if(purple_strequal(var, "stream-method")) {
 			if((value = purple_xmlnode_get_child(field, "value"))) {
 				char *val = purple_xmlnode_get_data(value);
-				if(val && !strcmp(val, NS_BYTESTREAMS)) {
+				if(purple_strequal(val, NS_BYTESTREAMS)) {
 					jabber_si_xfer_bytestreams_send_init(xfer);
 					jsx->stream_method |= STREAM_METHOD_BYTESTREAMS;
 					found_method = TRUE;
-				} else if (val && !strcmp(val, NS_IBB)) {
+				} else if (purple_strequal(val, NS_IBB)) {
 					jsx->stream_method |= STREAM_METHOD_IBB;
 					if (!found_method) {
 						/* we haven't tried to init a bytestream session, yet
@@ -1689,7 +1689,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	goffset filesize = 0;
 
 	if(!(profile = purple_xmlnode_get_attrib(si, "profile")) ||
-			strcmp(profile, NS_SI_FILE_TRANSFER))
+			!purple_strequal(profile, NS_SI_FILE_TRANSFER))
 		return;
 
 	if(!(stream_id = purple_xmlnode_get_attrib(si, "id")))
@@ -1726,15 +1726,15 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 
 	for(field = purple_xmlnode_get_child(x, "field"); field; field = purple_xmlnode_get_next_twin(field)) {
 		const char *var = purple_xmlnode_get_attrib(field, "var");
-		if(var && !strcmp(var, "stream-method")) {
+		if(purple_strequal(var, "stream-method")) {
 			for(option = purple_xmlnode_get_child(field, "option"); option;
 					option = purple_xmlnode_get_next_twin(option)) {
 				if((value = purple_xmlnode_get_child(option, "value"))) {
 					char *val;
 					if((val = purple_xmlnode_get_data(value))) {
-						if(!strcmp(val, NS_BYTESTREAMS)) {
+						if(purple_strequal(val, NS_BYTESTREAMS)) {
 							jsx->stream_method |= STREAM_METHOD_BYTESTREAMS;
-						} else if(!strcmp(val, NS_IBB)) {
+						} else if(purple_strequal(val, NS_IBB)) {
 							jsx->stream_method |= STREAM_METHOD_IBB;
 						}
 						g_free(val);

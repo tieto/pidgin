@@ -79,9 +79,9 @@ _find_resolver_data(gconstpointer a, gconstpointer b) {
 	gint ret = 1;
 
 	if(rd_a->if_idx == rd_b->if_idx
-			&& !strcmp(rd_a->name, rd_b->name)
-			&& !strcmp(rd_a->type, rd_b->type)
-			&& !strcmp(rd_a->domain, rd_b->domain)) {
+			&& purple_strequal(rd_a->name, rd_b->name)
+			&& purple_strequal(rd_a->type, rd_b->type)
+			&& purple_strequal(rd_a->domain, rd_b->domain)) {
 		ret = 0;
 	}
 
@@ -358,7 +358,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 				else {
 					while (tmp) {
 						BonjourBuddy *bb_tmp = tmp->data;
-						if (!strcmp(bb_tmp->name, serviceName)) {
+						if (purple_strequal(bb_tmp->name, serviceName)) {
 							bb = bb_tmp;
 							break;
 						}

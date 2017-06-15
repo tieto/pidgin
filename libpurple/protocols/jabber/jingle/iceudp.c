@@ -269,7 +269,7 @@ jingle_iceudp_add_local_candidate(JingleTransport *transport, const gchar *id, g
 
 	for (iter = iceudp->priv->local_candidates; iter; iter = g_list_next(iter)) {
 		JingleIceUdpCandidate *c = iter->data;
-		if (!strcmp(c->id, id)) {
+		if (purple_strequal(c->id, id)) {
 			generation = c->generation + 1;
 
 			g_boxed_free(JINGLE_TYPE_ICEUDP_CANDIDATE, c);
@@ -304,13 +304,13 @@ jingle_iceudp_get_remote_candidates(JingleTransport *transport)
 		JingleIceUdpCandidate *candidate = candidates->data;
 		PurpleMediaCandidate *new_candidate = purple_media_candidate_new(
 					candidate->foundation, candidate->component,
-					!strcmp(candidate->type, "host") ?
+					purple_strequal(candidate->type, "host") ?
 						PURPLE_MEDIA_CANDIDATE_TYPE_HOST :
-						!strcmp(candidate->type, "srflx") ?
+						purple_strequal(candidate->type, "srflx") ?
 							PURPLE_MEDIA_CANDIDATE_TYPE_SRFLX :
-							!strcmp(candidate->type, "prflx") ?
+							purple_strequal(candidate->type, "prflx") ?
 								PURPLE_MEDIA_CANDIDATE_TYPE_PRFLX :
-								!strcmp(candidate->type, "relay") ?
+								purple_strequal(candidate->type, "relay") ?
 									PURPLE_MEDIA_CANDIDATE_TYPE_RELAY : 0,
 					PURPLE_MEDIA_NETWORK_PROTOCOL_UDP,
 					candidate->ip, candidate->port);
@@ -334,7 +334,7 @@ jingle_iceudp_get_remote_candidate_by_id(JingleIceUdp *iceudp,
 	GList *iter = iceudp->priv->remote_candidates;
 	for (; iter; iter = g_list_next(iter)) {
 		JingleIceUdpCandidate *candidate = iter->data;
-		if (!strcmp(candidate->id, id)) {
+		if (purple_strequal(candidate->id, id)) {
 			return candidate;
 		}
 	}
@@ -453,7 +453,7 @@ jingle_iceudp_to_xml_internal(JingleTransport *transport, PurpleXmlNode *content
 			purple_xmlnode_set_attrib(xmltransport, "protocol", candidate->protocol);
 
 			if (candidate->reladdr != NULL &&
-					(strcmp(candidate->ip, candidate->reladdr) ||
+					(!purple_strequal(candidate->ip, candidate->reladdr) ||
 					(candidate->port != candidate->relport))) {
 				gchar *relport = g_strdup_printf("%d",
 						candidate->relport);

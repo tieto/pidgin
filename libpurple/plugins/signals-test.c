@@ -675,7 +675,7 @@ jabber_watched_iq(PurpleConnection *pc, const char *type, const char *id,
 	                  type, id, from, child, child->name,
 	                  purple_xmlnode_get_namespace(child));
 
-	if (g_str_equal(type, "get") || g_str_equal(type, "set")) {
+	if (purple_strequal(type, "get") || purple_strequal(type, "set")) {
 		/* Send the requisite reply */
 		PurpleXmlNode *iq = purple_xmlnode_new("iq");
 		purple_xmlnode_set_attrib(iq, "to", from);

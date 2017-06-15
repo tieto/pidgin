@@ -82,17 +82,19 @@ static gchar *generate_error_message(PurpleXmlNode *resp, const char *url)
 {
 	PurpleXmlNode *text;
 	PurpleXmlNode *status_code_node;
-	gchar *status_code;
 	gboolean have_error_code = TRUE;
 	gchar *err = NULL;
 	gchar *details = NULL;
 
 	status_code_node = purple_xmlnode_get_child(resp, "statusCode");
 	if (status_code_node) {
+		gchar *status_code;
+
 		/* We can get 200 OK here if the server omitted something we think it shouldn't have (see #12783).
 		 * No point in showing the "Ok" string to the user.
 		 */
-		if ((status_code = purple_xmlnode_get_data_unescaped(status_code_node)) && strcmp(status_code, "200") == 0) {
+		status_code = purple_xmlnode_get_data_unescaped(status_code_node);
+		if (purple_strequal(status_code, "200")) {
 			have_error_code = FALSE;
 		}
 	}
@@ -257,12 +259,12 @@ static gboolean parse_start_oscar_session_response(PurpleConnection *gc, const g
 		return FALSE;
 	}
 
-	if (strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0) {
+	if (!purple_strequal(encryption_type, OSCAR_NO_ENCRYPTION)) {
 		tls_node = purple_xmlnode_get_child(data_node, "tlsCertName");
 		if (tls_node != NULL) {
 			*tls_certname = purple_xmlnode_get_data_unescaped(tls_node);
 		} else {
-			if (strcmp(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION) == 0) {
+			if (purple_strequal(encryption_type, OSCAR_OPPORTUNISTIC_ENCRYPTION)) {
 				purple_debug_warning("oscar", "We haven't received a tlsCertName to use. We will not do SSL to BOS.\n");
 			} else {
 				purple_debug_error("oscar", "startOSCARSession was missing tlsCertName: %s\n", response);
@@ -368,7 +370,7 @@ static void send_start_oscar_session(OscarData *od, const char *token, const cha
 				od->icq ? ICQ_DEFAULT_DIST_ID : AIM_DEFAULT_DIST_ID),
 			get_client_key(od),
 			(gint64)hosttime,
-			strcmp(encryption_type, OSCAR_NO_ENCRYPTION) != 0 ? 1 : 0);
+			!purple_strequal(encryption_type, OSCAR_NO_ENCRYPTION));
 	signature = generate_signature("GET", get_start_oscar_session_url(od),
 			query_string, session_key);
 
@@ -453,7 +455,7 @@ static gboolean parse_client_login_response(PurpleConnection *gc, const gchar *r
 	}
 
 	/* Make sure the status code was 200 */
-	if (strcmp(tmp, "200") != 0)
+	if (!purple_strequal(tmp, "200"))
 	{
 		int status_code, status_detail_code = 0;
 

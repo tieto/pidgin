@@ -449,14 +449,14 @@ pidgin_sound_play_file(const char *filename)
 
 	method = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method");
 
-	if (!strcmp(method, "none")) {
+	if (purple_strequal(method, "none")) {
 		return;
-	} else if (!strcmp(method, "beep")) {
+	} else if (purple_strequal(method, "beep")) {
 		gdk_beep();
 		return;
 	}
 #ifdef _WIN32
-	else if (!strcmp(method, "playsoundw")) {
+	else if (purple_strequal(method, "playsoundw")) {
 		pidgin_sound_play_file_win32(filename);
 		return;
 	}
@@ -468,7 +468,7 @@ pidgin_sound_play_file(const char *filename)
 	}
 
 #ifndef _WIN32
-	if (!strcmp(method, "custom")) {
+	if (purple_strequal(method, "custom")) {
 		const char *sound_cmd;
 		char *command;
 		char *esc_filename;
@@ -521,23 +521,23 @@ pidgin_sound_play_file(const char *filename)
 	if (gst_init_failed)  /* Perhaps do gdk_beep instead? */
 		return;
 #ifdef _WIN32
-	if (!strcmp(method, "automatic")) {
+	if (purple_strequal(method, "automatic")) {
 		sink = gst_element_factory_make("directsoundsink", "sink");
 		if (sink == NULL)
 			sink = gst_element_factory_make("waveformsink", "sink");
 		if (sink == NULL)
 			sink = gst_element_factory_make("gconfaudiosink", "sink");
-	} else if (!strcmp(method, "directsound")) {
+	} else if (purple_strequal(method, "directsound")) {
 		sink = gst_element_factory_make("directsoundsink", "sink");
-	} else if (!strcmp(method, "waveform")) {
+	} else if (purple_strequal(method, "waveform")) {
 		sink = gst_element_factory_make("waveformsink", "sink");
 	}
 #else
-	if (!strcmp(method, "automatic")) {
+	if (purple_strequal(method, "automatic")) {
 		sink = gst_element_factory_make("gconfaudiosink", "sink");
-	} else if (!strcmp(method, "esd")) {
+	} else if (purple_strequal(method, "esd")) {
 		sink = gst_element_factory_make("esdsink", "sink");
-	} else if (!strcmp(method, "alsa")) {
+	} else if (purple_strequal(method, "alsa")) {
 		sink = gst_element_factory_make("alsasink", "sink");
 	}
 #endif
@@ -546,7 +546,7 @@ pidgin_sound_play_file(const char *filename)
 		return;
 	}
 
-	if (strcmp(method, "automatic") != 0 && !sink) {
+	if (!purple_strequal(method, "automatic") && !sink) {
 		purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 		return;
 	}

@@ -30,6 +30,7 @@
 #include <string.h>
 #include "nmrtf.h"
 #include "debug.h"
+#include "util.h"
 
 /* Internal RTF parser error codes */
 #define NMRTF_OK 0                      /* Everything's fine! */
@@ -707,7 +708,7 @@ rtf_dispatch_control(NMRtfContext *ctx, char *keyword, int param, gboolean param
     int idx;
 
     for (idx = 0; idx < table_size; idx++) {
-        if (strcmp(keyword, rtf_symbols[idx].keyword) == 0)
+        if (purple_strequal(keyword, rtf_symbols[idx].keyword))
             break;
 	}
 

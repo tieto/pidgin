@@ -1119,8 +1119,8 @@ chat_select_account_cb(GObject *w, PurpleAccount *account,
 	g_return_if_fail(data != NULL);
 	g_return_if_fail(account != NULL);
 
-	if (strcmp(purple_account_get_protocol_id(data->rq_data.account),
-	           purple_account_get_protocol_id(account)) == 0)
+	if (purple_strequal(purple_account_get_protocol_id(data->rq_data.account),
+	                    purple_account_get_protocol_id(account)))
 	{
 		data->rq_data.account = account;
 	}
@@ -2083,7 +2083,7 @@ pidgin_blist_sound_method_pref_cb(const char *name, PurplePrefType type,
 {
 	gboolean sensitive = TRUE;
 
-	if(!strcmp(value, "none"))
+	if(purple_strequal(value, "none"))
 		sensitive = FALSE;
 
 	gtk_action_set_sensitive(gtk_ui_manager_get_action(gtkblist->ui, "/BList/ToolsMenu/MuteSounds"), sensitive);
@@ -2105,7 +2105,7 @@ add_buddies_from_vcard(const char *protocol_id, PurpleGroup *group, GList *list,
 		gc = (PurpleConnection *)l->data;
 		account = purple_connection_get_account(gc);
 
-		if (!strcmp(purple_account_get_protocol_id(account), protocol_id))
+		if (purple_strequal(purple_account_get_protocol_id(account), protocol_id))
 			break;
 
 		account = NULL;
@@ -2169,21 +2169,21 @@ parse_vcard(const char *vcard, PurpleGroup *group)
 		if (*s == '\n') *s++ = '\0';
 
 		/* We only want to worry about a few fields here. */
-		if (!strcmp(field, "FN"))
+		if (purple_strequal(field, "FN"))
 			alias = g_strdup(value);
-		else if (!strcmp(field, "X-AIM") || !strcmp(field, "X-ICQ") ||
-				 !strcmp(field, "X-JABBER"))
+		else if (purple_strequal(field, "X-AIM") || purple_strequal(field, "X-ICQ") ||
+				 purple_strequal(field, "X-JABBER"))
 		{
 			char **values = g_strsplit(value, ":", 0);
 			char **im;
 
 			for (im = values; *im != NULL; im++)
 			{
-				if (!strcmp(field, "X-AIM"))
+				if (purple_strequal(field, "X-AIM"))
 					aims = g_list_append(aims, g_strdup(*im));
-				else if (!strcmp(field, "X-ICQ"))
+				else if (purple_strequal(field, "X-ICQ"))
 					icqs = g_list_append(icqs, g_strdup(*im));
-				else if (!strcmp(field, "X-JABBER"))
+				else if (purple_strequal(field, "X-JABBER"))
 					jabbers = g_list_append(jabbers, g_strdup(*im));
 			}
 
@@ -3346,10 +3346,10 @@ static char *get_mood_icon_path(const char *mood)
 {
 	char *path;
 
-	if (!strcmp(mood, "busy")) {
+	if (purple_strequal(mood, "busy")) {
 		path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
 			"status", "16", "busy.png", NULL);
-	} else if (!strcmp(mood, "hiptop")) {
+	} else if (purple_strequal(mood, "hiptop")) {
 		path = g_build_filename(PURPLE_DATADIR, "pixmaps", "pidgin",
 			"emblems", "16", "hiptop.png", NULL);
 	} else {
@@ -3571,7 +3571,7 @@ set_mood_cb(GtkWidget *widget, PurpleAccount *account)
 				path, (gpointer)mood->mood);
 		g_free(path);
 
-		if (current_mood && !strcmp(current_mood, mood->mood))
+		if (current_mood && purple_strequal(current_mood, mood->mood))
 			purple_request_field_list_add_selected(f, _(mood->description));
 	}
 	purple_request_field_group_add_field(g, f);
@@ -3846,7 +3846,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		g_object_get(c, "alias", &alias, NULL);
 		if (full && c && purple_buddy_get_local_alias(b) != NULL && purple_buddy_get_local_alias(b)[0] != '\0' &&
 		    (alias != NULL && alias[0] != '\0') &&
-		    strcmp(alias, purple_buddy_get_local_alias(b)) != 0)
+		    !purple_strequal(alias, purple_buddy_get_local_alias(b)))
 		{
 			purple_notify_user_info_add_pair_plaintext(user_info,
 					_("Buddy Alias"), purple_buddy_get_local_alias(b));
@@ -4949,7 +4949,7 @@ static void _prefs_change_redo_list(const char *name, PurplePrefType type,
 static void _prefs_change_sort_method(const char *pref_name, PurplePrefType type,
 									  gconstpointer val, gpointer data)
 {
-	if(!strcmp(pref_name, PIDGIN_PREFS_ROOT "/blist/sort_type"))
+	if(purple_strequal(pref_name, PIDGIN_PREFS_ROOT "/blist/sort_type"))
 		pidgin_blist_sort_method_set(val);
 }
 
@@ -5456,7 +5456,7 @@ update_account_error_state(PurpleAccount *account,
 
 	/* else, new and old are both non-NULL */
 
-	descriptions_differ = strcmp(old->description, new->description);
+	descriptions_differ = !purple_strequal(old->description, new->description);
 	desc = new->description;
 
 	switch (new->type) {
@@ -5985,8 +5985,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(gtkblist->treeview),
 			pidgin_blist_search_equal_func, NULL, NULL);
 
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), 
-		pidgin_make_scrollable(gtkblist->treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1), 
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox),
+		pidgin_make_scrollable(gtkblist->treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_NONE, -1, -1),
 		TRUE, TRUE, 0);
 
 	sep = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
@@ -6026,7 +6026,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(gtk_ui_manager_get_action(gtkblist->ui, "/BList/BuddiesMenu/ShowMenu/ShowProtocolIcons")),
 			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"));
 
-	if(!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"))
+	if(purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"))
 		gtk_action_set_sensitive(gtk_ui_manager_get_action(gtkblist->ui, "/BList/ToolsMenu/MuteSounds"), FALSE);
 
 	/* Update some dynamic things */
@@ -7632,7 +7632,7 @@ void pidgin_blist_sort_method_unreg(const char *id)
 
 	while(l) {
 		struct _PidginBlistSortMethod *method = l->data;
-		if(!strcmp(method->id, id)) {
+		if(purple_strequal(method->id, id)) {
 			pidgin_blist_sort_methods = g_list_delete_link(pidgin_blist_sort_methods, l);
 			g_free(method->id);
 			g_free(method->name);
@@ -7650,7 +7650,7 @@ void pidgin_blist_sort_method_set(const char *id){
 	if(!id)
 		id = "none";
 
-	while (l && strcmp(((struct _PidginBlistSortMethod*)l->data)->id, id))
+	while (l && !purple_strequal(((struct _PidginBlistSortMethod*)l->data)->id, id))
 		l = l->next;
 
 	if (l) {
@@ -7659,7 +7659,7 @@ void pidgin_blist_sort_method_set(const char *id){
 		pidgin_blist_sort_method_set("none");
 		return;
 	}
-	if (!strcmp(id, "none")) {
+	if (purple_strequal(id, "none")) {
 		redo_buddy_list(purple_blist_get_buddy_list(), TRUE, FALSE);
 	} else {
 		redo_buddy_list(purple_blist_get_buddy_list(), FALSE, FALSE);
@@ -8305,7 +8305,7 @@ pidgin_blist_update_sort_methods(void)
 		gtk_radio_action_set_group(action, sl);
 		sl = gtk_radio_action_get_group(action);
 
-		if (!strcmp(m, method->id))
+		if (purple_strequal(m, method->id))
 			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), TRUE);
 		else
 			gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), FALSE);

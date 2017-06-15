@@ -87,7 +87,7 @@ static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
 	if (a->username && b->username) {
 		normal = g_strdup(purple_normalize(a->account, a->username));
 		ret = (a->account == b->account) &&
-			!strcmp(normal, purple_normalize(b->account, b->username));
+			purple_strequal(normal, purple_normalize(b->account, b->username));
 		g_free(normal);
 	} else {
 		ret = (a == b);
@@ -118,7 +118,7 @@ static void search_cb(GntWidget *button, FinchLogViewer *lv)
 		return;
 	}
 
-	if (lv->search != NULL && !strcmp(lv->search, search_term)) {
+	if (lv->search != NULL && purple_strequal(lv->search, search_term)) {
 		return;
 	}
 
@@ -234,7 +234,7 @@ static void populate_log_tree(FinchLogViewer *lv)
 		pmonth = purple_utf8_strftime(_("%B %Y"),
 		                           log->tm ? log->tm : localtime(&log->time));
 
-		if (strcmp(pmonth, prev_top_month) != 0) {
+		if (!purple_strequal(pmonth, prev_top_month)) {
 			month = g_strdup(pmonth);
 			/* top level */
 			gnt_tree_add_row_last(GNT_TREE(lv->tree),

@@ -203,7 +203,7 @@ jabber_bosh_connection_parse(PurpleJabberBOSHConnection *conn,
 	root = purple_xmlnode_from_str(data, data_len);
 
 	type = purple_xmlnode_get_attrib(root, "type");
-	if (g_strcmp0(type, "terminate") == 0) {
+	if (purple_strequal(type, "terminate")) {
 		purple_connection_error(conn->js->gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("The BOSH "
 			"connection manager terminated your session."));
@@ -245,10 +245,10 @@ jabber_bosh_connection_recv(PurpleHttpConnection *http_conn,
 		 * the right xmlns on these packets. See #11315.
 		 */
 		xmlns = purple_xmlnode_get_namespace(child);
-		if ((xmlns == NULL || g_strcmp0(xmlns, NS_BOSH) == 0) &&
-			(g_strcmp0(child->name, "iq") == 0 ||
-			g_strcmp0(child->name, "message") == 0 ||
-			g_strcmp0(child->name, "presence") == 0))
+		if ((xmlns == NULL || purple_strequal(xmlns, NS_BOSH)) &&
+			(purple_strequal(child->name, "iq") ||
+			purple_strequal(child->name, "message") ||
+			purple_strequal(child->name, "presence")))
 		{
 			purple_xmlnode_set_namespace(child, NS_XMPP_CLIENT);
 		}
