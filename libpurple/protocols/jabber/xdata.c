@@ -64,7 +64,7 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 				PurpleRequestField *field = flds->data;
 				const char *id = purple_request_field_get_id(field);
 				int handleindex;
-				if(strcmp(id, "libpurple:jabber:xdata:actions"))
+				if(!purple_strequal(id, "libpurple:jabber:xdata:actions"))
 					continue;
 				handleindex = GPOINTER_TO_INT(purple_request_field_choice_get_value(field));
 				actionhandle = g_strdup(g_list_nth_data(data->actions, handleindex));
@@ -230,12 +230,12 @@ void *jabber_x_data_request_with_actions(JabberStream *js, PurpleXmlNode *packet
 		if(!type)
 			type = "text-single";
 
-		if(!var && strcmp(type, "fixed"))
+		if(!var && !purple_strequal(type, "fixed"))
 			continue;
 		if(!label)
 			label = var;
 
-		if(!strcmp(type, "text-private")) {
+		if(purple_strequal(type, "text-private")) {
 			if((valuenode = purple_xmlnode_get_child(fn, "value")))
 				value = purple_xmlnode_get_data(valuenode);
 
@@ -247,7 +247,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, PurpleXmlNode *packet
 			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
 
 			g_free(value);
-		} else if(!strcmp(type, "text-multi") || !strcmp(type, "jid-multi")) {
+		} else if(purple_strequal(type, "text-multi") || purple_strequal(type, "jid-multi")) {
 			GString *str = g_string_new("");
 
 			for(valuenode = purple_xmlnode_get_child(fn, "value"); valuenode;
@@ -267,13 +267,13 @@ void *jabber_x_data_request_with_actions(JabberStream *js, PurpleXmlNode *packet
 			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_MULTI));
 
 			g_string_free(str, TRUE);
-		} else if(!strcmp(type, "list-single") || !strcmp(type, "list-multi")) {
+		} else if(purple_strequal(type, "list-single") || purple_strequal(type, "list-multi")) {
 			PurpleXmlNode *optnode;
 			GList *selected = NULL;
 
 			field = purple_request_field_list_new(var, label);
 
-			if(!strcmp(type, "list-multi")) {
+			if(purple_strequal(type, "list-multi")) {
 				purple_request_field_list_set_multi_select(field, TRUE);
 				g_hash_table_replace(data->fields, g_strdup(var),
 						GINT_TO_POINTER(JABBER_X_DATA_LIST_MULTI));
@@ -316,7 +316,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, PurpleXmlNode *packet
 				selected = g_list_delete_link(selected, selected);
 			}
 
-		} else if(!strcmp(type, "boolean")) {
+		} else if(purple_strequal(type, "boolean")) {
 			gboolean def = FALSE;
 
 			if((valuenode = purple_xmlnode_get_child(fn, "value")))
@@ -332,7 +332,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, PurpleXmlNode *packet
 			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_BOOLEAN));
 
 			g_free(value);
-		} else if(!strcmp(type, "fixed")) {
+		} else if(purple_strequal(type, "fixed")) {
 			if((valuenode = purple_xmlnode_get_child(fn, "value")))
 				value = purple_xmlnode_get_data(valuenode);
 
@@ -342,7 +342,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, PurpleXmlNode *packet
 
 				g_free(value);
 			}
-		} else if(!strcmp(type, "hidden")) {
+		} else if(purple_strequal(type, "hidden")) {
 			if((valuenode = purple_xmlnode_get_child(fn, "value")))
 				value = purple_xmlnode_get_data(valuenode);
 
@@ -362,7 +362,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, PurpleXmlNode *packet
 					value ? value : "", FALSE);
 			purple_request_field_group_add_field(group, field);
 
-			if(!strcmp(type, "jid-single")) {
+			if(purple_strequal(type, "jid-single")) {
 				purple_request_field_set_type_hint(field, "screenname");
 				g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_JID_SINGLE));
 			} else {

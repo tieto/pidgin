@@ -3,6 +3,9 @@ syntax: regexp
 ^test_sha(1|256)$
 ^test_des3?$
 ^test_hmac$
+^test_image$
+^test_smiley$
+^test_smiley_list$
 ^test_trie$
 ^test_util$
 ^test_xmlnode$

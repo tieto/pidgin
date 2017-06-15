@@ -3,9 +3,6 @@
 %.o: %.c
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
 
-%.c: %.xs
-	$(TAG) "PERL" $(PERL) -MExtUtils::ParseXS -e 'ExtUtils::ParseXS::process_file(filename => "$<", output => "$@", typemap => "$(PURPLE_PERL_TOP)/common/typemap");'
-
 %.o: %.rc
 	@echo -e "  GEN\t$@"
 	@$(WINDRES) -I$(PURPLE_TOP) -i $< -o $@

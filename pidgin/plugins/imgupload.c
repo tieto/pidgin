@@ -121,8 +121,8 @@ imgup_imgur_upload(PidginWebView *webview, PurpleImage *image)
 		"Client-ID " IMGUP_IMGUR_CLIENT_ID);
 
 	/* TODO: make it a plain, multipart/form-data request */
-	img_data = purple_base64_encode(purple_image_get_data(image),
-		purple_image_get_size(image));
+	img_data = g_base64_encode(purple_image_get_data(image),
+		purple_image_get_data_size(image));
 	img_data_e = g_uri_escape_string(img_data, NULL, FALSE);
 	g_free(img_data);
 	req_data = g_strdup_printf("type=base64&image=%s", img_data_e);

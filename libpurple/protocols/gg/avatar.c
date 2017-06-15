@@ -353,8 +353,8 @@ ggp_avatar_own_got_token(PurpleConnection *gc, const gchar *token,
 	}
 	own_data->img = NULL;
 
-	img_data = purple_base64_encode(purple_image_get_data(img),
-		purple_image_get_size(img));
+	img_data = g_base64_encode(purple_image_get_data(img),
+		purple_image_get_data_size(img));
 	img_data_e = g_uri_escape_string(img_data, NULL, FALSE);
 	g_free(img_data);
 	request_data = g_strdup_printf("uin=%d&photo=%s", uin, img_data_e);

@@ -50,7 +50,7 @@ static PurpleXmlNode *finish_plaintext_authentication(JabberStream *js)
 	response = g_string_append(response,
 			purple_connection_get_password(js->gc));
 
-	enc_out = purple_base64_encode((guchar *)response->str, response->len);
+	enc_out = g_base64_encode((guchar *)response->str, response->len);
 
 	purple_xmlnode_set_attrib(auth, "mechanism", "PLAIN");
 	purple_xmlnode_insert_data(auth, enc_out, -1);

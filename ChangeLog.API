@@ -417,6 +417,7 @@ version 3.0.0 (??/??/????):
 		* purple_account_add_buddies_with_invite
 		* purple_account_add_buddy_with_invite
 		* purple_account_set_current_error
+		* purple_base64_*. Use g_base64_* instead
 		* purple_blist_load
 		* purple_blist_new
 		* purple_set_blist
@@ -461,6 +462,7 @@ version 3.0.0 (??/??/????):
 		* purple_notify_searchresults_get_columns_count
 		* purple_notify_searchresults_get_rows_count
 		* purple_notify_searchresults_row_get
+		* purple_ntlm_*
 		* PurplePluginType
 		* PurplePluginPriority
 		* PurplePluginLoaderInfo
@@ -631,6 +633,17 @@ version 3.0.0 (??/??/????):
 		* _GntProgressBarOrientation
 		* _GntTreeColumnFlag
 		* _GntWidgetFlags
+
+version 2.12.0:
+	libpurple:
+		Added:
+		* PURPLE_MESSAGE_REMOTE_SEND in PurpleMessageFlags, to specify
+		messages like _SEND that were sent from another location.
+		* purple_certificate_get_fingerprint_sha256
+		* purple_certificate_compare_pubkeys
+		* PurpleCertificateScheme.get_fingerprint_sha256
+		* PurpleCertificateScheme.compare_pubkeys
+		* PURPLE_CERTIFICATE_SCHEME_HAS_FUNC
 
 version 2.11.0:
 	libpurple:

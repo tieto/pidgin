@@ -27,11 +27,9 @@
 #define _PURPLE_PROXY_C_
 
 #include "internal.h"
-#include "ciphers/md5hash.h"
 #include "debug.h"
 #include "http.h"
 #include "notify.h"
-#include "ntlm.h"
 #include "prefs.h"
 #include "proxy.h"
 #include "purple-gio.h"

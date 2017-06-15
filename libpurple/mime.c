@@ -345,7 +345,7 @@ purple_mime_part_get_data_decoded(PurpleMimePart *part, guchar **data, gsize *le
 		*data = purple_base16_decode(part->data->str, len);
 
 	} else if(! g_ascii_strcasecmp(enc, "base64")) {
-		*data = purple_base64_decode(part->data->str, len);
+		*data = g_base64_decode(part->data->str, len);
 
 	} else if(! g_ascii_strcasecmp(enc, "quoted-printable")) {
 		*data = purple_quotedp_decode(part->data->str, len);

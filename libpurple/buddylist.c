@@ -123,7 +123,7 @@ static guint _purple_blist_hbuddy_equal(struct _purple_hbuddy *hb1, struct _purp
 {
 	return (hb1->group == hb2->group &&
 	        hb1->account == hb2->account &&
-	        g_str_equal(hb1->name, hb2->name));
+	        purple_strequal(hb1->name, hb2->name));
 }
 
 static void _purple_blist_hbuddy_free_key(struct _purple_hbuddy *hb)
@@ -372,7 +372,7 @@ blist_to_xmlnode(void)
 	child = purple_xmlnode_new_child(node, "blist");
 
 	localized_default = localized_default_group_name;
-	if (g_strcmp0(_("Buddies"), "Buddies") != 0)
+	if (!purple_strequal(_("Buddies"), "Buddies"))
 		localized_default = _("Buddies");
 	if (localized_default != NULL) {
 		purple_xmlnode_set_attrib(child,
@@ -1636,9 +1636,9 @@ PurpleGroup *purple_blist_find_group(const char *name)
 
 	if (name == NULL || name[0] == '\0')
 		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
-	if (g_strcmp0(name, "Buddies") == 0)
+	if (purple_strequal(name, "Buddies"))
 		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
-	if (g_strcmp0(name, localized_default_group_name) == 0)
+	if (purple_strequal(name, localized_default_group_name))
 		name = PURPLE_BLIST_DEFAULT_GROUP_NAME;
 
 	key = purple_blist_fold_name(name);
@@ -1704,7 +1704,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 				g_list_free(parts);
 
 				if (purple_chat_get_account(chat) == account && chat_name != NULL &&
-					normname != NULL && !strcmp(purple_normalize(account, chat_name), normname)) {
+					purple_strequal(purple_normalize(account, chat_name), normname)) {
 					g_free(normname);
 					return chat;
 				}

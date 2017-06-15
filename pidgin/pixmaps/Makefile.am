@@ -171,10 +171,6 @@ EMOTES_DEFAULT_24_SCALABLE = \
 		emotes/default/24/scalable/mobile.svg \
 		emotes/default/24/scalable/monkey.svg \
 		emotes/default/24/scalable/moon.svg \
-		emotes/default/24/scalable/msn-away.svg \
-		emotes/default/24/scalable/msn-busy.svg \
-		emotes/default/24/scalable/msn_online.svg \
-		emotes/default/24/scalable/msn.svg \
 		emotes/default/24/scalable/musical-note.svg \
 		emotes/default/24/scalable/peace.svg \
 		emotes/default/24/scalable/phone.svg \
@@ -218,10 +214,8 @@ PROTOCOLS_16_SCALABLE = \
 		protocols/16/scalable/irc.svg \
 		protocols/16/scalable/jabber.svg \
 		protocols/16/scalable/meanwhile.svg \
-		protocols/16/scalable/msn.svg \
 		protocols/16/scalable/silc.svg \
 		protocols/16/scalable/simple.svg \
-		protocols/16/scalable/yahoo.svg \
 		protocols/16/scalable/zephyr.svg
 
 PROTOCOLS_16 = \
@@ -235,11 +229,8 @@ PROTOCOLS_16 = \
 		protocols/16/irc.png \
 		protocols/16/jabber.png \
 		protocols/16/meanwhile.png \
-		protocols/16/msn.png \
-		protocols/16/mxit.png \
 		protocols/16/silc.png \
 		protocols/16/simple.png \
-		protocols/16/yahoo.png \
 		protocols/16/zephyr.png
 
 ICONS_16_SCALABLE = \
@@ -272,10 +263,8 @@ PROTOCOLS_22_SCALABLE = \
 		protocols/22/scalable/irc.svg \
 		protocols/22/scalable/jabber.svg \
 		protocols/22/scalable/meanwhile.svg \
-		protocols/22/scalable/msn.svg \
 		protocols/22/scalable/silc.svg \
 		protocols/22/scalable/simple.svg \
-		protocols/22/scalable/yahoo.svg \
 		protocols/22/scalable/zephyr.svg
 
 PROTOCOLS_22 = \
@@ -289,11 +278,8 @@ PROTOCOLS_22 = \
 		protocols/22/irc.png \
 		protocols/22/jabber.png \
 		protocols/22/meanwhile.png \
-		protocols/22/msn.png \
-		protocols/22/mxit.png \
 		protocols/22/silc.png \
 		protocols/22/simple.png \
-		protocols/22/yahoo.png \
 		protocols/22/zephyr.png
 
 PROTOCOLS_48 = \
@@ -307,11 +293,8 @@ PROTOCOLS_48 = \
 		protocols/48/irc.png \
 		protocols/48/jabber.png \
 		protocols/48/meanwhile.png \
-		protocols/48/msn.png \
-		protocols/48/mxit.png \
 		protocols/48/silc.png \
 		protocols/48/simple.png \
-		protocols/48/yahoo.png \
 		protocols/48/zephyr.png
 
 PROTOCOLS_SCALABLE = \
@@ -324,11 +307,8 @@ PROTOCOLS_SCALABLE = \
 		protocols/scalable/irc.svg \
 		protocols/scalable/jabber.svg \
 		protocols/scalable/meanwhile.svg \
-		protocols/scalable/msn.svg \
-		protocols/scalable/mxit.svg \
 		protocols/scalable/silc.svg \
 		protocols/scalable/simple.svg \
-		protocols/scalable/yahoo.svg \
 		protocols/scalable/zephyr.svg
 
 STATUS_11 = \

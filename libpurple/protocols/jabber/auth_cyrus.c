@@ -271,7 +271,7 @@ jabber_auth_start_cyrus(JabberStream *js, PurpleXmlNode **reply, char **error)
 					js->auth_fail_count++;
 
 				if (js->auth_fail_count == 1 &&
-					(js->sasl_mechs->str && g_str_equal(js->sasl_mechs->str, "GSSAPI"))) {
+					purple_strequal(js->sasl_mechs->str, "GSSAPI")) {
 					/* If we tried GSSAPI first, it failed, and it was the only method we had to try, try jabber:iq:auth
 					 * for compatibility with iChat 10.5 Server and other jabberd based servers.
 					 *
@@ -336,7 +336,7 @@ jabber_auth_start_cyrus(JabberStream *js, PurpleXmlNode **reply, char **error)
 			if (coutlen == 0) {
 				purple_xmlnode_insert_data(auth, "=", -1);
 			} else {
-				enc_out = purple_base64_encode((unsigned char*)clientout, coutlen);
+				enc_out = g_base64_encode((unsigned char*)clientout, coutlen);
 				purple_xmlnode_insert_data(auth, enc_out, -1);
 				g_free(enc_out);
 			}
@@ -420,7 +420,7 @@ jabber_cyrus_start(JabberStream *js, PurpleXmlNode *mechanisms,
 		 * mechanisms"...  Easiest just to blacklist it (for now).
 		 */
 		if (!mech_name || !*mech_name ||
-				g_str_equal(mech_name, "EXTERNAL")) {
+				purple_strequal(mech_name, "EXTERNAL")) {
 			g_free(mech_name);
 			continue;
 		}
@@ -458,7 +458,7 @@ jabber_cyrus_handle_challenge(JabberStream *js, PurpleXmlNode *packet,
 	unsigned int clen;
 	gsize declen;
 
-	dec_in = purple_base64_decode(enc_in, &declen);
+	dec_in = g_base64_decode(enc_in, &declen);
 
 	js->sasl_state = sasl_client_step(js->sasl, (char*)dec_in, declen,
 					  NULL, &c_out, &clen);
@@ -486,10 +486,10 @@ jabber_cyrus_handle_challenge(JabberStream *js, PurpleXmlNode *packet,
 			if (!purple_strequal(js->current_mech, "DIGEST-MD5") ||
 					strstr(c_out, ",charset="))
 				/* If we're not using DIGEST-MD5 or Cyrus SASL is fixed */
-				enc_out = purple_base64_encode((unsigned char*)c_out, clen);
+				enc_out = g_base64_encode((unsigned char*)c_out, clen);
 			else {
 				char *tmp = g_strdup_printf("%s,charset=utf-8", c_out);
-				enc_out = purple_base64_encode((unsigned char*)tmp, clen + 14);
+				enc_out = g_base64_encode((unsigned char*)tmp, clen + 14);
 				g_free(tmp);
 			}
 
@@ -519,7 +519,7 @@ jabber_cyrus_handle_success(JabberStream *js, PurpleXmlNode *packet,
 		gsize declen = 0;
 
 		if(enc_in != NULL)
-			dec_in = purple_base64_decode(enc_in, &declen);
+			dec_in = g_base64_decode(enc_in, &declen);
 
 		js->sasl_state = sasl_client_step(js->sasl, (char*)dec_in, declen, NULL, &c_out, &clen);
 
@@ -565,7 +565,7 @@ jabber_cyrus_handle_failure(JabberStream *js, PurpleXmlNode *packet,
 			return jabber_auth_start_cyrus(js, reply, error);
 
 		} else if ((js->auth_fail_count == 1) &&
-				   (js->current_mech && g_str_equal(js->current_mech, "GSSAPI"))) {
+				   purple_strequal(js->current_mech, "GSSAPI")) {
 			/* If we tried GSSAPI first, it failed, and it was the only method we had to try, try jabber:iq:auth
 			 * for compatibility with iChat 10.5 Server and other jabberd based servers.
 			 *

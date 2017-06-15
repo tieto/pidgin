@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:14-0500\n"
-"PO-Revision-Date: 2016-06-06 21:09+0000\n"
-"Last-Translator: Gary Kramlich <grim@reaperworld.com>\n"
+"POT-Creation-Date: 2017-03-09 18:53-0600\n"
+"PO-Revision-Date: 2016-10-14 20:42+0000\n"
+"Last-Translator: Richard Laager <rlaager@wiktel.com>\n"
 "Language-Team: Galician (http://www.transifex.com/pidgin/pidgin/language/"
 "gl/)\n"
 "Language: gl\n"
@@ -60,7 +60,6 @@ msgstr ""
 "%s atopou erros ao migrar os seus axustes de %s a %s. Investigue e termine a "
 "migración manualmente. Informe deste erro en http://developer.pidgin.im"
 
-#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Erro"
 
@@ -236,7 +235,6 @@ msgstr "Introduza a información do contacto."
 msgid "Chats"
 msgstr "Conversas"
 
-#. Extract their Name and put it in
 msgid "Name"
 msgstr "Nome"
 
@@ -344,11 +342,9 @@ msgstr "Cambiar a etiqueta"
 msgid "View Log"
 msgstr "Ver o rexistro"
 
-#. General
 msgid "Nickname"
 msgstr "Alcume"
 
-#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "Inactivo"
@@ -794,7 +790,6 @@ msgid "Remaining"
 msgstr "Restantes"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
-#. presence
 msgid "Status"
 msgstr "Estado"
 
@@ -1046,8 +1041,9 @@ msgstr "Novo aviso de contacto"
 msgid "Edit Buddy Pounce"
 msgstr "Editar aviso de contacto"
 
-msgid "Pounce Who"
-msgstr "Avisar a quen"
+#. Create the "Pounce on Whom" frame.
+msgid "Pounce on Whom"
+msgstr "A quen avisar"
 
 #. Account:
 msgid "Account:"
@@ -1292,8 +1288,8 @@ msgstr "O GStreamer fallou ao iniciar."
 msgid "(default)"
 msgstr "(predeterminado)"
 
-msgid "Select Sound File ..."
-msgstr "Seleccionar ficheiro de son ..."
+msgid "Select Sound File..."
+msgstr ""
 
 msgid "Sound Preferences"
 msgstr "Preferencias de son"
@@ -1375,21 +1371,12 @@ msgstr "Borrar o estado"
 msgid "Saved Statuses"
 msgstr "Estados gardados"
 
-#. title
 msgid "Title"
 msgstr "Título"
 
 msgid "Type"
 msgstr "Tipo"
 
-#. Statuses are almost all the same. Define a macro to reduce code repetition.
-#. PurpleStatusPrimitive
-#. id - use default
-#. name - use default
-#. saveable
-#. user_settable
-#. not independent
-#. Attributes - each status can have a message.
 msgid "Message"
 msgstr "Mensaxe"
 
@@ -1421,12 +1408,12 @@ msgstr "Mensaxe:"
 msgid "Edit Status"
 msgstr "Editar estado"
 
-msgid "Use different status for following accounts"
-msgstr "Usar un estado diferente para as contas seguintes"
+msgid "Use a different status for some accounts"
+msgstr ""
 
-#. Save & Use
-msgid "Save & Use"
-msgstr "Gardar e usar"
+#. Save and Use
+msgid "Save and Use"
+msgstr ""
 
 msgid "Certificates"
 msgstr "Certificados"
@@ -1556,8 +1543,8 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr "TinyURL para enriba: %s"
 
-msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr "Agarde mentres TinyURL busca un URL máis corto..."
+msgid "Please wait while TinyURL fetches a shorter URL..."
+msgstr ""
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Só crear o TinyURL dun URL se ten unha lonxitude coma esta ou superior"
@@ -1571,14 +1558,12 @@ msgstr "TinyURL"
 msgid "TinyURL plugin"
 msgstr "Plugin TinyURL"
 
-msgid "When receiving a message with URL(s), use TinyURL for easier copying"
+msgid "Shorten URLs in messages using TinyURL"
 msgstr ""
-"Ao recibir unha mensaxe con URL, empregar TinyURL para facilitar o copiado."
 
 msgid "Online"
 msgstr "Conectado"
 
-#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Desconectado"
 
@@ -1826,7 +1811,6 @@ msgstr "(autoasinado)"
 msgid "View Issuer Certificate"
 msgstr "Ver o emisor do certificado"
 
-#. show error to user
 msgid "Registration Error"
 msgstr "Erro de rexistro"
 
@@ -1842,7 +1826,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s desconectouse"
 
 #. Undocumented
-#. Unknown error
 msgid "Unknown error"
 msgstr "Erro descoñecido"
 
@@ -1973,22 +1956,6 @@ msgstr "O manexador dos URL «irc»"
 msgid "The command used to handle \"irc\" URLs, if enabled."
 msgstr "A orde usada para manexar os URL «irc»,  se está activado."
 
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Indica se a orde especificada debe manexar os URL «msnim»"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"É verdadeiro se a orde especificada na chave \"orde\" debe manexar os URL "
-"\"msnim\"."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "O manexador dos URL «msnim»"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "A orde usada para manexar os URL «msnim», se está activado."
-
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Indica se a orde especificada debe manexar os URL «sip»"
 
@@ -2020,22 +1987,6 @@ msgstr "O manexador dos URL «xmpp»"
 
 msgid "The command used to handle \"xmpp\" URLs, if enabled."
 msgstr "A orde usada para manexar os URL «xmpp», se está activado."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Indica se a orde especificada debe manexar os URL «ymsgr»"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"É verdadeiro se a orde especificada na chave «orde» debe manexar os URL "
-"«ymsgr»."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "O manexador dos URL «ymsgr»"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "A orde usada para manexar os URL «ymsgr»,  se está activado."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2876,11 +2827,8 @@ msgstr "Modo psíquico para conversas entrantes"
 
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
-"Provoca que aparezan xanelas de conversa cando outros usuarios comezan unha "
-"conversa consigo. Isto funciona para o AIM, o ICQ, o XMPP, o Sametime e o "
-"Yahoo!"
 
 msgid "You feel a disturbance in the force..."
 msgstr "Sentiu unha alteración na forza..."
@@ -3098,12 +3046,9 @@ msgstr ""
 "activestate.com\n"
 
 msgid ""
-"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
-"im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
+"developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
-"Non se atopou o xogo de ferramentas «Apple Bonjour para Windows», vexa a "
-"sección de preguntas máis frecuentes (FAQ) en: http://d.pidgin.im/"
-"BonjourWindows para máis información."
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "Non é posíbel escoitar as conexións entrantes de MI"
@@ -3120,7 +3065,6 @@ msgstr "Nome"
 msgid "Last name"
 msgstr "Apelidos"
 
-#. email
 msgid "Email"
 msgstr "Correo electrónico"
 
@@ -3208,14 +3152,12 @@ msgstr "Cidade"
 msgid "Year of birth"
 msgstr "Ano de nacemento"
 
-#. gender
 msgid "Gender"
 msgstr "Sexo"
 
 msgid "Male or female"
 msgstr "Home ou muller"
 
-#. 0
 msgid "Male"
 msgstr "Home"
 
@@ -3253,22 +3195,16 @@ msgstr "Seleccione unha conversa para o contacto: %s"
 msgid "Add to chat..."
 msgstr "Engadir á conversa..."
 
-#. 0
 #. Global
 msgid "Available"
 msgstr "Dispoñíbel"
 
-#. 2
 msgid "Chatty"
 msgstr "Falador"
 
-#. 3
 msgid "Do Not Disturb"
 msgstr "Non molestar"
 
-#. 1
-#. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
-#. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
 msgid "Away"
 msgstr "Ausente"
@@ -3276,8 +3212,6 @@ msgstr "Ausente"
 msgid "UIN"
 msgstr "UIN"
 
-#. first name
-#. optional information
 msgid "First Name"
 msgstr "Nome"
 
@@ -3302,9 +3236,6 @@ msgstr "Non hai usuarios que coincidan cos seus criterios de busca."
 msgid "Unable to read from socket"
 msgstr "Non é posíbel ler desde o conectador"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
 msgid "Connected"
 msgstr "Conectado"
 
@@ -3317,7 +3248,6 @@ msgstr "Engadir á conversa"
 msgid "Chat _name:"
 msgstr "_Nome da conversa:"
 
-#. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Conectando"
@@ -4097,8 +4027,6 @@ msgstr "Posto de traballo"
 msgid "Role"
 msgstr "Papel"
 
-#. birthday
-#. birthday (required)
 msgid "Birthday"
 msgstr "Aniversario"
 
@@ -4190,7 +4118,6 @@ msgstr "Terminar a sesión"
 msgid "JID"
 msgstr "JID"
 
-#. last name
 msgid "Last Name"
 msgstr "Apelidos"
 
@@ -4457,7 +4384,6 @@ msgstr "Ninguén (Destino pendente)"
 msgid "None"
 msgstr "Ninguén"
 
-#. subscription type
 msgid "Subscription"
 msgstr "Subscrición"
 
@@ -4473,12 +4399,6 @@ msgstr "Nome de estado de ánimo"
 msgid "Mood Comment"
 msgstr "Comentario de estado de ánimo"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
 msgid "Tune Artist"
 msgstr "Artista da canción"
 
@@ -4723,8 +4643,6 @@ msgstr ""
 "Non é posíbel enviar un zunido porque %s non o admite ou non quere recibir  "
 "zunidos agora."
 
-#. Yahoo only supports one attention command: the 'buzz'.
-#. This is index number YAHOO_BUZZ.
 msgid "Buzz"
 msgstr "Zunido"
 
@@ -4860,8 +4778,6 @@ msgstr "Permitir a autenticación con texto plano sobre as canles non cifradas"
 msgid "Connect port"
 msgstr "Conectar co porto"
 
-#. TODO: default to automatically try different ports. Make the user be
-#. * able to set the first port to try (like LastConnectedPort in Windows client).
 #. Account options
 msgid "Connect server"
 msgstr "Conectar co servidor"
@@ -4872,8 +4788,9 @@ msgstr "Proxies de transferencia de ficheiros"
 msgid "BOSH URL"
 msgstr "URL BOSH"
 
-#. this should probably be part of global smiley theme settings later on,
-#. shared with MSN
+#. this should probably be part of global smiley theme settings
+#. * later on
+#.
 msgid "Show Custom Smileys"
 msgstr "Amosar as emoticonas personalizadas"
 
@@ -4963,7 +4880,6 @@ msgstr ""
 "Non se puido enviar o ficheiro a %s, o usuario non admite a transferencia de "
 "ficheiros"
 
-#. not success
 msgid "File Send Failed"
 msgstr "Fallou o envío do ficheiro"
 
@@ -5262,1654 +5178,6 @@ msgstr "Accións"
 msgid "Select an action"
 msgstr "Seleccionar unha acción"
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "Non é posíbel engadir «%s»."
-
-msgid "Buddy Add error"
-msgstr "Erro ao engadir un contacto"
-
-msgid "The username specified does not exist."
-msgstr "O nome de usuario especificado non existe."
-
-msgid "Unable to parse message"
-msgstr "Non é posíbel analizar a mensaxe"
-
-msgid "Syntax Error (probably a client bug)"
-msgstr "Erro de sintaxe (probabelmente é un erro do cliente)"
-
-msgid "Invalid email address"
-msgstr "O enderezo de correo electrónico non é válido"
-
-msgid "User does not exist"
-msgstr "O usuario non existe"
-
-msgid "Fully qualified domain name missing"
-msgstr "Falta un nome de dominio totalmente cualificado"
-
-msgid "Already logged in"
-msgstr "Sesión xa iniciada"
-
-msgid "Invalid username"
-msgstr "Nome de usuario non válido"
-
-msgid "Invalid friendly name"
-msgstr "Nome de contacto incorrecto"
-
-msgid "List full"
-msgstr "Lista chea"
-
-msgid "Already there"
-msgstr "Xa está na lista"
-
-msgid "Not on list"
-msgstr "Non está na lista"
-
-msgid "User is offline"
-msgstr "O usuario está desconectado"
-
-msgid "Already in the mode"
-msgstr "Xa está nese modo"
-
-msgid "Already in opposite list"
-msgstr "Xa está na lista contraria"
-
-msgid "Too many groups"
-msgstr "Demasiados grupos"
-
-msgid "Invalid group"
-msgstr "Grupo non válido"
-
-msgid "User not in group"
-msgstr "O usuario non está no grupo"
-
-msgid "Group name too long"
-msgstr "O nome de grupo é demasiado longo"
-
-msgid "Cannot remove group zero"
-msgstr "Non se pode eliminar o grupo cero"
-
-msgid "Tried to add a user to a group that doesn't exist"
-msgstr "Intentou engadir un contacto a un grupo que non existe"
-
-msgid "Switchboard failed"
-msgstr "Fallou o servidor switchboard"
-
-msgid "Notify transfer failed"
-msgstr "Fallou a notificación da transferencia"
-
-msgid "Required fields missing"
-msgstr "Faltan campos requiridos"
-
-msgid "Too many hits to a FND"
-msgstr "Demasiados resultados dun FND"
-
-msgid "Not logged in"
-msgstr "Non iniciou a sesión"
-
-msgid "Service temporarily unavailable"
-msgstr "Servizo non dispoñíbel temporalmente"
-
-msgid "Database server error"
-msgstr "Erro do servidor de base de datos"
-
-msgid "Command disabled"
-msgstr "Orde desactivada"
-
-msgid "File operation error"
-msgstr "Erro de operación de ficheiros"
-
-msgid "Memory allocation error"
-msgstr "Erro de asignación de memoria"
-
-msgid "Wrong CHL value sent to server"
-msgstr "Enviouse un valor CHL erróneo ao servidor"
-
-msgid "Server busy"
-msgstr "Servidor ocupado"
-
-msgid "Server unavailable"
-msgstr "Servidor non dispoñíbel"
-
-msgid "Peer notification server down"
-msgstr "Servidor de notificación de pares caído"
-
-msgid "Database connect error"
-msgstr "Erro de conexión coa base de datos"
-
-msgid "Server is going down (abandon ship)"
-msgstr "O servidor está apagándose (abandonen o barco!)"
-
-msgid "Error creating connection"
-msgstr "Erro ao crear a conexión"
-
-msgid "CVR parameters are either unknown or not allowed"
-msgstr "Os parámetros CVR non se coñecen ou non están permitidos"
-
-msgid "Unable to write"
-msgstr "Non é posíbel escribir"
-
-msgid "Session overload"
-msgstr "Sesión sobrecargada"
-
-msgid "User is too active"
-msgstr "O usuario está demasiado activo"
-
-msgid "Too many sessions"
-msgstr "Demasiadas sesións"
-
-msgid "Passport not verified"
-msgstr "Pasaporte non verificado"
-
-msgid "Bad friend file"
-msgstr "Ficheiro de contactos incorrecto"
-
-msgid "Not expected"
-msgstr "Non se agardaba"
-
-msgid "Friendly name is changing too rapidly"
-msgstr "O nome de contacto está cambiando demasiado rápido."
-
-msgid "Server too busy"
-msgstr "Servidor demasiado ocupado"
-
-msgid "Authentication failed"
-msgstr "Fallou a autenticación"
-
-msgid "Not allowed when offline"
-msgstr "Non pode mandar mensaxes se está desconectado"
-
-msgid "Not accepting new users"
-msgstr "Non se aceptan novos usuarios"
-
-msgid "Kids Passport without parental consent"
-msgstr "Pasaporte de menores sen consentemento paterno"
-
-msgid "Passport account not yet verified"
-msgstr "Conta de pasaporte aínda non verificada"
-
-msgid "Passport account suspended"
-msgstr "Conta de pasaporte suspendida"
-
-msgid "Bad ticket"
-msgstr "Billete erróneo"
-
-#, c-format
-msgid "Unknown Error Code %d"
-msgstr "Código de erro descoñecido %d"
-
-#, c-format
-msgid "MSN Error: %s\n"
-msgstr "Erro do MSN: %s\n"
-
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Problema de sincronización da lista de contactos en %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s está na lista local dentro do grupo «%s» mais non na lista do servidor. "
-"Quere engadir este contacto?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s está na lista local mais non está na lista do servidor. Quere engadir "
-"este contacto?"
-
-msgid "Other Contacts"
-msgstr "Outros contactos"
-
-msgid "Non-IM Contacts"
-msgstr "Contactos non MI"
-
-#, c-format
-msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
-msgstr ""
-"%s envía unha chiscadela. <a href='msn-wink://%s'>Prema aquí para "
-"reproducila</a>"
-
-#, c-format
-msgid "%s sent a wink, but it could not be saved"
-msgstr "%s enviou unha chiscadel mais pode que non se garde"
-
-#, c-format
-msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
-msgstr ""
-"%s enviou un clip de voz. <a href='audio://%s'>Prema aquí para reproducilo</"
-"a>"
-
-#, c-format
-msgid "%s sent a voice clip, but it could not be saved"
-msgstr "%s enviou clip de voz mais pode que non se garde"
-
-#, c-format
-msgid "%s sent you a voice chat invite, which is not yet supported."
-msgstr "%s enviou un convite de conversa de voz mais isto aínda non é posíbel."
-
-msgid "Nudge"
-msgstr "Chamar a atención"
-
-#, c-format
-msgid "%s has nudged you!"
-msgstr "%s chamou a súa atención!"
-
-#, c-format
-msgid "Nudging %s..."
-msgstr "Chamando a atención de %s..."
-
-msgid "Email Address..."
-msgstr "Enderezo de correo electrónico..."
-
-msgid "Your new MSN friendly name is too long."
-msgstr "O seu novo nome do contacto MSN é demasiado longo."
-
-#, c-format
-msgid "Set friendly name for %s."
-msgstr "Defina o nome de contacto para %s"
-
-msgid "Set Friendly Name"
-msgstr "Estabelecer un nome amigábel"
-
-msgid "This is the name that other MSN buddies will see you as."
-msgstr "Este é o nome co que o verán outros usuarios do MSN."
-
-msgid "This Location"
-msgstr "Esta localización"
-
-msgid "This is the name that identifies this location"
-msgstr "Este é o nome que identifica a esta localización"
-
-msgid "Other Locations"
-msgstr "Outras localizacións"
-
-msgid "You can sign out from other locations here"
-msgstr "Pode desconectarse doutras localizacións aquí"
-
-#. TODO: Due to limitations in our current request field API, the
-#. following string will show up with a trailing colon.  This should
-#. be fixed either by adding an "include_colon" boolean, or creating
-#. a separate purple_request_field_label_new_without_colon function,
-#. or by never automatically adding the colon and requiring that
-#. callers add the colon themselves.
-msgid "You are not signed in from any other locations."
-msgstr "Non está conectado desde outra localización."
-
-msgid "Allow multiple logins?"
-msgstr "Desexa permitir múltiples conexións?"
-
-msgid ""
-"Do you want to allow or disallow connecting from multiple locations "
-"simultaneously?"
-msgstr ""
-"Desexa ou non permitir a conexión desde múltiples localizacións de forma "
-"simultánea?"
-
-msgid "Allow"
-msgstr "Permitir"
-
-msgid "Disallow"
-msgstr "Rexeitar"
-
-msgid "Set your home phone number."
-msgstr "Defina o número de teléfono do seu domicilio."
-
-msgid "Set your work phone number."
-msgstr "Defina o número de teléfono do seu traballo."
-
-msgid "Set your mobile phone number."
-msgstr "Defina o seu número de teléfono móbil."
-
-msgid "Allow MSN Mobile pages?"
-msgstr "Quere permitir páxinas de MSN Mobile?"
-
-msgid ""
-"Do you want to allow or disallow people on your buddy list to send you MSN "
-"Mobile pages to your cell phone or other mobile device?"
-msgstr ""
-"Quere permitir ou rexeitar, que a xente na súa lista de contactos lle envíe "
-"mensaxes a través de MSN Mobile ao seu teléfono móbil (ou outro dispositivo "
-"móbil)?"
-
-#, c-format
-msgid "Blocked Text for %s"
-msgstr "Texto bloqueado para %s"
-
-msgid "No text is blocked for this account."
-msgstr "Non hai ningún texto bloqueado para esta conta."
-
-#, c-format
-msgid ""
-"MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr ""
-"Os servidores MSN están bloqueando actualmente as seguintes expresións "
-"regulares:<br/>%s"
-
-msgid "This account does not have email enabled."
-msgstr "Esta conta non ten o correo electrónico activado."
-
-msgid "Send a mobile message."
-msgstr "Enviar unha mensaxe a un móbil."
-
-msgid "Page"
-msgstr "Páxina"
-
-msgid "Playing a game"
-msgstr "Xogando"
-
-msgid "Working"
-msgstr "Traballando"
-
-msgid "Has you"
-msgstr "Teno"
-
-msgid "Home Phone Number"
-msgstr "Definir o número de teléfono particular"
-
-msgid "Work Phone Number"
-msgstr "Definir o número de teléfono do traballo"
-
-msgid "Mobile Phone Number"
-msgstr "Definir o número do teléfono móbil"
-
-msgid "Be Right Back"
-msgstr "Volto agora"
-
-msgid "Busy"
-msgstr "Ocupado"
-
-msgid "On the Phone"
-msgstr "Ao teléfono"
-
-msgid "Out to Lunch"
-msgstr "Saín xantar"
-
-msgid "Game Title"
-msgstr "Título do xogo"
-
-msgid "Office Title"
-msgstr "Título de oficina"
-
-msgid "Set Friendly Name..."
-msgstr "Definir o nome do contacto..."
-
-msgid "View Locations..."
-msgstr "Ver localizacións..."
-
-msgid "Set Home Phone Number..."
-msgstr "Definir o número de teléfono particular..."
-
-msgid "Set Work Phone Number..."
-msgstr "Definir o número de teléfono do traballo..."
-
-msgid "Set Mobile Phone Number..."
-msgstr "Definir o número do teléfono móbil..."
-
-msgid "Enable/Disable Mobile Devices..."
-msgstr "Activar/Desactivar dispositivos móbiles..."
-
-msgid "Allow/Disallow Multiple Logins..."
-msgstr "Permitir/rexeitar múltiplas localizacións..."
-
-msgid "Allow/Disallow Mobile Pages..."
-msgstr "Permitir/Rexeitar páxinas de móbiles..."
-
-msgid "View Blocked Text..."
-msgstr "Ver o texto bloqueado..."
-
-msgid "Open Hotmail Inbox"
-msgstr "Abrir a caixa de entrada do Hotmail"
-
-msgid "Send to Mobile"
-msgstr "Enviar a un móbil"
-
-msgid "SSL support is needed for MSN. Please install a supported SSL library."
-msgstr ""
-"Necesítase a compatibilidade con SSL para o MSN. Instale unha biblioteca SSL "
-"compatíbel."
-
-#, c-format
-msgid ""
-"Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be valid email addresses."
-msgstr ""
-"Non se pode engadir ao amigo %s xa que o nome de usuario non é correcto. Os "
-"nomes de usuario deben ser enderezos de correo electrónico correctas."
-
-msgid "Unable to Add"
-msgstr "Non é posíbel engadir"
-
-msgid "Error retrieving profile"
-msgstr "Erro ao obter o perfil"
-
-msgid "General"
-msgstr "Xeral"
-
-msgid "Age"
-msgstr "Idade"
-
-msgid "Occupation"
-msgstr "Ocupación"
-
-msgid "Location"
-msgstr "Localización"
-
-msgid "Hobbies and Interests"
-msgstr "Afeccións e intereses"
-
-msgid "A Little About Me"
-msgstr "Un pouco sobre min"
-
-msgid "Social"
-msgstr "Social"
-
-msgid "Marital Status"
-msgstr "Estado civil"
-
-msgid "Interests"
-msgstr "Intereses"
-
-msgid "Pets"
-msgstr "Mascotas"
-
-msgid "Hometown"
-msgstr "Cidade natal"
-
-msgid "Places Lived"
-msgstr "Lugares en que vivín"
-
-msgid "Fashion"
-msgstr "Moda"
-
-msgid "Humor"
-msgstr "Humor"
-
-msgid "Music"
-msgstr "Música"
-
-msgid "Favorite Quote"
-msgstr "Cita preferida"
-
-msgid "Contact Info"
-msgstr "Información do contacto"
-
-msgid "Personal"
-msgstr "Persoal"
-
-msgid "Significant Other"
-msgstr "Outro significativo"
-
-msgid "Home Phone"
-msgstr "Teléfono particular"
-
-msgid "Home Phone 2"
-msgstr "Teléfono particular 2"
-
-msgid "Home Address"
-msgstr "Enderezo de casa"
-
-msgid "Personal Mobile"
-msgstr "Móbil persoal"
-
-msgid "Home Fax"
-msgstr "Fax particular"
-
-msgid "Personal Email"
-msgstr "Correo electrónico persoal"
-
-msgid "Personal IM"
-msgstr "MI persoal"
-
-msgid "Anniversary"
-msgstr "Aniversario"
-
-#. Business
-msgid "Work"
-msgstr "Traballo"
-
-msgid "Company"
-msgstr "Compañía"
-
-msgid "Department"
-msgstr "Departamento"
-
-msgid "Profession"
-msgstr "Profesión"
-
-msgid "Work Phone"
-msgstr "Teléfono do traballo"
-
-msgid "Work Phone 2"
-msgstr "Teléfono do traballo 2"
-
-msgid "Work Address"
-msgstr "Enderezo do traballo"
-
-msgid "Work Mobile"
-msgstr "Móbil do traballo"
-
-msgid "Work Pager"
-msgstr "Buscapersoas do traballo"
-
-msgid "Work Fax"
-msgstr "Fax do traballo"
-
-msgid "Work Email"
-msgstr "Correo electrónico do traballo"
-
-msgid "Work IM"
-msgstr "MI do traballo"
-
-msgid "Start Date"
-msgstr "Data de inicio"
-
-msgid "Favorite Things"
-msgstr "Cousas preferidas"
-
-msgid "Last Updated"
-msgstr "Última actualización"
-
-msgid "Homepage"
-msgstr "Páxina persoal"
-
-msgid "The user has not created a public profile."
-msgstr "O usuario non creou un perfil público."
-
-msgid ""
-"MSN reported not being able to find the user's profile. This either means "
-"that the user does not exist, or that the user exists but has not created a "
-"public profile."
-msgstr ""
-"O MSN indicou que non puido localizar o perfil do usuario. Isto significa "
-"que ou ben o usuario non existe ou que o usuario existe mais non creou un "
-"perfil público."
-
-msgid ""
-"Could not find any information in the user's profile. The user most likely "
-"does not exist."
-msgstr ""
-"Non foi posíbel atopar ningunha información no perfil do usuario. É probábel "
-"que o usuario non exista."
-
-msgid "View web profile"
-msgstr "Ver perfil web"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *< summary
-msgid "Windows Live Messenger Protocol Plugin"
-msgstr "Complemento de protocolo de mensaxería Windows Live"
-
-msgid "Use HTTP Method"
-msgstr "Usar o método HTTP"
-
-msgid "HTTP Method Server"
-msgstr "Servidor de método HTTP"
-
-msgid "Show custom smileys"
-msgstr "Amosar as emoticonas personalizadas"
-
-msgid "Allow direct connections"
-msgstr "Permitir conexións directas"
-
-msgid "Allow connecting from multiple locations"
-msgstr "Permitir conexiones desde múltiplas localizacións"
-
-msgid "nudge: nudge a user to get their attention"
-msgstr "nudge: Avisar a un contacto para chamar a súa atención"
-
-msgid "Windows Live ID authentication:Unable to connect"
-msgstr "Autenticación do Windows Live ID: non é posíbel conectarse"
-
-msgid "Windows Live ID authentication:Invalid response"
-msgstr "Autenticación do Windows Live ID: resposta non válida"
-
-msgid "The following users are missing from your addressbook"
-msgstr "Os seguintes usuarios faltan da súa axenda de enderezos"
-
-#, c-format
-msgid "Unknown error (%d): %s"
-msgstr "Erro descoñecido (%d): %s"
-
-msgid "Unable to add user"
-msgstr "Non é posíbel engadir o usuario"
-
-#. Unknown error!
-#, c-format
-msgid "Unknown error (%d)"
-msgstr "Erro descoñecido (%d)"
-
-msgid "Unable to remove user"
-msgstr "Non se pode eliminar o usuario"
-
-msgid "Mobile message was not sent because it was too long."
-msgstr "Non foi posíbel enviar a mensaxe porque era demasiado longa."
-
-msgid "Mobile message was not sent because an unknown error occurred."
-msgstr "Non se enviou a mensaxe de móbil por un erro descoñecido."
-
-#, c-format
-msgid ""
-"The MSN server will shut down for maintenance in %d minute. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgid_plural ""
-"The MSN server will shut down for maintenance in %d minutes. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgstr[0] ""
-"O servidor de MSN desconectarase para as tarefas de mantemento en %d minuto. "
-"Desconectaráselle automaticamente nese momento. Remate calquera conversa "
-"activa.\n"
-"\n"
-"Após que rematen as tarefas de mantemento poderá conectarse con éxito de "
-"novo."
-msgstr[1] ""
-"O servidor de MSN desconectarase para as tarefas de mantemento en %d "
-"minutos. Desconectaráselle automaticamente nese momento. Remate calquera "
-"conversa activa.\n"
-"\n"
-"Após que rematen as tarefas de mantemento poderá conectarse con éxito de "
-"novo."
-
-msgid ""
-"Message was not sent because the system is unavailable. This normally "
-"happens when the user is blocked or does not exist."
-msgstr ""
-"Non se enviou a mensaxe porque o sistema non está dispoñíbel. Isto sucede "
-"normalmente cando o usuario está bloqueado ou non existe."
-
-msgid "Message was not sent because messages are being sent too quickly."
-msgstr "Non enviou a mensaxe porque están sendo enviadas demasiado rápido."
-
-msgid "Message was not sent because an unknown encoding error occurred."
-msgstr ""
-"Non se enviou a mensaxe porque se produciu un erro de codificación "
-"descoñecido."
-
-msgid "Message was not sent because an unknown error occurred."
-msgstr "Non se enviou a mensaxe porque se produciu un erro descoñecido."
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. Converting the encoding from "
-"%s to UTF-8 failed.)"
-msgstr ""
-"%s (Produciuse un erro recibindo esta mensaxe. Fallou a conversión de %s a "
-"UTF-8.)"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was %s, but it "
-"was not valid UTF-8.)"
-msgstr ""
-"%s (Produciuse un erro recibindo esta mensaxe. O xogo de carácteres era %s, "
-"pero non era un UTF-8 correcto.)"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was missing, but "
-"it was not valid UTF-8.)"
-msgstr ""
-"%s (Produciuse un erro recibindo esta mensaxe. Falta o xogo de carácteres "
-"pero non era un UTF-8 correcto.)"
-
-msgid "Writing error"
-msgstr "Erro de escritura"
-
-msgid "Reading error"
-msgstr "Erro de lectura"
-
-#, c-format
-msgid ""
-"Connection error from %s server:\n"
-"%s"
-msgstr ""
-"Erro de conexión do servidor %s :\n"
-"%s"
-
-msgid "Our protocol is not supported by the server"
-msgstr "O servidor non é compatíbel co noso protocolo"
-
-msgid "Error parsing HTTP"
-msgstr "Erro no procesamento de HTTP"
-
-msgid "You have signed on from another location"
-msgstr "Conectouse desde outra localización"
-
-msgid "The MSN servers are temporarily unavailable. Please wait and try again."
-msgstr ""
-"Os servidores MSN non están dispoñíbeis temporalmente. Agarde e volva "
-"tentalo máis tarde."
-
-msgid "The MSN servers are going down temporarily"
-msgstr "Os servidores MSN van sufrir un apagado temporal"
-
-#, c-format
-msgid "Unable to authenticate: %s"
-msgstr "Non é posíbel autenticar: %s"
-
-#, c-format
-msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr "A lista de contactos MSN non está dispoñíbel temporalmente: %s"
-
-msgid "Handshaking"
-msgstr "Negociación"
-
-msgid "Transferring"
-msgstr "Transferindo"
-
-msgid "Starting authentication"
-msgstr "Comezando coa autenticación"
-
-msgid "Getting cookie"
-msgstr "Obtendo unha cookie"
-
-msgid "Sending cookie"
-msgstr "Enviando unha cookie"
-
-msgid "Retrieving buddy list"
-msgstr "Recuperando a lista de contactos"
-
-#, c-format
-msgid "%s requests to view your webcam, but this request is not yet supported."
-msgstr "%s enviou unconvite de cámara web mais aínda isto aínda non é posíbel."
-
-#, c-format
-msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr "%s invitouno a ver a súa cámara web, pero non está soportada."
-
-msgid "Away From Computer"
-msgstr "Ausente do computador"
-
-msgid "On The Phone"
-msgstr "Ao teléfono"
-
-msgid "Out To Lunch"
-msgstr "Saín comer"
-
-msgid "Message may have not been sent because a timeout occurred:"
-msgstr ""
-"Posíbelmente non se puido enviar a mensaxe porque se excedeu o tempo de "
-"espera:"
-
-msgid "Message could not be sent, not allowed while invisible:"
-msgstr ""
-"Non foi posíbel enviar a mensaxe, non está permitido mentres sexa invisíbel:"
-
-msgid "Message could not be sent because the user is offline:"
-msgstr "Non foi posíbel enviar a mensaxe porque o usuario non está conectado:"
-
-msgid "Message could not be sent because a connection error occurred:"
-msgstr ""
-"Non foi posíbel enviar a mensaxe porque se produciu un erro na conexión:"
-
-msgid "Message could not be sent because we are sending too quickly:"
-msgstr ""
-"Non foi posíbel enviar a mensaxe porque estamos a enviar demasiado rápido:"
-
-msgid ""
-"Message could not be sent because we were unable to establish a session with "
-"the server. This is likely a server problem, try again in a few minutes:"
-msgstr ""
-"Non foi posíbel enviar a mensaxe porque non se puido estabelecer unha "
-"conexión co servidor. É probábel que sexa un problema do servidor, inténteo "
-"de novo nuns minutos:"
-
-msgid ""
-"Message could not be sent because an error with the switchboard occurred:"
-msgstr ""
-"Non foi posíbel enviar a mensaxe porque se produciu un erro co switchboard:"
-
-msgid "Message may have not been sent because an unknown error occurred:"
-msgstr ""
-"Non foi posíbel enviar a mensaxe porque se produciu un erro descoñecido:"
-
-msgid "Delete Buddy from Address Book?"
-msgstr "Eliminar o contacto da súa axenda de enderezos?"
-
-msgid "Do you want to delete this buddy from your address book as well?"
-msgstr "Quere eliminar tamén a este contacto da súa axenda de enderezos?"
-
-msgid "The username specified is invalid."
-msgstr "O nome especificado non é válido."
-
-msgid "The Display Name you entered is invalid."
-msgstr "O nome introducido non é correcto."
-
-msgid ""
-"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-msgstr ""
-"A data de nacemento introducida non é correcta, o formato correcto é: «AAAA-"
-"MM-DD»."
-
-#. show error to user
-msgid "Profile Update Error"
-msgstr "Erro de actualización do perfil"
-
-#. no profile information yet, so we cannot update
-#. (reference: "libpurple/request.h")
-msgid "Profile"
-msgstr "Perfil"
-
-msgid "Your profile information is not yet retrieved. Please try again later."
-msgstr ""
-"A información do seu perfil aínda non foi recuperada. Tenteo máis tarde."
-
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "Nome público"
-
-#. about me
-msgid "About Me"
-msgstr "Sobre min"
-
-#. where I live
-msgid "Where I Live"
-msgstr "Onde vivo"
-
-#. relationship status
-msgid "Relationship Status"
-msgstr "Estado da relación"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "Número do teléfono móbil"
-
-#. is searchable
-msgid "Can be searched"
-msgstr "Pódese buscar"
-
-#. is suggestable
-msgid "Can be suggested"
-msgstr "Pódese suxerir"
-
-msgid "Update your MXit Profile"
-msgstr "Actualizar o perfil MXit"
-
-msgid "The PIN you entered is invalid."
-msgstr "O PIN introducido non é correcto."
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "O PIN introducido ten unha lonxitude incorrecta [4-10]."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr ""
-"O PIN introducido non é correcto. Debería consistir soamente en díxitos "
-"[0-9]."
-
-msgid "The two PINs you entered do not match."
-msgstr "Os dous PIN introducidos non coinciden."
-
-#. show error to user
-msgid "PIN Update Error"
-msgstr "Erro de actualización do PIN"
-
-#. pin
-#. pin (required)
-msgid "PIN"
-msgstr "PIN"
-
-#. verify pin
-msgid "Verify PIN"
-msgstr "Comprobar o PIN"
-
-#. (reference: "libpurple/request.h")
-msgid "Change PIN"
-msgstr "Cambiar o PIN"
-
-msgid "Change MXit PIN"
-msgstr "Cambiar o PIN MXit"
-
-msgid "View Splash"
-msgstr "Ver a pantalla de inicio"
-
-msgid "There is no splash-screen currently available"
-msgstr "Non hai ningunha pantalla de inicio dispoñíbel actualmente"
-
-msgid "About"
-msgstr "Acerca de"
-
-msgid "Search for user"
-msgstr "Buscar por usuario"
-
-msgid "Search for a MXit contact"
-msgstr "Buscar por contacto MXit"
-
-msgid "Type search information"
-msgstr "Escriba a información de busca"
-
-msgid "_Search"
-msgstr "_Buscar"
-
-#. display / change profile
-msgid "Change Profile..."
-msgstr "Cambiar o perfil..."
-
-#. change PIN
-msgid "Change PIN..."
-msgstr "Cambiar o PIN..."
-
-#. suggested friends
-msgid "Suggested friends..."
-msgstr "Amigos suxeridos..."
-
-#. search for contacts
-msgid "Search for contacts..."
-msgstr "Buscar contactos..."
-
-#. display splash-screen
-msgid "View Splash..."
-msgstr "Ver a pantalla de inicio..."
-
-#. display plugin version
-msgid "About..."
-msgstr "Acerca de..."
-
-#. the file is too big
-msgid "The file you are trying to send is too large!"
-msgstr "O ficheiro que está tentando enviar é demasiado grande!"
-
-#. file read error
-msgid "Unable to access the local file"
-msgstr "Non é posíbel acceder ao ficheiro local"
-
-#. file write error
-msgid "Unable to save the file"
-msgstr "Non é posíbel gardar o ficheiro"
-
-msgid ""
-"Unable to connect to the MXit HTTP server. Please check your server settings."
-msgstr ""
-"Non é posíbel pode conectar ao servidor HTTP MXit. Comprobe os axustes do "
-"servidor."
-
-msgid "Logging In..."
-msgstr "Iniciando sesión..."
-
-msgid ""
-"Unable to connect to the MXit server. Please check your server settings."
-msgstr ""
-"Non é posíbel conectar ao servidor MXit. Comprobe os axustes do servidor."
-
-msgid "Connecting..."
-msgstr "Conectando..."
-
-msgid "The Display Name you entered is too short."
-msgstr "O  nome público que introduciu é demasiado curto."
-
-msgid "The PIN you entered has an invalid length [7-10]."
-msgstr "O PIN introducido ten unha lonxitude incorrecta [7-10]."
-
-#. mxit login name
-msgid "MXit ID"
-msgstr "ID MXit"
-
-#. show the form to the user to complete
-msgid "Register New MXit Account"
-msgstr "Rexistrar unha nova cuenta MXit"
-
-msgid "Please fill in the following fields:"
-msgstr "Encha os seguintes campos:"
-
-#. no reply from the WAP site
-msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr "Erro contactando ao sitio WAP MXit. Tenteo máis tarde."
-
-#. wapserver error
-#. server could not find the user
-msgid ""
-"MXit is currently unable to process the request. Please try again later."
-msgstr "MXit non pode, actualmente, procesar o pedido. Tenteo máis tarde."
-
-msgid "Wrong security code entered. Please try again later."
-msgstr ""
-"Introduciu un código de seguranza incorrecto. Por favor, ténteo de novo máis "
-"tarde."
-
-msgid "Your session has expired. Please try again later."
-msgstr "A súa sesión xa expirou. Tenteo máis tarde."
-
-msgid "Invalid country selected. Please try again."
-msgstr "O pais seleccionado é incorrecto. Tenteo máis tarde."
-
-msgid "The MXit ID you entered is not registered. Please register first."
-msgstr ""
-"O ID de MXit que introduciu non está rexistrado. Probe a rexistralo primeiro."
-
-msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr ""
-"O ID de MXit que introduciu xa está rexistrado. Escolla outro nome de "
-"usuario."
-
-msgid "Internal error. Please try again later."
-msgstr "Error interno. Tenteo máis tarde"
-
-msgid "You did not enter the security code"
-msgstr "Non introducíu o código de seguranza"
-
-msgid "Security Code"
-msgstr "Código de seguranza"
-
-#. ask for input (required)
-msgid "Enter Security Code"
-msgstr "Introduza el código de seguranza"
-
-msgid "Your Country"
-msgstr "O seu país"
-
-msgid "Your Language"
-msgstr "O seu idioma"
-
-#. display the form to the user and wait for his/her input
-msgid "MXit Authorization"
-msgstr "Autorización MXit"
-
-msgid "MXit account validation"
-msgstr "Aprobación de conta MXit"
-
-msgid "Retrieving User Information..."
-msgstr "Recuperando a información do usuario..."
-
-msgid "was kicked"
-msgstr "foi expulsado"
-
-msgid "You have been kicked from this MultiMX."
-msgstr "Foi expulsado deste MultiMX."
-
-msgid "_Room Name:"
-msgstr "Nome da _sala:"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "Foi convidado"
-
-msgid "Loading menu..."
-msgstr "Cargando o menú..."
-
-msgid "Status Message"
-msgstr "Mensaxe de estado"
-
-msgid "Rejection Message"
-msgstr "Mensajes de rexeite"
-
-msgid "No profile available"
-msgstr "Non hai un perfil dispoñíbel"
-
-msgid "This contact does not have a profile."
-msgstr "Este contacto non ten un perfil."
-
-msgid "Your MXit ID..."
-msgstr "O seu ID MXit..."
-
-#. contact is in Deleted, Rejected or None state
-msgid "Re-Invite"
-msgstr "Volver a convidar"
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "Servidor WAP"
-
-msgid "Connect via HTTP"
-msgstr "Conectar vía HTTP"
-
-msgid "Enable splash-screen popup"
-msgstr "Activar a pantalla de inicio emerxente"
-
-msgid "Don't want to say"
-msgstr "Non quere dicir"
-
-msgid "Single"
-msgstr "Solteiro/a"
-
-msgid "In a relationship"
-msgstr "Nunha relación"
-
-msgid "Engaged"
-msgstr "Comprometido"
-
-msgid "Married"
-msgstr "Casado/a"
-
-msgid "It's complicated"
-msgstr "É complicado"
-
-msgid "Widowed"
-msgstr "Viúvo/a"
-
-msgid "Separated"
-msgstr "Separado/a"
-
-msgid "Divorced"
-msgstr "Divorciado/a"
-
-msgid "Last Online"
-msgstr "Última conexión"
-
-msgid "Invite Message"
-msgstr "Mensaxe de convite"
-
-msgid "No results"
-msgstr "Sen resultados"
-
-msgid "No contacts found."
-msgstr "Non se atoparon contactos."
-
-#. define columns
-msgid "UserId"
-msgstr "IDdeUsuario"
-
-msgid "Where I live"
-msgstr "Onde vivo"
-
-#, c-format
-msgid "You have %i suggested friend."
-msgid_plural "You have %i suggested friends."
-msgstr[0] "Ten %i suxestión de amizade."
-msgstr[1] "Ten %i suxestións de amizade."
-
-#, c-format
-msgid "We found %i contact that matches your search."
-msgid_plural "We found %i contacts that match your search."
-msgstr[0] "Atopamos %i  contacto que coincide coa busca."
-msgstr[1] "Atopamos %i  contactos que coinciden coa busca."
-
-#. we must have lost the connection, so terminate it so that we can reconnect
-msgid "We have lost the connection to MXit. Please reconnect."
-msgstr "Perdeuse a conexión a MXit. Volva a conectar."
-
-#. packet could not be queued for transmission
-msgid "Message Send Error"
-msgstr "Erro ao enviar a mensaxe."
-
-msgid "Unable to process your request at this time"
-msgstr "Non se pode procesar a súa petición neste momento."
-
-msgid "Timeout while waiting for a response from the MXit server."
-msgstr "Tempo de espera agardando unha resposta do servidor MXit."
-
-msgid "Successfully Logged In..."
-msgstr "Acceso conseguido..."
-
-#, c-format
-msgid ""
-"%s sent you an encrypted message, but it is not supported on this client."
-msgstr "%s envioulle unha mensaxe cifrada, máis non é admitido neste cliente."
-
-msgid "Message Error"
-msgstr "Mensaje de erro"
-
-#. could not be decrypted
-msgid "An encrypted message was received which could not be decrypted."
-msgstr "Recibiuse unha mensaxe cifrada que non foi posíbel descifrar."
-
-msgid "Cannot perform redirect using the specified protocol"
-msgstr "Non se puede realizar o redireccionamento usando o protocolo indicado"
-
-msgid "An internal MXit server error occurred."
-msgstr "Produciuse un erro interno do servidor MXit."
-
-#, c-format
-msgid "Login error: %s (%i)"
-msgstr "Error ao acceder: %s (%i)"
-
-#, c-format
-msgid "Logout error: %s (%i)"
-msgstr "Erro ao saír: %s (%i)"
-
-msgid "Contact Error"
-msgstr "Erro no contacto"
-
-msgid "Message Sending Error"
-msgstr "Error ao enviar a mensaxe"
-
-msgid "Status Error"
-msgstr "Erro de estado"
-
-msgid "Mood Error"
-msgstr "Erro de estado de ánimo"
-
-msgid "Invitation Error"
-msgstr "Erro no convite"
-
-msgid "Contact Removal Error"
-msgstr "Erro ao eliminar o contacto"
-
-msgid "Subscription Error"
-msgstr "Erro de subscripción"
-
-msgid "Contact Update Error"
-msgstr "Erro ao actualizar o contacto"
-
-msgid "File Transfer Error"
-msgstr "Erro na transferencia do ficheiro"
-
-msgid "Cannot create MultiMx room"
-msgstr "Non se pode crear a sala MultiMx"
-
-msgid "MultiMx Invitation Error"
-msgstr "Erro no convite MultiMx"
-
-msgid "Profile Error"
-msgstr "Erro de perfil"
-
-#. bad packet
-msgid "Invalid packet received from MXit."
-msgstr "Recibíu un paquete incorrecto de MXit."
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr "Produciuse un erro de conexión en MXit (etapa de lectura 0x01)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr "Produciuse un erro de conexión en MXit (etapa de lectura 0x02)"
-
-msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr "Produciuse un erro de conexión en MXit (etapa de lectura 0x03)"
-
-#. malformed packet length record (too long)
-msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr "Produciuse un erro de conexión en MXit (etapa de lectura 0x04)"
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr "Produciuse un erro de conexión en MXit (etapa de lectura 0x05)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr "Produciuse un erro de conexión en MXit (etapa de lectura 0x06)"
-
-msgid "In Love"
-msgstr "Namorado"
-
-msgid "Pending"
-msgstr "Pendente"
-
-msgid "Invited"
-msgstr "Convidado"
-
-msgid "Rejected"
-msgstr "Rexeitado"
-
-msgid "Deleted"
-msgstr "Borrada"
-
-msgid "MXit Advertising"
-msgstr "Publicidade MXit"
-
-msgid "More Information"
-msgstr "Máis información"
-
-#, c-format
-msgid "No such user: %s"
-msgstr "Non existe ese usuario: %s"
-
-msgid "User lookup"
-msgstr "Busca de usuario"
-
-msgid "Reading challenge"
-msgstr "Lendo o desafío"
-
-msgid "Unexpected challenge length from server"
-msgstr "O desafío do servidor ten unha lonxitude inesperada"
-
-msgid "Logging in"
-msgstr "Iniciando a sesión"
-
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpace - Sen definición de usuario"
-
-msgid "You appear to have no MySpace username."
-msgstr "Parece que non ten un nome de usuario no MySpace."
-
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr "Gustaríalle configurar un agora? (Nota: ISTO NON SE PODE CAMBIAR!)"
-
-msgid "Lost connection with server"
-msgstr "Perdeuse a conexión co servidor"
-
-#. Can't write _()'d strings in array initializers. Workaround.
-#. khc: then use N_() in the array initializer and use _() when they are
-#. used
-msgid "New mail messages"
-msgstr "Novas mensaxes de correo"
-
-msgid "New blog comments"
-msgstr "Novos comentarios de blogue"
-
-msgid "New profile comments"
-msgstr "Novos comentarios de perfil"
-
-msgid "New friend requests!"
-msgstr "Novas solicitudes de amigos!"
-
-msgid "New picture comments"
-msgstr "Novos comentarios de fotos"
-
-msgid "MySpace"
-msgstr "MySpace"
-
-msgid "IM Friends"
-msgstr "Amigos de MI"
-
-#, c-format
-msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"Engadiuse ou actualizouse %d contacto desde o servidor (incluídos os "
-"contactos que xa estaban na lista do lado do servidor)"
-msgstr[1] ""
-"Engadíronse ou actualizáronse %d contactos desde o servidor (incluídos os "
-"contactos que xa estaban na lista do lado do servidor)"
-
-msgid "Add contacts from server"
-msgstr "Engadir contactos desde o servidor"
-
-#, c-format
-msgid "Protocol error, code %d: %s"
-msgstr "Erro de protocolo, código %d: %s"
-
-#, c-format
-msgid ""
-"%s Your password is %zu characters, which is longer than the maximum length "
-"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
-"cfm?fuseaction=accountSettings.changePassword and try again."
-msgstr ""
-"%s O seu contrasinal ten %zu caracteres, maior do que a lonxitude máxima de "
-"%d.Acúrte o seu contrasinal en http://profileedit.myspace.com/index.cfm?"
-"fuseaction=accountSettings.changePassword e ténteo de novo."
-
-msgid "Incorrect username or password"
-msgstr "O nome de conta ou contrasinal non é correcto"
-
-msgid "MySpaceIM Error"
-msgstr "Erro do MySpaceIM"
-
-msgid "Invalid input condition"
-msgstr "Condición de entrada non válida"
-
-msgid "Failed to add buddy"
-msgstr "Fallou ao engadir un contacto"
-
-msgid "'addbuddy' command failed."
-msgstr "Fallou a orde «addbuddy»."
-
-msgid "persist command failed"
-msgstr "Fallou a orde «persist»"
-
-msgid "Failed to remove buddy"
-msgstr "Fallou ao eliminar o contacto"
-
-msgid "'delbuddy' command failed"
-msgstr "Fallou a orde «delbuddy»"
-
-msgid "blocklist command failed"
-msgstr "Fallou a orde «blocklist»"
-
-msgid "Missing Cipher"
-msgstr "Falta o cifrado"
-
-msgid "The RC4 cipher could not be found"
-msgstr "Non foi posíbel atopar o cifrado RC4"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"Actualice a unha versión do libpurple con compatibilidade de RC4 (>= 2.0.1). "
-"Non se cargará o complemento MySpaceIM."
-
-msgid "Add friends from MySpace.com"
-msgstr "Engadir amigos desde MySpace.com"
-
-msgid "Importing friends failed"
-msgstr "A importación de amigos fallou"
-
-#. TODO: find out how
-msgid "Find people..."
-msgstr "Atopar persoas..."
-
-msgid "Change IM name..."
-msgstr "Modificar o nome de MI..."
-
-msgid "myim URL handler"
-msgstr "Manexador de URL «myim»"
-
-msgid "No suitable MySpaceIM account could be found to open this myim URL."
-msgstr ""
-"Non foi posíbel atopar unha conta MySpaceIM apropiada para este URL myim."
-
-msgid "Enable the proper MySpaceIM account and try again."
-msgstr "Active a conta MySpaceIM apropiada e ténteo de novo."
-
-msgid "Show display name in status text"
-msgstr "Amosar o nome de pantalla no texto de estado"
-
-msgid "Show headline in status text"
-msgstr "Amosar o encabezamento no texto de estado"
-
-msgid "Send emoticons"
-msgstr "Enviar emoticonas"
-
-msgid "Screen resolution (dots per inch)"
-msgstr "Resolución de pantalla (puntos por polgada)"
-
-msgid "Base font size (points)"
-msgstr "Tamaño do tipo de letra base (puntos)"
-
-msgid "User"
-msgstr "Usuario"
-
-msgid "Headline"
-msgstr "Encabezamento"
-
-msgid "Song"
-msgstr "Canción"
-
-msgid "Total Friends"
-msgstr "Total de amigos"
-
-msgid "Client Version"
-msgstr "Versión do cliente"
-
-msgid ""
-"An error occurred while trying to set the username.  Please try again, or "
-"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
-"to set your username."
-msgstr ""
-"Produciuse un erro mentres se estabelecía o nome de usuario/a. Probe outra "
-"vez, ou visite http://editprofile.myspace.com/index.cfm?fuseaction=profile."
-"username para estabelecer o seu nome de usuario/a."
-
-msgid "MySpaceIM - Username Available"
-msgstr "MySpaceIM - O nome de usuario está dispoñíbel"
-
-msgid "This username is available. Would you like to set it?"
-msgstr "Este nome de usuario está dispoñíbel. Quere configuralo?"
-
-msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr "UNHA VEZ CONFIGURADO NON SE PODE CAMBIAR!"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM - Defina un nome de usuario"
-
-msgid "This username is unavailable."
-msgstr "Este nome de usuario non está dispoñibel."
-
-msgid "Please try another username:"
-msgstr "Intente outro nome de usuario:"
-
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "Non hai definido un nome de usuario"
-
-msgid "Please enter a username to check its availability:"
-msgstr "Introduza un nome de usuario para verificar a súa dispoñibilidade:"
-
-#. TODO: icons for each zap
-#. Lots of comments for translators:
-#. Zap means "to strike suddenly and forcefully as if with a
-#. * projectile or weapon."  This term often has an electrical
-#. * connotation, for example, "he was zapped by electricity when
-#. * he put a fork in the toaster."
-msgid "Zap"
-msgstr "Dar unha descarga"
-
-#, c-format
-msgid "%s has zapped you!"
-msgstr "%s deulle unha descarga!"
-
-#, c-format
-msgid "Zapping %s..."
-msgstr "Dándolle unha descarga a %s..."
-
-#. Whack means "to hit or strike someone with a sharp blow"
-msgid "Whack"
-msgstr "Golpear"
-
-#, c-format
-msgid "%s has whacked you!"
-msgstr "%s golpeouno!"
-
-#, c-format
-msgid "Whacking %s..."
-msgstr "Golpeando a %s..."
-
-#. Torch means "to set on fire."  Don't worry, this doesn't
-#. * make a whole lot of sense in English, either.  Feel free
-#. * to translate it literally.
-msgid "Torch"
-msgstr "Incendiar"
-
-#, c-format
-msgid "%s has torched you!"
-msgstr "%s incendiouno!"
-
-#, c-format
-msgid "Torching %s..."
-msgstr "Incendiando a %s..."
-
-#. Smooch means "to kiss someone, often enthusiastically"
-msgid "Smooch"
-msgstr "Bicar"
-
-#, c-format
-msgid "%s has smooched you!"
-msgstr "%s bicouno!"
-
-#, c-format
-msgid "Smooching %s..."
-msgstr "Bicando a %s..."
-
-#. A hug is a display of affection; wrapping your arms around someone
-msgid "Hug"
-msgstr "Abrazar"
-
-#, c-format
-msgid "%s has hugged you!"
-msgstr "%s abrazouno!"
-
-#, c-format
-msgid "Hugging %s..."
-msgstr "Abrazando a %s..."
-
-#. Slap means "to hit someone with an open/flat hand"
-msgid "Slap"
-msgstr "Dar unha labazada"
-
-#, c-format
-msgid "%s has slapped you!"
-msgstr "%s deulle unha labazada!"
-
-#, c-format
-msgid "Slapping %s..."
-msgstr "Dándolle unha labazada a %s..."
-
-#. Goose means "to pinch someone on their butt"
-msgid "Goose"
-msgstr "Beliscar"
-
-#, c-format
-msgid "%s has goosed you!"
-msgstr "%s beliscouno!"
-
-#, c-format
-msgid "Goosing %s..."
-msgstr "Beliscando %s..."
-
-#. A high-five is when two people's hands slap each other
-#. * in the air above their heads.  It is done to celebrate
-#. * something, often a victory, or to congratulate someone.
-msgid "High-five"
-msgstr "Chocar as 5"
-
-#, c-format
-msgid "%s has high-fived you!"
-msgstr "%s chocou as 5 consigo!"
-
-#, c-format
-msgid "High-fiving %s..."
-msgstr "Chocando as 5 con %s..."
-
-#. We're not entirely sure what the MySpace people mean by
-#. * this... but we think it's the equivalent of "prank."  Or, for
-#. * someone to perform a mischievous trick or practical joke.
-msgid "Punk"
-msgstr "Tomar o pelo"
-
-#, c-format
-msgid "%s has punk'd you!"
-msgstr "%s tomoulle o pelo!"
-
-#, c-format
-msgid "Punking %s..."
-msgstr "Tomándolle o pelo a %s..."
-
-#. Raspberry is a slang term for the vibrating sound made
-#. * when you stick your tongue out of your mouth with your
-#. * lips closed and blow.  It is typically done when
-#. * gloating or bragging.  Nowadays it's a pretty silly
-#. * gesture, so it does not carry a harsh negative
-#. * connotation.  It is generally used in a playful tone
-#. * with friends.
-msgid "Raspberry"
-msgstr "Sacar a lingua"
-
-#, c-format
-msgid "%s has raspberried you!"
-msgstr "%s sacoulle a lingua!"
-
-#, c-format
-msgid "Raspberrying %s..."
-msgstr "Sacándolle a lingua a %s..."
-
 msgid "Required parameters not passed in"
 msgstr "Non se recibiron os parámetros requiridos"
 
@@ -6960,6 +5228,9 @@ msgstr "Non se pode engadir a si mesmo"
 
 msgid "Master archive is misconfigured"
 msgstr "O arquivo mestre non está ben configurado"
+
+msgid "Incorrect username or password"
+msgstr "O nome de conta ou contrasinal non é correcto"
 
 msgid "Could not recognize the host of the username you entered"
 msgstr "Non se recoñeceu o host do nome de usuario que introduciu"
@@ -7086,6 +5357,12 @@ msgstr "Erro ao se comunicar co servidor. Pechando a conexión."
 msgid "Telephone Number"
 msgstr "Número de teléfono"
 
+msgid "Location"
+msgstr "Localización"
+
+msgid "Department"
+msgstr "Departamento"
+
 msgid "Personal Title"
 msgstr "Título"
 
@@ -7134,6 +5411,9 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "Desexa unirse á conversa?"
 
+msgid "You have signed on from another location"
+msgstr "Conectouse desde outra localización"
+
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
@@ -7150,6 +5430,9 @@ msgstr ""
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Pechouse esta conferencia. Non se poden enviar máis mensaxes."
+
+msgid "Busy"
+msgstr "Ocupado"
 
 #. *< type
 #. *< ui_requirement
@@ -7253,6 +5536,9 @@ msgstr "Nome de sala de conversa non válido"
 
 msgid "Invalid error"
 msgstr "Erro non válido"
+
+msgid "Not logged in"
+msgstr "Non iniciou a sesión"
 
 msgid "Cannot receive IM due to parental controls"
 msgstr "O control parental non permite recibir a mensaxe"
@@ -7389,11 +5675,20 @@ msgstr "Escoitando música"
 msgid "Studying"
 msgstr "Estudando"
 
+msgid "Working"
+msgstr "Traballando"
+
 msgid "In the restroom"
 msgstr "No baño"
 
 msgid "Received invalid data on connection with server"
 msgstr "Recibíronse datos incorrectos na conexión co servidor"
+
+msgid "Error parsing response from authentication server"
+msgstr ""
+
+msgid "Unknown error during authentication"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -7525,6 +5820,11 @@ msgstr ""
 "Vostede requiriu cifrado nos axustes da conta, mais o seu sistema non admite "
 "o uso de cifrado."
 
+msgid ""
+"You required Kerberos authentication but encryption is disabled in your "
+"account settings."
+msgstr ""
+
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr "Talvez sexa desconectado en breve. Comprobe %s para actualizacións."
@@ -7539,7 +5839,6 @@ msgid "Received authorization"
 msgstr "Recibiuse a autorización"
 
 #. Unregistered username
-#. the username does not exist
 msgid "Username does not exist"
 msgstr "O nome de usuario non existe"
 
@@ -7864,6 +6163,9 @@ msgstr ""
 "comezar cunha letra e conter só letras, números e espazos, ou só conter "
 "números."
 
+msgid "Unable to Add"
+msgstr "Non é posíbel engadir"
+
 msgid "Unable to Retrieve Buddy List"
 msgstr "Non é posíbel obter a lista de contactos"
 
@@ -8018,6 +6320,9 @@ msgid "Type the email address of the buddy you are searching for."
 msgstr ""
 "Escriba o enderezo de correo electrónico do contacto que está a buscar."
 
+msgid "_Search"
+msgstr "_Buscar"
+
 msgid "Set User Info (web)..."
 msgstr "Editar a información de usuario (web)..."
 
@@ -8054,8 +6359,17 @@ msgstr "Amosar os contactos pendentes de autorización"
 msgid "Search for Buddy by Email Address..."
 msgstr "Buscar un contacto polo enderezo de correo electrónico..."
 
-msgid "Use clientLogin"
-msgstr "Usar login de cliente"
+msgid "clientLogin"
+msgstr ""
+
+msgid "Kerberos"
+msgstr ""
+
+msgid "MD5-based"
+msgstr ""
+
+msgid "Authentication method"
+msgstr ""
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -8178,6 +6492,9 @@ msgstr "Información de usuario non dispoñíbel: %s"
 msgid "Mobile Phone"
 msgstr "Teléfono móbil"
 
+msgid "Age"
+msgstr "Idade"
+
 msgid "Personal Web Page"
 msgstr "Páxina web persoal"
 
@@ -8186,11 +6503,20 @@ msgstr "Páxina web persoal"
 msgid "Additional Information"
 msgstr "Información adicional"
 
+msgid "Home Address"
+msgstr "Enderezo de casa"
+
 msgid "Zip Code"
 msgstr "Código postal"
 
+msgid "Work Address"
+msgstr "Enderezo do traballo"
+
 msgid "Work Information"
 msgstr "Información do traballo"
+
+msgid "Company"
+msgstr "Compañía"
 
 msgid "Division"
 msgstr "Sección"
@@ -8209,6 +6535,12 @@ msgstr "Membro desde"
 
 msgid "Capabilities"
 msgstr "Capacidades"
+
+msgid "Profile"
+msgstr "Perfil"
+
+msgid "View web profile"
+msgstr "Ver perfil web"
 
 msgid "Invalid SNAC"
 msgstr "SNAC non válido"
@@ -8506,6 +6838,9 @@ msgstr ""
 "O identificador «%s» non coincide con ningún usuario da súa comunidade "
 "Sametime. Eliminouse esta entrada da súa lista de contactos."
 
+msgid "Unable to add user"
+msgstr "Non é posíbel engadir o usuario"
+
 #, c-format
 msgid ""
 "Error reading file %s: \n"
@@ -8790,6 +7125,9 @@ msgstr "Hiperactivo"
 
 msgid "Robot"
 msgstr "Robot"
+
+msgid "In Love"
+msgstr "Namorado"
 
 msgid "User Modes"
 msgstr "Modos de usuario"
@@ -9081,6 +7419,9 @@ msgstr "Organización"
 msgid "Unit"
 msgstr "Unidade"
 
+msgid "Homepage"
+msgstr "Páxina persoal"
+
 msgid "Note"
 msgstr "Nota"
 
@@ -9254,6 +7595,9 @@ msgstr "Produciuse un erro durante a conexión ao servidor SILC"
 
 msgid "Key Exchange failed"
 msgstr "Fallou o intercambio de chaves"
+
+msgid "Authentication failed"
+msgstr "Fallou a autenticación"
 
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
@@ -9771,430 +8115,6 @@ msgstr "Usuario de autenticación"
 msgid "Auth Domain"
 msgstr "Dominio de autenticación"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join &lt;sala&gt;:  Unirse a unha sala na rede Yahoo"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "list:  Amosa as salas da rede Yahoo"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr "doodle: Solicitar ao usuario o comezo dunha sesión Doodle"
-
-msgid "Yahoo ID..."
-msgstr "ID de Yahoo..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! Protocol Plugin"
-msgstr "Complemento de protocolo Yahoo"
-
-msgid "Pager port"
-msgstr "Porto do buscapersoas"
-
-msgid "File transfer server"
-msgstr "Servidor de transferencia de ficheiros"
-
-msgid "File transfer port"
-msgstr "Porto de transferencia de ficheiros"
-
-msgid "Chat room locale"
-msgstr "Localización da sala de conversa"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "Ignorar os convites a salas de conferencias ou de conversa"
-
-msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Utilizar unha  conta de pasarela para as conexións HTTP e HTTPS"
-
-msgid "Chat room list URL"
-msgstr "URL de lista de salas da conversa"
-
-msgid "Yahoo JAPAN ID..."
-msgstr "ID de Yahoo JAPAN..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! JAPAN Protocol Plugin"
-msgstr "Complemento de protocolo Yahoo! JAPAN"
-
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr "%s enviou unconvite de cámara web, mais aínda non está dispoñíbel."
-
-msgid "Your SMS was not delivered"
-msgstr "O seu SMS non foi entregado"
-
-msgid "Your Yahoo! message did not get sent."
-msgstr "A súa mensaxe Yahoo! non se enviou."
-
-#, c-format
-msgid "Yahoo! system message for %s:"
-msgstr "Mensaxe do sistema Yahoo! para %s:"
-
-msgid "Authorization denied message:"
-msgstr "Mensaxe de autorización rexeitada:"
-
-#, c-format
-msgid ""
-"%s has (retroactively) denied your request to add them to your list for the "
-"following reason: %s."
-msgstr ""
-"O usuario %s rexeitou (de forma retroactiva) a súa solicitude de engadilos á "
-"súa lista pola seguinte razón: %s."
-
-#, c-format
-msgid "%s has (retroactively) denied your request to add them to your list."
-msgstr ""
-"O usuario %s rexeitou (de forma retroactiva) a súa solicitude de engadilos á "
-"súa lista."
-
-msgid "Add buddy rejected"
-msgstr "Rexeitouse engadir o contacto"
-
-#. Some error in the received stream
-msgid "Received invalid data"
-msgstr "Recibíronse datos incorrectos"
-
-#. security lock from too many failed login attempts
-msgid ""
-"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-"website may fix this."
-msgstr ""
-"Conta bloqueada: Demasiados intentos fallos. Se inicia sesión no sitio web "
-"de Yahoo! é posíbel que isto se arranxe."
-
-#. indicates a lock of some description
-msgid ""
-"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
-"this."
-msgstr ""
-"Conta bloqueada: Razón descoñecida. Se inicia sesión no sitio web de Yahoo! "
-"é posíbel que isto se arranxe."
-
-#. indicates a lock due to logging in too frequently
-msgid ""
-"Account locked: You have been logging in too frequently.  Wait a few minutes "
-"before trying to connect again.  Logging into the Yahoo! website may help."
-msgstr ""
-"Conta bloqueada: Conectouse con demasiada frecuencia. Agarde uns minutos "
-"antes de volver a se conectar. Se se conecta ao servidor de web de Yahoo! é "
-"probábel que isto se arranxe."
-
-#. username or password missing
-msgid "Username or password missing"
-msgstr "O nome de conta ou contrasinal non foron atopados"
-
-#, c-format
-msgid ""
-"The Yahoo server has requested the use of an unrecognized authentication "
-"method.  You will probably not be able to successfully sign on to Yahoo.  "
-"Check %s for updates."
-msgstr ""
-"O servidor de Yahoo pediu o uso dun método de autenticación non recoñecido. "
-"Probabelmente non será quen de conectarse con Yahoo.  Comprobe se hai "
-"actualizacións de %s."
-
-msgid "Failed Yahoo! Authentication"
-msgstr "Fallou a autenticación en Yahoo!"
-
-#, c-format
-msgid ""
-"You have tried to ignore %s, but the user is on your buddy list.  Clicking "
-"\"Yes\" will remove and ignore the buddy."
-msgstr ""
-"Intentou ignorar a %s, mais o usuario está na súa lista de contactos. Se "
-"selecciona «Si» eliminarase e ignorarase este contacto."
-
-msgid "Ignore buddy?"
-msgstr "Quere ignorar o contacto?"
-
-msgid "Invalid username or password"
-msgstr "O nome de usuario ou o contrasinal non son válidos"
-
-msgid ""
-"Your account has been locked due to too many failed login attempts.  Please "
-"try logging into the Yahoo! website."
-msgstr ""
-"A súa conta foi bloqueada debido a demasiados intentos fallidos de inicio de "
-"sesión. Tente a iniciar sesión dende o sitio web de Yahoo!."
-
-msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr "Erro 52 descoñecido. Se reconecta poderiase arranxar isto."
-
-msgid ""
-"Error 1013: The username you have entered is invalid.  The most common cause "
-"of this error is entering your email address instead of your Yahoo! ID."
-msgstr ""
-"Erro 1013: O nome de usuario que inseriu non é válido. A causa máis común de "
-"este erro é que inserira o seu enderezo de correo electrónico no canto do "
-"seu identificador de Yahoo!"
-
-#, c-format
-msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
-msgstr ""
-"Erro descoñecido número %d. Se inicia sesión no sitio web de Yahoo! é "
-"posíbel que isto se arranxe."
-
-#, c-format
-msgid "Unable to add buddy %s to group %s to the server list on account %s."
-msgstr ""
-"Non é posíbel engadir o contacto %s ao grupo %s para a lista de servidor na "
-"conta %s."
-
-msgid "Unable to add buddy to server list"
-msgstr "Non é posíbel engadir o contacto na lista do servidor"
-
-#, c-format
-msgid "[ Audible %s/%s/%s.swf ] %s"
-msgstr "[ Audíbel %s/%s/%s.swf ] %s"
-
-msgid "Received unexpected HTTP response from server"
-msgstr "Recibiuse unha resposta HTTP inesperada do servidor"
-
-#, c-format
-msgid "Lost connection with %s: %s"
-msgstr "Perdeuse a conexión con %s: %s"
-
-#, c-format
-msgid "Unable to establish a connection with %s: %s"
-msgstr "Non é posíbel estabelecer unha conexión con %s: %s"
-
-msgid "Unable to connect: The server returned an empty response."
-msgstr "Non é posíbel conectar: o servidor devolveu unha resposta baleira."
-
-msgid ""
-"Unable to connect: The server's response did not contain the necessary "
-"information"
-msgstr ""
-"Non é posíbel conectar: a resposta do servidor non conten a información "
-"necesaria"
-
-msgid "Not at Home"
-msgstr "Fóra da casa"
-
-msgid "Not at Desk"
-msgstr "Lonxe do escritorio"
-
-msgid "Not in Office"
-msgstr "Fóra da oficina"
-
-msgid "On Vacation"
-msgstr "De vacacións"
-
-msgid "Stepped Out"
-msgstr "Abandonou"
-
-msgid "Not on server list"
-msgstr "Non incluído na lista do servidor"
-
-msgid "Appear Permanently Offline"
-msgstr "Aparecer permanentemente desconectado"
-
-msgid "Presence"
-msgstr "Presenza"
-
-msgid "Don't Appear Permanently Offline"
-msgstr "Non aparecer sempre desconectado"
-
-msgid "Join in Chat"
-msgstr "Unirse a unha conversa"
-
-msgid "Initiate Conference"
-msgstr "Iniciar unha conferencia"
-
-msgid "Presence Settings"
-msgstr "Axustes da presenza"
-
-msgid "Start Doodling"
-msgstr "Comezar o Doodle"
-
-msgid "Activate which ID?"
-msgstr "Que ID quere activar?"
-
-msgid "Select the ID you want to activate"
-msgstr "Seleccionar o ID que queres activar"
-
-msgid "Join whom in chat?"
-msgstr "A quen quere unir á conversa?"
-
-msgid "Activate ID..."
-msgstr "Activar ID..."
-
-msgid "Join User in Chat..."
-msgstr "Unir un usuario á conversa..."
-
-msgid "Open Inbox"
-msgstr "Abrir a caixa de entrada"
-
-msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr "Non se poden enviar SMS. Non foi posíbel obter o proveedor de móbil."
-
-msgid "Can't send SMS. Unknown mobile carrier."
-msgstr "Non se poden enviar SMS. Proveedor de móbil descoñecido."
-
-msgid "Getting mobile carrier to send the SMS."
-msgstr "Obtendo o proveedor de móbil para enviar SMS."
-
-#. Write a local message to this conversation showing that a request for a
-#. * Doodle session has been made
-#.
-msgid "Sent Doodle request."
-msgstr "Enviar unha petición Doodle."
-
-msgid "Unable to connect."
-msgstr "Non é posíbel conectar."
-
-msgid "Unable to establish file descriptor."
-msgstr "Non é posíbel estabelecer o descritor de ficheiro."
-
-#, c-format
-msgid "%s is trying to send you a group of %d files.\n"
-msgstr "%s está tentándolle enviar un grupo de %d ficheiros.\n"
-
-msgid "Write Error"
-msgstr "Erro de escritura"
-
-msgid "Yahoo! Japan Profile"
-msgstr "Perfil de Yahoo! xaponés"
-
-msgid "Yahoo! Profile"
-msgstr "Perfil de Yahoo!"
-
-msgid ""
-"Sorry, profiles marked as containing adult content are not supported at this "
-"time."
-msgstr ""
-"Síntoo, os perfís marcados como con contido só para adultos non están "
-"admitidos aínda."
-
-msgid ""
-"If you wish to view this profile, you will need to visit this link in your "
-"web browser:"
-msgstr ""
-"Se desexa ver este perfil, debería visitar esta ligazón co seu navegador web:"
-
-msgid "Yahoo! ID"
-msgstr "ID Yahoo!"
-
-msgid "Hobbies"
-msgstr "Afeccións"
-
-msgid "Latest News"
-msgstr "Últimas novas"
-
-msgid "Home Page"
-msgstr "Páxina persoal"
-
-msgid "Cool Link 1"
-msgstr "Ligazón interesante 1"
-
-msgid "Cool Link 2"
-msgstr "Ligazón interesante 2"
-
-msgid "Cool Link 3"
-msgstr "Ligazón interesante 3"
-
-msgid "Last Update"
-msgstr "Última actualización"
-
-msgid ""
-"This profile is in a language or format that is not supported at this time."
-msgstr ""
-"Este perfil está nun idioma ou formato que non é compatíbel neste momento."
-
-msgid ""
-"Could not retrieve the user's profile. This most likely is a temporary "
-"server-side problem. Please try again later."
-msgstr ""
-"Non foi posíbel obter o perfil do usuario. É probábel que sexa un problema "
-"temporal do servidor. Probe de novo máis tarde."
-
-msgid ""
-"Could not retrieve the user's profile. This most likely means that the user "
-"does not exist; however, Yahoo! sometimes does fail to find a user's "
-"profile. If you know that the user exists, please try again later."
-msgstr ""
-"Non foi posíbel obter o perfil do usuario. Isto habitualmente significa que "
-"o usuario non existe. No entanto, ás veces Yahoo! falla ao buscar un perfil "
-"de usuario. Se está seguro de que o usuario existe inténteo de novo máis "
-"tarde."
-
-msgid "The user's profile is empty."
-msgstr "O perfil do usuario está baleiro."
-
-#, c-format
-msgid "%s has declined to join."
-msgstr "%s rexeitou a unión."
-
-msgid "Failed to join chat"
-msgstr "Produciuse un fallo ao unirse á conversa"
-
-#. -6
-msgid "Unknown room"
-msgstr "Sala descoñecida"
-
-#. -15
-msgid "Maybe the room is full"
-msgstr "Quizais a sala está chea"
-
-#. -35
-msgid "Not available"
-msgstr "Non dispoñíbel"
-
-msgid ""
-"Unknown error. You may need to logout and wait five minutes before being "
-"able to rejoin a chatroom"
-msgstr ""
-"Erro descoñecido. Pode que teña que desconectarse e agardar cinco minutos "
-"antes de poder unirse de novo á sala da conversa"
-
-#, c-format
-msgid "You are now chatting in %s."
-msgstr "Agora está conversando en %s."
-
-msgid "Failed to join buddy in chat"
-msgstr "Produciuse un fallo ao unir o contacto á conversa"
-
-msgid "Maybe they're not in a chat?"
-msgstr "Quizais non están nunha conversa?"
-
-msgid "Fetching the room list failed."
-msgstr "Produciuse un fallo ao obter a lista de salas."
-
-msgid "Voices"
-msgstr "Voces"
-
-msgid "Webcams"
-msgstr "Cámaras web"
-
-msgid "Connection problem"
-msgstr "Problema de conexión"
-
-msgid "Unable to fetch room list."
-msgstr "Non é posíbel obter a lista de salas."
-
-msgid "User Rooms"
-msgstr "Salas de usuarios"
-
-msgid "Connection problem with the YCHT server"
-msgstr "Produciuse un problema ao conectarse co servidor YCHT"
-
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
@@ -10205,6 +8125,12 @@ msgstr ""
 #, c-format
 msgid "Unable to send to chat %s,%s,%s"
 msgstr "Non é posíbel enviar á conversa %s,%s,%s"
+
+msgid "User is offline"
+msgstr "O usuario está desconectado"
+
+msgid "User"
+msgstr "Usuario"
 
 msgid "Hidden or not logged-in"
 msgstr "Agochado ou sen sesión iniciada"
@@ -10602,12 +8528,9 @@ msgstr ""
 "con contas en múltiples redes de conversa."
 
 msgid ""
-"This means that you can be chatting with friends on MSN, talking to a friend "
-"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+"This means that you can be chatting with friends on AIM, talking to a friend "
+"on Google Talk, and sitting in an IRC chat room all at the same time."
 msgstr ""
-"Isto quere dicir que vostede pode estar conversando con amigos en MSN, "
-"falando cun amigo en Google Talk, e sentado nunha sala de conversas de "
-"Yahoo, todo o mesmo tempo."
 
 msgid "The buddy list showing friends on different networks."
 msgstr "A lista de contactos amosa  os seus amigos en diferentes redes."
@@ -10618,8 +8541,8 @@ msgstr "Mensaxería na Internet de Pidgin"
 msgid "Internet Messenger"
 msgstr "Mensaxería na Internet"
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+#, fuzzy
+msgid "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, and more"
 msgstr ""
 "Conversar mediante IM. Permite usar AIM, Google Talk, Jabber/XMPP, MSN, "
 "Yahoo e outros"
@@ -12144,20 +10067,13 @@ msgstr ""
 
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
-"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
-">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"emailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>This "
+"is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
 "support/\">archive</a>)<br/>We can't help with third-party protocols or "
 "plugins!<br/>This list's primary language is <b>English</b>.  You are "
 "welcome to post in another language, but the responses may be less helpful."
 "<br/>"
 msgstr ""
-"<font size=\"4\">Pode obter <b>axuda doutros usuarios de Pidgin</b></font> "
-"enviando un correo a <a href=\"mailto:support@pidgin.im\">support@pidgin.im</"
-"a><br/>Esta é unha lista <b>pública</b> de correo! (<a href=\"http://pidgin."
-"im/pipermail/support/\">ficheiro da lista</a>)<br/>Non podemos fornecer "
-"axuda de protocolos ou complementos de terceiros!<br/>O idioma principal "
-"desta lista é o <b>inglés</b>. Pode, se o desexa, escribir correos noutro "
-"idioma, pero obterá menos respostas útiles.<br/>"
 
 #, c-format
 msgid "About %s"
@@ -12968,10 +10884,6 @@ msgstr "Seleccione un ficheiro"
 msgid "Modify Buddy Pounce"
 msgstr "Editar o aviso do seu contacto"
 
-#. Create the "Pounce on Whom" frame.
-msgid "Pounce on Whom"
-msgstr "A quen avisar"
-
 msgid "_Account:"
 msgstr "_Conta:"
 
@@ -13638,9 +11550,9 @@ msgstr "E_stado:"
 msgid "Use a _different status for some accounts"
 msgstr "Usar un estado _diferente para algunhas contas"
 
-#. Save & Use button
-msgid "Sa_ve & Use"
-msgstr "Ga_rdar e usar"
+#. Save and Use button
+msgid "Sa_ve and Use"
+msgstr ""
 
 #, c-format
 msgid "Status for %s"
@@ -13703,9 +11615,6 @@ msgstr "Selector de estado"
 
 msgid "Google Talk"
 msgstr "Google Talk"
-
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -13997,6 +11906,9 @@ msgstr "Mensaxes recibidas"
 #, c-format
 msgid "Select Color for %s"
 msgstr "Seleccionar a cor para %s"
+
+msgid "General"
+msgstr "Xeral"
 
 msgid "Ignore incoming format"
 msgstr "Ignorar o formato entrante"
@@ -14386,14 +12298,11 @@ msgstr ""
 msgid "Notify For"
 msgstr "Notificación para"
 
-msgid "\t_Notify for System messages"
+msgid "\tS_ystem messages"
 msgstr ""
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_Só se alguén di o seu nome de usuario"
-
-msgid "\tNotify for _System messages"
-msgstr ""
 
 msgid "_Focused windows"
 msgstr "Xanelas con _foco"
@@ -14579,12 +12488,9 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "Permítelle enviar datos en bruto a protocolos baseados en texto."
 
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Permítelle enviar datos en bruto a protocolos baseados en texto (XMPP, MSN, "
-"IRC, TOC). Prema «Intro» na caixa de entrada para enviar. Observe a xanela "
-"de depuración."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -15044,14 +12950,8 @@ msgstr "Transparencia variábel para a lista de contactos e as conversas."
 #. *  description
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
-"the buddy list.\n"
-"\n"
-"* Note: This plugin requires Win2000 or greater."
+"the buddy list."
 msgstr ""
-"Este complemento activa transparencias alfa nas xanelas de conversa e na "
-"lista de contactos.\n"
-"\n"
-"* Nota: este complemento require Win2000 ou outro máis novo."
 
 #. Autostart
 msgid "Startup"

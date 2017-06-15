@@ -19,8 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301 USA
  */
 
-#ifndef _PURPLE_SMILEY_H_
-#define _PURPLE_SMILEY_H_
+#ifndef PURPLE_SMILEY_H
+#define PURPLE_SMILEY_H
+
 /**
  * SECTION:smiley
  * @include:smiley.h
@@ -45,9 +46,9 @@ typedef struct _PurpleSmiley PurpleSmiley;
 typedef struct _PurpleSmileyClass PurpleSmileyClass;
 
 #define PURPLE_TYPE_SMILEY            (purple_smiley_get_type())
-#define PURPLE_SMILEY(smiley)         (G_TYPE_CHECK_INSTANCE_CAST((smiley), PURPLE_TYPE_SMILEY, PurpleSmiley))
+#define PURPLE_SMILEY(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_SMILEY, PurpleSmiley))
 #define PURPLE_SMILEY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_SMILEY, PurpleSmileyClass))
-#define PURPLE_IS_SMILEY(smiley)      (G_TYPE_CHECK_INSTANCE_TYPE((smiley), PURPLE_TYPE_SMILEY))
+#define PURPLE_IS_SMILEY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_SMILEY))
 #define PURPLE_IS_SMILEY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_SMILEY))
 #define PURPLE_SMILEY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_SMILEY, PurpleSmileyClass))
 
@@ -56,10 +57,9 @@ typedef struct _PurpleSmileyClass PurpleSmileyClass;
  *
  * A generic smiley. It can either be a theme smiley, or a custom smiley.
  */
-struct _PurpleSmiley
-{
+struct _PurpleSmiley {
 	/*< private >*/
-	GObject parent;
+	PurpleImage parent;
 };
 
 /**
@@ -67,10 +67,9 @@ struct _PurpleSmiley
  *
  * Base class for #PurpleSmiley objects.
  */
-struct _PurpleSmileyClass
-{
+struct _PurpleSmileyClass {
 	/*< private >*/
-	GObjectClass parent_class;
+	PurpleImageClass parent_class;
 
 	/*< private >*/
 	void (*purple_reserved1)(void);
@@ -86,8 +85,7 @@ G_BEGIN_DECLS
  *
  * Returns: the #GType for a smiley.
  */
-GType
-purple_smiley_get_type(void);
+GType purple_smiley_get_type(void);
 
 /**
  * purple_smiley_new:
@@ -99,8 +97,19 @@ purple_smiley_get_type(void);
  *
  * Returns: the new #PurpleSmiley.
  */
-PurpleSmiley *
-purple_smiley_new(const gchar *shortcut, const gchar *path);
+PurpleSmiley *purple_smiley_new(const gchar *shortcut, const gchar *path);
+
+/**
+ * purple_smiley_new_from_data:
+ * @shortcut: The smiley shortcut (unescaped).
+ * @data: The raw data of the image.
+ * @length: The length of @data in bytes.
+ *
+ * Creates new smiley from @data.
+ *
+ * Returns: A new #PurpleSmiley.
+ */
+PurpleSmiley *purple_smiley_new_from_data(const gchar *shortcut, const guint8 *data, gsize length);
 
 /**
  * purple_smiley_new_remote:
@@ -112,8 +121,7 @@ purple_smiley_new(const gchar *shortcut, const gchar *path);
  *
  * Returns: the new remote #PurpleSmiley.
  */
-PurpleSmiley *
-purple_smiley_new_remote(const gchar *shortcut);
+PurpleSmiley *purple_smiley_new_remote(const gchar *shortcut);
 
 /**
  * purple_smiley_get_shortcut:
@@ -124,23 +132,8 @@ purple_smiley_new_remote(const gchar *shortcut);
  *
  * Returns: the unescaped shortcut.
  */
-const gchar *
-purple_smiley_get_shortcut(const PurpleSmiley *smiley);
-
-/**
- * purple_smiley_get_image:
- * @smiley: the smiley.
- *
- * Returns the image contents for a @smiley. It may not be ready for remote
- * smileys, so check it with #purple_image_is_ready.
- *
- * If you want to save it, increase a ref count for the returned object.
- *
- * Returns: (transfer none): the image contents for a @smiley.
- */
-PurpleImage *
-purple_smiley_get_image(PurpleSmiley *smiley);
+const gchar *purple_smiley_get_shortcut(const PurpleSmiley *smiley);
 
 G_END_DECLS
 
-#endif /* _PURPLE_SMILEY_H_ */
+#endif /* PURPLE_SMILEY_H */

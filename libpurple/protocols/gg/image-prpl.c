@@ -104,7 +104,7 @@ ggp_image_prepare(PurpleConversation *conv, PurpleImage *image, uint64_t *id)
 
 	g_return_val_if_fail(image, GGP_IMAGE_PREPARE_FAILURE);
 
-	image_size = purple_image_get_size(image);
+	image_size = purple_image_get_data_size(image);
 
 	if (image_size > GGP_IMAGE_SIZE_MAX) {
 		purple_debug_warning("gg", "ggp_image_prepare: image "
@@ -153,12 +153,13 @@ void ggp_image_recv(PurpleConnection *gc,
 		image_reply->crc32, image_reply->size,
 		image_reply->filename, id);
 
+	img = purple_image_new_from_data(
+		(const guint8 *)image_reply->image,
+		image_reply->size
+	);
 	purple_image_set_friendly_filename(img, image_reply->filename);
 
-	purple_image_transfer_write(img,
-		g_memdup(image_reply->image, image_reply->size),
-		image_reply->size);
-	purple_image_transfer_close(img);
+	g_hash_table_insert(sdata->recv_images, &id, img);
 }
 
 void ggp_image_send(PurpleConnection *gc,
@@ -205,7 +206,7 @@ void ggp_image_send(PurpleConnection *gc,
 	gg_image_reply(accdata->session, image_request->sender,
 		gg_filename,
 		purple_image_get_data(sent_image->image),
-		purple_image_get_size(sent_image->image));
+		purple_image_get_data_size(sent_image->image));
 	g_free(gg_filename);
 
 	conv = purple_conversations_find_with_account(
@@ -247,8 +248,7 @@ ggp_image_request(PurpleConnection *gc, uin_t uin, uint64_t id)
 	}
 
 
-	img = purple_image_transfer_new();
-	g_hash_table_insert(sdata->recv_images, ggp_uint64dup(id), img);
+	g_hash_table_insert(sdata->recv_images, ggp_uint64dup(id), NULL);
 
 	purple_debug_info("gg", "ggp_image_request: requesting image "
 		GGP_IMAGE_ID_FORMAT, id);

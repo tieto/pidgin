@@ -902,13 +902,13 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 		unsigned char *verifyd;
 		SilcUInt32 verify_len;
 
-		if (!strcmp(serverpk.type, "silc-rsa"))
+		if (purple_strequal(serverpk.type, "silc-rsa"))
 		  type = SILC_PKCS_SILC;
-		else if (!strcmp(serverpk.type, "ssh-rsa"))
+		else if (purple_strequal(serverpk.type, "ssh-rsa"))
 		  type = SILC_PKCS_SSH2;
-		else if (!strcmp(serverpk.type, "x509v3-sign-rsa"))
+		else if (purple_strequal(serverpk.type, "x509v3-sign-rsa"))
 		  type = SILC_PKCS_X509V3;
-		else if (!strcmp(serverpk.type, "pgp-sign-rsa"))
+		else if (purple_strequal(serverpk.type, "pgp-sign-rsa"))
 		  type = SILC_PKCS_OPENPGP;
 
 		if (silc_pkcs_public_key_alloc(type, serverpk.data,
@@ -988,10 +988,10 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 		if (usericon) {
 			const char *type = silc_mime_get_field(usericon, "Content-Type");
 			if (type &&
-			    (!strcmp(type, "image/jpeg") ||
-			     !strcmp(type, "image/gif") ||
-			     !strcmp(type, "image/bmp") ||
-			     !strcmp(type, "image/png"))) {
+			    (purple_strequal(type, "image/jpeg") ||
+			     purple_strequal(type, "image/gif") ||
+			     purple_strequal(type, "image/bmp") ||
+			     purple_strequal(type, "image/png"))) {
 				const unsigned char *data;
 				SilcUInt32 data_len;
 				data = silc_mime_get_data(usericon, &data_len);
@@ -1741,7 +1741,7 @@ void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleImage *img)
 	type = purple_image_get_mimetype(img);
 	if (type == NULL)
 		return;
-	if (g_strcmp0(purple_image_get_extension(img), "ico") == 0)
+	if (purple_strequal(purple_image_get_extension(img), "ico"))
 		return;
 
 	/* Add */
@@ -1751,7 +1751,7 @@ void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleImage *img)
 
 	silc_mime_add_field(mime, "Content-Type", type);
 	silc_mime_add_data(mime, purple_image_get_data(img),
-		purple_image_get_size(img));
+		purple_image_get_data_size(img));
 
 	silc_client_attribute_add(client, conn, SILC_ATTRIBUTE_USER_ICON,
 		mime, sizeof(*mime));

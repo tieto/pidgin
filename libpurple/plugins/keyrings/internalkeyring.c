@@ -33,7 +33,6 @@
 
 #include "ciphers/aescipher.h"
 #include "ciphers/pbkdf2cipher.h"
-#include "ciphers/sha256hash.h"
 
 #define INTKEYRING_NAME N_("Internal keyring")
 #define INTKEYRING_DESCRIPTION N_("This plugin provides the default password " \
@@ -139,7 +138,7 @@ intkeyring_buff_from_base64(const gchar *base64)
 	guchar *data;
 	gsize len;
 
-	data = purple_base64_decode(base64, &len);
+	data = g_base64_decode(base64, &len);
 
 	return intkeyring_buff_new(data, len);
 }
@@ -152,14 +151,12 @@ static intkeyring_buff_t *
 intkeyring_derive_key(const gchar *passphrase, intkeyring_buff_t *salt)
 {
 	PurpleCipher *cipher;
-	PurpleHash *hash;
 	gboolean succ;
 	intkeyring_buff_t *ret;
 
 	g_return_val_if_fail(passphrase != NULL, NULL);
 
-	hash = purple_sha256_hash_new();
-	cipher = purple_pbkdf2_cipher_new(hash);
+	cipher = purple_pbkdf2_cipher_new(G_CHECKSUM_SHA256);
 
 	g_object_set(G_OBJECT(cipher), "iter_count",
 		GUINT_TO_POINTER(purple_prefs_get_int(INTKEYRING_PREFS
@@ -175,7 +172,6 @@ intkeyring_derive_key(const gchar *passphrase, intkeyring_buff_t *salt)
 	succ = purple_cipher_digest(cipher, ret->data, ret->len);
 
 	g_object_unref(cipher);
-	g_object_unref(hash);
 
 	if (!succ) {
 		intkeyring_buff_free(ret);
@@ -282,7 +278,7 @@ intkeyring_encrypt(intkeyring_buff_t *key, const gchar *str)
 	if (encrypted_size < 0)
 		return NULL;
 
-	return purple_base64_encode(encrypted_raw, encrypted_size);
+	return g_base64_encode(encrypted_raw, encrypted_size);
 
 }
 
@@ -304,7 +300,7 @@ intkeyring_decrypt(intkeyring_buff_t *key, const gchar *str)
 	cipher = purple_aes_cipher_new();
 	g_return_val_if_fail(cipher != NULL, NULL);
 
-	encrypted_raw = purple_base64_decode(str, &encrypted_size);
+	encrypted_raw = g_base64_decode(str, &encrypted_size);
 	g_return_val_if_fail(encrypted_raw != NULL, NULL);
 
 	iv_len = purple_cipher_get_block_size(cipher);
@@ -378,7 +374,7 @@ intkeyring_change_masterpw(const gchar *new_password)
 		 * but it's not a problem.
 		 */
 		verifier = intkeyring_encrypt(key, INTKEYRING_VERIFY_STR);
-		salt_b64 = purple_base64_encode(salt->data, salt->len);
+		salt_b64 = g_base64_encode(salt->data, salt->len);
 	}
 
 	if (!verifier || !salt_b64) {

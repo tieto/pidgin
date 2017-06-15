@@ -43,24 +43,6 @@ test_util_base_16_decode(void) {
 }
 
 /******************************************************************************
- * base 64 tests
- *****************************************************************************/
-static void
-test_util_base_64_encode(void) {
-	gchar *in = purple_base64_encode((const unsigned char *)"forty-two", 10);
-	g_assert_cmpstr("Zm9ydHktdHdvAA==", ==, in);
-}
-
-static void
-test_util_base_64_decode(void) {
-	gsize sz = 0;
-	guchar *out = purple_base64_decode("b3d0LXl0cm9mAA==", &sz);
-
-	g_assert_cmpint(sz, ==, 10);
-	g_assert_cmpstr("owt-ytrof", ==, (gchar *)out);
-}
-
-/******************************************************************************
  * filename escape tests
  *****************************************************************************/
 static void
@@ -511,11 +493,6 @@ main(gint argc, gchar **argv) {
 	                test_util_base_16_encode);
 	g_test_add_func("/util/base/16/decode",
 	                test_util_base_16_decode);
-
-	g_test_add_func("/util/base/64/encode",
-	                test_util_base_64_encode);
-	g_test_add_func("/util/base/64/decode",
-	                test_util_base_64_decode);
 
 	g_test_add_func("/util/filename/escape",
 	                test_util_filename_escape);

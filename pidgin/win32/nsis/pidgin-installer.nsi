@@ -382,8 +382,6 @@ SectionGroupEnd
 !macroend
 SectionGroup /e $(URIHANDLERSSECTIONTITLE) SecURIHandlers
   !insertmacro URI_SECTION "aim"
-  !insertmacro URI_SECTION "msnim"
-  !insertmacro URI_SECTION "ymsgr"
   !insertmacro URI_SECTION "xmpp"
 SectionGroupEnd
 
@@ -499,10 +497,6 @@ Section Uninstall
     ; I can't think of an easy way to maintain a list in a single place
     Push "aim"
     Call un.UnregisterURIHandler
-    Push "msnim"
-    Call un.UnregisterURIHandler
-    Push "ymsgr"
-    Call un.UnregisterURIHandler
     Push "xmpp"
     Call un.UnregisterURIHandler
 
@@ -549,7 +543,6 @@ Section Uninstall
     Delete "$INSTDIR\plugins\gtkbuddynote.dll"
     Delete "$INSTDIR\plugins\history.dll"
 	Delete "$INSTDIR\plugins\internalkeyring.dll"
-	Delete "$INSTDIR\plugins\ssl-gnutls.dll"
 	Delete "$INSTDIR\plugins\webkit.dll"
 	Delete "$INSTDIR\plugins\wincred.dll"
     Delete "$INSTDIR\plugins\iconaway.dll"
@@ -558,29 +551,24 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libbonjour.dll"
     Delete "$INSTDIR\plugins\libgg.dll"
     Delete "$INSTDIR\plugins\libirc.dll"
-    Delete "$INSTDIR\plugins\libjabber.dll"
-    Delete "$INSTDIR\plugins\libmsn.dll"
-    Delete "$INSTDIR\plugins\libmxit.dll"
+    Delete "$INSTDIR\plugins\libnapster.dll"
     Delete "$INSTDIR\plugins\libnovell.dll"
     Delete "$INSTDIR\plugins\liboscar.dll"
     Delete "$INSTDIR\plugins\libsametime.dll"
     Delete "$INSTDIR\plugins\libsilc.dll"
     Delete "$INSTDIR\plugins\libsimple.dll"
-    Delete "$INSTDIR\plugins\libyahoo.dll"
+    Delete "$INSTDIR\plugins\libtoc.dll"
+    Delete "$INSTDIR\plugins\libxmpp.dll"
     Delete "$INSTDIR\plugins\log_reader.dll"
     Delete "$INSTDIR\plugins\markerline.dll"
     Delete "$INSTDIR\plugins\newline.dll"
     Delete "$INSTDIR\plugins\notify.dll"
-    Delete "$INSTDIR\plugins\nss-prefs.dll"
     Delete "$INSTDIR\plugins\offlinemsg.dll"
-    Delete "$INSTDIR\plugins\perl.dll"
     Delete "$INSTDIR\plugins\pidginrc.dll"
     Delete "$INSTDIR\plugins\psychic.dll"
     Delete "$INSTDIR\plugins\relnot.dll"
     Delete "$INSTDIR\plugins\sendbutton.dll"
     Delete "$INSTDIR\plugins\spellchk.dll"
-    Delete "$INSTDIR\plugins\ssl-nss.dll"
-    Delete "$INSTDIR\plugins\ssl.dll"
     Delete "$INSTDIR\plugins\statenotify.dll"
     Delete "$INSTDIR\plugins\ticker.dll"
     Delete "$INSTDIR\plugins\timestamp.dll"
@@ -589,15 +577,6 @@ Section Uninstall
     Delete "$INSTDIR\plugins\winprefs.dll"
     Delete "$INSTDIR\plugins\xmppconsole.dll"
     Delete "$INSTDIR\plugins\xmppdisco.dll"
-    Delete "$INSTDIR\plugins\perl\auto\Pidgin\Pidgin.dll"
-    RMDir "$INSTDIR\plugins\perl\auto\Pidgin"
-    Delete "$INSTDIR\plugins\perl\auto\Purple\autosplit.ix"
-    Delete "$INSTDIR\plugins\perl\auto\Purple\Purple.dll"
-    RMDir "$INSTDIR\plugins\perl\auto\Purple"
-    RMDir "$INSTDIR\plugins\perl\auto"
-    Delete "$INSTDIR\plugins\perl\Pidgin.pm"
-    Delete "$INSTDIR\plugins\perl\Purple.pm"
-    RMDir "$INSTDIR\plugins\perl"
     RMDir "$INSTDIR\plugins"
     Delete "$INSTDIR\sasl2\libanonymous-3.dll"
     Delete "$INSTDIR\sasl2\libcrammd5-3.dll"

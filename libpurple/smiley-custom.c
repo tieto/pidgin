@@ -1,4 +1,4 @@
-/* purpleOB
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -133,7 +133,7 @@ smileys_to_xmlnode(void)
 		purple_xmlnode_set_attrib(smiley_node, "shortcut",
 			purple_smiley_get_shortcut(smiley));
 		basename = g_path_get_basename(purple_image_get_path(
-				purple_smiley_get_image(smiley)));
+				PURPLE_IMAGE(smiley)));
 		purple_xmlnode_set_attrib(smiley_node, "filename", basename);
 		g_free(basename);
 	}
@@ -175,7 +175,7 @@ purple_smiley_custom_img_checksum(PurpleImage *img)
 
 	return g_compute_checksum_for_data(G_CHECKSUM_SHA1,
 		purple_image_get_data(img),
-		purple_image_get_size(img));
+		purple_image_get_data_size(img));
 }
 
 
@@ -262,14 +262,13 @@ purple_smiley_custom_remove(PurpleSmiley *smiley)
 	g_object_ref(smiley);
 	purple_smiley_list_remove(smileys_list, smiley);
 
-	path = purple_image_get_path(purple_smiley_get_image(smiley));
+	path = purple_image_get_path(PURPLE_IMAGE(smiley));
 
 	other_smileys = purple_smiley_list_get_unique(smileys_list);
 	is_unique = TRUE;
 	for (it = other_smileys; it; it = g_list_next(it)) {
 		PurpleSmiley *other = it->data;
-		const gchar *other_path = purple_image_get_path(
-			purple_smiley_get_image(other));
+		const gchar *other_path = purple_image_get_path(PURPLE_IMAGE(other));
 		if (g_strcmp0(other_path, path) == 0) {
 			is_unique = FALSE;
 			break;

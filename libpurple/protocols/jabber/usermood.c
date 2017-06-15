@@ -127,7 +127,7 @@ find_mood_by_name(const gchar *name)
 	g_return_val_if_fail(name && *name, NULL);
 
 	for (i = 0; moods[i].mood != NULL; ++i) {
-		if (g_str_equal(name, moods[i].mood)) {
+		if (purple_strequal(name, moods[i].mood)) {
 			return &moods[i];
 		}
 	}
@@ -151,7 +151,7 @@ static void jabber_mood_cb(JabberStream *js, const char *from, PurpleXmlNode *it
 		return;
 	for (moodinfo = mood->child; moodinfo; moodinfo = moodinfo->next) {
 		if (moodinfo->type == PURPLE_XMLNODE_TYPE_TAG) {
-			if (!strcmp(moodinfo->name, "text")) {
+			if (purple_strequal(moodinfo->name, "text")) {
 				if (!moodtext) /* only pick the first one */
 					moodtext = purple_xmlnode_get_data(moodinfo);
 			} else {

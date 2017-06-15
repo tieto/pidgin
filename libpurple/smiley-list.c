@@ -47,9 +47,106 @@ enum
 	PROP_LAST
 };
 
-static GObjectClass *parent_class;
 static GParamSpec *properties[PROP_LAST];
 
+/*******************************************************************************
+ * Object stuff
+ ******************************************************************************/
+G_DEFINE_TYPE_WITH_PRIVATE(PurpleSmileyList, purple_smiley_list, G_TYPE_OBJECT);
+
+static void
+purple_smiley_list_init(PurpleSmileyList *list) {
+	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
+
+	priv->trie = purple_trie_new();
+	priv->path_map = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, NULL);
+	priv->shortcut_map = g_hash_table_new_full(g_str_hash, g_str_equal,
+		g_free, NULL);
+
+	PURPLE_DBUS_REGISTER_POINTER(list, PurpleSmileyList);
+}
+
+static void
+purple_smiley_list_finalize(GObject *obj) {
+	PurpleSmileyList *sl = PURPLE_SMILEY_LIST(obj);
+	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
+	GList *it;
+
+	g_object_unref(priv->trie);
+	g_hash_table_destroy(priv->path_map);
+	g_hash_table_destroy(priv->shortcut_map);
+
+	for (it = priv->smileys; it; it = g_list_next(it)) {
+		PurpleSmiley *smiley = it->data;
+		g_object_set_data(G_OBJECT(smiley), "purple-smiley-list", NULL);
+		g_object_set_data(G_OBJECT(smiley), "purple-smiley-list-elem", NULL);
+		g_object_unref(smiley);
+	}
+	g_list_free(priv->smileys);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(sl);
+
+	G_OBJECT_CLASS(purple_smiley_list_parent_class)->finalize(obj);
+}
+
+static void
+purple_smiley_list_get_property(GObject *obj, guint param_id, GValue *value,
+                                GParamSpec *pspec)
+{
+	PurpleSmileyList *sl = PURPLE_SMILEY_LIST(obj);
+	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
+
+	switch (param_id) {
+		case PROP_DROP_FAILED_REMOTES:
+			g_value_set_boolean(value, priv->drop_failed_remotes);
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+static void
+purple_smiley_list_set_property(GObject *obj, guint param_id,
+                                const GValue *value, GParamSpec *pspec)
+{
+	PurpleSmileyList *sl = PURPLE_SMILEY_LIST(obj);
+	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
+
+	switch (param_id) {
+		case PROP_DROP_FAILED_REMOTES:
+			priv->drop_failed_remotes = g_value_get_boolean(value);
+			/* XXX: we could scan for remote smiley's on our list
+			 * and change the setting, but we don't care that much.
+			 */
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+static void
+purple_smiley_list_class_init(PurpleSmileyListClass *klass) {
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
+	obj_class->get_property = purple_smiley_list_get_property;
+	obj_class->set_property = purple_smiley_list_set_property;
+	obj_class->finalize = purple_smiley_list_finalize;
+
+	properties[PROP_DROP_FAILED_REMOTES] = g_param_spec_boolean(
+		"drop-failed-remotes", "Drop failed PurpleRemoteSmileys",
+		"Watch added remote smileys and remove them from the list, "
+		"if they change their state to failed", FALSE,
+		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+
+	g_object_class_install_properties(obj_class, PROP_LAST, properties);
+}
+
+/******************************************************************************
+ * Helpers
+ *****************************************************************************/
 static void
 _list_append2(GList **head_p, GList **tail_p, gpointer data)
 {
@@ -89,40 +186,20 @@ _list_delete_link2(GList **head_p, GList **tail_p, GList *link)
 static const gchar *
 smiley_get_uniqid(PurpleSmiley *smiley)
 {
-	return purple_image_get_path(purple_smiley_get_image(smiley));
+	return purple_image_get_path(PURPLE_IMAGE(smiley));
 }
 
 /*******************************************************************************
  * API implementation
  ******************************************************************************/
-
 PurpleSmileyList *
-purple_smiley_list_new(void)
-{
+purple_smiley_list_new(void) {
 	return g_object_new(PURPLE_TYPE_SMILEY_LIST, NULL);
 }
 
-static void
-remote_smiley_failed(PurpleImage *smiley_img, gpointer _list)
-{
-	PurpleSmileyList *list = _list;
-	PurpleSmiley *smiley;
-
-	smiley = g_object_get_data(G_OBJECT(smiley_img),
-		"purple-smiley-list-smiley");
-
-	purple_debug_info("smiley-list", "remote smiley '%s' has failed, "
-		"removing it from the list...",
-		purple_smiley_get_shortcut(smiley));
-
-	purple_smiley_list_remove(list, smiley);
-}
-
 gboolean
-purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
-{
+purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley) {
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
-	PurpleImage *smiley_img;
 	const gchar *smiley_path;
 	gboolean succ;
 	gchar *shortcut_escaped;
@@ -168,14 +245,6 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 
 	g_hash_table_insert(priv->shortcut_map, g_strdup(shortcut), smiley);
 
-	smiley_img = purple_smiley_get_image(smiley);
-	if (priv->drop_failed_remotes && !purple_image_is_ready(smiley_img)) {
-		g_object_set_data(G_OBJECT(smiley_img),
-			"purple-smiley-list-smiley", smiley);
-		g_signal_connect_object(smiley_img, "failed",
-			G_CALLBACK(remote_smiley_failed), list, 0);
-	}
-
 	smiley_path = smiley_get_uniqid(smiley);
 
 	/* TODO: add to the table, when the smiley sets the path */
@@ -191,8 +260,7 @@ purple_smiley_list_add(PurpleSmileyList *list, PurpleSmiley *smiley)
 }
 
 void
-purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
-{
+purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley) {
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
 	GList *list_elem, *it;
 	const gchar *shortcut, *path;
@@ -239,8 +307,7 @@ purple_smiley_list_remove(PurpleSmileyList *list, PurpleSmiley *smiley)
 }
 
 gboolean
-purple_smiley_list_is_empty(PurpleSmileyList *list)
-{
+purple_smiley_list_is_empty(const PurpleSmileyList *list) {
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
 
 	g_return_val_if_fail(priv != NULL, TRUE);
@@ -250,7 +317,7 @@ purple_smiley_list_is_empty(PurpleSmileyList *list)
 
 PurpleSmiley *
 purple_smiley_list_get_by_shortcut(PurpleSmileyList *list,
-	const gchar *shortcut)
+	                               const gchar *shortcut)
 {
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
 
@@ -260,8 +327,7 @@ purple_smiley_list_get_by_shortcut(PurpleSmileyList *list,
 }
 
 PurpleTrie *
-purple_smiley_list_get_trie(PurpleSmileyList *list)
-{
+purple_smiley_list_get_trie(PurpleSmileyList *list) {
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
 
 	g_return_val_if_fail(priv != NULL, NULL);
@@ -270,8 +336,7 @@ purple_smiley_list_get_trie(PurpleSmileyList *list)
 }
 
 GList *
-purple_smiley_list_get_unique(PurpleSmileyList *list)
-{
+purple_smiley_list_get_unique(PurpleSmileyList *list) {
 	GList *unique = NULL, *it;
 	GHashTable *unique_map;
 	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
@@ -300,134 +365,12 @@ purple_smiley_list_get_unique(PurpleSmileyList *list)
 }
 
 GList *
-purple_smiley_list_get_all(PurpleSmileyList *list)
-{
-	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
+purple_smiley_list_get_all(PurpleSmileyList *list) {
+	PurpleSmileyListPrivate *priv = NULL;
 
-	g_return_val_if_fail(priv != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_SMILEY_LIST(list), NULL);
+
+	priv = PURPLE_SMILEY_LIST_GET_PRIVATE(list);
 
 	return g_hash_table_get_values(priv->shortcut_map);
-}
-
-
-/*******************************************************************************
- * Object stuff
- ******************************************************************************/
-
-static void
-purple_smiley_list_init(GTypeInstance *instance, gpointer klass)
-{
-	PurpleSmileyList *sl = PURPLE_SMILEY_LIST(instance);
-	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
-
-	priv->trie = purple_trie_new();
-	priv->path_map = g_hash_table_new_full(g_str_hash, g_str_equal,
-		g_free, NULL);
-	priv->shortcut_map = g_hash_table_new_full(g_str_hash, g_str_equal,
-		g_free, NULL);
-
-	PURPLE_DBUS_REGISTER_POINTER(sl, PurpleSmileyList);
-}
-
-static void
-purple_smiley_list_finalize(GObject *obj)
-{
-	PurpleSmileyList *sl = PURPLE_SMILEY_LIST(obj);
-	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
-	GList *it;
-
-	g_object_unref(priv->trie);
-	g_hash_table_destroy(priv->path_map);
-	g_hash_table_destroy(priv->shortcut_map);
-
-	for (it = priv->smileys; it; it = g_list_next(it)) {
-		PurpleSmiley *smiley = it->data;
-		g_object_set_data(G_OBJECT(smiley), "purple-smiley-list", NULL);
-		g_object_set_data(G_OBJECT(smiley), "purple-smiley-list-elem", NULL);
-		g_object_unref(smiley);
-	}
-	g_list_free(priv->smileys);
-
-	PURPLE_DBUS_UNREGISTER_POINTER(sl);
-
-	G_OBJECT_CLASS(parent_class)->finalize(obj);
-}
-
-static void
-purple_smiley_list_get_property(GObject *object, guint par_id, GValue *value,
-	GParamSpec *pspec)
-{
-	PurpleSmileyList *sl = PURPLE_SMILEY_LIST(object);
-	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
-
-	switch (par_id) {
-		case PROP_DROP_FAILED_REMOTES:
-			g_value_set_boolean(value, priv->drop_failed_remotes);
-			break;
-		default:
-			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
-			break;
-	}
-}
-
-static void
-purple_smiley_list_set_property(GObject *object, guint par_id, const GValue *value,
-	GParamSpec *pspec)
-{
-	PurpleSmileyList *sl = PURPLE_SMILEY_LIST(object);
-	PurpleSmileyListPrivate *priv = PURPLE_SMILEY_LIST_GET_PRIVATE(sl);
-
-	switch (par_id) {
-		case PROP_DROP_FAILED_REMOTES:
-			priv->drop_failed_remotes = g_value_get_boolean(value);
-			/* XXX: we could scan for remote smiley's on our list
-			 * and change the setting, but we don't care that much.
-			 */
-			break;
-		default:
-			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, par_id, pspec);
-			break;
-	}
-}
-
-static void
-purple_smiley_list_class_init(PurpleSmileyListClass *klass)
-{
-	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
-
-	parent_class = g_type_class_peek_parent(klass);
-
-	g_type_class_add_private(klass, sizeof(PurpleSmileyListPrivate));
-
-	gobj_class->get_property = purple_smiley_list_get_property;
-	gobj_class->set_property = purple_smiley_list_set_property;
-	gobj_class->finalize = purple_smiley_list_finalize;
-
-	properties[PROP_DROP_FAILED_REMOTES] = g_param_spec_boolean(
-		"drop-failed-remotes", "Drop failed PurpleRemoteSmileys",
-		"Watch added remote smileys and remove them from the list, "
-		"if they change their state to failed", FALSE,
-		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
-
-	g_object_class_install_properties(gobj_class, PROP_LAST, properties);
-}
-
-GType
-purple_smiley_list_get_type(void)
-{
-	static GType type = 0;
-
-	if (G_UNLIKELY(type == 0)) {
-		static const GTypeInfo info = {
-			.class_size = sizeof(PurpleSmileyListClass),
-			.class_init = (GClassInitFunc)purple_smiley_list_class_init,
-			.instance_size = sizeof(PurpleSmileyList),
-			.instance_init = purple_smiley_list_init,
-		};
-
-		type = g_type_register_static(G_TYPE_OBJECT,
-			"PurpleSmileyList", &info, 0);
-	}
-
-	return type;
 }

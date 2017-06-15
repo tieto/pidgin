@@ -38,9 +38,6 @@
 #include "iq.h"
 #include "notify.h"
 
-#include "ciphers/hmaccipher.h"
-#include "ciphers/md5hash.h"
-
 static GSList *auth_mechs = NULL;
 
 static void auth_old_result_cb(JabberStream *js, const char *from,
@@ -169,7 +166,7 @@ jabber_auth_start(JabberStream *js, PurpleXmlNode *packet)
 		JabberSaslMech *possible = l->data;
 
 		/* Is this the Cyrus SASL mechanism? */
-		if (g_str_equal(possible->name, "*")) {
+		if (purple_strequal(possible->name, "*")) {
 			js->auth_mech = possible;
 			break;
 		}
@@ -226,7 +223,7 @@ static void auth_old_result_cb(JabberStream *js, const char *from,
 		/* FIXME: Why is this not in jabber_parse_error? */
 		if((error = purple_xmlnode_get_child(packet, "error")) &&
 					(err_code = purple_xmlnode_get_attrib(error, "code")) &&
-					g_str_equal(err_code, "401")) {
+					purple_strequal(err_code, "401")) {
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			/* Clear the pasword if it isn't being saved */
 			if (!purple_account_get_remember_password(account))
@@ -266,7 +263,8 @@ static void auth_old_cb(JabberStream *js, const char *from,
 
 			x = purple_xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
-			hash = jabber_calculate_data_hash(s, strlen(s), "sha1");
+			hash = g_compute_checksum_for_string(G_CHECKSUM_SHA1,
+					s, -1);
 			purple_xmlnode_insert_data(x, hash, -1);
 			g_free(hash);
 			g_free(s);
@@ -277,22 +275,15 @@ static void auth_old_cb(JabberStream *js, const char *from,
 			 * to non-SASL authentication.
 			 */
 			const char *challenge;
-			gchar digest[33];
-			PurpleCipher *hmac;
-			PurpleHash *md5;
-			gssize diglen;
+			gchar *digest;
 
 			/* Calculate the MHAC-MD5 digest */
-			md5 = purple_md5_hash_new();
-			hmac = purple_hmac_cipher_new(md5);
 			challenge = purple_xmlnode_get_attrib(x, "challenge");
-			purple_cipher_set_key(hmac, (guchar *)pw, strlen(pw));
-			purple_cipher_append(hmac, (guchar *)challenge, strlen(challenge));
-			diglen = purple_cipher_digest_to_str(hmac, digest, 33);
-			g_object_unref(hmac);
-			g_object_unref(md5);
+			digest = g_compute_hmac_for_string(G_CHECKSUM_MD5,
+					(guchar *)pw, strlen(pw),
+					challenge, -1);
 
-			g_return_if_fail(diglen > 0);
+			g_return_if_fail(digest != NULL);
 
 			/* Create the response query */
 			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
@@ -306,6 +297,7 @@ static void auth_old_cb(JabberStream *js, const char *from,
 			x = purple_xmlnode_new_child(query, "crammd5");
 
 			purple_xmlnode_insert_data(x, digest, 32);
+			g_free(digest);
 
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);
@@ -350,7 +342,7 @@ void jabber_auth_start_old(JabberStream *js)
 	 * is requiring SSL/TLS, we need to enforce it.
 	 */
 	if (!jabber_stream_is_ssl(js) &&
-			g_str_equal("require_tls",
+			purple_strequal("require_tls",
 				purple_account_get_string(account, "connection_security", JABBER_DEFAULT_REQUIRE_TLS))) {
 		purple_connection_error(js->gc,
 			PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,

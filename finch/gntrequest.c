@@ -446,7 +446,7 @@ create_string_field(PurpleRequestField *field, GntWidget **username)
 		gnt_entry_set_always_suggest(GNT_ENTRY(entry), TRUE);
 		if (username)
 			*username = entry;
-	} else if (hint && !strcmp(hint, "group")) {
+	} else if (purple_strequal(hint, "group")) {
 		PurpleBlistNode *node;
 		for (node = purple_blist_get_root(); node;
 				node = purple_blist_node_get_sibling_next(node)) {

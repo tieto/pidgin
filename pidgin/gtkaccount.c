@@ -183,7 +183,7 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *ne
 	}
 
 	if (new_icon_path != NULL) {
-		dialog->icon_img = purple_image_new_from_file(new_icon_path, TRUE);
+		dialog->icon_img = purple_image_new_from_file(new_icon_path, NULL);
 		purple_debug_warning("gtkaccount", "data was not necessary");
 		g_free(data);
 	} else if (data != NULL) {
@@ -735,7 +735,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		img = purple_buddy_icons_find_account_icon(dialog->account);
 		if (img)
 		{
-			len = purple_image_get_size(img);
+			len = purple_image_get_data_size(img);
 			data = g_memdup(purple_image_get_data(img), len);
 		}
 		set_dialog_icon(dialog, data, len,
@@ -812,7 +812,7 @@ add_account_options(AccountPrefsDialog *dialog)
 		{
 			case PURPLE_PREF_BOOLEAN:
 				if (account == NULL ||
-					strcmp(purple_account_get_protocol_id(account),
+					!purple_strequal(purple_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
 					bool_value = purple_account_option_get_default_bool(option);
@@ -837,7 +837,7 @@ add_account_options(AccountPrefsDialog *dialog)
 
 			case PURPLE_PREF_INT:
 				if (account == NULL ||
-					strcmp(purple_account_get_protocol_id(account),
+					!purple_strequal(purple_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
 					int_value = purple_account_option_get_default_int(option);
@@ -862,7 +862,7 @@ add_account_options(AccountPrefsDialog *dialog)
 
 			case PURPLE_PREF_STRING:
 				if (account == NULL ||
-					strcmp(purple_account_get_protocol_id(account),
+					!purple_strequal(purple_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
 					str_value = purple_account_option_get_default_string(option);
@@ -915,7 +915,7 @@ add_account_options(AccountPrefsDialog *dialog)
 				idx = 0;
 
 				if (account == NULL ||
-					strcmp(purple_account_get_protocol_id(account),
+					!purple_strequal(purple_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
 					str_value = purple_account_option_get_default_list_value(option);
@@ -1374,7 +1374,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		{
 			if (dialog->icon_img)
 			{
-				size_t len = purple_image_get_size(dialog->icon_img);
+				size_t len = purple_image_get_data_size(dialog->icon_img);
 				purple_buddy_icons_set_account_icon(account,
 					g_memdup(purple_image_get_data(dialog->icon_img), len), len);
 				purple_account_set_buddy_icon_path(account,
@@ -2133,7 +2133,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 				const char *path;
 				path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
 				if ((path != NULL) && (*path != '\0')) {
-					img = purple_image_new_from_file(path, TRUE);
+					img = purple_image_new_from_file(path, NULL);
 				}
 			}
 		} else {
@@ -2651,7 +2651,7 @@ get_user_info_cb(GtkWidget   *label,
                  gpointer     data)
 {
 	struct auth_request *ar = data;
-	if (!strcmp(uri, "viewinfo")) {
+	if (purple_strequal(uri, "viewinfo")) {
 		pidgin_retrieve_user_info(purple_account_get_connection(ar->account), ar->username);
 		return TRUE;
 	}

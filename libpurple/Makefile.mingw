@@ -71,13 +71,9 @@ C_SRC =	\
 			ciphers/aescipher.c \
 			ciphers/descipher.c \
 			ciphers/des3cipher.c \
-			ciphers/hmaccipher.c \
 			ciphers/md4hash.c \
-			ciphers/md5hash.c \
 			ciphers/pbkdf2cipher.c \
 			ciphers/rc4cipher.c \
-			ciphers/sha1hash.c \
-			ciphers/sha256hash.c \
 			cipher.c \
 			circularbuffer.c \
 			cmds.c \
@@ -106,7 +102,6 @@ C_SRC =	\
 			nat-pmp.c \
 			network.c \
 			notify.c \
-			ntlm.c \
 			plugins.c \
 			pluginpref.c \
 			pounce.c \
@@ -143,7 +138,6 @@ C_SRC =	\
 			whiteboard.c \
 			xfer.c \
 			xmlnode.c \
-			win32/giowin32.c \
 			win32/libc_interface.c \
 			win32/win32dep.c \
 			$(VV_SRC)

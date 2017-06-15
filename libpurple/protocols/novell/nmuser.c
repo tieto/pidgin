@@ -1449,7 +1449,7 @@ nm_find_folder(NMUser * user, const char *name)
 	for (i = 0; i < num_folders; i++) {
 		temp = nm_folder_get_subfolder(user->root_folder, i);
 		tname = nm_folder_get_name(temp);
-		if (tname && (strcmp(tname, name) == 0)) {
+		if (tname && purple_strequal(tname, name)) {
 			folder = temp;
 			break;
 		}
@@ -1568,7 +1568,7 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 	cmd = nm_request_get_cmd(request);
 	if (ret_code == NM_OK && cmd != NULL) {
 
-		if (strcmp("login", cmd) == 0) {
+		if (purple_strequal("login", cmd)) {
 
 			user->user_record = nm_create_user_record_from_fields(fields);
 
@@ -1578,11 +1578,11 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 			nm_create_contact_list(user);
 			done = _create_privacy_list(user, request);
 
-		} else if (strcmp("setstatus", cmd) == 0) {
+		} else if (purple_strequal("setstatus", cmd)) {
 
 			/* Nothing to do */
 
-		} else if (strcmp("createconf", cmd) == 0) {
+		} else if (purple_strequal("createconf", cmd)) {
 
 			conf = (NMConference *) nm_request_get_data(request);
 
@@ -1599,12 +1599,12 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 			nm_conference_list_add(user, conf);
 			nm_release_conference(conf);
 
-		} else if (strcmp("leaveconf", cmd) == 0) {
+		} else if (purple_strequal("leaveconf", cmd)) {
 
 			conf = (NMConference *) nm_request_get_data(request);
 			nm_conference_list_remove(user, conf);
 
-		} else if (strcmp("joinconf", cmd) == 0) {
+		} else if (purple_strequal("joinconf", cmd)) {
 			GSList *list = NULL, *node;
 
 			conf = nm_request_get_data(request);
@@ -1651,7 +1651,7 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 				}
 			}
 
-		} else if (strcmp("getdetails", cmd) == 0) {
+		} else if (purple_strequal("getdetails", cmd)) {
 
 			locate = nm_locate_field(NM_A_FA_RESULTS, fields);
 			while (locate && locate->ptr_value != 0) {
@@ -1682,11 +1682,11 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 				locate = nm_locate_field(NM_A_FA_RESULTS, locate+1);
 			}
 
-		} else if (strcmp("createfolder", cmd) == 0) {
+		} else if (purple_strequal("createfolder", cmd)) {
 
 			_update_contact_list(user, fields);
 
-		} else if (strcmp("createcontact", cmd) == 0) {
+		} else if (purple_strequal("createcontact", cmd)) {
 
 			_update_contact_list(user, fields);
 
@@ -1710,15 +1710,15 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 
 			}
 
-		} else if (strcmp("deletecontact", cmd) == 0) {
+		} else if (purple_strequal("deletecontact", cmd)) {
 
 			_update_contact_list(user, fields);
 
-		} else if (strcmp("movecontact", cmd) == 0) {
+		} else if (purple_strequal("movecontact", cmd)) {
 
 			_update_contact_list(user, fields);
 
-		} else if (strcmp("getstatus", cmd) == 0) {
+		} else if (purple_strequal("getstatus", cmd)) {
 
 			locate = nm_locate_field(NM_A_SZ_STATUS, fields);
 			if (locate) {
@@ -1727,11 +1727,11 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 										  atoi((char *) locate->ptr_value), NULL);
 			}
 
-		} else if (strcmp("updateitem", cmd) == 0) {
+		} else if (purple_strequal("updateitem", cmd)) {
 
 			/* Nothing extra to do here */
 
-		} else if (strcmp("createblock", cmd) == 0) {
+		} else if (purple_strequal("createblock", cmd)) {
 			if ((locate = nm_locate_field(NM_A_BLOCKING_DENY_LIST, fields))) {
 				if (locate->ptr_value) {
 					user->deny_list = g_slist_append(user->deny_list, g_strdup((char *)locate->ptr_value));
@@ -1741,7 +1741,7 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 					user->allow_list = g_slist_append(user->allow_list, g_strdup((char *)locate->ptr_value));
 				}
 			}
-		} else if (strcmp("updateblocks", cmd) == 0) {
+		} else if (purple_strequal("updateblocks", cmd)) {
 			/* nothing to do here */
 		} else {
 
@@ -1969,7 +1969,7 @@ _update_contact_list(NMUser * user, NMField * fields)
 		return;
 
 	/* Is it wrapped in a RESULTS array? */
-	if (strcmp(fields->tag, NM_A_FA_RESULTS) == 0) {
+	if (purple_strequal(fields->tag, NM_A_FA_RESULTS)) {
 		list = (NMField *) fields->ptr_value;
 	} else {
 		list = fields;

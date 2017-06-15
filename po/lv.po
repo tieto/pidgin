@@ -7,13 +7,14 @@
 # ajijaija <aija@laka.lv>, 2016
 # Anita Reitere <nitalynx@gmail.com>, 2015
 # Ingmārs Dīriņš <melhiors14@gmail.com>, 2016
+# Raitis Nugumanovs <rower@altnet.lv>, 2016
 # Rūdolfs Mazurs <rudolfs.mazurs@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-15 23:15-0500\n"
-"PO-Revision-Date: 2016-06-08 11:35+0000\n"
+"POT-Creation-Date: 2017-03-09 18:54-0600\n"
+"PO-Revision-Date: 2016-11-27 10:54+0000\n"
 "Last-Translator: Ingmārs Dīriņš <melhiors14@gmail.com>\n"
 "Language-Team: Latvian (http://www.transifex.com/pidgin/pidgin/language/"
 "lv/)\n"
@@ -45,7 +46,7 @@ msgid ""
 "  -v, --version       display the current version and exit\n"
 msgstr ""
 "%s\n"
-"Lietojums: %s [OPCIJA]...\n"
+"Lietošana: %s [OPCIJA]...\n"
 "\n"
 "  -c, --config=DIR    lietot DIR konfigurācijas datnēm\n"
 "  -d, --debug         drukāt atkļūdošanas ziņojumus uz stderr\n"
@@ -63,7 +64,6 @@ msgstr ""
 "pašrocīgi izmeklējiet un pabeidziet pārnešanu. Lūdzu, ziņojiet par šo kļūdu "
 "vietnē http://developer.pidgin.im"
 
-#. the user did not fill in the captcha
 msgid "Error"
 msgstr "Kļūda"
 
@@ -235,7 +235,6 @@ msgstr "Lūdzu, ievadiet informāciju par draugu."
 msgid "Chats"
 msgstr "Tērzēšanas"
 
-#. Extract their Name and put it in
 msgid "Name"
 msgstr "Nosaukums"
 
@@ -310,7 +309,7 @@ msgid "Set Alias"
 msgstr "Iestatīt pseidonīmu"
 
 msgid "Enter empty string to reset the name."
-msgstr "Ievadiet tukšu virkni, lai atstatītu vārdu."
+msgstr "Ievadiet tukšu virkni, lai atiestatītu vārdu."
 
 msgid "Removing this contact will also remove all the buddies in the contact"
 msgstr "Šī kontakta noņemšana noņems arī visus draugus kontaktā"
@@ -342,11 +341,9 @@ msgstr "Pārslēgt birku"
 msgid "View Log"
 msgstr "Skatīt žurnālu"
 
-#. General
 msgid "Nickname"
 msgstr "Segvārds"
 
-#. Never know what those translations might end up like...
 #. Idle stuff
 msgid "Idle"
 msgstr "Dīkstāvē"
@@ -789,7 +786,6 @@ msgid "Remaining"
 msgstr "Atlicis"
 
 #. XXX: Use of ggp_str_to_uin() is an ugly hack!
-#. presence
 msgid "Status"
 msgstr "Statuss"
 
@@ -1041,8 +1037,9 @@ msgstr "Jauna drauga reakcija"
 msgid "Edit Buddy Pounce"
 msgstr "Rediģēt drauga reakciju"
 
-msgid "Pounce Who"
-msgstr "Reakcija uz kuru"
+#. Create the "Pounce on Whom" frame.
+msgid "Pounce on Whom"
+msgstr "Reakcija kuram"
 
 #. Account:
 msgid "Account:"
@@ -1128,43 +1125,43 @@ msgstr "Draugu reakcijas"
 
 #, c-format
 msgid "%s has started typing to you (%s)"
-msgstr "%s ir sācis jums rakstīt (%s)"
+msgstr "%s sāka jums rakstīt (%s)"
 
 #, c-format
 msgid "%s has paused while typing to you (%s)"
-msgstr "%s ir uz brīdi pārstājis jums rakstīt (%s)"
+msgstr "%s uz brīdi pārstāja jums rakstīt (%s)"
 
 #, c-format
 msgid "%s has signed on (%s)"
-msgstr "%s ir pierakstījies (%s)"
+msgstr "%s pierakstījās (%s)"
 
 #, c-format
 msgid "%s has returned from being idle (%s)"
-msgstr "%s ir atgriezies no dīkstāves (%s)"
+msgstr "%s atgriezās no dīkstāves (%s)"
 
 #, c-format
 msgid "%s has returned from being away (%s)"
-msgstr "%s ir atgriezies no prombūtnes (%s)"
+msgstr "%s atgriezās no prombūtnes (%s)"
 
 #, c-format
 msgid "%s has stopped typing to you (%s)"
-msgstr "%s ir pārstājis jums rakstīt (%s)"
+msgstr "%s pārstāja jums rakstīt (%s)"
 
 #, c-format
 msgid "%s has signed off (%s)"
-msgstr "%s ir atrakstījies (%s)"
+msgstr "%s atrakstījās (%s)"
 
 #, c-format
 msgid "%s has become idle (%s)"
-msgstr "%s ir palicis neaktīvs (%s)"
+msgstr "%s palika neaktīvs (%s)"
 
 #, c-format
 msgid "%s has gone away. (%s)"
-msgstr "%s ir aizgājis. (%s)"
+msgstr "%s aizgāja. (%s)"
 
 #, c-format
 msgid "%s has sent you a message. (%s)"
-msgstr "%s ir nosūtījis jums ziņojumu. (%s)"
+msgstr "%s nosūtīja jums ziņojumu. (%s)"
 
 msgid "Unknown pounce event. Please report this!"
 msgstr "Nezināms reakcijas notikums. Lūdzu, par šo ziņojiet!"
@@ -1287,8 +1284,8 @@ msgstr "GStreamer neizdevās inicializēties."
 msgid "(default)"
 msgstr "(noklusējuma)"
 
-msgid "Select Sound File ..."
-msgstr "Atlasiet skaņas datni ..."
+msgid "Select Sound File..."
+msgstr "Atlasiet skaņas datni..."
 
 msgid "Sound Preferences"
 msgstr "Skaņas iestatījumi"
@@ -1355,7 +1352,7 @@ msgid "Test"
 msgstr "Testēt"
 
 msgid "Reset"
-msgstr "Atstatīt"
+msgstr "Atiestatīt"
 
 msgid "Choose..."
 msgstr "Izvēlēties..."
@@ -1370,21 +1367,12 @@ msgstr "Dzēst statusu"
 msgid "Saved Statuses"
 msgstr "Saglabātie statusi"
 
-#. title
 msgid "Title"
 msgstr "Nosaukums"
 
 msgid "Type"
 msgstr "Tips"
 
-#. Statuses are almost all the same. Define a macro to reduce code repetition.
-#. PurpleStatusPrimitive
-#. id - use default
-#. name - use default
-#. saveable
-#. user_settable
-#. not independent
-#. Attributes - each status can have a message.
 msgid "Message"
 msgstr "Ziņojums"
 
@@ -1416,11 +1404,11 @@ msgstr "Ziņojums:"
 msgid "Edit Status"
 msgstr "Rediģēt statusu"
 
-msgid "Use different status for following accounts"
-msgstr "Sekojošajiem kontiem lietot atšķirīgu statusu"
+msgid "Use a different status for some accounts"
+msgstr "Dažiem kontiem lietot atšķirīgu statusu"
 
-#. Save & Use
-msgid "Save & Use"
+#. Save and Use
+msgid "Save and Use"
 msgstr "Saglabāt un lietot"
 
 msgid "Certificates"
@@ -1551,8 +1539,8 @@ msgstr ""
 msgid "TinyURL for above: %s"
 msgstr "TinyURL iepriekš minētajam: %s"
 
-msgid "Please wait while TinyURL fetches a shorter URL ..."
-msgstr "Lūdzu, pagaidiet, kamēr TinyURL ienes īsāku vietrādi URL ..."
+msgid "Please wait while TinyURL fetches a shorter URL..."
+msgstr "Lūdzu pagaidiet, kamēr TinyURL ienes īsāku vietrādi URL..."
 
 msgid "Only create TinyURL for URLs of this length or greater"
 msgstr "Izveidot TinyURL tikai vismaz šāda garuma vietrāžiem URL"
@@ -1566,14 +1554,12 @@ msgstr "TinyURL"
 msgid "TinyURL plugin"
 msgstr "TinyURL spraudnis"
 
-msgid "When receiving a message with URL(s), use TinyURL for easier copying"
-msgstr ""
-"Kad saņem ziņojumu ar vietrāžiem URL, lietot TinyURL kopēšanas atvieglošanai"
+msgid "Shorten URLs in messages using TinyURL"
+msgstr "Saīsināt vietrāžus URL ziņojumos, lietojot TinyURL"
 
 msgid "Online"
 msgstr "Tiešsaistē"
 
-#. primitive,						no,							id,			name
 msgid "Offline"
 msgstr "Bezsaistē"
 
@@ -1731,8 +1717,7 @@ msgstr "(NESAKRĪT)"
 #. Make messages
 #, c-format
 msgid "%s has presented the following certificate for just-this-once use:"
-msgstr ""
-"%s ir stādījis priekšā sekojošo sertifikātu lietošanai tikai šai reizei:"
+msgstr "%s stādīja priekšā sekojošo sertifikātu lietošanai tikai šai reizei:"
 
 #, c-format
 msgid ""
@@ -1821,7 +1806,6 @@ msgstr "(pašparakstīts)"
 msgid "View Issuer Certificate"
 msgstr "Skatīt izdevēja sertifikātu"
 
-#. show error to user
 msgid "Registration Error"
 msgstr "Reģistrēšanas kļūda"
 
@@ -1837,7 +1821,6 @@ msgid "+++ %s signed off"
 msgstr "+++ %s atrakstījās"
 
 #. Undocumented
-#. Unknown error
 msgid "Unknown error"
 msgstr "Nezināma kļūda"
 
@@ -1973,23 +1956,6 @@ msgid "The command used to handle \"irc\" URLs, if enabled."
 msgstr ""
 "Komanda, kura lietota, lai apdarinātu \"irc\" vietrāžus URL, ja ieslēgta."
 
-msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Vai norādītajai komandai vajadzētu apdarināt \"msnim\" vietrāžus URL"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"msnim\" "
-"URLs."
-msgstr ""
-"Patiess, ja komandai, norādītai \"komanda\" atslēgā, vajadzētu apdarināt "
-"\"msnim\" vietrāžus URL."
-
-msgid "The handler for \"msnim\" URLs"
-msgstr "Apdarinātājs priekš \"msnim\" vietrāžiem URL"
-
-msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Komanda, kura lietota, lai apdarinātu \"msnim\" vietrāžus URL, ja ieslēgta."
-
 msgid "Whether the specified command should handle \"sip\" URLs"
 msgstr "Vai norādītajai komandai vajadzētu apdarināt \"sip\" vietrāžus URL"
 
@@ -2023,23 +1989,6 @@ msgstr "Apdarinātājs priekš \"xmpp\" vietrāžiem URL"
 msgid "The command used to handle \"xmpp\" URLs, if enabled."
 msgstr ""
 "Komanda, kura lietota, lai apdarinātu \"xmpp\" vietrāžus URL, ja ieslēgta."
-
-msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Vai norādītajai komandai vajadzētu apdarināt \"ymsgr\" vietrāžus URL"
-
-msgid ""
-"True if the command specified in the \"command\" key should handle \"ymsgr\" "
-"URLs."
-msgstr ""
-"Patiess, ja komandai, norādītai \"komanda\" atslēgā, vajadzētu apdarināt "
-"\"ymsgr\" vietrāžus URL."
-
-msgid "The handler for \"ymsgr\" URLs"
-msgstr "Apdarinātājs priekš \"ymsgr\" vietrāžiem URL"
-
-msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Komanda, kura lietota, lai apdarinātu \"ymsgr\" vietrāžus URL, ja ieslēgta."
 
 #, c-format
 msgid "Failed to get connection: %s"
@@ -2635,7 +2584,7 @@ msgstr "Automātiskā atbilde nosūtīta:"
 
 #, c-format
 msgid "%s has signed off."
-msgstr "%s ir atrakstījies."
+msgstr "%s atrakstījās."
 
 msgid "One or more messages may have been undeliverable."
 msgstr "Viens vai vairāki ziņojumi varētu būt bijuši nepiegādājami."
@@ -2869,10 +2818,10 @@ msgstr "Ekstrasensorais režīms ienākošajai sarunai"
 
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, and Sametime"
 msgstr ""
-"Izraisa sarunu logu parādīšanos, kad citi lietotāji sāk ziņot jums.  Šis "
-"strādā priekš AIM, ICQ, XMPP, Sametime un Yahoo!"
+"Izraisa sarunas logu parādīšanos, tiklīdz citi lietotāji sāk jums sūtīt "
+"ziņojumus. Šis darbojas priekš AIM, ICQ, XMPP un Sametime."
 
 msgid "You feel a disturbance in the force..."
 msgstr "Jūs jūtat traucēšanu spēkā..."
@@ -3029,11 +2978,11 @@ msgstr "%s vairs nav projām."
 
 #, c-format
 msgid "%s has gone away."
-msgstr "%s ir aizgājis."
+msgstr "%s aizgāja."
 
 #, c-format
 msgid "%s has become idle."
-msgstr "%s ir palicis neaktīvs."
+msgstr "%s palika neaktīvs."
 
 #, c-format
 msgid "%s is no longer idle."
@@ -3041,7 +2990,7 @@ msgstr "%s vairs nav neaktīvs."
 
 #, c-format
 msgid "%s has signed on."
-msgstr "%s ir pierakstījies."
+msgstr "%s pierakstījās."
 
 msgid "Notify When"
 msgstr "Paziņot, kad"
@@ -3089,11 +3038,11 @@ msgstr ""
 "instalējiet ActiveTCL no http://www.activestate.com\n"
 
 msgid ""
-"Unable to find Apple's \"Bonjour for Windows\" toolkit, see http://d.pidgin."
-"im/BonjourWindows for more information."
+"Unable to find Apple's \"Bonjour for Windows\" toolkit, see https://"
+"developer.pidgin.im/BonjourWindows for more information."
 msgstr ""
-"Nespēj atrast Apple \"Bonjour for Windows\" rīkkopu, skatīt http://d.pidgin."
-"im/BonjourWindows , lai iegūtu vairāk informācijas."
+"Nespēj atrast Apple \"Bonjour for Windows\" rīkkopu, skatiet https://"
+"developer.pidgin.im/BonjourWindows , lai iegūtu vairāk informācijas."
 
 msgid "Unable to listen for incoming IM connections"
 msgstr "Nespēj klausīties pēc ienākošajiem TZ savienojumiem"
@@ -3108,7 +3057,6 @@ msgstr "Vārds"
 msgid "Last name"
 msgstr "Uzvārds"
 
-#. email
 msgid "Email"
 msgstr "E-pasts"
 
@@ -3143,7 +3091,7 @@ msgstr "Bonjour"
 
 #, c-format
 msgid "%s has closed the conversation."
-msgstr "%s ir aizvēris sarunu."
+msgstr "%s aizvēra sarunu."
 
 msgid "Unable to send the message, the conversation couldn't be started."
 msgstr "Nespēj nosūtīt ziņojumu, saruna nevarēja tikt sākta."
@@ -3195,14 +3143,12 @@ msgstr "Pilsēta"
 msgid "Year of birth"
 msgstr "Dzimšanas gads"
 
-#. gender
 msgid "Gender"
 msgstr "Dzimums"
 
 msgid "Male or female"
 msgstr "Vīrietis vai sieviete"
 
-#. 0
 msgid "Male"
 msgstr "Vīrietis"
 
@@ -3240,22 +3186,16 @@ msgstr "Atlasiet tērzēšanu priekš drauga: %s"
 msgid "Add to chat..."
 msgstr "Pievienot tērzēšanai..."
 
-#. 0
 #. Global
 msgid "Available"
 msgstr "Pieejams"
 
-#. 2
 msgid "Chatty"
 msgstr "Pļāpīgs"
 
-#. 3
 msgid "Do Not Disturb"
 msgstr "Netraucēt"
 
-#. 1
-#. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
-#. * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message
 #. Away stuff
 msgid "Away"
 msgstr "Ir aizgājis"
@@ -3263,8 +3203,6 @@ msgstr "Ir aizgājis"
 msgid "UIN"
 msgstr "UIN"
 
-#. first name
-#. optional information
 msgid "First Name"
 msgstr "Vārds"
 
@@ -3289,9 +3227,6 @@ msgstr "Nav lietotāju, kuri atbilstu jūsu meklēšanas kritērijiem."
 msgid "Unable to read from socket"
 msgstr "Nespēj lasīt no ligzdas"
 
-#. The session is now set up, ready to be connected. This emits the
-#. * signedOn signal, so clients can now do anything with msimprpl, and
-#. * we're ready for it (session key, userid, username all setup).
 msgid "Connected"
 msgstr "Savienots"
 
@@ -3304,7 +3239,6 @@ msgstr "Pievienot tērzēšanai"
 msgid "Chat _name:"
 msgstr "Tērzēšanas _nosaukums:"
 
-#. 1. connect to server
 #. connect to the server
 msgid "Connecting"
 msgstr "Savienojas"
@@ -3543,11 +3477,11 @@ msgstr "Slavens"
 
 #, c-format
 msgid "%s has changed the topic to: %s"
-msgstr "%s ir nomainījis tematu uz: %s"
+msgstr "%s nomainīja tematu uz: %s"
 
 #, c-format
 msgid "%s has cleared the topic."
-msgstr "%s ir notīrījis tematu."
+msgstr "%s notīrīja tematu."
 
 #, c-format
 msgid "The topic for %s is: %s"
@@ -3768,7 +3702,7 @@ msgid ""
 "may disconnect you upon doing this.</i>"
 msgstr ""
 "list:  Attēlo sarakstu ar tērzētavām uz tīkla. <i>Brīdinājums, daži serveri "
-"varētu atvienot jūs pie šā darīšanas.</i>"
+"varētu atvienot jūs pie šā veikšanas.</i>"
 
 msgid "me &lt;action to perform&gt;:  Perform an action."
 msgstr "me &lt;darbība, kuru izpildīt&gt;:  Izpildīt darbību."
@@ -4040,7 +3974,7 @@ msgid "Given Name"
 msgstr "Dotais vārds"
 
 msgid "URL"
-msgstr "URL"
+msgstr "Vietrādis URL"
 
 msgid "Street Address"
 msgstr "Ielas adrese"
@@ -4082,8 +4016,6 @@ msgstr "Amata tituls"
 msgid "Role"
 msgstr "Loma"
 
-#. birthday
-#. birthday (required)
 msgid "Birthday"
 msgstr "Dzimšanas diena"
 
@@ -4177,7 +4109,6 @@ msgstr "Atteikties"
 msgid "JID"
 msgstr "JID"
 
-#. last name
 msgid "Last Name"
 msgstr "Uzvārds"
 
@@ -4322,7 +4253,7 @@ msgid "Invalid XMPP ID. Domain must be set."
 msgstr "Nederīgs XMPP ID. Domēnam vajag tikt iestatītam."
 
 msgid "Malformed BOSH URL"
-msgstr "Nepareizi veidots BOSH URL"
+msgstr "Nepareizi veidots BOSH vietrādis URL"
 
 #, c-format
 msgid "Registration of %s@%s successful"
@@ -4443,7 +4374,6 @@ msgstr "Nekas (uz gaidošo)"
 msgid "None"
 msgstr "Neviens"
 
-#. subscription type
 msgid "Subscription"
 msgstr "Parakstīšanās"
 
@@ -4459,12 +4389,6 @@ msgstr "Garastāvokļa nosaukums"
 msgid "Mood Comment"
 msgstr "Garastāvokļa komentārs"
 
-#. primitive
-#. ID
-#. name - use default
-#. saveable
-#. should be user_settable some day
-#. independent
 msgid "Tune Artist"
 msgstr "Melodijas izpildītājs"
 
@@ -4490,7 +4414,7 @@ msgid "Tune Year"
 msgstr "Melodijas gads"
 
 msgid "Tune URL"
-msgstr "Melodijas URL"
+msgstr "Melodijas vietrādis URL"
 
 msgid "Password Changed"
 msgstr "Parole izmainīta"
@@ -4709,14 +4633,12 @@ msgstr ""
 "Nespēj ieteikt tāpēc, ka %s neatbalsta to vai tagad nevēlas saņemt "
 "ieteikumus."
 
-#. Yahoo only supports one attention command: the 'buzz'.
-#. This is index number YAHOO_BUZZ.
 msgid "Buzz"
 msgstr "Ieteikt"
 
 #, c-format
 msgid "%s has buzzed you!"
-msgstr "%s ir jūs ieteicis!"
+msgstr "%s jūs ieteica!"
 
 #, c-format
 msgid "Buzzing %s..."
@@ -4757,16 +4679,16 @@ msgid "Account does not support PEP, can't set mood"
 msgstr "Konts neatbalsta PEP, nevar iestatīt garastāvokli"
 
 msgid "config:  Configure a chat room."
-msgstr "config:  Konfigurēt tērzēšanas istabu."
+msgstr "config:  Konfigurēt tērzētavu."
 
 msgid "configure:  Configure a chat room."
-msgstr "configure:  Konfigurēt tērzēšanas istabu."
+msgstr "configure:  Konfigurēt tērzētavu."
 
 msgid "part [message]:  Leave the room."
 msgstr "part [ziņojums]:  pamest istabu."
 
 msgid "register:  Register with a chat room."
-msgstr "register:  Reģistrēties pie tērzēšanas istabas."
+msgstr "register:  Reģistrēties ar tērzētavu."
 
 msgid "topic [new topic]:  View or change the topic."
 msgstr "topic [jauns temats]:  Skatīt vai mainīt tematu."
@@ -4842,8 +4764,6 @@ msgstr "Atļaut atklāta teksta autentifikāciju pāri nešifrētām straumēm"
 msgid "Connect port"
 msgstr "Savienot portu"
 
-#. TODO: default to automatically try different ports. Make the user be
-#. * able to set the first port to try (like LastConnectedPort in Windows client).
 #. Account options
 msgid "Connect server"
 msgstr "Savienot serveri"
@@ -4852,16 +4772,17 @@ msgid "File transfer proxies"
 msgstr "Datņu pārsūtīšanas starpniekserveri"
 
 msgid "BOSH URL"
-msgstr "BOSH URL"
+msgstr "BOSH vietrādis URL"
 
-#. this should probably be part of global smiley theme settings later on,
-#. shared with MSN
+#. this should probably be part of global smiley theme settings
+#. * later on
+#.
 msgid "Show Custom Smileys"
 msgstr "Rādīt pielāgotos smaidiņus"
 
 #, c-format
 msgid "%s has left the conversation."
-msgstr "%s ir atstājis sarunu."
+msgstr "%s atstāja sarunu."
 
 #, c-format
 msgid "Message from %s"
@@ -4869,7 +4790,7 @@ msgstr "Ziņojums no %s"
 
 #, c-format
 msgid "%s has set the topic to: %s"
-msgstr "%s ir iestatījis tematu uz: %s"
+msgstr "%s iestatīja tematu uz: %s"
 
 #, c-format
 msgid "The topic is: %s"
@@ -4943,7 +4864,6 @@ msgstr "Nezināma kļūda klātbūtnē"
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr "Nespēj nosūtīt datni %s, lietotājs neatbalsta datņu pārsūtījumus"
 
-#. not success
 msgid "File Send Failed"
 msgstr "Datnes sūtīšana neizdevās"
 
@@ -5241,1653 +5161,6 @@ msgstr "Darbības"
 msgid "Select an action"
 msgstr "Atlasīt darbību"
 
-#. only notify the user about problems adding to the friends list
-#. * maybe we should do something else for other lists, but it probably
-#. * won't cause too many problems if we just ignore it
-#, c-format
-msgid "Unable to add \"%s\"."
-msgstr "Nespēj pievienot \"%s\"."
-
-msgid "Buddy Add error"
-msgstr "Drauga pievienošanas kļūda"
-
-msgid "The username specified does not exist."
-msgstr "Norādītais lietotājvārds nepastāv."
-
-msgid "Unable to parse message"
-msgstr "Nespēj sintaktiski analizēt ziņojumu"
-
-msgid "Syntax Error (probably a client bug)"
-msgstr "Sintakses kļūda (varbūt klienta kļūda)"
-
-msgid "Invalid email address"
-msgstr "Nederīga e-pasta adrese"
-
-msgid "User does not exist"
-msgstr "Lietotājs nepastāv"
-
-msgid "Fully qualified domain name missing"
-msgstr "Trūkst pilnais domēna nosaukums"
-
-msgid "Already logged in"
-msgstr "Jau ir ierakstījies"
-
-msgid "Invalid username"
-msgstr "Nederīgs lietotājvārds"
-
-msgid "Invalid friendly name"
-msgstr "Nederīgs draudzīgais nosaukums"
-
-msgid "List full"
-msgstr "Saraksts pilns"
-
-msgid "Already there"
-msgstr "Jau ir šeit"
-
-msgid "Not on list"
-msgstr "Nav sarakstā"
-
-msgid "User is offline"
-msgstr "Lietotājs ir bezsaistē"
-
-msgid "Already in the mode"
-msgstr "Jau ir režīmā"
-
-msgid "Already in opposite list"
-msgstr "Jau ir pretējā sarakstā"
-
-msgid "Too many groups"
-msgstr "Pārāk daudz grupu"
-
-msgid "Invalid group"
-msgstr "Nederīga grupa"
-
-msgid "User not in group"
-msgstr "Lietotājs nav grupā"
-
-msgid "Group name too long"
-msgstr "Grupas nosaukums pārāk garš"
-
-msgid "Cannot remove group zero"
-msgstr "Nevar noņemt grupu nulle"
-
-msgid "Tried to add a user to a group that doesn't exist"
-msgstr "Mēģināja pievienot lietotāju grupai, kura nepastāv"
-
-msgid "Switchboard failed"
-msgstr "Komutācijas paneļa kļūda"
-
-msgid "Notify transfer failed"
-msgstr "Paziņošanas pārsūtīšana neizdevās"
-
-msgid "Required fields missing"
-msgstr "Trūkst vajadzīgie lauki"
-
-msgid "Too many hits to a FND"
-msgstr "Pārāk daudz trāpījumu uz FND"
-
-msgid "Not logged in"
-msgstr "Nav ierakstījies"
-
-msgid "Service temporarily unavailable"
-msgstr "Pakalpojums īslaicīgi nav pieejams"
-
-msgid "Database server error"
-msgstr "Datubāzes servera kļūda"
-
-msgid "Command disabled"
-msgstr "Komanda izslēgta"
-
-msgid "File operation error"
-msgstr "Datnes operācijas kļūda"
-
-msgid "Memory allocation error"
-msgstr "Atmiņas iedalīšanas kļūda"
-
-msgid "Wrong CHL value sent to server"
-msgstr "Uz serveri nosūtīta nepareiza CHL vērtība"
-
-msgid "Server busy"
-msgstr "Serveris aizņemts"
-
-msgid "Server unavailable"
-msgstr "Serveris nepieejams"
-
-msgid "Peer notification server down"
-msgstr "Vienādrangu paziņošanas serveris nedarbojās"
-
-msgid "Database connect error"
-msgstr "Datubāzes savienošanas kļūda"
-
-msgid "Server is going down (abandon ship)"
-msgstr "Serveris sāk nedarboties (pamest kuģi)"
-
-msgid "Error creating connection"
-msgstr "Kļūda, veidojot savienojumu"
-
-msgid "CVR parameters are either unknown or not allowed"
-msgstr "CVR parametri ir vai nu nezināmi vai nav atļauti"
-
-msgid "Unable to write"
-msgstr "Nespēj ierakstīt"
-
-msgid "Session overload"
-msgstr "Sesijas pārslodze"
-
-msgid "User is too active"
-msgstr "Lietotājs ir pārāk aktīvs"
-
-msgid "Too many sessions"
-msgstr "Pārāk daudz sesiju"
-
-msgid "Passport not verified"
-msgstr "Pase nav pārbaudīta"
-
-msgid "Bad friend file"
-msgstr "Slikta drauga datne"
-
-msgid "Not expected"
-msgstr "Nav gaidīts"
-
-msgid "Friendly name is changing too rapidly"
-msgstr "Draudzīgais nosaukums mainās pārāk strauji"
-
-msgid "Server too busy"
-msgstr "Serveris pārāk aizņemts"
-
-msgid "Authentication failed"
-msgstr "Autentifikācija neizdevās"
-
-msgid "Not allowed when offline"
-msgstr "Nav atļauts, kad bezsaistē"
-
-msgid "Not accepting new users"
-msgstr "Nepieņem jaunus lietotājus"
-
-msgid "Kids Passport without parental consent"
-msgstr "Kids Passport bez vecāku piekrišanas"
-
-msgid "Passport account not yet verified"
-msgstr "Pases konts vēl nav pārbaudīts"
-
-msgid "Passport account suspended"
-msgstr "Pases konts aizturēts"
-
-msgid "Bad ticket"
-msgstr "Slikta biļete"
-
-#, c-format
-msgid "Unknown Error Code %d"
-msgstr "Nezināms kļūdas kods %d"
-
-#, c-format
-msgid "MSN Error: %s\n"
-msgstr "MSN kļūda: %s:\n"
-
-#, c-format
-msgid "Buddy list synchronization issue in %s (%s)"
-msgstr "Draugu saraksta sinhronizācijas domstarpība iekš %s (%s)"
-
-#, c-format
-msgid ""
-"%s on the local list is inside the group \"%s\" but not on the server list. "
-"Do you want this buddy to be added?"
-msgstr ""
-"%s ir lokālajā sarakstā iekš grupas \"%s\", bet nav servera sarakstā. Vai "
-"jūs vēlaties, lai šis draugs tiktu pievienots?"
-
-#, c-format
-msgid ""
-"%s is on the local list but not on the server list. Do you want this buddy "
-"to be added?"
-msgstr ""
-"%s ir lokālajā sarakstā, bet nav servera sarakstā. Vai jūs vēlaties, lai šis "
-"draugs tiktu pievienots?"
-
-msgid "Other Contacts"
-msgstr "Citi kontakti"
-
-msgid "Non-IM Contacts"
-msgstr "Ne-TZ kontakti"
-
-#, c-format
-msgid "%s sent a wink. <a href='msn-wink://%s'>Click here to play it</a>"
-msgstr ""
-"%s nosūtīja mirkšķi. <a href='msn-wink://%s'>Klikšķiniet šeit, lai to "
-"atskaņotu</a>"
-
-#, c-format
-msgid "%s sent a wink, but it could not be saved"
-msgstr "%s nosūtīja mirkšķi, bet tas nevarēja tikt saglabāts"
-
-#, c-format
-msgid "%s sent a voice clip. <a href='audio://%s'>Click here to play it</a>"
-msgstr ""
-"%s nosūtīja balss klipu. <a href='audio://%s'>Klikšķiniet šeit, lai to "
-"atskaņotu</a>"
-
-#, c-format
-msgid "%s sent a voice clip, but it could not be saved"
-msgstr "%s nosūtīja balss klipu, bet tas nevarēja tikt saglabāts"
-
-#, c-format
-msgid "%s sent you a voice chat invite, which is not yet supported."
-msgstr ""
-"%s jums nosūtīja uzaicinājumu uz balss tērzēšanu, kas vēl netiek atbalstīta."
-
-msgid "Nudge"
-msgstr "Iedunkāt"
-
-#, c-format
-msgid "%s has nudged you!"
-msgstr "%s ir jūs iedunkājis!"
-
-#, c-format
-msgid "Nudging %s..."
-msgstr "Iedunkā %s..."
-
-msgid "Email Address..."
-msgstr "E-pasta adrese..."
-
-msgid "Your new MSN friendly name is too long."
-msgstr "Jūsu jaunais MSN draudzīgais nosaukums ir pārāk garš."
-
-#, c-format
-msgid "Set friendly name for %s."
-msgstr "Iestatīt draudzīgo nosaukumu priekš %s."
-
-msgid "Set Friendly Name"
-msgstr "Iestatīt draudzīgo nosaukumu"
-
-msgid "This is the name that other MSN buddies will see you as."
-msgstr "Šis ir vārds, ar kuru citi MSN draugi jūs redzēs."
-
-msgid "This Location"
-msgstr "Šī atrašanās vieta"
-
-msgid "This is the name that identifies this location"
-msgstr "Šis ir nosaukums, kurš identificē šo atrašanās vietu"
-
-msgid "Other Locations"
-msgstr "Citas atrašanās vietas"
-
-msgid "You can sign out from other locations here"
-msgstr "Šeit jūs varat izrakstīties no citām atrašanās vietām"
-
-#. TODO: Due to limitations in our current request field API, the
-#. following string will show up with a trailing colon.  This should
-#. be fixed either by adding an "include_colon" boolean, or creating
-#. a separate purple_request_field_label_new_without_colon function,
-#. or by never automatically adding the colon and requiring that
-#. callers add the colon themselves.
-msgid "You are not signed in from any other locations."
-msgstr "Jūs neesat pierakstījies no citām atrašanās vietām."
-
-msgid "Allow multiple logins?"
-msgstr "Vai atļaut vairākas ierakstīšanās?"
-
-msgid ""
-"Do you want to allow or disallow connecting from multiple locations "
-"simultaneously?"
-msgstr ""
-"Vai jūs vēlaties atļaut vai neatļaut pievienošanos no vairākām atrašanās "
-"vietām vienlaicīgi?"
-
-msgid "Allow"
-msgstr "Atļaut"
-
-msgid "Disallow"
-msgstr "Neatļaut"
-
-msgid "Set your home phone number."
-msgstr "Iestatiet savu mājas tālruņa numuru."
-
-msgid "Set your work phone number."
-msgstr "Iestatiet savu darba tālruņa numuru."
-
-msgid "Set your mobile phone number."
-msgstr "Iestatiet savu mobilā tālruņa numuru."
-
-msgid "Allow MSN Mobile pages?"
-msgstr "Vai atļaut MSN mobilās lapas?"
-
-msgid ""
-"Do you want to allow or disallow people on your buddy list to send you MSN "
-"Mobile pages to your cell phone or other mobile device?"
-msgstr ""
-"Vai jūs vēlaties atļaut vai neatļaut cilvēkiem jūsu draugu sarakstā nosūtīt "
-"jums MSN Mobile lapas uz jūsu mobilo tālruni vai citu mobilo ierīci?"
-
-#, c-format
-msgid "Blocked Text for %s"
-msgstr "Bloķētais teksts priekš %s"
-
-msgid "No text is blocked for this account."
-msgstr "Neviens teksts nav bloķēts šim kontam."
-
-#, c-format
-msgid ""
-"MSN servers are currently blocking the following regular expressions:<br/>%s"
-msgstr "MSN serveri pašlaik bloķē sekojošas regulārās izteiksmes:<br/>%s"
-
-msgid "This account does not have email enabled."
-msgstr "Šim kontam nav ieslēgts e-pasts."
-
-msgid "Send a mobile message."
-msgstr "Sūtīt mobilo ziņojumu."
-
-msgid "Page"
-msgstr "Lapa"
-
-msgid "Playing a game"
-msgstr "Spēlē spēli"
-
-msgid "Working"
-msgstr "Strādā"
-
-msgid "Has you"
-msgstr "Esi tu"
-
-msgid "Home Phone Number"
-msgstr "Mājas tālruņa numurs"
-
-msgid "Work Phone Number"
-msgstr "Darba tālruņa numurs"
-
-msgid "Mobile Phone Number"
-msgstr "Mobilā tālruņa numurs"
-
-msgid "Be Right Back"
-msgstr "Tūlīt atgriezīsies"
-
-msgid "Busy"
-msgstr "Aizņemts"
-
-msgid "On the Phone"
-msgstr "Pa telefonu"
-
-msgid "Out to Lunch"
-msgstr "Izgājis pusdienās"
-
-msgid "Game Title"
-msgstr "Spēles nosaukums"
-
-msgid "Office Title"
-msgstr "Biroja tituls"
-
-msgid "Set Friendly Name..."
-msgstr "Iestatīt draudzīgo nosaukumu..."
-
-msgid "View Locations..."
-msgstr "Skatīt atrašanās vietas..."
-
-msgid "Set Home Phone Number..."
-msgstr "Iestatīt mājas tālruņa numuru..."
-
-msgid "Set Work Phone Number..."
-msgstr "Iestatīt darba tālruņa numuru..."
-
-msgid "Set Mobile Phone Number..."
-msgstr "Iestatīt mobilā tālruņa numuru..."
-
-msgid "Enable/Disable Mobile Devices..."
-msgstr "Ieslēgt/izslēgt mobilās ierīces..."
-
-msgid "Allow/Disallow Multiple Logins..."
-msgstr "Atļaut/neatļaut vairākas ierakstīšanās..."
-
-msgid "Allow/Disallow Mobile Pages..."
-msgstr "Atļaut/neatļaut mobilās lapas..."
-
-msgid "View Blocked Text..."
-msgstr "Skatīt bloķēto tekstu..."
-
-msgid "Open Hotmail Inbox"
-msgstr "Atvērt Hotmail iesūtni"
-
-msgid "Send to Mobile"
-msgstr "Sūtīt uz mobilo"
-
-msgid "SSL support is needed for MSN. Please install a supported SSL library."
-msgstr ""
-"MSN ir vajadzīgs SSL atbalsts. Lūdzu, uzstādiet atbalstītu SSL bibliotēku."
-
-#, c-format
-msgid ""
-"Unable to add the buddy %s because the username is invalid.  Usernames must "
-"be valid email addresses."
-msgstr ""
-"Nespēj pievienot draugu %s tāpēc, ka lietotājvārds ir nederīgs.  "
-"Lietotājvārdiem jābūt derīgām e-pasta adresēm."
-
-msgid "Unable to Add"
-msgstr "Nespēj pievienot"
-
-msgid "Error retrieving profile"
-msgstr "Profila izgūšanas kļūda"
-
-msgid "General"
-msgstr "Vispārīgi"
-
-msgid "Age"
-msgstr "Vecums"
-
-msgid "Occupation"
-msgstr "Nodarbošanās"
-
-msgid "Location"
-msgstr "Atrašanās vieta"
-
-msgid "Hobbies and Interests"
-msgstr "Hobiji un intereses"
-
-msgid "A Little About Me"
-msgstr "Mazliet par mani"
-
-msgid "Social"
-msgstr "Sociāls"
-
-msgid "Marital Status"
-msgstr "Ģimenes stāvoklis"
-
-msgid "Interests"
-msgstr "Intereses"
-
-msgid "Pets"
-msgstr "Mājdzīvnieki"
-
-msgid "Hometown"
-msgstr "Dzimtā pilsēta"
-
-msgid "Places Lived"
-msgstr "Vietas, kur dzīvojis"
-
-msgid "Fashion"
-msgstr "Mode"
-
-msgid "Humor"
-msgstr "Humors"
-
-msgid "Music"
-msgstr "Mūzika"
-
-msgid "Favorite Quote"
-msgstr "Iemīļots citāts"
-
-msgid "Contact Info"
-msgstr "Kontakta informācija"
-
-msgid "Personal"
-msgstr "Personīgs"
-
-msgid "Significant Other"
-msgstr "Citi nozīmīgi"
-
-msgid "Home Phone"
-msgstr "Mājas tālrunis"
-
-msgid "Home Phone 2"
-msgstr "Mājas tālrunis 2"
-
-msgid "Home Address"
-msgstr "Mājas adrese"
-
-msgid "Personal Mobile"
-msgstr "Personīgais mobilais"
-
-msgid "Home Fax"
-msgstr "Mājas fakss"
-
-msgid "Personal Email"
-msgstr "Personīgais e-pasts"
-
-msgid "Personal IM"
-msgstr "Personīgā TZ"
-
-msgid "Anniversary"
-msgstr "Jubileja"
-
-#. Business
-msgid "Work"
-msgstr "Darbs"
-
-msgid "Company"
-msgstr "Uzņēmums"
-
-msgid "Department"
-msgstr "Nodaļa"
-
-msgid "Profession"
-msgstr "Profesija"
-
-msgid "Work Phone"
-msgstr "Darba tālrunis"
-
-msgid "Work Phone 2"
-msgstr "Darba tālrunis 2"
-
-msgid "Work Address"
-msgstr "Darba adrese"
-
-msgid "Work Mobile"
-msgstr "Darba mobilais"
-
-msgid "Work Pager"
-msgstr "Darba peidžeris"
-
-msgid "Work Fax"
-msgstr "Darba fakss"
-
-msgid "Work Email"
-msgstr "Darba e-pasts"
-
-msgid "Work IM"
-msgstr "Darba TZ"
-
-msgid "Start Date"
-msgstr "Sākuma datums"
-
-msgid "Favorite Things"
-msgstr "Iemīļotas lietas"
-
-msgid "Last Updated"
-msgstr "Pēdējo reizi atjaunināts"
-
-msgid "Homepage"
-msgstr "Mājaslapa"
-
-msgid "The user has not created a public profile."
-msgstr "Lietotājs nav izveidojis publisko profilu."
-
-msgid ""
-"MSN reported not being able to find the user's profile. This either means "
-"that the user does not exist, or that the user exists but has not created a "
-"public profile."
-msgstr ""
-"MSN ziņoja, ka nav spējīgs atrast lietotāja profilu. Šis nozīmē, ka vai nu "
-"lietotājs nepastāv vai ka lietotājs pastāv, bet nav izveidojis publisko "
-"profilu."
-
-msgid ""
-"Could not find any information in the user's profile. The user most likely "
-"does not exist."
-msgstr ""
-"Nevarēja atrast nekādu informāciju lietotāja profilā. Lietotājs visdrīzākais "
-"nepastāv."
-
-msgid "View web profile"
-msgstr "Skatīt tīmekļa profilu"
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *< summary
-msgid "Windows Live Messenger Protocol Plugin"
-msgstr "Windows Live Messenger protokola spraudnis"
-
-msgid "Use HTTP Method"
-msgstr "Lietot HTTP metodi"
-
-msgid "HTTP Method Server"
-msgstr "HTTP metodes serveris"
-
-msgid "Show custom smileys"
-msgstr "Rādīt pielāgotos smaidiņus"
-
-msgid "Allow direct connections"
-msgstr "Atļaut tiešos savienojumus"
-
-msgid "Allow connecting from multiple locations"
-msgstr "Atļaut pievienošanos no vairākām atrašanās vietām"
-
-msgid "nudge: nudge a user to get their attention"
-msgstr "nudge: iedunkāt lietotāju, lai iegūtu viņa uzmanību"
-
-msgid "Windows Live ID authentication:Unable to connect"
-msgstr "Windows Live ID autentifikācija:nespēj pievienoties"
-
-msgid "Windows Live ID authentication:Invalid response"
-msgstr "Windows Live ID autentifikācija:nederīga atbilde"
-
-msgid "The following users are missing from your addressbook"
-msgstr "Sekojošie lietotāji ir trūkstoši no jūsu adrešu grāmatas"
-
-#, c-format
-msgid "Unknown error (%d): %s"
-msgstr "Nezināma kļūda (%d): %s"
-
-msgid "Unable to add user"
-msgstr "Nespēj pievienot lietotāju"
-
-#. Unknown error!
-#, c-format
-msgid "Unknown error (%d)"
-msgstr "Nezināma kļūda (%d)"
-
-msgid "Unable to remove user"
-msgstr "Nespēj noņemt lietotāju"
-
-msgid "Mobile message was not sent because it was too long."
-msgstr "Mobilais ziņojums netika nosūtīts tāpēc, ka tas bija pārāk garš."
-
-msgid "Mobile message was not sent because an unknown error occurred."
-msgstr "Mobilais ziņojums netika nosūtīts tāpēc, ka notika nezināma kļūda."
-
-#, c-format
-msgid ""
-"The MSN server will shut down for maintenance in %d minute. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgid_plural ""
-"The MSN server will shut down for maintenance in %d minutes. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
-"\n"
-"After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgstr[0] ""
-"MSN serveris izslēgsies apkopei %d minūtes laikā. Jūs tiksiet automātiski "
-"izrakstīts tajā brīdī.  Lūdzu, pabeidziet jebkuru noritošo sarunu.\n"
-"\n"
-"Pēc tam, kad apkope būs pabeigta, jūs spēsiet veiksmīgi ierakstīties."
-msgstr[1] ""
-"MSN serveris izslēgsies apkopei %d minūšu laikā. Jūs tiksiet automātiski "
-"izrakstīts tajā brīdī.  Lūdzu, pabeidziet jebkuru noritošo sarunu.\n"
-"\n"
-"Pēc tam, kad apkope būs pabeigta, jūs spēsiet veiksmīgi ierakstīties."
-msgstr[2] ""
-"MSN serveris izslēgsies apkopei %d minūšu laikā. Jūs tiksiet automātiski "
-"izrakstīts tajā brīdī.  Lūdzu, pabeidziet jebkuru noritošo sarunu.\n"
-"\n"
-"Pēc tam, kad apkope būs pabeigta, jūs spēsiet veiksmīgi ierakstīties."
-
-msgid ""
-"Message was not sent because the system is unavailable. This normally "
-"happens when the user is blocked or does not exist."
-msgstr ""
-"Ziņojums netika nosūtīts tāpēc, ka sistēma ir nepieejama. Šis normāli notiek "
-"tad, kad lietotājs ir bloķēts vai nepastāv."
-
-msgid "Message was not sent because messages are being sent too quickly."
-msgstr "Ziņojums netika nosūtīts tāpēc, ka ziņojumi tiek sūtīti pārāk ātri."
-
-msgid "Message was not sent because an unknown encoding error occurred."
-msgstr "Ziņojums netika nosūtīts tāpēc, ka notika nezināma iekodēšanas kļūda."
-
-msgid "Message was not sent because an unknown error occurred."
-msgstr "Ziņojums netika nosūtīts tāpēc, ka notika nezināma kļūda."
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. Converting the encoding from "
-"%s to UTF-8 failed.)"
-msgstr ""
-"%s (Bija kļūda, saņemot šo ziņojumu. Iekodējuma pārveidošana no %s uz UTF-8 "
-"neizdevās.)"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was %s, but it "
-"was not valid UTF-8.)"
-msgstr ""
-"%s (Bija kļūda, saņemot šo ziņojumu. Rakstzīmju kopa bija %s, bet tā nebija "
-"derīga UTF-8.)"
-
-#, c-format
-msgid ""
-"%s (There was an error receiving this message. The charset was missing, but "
-"it was not valid UTF-8.)"
-msgstr ""
-"%s (Bija kļūda, saņemot šo ziņojumu. Rakstzīmju kopa bija trūkstoša, bet tā "
-"nebija derīga UTF-8.)"
-
-msgid "Writing error"
-msgstr "Rakstīšanas kļūda"
-
-msgid "Reading error"
-msgstr "Lasīšanas kļūda"
-
-#, c-format
-msgid ""
-"Connection error from %s server:\n"
-"%s"
-msgstr ""
-"Savienojuma kļūda no %s servera:\n"
-"%s"
-
-msgid "Our protocol is not supported by the server"
-msgstr "Mūsu protokols nav atbalstīts no servera"
-
-msgid "Error parsing HTTP"
-msgstr "Kļūda, sintaktiski analizējot HTTP"
-
-msgid "You have signed on from another location"
-msgstr "Jūs esat pierakstījies no citas atrašanās vietas"
-
-msgid "The MSN servers are temporarily unavailable. Please wait and try again."
-msgstr ""
-"MSN serveri īslaicīgi nav pieejami. Lūdzu, pagaidiet un mēģiniet vēlreiz."
-
-msgid "The MSN servers are going down temporarily"
-msgstr "MSN serveri sāk īslaicīgi nedarboties"
-
-#, c-format
-msgid "Unable to authenticate: %s"
-msgstr "Nespēj autentificēties: %s"
-
-#, c-format
-msgid "Your MSN buddy list is temporarily unavailable: %s"
-msgstr "MSN draugu saraksts īslaicīgi nav pieejams: %s"
-
-msgid "Handshaking"
-msgstr "Notiek rokspiešana"
-
-msgid "Transferring"
-msgstr "Notiek pārsūtīšana"
-
-msgid "Starting authentication"
-msgstr "Uzsāk autentifikāciju"
-
-msgid "Getting cookie"
-msgstr "Saņem sīkdatni"
-
-msgid "Sending cookie"
-msgstr "Sūta sīkdatni"
-
-msgid "Retrieving buddy list"
-msgstr "Izgūst draugu sarakstu"
-
-#, c-format
-msgid "%s requests to view your webcam, but this request is not yet supported."
-msgstr ""
-"%s pieprasa skatīt jūsu tīmekļa kameru, bet šis pieprasījums vēl netiek "
-"atbalstīts."
-
-#, c-format
-msgid "%s invited you to view his/her webcam, but this is not yet supported."
-msgstr ""
-"%s uzaicināja jūs skatīt viņa/viņas tīmekļa kameru, bet šis vēl netiek "
-"atbalstīts."
-
-msgid "Away From Computer"
-msgstr "Projām no datora"
-
-msgid "On The Phone"
-msgstr "Pa telefonu"
-
-msgid "Out To Lunch"
-msgstr "Izgājis pusdienās"
-
-msgid "Message may have not been sent because a timeout occurred:"
-msgstr "Ziņojums varētu nebūt ticis nosūtīts tāpēc, ka radās noilgums:"
-
-msgid "Message could not be sent, not allowed while invisible:"
-msgstr "Ziņojums nevarēja tikt nosūtīts, nav atļauts kamēr neredzams:"
-
-msgid "Message could not be sent because the user is offline:"
-msgstr "Ziņojums nevarēja tikt nosūtīts tāpēc, ka lietotājs ir bezsaistē:"
-
-msgid "Message could not be sent because a connection error occurred:"
-msgstr "Ziņojums nevarēja tikt nosūtīts tāpēc, ka notika savienojuma kļūda:"
-
-msgid "Message could not be sent because we are sending too quickly:"
-msgstr "Ziņojums nevarēja tikt nosūtīts tāpēc, ka mēs sūtam pārāk ātri:"
-
-msgid ""
-"Message could not be sent because we were unable to establish a session with "
-"the server. This is likely a server problem, try again in a few minutes:"
-msgstr ""
-"Ziņojums nevarēja tikt nosūtīts tāpēc, ka mēs nebijām spējīgi nodibināt "
-"sesiju ar serveri. Pilnīgi iespējams, šī ir servera problēma, mēģiniet "
-"vēlreiz dažu minūšu laikā:"
-
-msgid ""
-"Message could not be sent because an error with the switchboard occurred:"
-msgstr ""
-"Ziņojums nevarēja tikt nosūtīts tāpēc, ka notika komutācijas paneļa kļūda:"
-
-msgid "Message may have not been sent because an unknown error occurred:"
-msgstr "Ziņojums varētu nebūt ticis nosūtīts tāpēc, ka radās nezināma kļūda:"
-
-msgid "Delete Buddy from Address Book?"
-msgstr "Vai dzēst draugu no adrešu grāmatas?"
-
-msgid "Do you want to delete this buddy from your address book as well?"
-msgstr "Vai jūs vēlaties dzēst šo draugu arī no savas adrešu grāmatas?"
-
-msgid "The username specified is invalid."
-msgstr "Norādītais lietotājvārds ir nederīgs."
-
-msgid "The Display Name you entered is invalid."
-msgstr "Redzamais vārds, kuru jūs ievadījāt, ir nederīgs."
-
-msgid ""
-"The birthday you entered is invalid. The correct format is: 'YYYY-MM-DD'."
-msgstr ""
-"Dzimšanas diena, kuru jūs ievadījāt, ir nederīga. Pareizs formāts ir: 'GGGG-"
-"MM-DD'."
-
-#. show error to user
-msgid "Profile Update Error"
-msgstr "Profila atjaunināšanas kļūda"
-
-#. no profile information yet, so we cannot update
-#. (reference: "libpurple/request.h")
-msgid "Profile"
-msgstr "Profils"
-
-msgid "Your profile information is not yet retrieved. Please try again later."
-msgstr ""
-"Jūsu profila informācija vēl nav izgūta. Lūdzu, mēģiniet vēlreiz vēlāk."
-
-#. display name
-#. nick name (required)
-msgid "Display Name"
-msgstr "Redzamais vārds"
-
-#. about me
-msgid "About Me"
-msgstr "Par mani"
-
-#. where I live
-msgid "Where I Live"
-msgstr "Kur es dzīvoju"
-
-#. relationship status
-msgid "Relationship Status"
-msgstr "Attiecību statuss"
-
-#. mobile number
-msgid "Mobile Number"
-msgstr "Mobilā numurs"
-
-#. is searchable
-msgid "Can be searched"
-msgstr "Var tikt meklēts"
-
-#. is suggestable
-msgid "Can be suggested"
-msgstr "Var tikt ieteikts"
-
-msgid "Update your MXit Profile"
-msgstr "Atjaunināt jūsu MXit profilu"
-
-msgid "The PIN you entered is invalid."
-msgstr "PIN, kuru jūs ievadījāt, ir nepareizs."
-
-msgid "The PIN you entered has an invalid length [4-10]."
-msgstr "PIN, kuru jūs ievadījāt, ir nederīgs garums [4-10]."
-
-msgid "The PIN is invalid. It should only consist of digits [0-9]."
-msgstr "PIN ir nederīgs. Tam vajadzētu sastāvēt tikai no cipariem [0-9]."
-
-msgid "The two PINs you entered do not match."
-msgstr "Divi PIN, kurus jūs ievadījāt, nesakrīt."
-
-#. show error to user
-msgid "PIN Update Error"
-msgstr "PIN atjaunināšanas kļūda"
-
-#. pin
-#. pin (required)
-msgid "PIN"
-msgstr "PIN"
-
-#. verify pin
-msgid "Verify PIN"
-msgstr "Pārbaudīt PIN"
-
-#. (reference: "libpurple/request.h")
-msgid "Change PIN"
-msgstr "Mainīt PIN"
-
-msgid "Change MXit PIN"
-msgstr "Mainīt MXit PIN"
-
-msgid "View Splash"
-msgstr "Skatīt uzplaiksnījumu"
-
-msgid "There is no splash-screen currently available"
-msgstr "Pašlaik nav pieejama uzplaiksnījuma ekrāna"
-
-msgid "About"
-msgstr "Par"
-
-msgid "Search for user"
-msgstr "Meklēt lietotāju"
-
-msgid "Search for a MXit contact"
-msgstr "Meklēt MXit kontaktu"
-
-msgid "Type search information"
-msgstr "Ierakstiet meklēšanas informāciju"
-
-msgid "_Search"
-msgstr "_Meklēt"
-
-#. display / change profile
-msgid "Change Profile..."
-msgstr "Mainīt profilu..."
-
-#. change PIN
-msgid "Change PIN..."
-msgstr "Mainīt PIN..."
-
-#. suggested friends
-msgid "Suggested friends..."
-msgstr "Ieteiktie draugi..."
-
-#. search for contacts
-msgid "Search for contacts..."
-msgstr "Meklēt kontaktus..."
-
-#. display splash-screen
-msgid "View Splash..."
-msgstr "Skatīt uzplaiksnījumu..."
-
-#. display plugin version
-msgid "About..."
-msgstr "Par..."
-
-#. the file is too big
-msgid "The file you are trying to send is too large!"
-msgstr "Datne, kuru jūs mēģināt nosūtīt, ir pārāk liela!"
-
-#. file read error
-msgid "Unable to access the local file"
-msgstr "Nespēj piekļūt lokālajai datnei"
-
-#. file write error
-msgid "Unable to save the file"
-msgstr "Nespēj saglabāt datni"
-
-msgid ""
-"Unable to connect to the MXit HTTP server. Please check your server settings."
-msgstr ""
-"Nespēj pievienoties pie MXit HTTP servera. Lūdzu, pārbaudiet savus servera "
-"iestatījumus."
-
-msgid "Logging In..."
-msgstr "Notiek pieteikšanās..."
-
-msgid ""
-"Unable to connect to the MXit server. Please check your server settings."
-msgstr ""
-"Nespēj pievienoties pie MXit servera. Lūdzu, pārbaudiet savus servera "
-"iestatījumus."
-
-msgid "Connecting..."
-msgstr "Savienojas..."
-
-msgid "The Display Name you entered is too short."
-msgstr "Redzamais vārds, kuru jūs ievadījāt, ir pārāk īss."
-
-msgid "The PIN you entered has an invalid length [7-10]."
-msgstr "PIN, kuru jūs ievadījāt, ir nederīgs garums [7-10]."
-
-#. mxit login name
-msgid "MXit ID"
-msgstr "MXit ID"
-
-#. show the form to the user to complete
-msgid "Register New MXit Account"
-msgstr "Reģistrēt jaunu MXit kontu"
-
-msgid "Please fill in the following fields:"
-msgstr "Lūdzu, aizpildiet sekojošos laukus:"
-
-#. no reply from the WAP site
-msgid "Error contacting the MXit WAP site. Please try again later."
-msgstr "Kļūda, sazinoties ar MXit WAP vietni. Lūdzu, mēģiniet vēlreiz vēlāk."
-
-#. wapserver error
-#. server could not find the user
-msgid ""
-"MXit is currently unable to process the request. Please try again later."
-msgstr ""
-"MXit pašlaik nespēj apstrādāt pieprasījumu. Lūdzu, mēģiniet vēlreiz vēlāk."
-
-msgid "Wrong security code entered. Please try again later."
-msgstr "Ievadīts nepareizs drošības kods. Lūdzu, mēģiniet vēlreiz vēlāk."
-
-msgid "Your session has expired. Please try again later."
-msgstr "Jūsu sesija ir izbeigusies. Lūdzu, mēģiniet vēlreiz vēlāk."
-
-msgid "Invalid country selected. Please try again."
-msgstr "Atlasīta nederīga valsts. Lūdzu, mēģiniet vēlreiz."
-
-msgid "The MXit ID you entered is not registered. Please register first."
-msgstr ""
-"MXit ID, kuru jūs ievadījāt, nav reģistrēts. Lūdzu, reģistrējieties vispirms."
-
-msgid "The MXit ID you entered is already registered. Please choose another."
-msgstr ""
-"MXit ID, kuru jūs ievadījāt, jau ir reģistrēts. Lūdzu, izvēlieties citu."
-
-msgid "Internal error. Please try again later."
-msgstr "Iekšēja kļūda. Lūdzu, mēģiniet vēlreiz vēlāk."
-
-msgid "You did not enter the security code"
-msgstr "Jūs neievadījāt drošības kodu"
-
-msgid "Security Code"
-msgstr "Drošības kods"
-
-#. ask for input (required)
-msgid "Enter Security Code"
-msgstr "Ievadiet drošības kodu"
-
-msgid "Your Country"
-msgstr "Jūsu valsts"
-
-msgid "Your Language"
-msgstr "Jūsu valoda"
-
-#. display the form to the user and wait for his/her input
-msgid "MXit Authorization"
-msgstr "MXit autorizācija"
-
-msgid "MXit account validation"
-msgstr "MXit konta validācija"
-
-msgid "Retrieving User Information..."
-msgstr "Izgūst lietotāja informāciju..."
-
-msgid "was kicked"
-msgstr "tika izsperts"
-
-msgid "You have been kicked from this MultiMX."
-msgstr "Jūs tikāt izsperts no šī MultiMX."
-
-msgid "_Room Name:"
-msgstr "_Istabas nosaukums:"
-
-#. Display system message in chat window
-msgid "You have invited"
-msgstr "Jūs ielūdzāt"
-
-msgid "Loading menu..."
-msgstr "Ielādē izvēlni..."
-
-msgid "Status Message"
-msgstr "Statusa ziņojums"
-
-msgid "Rejection Message"
-msgstr "Noraidījuma ziņojums"
-
-msgid "No profile available"
-msgstr "Nav pieejama profila"
-
-msgid "This contact does not have a profile."
-msgstr "Šim kontaktam nav profila."
-
-msgid "Your MXit ID..."
-msgstr "Jūsu MXit ID..."
-
-#. contact is in Deleted, Rejected or None state
-msgid "Re-Invite"
-msgstr "Atkārtoti uzaicināt"
-
-#. Configuration options
-#. WAP server (reference: "libpurple/accountopt.h")
-msgid "WAP Server"
-msgstr "WAP serveris"
-
-msgid "Connect via HTTP"
-msgstr "Savienot caur HTTP"
-
-msgid "Enable splash-screen popup"
-msgstr "Ieslēgt uzplaiksnījuma ekrāna uznirstošo elementu"
-
-msgid "Don't want to say"
-msgstr "Negribu teikt"
-
-msgid "Single"
-msgstr "Viena"
-
-msgid "In a relationship"
-msgstr "Attiecībās"
-
-msgid "Engaged"
-msgstr "Saderinājies(-usies)"
-
-msgid "Married"
-msgstr "Precējies(-usies)"
-
-msgid "It's complicated"
-msgstr "Tas ir sarežģīti"
-
-msgid "Widowed"
-msgstr "Atraitnis"
-
-msgid "Separated"
-msgstr "Atšķīries"
-
-msgid "Divorced"
-msgstr "Šķīries"
-
-msgid "Last Online"
-msgstr "Pēdējo reizi tiešsaistē"
-
-msgid "Invite Message"
-msgstr "Uzaicinājuma ziņojums"
-
-msgid "No results"
-msgstr "Nav rezultātu"
-
-msgid "No contacts found."
-msgstr "Nav atrasti kontakti."
-
-#. define columns
-msgid "UserId"
-msgstr "Lietotāja ID"
-
-msgid "Where I live"
-msgstr "Kur es dzīvoju"
-
-#, c-format
-msgid "You have %i suggested friend."
-msgid_plural "You have %i suggested friends."
-msgstr[0] "Jums ir %i ieteiktais draugs."
-msgstr[1] "Jums ir %i ieteiktie draugi."
-msgstr[2] "Jums ir %i ieteikto draugu."
-
-#, c-format
-msgid "We found %i contact that matches your search."
-msgid_plural "We found %i contacts that match your search."
-msgstr[0] "Mēs atradām %i kontaktu, kurš atbilst jūsu meklēšanai."
-msgstr[1] "Mēs atradām %i kontaktus, kuri atbilst jūsu meklēšanai."
-msgstr[2] "Mēs atradām %i kontaktus, kuri atbilst jūsu meklēšanai."
-
-#. we must have lost the connection, so terminate it so that we can reconnect
-msgid "We have lost the connection to MXit. Please reconnect."
-msgstr ""
-"Mēs esam pazaudējuši savienojumu pie MXit. Lūdzu, atkal savienojieties."
-
-#. packet could not be queued for transmission
-msgid "Message Send Error"
-msgstr "Ziņojuma sūtīšanas kļūda"
-
-msgid "Unable to process your request at this time"
-msgstr "Nespēj šoreiz apstrādāt jūsu pieprasījumu"
-
-msgid "Timeout while waiting for a response from the MXit server."
-msgstr "Noilgums, kamēr gaidīja atbildi no MXit servera."
-
-msgid "Successfully Logged In..."
-msgstr "Veiksmīgi ierakstījies..."
-
-#, c-format
-msgid ""
-"%s sent you an encrypted message, but it is not supported on this client."
-msgstr ""
-"%s nosūtīja jums šifrētu ziņojumu, bet tas netiek atbalstīts šajā klientā."
-
-msgid "Message Error"
-msgstr "Ziņojuma kļūda"
-
-#. could not be decrypted
-msgid "An encrypted message was received which could not be decrypted."
-msgstr "Tika saņemts šifrēts ziņojums, kurš nevarēja tikt atšifrēts."
-
-msgid "Cannot perform redirect using the specified protocol"
-msgstr "Nevar izpildīt novirzīšanu, lietojot norādīto protokolu"
-
-msgid "An internal MXit server error occurred."
-msgstr "Notika iekšēja MXit servera kļūda."
-
-#, c-format
-msgid "Login error: %s (%i)"
-msgstr "Ierakstīšanās kļūda: %s (%i)"
-
-#, c-format
-msgid "Logout error: %s (%i)"
-msgstr "Izrakstīšanās kļūda: %s (%i)"
-
-msgid "Contact Error"
-msgstr "Kontakta kļūda"
-
-msgid "Message Sending Error"
-msgstr "Ziņojuma sūtīšanas kļūda"
-
-msgid "Status Error"
-msgstr "Statusa kļūda"
-
-msgid "Mood Error"
-msgstr "Garastāvokļa kļūda"
-
-msgid "Invitation Error"
-msgstr "Uzaicinājuma kļūda"
-
-msgid "Contact Removal Error"
-msgstr "Kontakta noņemšanas kļūda"
-
-msgid "Subscription Error"
-msgstr "Parakstīšanās kļūda"
-
-msgid "Contact Update Error"
-msgstr "Kontakta atjaunināšanas kļūda"
-
-msgid "File Transfer Error"
-msgstr "Datnes pārsūtīšanas kļūda"
-
-msgid "Cannot create MultiMx room"
-msgstr "Nevar izveidot MultiMx istabu"
-
-msgid "MultiMx Invitation Error"
-msgstr "MultiMx uzaicinājuma kļūda"
-
-msgid "Profile Error"
-msgstr "Profila kļūda"
-
-#. bad packet
-msgid "Invalid packet received from MXit."
-msgstr "Nederīga pakete saņemta no MXit."
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x01)"
-msgstr "MXit radās savienojuma kļūda. (lasīšanas posms 0x01)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x02)"
-msgstr "MXit radās savienojuma kļūda. (lasīšanas posms 0x02)"
-
-msgid "A connection error occurred to MXit. (read stage 0x03)"
-msgstr "MXit radās savienojuma kļūda. (lasīšanas posms 0x03)"
-
-#. malformed packet length record (too long)
-msgid "A connection error occurred to MXit. (read stage 0x04)"
-msgstr "MXit radās savienojuma kļūda. (lasīšanas posms 0x04)"
-
-#. connection error
-msgid "A connection error occurred to MXit. (read stage 0x05)"
-msgstr "MXit radās savienojuma kļūda. (lasīšanas posms 0x05)"
-
-#. connection closed
-msgid "A connection error occurred to MXit. (read stage 0x06)"
-msgstr "MXit radās savienojuma kļūda. (lasīšanas posms 0x06)"
-
-msgid "In Love"
-msgstr "Iemīlējies"
-
-msgid "Pending"
-msgstr "Gaida"
-
-msgid "Invited"
-msgstr "Uzaicināts"
-
-msgid "Rejected"
-msgstr "Noraidīts"
-
-msgid "Deleted"
-msgstr "Dzēsts"
-
-msgid "MXit Advertising"
-msgstr "MXit reklāma"
-
-msgid "More Information"
-msgstr "Vairāk informācijas"
-
-#, c-format
-msgid "No such user: %s"
-msgstr "Nav tāda lietotāja: %s"
-
-msgid "User lookup"
-msgstr "Lietotāju uzmeklēšana"
-
-msgid "Reading challenge"
-msgstr "Lasīšanas izaicinājums"
-
-msgid "Unexpected challenge length from server"
-msgstr "Negaidīts izaicinājuma garums no servera"
-
-msgid "Logging in"
-msgstr "Notiek pieteikšanās"
-
-msgid "MySpaceIM - No Username Set"
-msgstr "MySpaceIM - nav uzstādīts lietotājvārds"
-
-msgid "You appear to have no MySpace username."
-msgstr "Šķiet, ka jums nav MySpace lietotājvārda."
-
-msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
-msgstr ""
-"Vai jūs vēlaties iestatīt vienu tagad? (Piezīme: ŠIS NEVARĒS TIKT MAINĪTS!)"
-
-msgid "Lost connection with server"
-msgstr "Pazudis savienojums ar serveri"
-
-#. Can't write _()'d strings in array initializers. Workaround.
-#. khc: then use N_() in the array initializer and use _() when they are
-#. used
-msgid "New mail messages"
-msgstr "Jauni pasta ziņojumi"
-
-msgid "New blog comments"
-msgstr "Jauni emuāra komentāri"
-
-msgid "New profile comments"
-msgstr "Jauni profila komentāri"
-
-msgid "New friend requests!"
-msgstr "Jauni draugu pieprasījumi!"
-
-msgid "New picture comments"
-msgstr "Jauni attēla komentāri"
-
-msgid "MySpace"
-msgstr "MySpace"
-
-msgid "IM Friends"
-msgstr "TZ draugi"
-
-#, c-format
-msgid ""
-"%d buddy was added or updated from the server (including buddies already on "
-"the server-side list)"
-msgid_plural ""
-"%d buddies were added or updated from the server (including buddies already "
-"on the server-side list)"
-msgstr[0] ""
-"%d draugs tika pievienots vai atjaunināts no servera (ieskaitot servera "
-"puses sarakstā jau esošos draugus)"
-msgstr[1] ""
-"%d draugi tika pievienoti vai atjaunināti no servera (ieskaitot servera "
-"puses sarakstā jau esošos draugus)"
-msgstr[2] ""
-"%d draugu tika pievienoti vai atjaunināti no servera (ieskaitot servera "
-"puses sarakstā jau esošos draugus)"
-
-msgid "Add contacts from server"
-msgstr "Pievienot kontaktus no servera"
-
-#, c-format
-msgid "Protocol error, code %d: %s"
-msgstr "Protokola kļūda, kods %d: %s"
-
-#, c-format
-msgid ""
-"%s Your password is %zu characters, which is longer than the maximum length "
-"of %d.  Please shorten your password at http://profileedit.myspace.com/index."
-"cfm?fuseaction=accountSettings.changePassword and try again."
-msgstr ""
-"%s jūsu parole ir %zu rakstzīmes, kas ir garāka kā %d maksimuma garums.  "
-"Lūdzu, saīsiniet savu paroli pie http://profileedit.myspace.com/index.cfm?"
-"fuseaction=accountSettings.changePassword un mēģiniet vēlreiz."
-
-msgid "Incorrect username or password"
-msgstr "Nepareizs lietotājvārds vai parole"
-
-msgid "MySpaceIM Error"
-msgstr "MySpaceIM kļūda"
-
-msgid "Invalid input condition"
-msgstr "Nederīgs ievades nosacījums"
-
-msgid "Failed to add buddy"
-msgstr "Nevar pievienot draugu"
-
-msgid "'addbuddy' command failed."
-msgstr "'addbuddy' komanda neizdevās."
-
-msgid "persist command failed"
-msgstr "persist komanda neizdevās"
-
-msgid "Failed to remove buddy"
-msgstr "Nevar noņemt draugu"
-
-msgid "'delbuddy' command failed"
-msgstr "'delbuddy' komanda neizdevās"
-
-msgid "blocklist command failed"
-msgstr "blocklist komanda neizdevās"
-
-msgid "Missing Cipher"
-msgstr "Trūkstošs šifrs"
-
-msgid "The RC4 cipher could not be found"
-msgstr "RC4 šifrs nevarēja tikt atrasts"
-
-msgid ""
-"Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
-"not be loaded."
-msgstr ""
-"Atjauniniet uz libpurple ar RC4 atbalstu (>= 2.0.1). MySpaceIM spraudnis "
-"netiks ielādēts."
-
-msgid "Add friends from MySpace.com"
-msgstr "Pievienot draugus no MySpace.com"
-
-msgid "Importing friends failed"
-msgstr "Draugu importēšana neizdevās"
-
-#. TODO: find out how
-msgid "Find people..."
-msgstr "Atrast cilvēkus..."
-
-msgid "Change IM name..."
-msgstr "Mainīt TZ vārdu..."
-
-msgid "myim URL handler"
-msgstr "myim URL apdarinātājs"
-
-msgid "No suitable MySpaceIM account could be found to open this myim URL."
-msgstr ""
-"Nevarēja tikt atrasts neviens piemērots MySpaceIM konts, lai atvērtu šo myim "
-"vietrādi URL."
-
-msgid "Enable the proper MySpaceIM account and try again."
-msgstr "Ieslēdziet pienācīgu MySpaceIM kontu un mēģiniet vēlreiz."
-
-msgid "Show display name in status text"
-msgstr "Rādīt redzamo vārdu statusa tekstā"
-
-msgid "Show headline in status text"
-msgstr "Rādīt ievadrindu statusa tekstā"
-
-msgid "Send emoticons"
-msgstr "Sūtīt emocijikonas"
-
-msgid "Screen resolution (dots per inch)"
-msgstr "Ekrāna izšķirtspēja (punkti uz collu)"
-
-msgid "Base font size (points)"
-msgstr "Bāzes šrifta izmērs (punktos)"
-
-msgid "User"
-msgstr "Lietotājs"
-
-msgid "Headline"
-msgstr "Ievadrinda"
-
-msgid "Song"
-msgstr "Dziesma"
-
-msgid "Total Friends"
-msgstr "Pavisam draugi"
-
-msgid "Client Version"
-msgstr "Klienta versija"
-
-msgid ""
-"An error occurred while trying to set the username.  Please try again, or "
-"visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username "
-"to set your username."
-msgstr ""
-"Radās kļūda, kamēr mēģināja iestatīt lietotājvārdu.  Lūdzu, mēģiniet vēlreiz "
-"vai apmeklējiet http://editprofile.myspace.com/index.cfm?fuseaction=profile."
-"username , lai iestatītu savu lietotājvārdu."
-
-msgid "MySpaceIM - Username Available"
-msgstr "MySpaceIM - lietotājvārds pieejams"
-
-msgid "This username is available. Would you like to set it?"
-msgstr "Šis lietotājvārds ir pieejams. Vai jūs vēlaties to iestatīt?"
-
-msgid "ONCE SET, THIS CANNOT BE CHANGED!"
-msgstr "TIKLĪDZ IESTATĪTS, ŠIS NEVARĒS TIKT MAINĪTS!"
-
-msgid "MySpaceIM - Please Set a Username"
-msgstr "MySpaceIM - lūdzu, uzstādiet lietotājvārdu"
-
-msgid "This username is unavailable."
-msgstr "Lietotājvārds ir nepieejams."
-
-msgid "Please try another username:"
-msgstr "Lūdzu, mēģiniet citu lietotājvārdu:"
-
-#. Protocol won't log in now without a username set.. Disconnect
-msgid "No username set"
-msgstr "Nav uzstādīts lietotājvārds"
-
-msgid "Please enter a username to check its availability:"
-msgstr "Lūdzu, ievadiet lietotājvārdu, lai pārbaudītu tā pieejamību:"
-
-#. TODO: icons for each zap
-#. Lots of comments for translators:
-#. Zap means "to strike suddenly and forcefully as if with a
-#. * projectile or weapon."  This term often has an electrical
-#. * connotation, for example, "he was zapped by electricity when
-#. * he put a fork in the toaster."
-msgid "Zap"
-msgstr "Sakaut"
-
-#, c-format
-msgid "%s has zapped you!"
-msgstr "%s ir jūs sakāvis!"
-
-#, c-format
-msgid "Zapping %s..."
-msgstr "Sakauj %s..."
-
-#. Whack means "to hit or strike someone with a sharp blow"
-msgid "Whack"
-msgstr "Dauzīt"
-
-#, c-format
-msgid "%s has whacked you!"
-msgstr "%s ir dauzījis jūs!"
-
-#, c-format
-msgid "Whacking %s..."
-msgstr "Dauza %s..."
-
-#. Torch means "to set on fire."  Don't worry, this doesn't
-#. * make a whole lot of sense in English, either.  Feel free
-#. * to translate it literally.
-msgid "Torch"
-msgstr "Aizdedzināt"
-
-#, c-format
-msgid "%s has torched you!"
-msgstr "%s ir aizdedzinājis jūs!"
-
-#, c-format
-msgid "Torching %s..."
-msgstr "Aizdedzina %s..."
-
-#. Smooch means "to kiss someone, often enthusiastically"
-msgid "Smooch"
-msgstr "Noskūpstīt"
-
-#, c-format
-msgid "%s has smooched you!"
-msgstr "%s ir jūs noskūpstījis!"
-
-#, c-format
-msgid "Smooching %s..."
-msgstr "Noskūpsta %s..."
-
-#. A hug is a display of affection; wrapping your arms around someone
-msgid "Hug"
-msgstr "Apskaut"
-
-#, c-format
-msgid "%s has hugged you!"
-msgstr "%s ir jūs apskāvis!"
-
-#, c-format
-msgid "Hugging %s..."
-msgstr "Apskauj %s..."
-
-#. Slap means "to hit someone with an open/flat hand"
-msgid "Slap"
-msgstr "Iepļaukāt"
-
-#, c-format
-msgid "%s has slapped you!"
-msgstr "%s ir jūs iepļaukājis!"
-
-#, c-format
-msgid "Slapping %s..."
-msgstr "Iepļaukā %s..."
-
-#. Goose means "to pinch someone on their butt"
-msgid "Goose"
-msgstr "Iebikstīt sēžamvietā"
-
-#, c-format
-msgid "%s has goosed you!"
-msgstr "%s ir iebikstījis jums sēžamvietā!"
-
-#, c-format
-msgid "Goosing %s..."
-msgstr "Iebiksta %s sēžamvietā..."
-
-#. A high-five is when two people's hands slap each other
-#. * in the air above their heads.  It is done to celebrate
-#. * something, often a victory, or to congratulate someone.
-msgid "High-five"
-msgstr "Dod pieci"
-
-#, c-format
-msgid "%s has high-fived you!"
-msgstr "%s ir jums devis pieci!"
-
-#, c-format
-msgid "High-fiving %s..."
-msgstr "Dod pieci %s..."
-
-#. We're not entirely sure what the MySpace people mean by
-#. * this... but we think it's the equivalent of "prank."  Or, for
-#. * someone to perform a mischievous trick or practical joke.
-msgid "Punk"
-msgstr "Izspēlēt joku"
-
-#, c-format
-msgid "%s has punk'd you!"
-msgstr "%s ir izspēlējis joku uz jums!"
-
-#, c-format
-msgid "Punking %s..."
-msgstr "Izspēlē joku uz %s..."
-
-#. Raspberry is a slang term for the vibrating sound made
-#. * when you stick your tongue out of your mouth with your
-#. * lips closed and blow.  It is typically done when
-#. * gloating or bragging.  Nowadays it's a pretty silly
-#. * gesture, so it does not carry a harsh negative
-#. * connotation.  It is generally used in a playful tone
-#. * with friends.
-msgid "Raspberry"
-msgstr "Avene"
-
-#, c-format
-msgid "%s has raspberried you!"
-msgstr "%s ir aveņojis jūs!"
-
-#, c-format
-msgid "Raspberrying %s..."
-msgstr "Aveņo %s..."
-
 msgid "Required parameters not passed in"
 msgstr "Vajadzīgie parametri nav padoti iekšā"
 
@@ -6938,6 +5211,9 @@ msgstr "Nevar pievienot sevi"
 
 msgid "Master archive is misconfigured"
 msgstr "Galvenais arhīvs ir nepareizi konfigurēts"
+
+msgid "Incorrect username or password"
+msgstr "Nepareizs lietotājvārds vai parole"
 
 msgid "Could not recognize the host of the username you entered"
 msgstr "Nevarēja atpazīt resursdatoru lietotājvārdam, kuru jūs ievadījāt"
@@ -7060,6 +5336,12 @@ msgstr "Kļūda, sazinoties ar serveri. Aizver savienojumu."
 msgid "Telephone Number"
 msgstr "Tālruņa numurs"
 
+msgid "Location"
+msgstr "Atrašanās vieta"
+
+msgid "Department"
+msgstr "Nodaļa"
+
 msgid "Personal Title"
 msgstr "Personiskais tituls"
 
@@ -7090,7 +5372,7 @@ msgstr "Gaida atbildi..."
 
 #, c-format
 msgid "%s has been invited to this conversation."
-msgstr "%s ir ticis ielūgts uz šo sarunu."
+msgstr "%s saņēma ielūgumu uz šo sarunu."
 
 msgid "Invitation to Conversation"
 msgstr "Uzaicinājums uz sarunu"
@@ -7108,6 +5390,9 @@ msgstr ""
 msgid "Would you like to join the conversation?"
 msgstr "Vai jūs vēlaties pievienoties sarunai?"
 
+msgid "You have signed on from another location"
+msgstr "Jūs esat pierakstījies no citas atrašanās vietas"
+
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
@@ -7123,6 +5408,9 @@ msgstr ""
 
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "Šī konference ir tikusi slēgta. Ziņojumi vairs nevar tikt nosūtīti."
+
+msgid "Busy"
+msgstr "Aizņemts"
 
 #. *< type
 #. *< ui_requirement
@@ -7220,13 +5508,16 @@ msgstr ""
 "atšķirīgus iekodējumus vai %s ir kļūdains klients.)"
 
 msgid "Could not join chat room"
-msgstr "Nevarēja pievienoties tērzēšanas istabai"
+msgstr "Nevarēja pievienoties tērzētavai"
 
 msgid "Invalid chat room name"
-msgstr "Nederīgs tērzēšanas istabas nosaukums"
+msgstr "Nederīgs tērzētavas nosaukums"
 
 msgid "Invalid error"
 msgstr "Nederīga kļūda"
+
+msgid "Not logged in"
+msgstr "Nav ierakstījies"
 
 msgid "Cannot receive IM due to parental controls"
 msgstr "Nevar saņemt TZ dēļ vecāku kontroles"
@@ -7363,11 +5654,20 @@ msgstr "Klausās mūziku"
 msgid "Studying"
 msgstr "Studē"
 
+msgid "Working"
+msgstr "Strādā"
+
 msgid "In the restroom"
 msgstr "Atpūtas istabā"
 
 msgid "Received invalid data on connection with server"
 msgstr "Saņemti nederīgi dati savienojumā ar serveri"
+
+msgid "Error parsing response from authentication server"
+msgstr "Kļūda, sintaktiski analizējot atbildi no autorizācijas servera"
+
+msgid "Unknown error during authentication"
+msgstr "Nezināma kļūda autorizācijas laikā"
 
 #. *< type
 #. *< ui_requirement
@@ -7497,6 +5797,13 @@ msgstr ""
 "Jūs pieprasījāt šifrēšanu savos konta iestatījumos, bet šifrēšana nav jūsu "
 "sistēmas atbalstīta."
 
+msgid ""
+"You required Kerberos authentication but encryption is disabled in your "
+"account settings."
+msgstr ""
+"Jūs pieprasījāt Kerberos autorizāciju, bet šifrēšana ir izslēgta jūsu konta "
+"iestatījumos."
+
 #, c-format
 msgid "You may be disconnected shortly.  If so, check %s for updates."
 msgstr ""
@@ -7512,7 +5819,6 @@ msgid "Received authorization"
 msgstr "Saņemta autorizācija"
 
 #. Unregistered username
-#. the username does not exist
 msgid "Username does not exist"
 msgstr "Lietotājvārds nepastāv"
 
@@ -7859,6 +6165,9 @@ msgstr ""
 "Lietotājvārdiem jābūt derīgām e-pasta adresēm vai jāsākas ar burtu un "
 "jāsatur tikai burtus, ciparus un atstarpes, vai jāsatur tikai ciparus."
 
+msgid "Unable to Add"
+msgstr "Nespēj pievienot"
+
 msgid "Unable to Retrieve Buddy List"
 msgstr "Nespēj izgūt draugu sarakstu"
 
@@ -8013,6 +6322,9 @@ msgstr "Meklēt draugu pēc e-pasta adreses"
 msgid "Type the email address of the buddy you are searching for."
 msgstr "Ierakstiet drauga, kuru jūs meklējiet, e-pasta adresi."
 
+msgid "_Search"
+msgstr "_Meklēt"
+
 msgid "Set User Info (web)..."
 msgstr "Iestatīt lietotāja informāciju (tīmekļa)..."
 
@@ -8049,8 +6361,17 @@ msgstr "Rādīt autorizāciju gaidošos draugus"
 msgid "Search for Buddy by Email Address..."
 msgstr "Meklēt draugu pēc e-pasta adreses..."
 
-msgid "Use clientLogin"
-msgstr "Lietot clientLogin"
+msgid "clientLogin"
+msgstr "clientLogin"
+
+msgid "Kerberos"
+msgstr "Kerberos"
+
+msgid "MD5-based"
+msgstr "uz MD5 bāzēts"
+
+msgid "Authentication method"
+msgstr "Autentificēšanas metode"
 
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
@@ -8077,7 +6398,7 @@ msgstr "Mēģina pievienoties caur starpniekserveri."
 
 #, c-format
 msgid "%s has just asked to directly connect to %s"
-msgstr "%s ir tikko vaicājis tieši pievienoties pie %s"
+msgstr "%s tikko vaicāja tieši pievienoties pie %s"
 
 msgid ""
 "This requires a direct connection between the two computers and is necessary "
@@ -8174,6 +6495,9 @@ msgstr "Lietotāja informācija nav pieejama: %s"
 msgid "Mobile Phone"
 msgstr "Mobilais tālrunis"
 
+msgid "Age"
+msgstr "Vecums"
+
 msgid "Personal Web Page"
 msgstr "Personīgā Tīmekļa lapa"
 
@@ -8182,11 +6506,20 @@ msgstr "Personīgā Tīmekļa lapa"
 msgid "Additional Information"
 msgstr "Papildu informācija"
 
+msgid "Home Address"
+msgstr "Mājas adrese"
+
 msgid "Zip Code"
 msgstr "Pasta indekss"
 
+msgid "Work Address"
+msgstr "Darba adrese"
+
 msgid "Work Information"
 msgstr "Darba informācija"
+
+msgid "Company"
+msgstr "Uzņēmums"
 
 msgid "Division"
 msgstr "Struktūrvienība"
@@ -8205,6 +6538,12 @@ msgstr "Biedrs kopš"
 
 msgid "Capabilities"
 msgstr "Spējas"
+
+msgid "Profile"
+msgstr "Profils"
+
+msgid "View web profile"
+msgstr "Skatīt tīmekļa profilu"
 
 msgid "Invalid SNAC"
 msgstr "Nederīgs SNAC"
@@ -8502,6 +6841,9 @@ msgstr ""
 "Identifikators '%s' neatbilst nevienam lietotājam jūsu Sametime kopienā. Šis "
 "ieraksts ir ticis noņemts no jūsu draugu saraksta."
 
+msgid "Unable to add user"
+msgstr "Nespēj pievienot lietotāju"
+
 #, c-format
 msgid ""
 "Error reading file %s: \n"
@@ -8787,6 +7129,9 @@ msgstr "Hiperaktīvs"
 msgid "Robot"
 msgstr "Robots"
 
+msgid "In Love"
+msgstr "Iemīlējies"
+
 msgid "User Modes"
 msgstr "Lietotāja režīmi"
 
@@ -8806,7 +7151,7 @@ msgid "Geolocation"
 msgstr "Ģeogrāfiskā atrašanās vieta"
 
 msgid "Reset IM Key"
-msgstr "Atstatīt TZ atslēgu"
+msgstr "Atiestatīt TZ atslēgu"
 
 msgid "IM with Key Exchange"
 msgstr "TZ ar atslēgu apmaiņu"
@@ -8924,7 +7269,7 @@ msgstr "Lietotāju ierobežojums"
 
 msgid "Set user limit on channel. Set to zero to reset user limit."
 msgstr ""
-"Iestatīt lietotāju ierobežojumu kanālam. Iestatīt uz nulli, lai atstatītu "
+"Iestatīt lietotāju ierobežojumu kanālam. Iestatīt uz nulli, lai atiestatītu "
 "lietotāju ierobežojumu."
 
 msgid "Invite List"
@@ -8937,7 +7282,7 @@ msgid "Add Private Group"
 msgstr "Pievienot privāto grupu"
 
 msgid "Reset Permanent"
-msgstr "Atstatīt paliekošu"
+msgstr "Atiestatīt paliekošu"
 
 msgid "Set Permanent"
 msgstr "Iestatīt paliekošu"
@@ -8946,19 +7291,19 @@ msgid "Set User Limit"
 msgstr "Iestatīt lietotāju ierobežojumu"
 
 msgid "Reset Topic Restriction"
-msgstr "Atstatīt temata ierobežojumu"
+msgstr "Atiestatīt temata ierobežojumu"
 
 msgid "Set Topic Restriction"
 msgstr "Iestatīt temata ierobežojumu"
 
 msgid "Reset Private Channel"
-msgstr "Atstatīt privāto kanālu"
+msgstr "Atiestatīt privāto kanālu"
 
 msgid "Set Private Channel"
 msgstr "Iestatīt privāto kanālu"
 
 msgid "Reset Secret Channel"
-msgstr "Atstatīt slepeno kanālu"
+msgstr "Atiestatīt slepeno kanālu"
 
 msgid "Set Secret Channel"
 msgstr "Iestatīt slepeno kanālu"
@@ -9029,7 +7374,7 @@ msgstr "Radās kļūda"
 
 #, c-format
 msgid "%s has changed the topic of <I>%s</I> to: %s"
-msgstr "%s ir nomainījis <I>%s</I> tematu uz: %s"
+msgstr "%s nomainīja <I>%s</I> tematu uz: %s"
 
 #, c-format
 msgid "<I>%s</I> set channel <I>%s</I> modes to: %s"
@@ -9076,6 +7421,9 @@ msgstr "Organizācija"
 
 msgid "Unit"
 msgstr "Vienība"
+
+msgid "Homepage"
+msgstr "Mājaslapa"
 
 msgid "Note"
 msgstr "Piezīme"
@@ -9251,6 +7599,9 @@ msgstr "Kļūda, pievienojoties pie SILC servera"
 
 msgid "Key Exchange failed"
 msgstr "Atslēgu apmaiņa neizdevās"
+
+msgid "Authentication failed"
+msgstr "Autentifikācija neizdevās"
 
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
@@ -9765,427 +8116,6 @@ msgstr "Autentifikācijas lietotājs"
 msgid "Auth Domain"
 msgstr "Autentifikācijas domēns"
 
-msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-msgstr "join &lt;istaba&gt;:  Pievienoties tērzēšanas istabai Yahoo tīklā"
-
-msgid "list: List rooms on the Yahoo network"
-msgstr "list: uzskaita istabas Yahoo tīklā"
-
-msgid "doodle: Request user to start a Doodle session"
-msgstr "doodle: Pieprasīt lietotājam sākt izklaidīgās zīmēšanas sesiju"
-
-msgid "Yahoo ID..."
-msgstr "Yahoo ID..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! Protocol Plugin"
-msgstr "Yahoo! protokola spraudnis"
-
-msgid "Pager port"
-msgstr "Peidžera ports"
-
-msgid "File transfer server"
-msgstr "Datņu pārsūtīšanas serveris"
-
-msgid "File transfer port"
-msgstr "Datņu pārsūtīšanas ports"
-
-msgid "Chat room locale"
-msgstr "Tērzēšanas istabas lokāle"
-
-msgid "Ignore conference and chatroom invitations"
-msgstr "Ignorēt konferenču un tērzētavu ielūgumus"
-
-msgid "Use account proxy for HTTP and HTTPS connections"
-msgstr "Lietot konta starpniekserveri HTTP un HTTPS savienojumiem"
-
-msgid "Chat room list URL"
-msgstr "Tērzēšanas istabu saraksta URL"
-
-msgid "Yahoo JAPAN ID..."
-msgstr "Yahoo JAPAN ID..."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-msgid "Yahoo! JAPAN Protocol Plugin"
-msgstr "Yahoo! JAPAN protokola spraudnis"
-
-#, c-format
-msgid "%s has sent you a webcam invite, which is not yet supported."
-msgstr ""
-"%s ir nosūtījis jums tīmekļa kameras uzaicinājumu, kurš vēl netiek "
-"atbalstīts."
-
-msgid "Your SMS was not delivered"
-msgstr "Jūsu SMS netika piegādāta"
-
-msgid "Your Yahoo! message did not get sent."
-msgstr "Jūsu Yahoo! ziņojums netika nosūtīts."
-
-#, c-format
-msgid "Yahoo! system message for %s:"
-msgstr "Yahoo! sistēmas ziņojums priekš %s:"
-
-msgid "Authorization denied message:"
-msgstr "Autorizācijas lieguma ziņojums:"
-
-#, c-format
-msgid ""
-"%s has (retroactively) denied your request to add them to your list for the "
-"following reason: %s."
-msgstr ""
-"%s ir (ar atpakaļejošu datumu) atteicis jūsu pieprasījumu pievienot viņu "
-"savam sarakstam dēļ sekojoša iemesla: %s."
-
-#, c-format
-msgid "%s has (retroactively) denied your request to add them to your list."
-msgstr ""
-"%s ir (ar atpakaļejošu datumu) atteicis jūsu pieprasījumu pievienot viņu "
-"savam sarakstam."
-
-msgid "Add buddy rejected"
-msgstr "Drauga pievienošana noraidīta"
-
-#. Some error in the received stream
-msgid "Received invalid data"
-msgstr "Saņemti nederīgi dati"
-
-#. security lock from too many failed login attempts
-msgid ""
-"Account locked: Too many failed login attempts.  Logging into the Yahoo! "
-"website may fix this."
-msgstr ""
-"Konts bloķēts: pārāk daudz neizdevušos ierakstīšanās mēģinājumu.  "
-"Pieteikšanās Yahoo! tīmekļa vietnē varētu salabot šo."
-
-#. indicates a lock of some description
-msgid ""
-"Account locked: Unknown reason.  Logging into the Yahoo! website may fix "
-"this."
-msgstr ""
-"Konts bloķēts: nezināms iemesls.  Pieteikšanās Yahoo! tīmekļa vietnē varētu "
-"salabot šo."
-
-#. indicates a lock due to logging in too frequently
-msgid ""
-"Account locked: You have been logging in too frequently.  Wait a few minutes "
-"before trying to connect again.  Logging into the Yahoo! website may help."
-msgstr ""
-"Konts bloķēts: jūs esat bijis pieteicies pārāk bieži. Pagaidiet dažas "
-"minūtes pirms mēģināšanas pievienoties atkal.  Pieteikšanās Yahoo! tīmekļa "
-"vietnē varētu palīdzēt."
-
-#. username or password missing
-msgid "Username or password missing"
-msgstr "Trūkst lietotājvārds vai parole"
-
-#, c-format
-msgid ""
-"The Yahoo server has requested the use of an unrecognized authentication "
-"method.  You will probably not be able to successfully sign on to Yahoo.  "
-"Check %s for updates."
-msgstr ""
-"Yahoo serveris ir pieprasījis neatpazītas autentifikācijas metodes "
-"lietošanu.  Jūs varbūt nebūsiet spējīgs veiksmīgi pierakstīties Yahoo.  "
-"Pārbaudiet %s pēc atjauninājumiem."
-
-msgid "Failed Yahoo! Authentication"
-msgstr "Neizdevusies Yahoo! autentifikācija"
-
-#, c-format
-msgid ""
-"You have tried to ignore %s, but the user is on your buddy list.  Clicking "
-"\"Yes\" will remove and ignore the buddy."
-msgstr ""
-"Jūs esat mēģinājis ignorēt %s, bet lietotājs ir jūsu draugu sarakstā.  \"Jā"
-"\" klikšķināšana noņems un ignorēs draugu."
-
-msgid "Ignore buddy?"
-msgstr "Vai ignorēt draugu?"
-
-msgid "Invalid username or password"
-msgstr "Nederīgs lietotājvārds vai parole"
-
-msgid ""
-"Your account has been locked due to too many failed login attempts.  Please "
-"try logging into the Yahoo! website."
-msgstr ""
-"Jūsu konts ir ticis bloķēts dēļ pārāk daudziem neizdevušamies ierakstīšanās "
-"mēģinājumiem.  Lūdzu, mēģiniet pieteikties Yahoo! tīmekļa vietnē."
-
-msgid "Unknown error 52.  Reconnecting should fix this."
-msgstr "Nezināma kļūda 52.  Atkal savienošanai vajadzētu salabot šo."
-
-msgid ""
-"Error 1013: The username you have entered is invalid.  The most common cause "
-"of this error is entering your email address instead of your Yahoo! ID."
-msgstr ""
-"Kļūda 1013: lietotājvārds, kuru jūs esat ievadījis, ir nederīgs.  "
-"Visbiežākais šīskļūdas cēlonis ir jūsu e-pasta adreses, nevis jūsu Yahoo! "
-"ID, ievadīšana."
-
-#, c-format
-msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
-msgstr ""
-"Nezināma kļūda numur %d. Pieteikšanās Yahoo! tīmekļa vietnē varētu salabot "
-"šo."
-
-#, c-format
-msgid "Unable to add buddy %s to group %s to the server list on account %s."
-msgstr "Nespēj pievienot draugu %s grupai %s uz servera saraksta kontā %s."
-
-msgid "Unable to add buddy to server list"
-msgstr "Nespēj pievienot draugu servera sarakstam"
-
-#, c-format
-msgid "[ Audible %s/%s/%s.swf ] %s"
-msgstr "[ Audible %s/%s/%s.swf ] %s"
-
-msgid "Received unexpected HTTP response from server"
-msgstr "Saņemta negaidīta HTTP atbilde no servera"
-
-#, c-format
-msgid "Lost connection with %s: %s"
-msgstr "Pazudis savienojums ar %s: %s"
-
-#, c-format
-msgid "Unable to establish a connection with %s: %s"
-msgstr "Nespēj nodibināt savienojumu ar %s: %s"
-
-msgid "Unable to connect: The server returned an empty response."
-msgstr "Nespēj pievienoties: serveris atgrieza tukšu atbildi."
-
-msgid ""
-"Unable to connect: The server's response did not contain the necessary "
-"information"
-msgstr "Nespēj pievienoties: servera atbilde nesatur vajadzīgo informāciju"
-
-msgid "Not at Home"
-msgstr "Nav mājās"
-
-msgid "Not at Desk"
-msgstr "Nav pie darbvirsmas"
-
-msgid "Not in Office"
-msgstr "Nav birojā"
-
-msgid "On Vacation"
-msgstr "Atvaļinājumā"
-
-msgid "Stepped Out"
-msgstr "Izgāja"
-
-msgid "Not on server list"
-msgstr "Nav servera sarakstā"
-
-msgid "Appear Permanently Offline"
-msgstr "Parādās pastāvīgi bezsaistē"
-
-msgid "Presence"
-msgstr "Klātbūtne"
-
-msgid "Don't Appear Permanently Offline"
-msgstr "Neparādās pastāvīgi bezsaistē"
-
-msgid "Join in Chat"
-msgstr "Pievienot tērzēšanā"
-
-msgid "Initiate Conference"
-msgstr "Uzsākt konferenci"
-
-msgid "Presence Settings"
-msgstr "Klātbūtnes iestatījumi"
-
-msgid "Start Doodling"
-msgstr "Sākt izklaidīgo zīmēšanu"
-
-msgid "Activate which ID?"
-msgstr "Kuru ID aktivizēt?"
-
-msgid "Select the ID you want to activate"
-msgstr "Atlasiet ID, kuru jūs vēlaties aktivizēt"
-
-msgid "Join whom in chat?"
-msgstr "Kuru pievienot tērzēšanā?"
-
-msgid "Activate ID..."
-msgstr "Aktivizēt ID..."
-
-msgid "Join User in Chat..."
-msgstr "Pievienoties pie lietotāja tērzēšanā..."
-
-msgid "Open Inbox"
-msgstr "Atvērt iesūtni"
-
-msgid "Can't send SMS. Unable to obtain mobile carrier."
-msgstr "Nevar nosūtīt SMS. Nespēj iegūt mobilo sakaru operatoru."
-
-msgid "Can't send SMS. Unknown mobile carrier."
-msgstr "Nevar nosūtīt SMS. Nezināms mobilo sakaru operators."
-
-msgid "Getting mobile carrier to send the SMS."
-msgstr "Iegūst mobilo sakaru operatoru, lai nosūtītu SMS."
-
-#. Write a local message to this conversation showing that a request for a
-#. * Doodle session has been made
-#.
-msgid "Sent Doodle request."
-msgstr "Nosūtīja izklaidīgās zīmēšanas pieprasījumu."
-
-msgid "Unable to connect."
-msgstr "Nespēj pievienoties."
-
-msgid "Unable to establish file descriptor."
-msgstr "Nespēj nodibināt datnes deskriptoru."
-
-#, c-format
-msgid "%s is trying to send you a group of %d files.\n"
-msgstr "%s mēģina nosūtīt jums %d datņu grupu.\n"
-
-msgid "Write Error"
-msgstr "Rakstīšanas kļūda"
-
-msgid "Yahoo! Japan Profile"
-msgstr "Yahoo! Japan profils"
-
-msgid "Yahoo! Profile"
-msgstr "Yahoo! profils"
-
-msgid ""
-"Sorry, profiles marked as containing adult content are not supported at this "
-"time."
-msgstr ""
-"Atvainojiet, profili, kuri ir atzīmēti kā saturoši pieaugušo saturu, šoreiz "
-"netiek atbalstīti."
-
-msgid ""
-"If you wish to view this profile, you will need to visit this link in your "
-"web browser:"
-msgstr ""
-"Ja jūs vēlaties skatīt šo profilu, jums vajadzēs apmeklēt šo saiti jūsu "
-"tīmekļa pārlūkā:"
-
-msgid "Yahoo! ID"
-msgstr "Yahoo! ID"
-
-msgid "Hobbies"
-msgstr "Hobiji"
-
-msgid "Latest News"
-msgstr "Jaunākās ziņas"
-
-msgid "Home Page"
-msgstr "Mājas lapa"
-
-msgid "Cool Link 1"
-msgstr "Forša saite 1"
-
-msgid "Cool Link 2"
-msgstr "Forša saite 2"
-
-msgid "Cool Link 3"
-msgstr "Forša saite 3"
-
-msgid "Last Update"
-msgstr "Pēdējais atjauninājums"
-
-msgid ""
-"This profile is in a language or format that is not supported at this time."
-msgstr "Šis profils ir valodā vai formātā, kurš šoreiz nav atbalstīts."
-
-msgid ""
-"Could not retrieve the user's profile. This most likely is a temporary "
-"server-side problem. Please try again later."
-msgstr ""
-"Nevarēja izgūt lietotāja profilu. Šī visdrīzākais ir īslaicīga servera puses "
-"problēma. Lūdzu, mēģiniet vēlreiz vēlāk."
-
-msgid ""
-"Could not retrieve the user's profile. This most likely means that the user "
-"does not exist; however, Yahoo! sometimes does fail to find a user's "
-"profile. If you know that the user exists, please try again later."
-msgstr ""
-"Nevarēja izgūt lietotāja profilu. Šis visdrīzākais nozīmē, ka lietotājs "
-"nepastāv; taču Yahoo!  dažreiz neizdodas atrast lietotāja profilu. Ja jūs "
-"ziniet, ka lietotājs pastāv, lūdzu, mēģiniet vēlreiz vēlāk."
-
-msgid "The user's profile is empty."
-msgstr "Lietotāja profils ir tukšs."
-
-#, c-format
-msgid "%s has declined to join."
-msgstr "%s ir noraidījis pievienošanos."
-
-msgid "Failed to join chat"
-msgstr "Neizdevās pievienoties tērzēšanai"
-
-#. -6
-msgid "Unknown room"
-msgstr "Nezināma istaba"
-
-#. -15
-msgid "Maybe the room is full"
-msgstr "Varbūt istaba ir pilna"
-
-#. -35
-msgid "Not available"
-msgstr "Nav pieejams"
-
-msgid ""
-"Unknown error. You may need to logout and wait five minutes before being "
-"able to rejoin a chatroom"
-msgstr ""
-"Nezināma kļūda. Jums vajadzētu izrakstīties un pagaidīt piecas minūtes pirms "
-"būšanas spējīgam atkārtoti pievienoties tērzēšanai"
-
-#, c-format
-msgid "You are now chatting in %s."
-msgstr "Jūs tagad tērzējat iekš %s."
-
-msgid "Failed to join buddy in chat"
-msgstr "Neizdevās pievienot draugu tērzēšanā"
-
-msgid "Maybe they're not in a chat?"
-msgstr "Varbūt viņi nav tērzēšanā?"
-
-msgid "Fetching the room list failed."
-msgstr "Istabu saraksta ienešana neizdevās."
-
-msgid "Voices"
-msgstr "Balsis"
-
-msgid "Webcams"
-msgstr "Tīmekļa kameras"
-
-msgid "Connection problem"
-msgstr "Savienojuma problēma"
-
-msgid "Unable to fetch room list."
-msgstr "Nespēj ienest istabu sarakstu."
-
-msgid "User Rooms"
-msgstr "Lietotāja istabas"
-
-msgid "Connection problem with the YCHT server"
-msgstr "Savienojuma problēma ar YCHT serveri"
-
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
@@ -10196,6 +8126,12 @@ msgstr ""
 #, c-format
 msgid "Unable to send to chat %s,%s,%s"
 msgstr "Nespēj nosūtīt uz tērzēšanu %s,%s,%s"
+
+msgid "User is offline"
+msgstr "Lietotājs ir bezsaistē"
+
+msgid "User"
+msgstr "Lietotājs"
 
 msgid "Hidden or not logged-in"
 msgstr "Paslēpies vai nav ierakstījies"
@@ -10341,7 +8277,7 @@ msgstr "Notiek %s uzmanības pieprasīšana..."
 
 #, c-format
 msgid "%s has requested your attention!"
-msgstr "%s ir pieprasījis jūsu uzmanību!"
+msgstr "%s pieprasīja jūsu uzmanību!"
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
@@ -10380,12 +8316,12 @@ msgid ""
 "%s has invited %s to the chat room %s:\n"
 "%s"
 msgstr ""
-"%s ir ielūdzis %s uz tērzētavu %s:\n"
+"%s ielūdza %s uz tērzētavu %s:\n"
 "%s"
 
 #, c-format
 msgid "%s has invited %s to the chat room %s\n"
-msgstr "%s ir ielūdzis %s uz tērzētavu %s\n"
+msgstr "%s ielūdza %s uz tērzētavu %s\n"
 
 msgid "Accept chat invitation?"
 msgstr "Vai pieņemt tērzēšanas uzaicinājumu?"
@@ -10597,11 +8533,11 @@ msgstr ""
 "vairākiem tērzēšanas tīkliem vienlaicīgi."
 
 msgid ""
-"This means that you can be chatting with friends on MSN, talking to a friend "
-"on Google Talk, and sitting in a Yahoo chat room all at the same time."
+"This means that you can be chatting with friends on AIM, talking to a friend "
+"on Google Talk, and sitting in an IRC chat room all at the same time."
 msgstr ""
-"Tas nozīmē, ka jūs varat tērzēt ar draugiem  MSN, runāt ar draugu Google "
-"Talk un sēdēt Yahoo tērzētavā visur vienlaicīgi."
+"Tas nozīmē, ka jūs varat tērzēt ar draugiem AIM, runāt ar draugu Google Talk "
+"un sēdēt IRC tērzētavā visur vienlaicīgi."
 
 msgid "The buddy list showing friends on different networks."
 msgstr "Draugu saraksts, kurš parāda draugus dažādos tīklos."
@@ -10612,8 +8548,8 @@ msgstr "Pidgin Interneta ziņnesis"
 msgid "Internet Messenger"
 msgstr "Interneta ziņnesis"
 
-msgid ""
-"Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, MSN, Yahoo and more"
+#, fuzzy
+msgid "Chat over IM.  Supports AIM, Google Talk, Jabber/XMPP, and more"
 msgstr ""
 "Tērzēšana pāri TZ.  Atbalsta AIM, Google Talk, Jabber/XMPP, MSN, Yahoo un "
 "vairāk"
@@ -11413,7 +9349,7 @@ msgstr ""
 "Jūs pašlaik neesat pierakstījies ar kontu, kurš var uzaicināt šo draugu."
 
 msgid "Invite Buddy Into Chat Room"
-msgstr "Uzaicināt draugu tērzēšanas istabā"
+msgstr "Uzaicināt draugu tērzētavā"
 
 msgid "_Buddy:"
 msgstr "_Draugs:"
@@ -11639,7 +9575,7 @@ msgid ""
 "%s has stopped typing"
 msgstr ""
 "\n"
-"%s ir pārstājis rakstīt"
+"%s pārstāja rakstīt"
 
 #. Build the Send To menu
 msgid "S_end To"
@@ -12147,8 +10083,8 @@ msgstr ""
 
 msgid ""
 "<font size=\"4\"><b>Help from other Pidgin users</b></font> is available by "
-"e-mailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/"
-">This is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
+"emailing <a href=\"mailto:support@pidgin.im\">support@pidgin.im</a><br/>This "
+"is a <b>public</b> mailing list! (<a href=\"http://pidgin.im/pipermail/"
 "support/\">archive</a>)<br/>We can't help with third-party protocols or "
 "plugins!<br/>This list's primary language is <b>English</b>.  You are "
 "welcome to post in another language, but the responses may be less helpful."
@@ -12351,7 +10287,7 @@ msgid "Mute _Sounds"
 msgstr "Klusināt _skaņas"
 
 msgid "_Blink on New Message"
-msgstr "_Mirkšķināt uz jaunu ziņojumu"
+msgstr "_Mirkšķināt pie jauna ziņojuma"
 
 msgid "_Quit"
 msgstr "_Iziet"
@@ -12418,7 +10354,7 @@ msgid "Paste as Plain _Text"
 msgstr "Ielīmēt kā vienkāršu _tekstu"
 
 msgid "_Reset formatting"
-msgstr "Atstatīt fo_rmatēšanu"
+msgstr "Atiestatīt fo_rmatēšanu"
 
 msgid "Disable _smileys in selected text"
 msgstr "Izslēgt _smaidiņus atlasītajā tekstā"
@@ -12533,7 +10469,7 @@ msgid "Select Background Color"
 msgstr "Atlasiet fona krāsu"
 
 msgid "_URL"
-msgstr "_URL"
+msgstr "Vietrādis _URL"
 
 msgid "_Description"
 msgstr "_Apraksts"
@@ -12542,11 +10478,11 @@ msgid ""
 "Please enter the URL and description of the link that you want to insert. "
 "The description is optional."
 msgstr ""
-"Lūdzu, ievadiet saites, kuru jūs vēlaties ievietot, URL un aprakstu. "
-"Apraksts ir neobligāts."
+"Lūdzu, ievadiet saites, kuru jūs vēlaties ievietot, vietrādi URL un "
+"aprakstu. Apraksts ir neobligāts."
 
 msgid "Please enter the URL of the link that you want to insert."
-msgstr "Lūdzu, ievadiet saites, kuru jūs vēlaties ievietot, URL."
+msgstr "Lūdzu, ievadiet saites, kuru jūs vēlaties ievietot, vietrādi URL."
 
 msgid "Insert Link"
 msgstr "Ievietot saiti"
@@ -12612,7 +10548,7 @@ msgid "Foreground Color"
 msgstr "Priekšplāna krāsa"
 
 msgid "Reset Formatting"
-msgstr "Atstatīt formatēšanu"
+msgstr "Atiestatīt formatēšanu"
 
 msgid "Insert IM Image"
 msgstr "Ievietot TZ attēlu"
@@ -12886,7 +10822,7 @@ msgid "The browser command \"%s\" is invalid."
 msgstr "Pārlūka komanda \"%s\" ir nederīga."
 
 msgid "Unable to open URL"
-msgstr "Nespēj atvērt URL"
+msgstr "Nespēj atvērt vietrādi URL"
 
 #, c-format
 msgid "Error launching \"%s\": %s"
@@ -12899,7 +10835,8 @@ msgstr ""
 "iestatīta."
 
 msgid "Unable to open URL: the 'Manual' browser command seems invalid."
-msgstr "Nespēj atvērt URL: 'Pašrocīgā' pārlūka komanda liekas ir nederīga."
+msgstr ""
+"Nespēj atvērt vietrādi URL: 'Pašrocīgā' pārlūka komanda liekas ir nederīga."
 
 msgid "No message"
 msgstr "Nav ziņojuma"
@@ -12977,10 +10914,6 @@ msgstr "Atlasiet datni"
 
 msgid "Modify Buddy Pounce"
 msgstr "Pārveidot drauga reakciju"
-
-#. Create the "Pounce on Whom" frame.
-msgid "Pounce on Whom"
-msgstr "Reakcija kuram"
 
 msgid "_Account:"
 msgstr "_Konts:"
@@ -13243,8 +11176,8 @@ msgid ""
 "This is how your outgoing message text will appear when you use protocols "
 "that support formatting."
 msgstr ""
-"Šis ir, kā jūsu izejošā ziņojuma teksts izskatīsies, kad jūs lietosiet "
-"protokolus, kuri atbalsta formatēšanu."
+"Šādi izskatīsies jūsu izejošā ziņojuma teksts, kad jūs lietosiet protokolus, "
+"kuri atbalsta formatēšanu."
 
 msgid "Cannot start proxy configuration program."
 msgstr "Nevar sākt starpniekservera konfigurācijas programmu."
@@ -13384,7 +11317,7 @@ msgid ""
 "(%s for URL)"
 msgstr ""
 "_Pašrocīgā:\n"
-"(%s priekš URL)"
+"(%s priekš vietrāža URL)"
 
 msgid "Proxy Server"
 msgstr "Starpniekserveris"
@@ -13490,7 +11423,7 @@ msgid "_Browse..."
 msgstr "_Pārlūkot..."
 
 msgid "_Reset"
-msgstr "_Atstatīt"
+msgstr "_Atiestatīt"
 
 msgid "_Report idle time:"
 msgstr "_Ziņot par dīkstāves laiku:"
@@ -13648,9 +11581,9 @@ msgstr "_Statuss:"
 msgid "Use a _different status for some accounts"
 msgstr "_Dažiem kontiem lietot atšķirīgu statusu"
 
-#. Save & Use button
-msgid "Sa_ve & Use"
-msgstr "Sa_glabāt un lietot"
+#. Save and Use button
+msgid "Sa_ve and Use"
+msgstr "_Saglabāt un lietot"
 
 #, c-format
 msgid "Status for %s"
@@ -13714,9 +11647,6 @@ msgstr "Statusa atlasītājs"
 
 msgid "Google Talk"
 msgstr "Google Talk"
-
-msgid "Facebook (XMPP)"
-msgstr "Facebook (XMPP)"
 
 #, c-format
 msgid "The following error has occurred loading %s: %s"
@@ -14008,6 +11938,9 @@ msgstr "Saņemtie ziņojumi"
 #, c-format
 msgid "Select Color for %s"
 msgstr "Atlasiet krāsu priekš %s"
+
+msgid "General"
+msgstr "Vispārīgi"
 
 msgid "Ignore incoming format"
 msgstr "Ignorēt ienākošo formātu"
@@ -14396,14 +12329,11 @@ msgstr ""
 msgid "Notify For"
 msgstr "Paziņot priekš"
 
-msgid "\t_Notify for System messages"
-msgstr "\t_Paziņot priekš sistēmas ziņojumiem"
+msgid "\tS_ystem messages"
+msgstr "\t_Sistēmas ziņojumi"
 
 msgid "\t_Only when someone says your username"
 msgstr "\t_Tikai, kad kāds piemin jūsu lietotājvārdu"
-
-msgid "\tNotify for _System messages"
-msgstr "\tPaziņot priekš _sistēmas ziņojumiem"
 
 msgid "_Focused windows"
 msgstr "_Fokusētie logi"
@@ -14590,12 +12520,12 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "Ļauj jums nosūtīt neapstrādātu ievadi uz teksta bāzētiem protokoliem."
 
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Ļauj jums nosūtīt neapstrādātu ievadi uz teksta bāzētiem protokoliem (XMPP, "
-"MSN, IRC, TOC). Spiediet “Enter” ievadīšanas lodziņā, lai nosūtītu. "
-"Uzraugiet atkļūdošanas logu."
+"IRC, TOC). Spiediet “Enter” ievadīšanas lodziņā, lai nosūtītu. Uzraugiet "
+"atkļūdošanas logu."
 
 #, c-format
 msgid "You can upgrade to %s %s today."
@@ -15050,14 +12980,10 @@ msgstr "Mainīgs caurspīdīgums draugu sarakstam un sarunām."
 #. *  description
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
-"the buddy list.\n"
-"\n"
-"* Note: This plugin requires Win2000 or greater."
+"the buddy list."
 msgstr ""
 "Šis spraudnis ieslēdz mainīgu alfa caurspīdīgumu uz sarunu logiem un draugu "
-"saraksta.\n"
-"\n"
-"* Piezīme: Šis spraudnis pieprasa Win2000 vai jaunāku."
+"saraksta."
 
 #. Autostart
 msgid "Startup"

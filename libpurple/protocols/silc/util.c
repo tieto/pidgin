@@ -623,7 +623,7 @@ SilcDList silcpurple_image_message(const char *msg, SilcMessageFlags *mflags)
 		if (uri)
 			image = purple_image_store_get_from_uri(uri);
 		if (uri) {
-			unsigned long imglen = purple_image_get_size(image);
+			unsigned long imglen = purple_image_get_data_size(image);
 			gconstpointer img = purple_image_get_data(image);
 			const gchar *type;
 

@@ -35,6 +35,8 @@
 #include <gnome-keyring.h>
 #include <gnome-keyring-memory.h>
 
+#warning Gnome-Keyring API is deprecated, please use libSecret keyring instead.
+
 #define GNOMEKEYRING_NAME        N_("GNOME Keyring")
 #define GNOMEKEYRING_DESCRIPTION N_("This plugin will store passwords in " \
 	"GNOME Keyring.")
@@ -73,7 +75,9 @@ static void gnomekeyring_request_free(gnomekeyring_request *req)
 {
 	if (req->password != NULL) {
 		memset(req->password, 0, strlen(req->password));
+		G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		gnome_keyring_memory_free(req->password);
+		G_GNUC_END_IGNORE_DEPRECATIONS
 	}
 	g_free(req);
 }
@@ -303,18 +307,21 @@ gnomekeyring_process_queue(void)
 	}
 
 	if (req->type == GNOMEKEYRING_REQUEST_READ) {
+		G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		current_request = gnome_keyring_find_password(
 			GNOME_KEYRING_NETWORK_PASSWORD, gnomekeyring_read_cb,
 			req, gnomekeyring_request_cancel,
 			"user", purple_account_get_username(account),
 			"protocol", purple_account_get_protocol_id(account),
 			NULL);
+		G_GNUC_END_IGNORE_DEPRECATIONS
 	} else if (req->type == GNOMEKEYRING_REQUEST_SAVE &&
 		req->password != NULL)
 	{
 		gchar *display_name = g_strdup_printf(
 			_("Pidgin IM password for account %s"),
 			purple_account_get_username(account));
+		G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		current_request = gnome_keyring_store_password(
 			GNOME_KEYRING_NETWORK_PASSWORD, GNOME_KEYRING_DEFAULT,
 			display_name, req->password, gnomekeyring_save_cb, req,
@@ -322,16 +329,19 @@ gnomekeyring_process_queue(void)
 			"user", purple_account_get_username(account),
 			"protocol", purple_account_get_protocol_id(account),
 			NULL);
+		G_GNUC_END_IGNORE_DEPRECATIONS
 		g_free(display_name);
 	} else if (req->type == GNOMEKEYRING_REQUEST_SAVE &&
 		req->password == NULL)
 	{
+		G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		current_request = gnome_keyring_delete_password(
 			GNOME_KEYRING_NETWORK_PASSWORD, gnomekeyring_save_cb,
 			req, gnomekeyring_request_cancel,
 			"user", purple_account_get_username(account),
 			"protocol", purple_account_get_protocol_id(account),
 			NULL);
+		G_GNUC_END_IGNORE_DEPRECATIONS
 	} else {
 		g_return_if_reached();
 	}
@@ -365,7 +375,9 @@ gnomekeyring_save(PurpleAccount *account, const gchar *password,
 	req = g_new0(gnomekeyring_request, 1);
 	req->type = GNOMEKEYRING_REQUEST_SAVE;
 	req->account = account;
+	G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 	req->password = gnome_keyring_memory_strdup(password);
+	G_GNUC_END_IGNORE_DEPRECATIONS
 	req->cb.save = cb;
 	req->cb_data = data;
 
@@ -375,9 +387,13 @@ gnomekeyring_save(PurpleAccount *account, const gchar *password,
 static void
 gnomekeyring_cancel(void)
 {
+	G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 	gnomekeyring_cancel_queue();
+	G_GNUC_END_IGNORE_DEPRECATIONS
 	if (current_request) {
+		G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 		gnome_keyring_cancel_request(current_request);
+		G_GNUC_END_IGNORE_DEPRECATIONS
 		while (g_main_iteration(FALSE));
 	}
 }
@@ -430,7 +446,9 @@ plugin_load(PurplePlugin *plugin, GError **error)
 	}
 	g_module_make_resident(gkr_module);
 
+	G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 	if (!gnome_keyring_is_available()) {
+		G_GNUC_END_IGNORE_DEPRECATIONS
 		g_set_error(error, GNOMEKEYRING_DOMAIN, 0, "GNOME Keyring service is "
 			"disabled.");
 		purple_debug_info("keyring-gnome", "GNOME Keyring service is "

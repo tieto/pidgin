@@ -34,7 +34,6 @@
 #include "gtkutils.h"
 
 #include "protocols/jabber/jabber.h"
-#include "protocols/msn/session.h"
 
 #ifdef MAX
 # undef MAX
@@ -73,7 +72,7 @@ text_sent_cb(GtkEntry *entry)
 
 	purple_debug_misc("raw", "protocol_id = %s\n", protocol_id);
 
-	if (strcmp(protocol_id, "prpl-toc") == 0) {
+	if (purple_strequal(protocol_id, "prpl-toc")protocol_id) {
 		int *a = (int *)purple_connection_get_protocol_data(gc);
 		unsigned short seqno = htons(a[1]++ & 0xffff);
 		unsigned short len = htons(strlen(txt) + 1);
@@ -83,19 +82,12 @@ text_sent_cb(GtkEntry *entry)
 		write(*a, txt, ntohs(len));
 		purple_debug(PURPLE_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
 
-	} else if (strcmp(protocol_id, "prpl-msn") == 0) {
-		MsnSession *session = purple_connection_get_protocol_data(gc);
-		char buf[strlen(txt) + 3];
-
-		g_snprintf(buf, sizeof(buf), "%s\r\n", txt);
-		msn_servconn_write(session->notification->servconn, buf, strlen(buf));
-
-	} else if (strcmp(protocol_id, "prpl-irc") == 0) {
-		write(*(int *)purple_connection_get_protocol_data(gc), txt, strlen(txt));
-		write(*(int *)purple_connection_get_protocol_data(gc), "\r\n", 2);
+	} else if (purple_strequal(protocol_id, "prpl-irc")) {
+		write(*(int *)gc->proto_data, txt, strlen(txt));
+		write(*(int *)gc->proto_data, "\r\n", 2);
 		purple_debug(PURPLE_DEBUG_MISC, "raw", "IRC C: %s\n", txt);
 
-	} else if (strcmp(protocol_id, "prpl-jabber") == 0) {
+	} else if (purple_strequal(protocol_id, "prpl-jabber")) {
 		jabber_send_raw((JabberStream *)purple_connection_get_protocol_data(gc), txt, -1);
 
 	} else {
@@ -127,7 +119,7 @@ plugin_query(GError **error)
 		"category",     N_("Protocol utility"),
 		"summary",      N_("Lets you send raw input to text-based protocols."),
 		"description",  N_("Lets you send raw input to text-based protocols "
-		                   "(XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry "
+		                   "(XMPP, IRC, TOC). Hit 'Enter' in the entry "
 		                   "box to send. Watch the debug window."),
 		"authors",      authors,
 		"website",      PURPLE_WEBSITE,

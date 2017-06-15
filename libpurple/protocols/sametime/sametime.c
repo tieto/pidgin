@@ -697,7 +697,7 @@ static void blist_export(PurpleConnection *gc, struct mwSametimeList *stlist) {
 
     /* if the group has an owner and we're not it, skip it */
     owner = purple_blist_node_get_string(gn, GROUP_KEY_OWNER);
-    if(owner && strcmp(owner, purple_account_get_username(acct)))
+    if(owner && !purple_strequal(owner, purple_account_get_username(acct)))
       continue;
 
     /* the group's actual name may be different from the purple group's
@@ -950,8 +950,8 @@ static PurpleGroup *group_ensure(PurpleConnection *gc,
 
     DEBUG_INFO("found group named %s, owned by %s\n", NSTR(n), NSTR(o));
 
-    if(n && !strcmp(n, name)) {
-      if(!o || !strcmp(o, owner)) {
+    if(n && purple_strequal(n, name)) {
+      if(!o || purple_strequal(o, owner)) {
 	DEBUG_INFO("that'll work\n");
 	group = (PurpleGroup *) gn;
 	break;
@@ -1182,7 +1182,7 @@ static void blist_sync(PurpleConnection *gc, struct mwSametimeList *stlist) {
 
     /* dynamic group belonging to this account. don't prune contents */
     owner = purple_blist_node_get_string(gn, GROUP_KEY_OWNER);
-    if(owner && !strcmp(owner, acct_n))
+    if(owner && purple_strequal(owner, acct_n))
        continue;
 
     /* we actually are synching by this key as opposed to the group
@@ -1214,7 +1214,7 @@ static void blist_sync(PurpleConnection *gc, struct mwSametimeList *stlist) {
     gboolean del = TRUE;
 
     owner = purple_blist_node_get_string(gn, GROUP_KEY_OWNER);
-    if(owner && strcmp(owner, acct_n)) {
+    if(owner && !purple_strequal(owner, acct_n)) {
       /* it's a specialty group belonging to another account with some
 	 of our members in it, so don't fully delete it */
       del = FALSE;
@@ -1367,7 +1367,7 @@ static void blist_node_menu_cb(PurpleBlistNode *node,
 
   /* check if it's a NAB group for this account */
   owner = purple_blist_node_get_string(node, GROUP_KEY_OWNER);
-  if(owner && !strcmp(owner, purple_account_get_username(acct))) {
+  if(owner && purple_strequal(owner, purple_account_get_username(acct))) {
     act = purple_menu_action_new(_("Get Notes Address Book Info"),
                                PURPLE_CALLBACK(blist_menu_nab), pd, NULL);
     *menu = g_list_append(*menu, act);
@@ -1439,7 +1439,7 @@ static void services_starting(struct mwPurpleProtocolData *pd) {
     /* if the group is ownerless, or has an owner and we're not it,
        skip it */
     owner = purple_blist_node_get_string(l, GROUP_KEY_OWNER);
-    if(!owner || strcmp(owner, purple_account_get_username(acct)))
+    if(!owner || !purple_strequal(owner, purple_account_get_username(acct)))
       continue;
 
     gt = purple_blist_node_get_int(l, GROUP_KEY_TYPE);
@@ -1479,7 +1479,7 @@ static void session_loginRedirect(struct mwSession *session,
 					 MW_PLUGIN_DEFAULT_HOST);
 
   if(purple_account_get_bool(account, MW_KEY_FORCE, FALSE) ||
-     !host || (! strcmp(current_host, host)) ||
+     !host || purple_strequal(current_host, host) ||
      (purple_proxy_connect(gc, account, host, port, connect_cb, pd) == NULL)) {
 
     /* if we're configured to force logins, or if we're being
@@ -3878,8 +3878,8 @@ static char *im_mime_convert(PurpleConnection *gc,
 
       /* obtain and base64 encode the image data, and put it in the
 	 mime part */
-      size = purple_image_get_size(img);
-      data = purple_base64_encode(purple_image_get_data(img), size);
+      size = purple_image_get_data_size(img);
+      data = g_base64_encode(purple_image_get_data(img), size);
       purple_mime_part_set_data(part, data);
       g_free(data);
 
@@ -4189,13 +4189,13 @@ static void mw_protocol_set_status(PurpleAccount *acct, PurpleStatus *status) {
   mwUserStatus_clone(&stat, mwSession_getUserStatus(session));
 
   /* determine the state */
-  if(! strcmp(state, MW_STATE_ACTIVE)) {
+  if(purple_strequal(state, MW_STATE_ACTIVE)) {
     stat.status = mwStatus_ACTIVE;
 
-  } else if(! strcmp(state, MW_STATE_AWAY)) {
+  } else if(purple_strequal(state, MW_STATE_AWAY)) {
     stat.status = mwStatus_AWAY;
 
-  } else if(! strcmp(state, MW_STATE_BUSY)) {
+  } else if(purple_strequal(state, MW_STATE_BUSY)) {
     stat.status = mwStatus_BUSY;
   }
 
@@ -4360,7 +4360,7 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
       struct mwResolveMatch *match = res->matches->data;
 
       /* only one? that might be the right one! */
-      if(strcmp(res->name, match->id)) {
+      if(!purple_strequal(res->name, match->id)) {
 	/* uh oh, the single result isn't identical to the search
 	   term, better safe then sorry, so let's make sure it's who
 	   the user meant to add */
@@ -4649,7 +4649,7 @@ static struct mwConference *conf_find(struct mwServiceConference *srvc,
   ll = mwServiceConference_getConferences(srvc);
   for(l = ll; l; l = l->next) {
     struct mwConference *c = l->data;
-    if(! strcmp(name, mwConference_getName(c))) {
+    if(purple_strequal(name, mwConference_getName(c))) {
       conf = c;
       break;
     }

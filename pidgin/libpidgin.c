@@ -332,24 +332,26 @@ static GHashTable *pidgin_ui_get_info(void)
 		g_hash_table_insert(ui_info, "client_type", "pc");
 
 		/*
-		 * This is the client key for "Pidgin."  It is owned by the AIM
-		 * account "markdoliner."  Please don't use this key for other
-		 * applications.  You can either not specify a client key, in
-		 * which case the default "libpurple" key will be used, or you
-		 * can try to register your own at the AIM or ICQ web sites
-		 * (although this functionality was removed at some point, it's
-		 * possible it has been re-added).  AOL's old key management
-		 * page is http://developer.aim.com/manageKeys.jsp
+		 * prpl-aim-clientkey is a DevID (or "client key") for Pidgin, given to
+		 * us by AOL in September 2016.  prpl-icq-clientkey is also a client key
+		 * for Pidgin, owned by the AIM account "markdoliner."  Please don't use 
+		 * either for other applications.  Instead, you can either not specify a 
+		 * client key, in which case the default "libpurple" key will be used,
+		 * or you can try to register your own at the AIM or ICQ web sites
+		 * (although this functionality was removed at some point, it's possible 
+		 * it has been re-added).
 		 */
-		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "ma1cSASNCKFtrdv9");
+		g_hash_table_insert(ui_info, "prpl-aim-clientkey", "do1UCeb5gNqxB1S1");
 		g_hash_table_insert(ui_info, "prpl-icq-clientkey", "ma1cSASNCKFtrdv9");
 
 		/*
-		 * This is the distid for Pidgin, given to us by AOL.  Please
-		 * don't use this for other applications.  You can just not
-		 * specify a distid and libpurple will use a default.
+		 * prpl-aim-distid is a distID for Pidgin, given to us by AOL in
+		 * September 2016.  prpl-icq-distid is also a distID for Pidgin, given
+		 * to us by AOL.  Please don't use either for other applications.
+		 * Instead, you can just not specify a distID and libpurple will use a
+		 * default.
 		 */
-		g_hash_table_insert(ui_info, "prpl-aim-distid", GINT_TO_POINTER(1550));
+		g_hash_table_insert(ui_info, "prpl-aim-distid", GINT_TO_POINTER(1715));
 		g_hash_table_insert(ui_info, "prpl-icq-distid", GINT_TO_POINTER(1550));
 	}
 

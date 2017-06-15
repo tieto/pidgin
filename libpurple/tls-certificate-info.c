@@ -23,7 +23,6 @@
 
 #include "internal.h"
 #include "tls-certificate-info.h"
-#include "ciphers/sha1hash.h"
 #include "debug.h"
 #include "util.h"
 
@@ -789,7 +788,7 @@ purple_tls_certificate_info_get_subject_name(PurpleTlsCertificateInfo *info)
 GByteArray *
 purple_tls_certificate_get_fingerprint_sha1(GTlsCertificate *certificate)
 {
-	PurpleHash *hash;
+	GChecksum *hash;
 	GByteArray *der = NULL;
 	guint8 *data = NULL;
 	gsize buf_size = 0;
@@ -800,16 +799,16 @@ purple_tls_certificate_get_fingerprint_sha1(GTlsCertificate *certificate)
 
 	g_return_val_if_fail(der != NULL, NULL);
 
-	hash = purple_sha1_hash_new();
+	hash = g_checksum_new(G_CHECKSUM_SHA1);
 
-	buf_size = purple_hash_get_digest_size(hash);
+	buf_size = g_checksum_type_get_length(G_CHECKSUM_SHA1);
 	data = g_malloc(buf_size);
 
-	purple_hash_append(hash, der->data, der->len);
+	g_checksum_update(hash, der->data, der->len);
 	g_byte_array_unref(der);
 
-	purple_hash_digest(hash, data, buf_size);
-	g_object_unref(hash);
+	g_checksum_get_digest(hash, data, &buf_size);
+	g_checksum_free(hash);
 
 	return g_byte_array_new_take(data, buf_size);
 }

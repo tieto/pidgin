@@ -287,43 +287,6 @@ guchar *purple_base16_decode(const char *str, gsize *ret_len);
  */
 gchar *purple_base16_encode_chunked(const guchar *data, gsize len);
 
-
-/**************************************************************************/
-/* Base64 Functions                                                       */
-/**************************************************************************/
-
-/**
- * purple_base64_encode:
- * @data: The data to convert.
- * @len:  The length of the data.
- *
- * Converts a chunk of binary data to its base-64 equivalent.
- *
- *  See purple_base64_decode()
- *
- * Returns: The base-64 string in the ASCII encoding.  Must be
- *         g_free'd when no longer needed.
- */
-gchar *purple_base64_encode(const guchar *data, gsize len);
-
-/**
- * purple_base64_decode:
- * @str:     The base-64 string to convert to raw data.
- * @ret_len: The length of the returned data.  You can
- *                pass in NULL if you're sure that you know
- *                the length of the decoded data, or if you
- *                know you'll be able to use strlen to
- *                determine the length, etc.
- *
- * Converts an ASCII string of base-64 encoded data to
- * the binary equivalent.
- *
- *  See purple_base64_encode()
- *
- * Returns: The raw data.  Must be g_free'd when no longer needed.
- */
-guchar *purple_base64_decode(const char *str, gsize *ret_len);
-
 /**************************************************************************/
 /* Quoted Printable Functions                                             */
 /**************************************************************************/
@@ -592,8 +555,8 @@ gboolean purple_markup_find_tag(const char *needle, const char *haystack,
  *
  * Extracts a field of data from HTML.
  *
- * This is a scary function. See protocols/msn/msn.c and
- * protocols/yahoo/yahoo_profile.c for example usage.
+ * This is a scary function. It used to be used for MSN and Yahoo prpls,
+ * but since those prpls have been removed, this is now deprecated.
  *
  * Returns: TRUE if successful, or FALSE otherwise.
  */

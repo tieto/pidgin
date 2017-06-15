@@ -163,7 +163,7 @@ edit_dialog_image_choosen(const char *filename, gpointer _edit_dialog)
 	if (!filename)
 		return;
 
-	image = purple_image_new_from_file(filename, TRUE);
+	image = purple_image_new_from_file(filename, NULL);
 	if (!image)
 		return;
 
@@ -238,8 +238,8 @@ edit_dialog_save(SmileyEditDialog *edit_dialog)
 	if (edit_dialog->smiley == NULL)
 		shortcut_changed = image_changed = TRUE;
 	else {
-		shortcut_changed = (g_strcmp0(purple_smiley_get_shortcut(
-			edit_dialog->smiley), shortcut) != 0);
+		shortcut_changed = purple_strequal(purple_smiley_get_shortcut(
+			edit_dialog->smiley), shortcut);
 		image_changed = (edit_dialog->new_image != NULL);
 	}
 
@@ -249,8 +249,7 @@ edit_dialog_save(SmileyEditDialog *edit_dialog)
 	}
 
 	if (edit_dialog->new_image == NULL) {
-		edit_dialog->new_image =
-			purple_smiley_get_image(edit_dialog->smiley);
+		edit_dialog->new_image = PURPLE_IMAGE(edit_dialog->smiley);
 		g_return_if_fail(edit_dialog->new_image);
 	}
 
@@ -392,7 +391,7 @@ edit_dialog_show(SmileyManager *manager, PurpleSmiley *smiley)
 
 	if (smiley) {
 		edit_dialog->filename = g_strdup(purple_image_get_path(
-			purple_smiley_get_image(smiley)));
+			PURPLE_IMAGE(smiley)));
 		gtk_entry_set_text(edit_dialog->shortcut,
 			purple_smiley_get_shortcut(smiley));
 	}
@@ -506,7 +505,7 @@ smiley_list_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			return;
 		}
 
-		image = purple_image_new_from_file(filename, TRUE);
+		image = purple_image_new_from_file(filename, NULL);
 		if (!image) {
 			purple_debug_warning("gtksmiley-manager",
 				"dropped file is not a valid image");
@@ -587,8 +586,7 @@ manager_list_add(SmileyManager *manager, PurpleSmiley *smiley)
 	smiley_image = g_object_get_data(G_OBJECT(smiley),
 		"pidgin-smiley-manager-list-thumb");
 	if (smiley_image == NULL) {
-		smiley_image = pidgin_pixbuf_from_image(
-			purple_smiley_get_image(smiley));
+		smiley_image = pidgin_pixbuf_from_image(PURPLE_IMAGE(smiley));
 		smiley_image = pidgin_pixbuf_scale_down(smiley_image,
 			22, 22, GDK_INTERP_BILINEAR, TRUE);
 		g_object_set_data_full(G_OBJECT(smiley),

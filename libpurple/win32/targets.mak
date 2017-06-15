@@ -22,7 +22,7 @@ $(PURPLE_VERSION_H): $(PURPLE_VERSION_H).in $(PIDGIN_TREE_TOP)/configure.ac
 
 $(PIDGIN_REVISION_RAW_TXT):
 	@echo -e "  GEN\t$@"
-	@(hg --cwd $(PIDGIN_TREE_TOP) id -i --debug) 2>/dev/null >$@ \
+	@(hg --cwd $(PIDGIN_TREE_TOP) log -r . -T '{node}') 2>/dev/null >$@ \
 	|| rm -f $@
 
 $(PIDGIN_REVISION_H): $(PIDGIN_REVISION_RAW_TXT)
@@ -35,9 +35,6 @@ $(PIDGIN_REVISION_H): $(PIDGIN_REVISION_RAW_TXT)
 $(PURPLE_DLL) $(PURPLE_DLL).a: $(PURPLE_VERSION_H)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) libpurple.dll
 
-$(PURPLE_PERL_DLL) $(PURPLE_PERL_DLL).a:
-	$(MAKE) -C $(PURPLE_PERL_TOP) -f $(MINGW_MAKEFILE) perl.dll
-
 $(PIDGIN_DLL) $(PIDGIN_DLL).a:
 	$(MAKE_at) $(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) pidgin.dll
 
@@ -48,9 +45,6 @@ $(PIDGIN_EXE):
 $(PIDGIN_INSTALL_DIR):
 	mkdir -p $(PIDGIN_INSTALL_DIR)
 
-$(PIDGIN_INSTALL_PERL_DIR):
-	mkdir -p $(PIDGIN_INSTALL_PERL_DIR)
-
 $(PIDGIN_INSTALL_PLUGINS_DIR):
 	mkdir -p $(PIDGIN_INSTALL_PLUGINS_DIR)
 
@@ -59,6 +53,3 @@ $(PURPLE_INSTALL_PO_DIR):
 
 #$(PURPLE_INSTALL_PLUGINS_DIR):
 #	mkdir -p $(PURPLE_INSTALL_PLUGINS_DIR)
-
-#$(PURPLE_INSTALL_PERL_DIR):
-#	mkdir -p $(PURPLE_INSTALL_PERL_DIR)

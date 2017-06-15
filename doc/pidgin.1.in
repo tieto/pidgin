@@ -29,11 +29,10 @@ pidgin \- Instant Messaging client
 .SH DESCRIPTION
 .PP
 \fBpidgin\fR is a graphical modular messaging client based on libpurple
-which is capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC,
+which is capable of connecting to AIM, XMPP, ICQ, IRC, SILC,
 Novell GroupWise, Lotus Sametime, Zephyr, Gadu-Gadu, and QQ all at once. It has
 many common features found in other clients, as well as many unique features.
-Pidgin is not endorsed by or affiliated with America Online, ICQ, Microsoft, or
-Yahoo.
+Pidgin is not endorsed by or affiliated with America Online, ICQ, or Microsoft.
 .PP
 Pidgin can be extended by plugins written in multiple programming languages and
 controlled through DBus or \fBpurple-remote\fR.
@@ -93,7 +92,7 @@ protocols, aliases are saved on the server but not visible to other users.  On
 other protocols, aliases are saved only locally.
 .TP
 .B Protocol
-A messaging service.  AIM, XMPP, MSN, Zephyr, etc. are protocols.  Others may
+A messaging service.  AIM, XMPP, Zephyr, etc. are protocols.  Others may
 call these "service types," "account types," "services," and so on.
 
 .SH BUDDY LIST
@@ -521,15 +520,6 @@ text \fIPlugin Details\fR.  If the selected plugin has preferences or
 configuration options, the \fIConfigure Plugin\fR button will present the
 plugin's preferences dialog.
 
-.SH PERL
-Pidgin allows for plugins to be written in the perl scripting language.  See
-\fIPerl Scripting HOWTO\fR in the Pidgin documentation for more information
-about perl scripting.
-
-.SH TCL
-Pidgin allows for plugins to be written in the Tcl scripting language. See
-\fIplugins/tcl/TCL-HOWTO\fR for more information about Tcl scripting.
-
 .SH D-Bus
 Pidgin allows for interaction via D-Bus.  Currently very little documentation
 about this interaction exists.
@@ -612,8 +602,6 @@ Pidgin's active developers are:
 .br
   Sadrul Habib Chowdhury (developer)
 .br
-  Mark 'KingAnt' Doliner (developer) <\fIthekingant@users.sourceforge.net\fR>
-.br
   Gary 'grim' Kramlich (developer)
 .br
   Richard 'rlaager' Laager (developer) <\fIrlaager@pidgin.im\fR>
@@ -669,6 +657,8 @@ Our retired developers are:
   Thomas Butter (developer)
 .br
   Ka-Hing Cheung (developer)
+.br
+  Mark 'KingAnt' Doliner (developer) <\fIthekingant@users.sourceforge.net\fR>
 .br
   Jim Duchek <\fIjim@linuxpimps.com\fR> (maintainer)
 .br

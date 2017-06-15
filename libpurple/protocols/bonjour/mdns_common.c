@@ -186,7 +186,7 @@ void bonjour_dns_sd_update_buddy_icon(BonjourDnsSd *data) {
 		gsize avatar_len;
 
 		avatar_data = purple_image_get_data(img);
-		avatar_len = purple_image_get_size(img);
+		avatar_len = purple_image_get_data_size(img);
 
 		if (_mdns_set_buddy_icon_data(data, avatar_data, avatar_len)) {
 			g_free(data->phsh);

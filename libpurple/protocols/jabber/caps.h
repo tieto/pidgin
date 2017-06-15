@@ -27,7 +27,6 @@
 typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 
 #include "jabber.h"
-#include "cipher.h"
 
 /* Implementation of XEP-0115 - Entity Capabilities */
 
@@ -96,10 +95,11 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node,
  *	XEP-0115 Version 1.5.
  *
  *	@param info A JabberCapsClientInfo pointer.
- *	@param hash Hash cipher to be used. Either sha-1 or md5.
+ *	@param hash_type GChecksumType to be used. Either sha-1 or md5.
  *	@return		The base64 encoded SHA-1 hash; must be freed by caller
  */
-gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleHash *hash);
+gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info,
+                                  GChecksumType hash_type);
 
 /**
  *  Calculate SHA1 hash for own featureset.

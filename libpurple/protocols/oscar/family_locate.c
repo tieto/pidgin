@@ -1074,7 +1074,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 						 * with no mood icon. */
 						if (*icqmood) {
 							for (i = 0; icqmoods[i].icqmood; i++) {
-								if (!strcmp(icqmood, icqmoods[i].icqmood)) {
+								if (purple_strequal(icqmood, icqmoods[i].icqmood)) {
 									mood = icqmoods[i].mood;
 									break; /* should only match once... */
 								}
@@ -1515,7 +1515,7 @@ icq_get_custom_icon_description(const char *mood)
 		/* We check that description is not NULL to exclude
 		 * duplicates, like the typing duplicate. */
 		if (icq_purple_moods[i].description &&
-		    !strcmp(mood, icq_custom_icons[i].mood)) {
+		    purple_strequal(mood, icq_custom_icons[i].mood)) {
 			return icq_purple_moods[i].description;
 		}
 	}
@@ -1535,7 +1535,7 @@ icq_get_custom_icon_data(const char *mood)
 		/* We check that description is not NULL to exclude
 		 * duplicates, like the typing duplicate. */
 		if (icq_purple_moods[i].description &&
-		    !strcmp(mood, icq_custom_icons[i].mood)) {
+		    purple_strequal(mood, icq_custom_icons[i].mood)) {
 			return (guint8 *)icq_custom_icons[i].data;
 		}
 	}

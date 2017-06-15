@@ -143,11 +143,11 @@ static void jabber_oob_xfer_recv_error(PurpleXfer *xfer, const char *code) {
 	jabber_iq_set_id(iq, jox->iq_id);
 	y = purple_xmlnode_new_child(iq->node, "error");
 	purple_xmlnode_set_attrib(y, "code", code);
-	if(!strcmp(code, "406")) {
+	if(purple_strequal(code, "406")) {
 		z = purple_xmlnode_new_child(y, "not-acceptable");
 		purple_xmlnode_set_attrib(y, "type", "modify");
 		purple_xmlnode_set_namespace(z, NS_XMPP_STANZAS);
-	} else if(!strcmp(code, "404")) {
+	} else if(purple_strequal(code, "404")) {
 		z = purple_xmlnode_new_child(y, "not-found");
 		purple_xmlnode_set_attrib(y, "type", "cancel");
 		purple_xmlnode_set_namespace(z, NS_XMPP_STANZAS);

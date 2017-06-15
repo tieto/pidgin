@@ -147,7 +147,7 @@ docklet_update_status(void)
 	/* determine if any ims have unseen messages */
 	convs = get_pending_list(DOCKLET_TOOLTIP_LINE_LIMIT);
 
-	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "pending")) {
+	if (purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "pending")) {
 		if (convs && !visible) {
 			g_list_free(convs);
 			docklet_gtk_status_create(FALSE);
@@ -300,14 +300,14 @@ docklet_show_pref_changed_cb(const char *name, PurplePrefType type,
 			     gconstpointer value, gpointer data)
 {
 	const char *val = value;
-	if (!strcmp(val, "always")) {
+	if (purple_strequal(val, "always")) {
 		if (!visible)
 			docklet_gtk_status_create(FALSE);
 		else if (!visibility_manager) {
 			pidgin_blist_visibility_manager_add();
 			visibility_manager = TRUE;
 		}
-	} else if (!strcmp(val, "never")) {
+	} else if (purple_strequal(val, "never")) {
 		if (visible)
 			docklet_gtk_status_destroy();
 	} else {
@@ -433,7 +433,7 @@ activate_status_account_cb(GtkMenuItem *menuitem, gpointer user_data)
 				if (sub) {
 					const PurpleStatusType *sub_type = purple_savedstatus_substatus_get_status_type(sub);
 					const char *subtype_status_id = purple_status_type_get_id(sub_type);
-					if (subtype_status_id && !strcmp(subtype_status_id,
+					if (subtype_status_id && purple_strequal(subtype_status_id,
 							purple_status_type_get_id(status_type)))
 						found = TRUE;
 				}
@@ -745,7 +745,7 @@ docklet_menu(void)
 
 	menuitem = gtk_check_menu_item_new_with_mnemonic(_("Mute _Sounds"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/sound/mute"));
-	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"))
+	if (purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"))
 		gtk_widget_set_sensitive(GTK_WIDGET(menuitem), FALSE);
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -796,7 +796,7 @@ static void
 pidgin_docklet_embedded(void)
 {
 	if (!visibility_manager
-	    && strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "pending")) {
+	    && !purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "pending")) {
 		pidgin_blist_visibility_manager_add();
 		visibility_manager = TRUE;
 	}
@@ -991,7 +991,7 @@ pidgin_docklet_init()
 	gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), tmp);
 	g_free(tmp);
 
-	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "always"))
+	if (purple_strequal(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "always"))
 		docklet_gtk_status_create(FALSE);
 
 	purple_signal_connect(conn_handle, "signed-on",

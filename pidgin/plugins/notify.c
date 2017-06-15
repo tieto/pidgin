@@ -614,7 +614,7 @@ method_toggle_cb(GtkWidget *widget, gpointer data)
 
 	purple_prefs_set_bool(pref, on);
 
-	if (!strcmp(data, "method_string")) {
+	if (purple_strequal(data, "method_string")) {
 		GtkWidget *entry = g_object_get_data(G_OBJECT(widget), "title-entry");
 		gtk_widget_set_sensitive(entry, on);
 
@@ -645,7 +645,7 @@ options_entry_cb(GtkWidget *widget, GdkEventFocus *evt, gpointer data)
 	if (data == NULL)
 		return FALSE;
 
-	if (!strcmp(data, "method_string")) {
+	if (purple_strequal(data, "method_string")) {
 		purple_prefs_set_string("/plugins/gtk/X11/notify/title_string",
 		                      gtk_entry_get_text(GTK_ENTRY(widget)));
 	}
@@ -713,7 +713,7 @@ get_config_frame(PurplePlugin *plugin)
 	                 G_CALLBACK(type_toggle_cb), "type_im");
 
 	ref = toggle;
-	toggle = gtk_check_button_new_with_mnemonic(_("\t_Notify for System messages"));
+	toggle = gtk_check_button_new_with_mnemonic(_("\tS_ystem messages"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
 	                            purple_prefs_get_bool("/plugins/gtk/X11/notify/type_im_sys"));
@@ -741,7 +741,7 @@ get_config_frame(PurplePlugin *plugin)
 	g_signal_connect(G_OBJECT(ref), "toggled",
 	                 G_CALLBACK(pidgin_toggle_sensitive), toggle);
 
-	toggle = gtk_check_button_new_with_mnemonic(_("\tNotify for _System messages"));
+	toggle = gtk_check_button_new_with_mnemonic(_("\tS_ystem messages"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
 	                            purple_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_sys"));

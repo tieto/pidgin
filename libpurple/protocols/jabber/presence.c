@@ -69,7 +69,7 @@ str_to_presence_type(const char *type)
 		return JABBER_PRESENCE_AVAILABLE;
 
 	for (i = 0; i < G_N_ELEMENTS(jabber_presence_types); ++i)
-		if (g_str_equal(type, jabber_presence_types[i].name))
+		if (purple_strequal(type, jabber_presence_types[i].name))
 			return jabber_presence_types[i].type;
 
 	purple_debug_warning("jabber", "Unknown presence type '%s'\n", type);
@@ -212,12 +212,10 @@ void jabber_presence_send(JabberStream *js, gboolean force)
 		stripped = jabber_google_presence_outgoing(tune);
 	}
 
-#define CHANGED(a,b) ((!a && b) || (a && a[0] == '\0' && b && b[0] != '\0') || \
-					  (a && !b) || (a && a[0] != '\0' && b && b[0] == '\0') || (a && b && strcmp(a,b)))
 	/* check if there are any differences to the <presence> and send them in that case */
 	if (force || allowBuzz != js->allowBuzz || js->old_state != state ||
-		CHANGED(js->old_msg, stripped) || js->old_priority != priority ||
-		CHANGED(js->old_avatarhash, js->avatar_hash) || js->old_idle != js->idle) {
+		!purple_strequal(js->old_msg, stripped) || js->old_priority != priority ||
+		!purple_strequal(js->old_avatarhash, js->avatar_hash) || js->old_idle != js->idle) {
 		/* Need to update allowBuzz before creating the presence (with caps) */
 		js->allowBuzz = allowBuzz;
 
@@ -266,8 +264,9 @@ void jabber_presence_send(JabberStream *js, gboolean force)
 				purple_status_get_attr_int(tune, PURPLE_TUNE_TIME);
 	}
 
-	if(CHANGED(artist, js->old_artist) || CHANGED(title, js->old_title) || CHANGED(source, js->old_source) ||
-	   CHANGED(uri, js->old_uri) || CHANGED(track, js->old_track) || (length != js->old_length)) {
+	if(!purple_strequal(artist, js->old_artist) || !purple_strequal(title, js->old_title) ||
+			!purple_strequal(source, js->old_source) || !purple_strequal(uri, js->old_uri) ||
+			!purple_strequal(track, js->old_track) || (length != js->old_length)) {
 		PurpleJabberTuneInfo tuneinfo = {
 			(char*)artist,
 			(char*)title,
@@ -458,11 +457,12 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 
 			if ((binval = purple_xmlnode_get_child(photo, "BINVAL")) &&
 					(text = purple_xmlnode_get_data(binval))) {
-				data = purple_base64_decode(text, &size);
+				data = g_base64_decode(text, &size);
 				g_free(text);
 
 				if (data)
-					hash = jabber_calculate_data_hash(data, size, "sha1");
+					g_compute_checksum_for_data(
+						G_CHECKSUM_SHA1, data, size);
 			}
 
 			purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, data, size, hash);
@@ -593,7 +593,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, PurpleXmlNode *
 		}
 
 		if (g_slist_find(presence->chat_info.codes, GINT_TO_POINTER(110)) ||
-				g_str_equal(presence->jid_from->resource, chat->handle) ||
+				purple_strequal(presence->jid_from->resource, chat->handle) ||
 				purple_strequal(presence->to, jid))
 			is_our_resource = TRUE;
 
@@ -622,9 +622,9 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, PurpleXmlNode *
 		if (purple_strequal(affiliation, "owner"))
 			flags |= PURPLE_CHAT_USER_FOUNDER;
 		if (role) {
-			if (g_str_equal(role, "moderator"))
+			if (purple_strequal(role, "moderator"))
 				flags |= PURPLE_CHAT_USER_OP;
-			else if (g_str_equal(role, "participant"))
+			else if (purple_strequal(role, "participant"))
 				flags |= PURPLE_CHAT_USER_VOICE;
 		}
 
@@ -666,12 +666,12 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, PurpleXmlNode *
 		 */
 		if (!presence->jid_from->resource || !chat->conv || chat->left) {
 			if (chat->left &&
-					presence->jid_from->resource && chat->handle && !strcmp(presence->jid_from->resource, chat->handle))
+					presence->jid_from->resource && chat->handle && purple_strequal(presence->jid_from->resource, chat->handle))
 				jabber_chat_destroy(chat);
 			return FALSE;
 		}
 
-		is_our_resource = g_str_equal(presence->jid_from->resource, chat->handle);
+		is_our_resource = purple_strequal(presence->jid_from->resource, chat->handle);
 
 		jabber_buddy_remove_resource(presence->jb, presence->jid_from->resource);
 
@@ -700,7 +700,7 @@ handle_presence_chat(JabberStream *js, JabberPresence *presence, PurpleXmlNode *
 				} else {
 					nick_change = TRUE;
 
-					if (g_str_equal(presence->jid_from->resource, chat->handle)) {
+					if (purple_strequal(presence->jid_from->resource, chat->handle)) {
 						/* Changing our own nickname */
 						g_free(chat->handle);
 						/* TODO: This should be resourceprep'd */
@@ -1053,8 +1053,8 @@ void jabber_presence_parse(JabberStream *js, PurpleXmlNode *packet)
 
 			/* Look it up if we don't already have all this information */
 			if (!jbr || !jbr->caps.info ||
-					!g_str_equal(node, jbr->caps.info->tuple.node) ||
-					!g_str_equal(ver, jbr->caps.info->tuple.ver) ||
+					!purple_strequal(node, jbr->caps.info->tuple.node) ||
+					!purple_strequal(ver, jbr->caps.info->tuple.ver) ||
 					!purple_strequal(hash, jbr->caps.info->tuple.hash) ||
 					!jabber_caps_exts_known(jbr->caps.info, (gchar **)exts)) {
 				JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);

@@ -79,7 +79,7 @@ static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
 
 	normal = g_strdup(purple_normalize(a->account, a->buddyname));
 	ret = (a->account == b->account) &&
-		!strcmp(normal, purple_normalize(b->account, b->buddyname));
+		purple_strequal(normal, purple_normalize(b->account, b->buddyname));
 	g_free(normal);
 
 	return ret;
@@ -132,7 +132,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 		return;
 	}
 
-	if (lv->search != NULL && !strcmp(lv->search, search_term))
+	if (lv->search != NULL && purple_strequal(lv->search, search_term))
 	{
 		/* Searching for the same term acts as "Find Next" */
 		webkit_web_view_search_text(WEBKIT_WEB_VIEW(lv->web_view), lv->search, FALSE, TRUE, TRUE);
@@ -503,7 +503,7 @@ static void populate_log_tree(PidginLogViewer *lv)
 		month = purple_utf8_strftime(_("%B %Y"),
 		                           log->tm ? log->tm : localtime(&log->time));
 
-		if (strcmp(month, prev_top_month) != 0)
+		if (!purple_strequal(month, prev_top_month))
 		{
 			/* top level */
 			gtk_tree_store_append(lv->treestore, &toplevel, NULL);

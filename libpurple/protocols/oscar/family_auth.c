@@ -31,8 +31,6 @@
 
 #include <ctype.h>
 
-#include "ciphers/md5hash.h"
-
 /* #define USE_XOR_FOR_ICQ */
 
 #ifdef USE_XOR_FOR_ICQ
@@ -75,14 +73,15 @@ aim_encode_password(const char *password, guint8 *encoded)
 static int
 aim_encode_password_md5(const char *password, size_t password_len, const char *key, guint8 *digest)
 {
-	PurpleHash *hash;
+	GChecksum *hash;
+	gsize digest_len = 16;
 
-	hash = purple_md5_hash_new();
-	purple_hash_append(hash, (const guchar *)key, strlen(key));
-	purple_hash_append(hash, (const guchar *)password, password_len);
-	purple_hash_append(hash, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-	purple_hash_digest(hash, 16, digest, NULL);
-	g_object_unref(hash);
+	hash = g_checksum_new(G_CHECKSUM_MD5);
+	g_checksum_update(hash, (const guchar *)key, -1);
+	g_checksum_update(hash, (const guchar *)password, password_len);
+	g_checksum_update(hash, (const guchar *)AIM_MD5_STRING, -1);
+	g_checksum_get_digest(hash, digest, &digest_len);
+	g_checksum_free(hash);
 
 	return 0;
 }
@@ -90,19 +89,20 @@ aim_encode_password_md5(const char *password, size_t password_len, const char *k
 static int
 aim_encode_password_md5(const char *password, size_t password_len, const char *key, guint8 *digest)
 {
-	PurpleHash *hash;
+	GChecksum *hash;
 	guchar passdigest[16];
+	gsize digest_len = 16;
 
-	hash = purple_md5_hash_new();
-	purple_hash_append(hash, (const guchar *)password, password_len);
-	purple_hash_digest(hash, passdigest, sizeof(passdigest));
-	purple_hash_reset(hash);
+	hash = g_checksum_new(G_CHECKSUM_MD5);
+	g_checksum_update(hash, (const guchar *)password, password_len);
+	g_checksum_get_digest(hash, passdigest, &digest_len);
+	g_checksum_reset(hash);
 
-	purple_hash_append(hash, (const guchar *)key, strlen(key));
-	purple_hash_append(hash, passdigest, 16);
-	purple_hash_append(hash, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-	purple_hash_digest(hash, digest, 16);
-	g_object_unref(hash);
+	g_checksum_update(hash, (const guchar *)key, -1);
+	g_checksum_update(hash, passdigest, digest_len);
+	g_checksum_update(hash, (const guchar *)AIM_MD5_STRING, -1);
+	g_checksum_get_digest(hash, digest, &digest_len);
+	g_checksum_free(hash);
 
 	return 0;
 }

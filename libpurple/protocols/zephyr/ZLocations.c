@@ -10,6 +10,7 @@
  */
 
 #include "internal.h"
+#include "util.h"
 
 #ifndef WIN32
 #include <pwd.h>
@@ -127,11 +128,11 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 	    ZFreeNotice(&retnotice);
 	    return (ZERR_SERVNAK);
 	}
-	if (!strcmp(retnotice.z_message, ZSRVACK_NOTSENT)) {
+	if (purple_strequal(retnotice.z_message, ZSRVACK_NOTSENT)) {
 	    ZFreeNotice(&retnotice);
 	    return (ZERR_AUTHFAIL);
 	}
-	if (!strcmp(retnotice.z_message, ZSRVACK_FAIL)) {
+	if (purple_strequal(retnotice.z_message, ZSRVACK_FAIL)) {
 	    ZFreeNotice(&retnotice);
 	    return (ZERR_LOGINFAIL);
 	}
@@ -149,8 +150,8 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 	return (ZERR_INTERNAL);
     }
 
-    if (strcmp(retnotice.z_message, ZSRVACK_SENT) &&
-	strcmp(retnotice.z_message, ZSRVACK_NOTSENT)) {
+    if (!purple_strequal(retnotice.z_message, ZSRVACK_SENT) &&
+	!purple_strequal(retnotice.z_message, ZSRVACK_NOTSENT)) {
 	ZFreeNotice(&retnotice);
 	return (ZERR_INTERNAL);
     }

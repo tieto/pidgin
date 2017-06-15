@@ -109,10 +109,6 @@ SMILEYS = \
     monkey.png \
     moon.png \
     mrgreen.png \
-    msn-away.png \
-    msn-busy.png \
-    msn_online.png \
-    msn.png \
     musical-note.png \
     music.png \
     nervous.png \

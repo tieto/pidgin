@@ -30,6 +30,7 @@
 #include <string.h>
 #include "nmrtf.h"
 #include "debug.h"
+#include "util.h"
 
 /* Internal RTF parser error codes */
 #define NMRTF_OK 0                      /* Everything's fine! */
@@ -477,8 +478,8 @@ rtf_pop_state(NMRtfContext *ctx)
     NMRtfStateSave *save_old;
     GSList *link_old;
 
-    if (ctx->saved == NULL)
-        return NMRTF_STACK_UNDERFLOW;
+	if (ctx->saved == NULL)
+		return NMRTF_STACK_UNDERFLOW;
 
     save_old = ctx->saved->data;
     ctx->chp = save_old->chp;
@@ -671,13 +672,13 @@ rtf_flush_data(NMRtfContext *ctx)
 static int
 rtf_apply_property(NMRtfContext *ctx, NMRtfProperty prop, int val)
 {
-    if (ctx->rds == NMRTF_STATE_SKIP)  /* If we're skipping text, */
-        return NMRTF_OK;          /* don't do anything. */
+	if (ctx->rds == NMRTF_STATE_SKIP)  /* If we're skipping text, */
+		return NMRTF_OK;          /* don't do anything. */
 
     /* Need to flush any temporary data before a property change*/
     rtf_flush_data(ctx);
 
-    switch (prop) {
+	switch (prop) {
 		case NMRTF_PROP_FONT_IDX:
 			ctx->chp.font_idx = val;
 			break;
@@ -686,9 +687,9 @@ rtf_apply_property(NMRtfContext *ctx, NMRtfProperty prop, int val)
 			break;
 		default:
 			return NMRTF_BAD_TABLE;
-    }
+	}
 
-    return NMRTF_OK;
+	return NMRTF_OK;
 }
 
 /*
@@ -707,7 +708,7 @@ rtf_dispatch_control(NMRtfContext *ctx, char *keyword, int param, gboolean param
     int idx;
 
     for (idx = 0; idx < table_size; idx++) {
-        if (strcmp(keyword, rtf_symbols[idx].keyword) == 0)
+        if (purple_strequal(keyword, rtf_symbols[idx].keyword))
             break;
 	}
 

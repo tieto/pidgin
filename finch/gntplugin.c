@@ -697,7 +697,7 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 				}
 				stringlist = g_list_prepend(stringlist, value);
 				purple_request_field_list_add_icon(field, label, NULL, value);
-				if (strcmp(value, current_value) == 0)
+				if (purple_strequal(value, current_value))
 					purple_request_field_list_add_selected(field, label);
 				list = list->next->next;
 			}

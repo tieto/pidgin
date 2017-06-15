@@ -27,7 +27,6 @@ EXTRA_DIST = \
 		win32/targets.mak \
 		win32/wpurpleerror.h \
 		win32/win32dep.c \
-		win32/giowin32.c \
 		win32/win32dep.h
 
 SUBDIRS = . plugins protocols tests example
@@ -44,13 +43,9 @@ purple_coresources = \
 	ciphers/aescipher.c \
 	ciphers/descipher.c \
 	ciphers/des3cipher.c \
-	ciphers/hmaccipher.c \
 	ciphers/md4hash.c \
-	ciphers/md5hash.c \
 	ciphers/pbkdf2cipher.c \
 	ciphers/rc4cipher.c \
-	ciphers/sha1hash.c \
-	ciphers/sha256hash.c \
 	cipher.c \
 	circularbuffer.c \
 	cmds.c \
@@ -83,7 +78,6 @@ purple_coresources = \
 	mime.c \
 	nat-pmp.c \
 	network.c \
-	ntlm.c \
 	notify.c \
 	plugins.c \
 	pluginpref.c \
@@ -168,7 +162,6 @@ purple_coreheaders = \
 	nat-pmp.h \
 	network.h \
 	notify.h \
-	ntlm.h \
 	plugins.h \
 	pluginpref.h \
 	pounce.h \
@@ -218,7 +211,6 @@ endif
 
 if IS_WIN32
 purple_coresources += \
-	win32/giowin32.c \
 	win32/libc_interface.c \
 	win32/win32dep.c
 
@@ -245,13 +237,9 @@ purple_cipherheaders = \
 	aescipher.h \
 	descipher.h \
 	des3cipher.h \
-	hmaccipher.h \
 	md4hash.h \
-	md5hash.h \
 	pbkdf2cipher.h \
-	rc4cipher.h \
-	sha1hash.h \
-	sha256hash.h
+	rc4cipher.h
 
 purple_builtheaders = purple.h version.h enums.h marshallers.h
 
@@ -506,7 +494,7 @@ AM_CPPFLAGS = \
 
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS =
-INTROSPECTION_SCANNER_ARGS = --add-include-path=$(prefix)/share/gir-1.0 --warn-all
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(prefix)/share/gir-1.0 --warn-all --pkg-export=purple-$(PURPLE_MAJOR_VERSION)
 INTROSPECTION_COMPILER_ARGS = --includedir=$(prefix)/share/gir-1.0
 
 if HAVE_INTROSPECTION

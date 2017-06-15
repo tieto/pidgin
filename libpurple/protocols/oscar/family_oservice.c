@@ -928,7 +928,7 @@ aim_parse_extstatus(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 									"Uploading icon to icon server\n");
 					aim_bart_upload(od,
 						purple_image_get_data(img),
-						purple_image_get_size(img));
+						purple_image_get_data_size(img));
 					g_object_unref(img);
 				}
 			}

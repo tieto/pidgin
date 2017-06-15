@@ -18,7 +18,6 @@
  */
 #include "internal.h"
 
-#include "ciphers/md5hash.h"
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
@@ -255,34 +254,12 @@ purple_base16_encode_chunked(const guchar *data, gsize len)
 	return ascii;
 }
 
-
 /**************************************************************************
- * Base64 Functions
+ * Quoted Printable Functions (see RFC 2045).
  **************************************************************************/
 static const char xdigits[] =
 	"0123456789abcdef";
 
-gchar *
-purple_base64_encode(const guchar *data, gsize len)
-{
-	return g_base64_encode(data, len);
-}
-
-guchar *
-purple_base64_decode(const char *str, gsize *ret_len)
-{
-	/*
-	 * We want to allow ret_len to be NULL for backward compatibility,
-	 * but g_base64_decode() requires a valid length variable.  So if
-	 * ret_len is NULL then pass in a dummy variable.
-	 */
-	gsize unused;
-	return g_base64_decode(str, ret_len != NULL ? ret_len : &unused);
-}
-
-/**************************************************************************
- * Quoted Printable Functions (see RFC 2045).
- **************************************************************************/
 guchar *
 purple_quotedp_decode(const char *str, gsize *ret_len)
 {
@@ -442,7 +419,7 @@ purple_mime_decode_field(const char *str)
 				if (g_ascii_strcasecmp(encoding, "Q") == 0)
 					decoded = purple_quotedp_decode(encoded_text, &dec_len);
 				else if (g_ascii_strcasecmp(encoding, "B") == 0)
-					decoded = purple_base64_decode(encoded_text, &dec_len);
+					decoded = g_base64_decode(encoded_text, &dec_len);
 				else
 					decoded = NULL;
 				if (decoded) {
@@ -1349,8 +1326,7 @@ const char *
 purple_markup_unescape_entity(const char *text, int *length)
 {
 	const char *pln;
-	int len, pound;
-	char temp[2];
+	int len;
 
 	if (!text || *text != '&')
 		return NULL;
@@ -1373,18 +1349,29 @@ purple_markup_unescape_entity(const char *text, int *length)
 		pln = "\302\256";      /* or use g_unichar_to_utf8(0xae); */
 	else if(IS_ENTITY("&apos;"))
 		pln = "\'";
-	else if(*(text+1) == '#' &&
-			(sscanf(text, "&#%u%1[;]", &pound, temp) == 2 ||
-			 sscanf(text, "&#x%x%1[;]", &pound, temp) == 2) &&
-			pound != 0) {
+	else if(text[1] == '#' && g_ascii_isxdigit(text[2])) {
 		static char buf[7];
-		int buflen = g_unichar_to_utf8((gunichar)pound, buf);
+		const char *start = text + 2;
+		char *end;
+		guint64 pound;
+		int base = 10;
+		int buflen;
+
+		if (*start == 'x') {
+			base = 16;
+			start++;
+		}
+
+		pound = g_ascii_strtoull(start, &end, base);
+		if (pound == 0 || pound > INT_MAX || *end != ';') {
+			return NULL;
+		}
+
+		len = (end - text) + 1;
+
+		buflen = g_unichar_to_utf8((gunichar)pound, buf);
 		buf[buflen] = '\0';
 		pln = buf;
-
-		len = (*(text+2) == 'x' ? 3 : 2);
-		while(isxdigit((gint) text[len])) len++;
-		if(text[len] == ';') len++;
 	}
 	else
 		return NULL;
@@ -2286,7 +2273,6 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
  * - \n should be converted to a normal space
  * - in addition to <br>, <p> and <div> etc. should also be converted into \n
  * - We want to turn </td>#whitespace<td> sequences into a single tab
- * - We want to turn <td> into a single tab (for msn profile "parsing")
  * - We want to turn </tr>#whitespace<tr> sequences into a single \n
  * - <script>...</script> and <style>...</style> should be completely removed
  */
@@ -3824,7 +3810,7 @@ void purple_got_protocol_handler_uri(const char *uri)
 
 	tmp++;
 
-	if (g_str_equal(proto, "xmpp"))
+	if (purple_strequal(proto, "xmpp"))
 		delimiter = ';';
 	else
 		delimiter = '&';
@@ -4799,9 +4785,8 @@ gchar *purple_http_digest_calculate_session_key(
 		const gchar *nonce,
 		const gchar *client_nonce)
 {
-	PurpleHash *hasher;
-	gchar hash[33]; /* We only support MD5. */
-	gboolean digest_ok;
+	GChecksum *hasher;
+	gchar *hash;
 
 	g_return_val_if_fail(username != NULL, NULL);
 	g_return_val_if_fail(realm    != NULL, NULL);
@@ -4814,18 +4799,19 @@ gchar *purple_http_digest_calculate_session_key(
 						 g_ascii_strcasecmp(algorithm, "MD5") ||
 						 g_ascii_strcasecmp(algorithm, "MD5-sess"), NULL);
 
-	hasher = purple_md5_hash_new();
-	g_return_val_if_fail(hash != NULL, NULL);
+	hasher = g_checksum_new(G_CHECKSUM_MD5);
+	g_return_val_if_fail(hasher != NULL, NULL);
 
-	purple_hash_append(hasher, (guchar *)username, strlen(username));
-	purple_hash_append(hasher, (guchar *)":", 1);
-	purple_hash_append(hasher, (guchar *)realm, strlen(realm));
-	purple_hash_append(hasher, (guchar *)":", 1);
-	purple_hash_append(hasher, (guchar *)password, strlen(password));
+	g_checksum_update(hasher, (guchar *)username, -1);
+	g_checksum_update(hasher, (guchar *)":", -1);
+	g_checksum_update(hasher, (guchar *)realm, -1);
+	g_checksum_update(hasher, (guchar *)":", -1);
+	g_checksum_update(hasher, (guchar *)password, -1);
 
 	if (algorithm != NULL && !g_ascii_strcasecmp(algorithm, "MD5-sess"))
 	{
 		guchar digest[16];
+		gsize digest_len = 16;
 
 		if (client_nonce == NULL)
 		{
@@ -4834,22 +4820,20 @@ gchar *purple_http_digest_calculate_session_key(
 			return NULL;
 		}
 
-		purple_hash_digest(hasher, digest, sizeof(digest));
+		g_checksum_get_digest(hasher, digest, &digest_len);
 
-		purple_hash_reset(hasher);
-		purple_hash_append(hasher, digest, sizeof(digest));
-		purple_hash_append(hasher, (guchar *)":", 1);
-		purple_hash_append(hasher, (guchar *)nonce, strlen(nonce));
-		purple_hash_append(hasher, (guchar *)":", 1);
-		purple_hash_append(hasher, (guchar *)client_nonce, strlen(client_nonce));
+		g_checksum_reset(hasher);
+		g_checksum_update(hasher, digest, sizeof(digest));
+		g_checksum_update(hasher, (guchar *)":", -1);
+		g_checksum_update(hasher, (guchar *)nonce, -1);
+		g_checksum_update(hasher, (guchar *)":", -1);
+		g_checksum_update(hasher, (guchar *)client_nonce, -1);
 	}
 
-	digest_ok = purple_hash_digest_to_str(hasher, hash, sizeof(hash));
-	g_object_unref(hasher);
+	hash = g_strdup(g_checksum_get_string(hasher));
+	g_checksum_free(hasher);
 
-	g_return_val_if_fail(digest_ok, NULL);
-
-	return g_strdup(hash);
+	return hash;
 }
 
 gchar *purple_http_digest_calculate_response(
@@ -4863,9 +4847,8 @@ gchar *purple_http_digest_calculate_response(
 		const gchar *client_nonce,
 		const gchar *session_key)
 {
-	PurpleHash *hash;
-	static gchar hash2[33]; /* We only support MD5. */
-	gboolean digest_ok;
+	GChecksum *hash;
+	gchar *hash2;
 
 	g_return_val_if_fail(method      != NULL, NULL);
 	g_return_val_if_fail(digest_uri  != NULL, NULL);
@@ -4884,85 +4867,83 @@ gchar *purple_http_digest_calculate_response(
 						 g_ascii_strcasecmp(qop, "auth") ||
 						 g_ascii_strcasecmp(qop, "auth-int"), NULL);
 
-	hash = purple_md5_hash_new();
+	hash = g_checksum_new(G_CHECKSUM_MD5);
 	g_return_val_if_fail(hash != NULL, NULL);
 
-	purple_hash_append(hash, (guchar *)method, strlen(method));
-	purple_hash_append(hash, (guchar *)":", 1);
-	purple_hash_append(hash, (guchar *)digest_uri, strlen(digest_uri));
+	g_checksum_update(hash, (guchar *)method, -1);
+	g_checksum_update(hash, (guchar *)":", -1);
+	g_checksum_update(hash, (guchar *)digest_uri, -1);
 
 	if (qop != NULL && !g_ascii_strcasecmp(qop, "auth-int"))
 	{
-		PurpleHash *hash2;
-		gchar entity_hash[33];
+		gchar *entity_hash;
 
 		if (entity == NULL)
 		{
-			g_object_unref(hash);
+			g_checksum_free(hash);
 			purple_debug_error("hash", "Required entity missing for auth-int digest calculation.\n");
 			return NULL;
 		}
 
-		hash2 = purple_md5_hash_new();
-		purple_hash_append(hash2, (guchar *)entity, strlen(entity));
-		digest_ok = purple_hash_digest_to_str(hash2, entity_hash, sizeof(entity_hash));
-		g_object_unref(hash2);
+		entity_hash = g_compute_checksum_for_string(G_CHECKSUM_MD5,
+				entity, -1);
 
-		if (!digest_ok) {
-			g_object_unref(hash);
+		if (entity_hash == NULL) {
+			g_checksum_free(hash);
 			g_return_val_if_reached(NULL);
 		}
 
-		purple_hash_append(hash, (guchar *)":", 1);
-		purple_hash_append(hash, (guchar *)entity_hash, strlen(entity_hash));
+		g_checksum_update(hash, (guchar *)":", -1);
+		g_checksum_update(hash, (guchar *)entity_hash, -1);
+		g_free(entity_hash);
 	}
 
-	digest_ok = purple_hash_digest_to_str(hash, hash2, sizeof(hash2));
-	purple_hash_reset(hash);
+	hash2 = g_strdup(g_checksum_get_string(hash));
+	g_checksum_reset(hash);
 
-	if (!digest_ok) {
-		g_object_unref(hash);
+	if (hash2 == NULL) {
+		g_checksum_free(hash);
 		g_return_val_if_reached(NULL);
 	}
 
-	purple_hash_append(hash, (guchar *)session_key, strlen(session_key));
-	purple_hash_append(hash, (guchar *)":", 1);
-	purple_hash_append(hash, (guchar *)nonce, strlen(nonce));
-	purple_hash_append(hash, (guchar *)":", 1);
+	g_checksum_update(hash, (guchar *)session_key, -1);
+	g_checksum_update(hash, (guchar *)":", -1);
+	g_checksum_update(hash, (guchar *)nonce, -1);
+	g_checksum_update(hash, (guchar *)":", -1);
 
 	if (qop != NULL && *qop != '\0')
 	{
 		if (nonce_count == NULL)
 		{
-			g_object_unref(hash);
+			g_checksum_free(hash);
 			purple_debug_error("hash", "Required nonce_count missing for digest calculation.\n");
 			return NULL;
 		}
 
 		if (client_nonce == NULL)
 		{
-			g_object_unref(hash);
+			g_checksum_free(hash);
 			purple_debug_error("hash", "Required client_nonce missing for digest calculation.\n");
 			return NULL;
 		}
 
-		purple_hash_append(hash, (guchar *)nonce_count, strlen(nonce_count));
-		purple_hash_append(hash, (guchar *)":", 1);
-		purple_hash_append(hash, (guchar *)client_nonce, strlen(client_nonce));
-		purple_hash_append(hash, (guchar *)":", 1);
+		g_checksum_update(hash, (guchar *)nonce_count, -1);
+		g_checksum_update(hash, (guchar *)":", -1);
+		g_checksum_update(hash, (guchar *)client_nonce, -1);
+		g_checksum_update(hash, (guchar *)":", -1);
 
-		purple_hash_append(hash, (guchar *)qop, strlen(qop));
+		g_checksum_update(hash, (guchar *)qop, -1);
 
-		purple_hash_append(hash, (guchar *)":", 1);
+		g_checksum_update(hash, (guchar *)":", -1);
 	}
 
-	purple_hash_append(hash, (guchar *)hash2, strlen(hash2));
-	digest_ok = purple_hash_digest_to_str(hash, hash2, sizeof(hash2));
-	g_object_unref(hash);
+	g_checksum_update(hash, (guchar *)hash2, -1);
+	g_free(hash2);
 
-	g_return_val_if_fail(digest_ok, NULL);
+	hash2 = g_strdup(g_checksum_get_string(hash));
+	g_checksum_free(hash);
 
-	return g_strdup(hash2);
+	return hash2;
 }
 
 int

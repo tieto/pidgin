@@ -41,6 +41,17 @@
 #define AIM_DEFAULT_KDC_SERVER "kdc.uas.aol.com"
 #define AIM_DEFAULT_KDC_PORT 443
 
+/*
+ * Using clientLogin requires a developer ID.  This key is for libpurple.
+ * It is the default key for all libpurple-based clients.  AOL encourages
+ * UIs (especially ones with lots of users) to override this with their
+ * own key.
+ */
+#define ICQ_DEFAULT_DIST_ID 1553
+#define ICQ_DEFAULT_CLIENT_KEY "ma15d7JTxbmVG-RP"
+#define AIM_DEFAULT_DIST_ID 1717
+#define AIM_DEFAULT_CLIENT_KEY "ma19CwYN9i9Mw5nY"
+
 #define OSCAR_DEFAULT_LOGIN_PORT 5190
 
 #define OSCAR_OPPORTUNISTIC_ENCRYPTION "opportunistic_encryption"
