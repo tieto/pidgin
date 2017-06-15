@@ -453,6 +453,10 @@ version 3.0.0 (??/??/????):
 		* PurpleConversationType
 		* purple_core_migrate
 		* purple_dnsquery_a_account
+		* purple_event_loop_{get|set}_ui_ops. Manually drive the GLib
+		  event loop yourself. See GLib Main Event Loop docs.
+		* PurpleEventLoopUiOps. Manually drive the GLib event loop
+		  yourself. See GLib Main Event Loop docs.
 		* purple_network_listen_family. Use purple_network_listen, instead.
 		* purple_network_listen_map_external
 		* purple_network_listen_range_family. Use purple_network_listen,

@@ -24,8 +24,6 @@
 #define PURPLE_GLIB_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
 #define PURPLE_GLIB_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
 
-static PurpleEventLoopUiOps *eventloop_ui_ops = NULL;
-
 typedef struct _PurpleIOClosure {
 	PurpleInputFunction function;
 	guint result;
@@ -115,48 +113,4 @@ purple_input_pipe(int pipefd[2])
 #else
 	return pipe(pipefd);
 #endif
-}
-
-void
-purple_eventloop_set_ui_ops(PurpleEventLoopUiOps *ops)
-{
-	eventloop_ui_ops = ops;
-}
-
-PurpleEventLoopUiOps *
-purple_eventloop_get_ui_ops(void)
-{
-	g_return_val_if_fail(eventloop_ui_ops != NULL, NULL);
-
-	return eventloop_ui_ops;
-}
-
-/**************************************************************************
- * GBoxed code
- **************************************************************************/
-static PurpleEventLoopUiOps *
-purple_eventloop_ui_ops_copy(PurpleEventLoopUiOps *ops)
-{
-	PurpleEventLoopUiOps *ops_new;
-
-	g_return_val_if_fail(ops != NULL, NULL);
-
-	ops_new = g_new(PurpleEventLoopUiOps, 1);
-	*ops_new = *ops;
-
-	return ops_new;
-}
-
-GType
-purple_eventloop_ui_ops_get_type(void)
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		type = g_boxed_type_register_static("PurpleEventLoopUiOps",
-				(GBoxedCopyFunc)purple_eventloop_ui_ops_copy,
-				(GBoxedFreeFunc)g_free);
-	}
-
-	return type;
 }
