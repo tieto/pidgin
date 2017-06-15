@@ -27,7 +27,6 @@ EXTRA_DIST = \
 		win32/targets.mak \
 		win32/wpurpleerror.h \
 		win32/win32dep.c \
-		win32/giowin32.c \
 		win32/win32dep.h
 
 SUBDIRS = . plugins protocols tests example
@@ -214,7 +213,6 @@ endif
 
 if IS_WIN32
 purple_coresources += \
-	win32/giowin32.c \
 	win32/libc_interface.c \
 	win32/win32dep.c
 
