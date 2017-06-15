@@ -78,7 +78,6 @@ purple_coresources = \
 	mime.c \
 	nat-pmp.c \
 	network.c \
-	ntlm.c \
 	notify.c \
 	plugins.c \
 	pluginpref.c \
@@ -163,7 +162,6 @@ purple_coreheaders = \
 	nat-pmp.h \
 	network.h \
 	notify.h \
-	ntlm.h \
 	plugins.h \
 	pluginpref.h \
 	pounce.h \

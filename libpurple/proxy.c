@@ -30,7 +30,6 @@
 #include "debug.h"
 #include "http.h"
 #include "notify.h"
-#include "ntlm.h"
 #include "prefs.h"
 #include "proxy.h"
 #include "purple-gio.h"

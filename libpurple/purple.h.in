@@ -70,7 +70,6 @@
 #include <nat-pmp.h>
 #include <network.h>
 #include <notify.h>
-#include <ntlm.h>
 #include <plugins.h>
 #include <pluginpref.h>
 #include <pounce.h>
