@@ -108,26 +108,6 @@ purple_input_remove(guint tag)
 }
 
 int
-purple_input_get_error(int fd, int *error)
-{
-	PurpleEventLoopUiOps *ops = purple_eventloop_get_ui_ops();
-
-	if (ops->input_get_error)
-	{
-		int ret = ops->input_get_error(fd, error);
-		errno = *error;
-		return ret;
-	}
-	else
-	{
-		socklen_t len;
-		len = sizeof(*error);
-
-		return getsockopt(fd, SOL_SOCKET, SO_ERROR, error, &len);
-	}
-}
-
-int
 purple_input_pipe(int pipefd[2])
 {
 #ifdef _WIN32

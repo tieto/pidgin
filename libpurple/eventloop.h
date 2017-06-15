@@ -231,24 +231,6 @@ guint purple_input_add(int fd, PurpleInputCondition cond,
 gboolean purple_input_remove(guint handle);
 
 /**
- * purple_input_get_error:
- * @fd:        The input file descriptor.
- * @error:     A pointer to an #int which on return will have the error, or
- *             0 if no error.
- *
- * Get the current error status for an input.
- *
- * The return value and error follow getsockopt() with a level of SOL_SOCKET and an
- * option name of SO_ERROR, and this is how the error is determined if the UI does not
- * implement the input_get_error UI op.
- *
- * Returns: 0 if there is no error; -1 if there is an error, in which case
- *          #errno will be set.
- */
-int
-purple_input_get_error(int fd, int *error);
-
-/**
  * purple_input_pipe:
  * @pipefd: Array used to return file descriptors for both ends of pipe.
  *
