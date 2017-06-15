@@ -68,13 +68,6 @@ C_SRC =	\
 			buddylist.c \
 			buddyicon.c \
 			certificate.c \
-			ciphers/aescipher.c \
-			ciphers/descipher.c \
-			ciphers/des3cipher.c \
-			ciphers/md4hash.c \
-			ciphers/pbkdf2cipher.c \
-			ciphers/rc4cipher.c \
-			cipher.c \
 			circularbuffer.c \
 			cmds.c \
 			connection.c \
@@ -146,7 +139,6 @@ RC_SRC = win32/libpurplerc.rc
 
 ENUM_HEADERS = \
 	account.h \
-	cipher.h \
 	connection.h \
 	conversation.h \
 	conversationtypes.h \
