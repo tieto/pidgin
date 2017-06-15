@@ -1920,12 +1920,14 @@ purple_xfer_set_thumbnail(PurpleXfer *xfer, gconstpointer thumbnail,
 	gsize size, const gchar *mimetype)
 {
 	PurpleXferPrivate *priv = PURPLE_XFER_GET_PRIVATE(xfer);
+	gpointer old_thumbnail_data;
+	gchar *old_mimetype;
 
 	g_return_if_fail(priv != NULL);
 
 	/* Hold onto these in case they are equal to passed-in pointers */
-	gpointer *old_thumbnail_data = priv->thumbnail_data;
-	const gchar *old_mimetype = priv->thumbnail_mimetype;
+	old_thumbnail_data = priv->thumbnail_data;
+	old_mimetype = priv->thumbnail_mimetype;
 
 	if (thumbnail && size > 0) {
 		priv->thumbnail_data = g_memdup(thumbnail, size);
