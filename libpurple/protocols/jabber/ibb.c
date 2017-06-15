@@ -384,9 +384,9 @@ jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
                  const char *id, PurpleXmlNode *child)
 {
 	const char *name = child->name;
-	gboolean data  = g_str_equal(name, "data");
-	gboolean close = g_str_equal(name, "close");
-	gboolean open  = g_str_equal(name, "open");
+	gboolean data  = purple_strequal(name, "data");
+	gboolean close = purple_strequal(name, "close");
+	gboolean open  = purple_strequal(name, "open");
 	const gchar *sid = (data || close) ?
 		purple_xmlnode_get_attrib(child, "sid") : NULL;
 	JabberIBBSession *sess =
@@ -394,7 +394,7 @@ jabber_ibb_parse(JabberStream *js, const char *who, JabberIqType type,
 
 	if (sess) {
 
-		if (strcmp(who, jabber_ibb_session_get_who(sess)) != 0) {
+		if (!purple_strequal(who, jabber_ibb_session_get_who(sess))) {
 			/* the iq comes from a different JID than the remote JID of the
 			  session, ignore it */
 			purple_debug_error("jabber",

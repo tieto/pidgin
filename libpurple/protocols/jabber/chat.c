@@ -527,7 +527,7 @@ static void jabber_chat_room_configure_cb(JabberStream *js, const char *from,
 			if(!(xmlns = purple_xmlnode_get_namespace(x)))
 				continue;
 
-			if(!strcmp(xmlns, "jabber:x:data")) {
+			if(purple_strequal(xmlns, "jabber:x:data")) {
 				chat->config_dialog_type = PURPLE_REQUEST_FIELDS;
 				chat->config_dialog_handle = jabber_x_data_request(js, x, jabber_chat_room_configure_x_data_cb, chat);
 				return;
@@ -678,7 +678,7 @@ static void jabber_chat_register_cb(JabberStream *js, const char *from,
 			if(!(xmlns = purple_xmlnode_get_namespace(x)))
 				continue;
 
-			if(!strcmp(xmlns, "jabber:x:data")) {
+			if(purple_strequal(xmlns, "jabber:x:data")) {
 				jabber_x_data_request(js, x, jabber_chat_register_x_data_cb, chat);
 				return;
 			}
@@ -1241,7 +1241,7 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, const char *from,
 	for(x = purple_xmlnode_get_child(query, "feature"); x; x = purple_xmlnode_get_next_twin(x)) {
 		const char *var = purple_xmlnode_get_attrib(x, "var");
 
-		if(var && !strcmp(var, NS_XHTML_IM)) {
+		if(purple_strequal(var, NS_XHTML_IM)) {
 			chat->xhtml = TRUE;
 		}
 	}

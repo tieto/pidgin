@@ -477,7 +477,7 @@ jingle_rtp_init_media(JingleContent *content)
 		transmitter = "notransmitter";
 	g_object_unref(transport);
 
-	is_audio = g_str_equal(media_type, "audio");
+	is_audio = purple_strequal(media_type, "audio");
 
 	if (purple_strequal(senders, "both"))
 		type = is_audio ? PURPLE_MEDIA_AUDIO
@@ -505,7 +505,7 @@ jingle_rtp_init_media(JingleContent *content)
 		return FALSE;
 	}
 
-	if (g_str_equal(creator, "initiator"))
+	if (purple_strequal(creator, "initiator"))
 		is_creator = jingle_session_is_initiator(session);
 	else
 		is_creator = !jingle_session_is_initiator(session);
@@ -544,9 +544,9 @@ jingle_rtp_parse_codecs(PurpleXmlNode *description)
 		return NULL;
 	}
 
-	if (g_str_equal(media, "video")) {
+	if (purple_strequal(media, "video")) {
 		type = PURPLE_MEDIA_VIDEO;
-	} else if (g_str_equal(media, "audio")) {
+	} else if (purple_strequal(media, "audio")) {
 		type = PURPLE_MEDIA_AUDIO;
 	} else {
 		purple_debug_warning("jingle-rtp", "unknown media type: %s\n",

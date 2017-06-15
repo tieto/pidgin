@@ -58,11 +58,11 @@ static void jabber_tune_cb(JabberStream *js, const char *from, PurpleXmlNode *it
 		return; /* huh? */
 	for (tuneinfo = tune->child; tuneinfo; tuneinfo = tuneinfo->next) {
 		if (tuneinfo->type == PURPLE_XMLNODE_TYPE_TAG) {
-			if (!strcmp(tuneinfo->name, "artist")) {
+			if (purple_strequal(tuneinfo->name, "artist")) {
 				if (tuneinfodata.artist == NULL) /* only pick the first one */
 					tuneinfodata.artist = purple_xmlnode_get_data(tuneinfo);
 				valid = TRUE;
-			} else if (!strcmp(tuneinfo->name, "length")) {
+			} else if (purple_strequal(tuneinfo->name, "length")) {
 				if (tuneinfodata.time == -1) {
 					char *length = purple_xmlnode_get_data(tuneinfo);
 					if (length)
@@ -71,19 +71,19 @@ static void jabber_tune_cb(JabberStream *js, const char *from, PurpleXmlNode *it
 					if (tuneinfodata.time > 0)
 						valid = TRUE;
 				}
-			} else if (!strcmp(tuneinfo->name, "source")) {
+			} else if (purple_strequal(tuneinfo->name, "source")) {
 				if (tuneinfodata.album == NULL) /* only pick the first one */
 					tuneinfodata.album = purple_xmlnode_get_data(tuneinfo);
 				valid = TRUE;
-			} else if (!strcmp(tuneinfo->name, "title")) {
+			} else if (purple_strequal(tuneinfo->name, "title")) {
 				if (tuneinfodata.title == NULL) /* only pick the first one */
 					tuneinfodata.title = purple_xmlnode_get_data(tuneinfo);
 				valid = TRUE;
-			} else if (!strcmp(tuneinfo->name, "track")) {
+			} else if (purple_strequal(tuneinfo->name, "track")) {
 				if (tuneinfodata.track == NULL) /* only pick the first one */
 					tuneinfodata.track = purple_xmlnode_get_data(tuneinfo);
 				valid = TRUE;
-			} else if (!strcmp(tuneinfo->name, "uri")) {
+			} else if (purple_strequal(tuneinfo->name, "uri")) {
 				if (tuneinfodata.url == NULL) /* only pick the first one */
 					tuneinfodata.url = purple_xmlnode_get_data(tuneinfo);
 				valid = TRUE;

@@ -176,7 +176,7 @@ add_ims(GevoAddBuddyDialog *dialog, EContact *contact, const char *name,
 
 		account = purple_connection_get_account(gc);
 
-		if (!strcmp(purple_account_get_protocol_id(account), id))
+		if (purple_strequal(purple_account_get_protocol_id(account), id))
 			break;
 
 		account = NULL;
@@ -206,10 +206,10 @@ add_ims(GevoAddBuddyDialog *dialog, EContact *contact, const char *name,
 						   COLUMN_DATA, contact,
 						   -1);
 
-		if (!strcmp(purple_account_get_protocol_id(account),
+		if (purple_strequal(purple_account_get_protocol_id(account),
 					purple_account_get_protocol_id(dialog->account)) &&
 			dialog->username != NULL &&
-			!strcmp(account_name, dialog->username))
+			purple_strequal(account_name, dialog->username))
 		{
 			GtkTreeSelection *selection;
 
@@ -509,8 +509,8 @@ gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 	dialog->treeview =
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(dialog->treeview), TRUE);
-	gtk_box_pack_start(GTK_BOX(vbox), 
-		pidgin_make_scrollable(dialog->treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1), 
+	gtk_box_pack_start(GTK_BOX(vbox),
+		pidgin_make_scrollable(dialog->treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1),
 		TRUE, TRUE, 0);
 	gtk_widget_show(dialog->treeview);
 

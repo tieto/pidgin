@@ -255,7 +255,7 @@ find_file(const char *dir, const char *base)
 	if (base == NULL)
 		return NULL;
 
-	if (!strcmp(dir, "pidgin"))
+	if (purple_strequal(dir, "pidgin"))
 		filename = g_build_filename("pixmaps", "pidgin", base, NULL);
 	else
 		filename = g_build_filename("pixmaps", "pidgin", dir, base, NULL);

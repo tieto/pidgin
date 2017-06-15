@@ -34,7 +34,7 @@ void jabber_google_roster_outgoing(JabberStream *js, PurpleXmlNode *query, Purpl
 	char *jid_norm = (char *)jabber_normalize(account, jid);
 
 	while (list) {
-		if (!strcmp(jid_norm, (char*)list->data)) {
+		if (purple_strequal(jid_norm, (char*)list->data)) {
 			purple_xmlnode_set_attrib(query, "xmlns:gr", NS_GOOGLE_ROSTER);
 			purple_xmlnode_set_attrib(query, "gr:ext", "2");
 			purple_xmlnode_set_attrib(item, "gr:t", "B");
@@ -56,7 +56,7 @@ gboolean jabber_google_roster_incoming(JabberStream *js, PurpleXmlNode *item)
 	const char *subscription = purple_xmlnode_get_attrib(item, "subscription");
 	const char *ask = purple_xmlnode_get_attrib(item, "ask");
 
-	if ((!subscription || !strcmp(subscription, "none")) && !ask) {
+	if ((!subscription || purple_strequal(subscription, "none")) && !ask) {
 		/* The Google Talk servers will automatically add people from your Gmail address book
 		 * with subscription=none. If we see someone with subscription=none, ignore them.
 		 */

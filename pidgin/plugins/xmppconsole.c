@@ -78,7 +78,7 @@ xmppconsole_is_xmpp_account(PurpleAccount *account)
 
 	i = 0;
 	while (xmpp_prpls[i] != NULL) {
-		if (g_strcmp0(xmpp_prpls[i], prpl_name) == 0)
+		if (purple_strequal(xmpp_prpls[i], prpl_name))
 			return TRUE;
 		i++;
 	}
@@ -105,8 +105,8 @@ purple_xmlnode_to_pretty_str(PurpleXmlNode *node, int *len)
 	if (node->xmlns) {
 		if ((!node->parent ||
 		     !node->parent->xmlns ||
-		     strcmp(node->xmlns, node->parent->xmlns)) &&
-		    strcmp(node->xmlns, "jabber:client"))
+		     !purple_strequal(node->xmlns, node->parent->xmlns)) &&
+		    !purple_strequal(node->xmlns, "jabber:client"))
 		{
 			char *xmlns = g_markup_escape_text(node->xmlns, -1);
 			g_string_append_printf(text,
@@ -477,14 +477,14 @@ static void presence_clicked_cb(GtkWidget *w, gpointer nul)
 
 	to = g_markup_escape_text(gtk_entry_get_text(GTK_ENTRY(to_entry)), -1);
 	type = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(type_combo));
-	if (!strcmp(type, "default"))
+	if (purple_strequal(type, "default"))
 		type = "";
 	show = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(show_combo));
-	if (!strcmp(show, "default"))
+	if (purple_strequal(show, "default"))
 		show = "";
 	status = g_markup_escape_text(gtk_entry_get_text(GTK_ENTRY(status_entry)), -1);
 	priority = g_markup_escape_text(gtk_entry_get_text(GTK_ENTRY(priority_entry)), -1);
-	if (!strcmp(priority, "0"))
+	if (purple_strequal(priority, "0"))
 		*priority = '\0';
 
 	stanza = g_strdup_printf("&lt;presence %s%s%s id='console%x' %s%s%s&gt;"
@@ -789,7 +789,7 @@ create_console(PurplePluginAction *action)
 		pidgin_webview_append_html(PIDGIN_WEBVIEW(console->webview), tmp);
 		g_free(tmp);
 	}
-	gtk_box_pack_start(GTK_BOX(vbox), 
+	gtk_box_pack_start(GTK_BOX(vbox),
 		pidgin_make_scrollable(console->webview, GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC, GTK_SHADOW_ETCHED_IN, -1, -1),
 		TRUE, TRUE, 0);
 

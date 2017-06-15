@@ -696,7 +696,7 @@ create_protocols_menu(const char *default_proto_id)
 		if (pixbuf)
 			g_object_unref(pixbuf);
 
-		if (default_proto_id != NULL && !strcmp(purple_protocol_get_id(protocol), default_proto_id))
+		if (default_proto_id != NULL && purple_strequal(purple_protocol_get_id(protocol), default_proto_id))
 			aop_menu->default_item = i;
 	}
 	g_list_free(list);
@@ -1061,15 +1061,15 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 
 				protoname = purple_protocol_class_list_icon(proto, account, NULL);
 
-				if (!strcmp(protoname, protocol))
+				if (purple_strequal(protoname, protocol))
 					break;
 
 				account = NULL;
 			}
 
 			/* Special case for AIM and ICQ */
-			if (account == NULL && (!strcmp(protocol, "aim") ||
-									!strcmp(protocol, "icq")))
+			if (account == NULL && (purple_strequal(protocol, "aim") ||
+									purple_strequal(protocol, "icq")))
 			{
 				for (l = list; l != NULL; l = l->next)
 				{
@@ -1100,7 +1100,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 
 					protoname = purple_protocol_class_list_icon(proto, account, NULL);
 
-					if (!strcmp(protoname, "aim") || !strcmp(protoname, "icq"))
+					if (purple_strequal(protoname, "aim") || purple_strequal(protoname, "icq"))
 						break;
 
 					account = NULL;
@@ -1550,7 +1550,7 @@ pidgin_dnd_file_send_desktop(PurpleAccount *account, const gchar *who,
 	 * nothing else? Probably not.  I'll just give an error and
 	 * return. */
 	/* The original patch sent the icon used by the launcher.  That's probably wrong */
-	if (!g_strcmp0(type, "Link")) {
+	if (purple_strequal(type, "Link")) {
 		purple_notify_error(NULL, NULL, _("Cannot send launcher"),
 				_("You dragged a desktop launcher. Most "
 					"likely you wanted to send the target "
@@ -1904,7 +1904,7 @@ add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, c
 
 	/* There's no sense listing things like: 'xxx "xxx"'
 	   when the name and buddy alias match. */
-	if (buddy_alias && strcmp(buddy_alias, buddyname)) {
+	if (buddy_alias && !purple_strequal(buddy_alias, buddyname)) {
 		char *completion_entry = g_strdup_printf("%s \"%s\"", buddyname, buddy_alias);
 		char *tmp2 = g_utf8_normalize(buddy_alias, -1, G_NORMALIZE_DEFAULT);
 
@@ -1926,9 +1926,9 @@ add_buddyname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, c
 
 	/* There's no sense listing things like: 'xxx "xxx"'
 	   when the name and contact alias match. */
-	if (contact_alias && strcmp(contact_alias, buddyname)) {
+	if (contact_alias && !purple_strequal(contact_alias, buddyname)) {
 		/* We don't want duplicates when the contact and buddy alias match. */
-		if (!buddy_alias || strcmp(contact_alias, buddy_alias)) {
+		if (!purple_strequal(contact_alias, buddy_alias)) {
 			char *completion_entry = g_strdup_printf("%s \"%s\"",
 							buddyname, contact_alias);
 			char *tmp2 = g_utf8_normalize(contact_alias, -1, G_NORMALIZE_DEFAULT);
@@ -2380,10 +2380,10 @@ pidgin_convert_buddy_icon(PurpleProtocol *protocol, const char *path, size_t *le
 
 				purple_debug_info("buddyicon", "Converting buddy icon to %s\n", protocol_formats[i]);
 
-				if (g_str_equal(protocol_formats[i], "png")) {
+				if (purple_strequal(protocol_formats[i], "png")) {
 					key = "compression";
 					value = "9";
-				} else if (g_str_equal(protocol_formats[i], "jpeg")) {
+				} else if (purple_strequal(protocol_formats[i], "jpeg")) {
 					sprintf(tmp_buf, "%u", quality);
 					key = "quality";
 					value = tmp_buf;
@@ -2424,7 +2424,7 @@ pidgin_convert_buddy_icon(PurpleProtocol *protocol, const char *path, size_t *le
 
 				g_free(contents);
 
-				if (!g_str_equal(protocol_formats[i], "jpeg")) {
+				if (!purple_strequal(protocol_formats[i], "jpeg")) {
 					/* File size was too big and we can't lower the quality,
 					   so skip to the next image type. */
 					break;
@@ -3501,9 +3501,9 @@ open_dialog(PidginWebView *webview, const char *url)
 
 	str = url + sizeof("open://") - 1;
 
-	if (strcmp(str, "accounts") == 0)
+	if (purple_strequal(str, "accounts"))
 		pidgin_accounts_window_show();
-	else if (strcmp(str, "prefs") == 0)
+	else if (purple_strequal(str, "prefs"))
 		pidgin_prefs_show();
 	else
 		return FALSE;

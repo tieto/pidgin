@@ -30,6 +30,8 @@
 #include <windows.h>
 #endif
 
+#include "util.h"
+
 #define NO_ESCAPE(ch) ((ch == 0x20) || (ch >= 0x30 && ch <= 0x39) || \
 					(ch >= 0x41 && ch <= 0x5a) || (ch >= 0x61 && ch <= 0x7a))
 
@@ -426,7 +428,7 @@ nm_send_request(NMConn *conn, char *cmd, NMField *fields,
 
 	/* Write headers */
 	if (rc == NM_OK) {
-		if (strcmp("login", cmd) == 0) {
+		if (purple_strequal("login", cmd)) {
 			bytes_to_send = g_snprintf(buffer, sizeof(buffer),
 									   "Host: %s:%d\r\n\r\n", conn->addr, conn->port);
 			ret = nm_tcp_write(conn, buffer, bytes_to_send);
@@ -522,7 +524,7 @@ nm_read_header(NMConn * conn)
 
 	/* Finish reading header, in the future we might want to do more processing here */
 	/* TODO: handle more general redirects in the future */
-	while ((rc == NM_OK) && (strcmp(buffer, "\r\n") != 0)) {
+	while ((rc == NM_OK) && (!purple_strequal(buffer, "\r\n"))) {
 		rc = read_line(conn, buffer, sizeof(buffer));
 	}
 

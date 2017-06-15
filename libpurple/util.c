@@ -3810,7 +3810,7 @@ void purple_got_protocol_handler_uri(const char *uri)
 
 	tmp++;
 
-	if (g_str_equal(proto, "xmpp"))
+	if (purple_strequal(proto, "xmpp"))
 		delimiter = ';';
 	else
 		delimiter = '&';

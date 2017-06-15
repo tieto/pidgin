@@ -812,7 +812,7 @@ add_account_options(AccountPrefsDialog *dialog)
 		{
 			case PURPLE_PREF_BOOLEAN:
 				if (account == NULL ||
-					strcmp(purple_account_get_protocol_id(account),
+					!purple_strequal(purple_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
 					bool_value = purple_account_option_get_default_bool(option);
@@ -837,7 +837,7 @@ add_account_options(AccountPrefsDialog *dialog)
 
 			case PURPLE_PREF_INT:
 				if (account == NULL ||
-					strcmp(purple_account_get_protocol_id(account),
+					!purple_strequal(purple_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
 					int_value = purple_account_option_get_default_int(option);
@@ -862,7 +862,7 @@ add_account_options(AccountPrefsDialog *dialog)
 
 			case PURPLE_PREF_STRING:
 				if (account == NULL ||
-					strcmp(purple_account_get_protocol_id(account),
+					!purple_strequal(purple_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
 					str_value = purple_account_option_get_default_string(option);
@@ -915,7 +915,7 @@ add_account_options(AccountPrefsDialog *dialog)
 				idx = 0;
 
 				if (account == NULL ||
-					strcmp(purple_account_get_protocol_id(account),
+					!purple_strequal(purple_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
 					str_value = purple_account_option_get_default_list_value(option);
@@ -2651,7 +2651,7 @@ get_user_info_cb(GtkWidget   *label,
                  gpointer     data)
 {
 	struct auth_request *ar = data;
-	if (!strcmp(uri, "viewinfo")) {
+	if (purple_strequal(uri, "viewinfo")) {
 		pidgin_retrieve_user_info(purple_account_get_connection(ar->account), ar->username);
 		return TRUE;
 	}

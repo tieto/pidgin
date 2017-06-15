@@ -42,13 +42,13 @@ window_kpress_cb(GntWidget *wid, const char *key, GntTextView *view)
 {
 	if (key[0] == 27)
 	{
-		if (strcmp(key, GNT_KEY_DOWN) == 0)
+		if (purple_strequal(key, GNT_KEY_DOWN))
 			gnt_text_view_scroll(view, 1);
-		else if (strcmp(key, GNT_KEY_UP) == 0)
+		else if (purple_strequal(key, GNT_KEY_UP))
 			gnt_text_view_scroll(view, -1);
-		else if (strcmp(key, GNT_KEY_PGDOWN) == 0)
+		else if (purple_strequal(key, GNT_KEY_PGDOWN))
 			gnt_text_view_scroll(view, wid->priv.height - 2);
-		else if (strcmp(key, GNT_KEY_PGUP) == 0)
+		else if (purple_strequal(key, GNT_KEY_PGUP))
 			gnt_text_view_scroll(view, -(wid->priv.height - 2));
 		else
 			return FALSE;

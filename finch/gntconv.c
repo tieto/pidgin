@@ -1368,15 +1368,15 @@ cmd_message_color(PurpleConversation *conv, const char *cmd, char **args, char *
 	int *msgclass  = NULL;
 	int fg, bg;
 
-	if (strcmp(args[0], "receive") == 0)
+	if (purple_strequal(args[0], "receive"))
 		msgclass = &color_message_receive;
-	else if (strcmp(args[0], "send") == 0)
+	else if (purple_strequal(args[0], "send"))
 		msgclass = &color_message_send;
-	else if (strcmp(args[0], "highlight") == 0)
+	else if (purple_strequal(args[0], "highlight"))
 		msgclass = &color_message_highlight;
-	else if (strcmp(args[0], "action") == 0)
+	else if (purple_strequal(args[0], "action"))
 		msgclass = &color_message_action;
-	else if (strcmp(args[0], "timestamp") == 0)
+	else if (purple_strequal(args[0], "timestamp"))
 		msgclass = &color_timestamp;
 	else {
 		if (error)
