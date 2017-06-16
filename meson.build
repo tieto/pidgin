@@ -104,7 +104,6 @@ package_revision = vcs_tag(
     fallback : meson.project_version())
 
 sedpath = find_program('sed')
-xxdpath = find_program('xxd')
 
 # Storing configure arguments
 # conf.set('CONFIG_ARGS', ac_configure_args)

@@ -102,28 +102,9 @@ pidgin_SOURCES = [
 	'pidgin.c'
 ]
 
-# FIXME: Need to write a portable way to do this.
-
-gtkdebug_html_body1 = custom_target('gtkdebug.html.body1.h',
-    input : 'gtkdebug.html',
-    output : 'gtkdebug.html.body1.h',
-	command : [sedpath,
-               '-e', 's/^[ 	]\+//g',
-               '-e', 's/[ 	]\+/ /g',
-               '@INPUT@'],
-    capture : true)
-gtkdebug_html_body2 = custom_target('gtkdebug.html.body2.h',
-    input : gtkdebug_html_body1,
-    output : 'gtkdebug.html.body2.h',
-	command : [xxdpath, '-i', '@INPUT@', '@OUTPUT@'])
-gtkdebug_html_h = custom_target('gtkdebug.html.h',
-    input : gtkdebug_html_body2,
-    output : 'gtkdebug.html.h',
-	command : [sedpath,
-               '-e', 's/\(0x[0-9a-f][0-9a-f]\)$/\1, 0x00/',
-               '-e', 's/pidgin_gtkdebug_html_body1_h/gtkdebug_html/g',
-               '@INPUT@'],
-    capture : true)
+gtkdebug_html = gnome.compile_resources('gtkdebug.gresource', 'gtkdebug.gresource.xml',
+  c_name : 'gtkdebug')
+libpidgin_SOURCES += gtkdebug_html
 
 if IS_WIN32
 	libpidgin_SOURCES += [
