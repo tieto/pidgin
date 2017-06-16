@@ -4,6 +4,7 @@ EXTRA_DIST = \
 		getopt1.c \
 		gtk3compat.h \
 		gtkdebug.html \
+		gtkdebug.gresource.xml \
 		Makefile.mingw \
 		data/pidgin.appdata.xml.in \
 		data/pidgin.desktop.in \
@@ -181,10 +182,10 @@ BUILT_SOURCES = $(libpidgin_la_builtheaders) $(libpidgin_la_builtsources)
 CLEANFILES = gtkdebug.gresource.h gtkdebug.gresource.c
 
 %.gresource.h: %.gresource.xml
-	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --generate-header --target $@ --c-name gtkdebug $<
+	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --generate-header --target $@ --c-name $* --sourcedir $(srcdir) $<
 
 %.gresource.c: %.gresource.xml
-	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --generate-source --target $@ --c-name gtkdebug $<
+	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --generate-source --target $@ --c-name $* --sourcedir $(srcdir) $<
 
 gtkdebug.gresource.c: gtkdebug.html
 gtkdebug.gresource.h: gtkdebug.html

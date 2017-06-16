@@ -593,8 +593,8 @@ debug_window_new(void)
 	error = NULL;
 	resource_bytes = g_resource_lookup_data(resource,
 	                                        "/im/pidgin/Pidgin/gtkdebug.html",
-						G_RESOURCE_LOOKUP_FLAGS_NONE,
-						&error);
+	                                        G_RESOURCE_LOOKUP_FLAGS_NONE,
+	                                        &error);
 	if (G_UNLIKELY(resource_bytes == NULL || error != NULL)) {
 		gchar *msg = g_strdup_printf("Unable to load debug window HTML: %s\n",
 		                             error ? error->message : "Unknown error");
