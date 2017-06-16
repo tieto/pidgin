@@ -143,7 +143,7 @@ if ENABLE_GTK
 	    include_directories : [toplevel_inc],
 	    soversion : purple_lt_current,
 	    version : PURPLE_LT_VERSION_INFO,
-	    dependencies : [gtk, gstreamer_video, webkit, enchant, dbus, x11, sm, xss, GCR, libpurple_dep, glib, math],
+	    dependencies : [gtk, gstreamer_video, webkit, enchant, dbus, x11, sm, xss, GCR, IOKIT, libpurple_dep, glib, math],
 	    install : true)
 	libpidgin_dep = declare_dependency(
 	    include_directories : [toplevel_inc, libpidgin_inc],

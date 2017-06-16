@@ -356,11 +356,13 @@ result = compiler.run(code, name : 'the %z format string in strftime()')
 conf.set('HAVE_STRFTIME_Z_FORMAT', result.returncode() == 0)
 
 # before gettexting, in case iconv matters
+IOKIT = []
 if host_machine.system() == 'darwin'
 	if compiler.has_header('CoreFoundation/CoreFoundation.h')
 		if compiler.has_header('IOKit/IOKitLib.h')
 			conf.set('HAVE_IOKIT', true)
-			# FIXME: LIBS="$LIBS -framework IOKit -framework CoreFoundation"
+			IOKIT = dependency('appleframeworks',
+			                   modules : ['IOKit', 'CoreFoundation'])
 		endif
 	endif
 
