@@ -261,7 +261,6 @@ if test "x$is_win32" != "xyes" ; then
 	AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, ,
 		[AC_MSG_ERROR([inet_aton not found])])])
 fi
-AC_CHECK_LIB(resolv, __res_query)
 AC_CHECK_LIB(nsl, gethostent)
 if test "x$is_win32" = "xyes" ; then
 	AC_DEFINE(HAVE_GETADDRINFO, 1, [Define to 1 if you have the getaddrinfo function.])
@@ -407,8 +406,6 @@ int main()
 # before gettexting, in case iconv matters
 case "$host_os" in
 darwin*)
-	AC_CHECK_LIB(resolv, res_query)
-
 	AC_CHECK_HEADER(CoreFoundation/CoreFoundation.h, [
 		AC_CHECK_HEADER(IOKit/IOKitLib.h, [
 			AC_DEFINE(HAVE_IOKIT, 1, [Define if we have IOKit])

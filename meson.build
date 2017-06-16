@@ -240,9 +240,6 @@ if not IS_WIN32
 		endif
 	endif
 endif
-if compiler.has_function('__res_query', args : '-lresolv')
-	conf.set('HAVE_LIBRESOLV', true)
-endif
 if compiler.has_function('gethostent', args : '-lnsl')
 	conf.set('HAVE_LIBNSL', true)
 endif
@@ -360,10 +357,6 @@ conf.set('HAVE_STRFTIME_Z_FORMAT', result.returncode() == 0)
 
 # before gettexting, in case iconv matters
 if host_machine.system() == 'darwin'
-	if compiler.has_function('res_query', args : '-lresolv')
-		conf.set('HAVE_LIBRESOLV', true)
-	endif
-
 	if compiler.has_header('CoreFoundation/CoreFoundation.h')
 		if compiler.has_header('IOKit/IOKitLib.h')
 			conf.set('HAVE_IOKIT', true)
