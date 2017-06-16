@@ -564,18 +564,24 @@ Use -Dsm=false if you do not need session management support.
 	# Check for stuff needed by the Evolution integration plugin.
 	#######################################################################
 	if enable_gevolution
-		evo_deps = ['libebook-1.2', 'libedata-book-1.2', 'evolution-data-server-1.2 >= 3.6']
+		evo_deps = [
+		    ['libebook-1.2', []],
+		    ['libedata-book-1.2', []],
+		    ['evolution-data-server-1.2', '>= 3.6']
+		]
 		EVOLUTION_ADDRESSBOOK = []
 		foreach dep : evo_deps
-			EVOLUTION_ADDRESSBOOK.append(
-				dependency(dep, required : force_deps)
-			)
+			EVOLUTION_ADDRESSBOOK += [
+			    dependency(dep[0], version : dep[1], required : force_deps)
+			]
+			if not EVOLUTION_ADDRESSBOOK[-1].found()
+				enable_gevolution = false
+			endif
 		endforeach
-		if enable_gevolution
-			conf.set('HAVE_EVOLUTION_ADDRESSBOOK', true)
-#			AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
-#			AC_SUBST(EVOLUTION_ADDRESSBOOK_LIBS)
-		endif
+	endif
+	conf.set('HAVE_EVOLUTION_ADDRESSBOOK', enable_gevolution)
+	if not enable_gevolution
+		EVOLUTION_ADDRESSBOOK = []
 	endif
 
 	#######################################################################
@@ -596,6 +602,8 @@ Use -Dsm=false if you do not need session management support.
 		else
 			enable_gcr = false
 		endif
+	else
+		GCR = []
 	endif
 
 
@@ -1118,9 +1126,6 @@ if enable_unity
 		dependency('messaging-menu', version : '>= 12.10')
 	]
 	USES_MM_CHAT_SECTION = 'X-MessagingMenu-UsesChatSection=true'
-#	AC_SUBST(UNITY_CFLAGS)
-#	AC_SUBST(UNITY_LIBS)
-#	AC_SUBST(USES_MM_CHAT_SECTION)
 endif
 ENABLE_UNITY = enable_unity
 
@@ -1541,37 +1546,14 @@ endif
 # Check for external libzephyr
 #######################################################################
 zephyr = get_option('zephyr')
-EXTERNAL_LIBZEPHYR = zephyr
-#AC_SUBST(ZEPHYR_CFLAGS)
-#AC_SUBST(ZEPHYR_LDFLAGS)
-#AC_SUBST(ZEPHYR_LIBS)
 if zephyr
-#	if test '$zephyr' != 'yes' ; then
-#		ZEPHYR_CFLAGS='-I${zephyr}/include'
-#		ZEPHYR_LDFLAGS='-L${zephyr}/lib'
-#	elif test -d /usr/athena/include/zephyr ; then
-#		ZEPHYR_CFLAGS='-I/usr/athena/include'
-#	elif test -d /usr/include/zephyr ; then
-#		ZEPHYR_CFLAGS='-I/usr/include'
-#	elif test -d /usr/local/include/zephyr ; then
-#		ZEPHYR_CFLAGS='-I/usr/local/include'
-#	fi
-	conf.set('LIBZEPHYR_EXT', true)
-	EXTERNAL_LIBZEPHYR = zephyr
-#	orig_LDFLAGS='$LDFLAGS'
-#	LDFLAGS='$LDFLAGS $ZEPHYR_LDFLAGS'
-#	AC_CHECK_LIB(zephyr, ZInitialize,
-#		[ZEPHYR_LIBS='-lzephyr'],
-#		[AC_MSG_ERROR([Zephyr libraries not found])],
-#		-lzephyr)
-#	orig_LIBS='$LIBS'
-#	LIBS='$orig_LIBS'
-#	LDFLAGS='$orig_LDFLAGS'
+	ext_zephyr = dependency('zephyr', required : force_deps)
+	zephyr = ext_zephyr.found()
+else
 	ext_zephyr = []
 endif
-if not zephyr
-	ext_zephyr = []
-endif
+EXTERNAL_LIBZEPHYR = zephyr
+conf.set('LIBZEPHYR_EXT', EXTERNAL_LIBZEPHYR)
 
 #AC_MSG_CHECKING(for me pot o' gold)
 #AC_MSG_RESULT(no)
