@@ -14,13 +14,9 @@ purple_coresources = [
 	'ciphers/aescipher.c',
 	'ciphers/descipher.c',
 	'ciphers/des3cipher.c',
-	'ciphers/hmaccipher.c',
 	'ciphers/md4hash.c',
-	'ciphers/md5hash.c',
 	'ciphers/pbkdf2cipher.c',
 	'ciphers/rc4cipher.c',
-	'ciphers/sha1hash.c',
-	'ciphers/sha256hash.c',
 	'cipher.c',
 	'circularbuffer.c',
 	'cmds.c',
@@ -53,7 +49,6 @@ purple_coresources = [
 	'mime.c',
 	'nat-pmp.c',
 	'network.c',
-	'ntlm.c',
 	'notify.c',
 	'plugins.c',
 	'pluginpref.c',
@@ -135,7 +130,6 @@ purple_coreheaders = [
 	'nat-pmp.h',
 	'network.h',
 	'notify.h',
-	'ntlm.h',
 	'plugins.h',
 	'pluginpref.h',
 	'pounce.h',
@@ -184,7 +178,6 @@ endif
 
 if IS_WIN32
 	purple_coresources += [
-		'win32/giowin32.c',
 		'win32/libc_interface.c',
 		'win32/win32dep.c'
 	]
@@ -211,13 +204,9 @@ purple_cipherheaders = [
 	'ciphers/aescipher.h',
 	'ciphers/descipher.h',
 	'ciphers/des3cipher.h',
-	'ciphers/hmaccipher.h',
 	'ciphers/md4hash.h',
-	'ciphers/md5hash.h',
 	'ciphers/pbkdf2cipher.h',
 	'ciphers/rc4cipher.h',
-	'ciphers/sha1hash.h',
-	'ciphers/sha256hash.h'
 ]
 
 purple_enumheaders = [

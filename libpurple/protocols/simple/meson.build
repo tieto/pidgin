@@ -1,4 +1,6 @@
 SIMPLESOURCES = [
+	'ntlm.c',
+	'ntlm.h',
 	'simple.c',
 	'simple.h',
 	'sipmsg.c',
