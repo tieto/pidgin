@@ -351,6 +351,8 @@ dbus_signals_c = custom_target('dbus_signals_c',
                                command : [python, dbus_analyze_signals, '-o', '@OUTPUT@',
                                           '@INPUT@'])
 
+dbus_builtheaders = [dbus_types_h]
+dbus_builtsources = [dbus_types_c, dbus_bindings_c, dbus_signals_c]
 
 # libpurple-client
 
@@ -403,12 +405,16 @@ else
 
 dbus_sources = []
 dbus_headers = []
+dbus_builtsources = []
+dbus_builtheaders = []
 
 endif
 
 libpurple_inc = include_directories('.')
 libpurple = library('purple',
-                    purple_coresources + purple_builtsources + dbus_sources + purple_builtheaders,
+                    purple_coresources + purple_builtsources +
+                    dbus_sources + dbus_builtsources +
+                    purple_builtheaders + dbus_builtheaders,
                     include_directories : [toplevel_inc, libpurple_inc],
                     install : true,
                     soversion : purple_lt_current,
