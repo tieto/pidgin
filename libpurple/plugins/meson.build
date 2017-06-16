@@ -15,9 +15,9 @@ if PLUGINS
 	    dependencies : [libpurple_dep],
 	    name_prefix : '')
 
-#	caesarcipher_consumer = library('caesarcipher_consumer', 'caesarcipher_consumer.c',
-#	    dependencies : [libpurple_dep],
-#	    name_prefix : '')
+	caesarcipher_consumer = shared_module('caesarcipher_consumer', 'caesarcipher_consumer.c',
+	    dependencies : [libpurple_dep],
+	    name_prefix : '')
 
 	codeinline = library('codeinline', 'codeinline.c',
 	    dependencies : [libpurple_dep],
