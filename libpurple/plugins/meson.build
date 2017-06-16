@@ -84,12 +84,12 @@ if PLUGINS
 	if ENABLE_DBUS
 		dbus_example_bindings_c = custom_target('dbus_example_bindings_c',
 		    input : 'dbus-example.c',
-		    output : 'dbus-example-bindings.c',
+		    output : 'dbus-example-bindings.ch',
 		    command : [python,
 		               meson.source_root() + '/libpurple/dbus-analyze-functions.py',
 		               '--export-only', '-o', '@OUTPUT@', '@INPUT@'])
 
-		dbus_example = library('dbus-example', 'dbus-example.c',
+		dbus_example = library('dbus-example', 'dbus-example.c', dbus_example_bindings_c,
 		    dependencies : [libpurple_dep, dbus],
 		    name_prefix : '')
 	endif  # ENABLE_DBUS

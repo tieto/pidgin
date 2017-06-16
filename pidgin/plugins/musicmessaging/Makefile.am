@@ -18,18 +18,18 @@ musicmessaging_la_SOURCES = \
 
 musicmessaging_la_LIBADD = @PIDGIN_LIBS@ $(DBUS_LIBS)
 
-CLEANFILES              = music-messaging-bindings.c
+CLEANFILES              = music-messaging-bindings.ch
 
 .PHONY: always
 
 $(top_builddir)/libpurple/dbus-types.h: always
 	$(AM_V_GEN)cd $(@D) && $(MAKE) $(AM_MAKEFLAGS) $(@F)
 
-music-messaging-bindings.c: $(top_srcdir)/libpurple/dbus-analyze-functions.py $(musicmessaging_la_SOURCES)
+music-messaging-bindings.ch: $(top_srcdir)/libpurple/dbus-analyze-functions.py $(musicmessaging_la_SOURCES)
 	$(AM_V_GEN)cat $(srcdir)/$(musicmessaging_la_SOURCES) | \
 	$(PYTHON) $(top_srcdir)/libpurple/dbus-analyze-functions.py --export-only > $@
 
-$(musicmessaging_la_OBJECTS) musicmessaging.so: music-messaging-bindings.c $(top_builddir)/libpurple/dbus-types.h
+$(musicmessaging_la_OBJECTS) musicmessaging.so: music-messaging-bindings.ch $(top_builddir)/libpurple/dbus-types.h
 
 endif
 endif

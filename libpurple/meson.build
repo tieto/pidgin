@@ -329,7 +329,7 @@ dbus_analyze_types = files('dbus-analyze-types.py')[0]
 
 dbus_types_c = custom_target('dbus_types_c',
                              input : purple_build_coreheaders,
-                             output : 'dbus-types.c',
+                             output : 'dbus-types.ch',
                              command : [python, dbus_analyze_types, '-o', '@OUTPUT@',
                                         '--pattern=PURPLE_DBUS_DEFINE_TYPE(%s)', '@INPUT@'])
 
@@ -341,13 +341,13 @@ dbus_types_h = custom_target('dbus_types_h',
 
 dbus_bindings_c = custom_target('dbus_bindings_c',
                                 input : dbus_exported,
-                                output : 'dbus-bindings.c',
+                                output : 'dbus-bindings.ch',
                                 command : [python, dbus_analyze_functions, '-o', '@OUTPUT@',
                                            '@INPUT@'])
 
 dbus_signals_c = custom_target('dbus_signals_c',
                                input : dbus_signals,
-                               output : 'dbus-signals.c',
+                               output : 'dbus-signals.ch',
                                command : [python, dbus_analyze_signals, '-o', '@OUTPUT@',
                                           '@INPUT@'])
 
@@ -426,7 +426,7 @@ libpurple = library('purple',
                          gstreamer_app, idn, json, gnutls,
                          nss, zlib, math])
 libpurple_dep = declare_dependency(
-	sources : purple_builtsources,  # Ensure built before any dependencies.
+    sources : purple_builtheaders,  # Ensure built before any dependencies.
     include_directories : [toplevel_inc, libpurple_inc],
     link_with : libpurple,
     dependencies : [gstreamer, gplugin, glib, gio])
