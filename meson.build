@@ -134,8 +134,8 @@ if host_machine.system() == 'windows'
 else
 	is_win32 = false
 	is_not_win32 = true
-	ws2_32 = declare_dependency()
-	dnsapi = declare_dependency()
+	ws2_32 = []
+	dnsapi = []
 endif
 IS_WIN32 = is_win32
 
@@ -480,13 +480,13 @@ Use -Dx=false if you do not need X11 support.
 		enable_screensaver = false
 		enable_sm = false
 		enable_gestures = false
-		x11 = declare_dependency()
+		x11 = []
 	endif
 
 	#######################################################################
 	# Check for XScreenSaver
 	#######################################################################
-	xss = declare_dependency()
+	xss = []
 	if enable_screensaver
 		if with_x
 			xss_headers = []
@@ -558,7 +558,7 @@ Use -Dsm=false if you do not need session management support.
 		endif
 	endif
 	if not enable_sm
-		sm = declare_dependency()
+		sm = []
 	endif
 
 	#######################################################################
@@ -800,7 +800,7 @@ if enable_vv
 		conf.set('HAVE_MEDIA_APPLICATION', true)
 	endif
 else
-	gstreamer_app = declare_dependency()
+	gstreamer_app = []
 endif
 
 #######################################################################
@@ -811,7 +811,7 @@ if get_option('idn')
 	idn = dependency('libidn', version : '>= 0.0.0', required : force_deps)
 	conf.set('USE_IDN', idn.found())
 else
-	idn = declare_dependency()
+	idn = []
 endif
 
 #######################################################################
@@ -1108,8 +1108,8 @@ if enable_dbus
 	dbus_glib = dependency('dbus-glib-1', version : '>= 0.60', required : force_deps)
 	enable_dbus = dbus.found() and dbus_glib.found()
 else
-	dbus = declare_dependency()
-	dbus_glib = declare_dependency()
+	dbus = []
+	dbus_glib = []
 endif
 
 #######################################################################
@@ -1254,7 +1254,7 @@ if get_option('plugins')
 	conf.set('GPLUGIN_REQ', ', gplugin')
 	enable_introspection = true
 else
-	gplugin = declare_dependency()
+	gplugin = []
 	enable_introspection = false
 endif
 
@@ -1489,7 +1489,7 @@ else
 	USE_CYRUS_SASL = false
 endif
 if not USE_CYRUS_SASL
-	sasl = declare_dependency()
+	sasl = []
 endif
 
 #######################################################################
@@ -1529,10 +1529,10 @@ if kerberos
 #	AC_CHECK_FUNCS(krb_get_err_text krb_log)
 #	LIBS='$orig_LIBS'
 #	LDFLAGS='$orig_LDFLAGS'
-	krb4 = declare_dependency()
+	krb4 = []
 endif
 if not kerberos
-	krb4 = declare_dependency()
+	krb4 = []
 endif
 
 #######################################################################
@@ -1565,10 +1565,10 @@ if zephyr
 #	orig_LIBS='$LIBS'
 #	LIBS='$orig_LIBS'
 #	LDFLAGS='$orig_LDFLAGS'
-	ext_zephyr = declare_dependency()
+	ext_zephyr = []
 endif
 if not zephyr
-	ext_zephyr = declare_dependency()
+	ext_zephyr = []
 endif
 
 #AC_MSG_CHECKING(for me pot o' gold)
