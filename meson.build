@@ -906,7 +906,6 @@ DEFAULT_PRPLS = ['bonjour', 'facebook', 'gg', 'irc', 'jabber', 'novell',
                  'oscar', 'sametime', 'silc', 'simple', 'zephyr']
 ALL_PRPLS = DEFAULT_PRPLS + ['null']
 
-DISTRIB = get_option('distrib')
 dynamic_list = get_option('dynamic-prpls').split(',')
 static_list = get_option('static-prpls').split(',')
 if (static_list != [''] and static_list != []) and dynamic_list == ['all']

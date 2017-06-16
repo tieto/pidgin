@@ -1220,8 +1220,6 @@ AC_SUBST(LIBGADU_LIBS)
 AC_SUBST(LIBGADU_CFLAGS)
 
 
-AC_ARG_ENABLE(distrib,,,enable_distrib=no)
-AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 DYNAMIC_PRPLS=all
 AC_ARG_WITH(static-prpls, [AS_HELP_STRING([--with-static-prpls], [Link to certain protocols statically])], [STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`], [STATIC_PRPLS=""])
 if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
