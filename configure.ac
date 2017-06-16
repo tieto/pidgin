@@ -109,7 +109,6 @@ GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
 AC_SUBST(GNT_LT_VERSION_INFO)
 
 AC_PATH_PROG(sedpath, sed)
-AC_PATH_PROG(xxdpath, xxd)
 
 dnl Storing configure arguments
 AC_DEFINE_UNQUOTED(CONFIG_ARGS, "$ac_configure_args", [configure arguments])
@@ -487,6 +486,8 @@ AC_SUBST(GLIB_GENMARSHAL)
 
 GLIB_MKENUMS=`$PKG_CONFIG --variable=glib_mkenums glib-2.0`
 AC_SUBST(GLIB_MKENUMS)
+
+AC_PATH_PROG(GLIB_COMPILE_RESOURCES, [glib-compile-resources])
 
 AC_PATH_PROG(GTESTER, gtester)
 GLIB_TESTS

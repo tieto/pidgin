@@ -40,7 +40,7 @@
 
 #include "gtk3compat.h"
 
-#include "gtkdebug.html.h"
+#include "gtkdebug.gresource.h"
 
 typedef struct
 {
@@ -409,7 +409,10 @@ toolbar_context(GtkWidget *toolbar, GdkEventButton *event, gpointer null)
 static DebugWindow *
 debug_window_new(void)
 {
+	GError *error;
 	DebugWindow *win;
+	GResource *resource;
+	GBytes *resource_bytes;
 	GtkWidget *vbox;
 	GtkWidget *toolbar;
 	GtkWidget *frame;
@@ -586,7 +589,25 @@ debug_window_new(void)
 	frame = pidgin_create_webview(FALSE, &win->text, NULL);
 	pidgin_webview_set_format_functions(PIDGIN_WEBVIEW(win->text),
 	                                 PIDGIN_WEBVIEW_ALL ^ PIDGIN_WEBVIEW_SMILEY ^ PIDGIN_WEBVIEW_IMAGE);
-	pidgin_webview_load_html_string(PIDGIN_WEBVIEW(win->text), gtkdebug_html);
+	resource = gtkdebug_get_resource();
+	error = NULL;
+	resource_bytes = g_resource_lookup_data(resource,
+	                                        "/im/pidgin/Pidgin/gtkdebug.html",
+						G_RESOURCE_LOOKUP_FLAGS_NONE,
+						&error);
+	if (G_UNLIKELY(resource_bytes == NULL || error != NULL)) {
+		gchar *msg = g_strdup_printf("Unable to load debug window HTML: %s\n",
+		                             error ? error->message : "Unknown error");
+		g_clear_error(&error);
+		pidgin_webview_load_html_string(PIDGIN_WEBVIEW(win->text), msg);
+		g_free(msg);
+	} else {
+		gconstpointer gtkdebug_html;
+		gtkdebug_html = g_bytes_get_data(resource_bytes, NULL);
+		pidgin_webview_load_html_string(PIDGIN_WEBVIEW(win->text),
+		                                gtkdebug_html);
+	}
+	g_bytes_unref(resource_bytes);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 

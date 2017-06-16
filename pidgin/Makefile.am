@@ -52,6 +52,7 @@ libpidgin_la_SOURCES = \
 	gtkconv-theme.c \
 	gtkconv-theme-loader.c \
 	gtkdebug.c \
+	gtkdebug.gresource.c \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
 	gtkdocklet.c \
@@ -172,18 +173,22 @@ libpidginincludedir=$(includedir)/pidgin
 libpidgininclude_HEADERS = \
 	$(libpidgin_la_headers)
 
-libpidgin_la_builtheaders = gtkdebug.html.h
+libpidgin_la_builtheaders = gtkdebug.gresource.h
+libpidgin_la_builtsources = gtkdebug.gresource.c
 
-BUILT_SOURCES = $(libpidgin_la_builtheaders)
+BUILT_SOURCES = $(libpidgin_la_builtheaders) $(libpidgin_la_builtsources)
 
-CLEANFILES = gtkdebug.html.h
+CLEANFILES = gtkdebug.gresource.h gtkdebug.gresource.c
 
-%.html.h: %.html
-	$(AM_V_GEN)echo "static const char $*_html[] = {" > $@
-	$(AM_V_at)$(sedpath) -e 's/^[ 	]\+//g' -e 's/[ 	]\+/ /g' $< | $(xxdpath) -i | sed -e 's/\(0x[0-9a-f][0-9a-f]\)$$/\1, 0x00/' >> $@
-	$(AM_V_at)echo "};" >> $@
+%.gresource.h: %.gresource.xml
+	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --generate-header --target $@ --c-name gtkdebug $<
 
-gtkdebug.c: gtkdebug.html.h
+%.gresource.c: %.gresource.xml
+	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --generate-source --target $@ --c-name gtkdebug $<
+
+gtkdebug.gresource.c: gtkdebug.html
+gtkdebug.gresource.h: gtkdebug.html
+gtkdebug.c: gtkdebug.gresource.h
 
 libpidgin_la_DEPENDENCIES = @LIBOBJS@ $(LIBPIDGIN_WIN32RES)
 libpidgin_la_LDFLAGS = -export-dynamic -no-undefined \
