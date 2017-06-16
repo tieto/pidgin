@@ -1095,7 +1095,7 @@ if enable_unity
 		dependency('unity', version : '>= 6.8'),
 		dependency('messaging-menu', version : '>= 12.10')
 	]
-	USES_MM_CHAT_SECTION = 'X-MessagingMenu-UsesChatSection=true'
+	conf.set('USES_MM_CHAT_SECTION', 'X-MessagingMenu-UsesChatSection=true')
 endif
 ENABLE_UNITY = enable_unity
 
@@ -1418,10 +1418,10 @@ endif
 if get_option('plugins')
 	conf.set('PURPLE_PLUGINS', 1)
 	PLUGINS = true
-	PLUGINS_DEFINE = '#define PURPLE_PLUGINS 1'
+	conf.set('PLUGINS_DEFINE', '#define PURPLE_PLUGINS 1')
 else
 	PLUGINS = false
-	PLUGINS_DEFINE = '#undef PURPLE_PLUGINS'
+	conf.set('PLUGINS_DEFINE', '#undef PURPLE_PLUGINS')
 endif
 
 #######################################################################
