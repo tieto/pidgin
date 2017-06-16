@@ -124,20 +124,17 @@ SUNCC = compiler.compiles('void main() {__SUNPRO_C;};')
 if host_machine.system() == 'windows'
 	windows = import('windows')
 
-	is_win32 = true
-	is_not_win32 = false
+	IS_WIN32 = true
 	# FIXME: Need to add ws2_32 to some target.
 	ws2_32 = compiler.find_library('ws2_32')
 	dnsapi = compiler.find_library('dnsapi')
 	conf.set('IS_WIN32_CROSS_COMPILED', true)
 	conf.set('WIN32_LEAN_AND_MEAN', true)
 else
-	is_win32 = false
-	is_not_win32 = true
+	IS_WIN32 = false
 	ws2_32 = []
 	dnsapi = []
 endif
-IS_WIN32 = is_win32
 
 # Checks for header files.
 # AC_HEADER_SYS_WAIT:
@@ -162,10 +159,10 @@ conf.set('SIZEOF_TIME_T', time_t_size)
 conf.set('WORDS_BIGENDIAN', host_machine.endian() != 'little')
 
 conf.set('USE_WIN32_FHS',
-    is_win32 and get_option('win32-dirs') == 'fhs')
+    IS_WIN32 and get_option('win32-dirs') == 'fhs')
 
 # Check for directories
-if is_win32
+if IS_WIN32
 	if get_option('win32-dirs') == 'fhs'
 		foreach dir : ['bin', 'lib', 'data', 'sysconf', 'locale']
 			path = get_option(dir + 'dir')
@@ -235,7 +232,7 @@ else
 endif
 
 # Check for inet_aton
-if is_not_win32
+if not IS_WIN32
 	if not compiler.has_function('inet_aton')
 		if not compiler.has_function('inet_aton', args : '-lresolv')
 			# FIXME: Someone needs to link with -lresolv if needed.
@@ -249,7 +246,7 @@ endif
 if compiler.has_function('gethostent', args : '-lnsl')
 	conf.set('HAVE_LIBNSL', true)
 endif
-if is_win32
+if IS_WIN32
 	conf.set('HAVE_GETADDRINFO', true)
 	conf.set('HAVE_INET_NTOP', true)
 else
@@ -275,7 +272,7 @@ conf.set('HAVE_GETIFADDRS',
     compiler.has_function('getifaddrs'))
 
 # Check for socklen_t (in Unix98)
-if is_win32
+if IS_WIN32
 	socket_header = 'ws2tcpip.h'
 else
 	socket_header = 'sys/socket.h'
@@ -300,7 +297,7 @@ conf.set('HAVE_STRUCT_SOCKADDR_SA_LEN',
         prefix : '#include <@0@>'.format(socket_header)))
 
 # Check for v6-only sockets
-if is_win32
+if IS_WIN32
 	header = 'ws2tcpip.h'
 else
 	header = 'netinet/in.h'
@@ -417,7 +414,7 @@ conf.set('DISPLAY_VERSION', '"@0@"'.format(DISPLAY_VERSION))
 
 force_deps = not get_option('missing-dependencies')
 
-with_x = get_option('x') and is_not_win32
+with_x = get_option('x') and not IS_WIN32
 
 # #######################################################################
 # # Check for GTK+ 2.18 and other things used by the GTK UI
@@ -640,7 +637,7 @@ if enable_consoleui
 		enable_consoleui = false
 	endif
 
-	if is_win32
+	if IS_WIN32
 		# FIXME: $host ?
 		ncurses_sys_prefix = '/usr/$host/sys-root/mingw'
 	else
@@ -837,7 +834,7 @@ endif
 
 enable_avahi = get_option('avahi')
 avahi = []
-if enable_avahi and is_win32
+if enable_avahi and IS_WIN32
 	# Just keep enabled.
 elif enable_avahi
 	# Attempt to autodetect Avahi
@@ -935,7 +932,7 @@ foreach prpl : static_list
 		# Do nothing
 	elif prpl == 'gg' and not have_libgadu
 		# Do nothing
-	elif prpl == 'zephyr' and is_win32
+	elif prpl == 'zephyr' and IS_WIN32
 		# Do nothing
 	else
 		STATIC_PRPLS += [prpl]
@@ -992,7 +989,7 @@ foreach prpl : dynamic_list
 		# Do nothing.
 	elif prpl == 'gg' and not have_libgadu
 		# Do nothing.
-	elif prpl == 'zephyr' and is_win32
+	elif prpl == 'zephyr' and IS_WIN32
 		# Do nothing.
 	else
 		DYNAMIC_PRPLS += [prpl]
@@ -1100,7 +1097,7 @@ endif
 #######################################################################
 
 # dbus doesn't compile for win32 at the moment
-enable_dbus = get_option('dbus') and is_not_win32
+enable_dbus = get_option('dbus') and not IS_WIN32
 
 if enable_dbus
 	dbus_binding_tool = find_program('dbus-binding-tool')
@@ -1148,7 +1145,7 @@ ENABLE_SECRETSERVICE = enable_secret_service
 # Check for GNOME Keyring headers
 #######################################################################
 
-enable_gnome_keyring = get_option('gnome-keyring') and is_not_win32
+enable_gnome_keyring = get_option('gnome-keyring') and not IS_WIN32
 
 if enable_gnome_keyring
 	gnome_keyring = dependency('gnome-keyring-1', required : force_deps)
@@ -1167,7 +1164,7 @@ ENABLE_GNOMEKEYRING = enable_gnome_keyring
 # Check for KWallet headers
 #######################################################################
 
-enable_kwallet = get_option('kwallet') and is_not_win32
+enable_kwallet = get_option('kwallet') and not IS_WIN32
 
 if enable_kwallet
 	# Ensure C++ compiler works
@@ -1355,7 +1352,7 @@ ssl_certificates_dir = get_option('system-ssl-certs')
 SSL_CERTIFICATES_DIR = ''
 if ssl_certificates_dir != ''
 	if run_command('test', '-d', ssl_certificates_dir).returncode() != 0
-		if is_win32
+		if IS_WIN32
 			message(ssl_certificates_dir + ' does not exist. It may be OK when cross-compiling, but please make sure about it.')
 		else
 			error(ssl_certificates_dir + ' does not exist, if this is the correct location please make sure that it exists.')
@@ -1736,7 +1733,7 @@ message('')
 message('Build with plugin support..... : ' + PLUGINS.to_string())
 message('Enable Introspection...........: ' + enable_introspection.to_string())
 
-if is_win32
+if IS_WIN32
 	message('')
 	message('Win32 directory structure..... : ' + get_option('win32-dirs'))
 endif
