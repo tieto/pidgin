@@ -24,7 +24,6 @@
 #include "debug.h"
 #include "glibcompat.h"
 #include "image-store.h"
-#include "marshallers.h"
 #include "pidgin.h"
 #include "pidginstock.h"
 
@@ -1344,45 +1343,44 @@ pidgin_webview_class_init(PidginWebViewClass *klass, gpointer userdata)
 	                                       G_TYPE_FROM_CLASS(gobject_class),
 	                                       G_SIGNAL_RUN_FIRST,
 	                                       G_STRUCT_OFFSET(PidginWebViewClass, buttons_update),
-	                                       NULL, 0, g_cclosure_marshal_VOID__INT,
+	                                       NULL, 0, NULL,
 	                                       G_TYPE_NONE, 1, G_TYPE_INT);
 	signals[TOGGLE_FORMAT] = g_signal_new("format-toggled",
 	                                      G_TYPE_FROM_CLASS(gobject_class),
 	                                      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 	                                      G_STRUCT_OFFSET(PidginWebViewClass, toggle_format),
-	                                      NULL, 0, g_cclosure_marshal_VOID__INT,
+	                                      NULL, 0, NULL,
 	                                      G_TYPE_NONE, 1, G_TYPE_INT);
 	signals[CLEAR_FORMAT] = g_signal_new("format-cleared",
 	                                     G_TYPE_FROM_CLASS(gobject_class),
 	                                     G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
 	                                     G_STRUCT_OFFSET(PidginWebViewClass, clear_format),
-	                                     NULL, 0, g_cclosure_marshal_VOID__VOID,
+	                                     NULL, 0, NULL,
 	                                     G_TYPE_NONE, 0);
 	signals[UPDATE_FORMAT] = g_signal_new("format-updated",
 	                                      G_TYPE_FROM_CLASS(gobject_class),
 	                                      G_SIGNAL_RUN_FIRST,
 	                                      G_STRUCT_OFFSET(PidginWebViewClass, update_format),
-	                                      NULL, 0, g_cclosure_marshal_VOID__VOID,
+	                                      NULL, 0, NULL,
 	                                      G_TYPE_NONE, 0);
 	signals[CHANGED] = g_signal_new("changed",
 	                                G_TYPE_FROM_CLASS(gobject_class),
 	                                G_SIGNAL_RUN_FIRST,
 	                                G_STRUCT_OFFSET(PidginWebViewClass, changed),
-	                                NULL, NULL, g_cclosure_marshal_VOID__VOID,
+	                                NULL, NULL, NULL,
 	                                G_TYPE_NONE, 0);
 	signals[HTML_APPENDED] = g_signal_new("html-appended",
 	                                      G_TYPE_FROM_CLASS(gobject_class),
 	                                      G_SIGNAL_RUN_FIRST,
 	                                      G_STRUCT_OFFSET(PidginWebViewClass, html_appended),
-	                                      NULL, NULL,
-	                                      g_cclosure_marshal_VOID__OBJECT,
+	                                      NULL, NULL, NULL,
 	                                      G_TYPE_NONE, 1, WEBKIT_TYPE_DOM_RANGE,
 	                                      NULL);
 	signals[INSERT_IMAGE] = g_signal_new("insert-image",
 		G_TYPE_FROM_CLASS(gobject_class), G_SIGNAL_RUN_LAST,
 		G_STRUCT_OFFSET(PidginWebViewClass, insert_image),
-		pidgin_webview_insert_image_accu, NULL,
-		purple_smarshal_BOOLEAN__OBJECT, G_TYPE_BOOLEAN, 1,
+		pidgin_webview_insert_image_accu, NULL, NULL,
+		G_TYPE_BOOLEAN, 1,
 		PURPLE_TYPE_IMAGE);
 
 	/* Class Methods */

@@ -105,8 +105,7 @@ gnt_check_box_class_init(GntCheckBoxClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntCheckBoxClass, toggled),
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 	GNTDEBUG;
 }

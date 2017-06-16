@@ -24,7 +24,6 @@
 #include "gntbox.h"
 #include "gntcombobox.h"
 #include "gnttree.h"
-#include "gntmarshal.h"
 #include "gntstyle.h"
 #include "gntutils.h"
 
@@ -283,8 +282,7 @@ gnt_combo_box_class_init(GntComboBoxClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 0,
-					 NULL, NULL,
-					 gnt_closure_marshal_VOID__POINTER_POINTER,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
 
 	gnt_bindable_class_register_action(bindable, "dropdown", dropdown_menu,

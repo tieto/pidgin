@@ -56,7 +56,7 @@ else
 VV_SRC =
 endif
 
-BUILT_SRC = marshallers.c enums.c
+BUILT_SRC = enums.c
 
 C_SRC =	\
 			$(BUILT_SRC) \
@@ -209,15 +209,6 @@ install: install_shallow all
 
 $(OBJECTS): $(PURPLE_CONFIG_H) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H)
 
-marshallers.h: marshallers.list
-	@echo -e "  GEN\t$@"
-	@$(GLIB_GENMARSHAL) --prefix=purple_smarshal $< --header > marshallers.h
-
-marshallers.c: marshallers.list marshallers.h
-	@echo -e "  GEN\t$@"
-	@echo "#include \"marshallers.h\"" > marshallers.c
-	@$(GLIB_GENMARSHAL) --prefix=purple_smarshal $< --body >> marshallers.c
-
 enums.h: enums.h.in $(ENUM_HEADERS)
 	@echo -e "  GEN\t$@"
 	@$(GLIB_MKENUMS) --template enums.h.in $(ENUM_HEADERS) > enums.h
@@ -233,7 +224,7 @@ $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 ## CLEAN RULES
 ##
 clean:
-	rm -f $(OBJECTS) $(RC_SRC) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H) marshallers.h marshallers.c enums.h enums.c
+	rm -f $(OBJECTS) $(RC_SRC) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H) enums.h enums.c
 	rm -f $(TARGET).dll $(TARGET).dll.a $(TARGET).def
 	$(MAKE_at) $(MAKE) -C $(PURPLE_PROTOS_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE_at) $(MAKE) -C $(PURPLE_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean
