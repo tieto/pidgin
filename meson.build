@@ -476,8 +476,25 @@ Use -Dx=false if you do not need X11 support.
 ''')
 			endif
 		endif
-	else
+	endif
+	if not with_x
+		if enable_screensaver
+			msg = 'X support is required to build with XScreenSaver extensions'
+			if force_deps
+				error(msg)
+			else
+				message(msg)
+			endif
+		endif
 		enable_screensaver = false
+		if enable_sm
+			msg = 'X support is required to build with X session management support'
+			if force_deps
+				error(msg)
+			else
+				message(msg)
+			endif
+		endif
 		enable_sm = false
 		enable_gestures = false
 		x11 = []
@@ -486,88 +503,64 @@ Use -Dx=false if you do not need X11 support.
 	#######################################################################
 	# Check for XScreenSaver
 	#######################################################################
-	xss = []
+	xss_libs = []
 	if enable_screensaver
-		if with_x
-			xss_headers = []
-			xss_libs = []
-			if compiler.has_function('XScreenSaverRegister',
-			    args : ['-lXext', '-lX11', '-lXext', '-lm'])
-				xss_libs = ['-lXext', '-lX11', '-lXext', '-lm']
-			elif compiler.has_function('XScreenSaverRegister',
-			    args : ['-lXss', '-lX11', '-lXext', '-lm'])
-				xss_libs = ['-lXss', '-lX11', '-lXext', '-lm']
-			endif
-			if xss_libs != []
-				if not compiler.has_header('X11/extensions/scrnsaver.h',
-				    prefix : '#include <X11/Xlib.h>')
-					enable_screensaver = false
-				endif
-			else
+		if compiler.has_function('XScreenSaverRegister',
+		    args : ['-lXext', '-lX11', '-lXext', '-lm'])
+			xss_libs = ['-lXext', '-lX11', '-lXext', '-lm']
+		elif compiler.has_function('XScreenSaverRegister',
+		    args : ['-lXss', '-lX11', '-lXext', '-lm'])
+			xss_libs = ['-lXss', '-lX11', '-lXext', '-lm']
+		endif
+		if xss_libs != []
+			if not compiler.has_header('X11/extensions/scrnsaver.h',
+			    prefix : '#include <X11/Xlib.h>')
 				enable_screensaver = false
+				xss_libs = []
 			endif
+		else
+			enable_screensaver = false
+		endif
 
-			if enable_screensaver
-				conf.set('USE_SCREENSAVER', true)
-				xss = declare_dependency(
-				    link_args : xss_libs
-				)
-			else
-				if force_deps
-					error('''
+		if not enable_screensaver and force_deps
+			error('''
 XScreenSaver extension development headers (libXScrnSaver-devel or libxss-dev) not found.
 Use -Dscreensaver=false if you do not need XScreenSaver extension support,
 this is required for detecting idle time by mouse and keyboard usage.
 ''')
-				endif
-			endif
-		else
-			error('X support is required to build with XScreenSaver extensions')
 		endif
 	endif
+	conf.set('USE_SCREENSAVER', enable_screensaver)
+	xss = declare_dependency(
+	    link_args : xss_libs
+	)
 
 	#######################################################################
 	# Check for X session management libs
 	#######################################################################
 	if enable_sm
-		if with_x
-			enable_sm = false
-			found_sm_lib = compiler.has_function('SmcSaveYourselfDone',
-			    args : '-lSM')
-			if found_sm_lib
-				if compiler.has_header('X11/SM/SMlib.h')
-					sm = declare_dependency(
-					    link_args : ['-lSM', '-lICE']
-					)
-					enable_sm = true
-				endif
+		enable_sm = false
+		found_sm_lib = compiler.has_function('SmcSaveYourselfDone',
+		    args : '-lSM')
+		if found_sm_lib
+			if compiler.has_header('X11/SM/SMlib.h')
+				sm = declare_dependency(
+				    link_args : ['-lSM', '-lICE']
+				)
+				enable_sm = true
 			endif
+		endif
 
-			if enable_sm
-				conf.set('USE_SM', true)
-			else
-				if force_deps
-					error('''
+		if not enable_sm and force_deps
+			error('''
 X session management development headers not found.
 Use -Dsm=false if you do not need session management support.
 ''')
-				endif
-			endif
-		else
-			error('X support is required to build with X session management support')
 		endif
 	endif
+	conf.set('USE_SM', enable_sm)
 	if not enable_sm
 		sm = []
-	endif
-
-	#######################################################################
-	# Check for X11 to allow the gestures plugin
-	#######################################################################
-	if enable_gestures
-		if not with_x
-			enable_gestures = false
-		endif
 	endif
 
 	#######################################################################
