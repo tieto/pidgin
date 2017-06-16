@@ -91,21 +91,6 @@ if ENABLE_GNT
 	               install : true,
 	               install_dir : get_option('libdir') + '/pkgconfig')
 
-#AM_CPPFLAGS = \
-#	-DSTANDALONE \
-#	-I$(top_srcdir)/libpurple/ \
-#	-I$(top_builddir)/libpurple \
-#	-I$(top_srcdir) \
-#	-I$(srcdir)/libgnt/ \
-#	$(DEBUG_CFLAGS) \
-#	$(GLIB_CFLAGS) \
-#	$(GPLUGIN_CFLAGS) \
-#	$(DBUS_CFLAGS) \
-#	$(LIBXML_CFLAGS) \
-#	$(GSTREAMER_CFLAGS) \
-#	$(INTROSPECTION_CFLAGS) \
-#	$(GNT_CFLAGS)
-
 	if enable_introspection
 		introspection_sources = libfinch_headers
 

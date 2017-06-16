@@ -9,8 +9,6 @@ if ENABLE_GTK
 	    configuration : conf,
 	    install : true,
 	    install_dir : get_option('mandir') + '/man1')
-
-	#install_man(pidgin_man)
 endif
 
 if ENABLE_GNT
@@ -20,6 +18,4 @@ if ENABLE_GNT
 	    configuration : conf,
 	    install : true,
 	    install_dir : get_option('mandir') + '/man1')
-
-	#install_man(finch_man)
 endif

@@ -149,25 +149,6 @@ if ENABLE_GTK
 	    include_directories : [toplevel_inc, libpidgin_inc],
 	    link_with : libpidgin,
 	    dependencies : [webkit, gtk, glib, math])
-#	libpidgin_la_LDFLAGS = -export-dynamic \
-#	libpidgin_la_LIBADD = \
-#		@LIBOBJS@ \
-#		$(ENCHANT_LIBS) \
-#		$(GLIB_LIBS) \
-#		$(GPLUGIN_LIBS) \
-#		$(GCR_LIBS) \
-#		$(DBUS_LIBS) \
-#		$(GSTREAMER_LIBS) \
-#		$(GSTVIDEO_LIBS) \
-#		$(GSTINTERFACES_LIBS) \
-#		$(XSS_LIBS) \
-#		$(SM_LIBS) \
-#		$(INTLLIBS) \
-#		$(LIBXML_LIBS) \
-#		$(WEBKIT_LIBS) \
-#		$(GTK_LIBS) \
-#		$(X11_LIBS) \
-#		$(INTROSPECTION_LIBS) \
 
 	pidgin = executable('pidgin',
 	    pidgin_SOURCES,
@@ -179,22 +160,6 @@ if ENABLE_GTK
 #		libpidgin_la_LIBADD += -lwinmm
 #		pidgin_LDFLAGS += -mwindows
 	endif
-
-#	AM_CPPFLAGS = \
-#		$(ENCHANT_CFLAGS) \
-#		$(GLIB_CFLAGS) \
-#		$(GPLUGIN_CFLAGS) \
-#		$(GCR_CFLAGS) \
-#		$(GSTREAMER_CFLAGS) \
-#		$(GSTVIDEO_CFLAGS) \
-#		$(GSTINTERFACES_CFLAGS) \
-#		$(DEBUG_CFLAGS) \
-#		$(GTK_CFLAGS) \
-#		$(X11_CFLAGS) \
-#		$(DBUS_CFLAGS) \
-#		$(LIBXML_CFLAGS) \
-#		$(WEBKIT_CFLAGS) \
-#		$(INTROSPECTION_CFLAGS)
 
 	configure_file(input : 'data/pidgin-3.pc.in',
 	               output : 'pidgin-3.pc',

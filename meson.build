@@ -305,10 +305,6 @@ endif
 conf.set('HAVE_IPV6_V6ONLY',
     compiler.has_header_symbol(header, 'IPV6_V6ONLY'))
 
-# to prevent the g_stat()/g_unlink() crash,
-# (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
-#AC_SYS_LARGEFILE
-
 # FreeBSD doesn't have libdl, dlopen is provided by libc
 if compiler.has_function('dlopen')
 	LIBDL = ''
@@ -691,8 +687,6 @@ Finch will not be built. You need to install ncursesw (or ncurses) and its devel
 ''')
 endif
 
-#AC_SUBST(GNT_LIBS)
-#AC_SUBST(GNT_CFLAGS)
 ENABLE_GNT = enable_consoleui
 
 #conf.set('HAVE_WCWIDTH', compiler.has_function('wcwidth'))
@@ -716,13 +710,6 @@ json = dependency('json-glib-1.0', version : '>= 0.14.0')
 #######################################################################
 
 zlib = dependency('zlib', version : '>= 1.2.0')
-
-#######################################################################
-# GConf schemas
-#######################################################################
-GCONFTOOL = find_program('gconftool-2', required : false)
-USE_GCONFTOOL = GCONFTOOL.found()
-#AM_GCONF_SOURCE_2
 
 #######################################################################
 # Check for GStreamer
@@ -825,8 +812,6 @@ else
 	enable_meanwhile = false
 	meanwhile = []
 endif
-#AC_SUBST(MEANWHILE_CFLAGS)
-#AC_SUBST(MEANWHILE_LIBS)
 
 #######################################################################
 # Check for Native Avahi headers (for Bonjour)
@@ -1070,22 +1055,15 @@ if compiler.get_id() == 'gcc'
 #			AC_MSG_RESULT(no)
 #		])
 	endif
-
-#	DEBUG_CFLAGS='-Wall $DEBUG_CFLAGS'
-#	CFLAGS='-g $CFLAGS'
 endif
-#DEBUG_CPPFLAGS=`echo '$DEBUG_CFLAGS' | $sedpath 's/-Wdeclaration-after-statement//' | $sedpath 's/-Wmissing-prototypes//' | $sedpath 's/-Waggregate-return//'`
-#
 if SUNCC
 	add_global_arguments('-features=extensions', language : 'c')
 endif
 
 pidginpath = find_program('pidgin')
 
-have_clang = compiler.get_id() == 'clang'
-
 if get_option('glib-errors-trace')
-	if have_clang
+	if compiler.get_id() == 'clang'
 		error('--enable-glib-errors-trace doesn\'t work with clang')
 	endif
 	conf.set('ENABLE_GLIBTRACE', true)
@@ -1236,13 +1214,6 @@ if enable_kwallet
 #		])
 endif
 
-#CPPFLAGS='$CPPFLAGS_save'
-#LIBS='$LIBS_save'
-#AC_LANG_POP
-
-#AC_SUBST(KWALLET_CXXFLAGS)
-#AC_SUBST(KWALLET_LIBS)
-
 ENABLE_KWALLET = enable_kwallet and false
 
 #######################################################################
@@ -1360,14 +1331,12 @@ if ssl_certificates_dir != ''
 	endif
 	SSL_CERTIFICATES_DIR = ssl_certificates_dir
 endif
-#AC_SUBST(SSL_CERTIFICATES_DIR)
 if SSL_CERTIFICATES_DIR != ''
 	conf.set('SSL_CERTIFICATES_DIR',
 	    '"@0@"'.format(SSL_CERTIFICATES_DIR))
 endif
 INSTALL_SSL_CERTIFICATES = SSL_CERTIFICATES_DIR == ''
 
-# These two are inverses of each other <-- stolen from evolution!
 enable_gnutls = get_option('gnutls')
 have_gnutls = false
 enable_nss = get_option('nss')
@@ -1451,16 +1420,6 @@ Novell Groupwise and Google Talk will not work without SSL support.
 ''')
 endif
 
-#if test '$ac_cv_cygwin' = yes ; then
-#	LDADD='$LDADD -static'
-#	conf.set('DEBUG', true)
-#endif
-
-#AC_SUBST(DEBUG_CPPFLAGS)
-#AC_SUBST(DEBUG_CFLAGS)
-#AC_SUBST(LDADD)
-#AC_SUBST(LIBS)
-
 if get_option('plugins')
 	conf.set('PURPLE_PLUGINS', 1)
 	PLUGINS = true
@@ -1477,8 +1436,6 @@ foreach func : ['snprintf', 'connect']
 	conf.set('HAVE_' + func.to_upper(),
 	    compiler.has_function(func))
 endforeach
-#AC_SUBST(SASL_LIBS)
-SASL_LIBS = ''
 enable_cyrus_sasl = get_option('cyrus-sasl')
 if enable_cyrus_sasl
 	if compiler.has_function('sasl_client_init', args : '-lsasl2')
@@ -1518,8 +1475,6 @@ if kerberos
 	endif
 	conf.set('ZEPHYR_USES_KERBEROS', true)
 
-#	orig_LDFLAGS='$LDFLAGS'
-#	LDFLAGS='$LDFLAGS $KRB4_LDFLAGS'
 #	AC_CHECK_LIB(krb4, krb_rd_req,
 #			[KRB4_LIBS='-lkrb4 -ldes425 -lkrb5 -lk5crypto -lcom_err'],
 #			[AC_CHECK_LIB(krb, krb_rd_req,
@@ -1527,12 +1482,8 @@ if kerberos
 #				[AC_MSG_ERROR([Kerberos 4 libraries not found])],
 #				-ldes)],
 #			-ldes425 -lkrb5 -lk5crypto -lcom_err)
-#	orig_LIBS='$LIBS'
-#	LIBS='$LIBS $KRB4_LIBS'
 #	AC_CHECK_FUNCS(krb_set_key krb_rd_req krb_get_lrealm)
 #	AC_CHECK_FUNCS(krb_get_err_text krb_log)
-#	LIBS='$orig_LIBS'
-#	LDFLAGS='$orig_LDFLAGS'
 	krb4 = []
 endif
 if not kerberos
@@ -1619,72 +1570,12 @@ PURPLE_AVAILABLE = true
 toplevel_inc = include_directories('.')
 
 subdir('doc')
-#subdir('doc/reference')
-#subdir('doc/reference/finch')
-#subdir('doc/reference/libpurple')
-#subdir('doc/reference/protocols')
-#subdir('doc/reference/protocols/facebook')
-#subdir('doc/reference/pidgin')
-#subdir('libpurple/data/gconf')
-#subdir('libpurple/example')
-#subdir('libpurple/plugins')
-#subdir('libpurple/plugins/keyrings')
 subdir('libpurple')
-#subdir('libpurple/protocols')
-#subdir('libpurple/protocols/bonjour')
-#subdir('libpurple/protocols/facebook')
-#subdir('libpurple/protocols/gg')
-#subdir('libpurple/protocols/irc')
-#subdir('libpurple/protocols/jabber')
-#subdir('libpurple/protocols/jabber/tests')
-#subdir('libpurple/protocols/novell')
-#subdir('libpurple/protocols/null')
-#subdir('libpurple/protocols/oscar')
-#subdir('libpurple/protocols/oscar/tests')
-#subdir('libpurple/protocols/sametime')
-#subdir('libpurple/protocols/silc')
-#subdir('libpurple/protocols/simple')
-#subdir('libpurple/protocols/zephyr')
-#subdir('libpurple/tests')
 subdir('share/sounds')
 subdir('share/ca-certs')
 subdir('finch')
-#subdir('finch/libgnt')
-#subdir('finch/libgnt/wms')
-#subdir('finch/plugins')
 subdir('pidgin')
-#subdir('pidgin/plugins')
-#subdir('pidgin/plugins/cap')
-#subdir('pidgin/plugins/disco')
-#subdir('pidgin/plugins/gestures')
-#subdir('pidgin/plugins/gevolution')
-#subdir('pidgin/plugins/musicmessaging')
-#subdir('pidgin/plugins/ticker')
-#subdir('pidgin/plugins/win32/transparency')
-#subdir('pidgin/plugins/win32/winprefs')
-#subdir('pidgin/themes')
 
-#		   doc/pidgin.1
-#		   doc/finch.1
-#		   doc/reference/finch/version.xml
-#		   doc/reference/libpurple/version.xml
-#		   doc/reference/protocols/version.xml
-#		   doc/reference/pidgin/version.xml
-#		   pidgin/data/pidgin.desktop.in
-#		   pidgin/data/pidgin-3.pc
-#		   pidgin/data/pidgin-3-uninstalled.pc
-#		   pidgin/win32/pidgin_dll_rc.rc
-#		   pidgin/win32/pidgin_exe_rc.rc
-#		   libpurple/data/purple-3.pc
-#		   libpurple/data/purple-3-uninstalled.pc
-#		   libpurple/win32/libpurplerc.rc
-#		   finch/finch.pc
-#		   finch/finch_winres.rc
-#		   finch/libfinch_winres.rc
-#		   finch/libgnt/gnt.pc
-#		   finch/libgnt/libgnt_winres.rc
-#		   po/Makefile.in
-#		  ])
 configure_file(output : 'config.h',
     configuration : conf)
 
@@ -1764,4 +1655,3 @@ endif
 message('')
 message('configure complete, now type \'ninja\'')
 message('')
-

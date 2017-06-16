@@ -1,7 +1,3 @@
-if USE_GCONFTOOL
-#	subdir('data/gconf')
-endif
-
 purple_coresources = [
 	'account.c',
 	'accounts.c',
@@ -502,4 +498,3 @@ subdir('tests')
 subdir('example')
 subdir('plugins')
 subdir('protocols')
-
