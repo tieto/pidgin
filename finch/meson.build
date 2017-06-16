@@ -90,7 +90,6 @@ if ENABLE_GNT
 	               configuration : conf,
 	               install : true,
 	               install_dir : get_option('libdir') + '/pkgconfig')
-endif
 
 #AM_CPPFLAGS = \
 #	-DSTANDALONE \
@@ -107,7 +106,6 @@ endif
 #	$(INTROSPECTION_CFLAGS) \
 #	$(GNT_CFLAGS)
 
-if ENABLE_GNT
 	if enable_introspection
 		introspection_sources = libfinch_headers
 
@@ -121,6 +119,6 @@ if ENABLE_GNT
 		                                 purple_minor_version),
 		    install : true)
 	endif
-endif  # ENABLE_GNT
 
-subdir('plugins')
+	subdir('plugins')
+endif  # ENABLE_GNT

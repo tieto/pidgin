@@ -238,6 +238,7 @@ endif
 if is_not_win32
 	if not compiler.has_function('inet_aton')
 		if not compiler.has_function('inet_aton', args : '-lresolv')
+			# FIXME: Someone needs to link with -lresolv if needed.
 			error('inet_aton not found')
 		endif
 	endif
@@ -437,9 +438,7 @@ if get_option('gtkui')
 	gtk = dependency('gtk+-3.0', version : '>= 3.0.0')
 	# We only really need Pango >= 1.4 for decent RTL support
 	pango = dependency('pango', version : '>= 1.4.0')
-	if pango.found()
-		conf.set('HAVE_PANGO14', true)
-	endif
+	conf.set('HAVE_PANGO14', pango.found())
 
 	webkit = dependency('webkitgtk-3.0', version : '>= 1.3.7')
 
@@ -453,11 +452,9 @@ if get_option('gtkui')
 		use_enchant = true
 		enchant = dependency('enchant', required : force_deps)
 		use_enchant = enchant.found()
-		if use_enchant
-			conf.set('USE_ENCHANT', true)
-#			AC_SUBST(ENCHANT_CFLAGS)
-#			AC_SUBST(ENCHANT_LIBS)
-		endif
+		conf.set('USE_ENCHANT', use_enchant)
+	else
+		enchant = []
 	endif
 
 	#######################################################################
@@ -603,12 +600,13 @@ Use -Dsm=false if you do not need session management support.
 
 
 else	# GTK
-	enable_gcr = false
 	enable_cap = false
+	enable_gcr = false
 	enable_gevolution = false
 	enable_screensaver = false
 	enable_sm = false
 	enable_startup_notification = false
+	use_enchant = false
 endif	# GTK
 
 ENABLE_GTK = get_option('gtkui')
@@ -733,6 +731,8 @@ if enable_gst
 	else
 		enable_gst = false
 	endif
+else
+	gstreamer = []
 endif
 
 #######################################################################
@@ -747,6 +747,8 @@ if enable_gstvideo
 	else
 		enable_gstvideo = false
 	endif
+else
+	gstreamer_video = []
 endif
 
 #######################################################################
@@ -757,6 +759,7 @@ if get_option('farstream')
 	                       required : false)
 	enable_farstream = farstream.found()
 else
+	farstream = []
 	enable_farstream = false
 endif
 
@@ -815,6 +818,7 @@ if get_option('meanwhile')
 	enable_meanwhile = meanwhile.found()
 else
 	enable_meanwhile = false
+	meanwhile = []
 endif
 #AC_SUBST(MEANWHILE_CFLAGS)
 #AC_SUBST(MEANWHILE_LIBS)
@@ -1149,6 +1153,8 @@ if enable_gnome_keyring
 	else
 		enable_gnome_keyring = false
 	endif
+else
+	gnome_keyring = []
 endif
 
 ENABLE_GNOMEKEYRING = enable_gnome_keyring
@@ -1384,6 +1390,8 @@ if enable_gnutls
 		conf.set('HAVE_GNUTLS', true)
 		msg_gnutls = 'GnuTLS'
 	endif
+else
+	gnutls = []
 endif
 
 USE_GNUTLS = have_gnutls
@@ -1409,6 +1417,8 @@ if enable_nss
 		conf.set('HAVE_NSS', true)
 		msg_nss = 'Mozilla NSS'
 	endif
+else
+	nss = []
 endif
 
 USE_NSS = have_nss
