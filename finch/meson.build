@@ -57,8 +57,16 @@ if IS_WIN32
 #	libfinch_la_LIBADD += \
 #		-lwinmm
 
-	finch_SOURCES += windows.compile_resources('finch_winres.rc')
-	libfinch_SOURCES += windows.compile_resources('libfinch_winres.rc')
+	finch_winres = configure_file(
+	    input : 'finch_winres.rc.in',
+	    output : 'finch_winres.rc',
+	    configuration : version_conf)
+	finch_SOURCES += windows.compile_resources(finch_winres)
+	libfinch_winres = configure_file(
+	    input : 'libfinch_winres.rc.in',
+	    output : 'libfinch_winres.rc',
+	    configuration : version_conf)
+	libfinch_SOURCES += windows.compile_resources(libfinch_winres)
 endif
 
 if ENABLE_GNT

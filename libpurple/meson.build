@@ -185,8 +185,11 @@ if IS_WIN32
 		'win32/wpurpleerror.h'
 	]
 
-	# TODO: Do something with this object.
-	purple_coresources += windows.compile_resources('win32/libpurplerc.rc')
+	libpurplerc = configure_file(
+	    input : 'win32/libpurplerc.rc.in',
+	    output : 'libpurplerc.rc',
+	    configuration : version_conf)
+	purple_coresources += windows.compile_resources(libpurplerc)
 endif
 
 purple_mediaheaders = [
@@ -416,8 +419,7 @@ libpurple = library('purple',
                     soversion : purple_lt_current,
                     version : PURPLE_LT_VERSION_INFO,
                     dependencies : # static_link_libs
-                        [dbus, dbus_glib, dnsapi, glib, gio, gplugin, libxml, #networkmanager,
-                         #intllibs,
+                        [dbus, dbus_glib, dnsapi, ws2_32, glib, gio, gplugin, libxml,
                          farstream, gstreamer, gstreamer_video,
                          gstreamer_app, idn, json, gnutls,
                          nss, zlib, math])

@@ -117,9 +117,15 @@ if IS_WIN32
 	#	win32/MinimizeToTray.c
 	#	win32/MinimizeToTray.h
 
+	pidgin_exe_rc = configure_file(
+	    input : 'win32/pidgin_exe_rc.rc.in',
+	    output : 'pidgin_exe_rc.rc',
+	    configuration : version_conf)
 	pidgin_SOURCES += [
-		'win32/winpidgin.c',
-		windows.compile_resources('win32/pidgin_exe_rc.rc')
+	    'win32/winpidgin.c',
+	    windows.compile_resources(pidgin_exe_rc,
+	        include_directories : include_directories('win32')
+	    )
 	]
 
 	libpidgin_headers += [
@@ -131,7 +137,13 @@ endif
 
 if ENABLE_GTK
 	if IS_WIN32
-		libpidgin_SOURCES += windows.compile_resources('win32/pidgin_dll_rc.rc')
+		pidgin_dll_rc = configure_file(
+		    input : 'win32/pidgin_dll_rc.rc.in',
+		    output : 'pidgin_dll_rc.rc',
+		    configuration : version_conf)
+		libpidgin_SOURCES += windows.compile_resources(pidgin_dll_rc,
+		    include_directories : include_directories('win32')
+		)
 	endif
 
 	install_headers(libpidgin_headers, subdir : 'pidgin')

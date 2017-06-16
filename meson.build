@@ -125,7 +125,6 @@ if host_machine.system() == 'windows'
 	windows = import('windows')
 
 	IS_WIN32 = true
-	# FIXME: Need to add ws2_32 to some target.
 	ws2_32 = compiler.find_library('ws2_32')
 	dnsapi = compiler.find_library('dnsapi')
 	conf.set('IS_WIN32_CROSS_COMPILED', true)
