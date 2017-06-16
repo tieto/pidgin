@@ -150,7 +150,6 @@ compile.
 
 Optional Packages:
 
-	`--with-silc-includes=DIR' 	and `--with-silc-libs=DIR' can be used if your silc libraries are installed to a location not in your path. 
 
 	`--with-static-prpls' takes a list of comma separated protocols to build in statically (rather than as plugins).  Use this with care.
 

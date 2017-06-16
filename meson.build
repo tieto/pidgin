@@ -430,21 +430,6 @@ enable_cap = get_option('cap')
 enable_gestures = get_option('gestures')
 enable_gcr = get_option('gcr')
 
-#AC_PATH_XTRA
-## We can't assume that $x_libraries will be set, because autoconf does not
-## set it in the case when the X libraries are in a standard place.
-## Ditto for $x_includes
-#if test X"$x_libraries" = X"" || test X"$x_libraries" = XNONE; then
-#    x_libpath_add=
-#else
-#    x_libpath_add="-L$x_libraries"
-#fi
-#if test X"$x_includes" = X"" || test X"$x_includes" = XNONE; then
-#    x_incpath_add=
-#else
-#    x_incpath_add="-I$x_includes"
-#fi
-
 # #######################################################################
 # Check Pidgin dependencies
 # #######################################################################
@@ -483,21 +468,14 @@ if get_option('gtkui')
 		if x11.found()
 			conf.set('HAVE_X11', true)
 		else
-			if x_incpath_add != '' and x_libpath_add != ''
-#				X11_LIBS='$x_libpath_add'
-#				X11_CFLAGS='$x_incpath_add'
-			else
-				with_x = false
-				if force_deps
-					error('''
+			with_x = false
+			if force_deps
+				error('''
 X11 development headers not found.
 Use -Dx=false if you do not need X11 support.
 ''')
-				endif
 			endif
 		endif
-#		AC_SUBST(X11_LIBS)
-#		AC_SUBST(X11_CFLAGS)
 	else
 		enable_screensaver = false
 		enable_sm = false
@@ -511,7 +489,6 @@ Use -Dx=false if you do not need X11 support.
 	xss = declare_dependency()
 	if enable_screensaver
 		if with_x
-			# FIXME: Neither of these obey x_incpath_add or x_libpath_add.
 			xss_headers = []
 			xss_libs = []
 			if compiler.has_function('XScreenSaverRegister',
@@ -555,7 +532,6 @@ this is required for detecting idle time by mouse and keyboard usage.
 	if enable_sm
 		if with_x
 			enable_sm = false
-			# FIXME: Neither of these obey x_incpath_add or x_libpath_add.
 			found_sm_lib = compiler.has_function('SmcSaveYourselfDone',
 			    args : '-lSM')
 			if found_sm_lib
@@ -678,8 +654,6 @@ if enable_consoleui
 	if enable_consoleui
 		# Some distros put the headers in ncursesw/, some don't
 		found_ncurses_h = false
-		# FIXME: Define NCURSES_HEADERS option somewhere.
-#		foreach location : NCURSES_HEADERS + ncurses_sys_dirs
 		foreach location : ncurses_sys_dirs
 			f = location + '/ncurses.h'
 			if not found_ncurses_h
@@ -706,10 +680,6 @@ if enable_consoleui
 		]
 		enable_consoleui = ncurses_libs[0].found() and ncurses_libs[1].found()
 		conf.set('NO_WIDECHAR', true)
-		# FIXME: Define NCURSES_HEADERS option somewhere.
-#		if NCURSES_HEADERS != ''
-#			ncurses_inc = [include_directories(NCURSES_HEADERS)]
-#		endif
 	endif
 endif
 ncurses = declare_dependency(
@@ -861,96 +831,45 @@ endif
 #######################################################################
 
 enable_avahi = get_option('avahi')
+avahi = []
 if enable_avahi and is_win32
-	avahiincludes = true
-	avahilibs = true
+	# Just keep enabled.
 elif enable_avahi
-	AVAHI_CFLAGS = ''
-	AVAHI_LIBS = ''
-
 	# Attempt to autodetect Avahi
-	avahi = dependency('avahi-client avahi-glib', required : false)
-	if avahi.found()
-		avahiincludes = true
-		avahilibs = true
+	avahi_client = dependency('avahi-client', required : false)
+	avahi_glib = dependency('avahi-glib', required : false)
+	if avahi_client.found() and avahi_glib.found()
+		avahi = [avahi_client, avahi_glib]
 	else
-		avahiincludes = false
-		avahilibs = false
-	endif
-
-	# Override AVAHI_CFLAGS if the user specified an include dir
-	if get_option('avahi-client-includes') != ''
-		AVAHI_CFLAGS = '-I' + get_option('avahi-client-includes')
-	endif
-#	CPPFLAGS_save='$CPPFLAGS'
-#	CPPFLAGS='$CPPFLAGS $AVAHI_CFLAGS'
-#	AC_CHECK_HEADER(avahi-client/client.h, [avahiincludes=yes], [avahiincludes=no])
-#	CPPFLAGS='$CPPFLAGS $AVAHI_CFLAGS $GLIB_CFLAGS'
-#	AC_CHECK_HEADER(avahi-glib/glib-malloc.h, [avahiincludes=yes], [avahiincludes=no])
-#	CPPFLAGS='$CPPFLAGS_save'
-#
-#	# Override AVAHI_LIBS if the user specified a libs dir
-#	if test '$ac_avahi_client_libs' != 'no'; then
-#		AVAHI_LIBS='-L$ac_avahi_client_libs -lavahi-common -lavahi-client -lavahi-glib '
-#	fi
-#	AC_CHECK_LIB(avahi-client, avahi_client_new, [avahilibs=yes], [avahilibs=no], $AVAHI_LIBS)
-endif
-
-if enable_avahi and (not avahiincludes or not avahilibs)
-	enable_avahi = false
-	if force_deps
-		error('''
-avahi development headers not found.
+		enable_avahi = false
+		if force_deps
+			error('''
+avahi development package not found.
 Use -Davahi=false if you do not need avahi (Bonjour) support.
 ''')
+		endif
 	endif
 endif
-#AC_SUBST(AVAHI_CFLAGS)
-#AC_SUBST(AVAHI_LIBS)
 
 
 #######################################################################
 # Check for SILC client includes and libraries
 #######################################################################
-SILC_CFLAGS = ''
-SILC_LIBS = ''
 have_silc = false
-if get_option('silc-includes') != '' or get_option('silc-libs') != ''
-	silc_manual_check = true
-else
-	silc_manual_check = false
-endif
-if not silc_manual_check
+if get_option('silc')
 	silc = dependency('silcclient', version : '>= 1.1', required : false)
 	if silc.found()
 		have_silc = true
+		# SILC Toolkit >= 1.0.1 has a new MIME API
+		conf.set('HAVE_SILCMIME_H', true)
 	else
-		have_silc = false
+		if force_deps
+			error('''
+SILC development package not found.
+Use -Dsilc=false if you do not need SILC support.
+''')
+		endif
 	endif
-else
-#	if test '$ac_silc_includes' != 'no'; then
-#		SILC_CFLAGS='-I$ac_silc_includes'
-#	fi
-#	CPPFLAGS_save='$CPPFLAGS'
-#	CPPFLAGS='$CPPFLAGS $SILC_CFLAGS'
-#	AC_CHECK_HEADER(silc.h, [silcincludes=yes])
-#	CPPFLAGS='$CPPFLAGS_save'
-#
-#	if test '$ac_silc_libs' != 'no'; then
-#		SILC_LIBS='-L$ac_silc_libs'
-#	fi
-#	SILC_LIBS='$SILC_LIBS -lsilc -lsilcclient -lpthread $LIBDL'
-#	AC_CHECK_LIB(silcclient, silc_client_init, [silcclient=yes], , $SILC_LIBS)
-#
-#	if test 'x$silcincludes' = 'xyes' -a 'x$silcclient' = 'xyes'; then
-#		have_silc='yes'
-#	fi
-endif
-#AC_SUBST(SILC_LIBS)
-#AC_SUBST(SILC_CFLAGS)
-# SILC Toolkit >= 1.0.1 has a new MIME API
-if have_silc
-	conf.set('HAVE_SILCMIME_H', true)
 endif
 
 #######################################################################
@@ -1272,7 +1191,6 @@ if enable_kwallet
 #				AC_MSG_ERROR([
 #kde4-config not found. $KDE4_CONFIG
 #Use -Dkwallet=false if you do not need KWallet support.
-#Use --with-kwallet-includes and --with-kwallet-libs to set up includes manually.
 #])
 #			fi
 #		fi
@@ -1280,9 +1198,7 @@ if enable_kwallet
 endif
 
 if enable_kwallet
-#	if test '$ac_kwallet_includes' != 'no'; then
-#		KWALLET_CXXFLAGS='-I$ac_kwallet_includes'
-#	elif test 'x$KDE4_CONFIG' != 'xno'; then
+#	if test 'x$KDE4_CONFIG' != 'xno'; then
 #		KWALLET_CXXFLAGS='$QT4_CFLAGS -I`$KDE4_CONFIG --path include`'
 #	fi
 #	CPPFLAGS='$CPPFLAGS $KWALLET_CXXFLAGS'
@@ -1299,9 +1215,7 @@ endif
 
 if enable_kwallet
 #	AC_MSG_CHECKING([for KWallet libraries])
-#	if test '$ac_kwallet_libs' != 'no'; then
-#		KWALLET_LIBS='-L$ac_kwallet_libs -lkdeui'
-#	elif test 'x$KDE4_CONFIG' != 'xno'; then
+#	if test 'x$KDE4_CONFIG' != 'xno'; then
 #		KWALLET_LIBS='-L`$KDE4_CONFIG --install lib`/kde4/devel -lkdeui'
 #	else
 #		KWALLET_LIBS='-lkdeui'

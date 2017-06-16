@@ -41,9 +41,6 @@ option('gestures', type : 'boolean', value : true,
 option('gcr', type : 'boolean', value : false,
        description : 'compile with GCR certificate widgets')
 
-option('ncurses-headers', type : 'string',
-       description : 'compile finch against the ncurses includes in DIR')
-
 option('gstreamer', type : 'boolean', value : true,
        description : 'compile with GStreamer audio support')
 
@@ -64,18 +61,12 @@ option('meanwhile', type : 'boolean', value : true,
 
 option('avahi', type : 'boolean', value : true,
        description : 'compile with avahi (required for Bonjour support)')
-option('avahi-client-includes', type : 'string',
-       description : 'compile the Bonjour plugin against the Avahi Client includes in DIR')
-option('avahi-client-libs', type : 'string',
-       description : 'compile the Bonjour plugin against the Avahi Client libs in DIR')
-
-option('silc-includes', type : 'string',
-       description : 'compile the SILC plugin against includes in DIR')
-option('silc-libs', type : 'string',
-       description : 'compile the SILC plugin against the SILC libs in DIR')
 
 option('libgadu', type : 'boolean', value : true,
        description : 'compile with libgadu (required for GaduGadu support)')
+
+option('silc', type : 'boolean', value : true,
+       description : 'compile with SILC plugin')
 
 option('distrib', type : 'boolean', value : false)
 
@@ -114,10 +105,6 @@ option('gnome-keyring', type : 'boolean', value : true,
 
 option('kwallet', type : 'boolean', value : true,
        description : 'enable KWallet support')
-option('kwallet-includes', type : 'string',
-       description : 'compile the KWallet plugin against includes in DIR')
-option('kwallet-libs', type : 'string',
-       description : 'compile the KWallet plugin against the KWallet libs in DIR')
 
 option('dbus-services', type : 'string',
        description : 'where the D-Bus services directory is located')
