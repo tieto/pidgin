@@ -92,7 +92,7 @@ libgnt_dep = declare_dependency(
 
 configure_file(input : 'gnt.pc.in',
                output : 'gnt.pc',
-               configuration : conf,
+               configuration : pkg_conf,
                install : true,
                install_dir : get_option('libdir') + '/pkgconfig')
 

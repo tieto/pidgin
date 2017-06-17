@@ -95,7 +95,7 @@ if ENABLE_GNT
 
 	configure_file(input : 'finch.pc.in',
 	               output : 'finch.pc',
-	               configuration : conf,
+	               configuration : pkg_conf,
 	               install : true,
 	               install_dir : get_option('libdir') + '/pkgconfig')
 

@@ -454,7 +454,7 @@ install_headers(purple_mediaheaders,
 
 configure_file(input : 'data/purple-3.pc.in',
                output : 'purple-3.pc',
-               configuration : conf,
+               configuration : pkg_conf,
                install : true,
                install_dir : get_option('libdir') + '/pkgconfig')
 

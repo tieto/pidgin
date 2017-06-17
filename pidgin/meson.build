@@ -175,7 +175,7 @@ if ENABLE_GTK
 
 	configure_file(input : 'data/pidgin-3.pc.in',
 	               output : 'pidgin-3.pc',
-	               configuration : conf,
+	               configuration : pkg_conf,
 	               install : true,
 	               install_dir : get_option('libdir') + '/pkgconfig')
 

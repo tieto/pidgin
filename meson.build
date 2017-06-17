@@ -69,6 +69,8 @@ gnt_display_version = '@0@@1@'.format(gnt_version,
 
 add_global_arguments('-DHAVE_CONFIG_H=1', language : 'c')
 conf = configuration_data()
+man_conf = configuration_data()
+pkg_conf = configuration_data()
 version_conf = configuration_data()
 
 conf.set('PACKAGE', '"@0@"'.format(meson.project_name()))
@@ -102,6 +104,22 @@ package_revision = vcs_tag(
     input : 'package_revision.h.in',
     output : 'package_revision.h',
     fallback : meson.project_version())
+
+# For man pages.
+man_conf.set('VERSION', purple_display_version)
+man_conf.set('prefix', get_option('prefix'))
+
+# This is used for pkg-config files. This probably can be removed and the
+# builtin generator used instead once we drop the Autotools build.
+pkg_conf.set('VERSION', purple_display_version)
+pkg_conf.set('PURPLE_MAJOR_VERSION', purple_major_version)
+pkg_conf.set('prefix', get_option('prefix'))
+pkg_conf.set('exec_prefix', '${prefix}')
+pkg_conf.set('libdir', join_paths('${exec_prefix}', get_option('libdir')))
+pkg_conf.set('includedir', join_paths('${prefix}', get_option('includedir')))
+pkg_conf.set('datarootdir', join_paths('${prefix}', get_option('datadir')))
+pkg_conf.set('datadir', '${datarootdir}')
+pkg_conf.set('sysconfdir', join_paths('${prefix}', get_option('sysconfdir')))
 
 sedpath = find_program('sed')
 
@@ -1215,8 +1233,8 @@ ENABLE_KWALLET = enable_kwallet and false
 #######################################################################
 if get_option('plugins')
 	gplugin = dependency('gplugin', version : '>= 0.0.17')
-	# GPLUGIN_REG sets pkg-config requirements in the .pc file
-	conf.set('GPLUGIN_REQ', ', gplugin')
+	# GPLUGIN_REQ sets pkg-config requirements in the .pc file
+	pkg_conf.set('GPLUGIN_REQ', ', gplugin')
 	enable_introspection = true
 else
 	gplugin = []
