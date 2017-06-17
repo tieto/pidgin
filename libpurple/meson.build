@@ -336,7 +336,9 @@ dbus_types_h = custom_target('dbus_types_h',
                              input : purple_build_coreheaders,
                              output : 'dbus-types.h',
                              command : [python, dbus_analyze_types, '-o', '@OUTPUT@',
-                                        '--pattern=PURPLE_DBUS_DECLARE_TYPE(%s)', '@INPUT@'])
+                                        '--pattern=PURPLE_DBUS_DECLARE_TYPE(%s)', '@INPUT@'],
+                             install : true,
+                             install_dir : join_paths(get_option('includedir'), 'libpurple'))
 
 dbus_bindings_c = custom_target('dbus_bindings_c',
                                 input : dbus_exported,
