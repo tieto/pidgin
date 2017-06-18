@@ -1985,6 +1985,33 @@ fi
 AC_SUBST(PLUGINS_DEFINE)
 
 dnl #######################################################################
+dnl # Check for Nettle (Crypto Library)
+dnl #######################################################################
+AC_ARG_ENABLE(nettle,
+	[AC_HELP_STRING([--disable-nettle], [disable Nettle support])],
+	enable_nettle="$enableval", enable_nettle="yes")
+
+if test "x$enable_nettle" = "xyes" ; then
+	PKG_CHECK_MODULES(NETTLE, [nettle >= 3.0], [
+		enable_nettle="yes"
+		AC_SUBST(NETTLE_CFLAGS)
+		AC_SUBST(NETTLE_LIBS)
+		AC_DEFINE(HAVE_NETTLE, 1, [Define if we have Nettle.])
+	], [
+		enable_nettle="no"
+	])
+
+	if test "x$enable_nettle" != "xyes" -a "x$force_deps" = "xyes" ; then
+		AC_MSG_ERROR([
+Nettle development headers not found
+Use --disable-nettle if you do not need it.
+])
+	fi
+fi
+
+AM_CONDITIONAL(ENABLE_NETTLE, test "x$enable_nettle" = "xyes")
+
+dnl #######################################################################
 dnl # Check for Cyrus-SASL (for xmpp/irc)
 dnl #######################################################################
 dnl AC_CHECK_SIZEOF(short)
@@ -2234,6 +2261,7 @@ echo SSL Library/Libraries......... : $msg_ssl
 if test "x$SSL_CERTIFICATES_DIR" != "x" ; then
 	eval eval echo SSL CA certificates directory. : $SSL_CERTIFICATES_DIR
 fi
+echo Build with Nettle support..... : $enable_nettle
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
