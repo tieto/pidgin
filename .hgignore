@@ -64,7 +64,6 @@ doc/reference/.*/html/.*
 doc/reference/.*/xml/.*
 doc/reference/.*/version.xml
 finch/finch$
-finch/libgnt/gntmarshal.[ch]
 gtk-doc.make
 install-sh
 intltool-.*
@@ -75,9 +74,7 @@ libpurple/enums.[ch]
 libpurple/example/nullclient
 libpurple/data/purple-url-handler.desktop$
 libpurple/data/purple-url-handler.desktop.in$
-libpurple/marshallers.[ch]
 libpurple/plugins/dbus-example-bindings.c
-libpurple/protocols/facebook/marshal.[ch]
 libpurple/purple-client-bindings.ch
 libpurple/purple-client-bindings.h
 libpurple/purple-client-example

@@ -102,9 +102,9 @@ pidgin_SOURCES = [
 	'pidgin.c'
 ]
 
-gtkdebug_html = gnome.compile_resources('gtkdebug.gresource', 'gtkdebug.gresource.xml',
-  c_name : 'gtkdebug')
-libpidgin_SOURCES += gtkdebug_html
+pidgin_resource = gnome.compile_resources('pidgin.gresource', 'pidgin.gresource.xml',
+  c_name : 'pidgin')
+libpidgin_SOURCES += pidgin_resource
 
 if IS_WIN32
 	libpidgin_SOURCES += [

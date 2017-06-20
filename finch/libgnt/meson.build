@@ -1,14 +1,4 @@
-marshallers = gnome.genmarshal('gntmarshal',
-    sources : 'gntmarshal',
-    prefix : 'gnt_closure_marshal',
-    install_header : true,
-    install_dir : get_option('includedir') + '/gnt')
-gntmarshal_c = marshallers[0]
-gntmarshal_h = marshallers[1]
-
 libgnt_SOURCES = [
-	gntmarshal_c,
-	gntmarshal_h,
 	'gntwidget.c',
 	'gntbindable.c',
 	'gntbox.c',
@@ -85,7 +75,6 @@ libgnt = library('gnt',
                  version : GNT_LT_VERSION_INFO,
                  dependencies : libgnt_deps)
 libgnt_dep = declare_dependency(
-	sources : gntmarshal_h,  # Ensure built before any dependencies.
     include_directories : [toplevel_inc, libgnt_inc],
     link_with : libgnt,
     dependencies : [ncurses, glib])

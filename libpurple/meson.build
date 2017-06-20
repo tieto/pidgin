@@ -229,14 +229,6 @@ purple_enumheaders = [
 ]
 
 
-marshallers = gnome.genmarshal('marshallers',
-    sources : 'marshallers.list',
-    prefix : 'purple_smarshal',
-    install_header : true,
-    install_dir : get_option('includedir') + '/libpurple')
-marshallers_c = marshallers[0]
-marshallers_h = marshallers[1]
-
 enums = gnome.mkenums('enums',
     sources : purple_enumheaders,
     h_template : 'enums.h.in',
@@ -259,14 +251,12 @@ version_h = configure_file(input : 'version.h.in',
 
 purple_builtsources = [
 	enums_c,
-	marshallers_c
 ]
 
 purple_builtheaders = [
 	purple_h,
 	version_h,
 	enums_h,
-	marshallers_h
 ]
 
 if ENABLE_DBUS

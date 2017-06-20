@@ -28,7 +28,6 @@
 #include "gntentry.h"
 #include "gntfilesel.h"
 #include "gntlabel.h"
-#include "gntmarshal.h"
 #include "gntstyle.h"
 #include "gnttree.h"
 
@@ -506,8 +505,7 @@ gnt_file_sel_class_init(GntFileSelClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntFileSelClass, file_selected),
-					 NULL, NULL,
-					 gnt_closure_marshal_VOID__STRING_STRING,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 
 	gnt_bindable_class_register_action(bindable, "toggle-tag", toggle_tag_selection, "t", NULL);

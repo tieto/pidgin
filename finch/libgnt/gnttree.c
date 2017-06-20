@@ -21,7 +21,6 @@
  */
 
 #include "gntinternal.h"
-#include "gntmarshal.h"
 #include "gntstyle.h"
 #include "gnttree.h"
 #include "gntutils.h"
@@ -1072,32 +1071,28 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntTreeClass, selection_changed),
-					 NULL, NULL,
-					 gnt_closure_marshal_VOID__POINTER_POINTER,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
 	signals[SIG_SCROLLED] =
 		g_signal_new("scrolled",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 0,
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__INT,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 1, G_TYPE_INT);
 	signals[SIG_TOGGLED] =
 		g_signal_new("toggled",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntTreeClass, toggled),
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__POINTER,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
 	signals[SIG_COLLAPSED] =
 		g_signal_new("collapse-toggled",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 0,
-					 NULL, NULL,
-					 gnt_closure_marshal_VOID__POINTER_BOOLEAN,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 
 	gnt_bindable_class_register_action(bindable, "move-up", action_up,

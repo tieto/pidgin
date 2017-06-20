@@ -26,7 +26,6 @@
 #include "gntinternal.h"
 #include "gntbox.h"
 #include "gntentry.h"
-#include "gntmarshal.h"
 #include "gntstyle.h"
 #include "gnttree.h"
 #include "gntutils.h"
@@ -951,16 +950,14 @@ gnt_entry_class_init(GntEntryClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntEntryClass, text_changed),
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 
 	signals[SIG_COMPLETION] =
 		g_signal_new("completion",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
-					 0, NULL, NULL,
-					 gnt_closure_marshal_VOID__POINTER_POINTER,
+					 0, NULL, NULL, NULL,
 					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
 
 	gnt_bindable_class_register_action(bindable, "cursor-home", move_start,
