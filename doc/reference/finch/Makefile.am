@@ -66,7 +66,6 @@ IGNORE_HFILES=\
 	wms \
 	getopt.h \
 	gntinternal.h \
-	gntmarshal.h \
 	gnt-skel.h
 
 # Images to copy into HTML directory.
