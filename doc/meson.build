@@ -1,5 +1,5 @@
-if ENABLE_GTK_DOC
-#	subdir('reference')
+if ENABLE_DOC
+	subdir('reference')
 endif
 
 if ENABLE_GTK

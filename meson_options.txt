@@ -17,6 +17,9 @@ option('gtkui', type : 'boolean', value : true,
 option('consoleui', type : 'boolean', value : true,
        description : 'compile with console user interface')
 
+option('doc', type : 'boolean', value : false,
+       description : 'build documentation with gtk-doc')
+
 option('screensaver', type : 'boolean', value : true,
        description : 'compile with X screensaver extension (used to detect idleness)')
 

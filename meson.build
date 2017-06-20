@@ -1559,19 +1559,15 @@ INSTALL_PIXMAPS = get_option('pixmaps-install')
 ENABLE_TRAYCOMPAT = get_option('trayicon-compat')
 
 # check for gtk-doc
-#m4_ifdef([GTK_DOC_CHECK], [
-#GTK_DOC_CHECK([1.16],[--flavour no-tmpl])
-#],[
-#	if test 'x$force_deps' = 'xyes' -a 'x$enable_gtk_doc' = 'xyes'; then
-#		AC_MSG_ERROR([
-#You have requested to generate documentation, but gtk-doc was not found.
-#		])
-#	fi
-#
-#	AM_CONDITIONAL([ENABLE_GTK_DOC], false)
-#	enable_gtk_doc=no
-#])
-ENABLE_GTK_DOC = false
+ENABLE_DOC = get_option('doc')
+if ENABLE_DOC
+	if meson.version().version_compare('<0.42.0')
+		if force_deps
+			error('Meson 0.42.0 or newer is required to build documentation.')
+		endif
+		ENABLE_DOC = false
+	endif
+endif
 
 enable_debug = get_option('debug')
 conf.set('DEBUG', enable_debug)
@@ -1581,12 +1577,12 @@ PURPLE_AVAILABLE = true
 # So that config.h may be found.
 toplevel_inc = include_directories('.')
 
-subdir('doc')
 subdir('libpurple')
 subdir('share/sounds')
 subdir('share/ca-certs')
 subdir('finch')
 subdir('pidgin')
+subdir('doc')
 
 configure_file(output : 'config.h',
     configuration : conf)
@@ -1643,7 +1639,7 @@ endif
 
 message('')
 message('Print debugging messages...... : ' + enable_debug.to_string())
-message('Generate documentation........ : ' + ENABLE_GTK_DOC.to_string())
+message('Generate documentation........ : ' + ENABLE_DOC.to_string())
 message('')
 bindir = get_option('bindir')
 if not bindir.startswith('/')
