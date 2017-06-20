@@ -469,7 +469,7 @@ if enable_introspection
 	                         dbus_headers + purple_cipherheaders +
 	                         purple_mediaheaders)
 
-	Purple_gir_includes = ['GObject-2.0']
+	Purple_gir_includes = ['GObject-2.0', 'Gio-2.0']
 	if PLUGINS
 		Purple_gir_includes += ['GPlugin-0.0']
 	endif
@@ -481,8 +481,9 @@ if enable_introspection
 	    sources : introspection_sources,
 	    includes : Purple_gir_includes,
 	    namespace : 'Purple',
-	    symbol_prefix : 'purple_',
+	    symbol_prefix : 'purple',
 	    identifier_prefix : 'Purple',
+	    export_packages : 'purple-@0@'.format(purple_major_version),
 	    nsversion : '@0@.@1@'.format(purple_major_version,
 	                                 purple_minor_version),
 	    install : true)

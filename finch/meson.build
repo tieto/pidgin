@@ -106,8 +106,9 @@ if ENABLE_GNT
 		    sources : introspection_sources,
 		    includes : [libgnt_gir[0], libpurple_gir[0]],
 		    namespace : 'Finch',
-		    symbol_prefix : 'finch_',
+		    symbol_prefix : 'finch',
 		    identifier_prefix : 'Finch',
+		    export_packages : 'finch',
 		    nsversion : '@0@.@1@'.format(purple_major_version,
 		                                 purple_minor_version),
 		    install : true)

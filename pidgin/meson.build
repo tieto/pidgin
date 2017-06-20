@@ -211,8 +211,9 @@ if ENABLE_GTK
 		    sources : introspection_sources,
 		    includes : ['GObject-2.0', 'Gtk-3.0', libpurple_gir[0]],
 		    namespace : 'Pidgin',
-		    symbol_prefix : 'pidgin_',
+		    symbol_prefix : 'pidgin',
 		    identifier_prefix : 'Pidgin',
+		    export_packages : 'pidgin-@0@'.format(purple_major_version),
 		    nsversion : '@0@.@1@'.format(purple_major_version,
 		                                 purple_minor_version),
 		    install : true)

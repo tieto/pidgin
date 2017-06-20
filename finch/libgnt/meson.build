@@ -90,7 +90,7 @@ if enable_introspection
 	    sources : libgnt_headers,
 	    includes : 'GObject-2.0',
 	    namespace : 'Gnt',
-	    symbol_prefix : 'gnt_',
+	    symbol_prefix : 'gnt',
 	    identifier_prefix : 'Gnt',
 	    nsversion : '@0@.@1@'.format(gnt_major_version, gnt_minor_version),
 	    install : true)
