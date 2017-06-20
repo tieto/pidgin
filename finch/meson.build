@@ -78,8 +78,7 @@ if ENABLE_GNT
 	    libfinch_SOURCES,
 	    c_args : '-DSTANDALONE',
 	    include_directories : [toplevel_inc],
-	    soversion : purple_lt_current,
-	    version : PURPLE_LT_VERSION_INFO,
+	    version : PURPLE_LIB_VERSION,
 	    dependencies : [libpurple_dep, libgnt_dep, glib],
 	    install : true)
 	libfinch_dep = declare_dependency(

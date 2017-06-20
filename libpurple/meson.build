@@ -382,8 +382,7 @@ purple_client_bindings_c = custom_target('purple_client_bindings_c',
 
 libpurple_client = library('purple-client',
     'purple-client.c', purple_client_bindings_c, purple_client_bindings_h,
-    soversion : purple_lt_current,
-    version : PURPLE_LT_VERSION_INFO,
+    version : PURPLE_LIB_VERSION,
     dependencies : [dbus, dbus_glib],
     install : true)
 
@@ -408,8 +407,7 @@ libpurple = library('purple',
                     purple_builtheaders + dbus_builtheaders,
                     include_directories : [toplevel_inc, libpurple_inc],
                     install : true,
-                    soversion : purple_lt_current,
-                    version : PURPLE_LT_VERSION_INFO,
+                    version : PURPLE_LIB_VERSION,
                     dependencies : # static_link_libs
                         [dbus, dbus_glib, dnsapi, ws2_32, glib, gio, gplugin, libxml,
                          farstream, gstreamer, gstreamer_video,

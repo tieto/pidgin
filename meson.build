@@ -84,10 +84,9 @@ version_conf.set('PURPLE_VERSION', purple_display_version)
 version_conf.set('PURPLE_API_VERSION',
                  purple_lt_current - purple_minor_version)
 
-PURPLE_LT_VERSION_INFO = '@0@.@1@.@2@'.format(purple_lt_current,
-                                              purple_micro_version,
-                                              purple_minor_version)
-version_conf.set('PURPLE_LT_VERSION_INFO', PURPLE_LT_VERSION_INFO)
+PURPLE_LIB_VERSION = '@0@.@1@.@2@'.format(purple_lt_current - purple_minor_version,
+                                          purple_minor_version,
+                                          purple_micro_version)
 
 version_conf.set('GNT_MAJOR_VERSION', gnt_major_version)
 version_conf.set('GNT_MINOR_VERSION', gnt_minor_version)
@@ -95,10 +94,9 @@ version_conf.set('GNT_MICRO_VERSION', gnt_micro_version)
 version_conf.set('GNT_VERSION', gnt_display_version)
 version_conf.set('GNT_API_VERSION', gnt_lt_current - gnt_minor_version)
 
-GNT_LT_VERSION_INFO = '@0@.@1@.@2@'.format(gnt_lt_current,
-                                           gnt_micro_version,
-                                           gnt_minor_version)
-version_conf.set('GNT_LT_VERSION_INFO', GNT_LT_VERSION_INFO)
+GNT_LIB_VERSION = '@0@.@1@.@2@'.format(gnt_lt_current - gnt_minor_version,
+                                       gnt_minor_version,
+                                       gnt_micro_version)
 
 package_revision = vcs_tag(
     input : 'package_revision.h.in',

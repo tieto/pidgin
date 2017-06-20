@@ -153,8 +153,7 @@ if ENABLE_GTK
 	libpidgin = shared_library('pidgin',
 	    libpidgin_SOURCES,
 	    include_directories : [toplevel_inc],
-	    soversion : purple_lt_current,
-	    version : PURPLE_LT_VERSION_INFO,
+	    version : PURPLE_LIB_VERSION,
 	    dependencies : [gtk, gstreamer_video, webkit, enchant, dbus, x11, sm, xss, GCR, IOKIT, libpurple_dep, glib, math],
 	    install : true)
 	libpidgin_dep = declare_dependency(

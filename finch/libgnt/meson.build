@@ -71,8 +71,7 @@ libgnt = library('gnt',
                  libgnt_SOURCES,
                  include_directories : [toplevel_inc],
                  install : true,
-                 soversion : gnt_lt_current,
-                 version : GNT_LT_VERSION_INFO,
+                 version : GNT_LIB_VERSION,
                  dependencies : libgnt_deps)
 libgnt_dep = declare_dependency(
     include_directories : [toplevel_inc, libgnt_inc],
