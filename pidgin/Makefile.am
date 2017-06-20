@@ -4,7 +4,7 @@ EXTRA_DIST = \
 		getopt1.c \
 		gtk3compat.h \
 		gtkdebug.html \
-		gtkdebug.gresource.xml \
+		pidgin.gresource.xml \
 		Makefile.mingw \
 		data/pidgin.appdata.xml.in \
 		data/pidgin.desktop.in \
@@ -53,7 +53,6 @@ libpidgin_la_SOURCES = \
 	gtkconv-theme.c \
 	gtkconv-theme-loader.c \
 	gtkdebug.c \
-	gtkdebug.gresource.c \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
 	gtkdocklet.c \
@@ -87,6 +86,7 @@ libpidgin_la_SOURCES = \
 	gtkxfer.c \
 	libpidgin.c \
 	minidialog.c \
+	pidgin.gresource.c \
 	pidgintooltip.c
 
 libpidgin_la_headers = \
@@ -174,12 +174,12 @@ libpidginincludedir=$(includedir)/pidgin
 libpidgininclude_HEADERS = \
 	$(libpidgin_la_headers)
 
-libpidgin_la_builtheaders = gtkdebug.gresource.h
-libpidgin_la_builtsources = gtkdebug.gresource.c
+libpidgin_la_builtheaders = pidgin.gresource.h
+libpidgin_la_builtsources = pidgin.gresource.c
 
 BUILT_SOURCES = $(libpidgin_la_builtheaders) $(libpidgin_la_builtsources)
 
-CLEANFILES = gtkdebug.gresource.h gtkdebug.gresource.c
+CLEANFILES = pidgin.gresource.h pidgin.gresource.c
 
 %.gresource.h: %.gresource.xml
 	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --generate-header --target $@ --c-name $* --sourcedir $(srcdir) $<
@@ -187,9 +187,9 @@ CLEANFILES = gtkdebug.gresource.h gtkdebug.gresource.c
 %.gresource.c: %.gresource.xml
 	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --generate-source --target $@ --c-name $* --sourcedir $(srcdir) $<
 
-gtkdebug.gresource.c: gtkdebug.html
-gtkdebug.gresource.h: gtkdebug.html
-gtkdebug.c: gtkdebug.gresource.h
+pidgin.gresource.c: gtkdebug.html
+pidgin.gresource.h: gtkdebug.html
+gtkdebug.c: pidgin.gresource.h
 
 libpidgin_la_DEPENDENCIES = @LIBOBJS@ $(LIBPIDGIN_WIN32RES)
 libpidgin_la_LDFLAGS = -export-dynamic -no-undefined \

@@ -40,7 +40,7 @@
 
 #include "gtk3compat.h"
 
-#include "gtkdebug.gresource.h"
+#include "pidgin.gresource.h"
 
 typedef struct
 {
@@ -589,7 +589,7 @@ debug_window_new(void)
 	frame = pidgin_create_webview(FALSE, &win->text, NULL);
 	pidgin_webview_set_format_functions(PIDGIN_WEBVIEW(win->text),
 	                                 PIDGIN_WEBVIEW_ALL ^ PIDGIN_WEBVIEW_SMILEY ^ PIDGIN_WEBVIEW_IMAGE);
-	resource = gtkdebug_get_resource();
+	resource = pidgin_get_resource();
 	error = NULL;
 	resource_bytes = g_resource_lookup_data(resource,
 	                                        "/im/pidgin/Pidgin/gtkdebug.html",
