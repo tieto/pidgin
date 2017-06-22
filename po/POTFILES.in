@@ -168,8 +168,8 @@ libpurple/util.c
 libpurple/win32/libc_interface.c
 libpurple/xfer.c
 libpurple/xmlnode.c
-pidgin/data/pidgin.appdata.xml.in
-pidgin/data/pidgin.desktop.in
+pidgin/data/im.pidgin.Pidgin.appdata.xml.in
+pidgin/data/im.pidgin.Pidgin.desktop.in
 pidgin/gtkaccount.c
 pidgin/gtkblist-theme.c
 pidgin/gtkblist.c

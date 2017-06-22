@@ -2036,7 +2036,7 @@ AC_CONFIG_FILES([Makefile
 		   doc/reference/pidgin/version.xml
 		   m4macros/Makefile
 		   pidgin/Makefile
-		   pidgin/data/pidgin.desktop.in
+		   pidgin/data/im.pidgin.Pidgin.desktop.in
 		   pidgin/data/pidgin-3.pc
 		   pidgin/data/pidgin-3-uninstalled.pc
 		   pidgin/pixmaps/Makefile
@@ -2159,7 +2159,7 @@ fi
 if test "x$enable_i18n" = "xno" ; then
 	echo
 	echo Warning: You have disabled the building and installation of translation
-	echo data.  This will prevent building pidgin.desktop.
+	echo data.  This will prevent building Pidgin desktop files.
 	echo Be sure you know what you are doing.
 fi
 echo
