@@ -195,7 +195,7 @@ if ENABLE_GTK
 		               '-c', '@BUILD_DIR@/po/.intltool-merge-cache',
 		               meson.source_root() + '/po', '@INPUT@', '@OUTPUT@'],
 		    install : true,
-		    install_dir : get_option('datadir') + '/appdata')
+		    install_dir : get_option('datadir') + '/metainfo')
 	endif  # INSTALL_I18N
 
 	if enable_introspection
