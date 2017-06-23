@@ -1010,7 +1010,12 @@ conf.set('HAVE_UNAME',
     compiler.has_function('uname'))
 
 
-DEBUG_CFLAGS = '-DPURPLE_DISABLE_DEPRECATED -DPIDGIN_DISABLE_DEPRECATED -DFINCH_DISABLE_DEPRECATED -DGNT_DISABLE_DEPRECATED'
+add_project_arguments(
+    '-DPURPLE_DISABLE_DEPRECATED',
+    '-DPIDGIN_DISABLE_DEPRECATED',
+    '-DFINCH_DISABLE_DEPRECATED',
+    '-DGNT_DISABLE_DEPRECATED',
+    language : 'c')
 if compiler.get_id() == 'gcc'
 	# We enable -Wall later.
 	# If it's set after the warning CFLAGS in the compiler invocation, it counteracts the -Wno... flags.
