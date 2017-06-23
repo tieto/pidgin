@@ -39,8 +39,7 @@ if PLUGINS
 
 	gtk_signals_test = library('gtk_signals_test', 'gtk-signals-test.c',
 	    dependencies : [libpurple_dep, libpidgin_dep, glib],
-	    name_prefix : '',
-	    install : true, install_dir : PIDGIN_PLUGINDIR)
+	    name_prefix : '')
 
 	history = library('history', 'history.c',
 	    dependencies : [libpurple_dep, libpidgin_dep, glib],
