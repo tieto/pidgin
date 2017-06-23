@@ -180,10 +180,7 @@ conf.set('USE_WIN32_FHS',
 if IS_WIN32
 	if get_option('win32-dirs') == 'fhs'
 		foreach dir : ['bin', 'lib', 'data', 'sysconf', 'locale']
-			path = get_option(dir + 'dir')
-			if not path.startswith('/')
-				path = get_option('prefix') + '/' + path
-			endif
+			path = join_paths(get_option('prefix'), get_option(dir + 'dir'))
 			conf.set('WIN32_FHS_@0@DIR'.format(dir.to_upper()), path)
 		endforeach
 
@@ -201,17 +198,11 @@ if IS_WIN32
 	purple_localedir = 'wpurple_locale_dir()'
 else
 	foreach dir : ['data', 'sysconf', 'locale']
-		path = get_option(dir + 'dir')
-		if not path.startswith('/')
-			path = get_option('prefix') + '/' + path
-		endif
+		path = join_paths(get_option('prefix'), get_option(dir + 'dir'))
 		set_variable('purple_@0@dir'.format(dir), '"@0@"'.format(path))
 	endforeach
 
-	common_libdir = get_option('libdir')
-	if not common_libdir.startswith('/')
-		common_libdir = get_option('prefix') + '/' + common_libdir
-	endif
+	common_libdir = join_paths(get_option('prefix'), get_option('libdir'))
 	purple_libdir = '"@0@/purple-@1@"'.format(common_libdir, purple_major_version)
 	pidgin_libdir = '"@0@/pidgin-@1@"'.format(common_libdir, purple_major_version)
 	finch_libdir = '"@0@/finch-@1@"'.format(common_libdir, purple_major_version)
@@ -223,15 +214,12 @@ conf.set('FINCH_LIBDIR', finch_libdir)
 conf.set('PURPLE_SYSCONFDIR', purple_sysconfdir)
 conf.set('PURPLE_LOCALEDIR', purple_localedir)
 
-abslibdir = get_option('libdir')
-if not abslibdir.startswith('/')
-	abslibdir = get_option('prefix') + '/' + abslibdir
-endif
-PURPLE_PLUGINDIR = '@0@/purple-@1@'.format(abslibdir, purple_major_version)
+abslibdir = join_paths(get_option('prefix'), get_option('libdir'))
+PURPLE_PLUGINDIR = join_paths(abslibdir, 'purple-@0@'.format(purple_major_version))
 conf.set('PURPLE_PLUGINDIR', '"@0@"'.format(PURPLE_PLUGINDIR))
-PIDGIN_PLUGINDIR = '@0@/pidgin-@1@'.format(abslibdir, purple_major_version)
+PIDGIN_PLUGINDIR = join_paths(abslibdir, 'pidgin-@0@'.format(purple_major_version))
 conf.set('PIDGIN_PLUGINDIR', '"@0@"'.format(PIDGIN_PLUGINDIR))
-FINCH_PLUGINDIR = '@0@/finch-@1@'.format(abslibdir, purple_major_version)
+FINCH_PLUGINDIR = join_paths(abslibdir, 'finch-@0@'.format(purple_major_version))
 conf.set('FINCH_PLUGINDIR', '"@0@"'.format(FINCH_PLUGINDIR))
 
 # Checks for library functions.
@@ -1589,10 +1577,7 @@ message('')
 message('Print debugging messages...... : ' + enable_debug.to_string())
 message('Generate documentation........ : ' + ENABLE_DOC.to_string())
 message('')
-bindir = get_option('bindir')
-if not bindir.startswith('/')
-	bindir = get_option('prefix') + '/' + bindir
-endif
+bindir = join_paths(get_option('prefix'), get_option('bindir'))
 message('Pidgin will be installed in @0@.'.format(bindir))
 if pidginpath.found()
 	message('Warning: You have an old copy of Pidgin at @0@.'.format(pidginpath.path()))
