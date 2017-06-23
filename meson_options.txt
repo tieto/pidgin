@@ -107,9 +107,6 @@ option('gnome-keyring', type : 'boolean', value : true,
 option('kwallet', type : 'boolean', value : true,
        description : 'enable KWallet support')
 
-option('dbus-services', type : 'string',
-       description : 'where the D-Bus services directory is located')
-
 option('system-ssl-certs', type : 'string',
        description : 'directory containing system-wide SSL CA certificates')
 option('gnutls', type : 'boolean', value : true,

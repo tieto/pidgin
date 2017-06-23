@@ -1106,6 +1106,10 @@ else
 	dbus_glib = []
 endif
 
+if enable_dbus
+	conf.set('HAVE_DBUS', true)
+endif
+
 #######################################################################
 # Check for Unity and Messaging Menu
 #######################################################################
@@ -1269,65 +1273,6 @@ endif
 if enable_consoleui
 	python_dep = dependency('python3')
 	conf.set('USE_PYTHON', python_dep.found())
-endif
-
-###########################################################################
-# Find the D-Bus services dir.
-#
-# This is a 3 step process that
-#
-# 1. checks if --with-dbus-services was set, if so use that.
-# 2. checks if --prefix was given, if so use that.
-# 3. fallbacks to installing into what should be the correct system
-#    directories.
-#
-# This is still prone to error if one of the legacy directories exist
-# although a newer dbus is installed.  But I have tried to order the
-# directory searching to keep this situation at a minimum.
-###########################################################################
-
-DBUS_SERVICES_DIR = ''
-dbus_services = get_option('dbus-services')
-
-if enable_dbus
-#	AC_MSG_CHECKING([location of the D-Bus services directory])
-	if dbus_services != ''
-		if run_command('test', '-d', dbus_services).returncode() != 0
-			error(dbus_services + ' does not exist, if this is the correct location please make sure that it exists.')
-		endif
-
-		DBUS_SERVICES_DIR = dbus_services
-	else
-		if get_option('prefix') != ''
-			# no prefix given, so we look for the correct dbus system paths.
-			# if a prefix is given, we use it.
-
-			serviceprefixes = [get_option('prefix') + '/share', get_option('prefix') + '/lib', '/usr/share', '/usr/local/share']
-			DBUS_SERVICES_DIR = ''
-
-			foreach d : serviceprefixes
-				dir = d + '/dbus-1/services'
-				if DBUS_SERVICES_DIR == '' and run_command('test', '-d', dir).returncode() == 0
-					DBUS_SERVICES_DIR = dir
-				endif
-			endforeach
-
-			if DBUS_SERVICES_DIR == ''
-				error('D-Bus services directory was not found!  Please use --with-dbus-services and specify its location.')
-			endif
-		else
-			DBUS_SERVICES_DIR = get_option('datadir') + '/dbus-1/services'
-		endif
-	endif
-#	AC_MSG_RESULT([$DBUS_SERVICES_DIR])
-	conf.set('HAVE_DBUS', true)
-endif
-#AC_SUBST(DBUS_SERVICES_DIR)
-
-if enable_dbus
-	message('Building with D-Bus support')
-else
-	message('Building without D-Bus support')
 endif
 
 ENABLE_DBUS = enable_dbus
@@ -1608,9 +1553,6 @@ message('')
 message('Build with GStreamer support.. : ' + enable_gst.to_string())
 message('Build with D-Bus support...... : ' + enable_dbus.to_string())
 message('Build with voice and video.... : ' + enable_vv.to_string())
-if enable_dbus
-	message('D-Bus services directory...... :' + DBUS_SERVICES_DIR)
-endif
 message('Build with GNU Libidn......... : ' + get_option('idn').to_string())
 message('SSL Library/Libraries......... : ' + msg_ssl)
 if SSL_CERTIFICATES_DIR != ''
