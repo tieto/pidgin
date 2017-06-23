@@ -1257,7 +1257,18 @@ endif
 # it is now accessible through D-Bus.
 
 if enable_dbus or enable_consoleui
-	python = find_program('python3')
+	if meson.version().version_compare('>=0.38.0')
+		python3_mod = import('python3')
+		python = python3_mod.find_python()
+	else
+		python = find_program('python3')
+	endif
+endif
+
+# Check for Python headers (currently useful only for libgnt)
+if enable_consoleui
+	python_dep = dependency('python3')
+	conf.set('USE_PYTHON', python_dep.found())
 endif
 
 ###########################################################################
@@ -1320,14 +1331,6 @@ else
 endif
 
 ENABLE_DBUS = enable_dbus
-
-# Check for Python headers (currently useful only for libgnt)
-# (Thanks to XChat)
-if enable_consoleui
-	python_dep = dependency('python')
-endif
-#AC_SUBST(PY_CFLAGS)
-#AC_SUBST(PY_LIBS)
 
 #######################################################################
 # SSL support

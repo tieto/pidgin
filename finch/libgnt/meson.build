@@ -60,9 +60,7 @@ if ENABLE_GNT
 
 install_headers(libgnt_headers, subdir : 'gnt')
 
-libgnt_deps = [ncurses, libxml, glib, gobject, gmodule] #pythonlib]
 if IS_WIN32
-	libgnt_deps += [gmodule]
 	libgnt_SOURCES += windows.compile_resources('libgnt_winres.rc')
 endif
 
@@ -72,7 +70,7 @@ libgnt = library('gnt',
                  include_directories : [toplevel_inc],
                  install : true,
                  version : GNT_LIB_VERSION,
-                 dependencies : libgnt_deps)
+                 dependencies : [ncurses, libxml, glib, gobject, gmodule, python_dep])
 libgnt_dep = declare_dependency(
     include_directories : [toplevel_inc, libgnt_inc],
     link_with : libgnt,
