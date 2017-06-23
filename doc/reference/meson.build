@@ -5,6 +5,6 @@ if ENABLE_GTK
 	subdir('pidgin')
 endif
 
-if ENABLE_GNT
+if enable_consoleui
 	subdir('finch')
 endif

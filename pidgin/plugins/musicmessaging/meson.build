@@ -1,4 +1,4 @@
-if PLUGINS and ENABLE_DBUS
+if PLUGINS and enable_dbus
 	install_data('music.png',
 		install_dir : get_option('datadir') + '/pixmaps/pidgin/buttons')
 

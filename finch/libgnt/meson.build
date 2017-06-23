@@ -56,7 +56,7 @@ libgnt_headers = [
 	'gnt.h'
 ]
 
-if ENABLE_GNT
+if enable_consoleui
 
 install_headers(libgnt_headers, subdir : 'gnt')
 
@@ -95,4 +95,4 @@ endif
 
 subdir('wms')
 
-endif  # ENABLE_GNT
+endif  # enable_consoleui

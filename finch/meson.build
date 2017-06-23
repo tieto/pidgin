@@ -69,7 +69,7 @@ if IS_WIN32
 	libfinch_SOURCES += windows.compile_resources(libfinch_winres)
 endif
 
-if ENABLE_GNT
+if enable_consoleui
 	install_headers(libfinch_headers, subdir : 'finch')
 
 	libfinch_inc = include_directories('.')
@@ -114,4 +114,4 @@ if ENABLE_GNT
 	endif
 
 	subdir('plugins')
-endif  # ENABLE_GNT
+endif  # enable_consoleui

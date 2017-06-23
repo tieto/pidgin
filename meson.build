@@ -611,10 +611,6 @@ else	# GTK
 endif	# GTK
 
 ENABLE_GTK = get_option('gtkui')
-BUILD_GEVOLUTION = enable_gevolution
-ENABLE_CAP = enable_cap
-ENABLE_GESTURES = enable_gestures
-ENABLE_GCR = enable_gcr
 
 
 #######################################################################
@@ -686,8 +682,6 @@ Finch will not be built. You need to install ncursesw (or ncurses) and its devel
 
 ''')
 endif
-
-ENABLE_GNT = enable_consoleui
 
 #conf.set('HAVE_WCWIDTH', compiler.has_function('wcwidth'))
 
@@ -775,7 +769,6 @@ Or use -Dvv=false if you do not need voice/video support.
 else
 	enable_vv = false
 endif
-USE_VV = enable_vv
 
 #######################################################################
 # Check for Raw data streams support in Farstream
@@ -1111,7 +1104,6 @@ if enable_unity
 	]
 	conf.set('USES_MM_CHAT_SECTION', 'X-MessagingMenu-UsesChatSection=true')
 endif
-ENABLE_UNITY = enable_unity
 
 #######################################################################
 # Check for Secret Service headers
@@ -1125,8 +1117,6 @@ if enable_secret_service
 		enable_secret_service = false
 	endif
 endif
-
-ENABLE_SECRETSERVICE = enable_secret_service
 
 #######################################################################
 # Check for GNOME Keyring headers
@@ -1145,13 +1135,12 @@ else
 	gnome_keyring = []
 endif
 
-ENABLE_GNOMEKEYRING = enable_gnome_keyring
-
 #######################################################################
 # Check for KWallet headers
 #######################################################################
 
 enable_kwallet = get_option('kwallet') and not IS_WIN32
+enable_kwallet = false
 
 if enable_kwallet
 	# Ensure C++ compiler works
@@ -1223,8 +1212,6 @@ if enable_kwallet
 #		])
 endif
 
-ENABLE_KWALLET = enable_kwallet and false
-
 #######################################################################
 # Check for GPlugin 0.0.17
 #######################################################################
@@ -1264,8 +1251,6 @@ if enable_consoleui
 	python_dep = dependency('python3')
 	conf.set('USE_PYTHON', python_dep.found())
 endif
-
-ENABLE_DBUS = enable_dbus
 
 #######################################################################
 # SSL support
@@ -1317,8 +1302,6 @@ else
 	gnutls = []
 endif
 
-USE_GNUTLS = have_gnutls
-
 #
 # Check for NSS if it isn't disabled
 #
@@ -1343,8 +1326,6 @@ if enable_nss
 else
 	nss = []
 endif
-
-USE_NSS = have_nss
 
 
 if msg_nss != '' and msg_gnutls != ''
@@ -1392,17 +1373,13 @@ endforeach
 enable_cyrus_sasl = get_option('cyrus-sasl')
 if enable_cyrus_sasl
 	if compiler.has_function('sasl_client_init', args : '-lsasl2')
-		USE_CYRUS_SASL = true
 		conf.set('HAVE_CYRUS_SASL', true)
 		sasl = declare_dependency(link_args : '-lsasl2')
 	else
-		USE_CYRUS_SASL = false
 		error('Cyrus SASL library not found')
 	endif
 else
-	USE_CYRUS_SASL = false
-endif
-if not USE_CYRUS_SASL
+	enable_cyrus_sasl = false
 	sasl = []
 endif
 

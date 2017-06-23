@@ -11,7 +11,7 @@ if ENABLE_GTK
 	    install_dir : get_option('mandir') + '/man1')
 endif
 
-if ENABLE_GNT
+if enable_consoleui
 	finch_man = configure_file(
 	    input : 'finch.1.in',
 	    output : 'finch.1',

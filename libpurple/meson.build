@@ -168,7 +168,7 @@ purple_coreheaders = [
 	'xmlnode.h',
 ]
 
-if USE_VV
+if enable_vv
 	purple_coreheaders += 'media-gst.h'
 endif
 
@@ -259,7 +259,7 @@ purple_builtheaders = [
 	enums_h,
 ]
 
-if ENABLE_DBUS
+if enable_dbus
 
 # purple dbus server
 
@@ -419,7 +419,7 @@ libpurple_dep = declare_dependency(
     link_with : libpurple,
     dependencies : [gstreamer, gplugin, glib, gio])
 
-if ENABLE_DBUS
+if enable_dbus
 
 # purple-client-example
 
@@ -471,7 +471,7 @@ if enable_introspection
 	if PLUGINS
 		Purple_gir_includes += ['GPlugin-0.0']
 	endif
-	if ENABLE_DBUS
+	if enable_dbus
 		Purple_gir_includes += ['DBus-1.0', 'DBusGLib-1.0']
 	endif
 

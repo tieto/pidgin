@@ -81,7 +81,7 @@ if PLUGINS
 	    name_prefix : '',
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 
-	if ENABLE_DBUS
+	if enable_dbus
 		dbus_example_bindings_c = custom_target('dbus_example_bindings_c',
 		    input : 'dbus-example.c',
 		    output : 'dbus-example-bindings.ch',
@@ -92,5 +92,5 @@ if PLUGINS
 		dbus_example = library('dbus-example', 'dbus-example.c', dbus_example_bindings_c,
 		    dependencies : [libpurple_dep, dbus],
 		    name_prefix : '')
-	endif  # ENABLE_DBUS
+	endif  # enable_dbus
 endif  # PLUGINS

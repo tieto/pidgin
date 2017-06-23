@@ -91,7 +91,7 @@ JABBERSOURCES = [
 	'xmpp.h'
 ]
 
-if USE_CYRUS_SASL
+if enable_cyrus_sasl
 	JABBERSOURCES += ['auth_cyrus.c']
 endif
 

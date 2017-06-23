@@ -1,16 +1,16 @@
-if BUILD_GEVOLUTION
+if enable_gevolution
 	subdir('gevolution')
 endif
 
-if ENABLE_DBUS
+if enable_dbus
 	subdir('musicmessaging')
 endif
 
-if ENABLE_CAP
+if enable_cap
 	subdir('cap')
 endif
 
-if ENABLE_GESTURES
+if enable_gestures
 	subdir('gestures')
 endif
 
@@ -96,7 +96,7 @@ if PLUGINS
 	    name_prefix : '',
 	    install : true, install_dir : PIDGIN_PLUGINDIR)
 
-	if ENABLE_UNITY
+	if enable_unity
 		unity = library('unity', 'unity.c',
 		    dependencies : [UNITY, libpurple_dep, libpidgin_dep, glib],
 		    name_prefix : '',
