@@ -67,7 +67,7 @@ gnt_display_version = '@0@@1@'.format(gnt_version,
                                       gnt_version_suffix)
 
 
-add_global_arguments('-DHAVE_CONFIG_H=1', language : 'c')
+add_project_arguments('-DHAVE_CONFIG_H=1', language : 'c')
 conf = configuration_data()
 man_conf = configuration_data()
 pkg_conf = configuration_data()
@@ -1042,7 +1042,7 @@ if compiler.get_id() == 'gcc'
 			'-Wfloat-equal',
 			'-Wundef']
 		if compiler.has_argument(newflag)
-			add_global_arguments(newflag, language : 'c')
+			add_project_arguments(newflag, language : 'c')
 		endif
 	endforeach
 
@@ -1067,7 +1067,7 @@ if compiler.get_id() == 'gcc'
 	endif
 endif
 if SUNCC
-	add_global_arguments('-features=extensions', language : 'c')
+	add_project_arguments('-features=extensions', language : 'c')
 endif
 
 pidginpath = find_program('pidgin')
@@ -1077,7 +1077,7 @@ if get_option('glib-errors-trace')
 		error('--enable-glib-errors-trace doesn\'t work with clang')
 	endif
 	conf.set('ENABLE_GLIBTRACE', true)
-	add_global_arguments('-rdynamic', language : 'c')
+	add_project_arguments('-rdynamic', language : 'c')
 endif
 
 #######################################################################
