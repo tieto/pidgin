@@ -717,6 +717,8 @@ int pidgin_start(int argc, char *argv[])
 	app = G_APPLICATION(gtk_application_new("im.pidgin.Pidgin",
 				G_APPLICATION_NON_UNIQUE));
 
+	g_object_set(app, "register-session", TRUE, NULL);
+
 	g_signal_connect(app, "activate",
 			G_CALLBACK(pidgin_activate_cb), NULL);
 
