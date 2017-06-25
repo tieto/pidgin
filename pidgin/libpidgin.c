@@ -317,7 +317,7 @@ pidgin_quit(void)
 		g_hash_table_destroy(ui_info);
 
 	/* and end it all... */
-	gtk_main_quit();
+	g_application_quit(g_application_get_default());
 }
 
 static GHashTable *pidgin_ui_get_info(void)
@@ -378,6 +378,12 @@ pidgin_core_get_ui_ops(void)
 }
 
 static void
+pidgin_activate_cb(GApplication *application, gpointer user_data)
+{
+	purple_blist_set_visible(TRUE);
+}
+
+static void
 show_usage(const char *name, gboolean terse)
 {
 	char *text;
@@ -422,6 +428,7 @@ show_usage(const char *name, gboolean terse)
 
 int pidgin_start(int argc, char *argv[])
 {
+	GApplication *app;
 	gboolean opt_force_online = FALSE;
 	gboolean opt_help = FALSE;
 	gboolean opt_login = FALSE;
@@ -452,6 +459,7 @@ int pidgin_start(int argc, char *argv[])
 	GList *active_accounts;
 	GStatBuf st;
 	GError *error;
+	int ret;
 
 	struct option long_options[] = {
 		{"config",       required_argument, NULL, 'c'},
@@ -689,6 +697,9 @@ int pidgin_start(int argc, char *argv[])
 	purple_debug_set_enabled(debug_enabled);
 	purple_debug_set_colored(debug_colored);
 
+	/* Call this here as GtkApplication calls gtk_init() in
+	 * g_application_register() and we don't necessarily want to exit().
+	 */
 	gui_check = gtk_init_check(&argc, &argv);
 	if (!gui_check) {
 		const char *display = gdk_display_get_name(gdk_display_get_default());
@@ -700,6 +711,24 @@ int pidgin_start(int argc, char *argv[])
 		g_free(segfault_message);
 #endif
 
+		return 1;
+	}
+
+	app = G_APPLICATION(gtk_application_new("im.pidgin.Pidgin",
+				G_APPLICATION_NON_UNIQUE));
+
+	g_signal_connect(app, "activate",
+			G_CALLBACK(pidgin_activate_cb), NULL);
+
+	if (!g_application_register(app, NULL, &error)) {
+		purple_debug_error("gtk",
+				"Unable to register GApplication: %s\n",
+				error->message);
+		g_clear_error(&error);
+		g_object_unref(app);
+#ifndef _WIN32
+		g_free(segfault_message);
+#endif
 		return 1;
 	}
 
@@ -845,7 +874,23 @@ int pidgin_start(int argc, char *argv[])
 	winpidgin_post_init();
 #endif
 
-	gtk_main();
+	/* TODO: Use GtkApplicationWindow or add a window instead */
+	g_application_hold(app);
+
+	ret = g_application_run(app, 0, NULL);
+
+	/* Make sure purple has quit in case something in GApplication
+	 * has caused g_application_run() to finish on its own. This can
+	 * happen, for example, if the desktop session is ending.
+	 */
+	if (purple_get_core() != NULL) {
+		purple_core_quit();
+	}
+
+	/* Now that we're sure purple_core_quit() has been called,
+	 * this can be freed.
+	 */
+	g_object_unref(app);
 
 #ifndef _WIN32
 	g_free(segfault_message);
@@ -858,5 +903,5 @@ int pidgin_start(int argc, char *argv[])
 	winpidgin_cleanup();
 #endif
 
-	return 0;
+	return ret;
 }
