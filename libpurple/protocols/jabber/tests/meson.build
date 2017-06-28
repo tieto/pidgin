@@ -1,6 +1,4 @@
-# FIXME: 'jutil' can't find an inline function while linking.
-
-foreach prog : ['caps', 'digest_md5', 'scram']
+foreach prog : ['caps', 'digest_md5', 'scram', 'jutil']
 	e = executable(
 	    'test_jabber_' + prog, 'test_jabber_@0@.c'.format(prog),
 	    link_with : [jabber_prpl],
