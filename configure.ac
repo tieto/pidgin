@@ -523,10 +523,6 @@ AC_ARG_ENABLE(screensaver,
 	[AS_HELP_STRING([--disable-screensaver],
 		[compile without X screensaver extension (used to detect idleness)])],
 	enable_screensaver="$enableval", enable_screensaver="yes")
-AC_ARG_ENABLE(startup-notification,
-	[AS_HELP_STRING([--disable-startup-notification],
-		[compile without startup notification support])],
-	enable_startup_notification="$enableval", enable_startup_notification="yes")
 AC_ARG_ENABLE(enchant,
 	[AS_HELP_STRING([--disable-enchant],
 		[compile without Enchant spell checking support])],
@@ -753,7 +749,6 @@ else # GTK
 	enable_cap=no
 	enable_gevolution=no
 	enable_screensaver=no
-	enable_startup_notification=no
 fi	# GTK
 
 AM_CONDITIONAL(ENABLE_GTK, test "x$enable_gtkui" = "xyes")
@@ -2136,7 +2131,6 @@ echo Install translations.......... : $enable_i18n
 echo Has you....................... : yes
 echo
 echo Use XScreenSaver Extension.... : $enable_screensaver
-echo Use startup notification...... : $enable_startup_notification
 echo Build with Enchant support.... : $use_enchant
 echo Build with GCR widgets........ : $enable_gcr
 echo Build Unity integration plugin.: $enable_unity
