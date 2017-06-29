@@ -63,7 +63,6 @@
 #include "gtkrequest.h"
 #include "gtkroomlist.h"
 #include "gtksavedstatuses.h"
-#include "gtksession.h"
 #include "gtksmiley-theme.h"
 #include "gtksound.h"
 #include "gtkutils.h"
@@ -294,11 +293,6 @@ static GHashTable *ui_info = NULL;
 static void
 pidgin_quit(void)
 {
-#ifdef USE_SM
-	/* unplug */
-	pidgin_session_end();
-#endif
-
 	/* Uninit */
 	pidgin_utils_uninit();
 	pidgin_notify_uninit();
@@ -802,9 +796,6 @@ int pidgin_start(int argc, char *argv[])
 
 	ui_main();
 
-#ifdef USE_SM
-	pidgin_session_init(argv[0], opt_session_arg, opt_config_dir_arg);
-#endif
 	g_free(opt_session_arg);
 	opt_session_arg = NULL;
 	g_free(opt_config_dir_arg);

@@ -287,9 +287,6 @@
 /* Define to 1 if you have X11 */
 /* #define HAVE_X11 1 */
 
-/* Define to 1 if you have the <X11/SM/SMlib.h> header file. */
-/* #define HAVE_X11_SM_SMLIB_H 1 */
-
 /* whether or not we have xsltproc for devhelp index */
 /* #define HAVE_XSLTPROC 1 */
 
@@ -359,9 +356,6 @@
 
 /* Define if we're using XScreenSaver. */
 #define USE_SCREENSAVER 1
-
-/* Define if we're using X Session Management. */
-/* #define USE_SM 1 */
 
 /* Use voice and video */
 /* #define USE_VV 1 */
