@@ -516,10 +516,6 @@ AC_ARG_ENABLE(consoleui, [AS_HELP_STRING([--disable-consoleui],
 dnl #######################################################################
 dnl # Check for GTK+ 2.18 and other things used by the GTK UI
 dnl #######################################################################
-AC_ARG_ENABLE(screensaver,
-	[AS_HELP_STRING([--disable-screensaver],
-		[compile without X screensaver extension (used to detect idleness)])],
-	enable_screensaver="$enableval", enable_screensaver="yes")
 AC_ARG_ENABLE(enchant,
 	[AS_HELP_STRING([--disable-enchant],
 		[compile without Enchant spell checking support])],
@@ -633,49 +629,7 @@ Use --without-x if you do not need X11 support.
 		AC_SUBST(X11_LIBS)
 		AC_SUBST(X11_CFLAGS)
 	else
-		enable_screensaver=no
 		enable_gestures=no
-	fi
-
-	dnl #######################################################################
-	dnl # Check for XScreenSaver
-	dnl #######################################################################
-	if test "x$enable_screensaver" = "xyes" ; then
-		if test "x$with_x" = "xyes" ; then
-			old_LIBS="$LIBS"
-			LIBS="$LIBS $GTK_LIBS $x_libpath_add"
-			XSS_LIBS=""
-			XSS_HEADERS=""
-			AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_EXTRA_LIBS"],[],[-lX11 -lXext -lm])
-			AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_LIBS $X_EXTRA_LIBS -lXss"],[],[-lX11 -lXext -lm])
-			if test "x$XSS_LIBS" != "x"; then
-				oldCPPFLAGS="$CPPFLAGS"
-				CPPFLAGS="$CPPFLAGS $x_incpath_add"
-				AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-					#include <X11/Xlib.h>
-					#include <X11/extensions/scrnsaver.h>
-					]], [[]])], [], [enable_screensaver=no])
-				CPPFLAGS="$oldCPPFLAGS"
-			else
-				enable_screensaver=no
-			fi
-			LIBS="$old_LIBS"
-
-			if test "x$enable_screensaver" = "xyes" ; then
-				AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])
-				AC_SUBST(XSS_LIBS)
-			else
-				if test "x$force_deps" = "xyes" ; then
-					AC_MSG_ERROR([
-XScreenSaver extension development headers (libXScrnSaver-devel or libxss-dev) not found.
-Use --disable-screensaver if you do not need XScreenSaver extension support,
-this is required for detecting idle time by mouse and keyboard usage.
-])
-				fi
-			fi
-		else
-			AC_MSG_ERROR([X support is required to build with XScreenSaver extensions])
-		fi
 	fi
 
 	dnl #######################################################################
@@ -745,7 +699,6 @@ else # GTK
 	enable_gcr=no
 	enable_cap=no
 	enable_gevolution=no
-	enable_screensaver=no
 fi	# GTK
 
 AM_CONDITIONAL(ENABLE_GTK, test "x$enable_gtkui" = "xyes")
@@ -2126,7 +2079,6 @@ echo Old tray icon compatibility... : $enable_traycompat
 echo Install translations.......... : $enable_i18n
 echo Has you....................... : yes
 echo
-echo Use XScreenSaver Extension.... : $enable_screensaver
 echo Build with Enchant support.... : $use_enchant
 echo Build with GCR widgets........ : $enable_gcr
 echo Build Unity integration plugin.: $enable_unity

@@ -200,7 +200,6 @@ libpidgin_la_LIBADD = \
 	$(GSTREAMER_LIBS) \
 	$(GSTVIDEO_LIBS) \
 	$(GSTINTERFACES_LIBS) \
-	$(XSS_LIBS) \
 	$(INTLLIBS) \
 	$(LIBXML_LIBS) \
 	$(WEBKIT_LIBS) \
