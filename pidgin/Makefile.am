@@ -72,7 +72,6 @@ libpidgin_la_SOURCES = \
 	gtkroomlist.c \
 	gtksavedstatuses.c \
 	gtkscrollbook.c \
-	gtksession.c \
 	gtksmiley-manager.c \
 	gtksmiley-theme.c \
 	gtksound.c \
@@ -121,7 +120,6 @@ libpidgin_la_headers = \
 	gtkroomlist.h \
 	gtksavedstatuses.h \
 	gtkscrollbook.h \
-	gtksession.h \
 	gtksmiley-manager.h \
 	gtksmiley-theme.h \
 	gtksound.h \
@@ -203,7 +201,6 @@ libpidgin_la_LIBADD = \
 	$(GSTVIDEO_LIBS) \
 	$(GSTINTERFACES_LIBS) \
 	$(XSS_LIBS) \
-	$(SM_LIBS) \
 	$(INTLLIBS) \
 	$(LIBXML_LIBS) \
 	$(WEBKIT_LIBS) \
