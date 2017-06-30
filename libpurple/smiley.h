@@ -32,7 +32,7 @@
  * A #PurpleSmiley is a base class for associating emoticon images and their
  * textual representation. It's intended for various smiley-related tasks:
  * parsing the text against them, displaying in the smiley selector, or handling
- * remote data (using #PurpleRemoteSmiley).
+ * remote data.
  *
  * The #PurpleSmiley:shortcut is always unescaped, but <link linkend="libpurple-smiley-parser">smiley parser</link>
  * may deal with special characters.
