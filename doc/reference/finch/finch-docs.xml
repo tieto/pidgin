@@ -64,6 +64,7 @@
 	  <!-- TODO: document not found. Find it.
 	  <xi:include href="xml/gntid.xml" />
 	  -->
+      <xi:include href="xml/gntlabel.xml" />
       <xi:include href="xml/gntline.xml" />
       <xi:include href="xml/gntmenu.xml" />
       <xi:include href="xml/gntmenuitem.xml" />
