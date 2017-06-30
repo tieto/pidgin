@@ -21,6 +21,7 @@
  */
 
 #include <glib.h>
+#include <string.h>
 
 #include <purple.h>
 

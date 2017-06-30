@@ -26,7 +26,6 @@
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
-#include "eventloop.h"
 #include "glibcompat.h"
 #include "log.h"
 #include "notify.h"
@@ -132,103 +131,6 @@ static PurpleCoreUiOps *
 gnt_core_get_ui_ops(void)
 {
 	return &core_ops;
-}
-
-/* Anything IO-related is directly copied from gtkpurple's source tree */
-
-#define FINCH_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
-#define FINCH_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
-
-typedef struct _PurpleGntIOClosure {
-	PurpleInputFunction function;
-	guint result;
-	gpointer data;
-
-} PurpleGntIOClosure;
-
-static void purple_gnt_io_destroy(gpointer data)
-{
-	g_free(data);
-}
-
-static gboolean purple_gnt_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
-{
-	PurpleGntIOClosure *closure = data;
-	PurpleInputCondition purple_cond = 0;
-
-	if (condition & FINCH_READ_COND)
-		purple_cond |= PURPLE_INPUT_READ;
-	if (condition & FINCH_WRITE_COND)
-		purple_cond |= PURPLE_INPUT_WRITE;
-
-#if 0
-	purple_debug(PURPLE_DEBUG_MISC, "gtk_eventloop",
-			   "CLOSURE: callback for %d, fd is %d\n",
-			   closure->result, g_io_channel_unix_get_fd(source));
-#endif
-
-#ifdef _WIN32
-	if(! purple_cond) {
-#if 0
-		purple_debug_misc("gnt_eventloop",
-			   "CLOSURE received GIOCondition of 0x%x, which does not"
-			   " match 0x%x (READ) or 0x%x (WRITE)\n",
-			   condition, FINCH_READ_COND, FINCH_WRITE_COND);
-#endif /* DEBUG */
-
-		return TRUE;
-	}
-#endif /* _WIN32 */
-
-	closure->function(closure->data, g_io_channel_unix_get_fd(source),
-			  purple_cond);
-
-	return TRUE;
-}
-
-static guint gnt_input_add(gint fd, PurpleInputCondition condition, PurpleInputFunction function,
-							   gpointer data)
-{
-	PurpleGntIOClosure *closure = g_new0(PurpleGntIOClosure, 1);
-	GIOChannel *channel;
-	GIOCondition cond = 0;
-
-	closure->function = function;
-	closure->data = data;
-
-	if (condition & PURPLE_INPUT_READ)
-		cond |= FINCH_READ_COND;
-	if (condition & PURPLE_INPUT_WRITE)
-		cond |= FINCH_WRITE_COND;
-
-	channel = g_io_channel_unix_new(fd);
-	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
-					      purple_gnt_io_invoke, closure, purple_gnt_io_destroy);
-
-	g_io_channel_unref(channel);
-	return closure->result;
-}
-
-static PurpleEventLoopUiOps eventloop_ops =
-{
-	g_timeout_add,
-	g_source_remove,
-	gnt_input_add,
-	g_source_remove,
-	NULL, /* input_get_error */
-	g_timeout_add_seconds,
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
-
-static PurpleEventLoopUiOps *
-gnt_eventloop_get_ui_ops(void)
-{
-	return &eventloop_ops;
 }
 
 /* This is mostly copied from gtkpurple's source tree */
@@ -348,7 +250,6 @@ init_libpurple(int argc, char **argv)
 	purple_debug_set_enabled(debug_enabled);
 
 	purple_core_set_ui_ops(gnt_core_get_ui_ops());
-	purple_eventloop_set_ui_ops(gnt_eventloop_get_ui_ops());
 	purple_idle_set_ui_ops(finch_idle_get_ui_ops());
 
 	if (!purple_core_init(FINCH_UI))

@@ -29,7 +29,6 @@
 #include "core.h"
 #include "dbus-maybe.h"
 #include "debug.h"
-#include "eventloop.h"
 #include "glibcompat.h"
 #include "log.h"
 #include "network.h"
@@ -50,7 +49,6 @@
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
 #include "gtkdocklet.h"
-#include "gtkeventloop.h"
 #include "gtkxfer.h"
 #include "gtkidle.h"
 #include "gtklog.h"
@@ -63,7 +61,6 @@
 #include "gtkrequest.h"
 #include "gtkroomlist.h"
 #include "gtksavedstatuses.h"
-#include "gtksession.h"
 #include "gtksmiley-theme.h"
 #include "gtksound.h"
 #include "gtkutils.h"
@@ -294,11 +291,6 @@ static GHashTable *ui_info = NULL;
 static void
 pidgin_quit(void)
 {
-#ifdef USE_SM
-	/* unplug */
-	pidgin_session_end();
-#endif
-
 	/* Uninit */
 	pidgin_utils_uninit();
 	pidgin_notify_uninit();
@@ -317,7 +309,7 @@ pidgin_quit(void)
 		g_hash_table_destroy(ui_info);
 
 	/* and end it all... */
-	gtk_main_quit();
+	g_application_quit(g_application_get_default());
 }
 
 static GHashTable *pidgin_ui_get_info(void)
@@ -378,6 +370,12 @@ pidgin_core_get_ui_ops(void)
 }
 
 static void
+pidgin_activate_cb(GApplication *application, gpointer user_data)
+{
+	purple_blist_set_visible(TRUE);
+}
+
+static void
 show_usage(const char *name, gboolean terse)
 {
 	char *text;
@@ -422,6 +420,7 @@ show_usage(const char *name, gboolean terse)
 
 int pidgin_start(int argc, char *argv[])
 {
+	GApplication *app;
 	gboolean opt_force_online = FALSE;
 	gboolean opt_help = FALSE;
 	gboolean opt_login = FALSE;
@@ -452,6 +451,7 @@ int pidgin_start(int argc, char *argv[])
 	GList *active_accounts;
 	GStatBuf st;
 	GError *error;
+	int ret;
 
 	struct option long_options[] = {
 		{"config",       required_argument, NULL, 'c'},
@@ -689,6 +689,9 @@ int pidgin_start(int argc, char *argv[])
 	purple_debug_set_enabled(debug_enabled);
 	purple_debug_set_colored(debug_colored);
 
+	/* Call this here as GtkApplication calls gtk_init() in
+	 * g_application_register() and we don't necessarily want to exit().
+	 */
 	gui_check = gtk_init_check(&argc, &argv);
 	if (!gui_check) {
 		const char *display = gdk_display_get_name(gdk_display_get_default());
@@ -700,6 +703,26 @@ int pidgin_start(int argc, char *argv[])
 		g_free(segfault_message);
 #endif
 
+		return 1;
+	}
+
+	app = G_APPLICATION(gtk_application_new("im.pidgin.Pidgin",
+				G_APPLICATION_NON_UNIQUE));
+
+	g_object_set(app, "register-session", TRUE, NULL);
+
+	g_signal_connect(app, "activate",
+			G_CALLBACK(pidgin_activate_cb), NULL);
+
+	if (!g_application_register(app, NULL, &error)) {
+		purple_debug_error("gtk",
+				"Unable to register GApplication: %s\n",
+				error->message);
+		g_clear_error(&error);
+		g_object_unref(app);
+#ifndef _WIN32
+		g_free(segfault_message);
+#endif
 		return 1;
 	}
 
@@ -726,7 +749,6 @@ int pidgin_start(int argc, char *argv[])
 #endif
 
 	purple_core_set_ui_ops(pidgin_core_get_ui_ops());
-	purple_eventloop_set_ui_ops(pidgin_eventloop_get_ui_ops());
 
 	if (!purple_core_init(PIDGIN_UI)) {
 		fprintf(stderr,
@@ -771,9 +793,6 @@ int pidgin_start(int argc, char *argv[])
 
 	ui_main();
 
-#ifdef USE_SM
-	pidgin_session_init(argv[0], opt_session_arg, opt_config_dir_arg);
-#endif
 	g_free(opt_session_arg);
 	opt_session_arg = NULL;
 	g_free(opt_config_dir_arg);
@@ -845,7 +864,23 @@ int pidgin_start(int argc, char *argv[])
 	winpidgin_post_init();
 #endif
 
-	gtk_main();
+	/* TODO: Use GtkApplicationWindow or add a window instead */
+	g_application_hold(app);
+
+	ret = g_application_run(app, 0, NULL);
+
+	/* Make sure purple has quit in case something in GApplication
+	 * has caused g_application_run() to finish on its own. This can
+	 * happen, for example, if the desktop session is ending.
+	 */
+	if (purple_get_core() != NULL) {
+		purple_core_quit();
+	}
+
+	/* Now that we're sure purple_core_quit() has been called,
+	 * this can be freed.
+	 */
+	g_object_unref(app);
 
 #ifndef _WIN32
 	g_free(segfault_message);
@@ -858,5 +893,5 @@ int pidgin_start(int argc, char *argv[])
 	winpidgin_cleanup();
 #endif
 
-	return 0;
+	return ret;
 }

@@ -254,7 +254,7 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 		ifc.ifc_req = buffer_ifr;
 		ioctl(source, SIOCGIFCONF, &ifc);
 
-		it = buffer;
+		it = (guchar *)buffer_ifr;
 		it_end = it + ifc.ifc_len;
 		while (it < it_end) {
 			ifr = (struct ifreq*)(gpointer)it;

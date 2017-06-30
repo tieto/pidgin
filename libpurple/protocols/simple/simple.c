@@ -265,11 +265,8 @@ static gchar *auth_header(struct simple_account_data *sip,
 	gchar noncecount[9];
 	gchar *response;
 	gchar *ret;
-	gchar *tmp;
-	const char *authdomain;
 	const char *authuser;
 
-	authdomain = purple_account_get_string(sip->account, "authdomain", "");
 	authuser = purple_account_get_string(sip->account, "authuser", sip->username);
 
 	if(!authuser || strlen(authuser) < 1) {
@@ -287,6 +284,13 @@ static gchar *auth_header(struct simple_account_data *sip,
 		g_free(response);
 		return ret;
 	} else if(auth->type == 2) { /* NTLM */
+#ifdef HAVE_NETTLE
+		const gchar *authdomain;
+		gchar *tmp;
+
+		authdomain = purple_account_get_string(sip->account,
+				"authdomain", "");
+
 		if(auth->nc == 3 && auth->nonce) {
 			/* TODO: Don't hardcode "purple" as the hostname */
 			ret = purple_ntlm_gen_type3(authuser, sip->password, "purple", authdomain, (const guint8 *)auth->nonce, &auth->flags);
@@ -296,6 +300,10 @@ static gchar *auth_header(struct simple_account_data *sip,
 		}
 		tmp = g_strdup_printf("NTLM qop=\"auth\", realm=\"%s\", targetname=\"%s\", gssapi-data=\"\"", auth->realm, auth->target);
 		return tmp;
+#else
+		/* Used without support enabled */
+		g_return_val_if_reached(NULL);
+#endif /* HAVE_NETTLE */
 	}
 
 	sprintf(noncecount, "%08d", auth->nc++);
@@ -350,6 +358,7 @@ static void fill_auth(struct simple_account_data *sip, const gchar *hdr, struct 
 	}
 
 	if(!g_ascii_strncasecmp(hdr, "NTLM", 4)) {
+#ifdef HAVE_NETTLE
 		purple_debug_info("simple", "found NTLM\n");
 		auth->type = 2;
 		parts = g_strsplit(hdr+5, "\",", 0);
@@ -382,6 +391,11 @@ static void fill_auth(struct simple_account_data *sip, const gchar *hdr, struct 
 		}
 
 		return;
+#else
+		purple_debug_error("simple", "NTLM auth unsupported without "
+				"libnettle support. Please rebuild with "
+				"libnettle support for this feature.\n");
+#endif /* HAVE_NETTLE */
 	} else if(!g_ascii_strncasecmp(hdr, "DIGEST", 6)) {
 
 		purple_debug_info("simple", "found DIGEST\n");

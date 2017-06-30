@@ -26,8 +26,10 @@
 #include "ntlm.h"
 #include "debug.h"
 
-#include "ciphers/descipher.h"
-#include "ciphers/md4hash.h"
+#ifdef HAVE_NETTLE
+#include <nettle/des.h>
+#include <nettle/md4.h>
+#endif
 
 #include <string.h>
 
@@ -112,6 +114,7 @@ purple_ntlm_parse_type2(const gchar *type2, guint32 *flags)
 	return nonce;
 }
 
+#ifdef HAVE_NETTLE
 /*
  * Create a 64bit DES key by taking a 56bit key and adding
  * a parity bit after every 7th bit.
@@ -130,19 +133,15 @@ setup_des_key(const guint8 key_56[], guint8 *key)
 }
 
 /*
- * helper function for purple cipher.c
+ * helper function for des encryption
  */
 static void
 des_ecb_encrypt(const guint8 *plaintext, guint8 *result, const guint8 *key)
 {
-	PurpleCipher *cipher;
-	gssize encsiz;
+	struct des_ctx ctx;
 
-	cipher = purple_des_cipher_new();
-	purple_cipher_set_key(cipher, key, 8);
-	encsiz = purple_cipher_encrypt(cipher, plaintext, 8, result, 8);
-	g_warn_if_fail(encsiz == 8);
-	g_object_unref(cipher);
+	des_set_key(&ctx, key);
+	des_encrypt(&ctx, DES_BLOCK_SIZE, result, plaintext);
 }
 
 /*
@@ -201,10 +200,12 @@ gensesskey(char *buffer)
 		buffer[i] = (char)(g_random_int() & 0xff);
 	}
 }
+#endif /* HAVE_NETTLE */
 
 gchar *
 purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *hostname, const gchar *domain, const guint8 *nonce, guint32 *flags)
 {
+#ifdef HAVE_NETTLE
 	char lm_pw[14];
 	unsigned char lm_hpw[21];
 	char sesskey[16];
@@ -219,7 +220,7 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 	unsigned char magic[] = { 0x4B, 0x47, 0x53, 0x21, 0x40, 0x23, 0x24, 0x25 };
 	unsigned char nt_hpw[21];
 	char nt_pw[128];
-	PurpleHash *hash;
+	struct md4_ctx ctx;
 	char *tmp;
 	int idx;
 	gchar *ucs2le;
@@ -320,10 +321,9 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 		nt_pw[2 * idx + 1] = 0;
 	}
 
-	hash = purple_md4_hash_new();
-	purple_hash_append(hash, (guint8 *)nt_pw, 2 * lennt);
-	purple_hash_digest(hash, nt_hpw, sizeof(nt_hpw));
-	g_object_unref(hash);
+	md4_init(&ctx);
+	md4_update(&ctx, 2 * lennt, (uint8_t *)nt_pw);
+	md4_digest(&ctx, MD4_DIGEST_SIZE, nt_hpw);
 
 	memset(nt_hpw + 16, 0, 5);
 	calc_resp(nt_hpw, nonce, nt_resp);
@@ -344,4 +344,8 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 	g_free(tmsg);
 
 	return tmp;
+#else
+	/* Used without support enabled */
+	g_return_val_if_reached(NULL);
+#endif /* HAVE_NETTLE */
 }

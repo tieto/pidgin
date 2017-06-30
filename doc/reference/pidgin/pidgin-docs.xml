@@ -35,7 +35,6 @@
       <xi:include href="xml/gtkdebug.xml" />
       <xi:include href="xml/gtkdocklet.xml" />
       <xi:include href="xml/gtkdnd-hints.xml" />
-      <xi:include href="xml/gtkeventloop.xml" />
       <xi:include href="xml/gtkxfer.xml" />
       <xi:include href="xml/gtkicon-theme.xml" />
       <xi:include href="xml/gtkidle.xml" />

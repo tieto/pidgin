@@ -56,7 +56,6 @@ libpidgin_la_SOURCES = \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
 	gtkdocklet.c \
-	gtkeventloop.c \
 	gtkicon-theme.c \
 	gtkicon-theme-loader.c \
 	gtkidle.c \
@@ -73,7 +72,6 @@ libpidgin_la_SOURCES = \
 	gtkroomlist.c \
 	gtksavedstatuses.c \
 	gtkscrollbook.c \
-	gtksession.c \
 	gtksmiley-manager.c \
 	gtksmiley-theme.c \
 	gtksound.c \
@@ -105,7 +103,6 @@ libpidgin_la_headers = \
 	gtkdialogs.h \
 	gtkdnd-hints.h \
 	gtkdocklet.h \
-	gtkeventloop.h \
 	gtkicon-theme.h \
 	gtkicon-theme-loader.h \
 	gtkidle.h \
@@ -123,7 +120,6 @@ libpidgin_la_headers = \
 	gtkroomlist.h \
 	gtksavedstatuses.h \
 	gtkscrollbook.h \
-	gtksession.h \
 	gtksmiley-manager.h \
 	gtksmiley-theme.h \
 	gtksound.h \
@@ -205,7 +201,6 @@ libpidgin_la_LIBADD = \
 	$(GSTVIDEO_LIBS) \
 	$(GSTINTERFACES_LIBS) \
 	$(XSS_LIBS) \
-	$(SM_LIBS) \
 	$(INTLLIBS) \
 	$(LIBXML_LIBS) \
 	$(WEBKIT_LIBS) \
