@@ -22,9 +22,9 @@
 #ifndef PURPLE_GROUP_H
 #define PURPLE_GROUP_H
 /**
- * SECTION:blistnodetypes
- * @section_id: libpurple-blistnodetypes
- * @short_description: <filename>blistnodetypes.h</filename>
+ * SECTION:group
+ * @section_id: libpurple-group
+ * @short_description: <filename>group.h</filename>
  * @title: Buddy, Chat, Contact and Group node Objects
  */
 

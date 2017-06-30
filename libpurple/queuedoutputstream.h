@@ -24,8 +24,8 @@
 #ifndef _PURPLE_QUEUED_OUTPUT_STREAM_H
 #define _PURPLE_QUEUED_OUTPUT_STREAM_H
 /**
- * SECTION:queued-output-stream
- * @section_id: libpurple-queued-output-stream
+ * SECTION:queuedoutputstream
+ * @section_id: libpurple-queuedoutputstream
  * @short_description: GOutputStream for queuing data to output
  * @title: GOutputStream class
  *
