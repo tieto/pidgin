@@ -12,17 +12,16 @@
   <itemizedlist>
 <listitem><link linkend="PurpleAccountUiOps"><literal>PurpleAccountUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleBlistUiOps"><literal>PurpleBlistUiOps</literal></link></listitem>
+<listitem><link linkend="PurpleCommandsUiOps"><literal>PurpleCommandsUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleConnectionUiOps"><literal>PurpleConnectionUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleConversationUiOps"><literal>PurpleConversationUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleCoreUiOps"><literal>PurpleCoreUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleDebugUiOps"><literal>PurpleDebugUiOps</literal></link></listitem>
-<listitem><link linkend="PurpleDnsQueryUiOps"><literal>PurpleDnsQueryUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleIdleUiOps"><literal>PurpleIdleUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleNotifyUiOps"><literal>PurpleNotifyUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleRequestUiOps"><literal>PurpleRequestUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleRoomlistUiOps"><literal>PurpleRoomlistUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleSoundUiOps"><literal>PurpleSoundUiOps</literal></link></listitem>
-<listitem><link linkend="PurpleSrvTxtQueryUiOps"><literal>PurpleSrvTxtQueryUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleWhiteboardUiOps"><literal>PurpleWhiteboardUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleXferUiOps"><literal>PurpleXferUiOps</literal></link></listitem>
   </itemizedlist>
