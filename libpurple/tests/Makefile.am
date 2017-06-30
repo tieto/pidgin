@@ -6,11 +6,15 @@ COMMON_LIBS=\
 	$(GPLUGIN_LIBS)
 
 test_programs=\
+	test_image \
 	test_smiley \
 	test_smiley_list \
 	test_trie \
 	test_util \
 	test_xmlnode
+
+test_image_SOURCES=test_image.c
+test_image_LDADD=$(COMMON_LIBS)
 
 test_smiley_SOURCES=test_smiley.c
 test_smiley_LDADD=$(COMMON_LIBS)
