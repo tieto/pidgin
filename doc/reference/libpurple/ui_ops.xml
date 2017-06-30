@@ -17,7 +17,6 @@
 <listitem><link linkend="PurpleCoreUiOps"><literal>PurpleCoreUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleDebugUiOps"><literal>PurpleDebugUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleDnsQueryUiOps"><literal>PurpleDnsQueryUiOps</literal></link></listitem>
-<listitem><link linkend="PurpleEventLoopUiOps"><literal>PurpleEventLoopUiOps</literal></link> (without this, nothing will work and you will cry)</listitem>
 <listitem><link linkend="PurpleIdleUiOps"><literal>PurpleIdleUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleNotifyUiOps"><literal>PurpleNotifyUiOps</literal></link></listitem>
 <listitem><link linkend="PurpleRequestUiOps"><literal>PurpleRequestUiOps</literal></link></listitem>

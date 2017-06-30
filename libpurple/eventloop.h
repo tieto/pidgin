@@ -31,8 +31,6 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#define PURPLE_TYPE_EVENTLOOP_UI_OPS (purple_eventloop_ui_ops_get_type())
-
 /**
  * PurpleInputCondition:
  * @PURPLE_INPUT_READ:  A read condition.
@@ -56,99 +54,6 @@ typedef enum
  * condition that was satisfied to cause the callback to be invoked.
  */
 typedef void (*PurpleInputFunction)(gpointer, gint, PurpleInputCondition);
-
-typedef struct _PurpleEventLoopUiOps PurpleEventLoopUiOps;
-
-/**
- * PurpleEventLoopUiOps:
- * @timeout_add: Should create a callback timer with an interval measured in
- *               milliseconds. The supplied @function should be called every
- *               @interval seconds until it returns %FALSE, after which it
- *               should not be called again.
- *               <sbr/>Analogous to g_timeout_add in glib.
- *               <sbr/>Note: On Win32, this function may be called from a thread
- *               other than the libpurple thread. You should make sure to detect
- *               this situation and to only call "function" from the libpurple
- *               thread.
- *               <sbr/>See purple_timeout_add().
- *               <sbr/>@interval: the interval in
- *                                <emphasis>milliseconds</emphasis> between
- *                                calls to @function.
- *               <sbr/>@data: arbitrary data to be passed to @function at each
- *                            call.
- *               <sbr/>Returns: a handle for the timeout, which can be passed to
- *                              @timeout_remove.
- * @timeout_remove: Should remove a callback timer. Analogous to
- *                  g_source_remove() in glib.
- *                  <sbr/>See purple_timeout_remove().
- *                  <sbr/>@handle: an identifier for a timeout, as returned by
- *                                 @timeout_add.
- *                  <sbr/>Returns: %TRUE if the timeout identified by @handle
- *                                 was found and removed.
- * @input_add: Should add an input handler. Analogous to g_io_add_watch_full()
- *             in glib.
- *                <sbr/>See purple_input_add().
- *             <sbr/>@fd:        a file descriptor to watch for events
- *             <sbr/>@cond:      a bitwise OR of events on @fd for which @func
- *                               should be called.
- *             <sbr/>@func:      a callback to fire whenever a relevant event on
- *                               @fd occurs.
- *             <sbr/>@user_data: arbitrary data to pass to @fd.
- *             <sbr/>Returns:    an identifier for this input handler, which can
- *                               be passed to @input_remove.
- * @input_remove: Should remove an input handler. Analogous to g_source_remove()
- *                in glib.
- *                <sbr/>See purple_input_remove().
- *                <sbr/>@handle: an identifier, as returned by #input_add.
- *                <sbr/>Returns: %TRUE if the input handler was found and
- *                               removed.
- * @input_get_error: If implemented, should get the current error status for an
- *                   input.
- *                   <sbr/>Implementation of this UI op is optional. Implement
- *                   it if the UI's sockets or event loop needs to customize
- *                   determination of socket error status. If unimplemented,
- *                   <literal>getsockopt(2)</literal> will be used instead.
- *                   <sbr/>See purple_input_get_error().
- * @timeout_add_seconds: If implemented, should create a callback timer with an
- *                       interval measured in seconds. Analogous to
- *                       g_timeout_add_seconds() in glib.
- *                       <sbr/>This allows UIs to group timers for better power
- *                       efficiency. For this reason, @interval may be rounded
- *                       by up to a second.
- *                       <sbr/>Implementation of this UI op is optional. If it's
- *                       not implemented, calls to purple_timeout_add_seconds()
- *                       will be serviced by @timeout_add.
- *                       <sbr/>See purple_timeout_add_seconds().
- *
- * An abstraction of an application's mainloop; libpurple will use this to
- * watch file descriptors and schedule timed callbacks.  If your application
- * uses the glib mainloop, there is an implementation of this struct in
- * <filename>libpurple/example/nullclient.c</filename> which you can use
- * verbatim.
- */
-struct _PurpleEventLoopUiOps
-{
-	/* TODO Who is responsible for freeing @data? */
-	guint (*timeout_add)(guint interval, GSourceFunc function, gpointer data);
-
-	gboolean (*timeout_remove)(guint handle);
-
-	guint (*input_add)(int fd, PurpleInputCondition cond,
-	                   PurpleInputFunction func, gpointer user_data);
-
-	gboolean (*input_remove)(guint handle);
-
-	int (*input_get_error)(int fd, int *error);
-
-	guint (*timeout_add_seconds)(guint interval, GSourceFunc function,
-	                             gpointer data);
-
-	/*< private >*/
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
-};
 
 G_BEGIN_DECLS
 
@@ -231,24 +136,6 @@ guint purple_input_add(int fd, PurpleInputCondition cond,
 gboolean purple_input_remove(guint handle);
 
 /**
- * purple_input_get_error:
- * @fd:        The input file descriptor.
- * @error:     A pointer to an #int which on return will have the error, or
- *             0 if no error.
- *
- * Get the current error status for an input.
- *
- * The return value and error follow getsockopt() with a level of SOL_SOCKET and an
- * option name of SO_ERROR, and this is how the error is determined if the UI does not
- * implement the input_get_error UI op.
- *
- * Returns: 0 if there is no error; -1 if there is an error, in which case
- *          #errno will be set.
- */
-int
-purple_input_get_error(int fd, int *error);
-
-/**
  * purple_input_pipe:
  * @pipefd: Array used to return file descriptors for both ends of pipe.
  *
@@ -266,36 +153,6 @@ purple_input_get_error(int fd, int *error);
  */
 int
 purple_input_pipe(int pipefd[2]);
-
-
-
-/**************************************************************************/
-/* UI Registration Functions                                              */
-/**************************************************************************/
-
-/**
- * purple_eventloop_ui_ops_get_type:
- *
- * Returns: The #GType for the #PurpleEventLoopUiOps boxed structure.
- */
-GType purple_eventloop_ui_ops_get_type(void);
-
-/**
- * purple_eventloop_set_ui_ops:
- * @ops: The UI operations structure.
- *
- * Sets the UI operations structure to be used for accounts.
- */
-void purple_eventloop_set_ui_ops(PurpleEventLoopUiOps *ops);
-
-/**
- * purple_eventloop_get_ui_ops:
- *
- * Returns the UI operations structure used for accounts.
- *
- * Returns: The UI operations structure in use.
- */
-PurpleEventLoopUiOps *purple_eventloop_get_ui_ops(void);
 
 G_END_DECLS
 
