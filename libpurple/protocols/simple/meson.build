@@ -10,9 +10,9 @@ SIMPLESOURCES = [
 if STATIC_SIMPLE
 	simple_prpl = static_library('simple', SIMPLESOURCES,
 	    c_args : '-DPURPLE_STATIC_PRPL',
-	    dependencies : [libpurple_dep, glib, gio])
+	    dependencies : [libpurple_dep, nettle, glib, gio])
 elif DYNAMIC_SIMPLE
 	simple_prpl = shared_library('simple', SIMPLESOURCES,
-	    dependencies : [libpurple_dep, glib, gio],
+	    dependencies : [libpurple_dep, nettle, glib, gio],
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 endif

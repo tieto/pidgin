@@ -1267,85 +1267,6 @@ if SSL_CERTIFICATES_DIR != ''
 endif
 INSTALL_SSL_CERTIFICATES = SSL_CERTIFICATES_DIR == ''
 
-enable_gnutls = get_option('gnutls')
-have_gnutls = false
-enable_nss = get_option('nss')
-have_nss = false
-
-msg_ssl = 'None. Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!'
-msg_gnutls = ''
-msg_nss = ''
-
-#
-# Check for GnuTLS if it isn't disabled
-#
-looked_for_gnutls = false
-if enable_gnutls
-	looked_for_gnutls = true
-
-	# minimum required version should almost certainly be higher
-	gnutls = dependency('gnutls', version : '>= 2.10', required : false)
-	have_gnutls = gnutls.found()
-	if have_gnutls
-		conf.set('HAVE_GNUTLS', true)
-		msg_gnutls = 'GnuTLS'
-	endif
-else
-	gnutls = []
-endif
-
-#
-# Check for NSS if it isn't disabled
-#
-looked_for_nss = false
-if enable_nss
-	looked_for_nss = true
-
-	# TODO: set required minimum version
-	nss = dependency('mozilla-nss', required : false)
-	if nss.found()
-		have_nss = true
-	else
-		# TODO: set required minimum version
-		nss = dependency('nss', required : false)
-		have_nss = nss.found()
-	endif
-
-	if have_nss
-		conf.set('HAVE_NSS', true)
-		msg_nss = 'Mozilla NSS'
-	endif
-else
-	nss = []
-endif
-
-
-if msg_nss != '' and msg_gnutls != ''
-	msg_ssl = msg_nss + ' and ' + msg_gnutls
-elif msg_nss != ''
-	msg_ssl = msg_nss
-elif msg_gnutls != ''
-	msg_ssl = msg_gnutls
-elif looked_for_gnutls and looked_for_nss and force_deps
-	error('''
-Neither GnuTLS or NSS SSL development headers found.
-Use -Dnss=false -Dgnutls=false if you do not need SSL support.
-Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!
-''')
-elif looked_for_gnutls and force_deps
-	error('''
-GnuTLS SSL development headers not found.
-Use -Dgnutls=false if you do not need SSL support.
-Novell Groupwise and Google Talk will not work without SSL support.
-''')
-elif looked_for_nss and force_deps
-	error('''
-NSS SSL development headers not found.
-Use -Dnss=false if you do not need SSL support.
-Novell Groupwise and Google Talk will not work without SSL support.
-''')
-endif
-
 if get_option('plugins')
 	conf.set('PURPLE_PLUGINS', 1)
 	PLUGINS = true
@@ -1353,6 +1274,25 @@ if get_option('plugins')
 else
 	PLUGINS = false
 	conf.set('PLUGINS_DEFINE', '#undef PURPLE_PLUGINS')
+endif
+
+#######################################################################
+# Check for Nettle (Crypto Library)
+#######################################################################
+
+enable_nettle = get_option('nettle')
+
+if enable_nettle
+	nettle = dependency('nettle', version : '>= 3.0')
+	enable_nettle = nettle.found()
+	conf.set('HAVE_NETTLE', enable_nettle)
+
+	if not enable_nettle and force_deps
+		error('''
+Nettle development headers not found
+Use -Dnettle=false if you do not need it.
+''')
+	endif
 endif
 
 #######################################################################
@@ -1513,10 +1453,10 @@ message('Build with GStreamer support.. : ' + enable_gst.to_string())
 message('Build with D-Bus support...... : ' + enable_dbus.to_string())
 message('Build with voice and video.... : ' + enable_vv.to_string())
 message('Build with GNU Libidn......... : ' + get_option('idn').to_string())
-message('SSL Library/Libraries......... : ' + msg_ssl)
 if SSL_CERTIFICATES_DIR != ''
 	message('SSL CA certificates directory. : ' + SSL_CERTIFICATES_DIR)
 endif
+message('Build with Nettle support..... : ' + enable_nettle.to_string())
 message('Build with Cyrus SASL support. : ' + enable_cyrus_sasl.to_string())
 message('Use kerberos 4 with zephyr.... : ' + kerberos.to_string())
 message('Use external libzephyr........ : ' + zephyr.to_string())

@@ -11,14 +11,6 @@ if PLUGINS
 	    name_prefix : '',
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 
-	caesarcipher = library('caesarcipher', 'caesarcipher.c', 'caesarcipher.h',
-	    dependencies : [libpurple_dep],
-	    name_prefix : '')
-
-	caesarcipher_consumer = shared_module('caesarcipher_consumer', 'caesarcipher_consumer.c',
-	    dependencies : [libpurple_dep],
-	    name_prefix : '')
-
 	codeinline = library('codeinline', 'codeinline.c',
 	    dependencies : [libpurple_dep],
 	    name_prefix : '')

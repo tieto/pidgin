@@ -7,13 +7,6 @@ purple_coresources = [
 	'buddylist.c',
 	'buddyicon.c',
 	'chat.c',
-	'ciphers/aescipher.c',
-	'ciphers/descipher.c',
-	'ciphers/des3cipher.c',
-	'ciphers/md4hash.c',
-	'ciphers/pbkdf2cipher.c',
-	'ciphers/rc4cipher.c',
-	'cipher.c',
 	'circularbuffer.c',
 	'cmds.c',
 	'connection.c',
@@ -97,7 +90,6 @@ purple_coreheaders = [
 	'buddylist.h',
 	'buddyicon.h',
 	'chat.h',
-	'cipher.h',
 	'circularbuffer.h',
 	'cmds.h',
 	'connection.h',
@@ -199,19 +191,9 @@ purple_mediaheaders = [
 	'media/enum-types.h'
 ]
 
-purple_cipherheaders = [
-	'ciphers/aescipher.h',
-	'ciphers/descipher.h',
-	'ciphers/des3cipher.h',
-	'ciphers/md4hash.h',
-	'ciphers/pbkdf2cipher.h',
-	'ciphers/rc4cipher.h',
-]
-
 purple_enumheaders = [
 	'account.h',
 	'buddyicon.h',
-	'cipher.h',
 	'connection.h',
 	'conversation.h',
 	'conversationtypes.h',
@@ -305,7 +287,7 @@ dbus_exported = [
 	'protocols.h'
 ]
 
-purple_build_coreheaders = purple_coreheaders + purple_cipherheaders + purple_mediaheaders
+purple_build_coreheaders = purple_coreheaders + purple_mediaheaders
 purple_build_coreheaders += purple_builtheaders
 
 
@@ -411,8 +393,8 @@ libpurple = library('purple',
                     dependencies : # static_link_libs
                         [dbus, dbus_glib, dnsapi, ws2_32, glib, gio, gplugin, libxml,
                          farstream, gstreamer, gstreamer_video,
-                         gstreamer_app, idn, json, gnutls,
-                         nss, zlib, math])
+                         gstreamer_app, idn, json,
+                         zlib, math])
 libpurple_dep = declare_dependency(
     sources : purple_builtheaders,  # Ensure built before any dependencies.
     include_directories : [toplevel_inc, libpurple_inc],
@@ -433,9 +415,6 @@ endif
 
 install_headers(purple_coreheaders + dbus_headers,
                 subdir : 'libpurple')
-
-install_headers(purple_cipherheaders,
-                subdir : 'libpurple/ciphers')
 
 install_headers(purple_mediaheaders,
                 subdir : 'libpurple/media')
@@ -464,8 +443,7 @@ endif  # INSTALL_I18N
 
 if enable_introspection
 	introspection_sources = (purple_coreheaders + purple_builtheaders +
-	                         dbus_headers + purple_cipherheaders +
-	                         purple_mediaheaders)
+	                         dbus_headers + purple_mediaheaders)
 
 	Purple_gir_includes = ['GObject-2.0', 'Gio-2.0']
 	if PLUGINS

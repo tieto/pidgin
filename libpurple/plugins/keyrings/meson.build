@@ -1,8 +1,10 @@
 if PLUGINS
-	internalkeyring_plugin = library('internalkeyring', 'internalkeyring.c',
-	    dependencies : [libpurple_dep],
-	    name_prefix : '',
-	    install : true, install_dir : PURPLE_PLUGINDIR)
+	if enable_nettle
+		internalkeyring_plugin = library('internalkeyring', 'internalkeyring.c',
+		    dependencies : [nettle, libpurple_dep],
+		    name_prefix : '',
+		    install : true, install_dir : PURPLE_PLUGINDIR)
+	endif
 
 	if enable_secret_service
 		secretsservice_plugin = library('secretservice', 'secretservice.c',

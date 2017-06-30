@@ -109,10 +109,8 @@ option('kwallet', type : 'boolean', value : true,
 
 option('system-ssl-certs', type : 'string',
        description : 'directory containing system-wide SSL CA certificates')
-option('gnutls', type : 'boolean', value : true,
-       description : 'attempt to use GnuTLS for SSL support')
-option('nss', type : 'boolean', value : true,
-       description : 'attempt to use Mozilla libnss for SSL support')
+option('nettle', type : 'boolean', value : true,
+       description : 'enable Nettle support')
 
 option('cyrus-sasl', type : 'boolean', value : false,
        description : 'enable Cyrus SASL support for XMPP/IRC')
