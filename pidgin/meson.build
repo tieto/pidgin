@@ -149,7 +149,6 @@ if ENABLE_GTK
 	install_headers(libpidgin_headers, subdir : 'pidgin')
 
 	libpidgin_inc = include_directories('.')
-	# TODO: This doesn't quite match autotools' version.
 	libpidgin = shared_library('pidgin',
 	    libpidgin_SOURCES,
 	    include_directories : [toplevel_inc],

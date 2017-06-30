@@ -73,7 +73,6 @@ if enable_consoleui
 	install_headers(libfinch_headers, subdir : 'finch')
 
 	libfinch_inc = include_directories('.')
-	# TODO: This doesn't quite match autotools' version.
 	libfinch = shared_library('finch',
 	    libfinch_SOURCES,
 	    c_args : '-DSTANDALONE',

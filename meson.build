@@ -1,4 +1,4 @@
-project('pidgin', 'c', meson_version : '>0.36.0')
+project('pidgin', 'c', meson_version : '>=0.37.0')
 
 # UPDATING VERSION NUMBERS FOR RELEASES
 #
@@ -307,15 +307,6 @@ endif
 conf.set('HAVE_IPV6_V6ONLY',
     compiler.has_header_symbol(header, 'IPV6_V6ONLY'))
 
-# FreeBSD doesn't have libdl, dlopen is provided by libc
-if compiler.has_function('dlopen')
-	LIBDL = ''
-else
-	if compiler.has_function('dlopen', args : '-ldl')
-		LIBDL = '-ldl'
-	endif
-endif
-
 # Windows and Haiku do not use libm for the math functions, they are part
 # of the C library
 math = compiler.find_library('m')
@@ -391,7 +382,7 @@ if INSTALL_I18N
 endif
 
 # #######################################################################
-# # Check for GLib 2.35 (required)
+# # Check for GLib 2.36 (required)
 # #######################################################################
 glib = dependency('glib-2.0', version : '>= 2.36.0')
 gio = dependency('gio-2.0')
@@ -1095,6 +1086,7 @@ endif
 
 #######################################################################
 # Check for Unity and Messaging Menu
+# Remove when Ubuntu 16.04 is EOL
 #######################################################################
 enable_unity = get_option('unity-integration')
 if enable_unity

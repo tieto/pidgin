@@ -1487,6 +1487,7 @@ fi
 
 dnl #######################################################################
 dnl # Check for Unity and Messaging Menu
+dnl # Remove when Ubuntu 16.04 is EOL
 dnl #######################################################################
 AC_ARG_ENABLE(unity, [AC_HELP_STRING([--enable-unity],
 	[compile with support for unity integration plugin])], enable_unity="$enableval", enable_unity="no")
