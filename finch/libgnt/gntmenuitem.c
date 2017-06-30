@@ -57,8 +57,7 @@ gnt_menuitem_class_init(GntMenuItemClass *klass)
 		g_signal_new("activate",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
-					 0, NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 0, NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 }
 

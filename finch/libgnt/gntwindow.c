@@ -94,8 +94,7 @@ gnt_window_class_init(GntWindowClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 0,
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 
 	signals[SIG_WORKSPACE_SHOW] =
@@ -103,8 +102,7 @@ gnt_window_class_init(GntWindowClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 0,
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__VOID,
+					 NULL, NULL, NULL,
 					 G_TYPE_NONE, 0);
 
 	gnt_bindable_class_register_action(bindable, "show-menu", show_menu,

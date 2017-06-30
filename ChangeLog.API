@@ -23,14 +23,6 @@ version 3.0.0 (??/??/????):
 		* purple_account_presence_new
 		* purple_buddy_presence_new
 		* purple_account_register_completed
-		* PurpleAESCipher, PurpleDESCipher, PurpleDES3Cipher, PurpleHMACCipher,
-		  PurplePBKDF2Cipher and PurpleRC4Cipher inherit PurpleCipher
-		* purple_aes_cipher_new
-		* purple_des3_cipher_new
-		* purple_des_cipher_new
-		* purple_hmac_cipher_new
-		* purple_pbkdf2_cipher_new
-		* purple_rc4_cipher_new
 		* purple_blist_node_is_transient
 		* purple_blist_node_set_transient
 		* purple_certificate_get_der_data
@@ -55,13 +47,6 @@ version 3.0.0 (??/??/????):
 		* purple_counting_node_get_*
 		* purple_counting_node_change_*
 		* purple_counting_node_set_*
-		* PurpleHash and purple_hash_* API
-		* PurpleMD4Hash, PurpleMD5Hash, PurpleSHA1Hash and PurpleSHA265Hash
-		  inherit PurpleHash
-		* purple_md4_hash_new
-		* purple_md5_hash_new
-		* purple_sha1_hash_new
-		* purple_sha256_hash_new
 		* PurpleIMConversation and PurpleChatConversation inherit
 		  PurpleConversation
 		* purple_notify_emails_pending
@@ -197,8 +182,6 @@ version 3.0.0 (??/??/????):
 		* conversation.h has been split into conversation.h
 		  (PurpleConversation), conversationtypes.h (PurpleIMConversation and
 		  PurpleChatConversation) and conversations.h (Conversations subsystem)
-		* Files in libpurple/ciphers have been renamed. To use a particular
-		  cipher, include its header.
 		* Renamed ft.h file to xfer.h
 		* Renamed plugin.h file to plugins.h
 		* prpl.h has been split into protocol.h (PurpleProtocol GObject and
@@ -259,9 +242,6 @@ version 3.0.0 (??/??/????):
 		* Replaced 'chat-buddy' with 'chat-user' in conversation signals
 		* Replaced chatname, buddyname arguments of 'chat-user-flags' (formerly
 		  'chat-buddy-flags') signal with PurpleChatUser *
-		* PurpleCipher split into PurpleCipher and PurpleHash, both are
-		  GObjects. Please see the documentation for details.
-		* purple_cipher_context_* functions are now purple_cipher_*
 		* PurpleCircBuffer changed to PurpleCircularBuffer, is now a GObject.
 		  Please see the documentation for details.
 		* purple_circ_buffer_* functions are now purple_circular_buffer_*
@@ -403,7 +383,6 @@ version 3.0.0 (??/??/????):
 		* buddy-added and buddy-removed blist signals
 		* privacy.h file
 		* value.h file
-		* _PurpleCipherBatchMode
 		* _PurpleCmdFlag
 		* _PurpleCmdPriority
 		* _PurpleCmdRet
@@ -430,19 +409,8 @@ version 3.0.0 (??/??/????):
 		  purple_certificate_check_signature_chain, instead
 		* purple_certificate_display_x509. Use purple_request_certificate,
 		  instead
-		* PurpleCipherContext
-		* purple_cipher_context_destroy
-		* purple_cipher_context_get_data
-		* purple_cipher_context_get_option
-		* purple_cipher_context_new
-		* purple_cipher_context_new_by_name
-		* purple_cipher_context_set_data
-		* purple_cipher_context_set_option
-		* purple_cipher_get_capabilities
-		* purple_cipher_get_name
-		* PurpleCipherOps
-		* purple_ciphers_*
-		* PurpleCipher's init and uninit operations
+		* Purple Cipher API (PurpleCipherContext and friends).
+		  Use GLib's GHmac or GChecksum instead.
 		* purple_connection_error_reason
 		* purple_connection_new
 		* purple_connection_new_unregister
@@ -453,6 +421,10 @@ version 3.0.0 (??/??/????):
 		* PurpleConversationType
 		* purple_core_migrate
 		* purple_dnsquery_a_account
+		* purple_event_loop_{get|set}_ui_ops. Manually drive the GLib
+		  event loop yourself. See GLib Main Event Loop docs.
+		* PurpleEventLoopUiOps. Manually drive the GLib event loop
+		  yourself. See GLib Main Event Loop docs.
 		* purple_network_listen_family. Use purple_network_listen, instead.
 		* purple_network_listen_map_external
 		* purple_network_listen_range_family. Use purple_network_listen,

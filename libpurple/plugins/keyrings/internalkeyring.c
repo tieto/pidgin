@@ -31,8 +31,9 @@
 #include "plugins.h"
 #include "version.h"
 
-#include "ciphers/aescipher.h"
-#include "ciphers/pbkdf2cipher.h"
+#include <nettle/aes.h>
+#include <nettle/cbc.h>
+#include <nettle/pbkdf2.h>
 
 #define INTKEYRING_NAME N_("Internal keyring")
 #define INTKEYRING_DESCRIPTION N_("This plugin provides the default password " \
@@ -45,7 +46,7 @@
 #define INTKEYRING_PBKDF2_ITERATIONS 10000
 #define INTKEYRING_PBKDF2_ITERATIONS_MIN 1000
 #define INTKEYRING_PBKDF2_ITERATIONS_MAX 1000000000
-#define INTKEYRING_KEY_LEN (256/8)
+#define INTKEYRING_KEY_LEN AES256_KEY_SIZE
 #define INTKEYRING_ENCRYPT_BUFF_LEN 1000
 #define INTKEYRING_ENCRYPTED_MIN_LEN 50
 #define INTKEYRING_ENCRYPTION_METHOD "pbkdf2-sha256-aes256"
@@ -150,33 +151,16 @@ intkeyring_buff_from_base64(const gchar *base64)
 static intkeyring_buff_t *
 intkeyring_derive_key(const gchar *passphrase, intkeyring_buff_t *salt)
 {
-	PurpleCipher *cipher;
-	gboolean succ;
 	intkeyring_buff_t *ret;
 
 	g_return_val_if_fail(passphrase != NULL, NULL);
 
-	cipher = purple_pbkdf2_cipher_new(G_CHECKSUM_SHA256);
-
-	g_object_set(G_OBJECT(cipher), "iter_count",
-		GUINT_TO_POINTER(purple_prefs_get_int(INTKEYRING_PREFS
-		"pbkdf2_iterations")), NULL);
-	g_object_set(G_OBJECT(cipher), "out_len", GUINT_TO_POINTER(
-		INTKEYRING_KEY_LEN), NULL);
-	purple_cipher_set_salt(cipher, salt->data, salt->len);
-	purple_cipher_set_key(cipher, (const guchar*)passphrase,
-		strlen(passphrase));
-
 	ret = intkeyring_buff_new(g_new(guchar, INTKEYRING_KEY_LEN),
 		INTKEYRING_KEY_LEN);
-	succ = purple_cipher_digest(cipher, ret->data, ret->len);
 
-	g_object_unref(cipher);
-
-	if (!succ) {
-		intkeyring_buff_free(ret);
-		return NULL;
-	}
+	pbkdf2_hmac_sha256(strlen(passphrase), (const uint8_t *)passphrase,
+		purple_prefs_get_int(INTKEYRING_PREFS"pbkdf2_iterations"),
+		salt->len, salt->data, ret->len, ret->data);
 
 	return ret;
 }
@@ -230,10 +214,11 @@ intkeyring_gen_salt(size_t len)
 static gchar *
 intkeyring_encrypt(intkeyring_buff_t *key, const gchar *str)
 {
-	PurpleCipher *cipher;
+	struct CBC_CTX(struct aes256_ctx, AES_BLOCK_SIZE) ctx;
 	intkeyring_buff_t *iv;
 	guchar plaintext[INTKEYRING_ENCRYPT_BUFF_LEN];
 	size_t plaintext_len, text_len, verify_len;
+	int padding_len;
 	guchar encrypted_raw[INTKEYRING_ENCRYPT_BUFF_LEN];
 	ssize_t encrypted_size;
 
@@ -249,31 +234,38 @@ intkeyring_encrypt(intkeyring_buff_t *key, const gchar *str)
 	g_return_val_if_fail(plaintext_len + verify_len <= sizeof(plaintext),
 		NULL);
 
-	cipher = purple_aes_cipher_new();
-	g_return_val_if_fail(cipher != NULL, NULL);
-
 	memset(plaintext, 0, plaintext_len);
 	memcpy(plaintext, str, text_len);
 	memcpy(plaintext + plaintext_len, INTKEYRING_VERIFY_STR, verify_len);
 	plaintext_len += verify_len;
 
-	iv = intkeyring_gen_salt(purple_cipher_get_block_size(cipher));
+	/* Pad PKCS7 */
+	padding_len = AES_BLOCK_SIZE - (plaintext_len % AES_BLOCK_SIZE);
+
+	if (plaintext_len + padding_len > INTKEYRING_ENCRYPT_BUFF_LEN) {
+		purple_debug_error("keyring-internal",
+			"Internal keyring encrypt buffer too small");
+		return NULL;
+	}
+
+	memset(plaintext + plaintext_len, padding_len, padding_len);
+	plaintext_len += padding_len;
+
+	/* Encrypt */
+	iv = intkeyring_gen_salt(AES_BLOCK_SIZE);
 	g_return_val_if_fail(iv != NULL, NULL);
-	purple_cipher_set_iv(cipher, iv->data, iv->len);
-	purple_cipher_set_key(cipher, key->data, key->len);
-	purple_cipher_set_batch_mode(cipher,
-		PURPLE_CIPHER_BATCH_MODE_CBC);
+	aes256_set_encrypt_key(&ctx.ctx, key->data);
+	CBC_SET_IV(&ctx, iv->data);
 
 	memcpy(encrypted_raw, iv->data, iv->len);
 
-	encrypted_size = purple_cipher_encrypt(cipher,
-		plaintext, plaintext_len, encrypted_raw + iv->len,
-		sizeof(encrypted_raw) - iv->len);
+	CBC_ENCRYPT(&ctx, aes256_encrypt, plaintext_len,
+		encrypted_raw + iv->len, plaintext);
+	encrypted_size = plaintext_len;
 	encrypted_size += iv->len;
 
 	memset(plaintext, 0, plaintext_len);
 	intkeyring_buff_free(iv);
-	g_object_unref(cipher);
 
 	if (encrypted_size < 0)
 		return NULL;
@@ -285,42 +277,63 @@ intkeyring_encrypt(intkeyring_buff_t *key, const gchar *str)
 static gchar *
 intkeyring_decrypt(intkeyring_buff_t *key, const gchar *str)
 {
-	PurpleCipher *cipher;
+	struct CBC_CTX(struct aes256_ctx, AES_BLOCK_SIZE) ctx;
 	guchar *encrypted_raw;
 	gsize encrypted_size;
 	size_t iv_len, verify_len, text_len;
 	guchar plaintext[INTKEYRING_ENCRYPT_BUFF_LEN];
 	const gchar *verify_str = NULL;
-	ssize_t plaintext_len;
+	size_t plaintext_len;
+	guint padding_len;
+	guint i;
 	gchar *ret;
 
 	g_return_val_if_fail(key != NULL, NULL);
 	g_return_val_if_fail(str != NULL, NULL);
 
-	cipher = purple_aes_cipher_new();
-	g_return_val_if_fail(cipher != NULL, NULL);
-
 	encrypted_raw = g_base64_decode(str, &encrypted_size);
 	g_return_val_if_fail(encrypted_raw != NULL, NULL);
 
-	iv_len = purple_cipher_get_block_size(cipher);
+	iv_len = AES_BLOCK_SIZE;
 	if (encrypted_size < iv_len) {
 		g_free(encrypted_raw);
 		return NULL;
 	}
 
-	purple_cipher_set_iv(cipher, encrypted_raw, iv_len);
-	purple_cipher_set_key(cipher, key->data, key->len);
-	purple_cipher_set_batch_mode(cipher,
-		PURPLE_CIPHER_BATCH_MODE_CBC);
-
-	plaintext_len = purple_cipher_decrypt(cipher,
-		encrypted_raw + iv_len, encrypted_size - iv_len,
-		plaintext, sizeof(plaintext));
-
+	/* Decrypt */
+	aes256_set_decrypt_key(&ctx.ctx, key->data);
+	CBC_SET_IV(&ctx, encrypted_raw);
+	CBC_DECRYPT(&ctx, aes256_decrypt, encrypted_size - iv_len,
+		plaintext, encrypted_raw + iv_len);
+	plaintext_len = encrypted_size - iv_len;
 	g_free(encrypted_raw);
-	g_object_unref(cipher);
 
+	/* Unpad PKCS7 */
+	padding_len = plaintext[plaintext_len - 1];
+	if (padding_len == 0 || padding_len > AES_BLOCK_SIZE ||
+			padding_len > plaintext_len) {
+		purple_debug_warning("internal-keyring",
+			"Invalid padding length: %d (total %" G_GSIZE_FORMAT
+			") - most probably, the key was invalid\n",
+			padding_len, plaintext_len);
+		return NULL;
+	}
+
+	plaintext_len -= padding_len;
+	for (i = 0; i < padding_len; ++i) {
+		if (plaintext[plaintext_len + i] != padding_len) {
+			purple_debug_warning("internal-keyring",
+				"Padding doesn't match at pos %d (found %02x, "
+				"expected %02x) - "
+				"most probably, the key was invalid\n",
+				i, plaintext[plaintext_len + i], padding_len);
+			return NULL;
+		}
+	}
+
+	memset(plaintext + plaintext_len, 0, padding_len);
+
+	/* Verify */
 	verify_len = strlen(INTKEYRING_VERIFY_STR);
 	/* Don't remove the len > 0 check! */
 	if (plaintext_len > 0 && (gsize)plaintext_len > verify_len &&

@@ -14,6 +14,7 @@ SIMPLESOURCES = \
 AM_CFLAGS = $(st)
 
 libsimple_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
+libsimple_la_LIBADD  = $(NETTLE_LIBS)
 
 if STATIC_SIMPLE
 
@@ -27,7 +28,7 @@ else
 st =
 pkg_LTLIBRARIES      = libsimple.la
 libsimple_la_SOURCES = $(SIMPLESOURCES)
-libsimple_la_LIBADD  = @PURPLE_LIBS@
+libsimple_la_LIBADD += @PURPLE_LIBS@
 
 endif
 
@@ -36,4 +37,5 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(GLIB_CFLAGS) \
 	$(GPLUGIN_CFLAGS) \
-	$(DEBUG_CFLAGS)
+	$(DEBUG_CFLAGS) \
+	$(NETTLE_CFLAGS)

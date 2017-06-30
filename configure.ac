@@ -109,7 +109,6 @@ GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
 AC_SUBST(GNT_LT_VERSION_INFO)
 
 AC_PATH_PROG(sedpath, sed)
-AC_PATH_PROG(xxdpath, xxd)
 
 dnl Storing configure arguments
 AC_DEFINE_UNQUOTED(CONFIG_ARGS, "$ac_configure_args", [configure arguments])
@@ -487,6 +486,8 @@ AC_SUBST(GLIB_GENMARSHAL)
 
 GLIB_MKENUMS=`$PKG_CONFIG --variable=glib_mkenums glib-2.0`
 AC_SUBST(GLIB_MKENUMS)
+
+AC_PATH_PROG(GLIB_COMPILE_RESOURCES, [glib-compile-resources])
 
 AC_PATH_PROG(GTESTER, gtester)
 GLIB_TESTS
@@ -1865,105 +1866,6 @@ if test "x$SSL_CERTIFICATES_DIR" != "x" ; then
 fi
 AM_CONDITIONAL(INSTALL_SSL_CERTIFICATES, test "x$SSL_CERTIFICATES_DIR" = "x")
 
-dnl These two are inverses of each other <-- stolen from evolution!
-
-AC_ARG_ENABLE(gnutls,
-	[  --enable-gnutls=[yes,no]  attempt to use GnuTLS for SSL support [default=yes]],
-	[enable_gnutls="$enableval"],
-	[enable_gnutls="yes"])
-
-AC_ARG_ENABLE(nss,
-	[  --enable-nss=[yes,no,static]    attempt to use Mozilla libnss for SSL support [default=yes]],
-	[enable_nss="$enableval"],
-	[enable_nss="yes"])
-
-msg_ssl="None. Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
-looked_for_gnutls="no"
-dnl #
-dnl # Check for GnuTLS if it isn't disabled
-dnl #
-if test "x$enable_gnutls" != "xno"; then
-	looked_for_gnutls="yes"
-
-	if `$PKG_CONFIG --exists gnutls`; then
-		dnl # minimum required version should almost certainly be higher
-		PKG_CHECK_MODULES(GNUTLS, [gnutls >= 2.10], [
-			have_gnutls="yes"
-		], [
-			AC_MSG_RESULT(no)
-			have_gnutls="no"
-		])
-	fi
-
-	if test "x$have_gnutls" = "xyes"; then
-		AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GnuTLS])
-		msg_gnutls="GnuTLS"
-	fi
-fi
-
-AM_CONDITIONAL(USE_GNUTLS, test "x$have_gnutls" = "xyes")
-
-
-dnl #
-dnl # Check for NSS if it isn't disabled
-dnl #
-looked_for_nss="no"
-if test "x$enable_nss" != "xno"; then
-	looked_for_nss="yes"
-
-	if `$PKG_CONFIG --exists mozilla-nss`; then
-		dnl # TODO: set required minimum version
-		PKG_CHECK_MODULES(NSS, mozilla-nss, [
-			have_nss="yes"
-		], [
-			AC_MSG_RESULT(no)
-			have_nss="no"
-		])
-	elif `$PKG_CONFIG --exists nss`; then
-		dnl # TODO: set required minimum version
-		PKG_CHECK_MODULES(NSS, nss, [
-			have_nss="yes"
-		], [
-			AC_MSG_RESULT(no)
-			have_nss="no"
-		])
-	fi
-
-	if test "x$have_nss" = "xyes"; then
-		AC_DEFINE(HAVE_NSS, 1, [Define if you have Mozilla NSS])
-		msg_nss="Mozilla NSS"
-	fi
-fi
-
-AM_CONDITIONAL(USE_NSS, test "x$have_nss" = "xyes")
-
-
-if test "x$msg_nss" != "x" -a "x$msg_gnutls" != "x"; then
-	msg_ssl="$msg_nss and $msg_gnutls"
-elif test "x$msg_nss" != "x"; then
-	msg_ssl=$msg_nss
-elif test "x$msg_gnutls" != "x"; then
-	msg_ssl=$msg_gnutls
-elif test "x$looked_for_gnutls" = "xyes" -a "x$looked_for_nss" = "xyes" -a "x$force_deps" = "xyes" ; then
-	AC_MSG_ERROR([
-Neither GnuTLS or NSS SSL development headers found.
-Use --disable-nss --disable-gnutls if you do not need SSL support.
-Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!
-])
-elif test "x$looked_for_gnutls" = "xyes" -a "x$force_deps" = "xyes" ; then
-	AC_MSG_ERROR([
-GnuTLS SSL development headers not found.
-Use --disable-gnutls if you do not need SSL support.
-Novell Groupwise and Google Talk will not work without SSL support.
-])
-elif test "x$looked_for_nss" = "xyes" -a "x$force_deps" = "xyes" ; then
-	AC_MSG_ERROR([
-NSS SSL development headers not found.
-Use --disable-nss if you do not need SSL support.
-Novell Groupwise and Google Talk will not work without SSL support.
-])
-fi
-
 if test "$ac_cv_cygwin" = yes ; then
 	LDADD="$LDADD -static"
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
@@ -1983,6 +1885,33 @@ else
 	PLUGINS_DEFINE="#undef PURPLE_PLUGINS"
 fi
 AC_SUBST(PLUGINS_DEFINE)
+
+dnl #######################################################################
+dnl # Check for Nettle (Crypto Library)
+dnl #######################################################################
+AC_ARG_ENABLE(nettle,
+	[AC_HELP_STRING([--disable-nettle], [disable Nettle support])],
+	enable_nettle="$enableval", enable_nettle="yes")
+
+if test "x$enable_nettle" = "xyes" ; then
+	PKG_CHECK_MODULES(NETTLE, [nettle >= 3.0], [
+		enable_nettle="yes"
+		AC_SUBST(NETTLE_CFLAGS)
+		AC_SUBST(NETTLE_LIBS)
+		AC_DEFINE(HAVE_NETTLE, 1, [Define if we have Nettle.])
+	], [
+		enable_nettle="no"
+	])
+
+	if test "x$enable_nettle" != "xyes" -a "x$force_deps" = "xyes" ; then
+		AC_MSG_ERROR([
+Nettle development headers not found
+Use --disable-nettle if you do not need it.
+])
+	fi
+fi
+
+AM_CONDITIONAL(ENABLE_NETTLE, test "x$enable_nettle" = "xyes")
 
 dnl #######################################################################
 dnl # Check for Cyrus-SASL (for xmpp/irc)
@@ -2230,10 +2159,10 @@ if test "x$enable_dbus" = "xyes" ; then
 	eval eval echo D-Bus services directory...... : $DBUS_SERVICES_DIR
 fi
 echo Build with GNU Libidn......... : $enable_idn
-echo SSL Library/Libraries......... : $msg_ssl
 if test "x$SSL_CERTIFICATES_DIR" != "x" ; then
 	eval eval echo SSL CA certificates directory. : $SSL_CERTIFICATES_DIR
 fi
+echo Build with Nettle support..... : $enable_nettle
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
