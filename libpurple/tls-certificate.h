@@ -43,10 +43,10 @@
  *
  * Returns a list of the IDs for certificates trusted with
  * purple_tls_certificate_trust() and friends. These IDs can then be passed
- * to purple_certificate_path() or used directly, if desired.
+ * to purple_tls_certificate_new_from_id() or used directly, if desired.
  *
  * Returns: (transfer full) (element-type utf8): #GList of IDs described above
- *          Free with purple_certificate_free_ids()
+ *          Free with purple_tls_certificate_free_ids()
  */
 GList *
 purple_tls_certificate_list_ids(void);
@@ -54,9 +54,9 @@ purple_tls_certificate_list_ids(void);
 /**
  * purple_tls_certificate_free_ids:
  * @ids: (transfer full) (element-type utf8): List of ids retrieved from
- *       purple_certificate_list_ids()
+ *       purple_tls_certificate_list_ids()
  *
- * Frees the list of IDs returned from purple_certificate_list_ids().
+ * Frees the list of IDs returned from purple_tls_certificate_list_ids().
  */
 void
 purple_tls_certificate_free_ids(GList *ids);
