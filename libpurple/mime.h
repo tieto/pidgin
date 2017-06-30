@@ -89,6 +89,8 @@ PurpleMimeDocument *purple_mime_document_parsen(const char *buf, gsize len);
 
 /**
  * purple_mime_document_write:
+ * @doc: The MIME document.
+ * @str: The string to write the MIME document to.
  *
  * Write (append) a MIME document onto a GString.
  */
@@ -178,6 +180,8 @@ const char *purple_mime_part_get_field(PurpleMimePart *part,
 
 /**
  * purple_mime_part_get_field_decoded:
+ * @part:  The MIME document part.
+ * @field: Case-insensitive name of the header field.
  *
  * Get the decoded value of a specific field in the header of a
  * document part.
