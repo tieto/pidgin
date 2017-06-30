@@ -30,7 +30,6 @@ libpidgin_SOURCES = [
 	'gtkroomlist.c',
 	'gtksavedstatuses.c',
 	'gtkscrollbook.c',
-	'gtksession.c',
 	'gtksmiley-manager.c',
 	'gtksmiley-theme.c',
 	'gtksound.c',
@@ -79,7 +78,6 @@ libpidgin_headers = [
 	'gtkroomlist.h',
 	'gtksavedstatuses.h',
 	'gtkscrollbook.h',
-	'gtksession.h',
 	'gtksmiley-manager.h',
 	'gtksmiley-theme.h',
 	'gtksound.h',
@@ -151,7 +149,7 @@ if ENABLE_GTK
 	    libpidgin_SOURCES,
 	    include_directories : [toplevel_inc],
 	    version : PURPLE_LIB_VERSION,
-	    dependencies : [gtk, gstreamer_video, webkit, enchant, dbus, x11, sm, xss, GCR, IOKIT, libpurple_dep, glib, math],
+	    dependencies : [gtk, gstreamer_video, webkit, enchant, dbus, x11, xss, GCR, IOKIT, libpurple_dep, glib, math],
 	    install : true)
 	libpidgin_dep = declare_dependency(
 	    include_directories : [toplevel_inc, libpidgin_inc],

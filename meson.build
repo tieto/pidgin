@@ -407,7 +407,6 @@ with_x = get_option('x') and not IS_WIN32
 # # Check for GTK+ 2.18 and other things used by the GTK UI
 # #######################################################################
 enable_screensaver = get_option('screensaver')
-enable_sm = get_option('sm')
 enable_startup_notification = get_option('startup-notification')
 enable_enchant = get_option('enchant')
 enable_gevolution = get_option('gevolution')
@@ -468,15 +467,6 @@ Use -Dx=false if you do not need X11 support.
 			endif
 		endif
 		enable_screensaver = false
-		if enable_sm
-			msg = 'X support is required to build with X session management support'
-			if force_deps
-				error(msg)
-			else
-				message(msg)
-			endif
-		endif
-		enable_sm = false
 		enable_gestures = false
 		x11 = []
 	endif
@@ -515,34 +505,6 @@ this is required for detecting idle time by mouse and keyboard usage.
 	xss = declare_dependency(
 	    link_args : xss_libs
 	)
-
-	#######################################################################
-	# Check for X session management libs
-	#######################################################################
-	if enable_sm
-		enable_sm = false
-		found_sm_lib = compiler.has_function('SmcSaveYourselfDone',
-		    args : '-lSM')
-		if found_sm_lib
-			if compiler.has_header('X11/SM/SMlib.h')
-				sm = declare_dependency(
-				    link_args : ['-lSM', '-lICE']
-				)
-				enable_sm = true
-			endif
-		endif
-
-		if not enable_sm and force_deps
-			error('''
-X session management development headers not found.
-Use -Dsm=false if you do not need session management support.
-''')
-		endif
-	endif
-	conf.set('USE_SM', enable_sm)
-	if not enable_sm
-		sm = []
-	endif
 
 	#######################################################################
 	# Check for stuff needed by the Evolution integration plugin.
@@ -596,7 +558,6 @@ else	# GTK
 	enable_gcr = false
 	enable_gevolution = false
 	enable_screensaver = false
-	enable_sm = false
 	enable_startup_notification = false
 	use_enchant = false
 endif	# GTK
@@ -1466,7 +1427,6 @@ message('Install translations.......... : ' + INSTALL_I18N.to_string())
 message('Has you....................... : yes')
 message('')
 message('Use XScreenSaver Extension.... : ' + enable_screensaver.to_string())
-message('Use X Session Management...... : ' + enable_sm.to_string())
 message('Use startup notification...... : ' + enable_startup_notification.to_string())
 message('Build with Enchant support.... : ' + use_enchant.to_string())
 message('Build with GCR widgets........ : ' + enable_gcr.to_string())
