@@ -5,10 +5,14 @@ CLEANFILES =
 
 plugindir = @PURPLE_PLUGINDIR@
 
-internalkeyring_la_CFLAGS  = $(AM_CPPFLAGS)
+if ENABLE_NETTLE
+
+internalkeyring_la_CFLAGS  = $(AM_CPPFLAGS) $(NETTLE_CFLAGS)
 internalkeyring_la_LDFLAGS = -module @PLUGIN_LDFLAGS@
 internalkeyring_la_SOURCES = internalkeyring.c
-internalkeyring_la_LIBADD  = @PURPLE_LIBS@
+internalkeyring_la_LIBADD  = @PURPLE_LIBS@ $(NETTLE_LIBS)
+
+endif
 
 if ENABLE_SECRETSERVICE
 
@@ -56,8 +60,12 @@ endif
 
 if PLUGINS
 
-plugin_LTLIBRARIES = \
+plugin_LTLIBRARIES =
+
+if ENABLE_NETTLE
+plugin_LTLIBRARIES += \
 	internalkeyring.la
+endif
 
 if ENABLE_SECRETSERVICE
 plugin_LTLIBRARIES += \

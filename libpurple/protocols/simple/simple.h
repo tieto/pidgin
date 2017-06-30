@@ -28,7 +28,6 @@
 #include <gio/gio.h>
 #include <time.h>
 
-#include "cipher.h"
 #include "circularbuffer.h"
 #include "network.h"
 #include "proxy.h"

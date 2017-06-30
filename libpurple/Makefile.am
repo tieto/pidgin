@@ -39,13 +39,6 @@ purple_coresources = \
 	buddylist.c \
 	buddyicon.c \
 	chat.c \
-	ciphers/aescipher.c \
-	ciphers/descipher.c \
-	ciphers/des3cipher.c \
-	ciphers/md4hash.c \
-	ciphers/pbkdf2cipher.c \
-	ciphers/rc4cipher.c \
-	cipher.c \
 	circularbuffer.c \
 	cmds.c \
 	connection.c \
@@ -131,7 +124,6 @@ purple_coreheaders = \
 	buddylist.h \
 	buddyicon.h \
 	chat.h \
-	cipher.h \
 	circularbuffer.h \
 	cmds.h \
 	connection.h \
@@ -231,20 +223,11 @@ purple_mediaheaders = \
 	codec.h \
 	enum-types.h
 
-purple_cipherheaders = \
-	aescipher.h \
-	descipher.h \
-	des3cipher.h \
-	md4hash.h \
-	pbkdf2cipher.h \
-	rc4cipher.h
-
 purple_builtheaders = purple.h version.h enums.h
 
 purple_enumheaders = \
 	$(srcdir)/account.h \
 	$(srcdir)/buddyicon.h \
-	$(srcdir)/cipher.h \
 	$(srcdir)/connection.h \
 	$(srcdir)/conversation.h \
 	$(srcdir)/conversationtypes.h \
@@ -308,7 +291,6 @@ dbus_exported = dbus-useful.h dbus-define-api.h account.h accounts.h blistnode.h
 # to not being able to find the enums.h file if it's already
 # been generated in the $(srcdir).
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
-		$(addprefix $(srcdir)/ciphers/, $(purple_cipherheaders)) \
 		$(addprefix $(srcdir)/media/, $(purple_mediaheaders)) \
 		$(filter-out: enums.h, $(purple_builtheaders))
 dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))
@@ -347,7 +329,7 @@ libpurple_client_la_LIBADD = $(DBUS_LIBS)
 purple-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 	$(AM_V_GEN) $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client -o $@ $(dbus_build_exported)
 
-purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(addprefix ciphers/, $(purple_cipherheaders)) $(addprefix media/, $(purple_mediaheaders)) $(purple_builtheaders) $(dbus_exported)
+purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(addprefix media/, $(purple_mediaheaders)) $(purple_builtheaders) $(dbus_exported)
 	$(AM_V_GEN) $(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim -o $@ $(purple_build_coreheaders)
 	$(AM_V_at) $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client --headers --append -o $@ $(dbus_build_exported)
 
@@ -409,10 +391,6 @@ libpurpleinclude_HEADERS = \
 	$(purple_builtheaders) \
 	$(dbus_headers)
 
-cipherincludedir=$(includedir)/libpurple/ciphers
-cipherinclude_HEADERS = \
-	$(addprefix $(srcdir)/ciphers/, $(purple_cipherheaders))
-
 mediaincludedir=$(includedir)/libpurple/media
 mediainclude_HEADERS = \
 	$(addprefix $(srcdir)/media/, $(purple_mediaheaders))
@@ -456,8 +434,6 @@ libpurple_la_LIBADD = \
 	$(GSTINTERFACES_LIBS) \
 	$(IDN_LIBS) \
 	$(JSON_LIBS) \
-	$(GNUTLS_LIBS) \
-	$(NSS_LIBS) \
 	$(ZLIB_LIBS) \
 	$(INTROSPECTION_LIBS) \
 	-lm
@@ -476,8 +452,6 @@ AM_CPPFLAGS = \
 	$(IDN_CFLAGS) \
 	$(NETWORKMANAGER_CFLAGS) \
 	$(JSON_CFLAGS) \
-	$(GNUTLS_CFLAGS) \
-	$(NSS_CFLAGS) \
 	$(ZLIB_CFLAGS) \
 	$(INTROSPECTION_CFLAGS)
 
@@ -489,7 +463,6 @@ INTROSPECTION_COMPILER_ARGS = --includedir=$(prefix)/share/gir-1.0
 if HAVE_INTROSPECTION
 introspection_sources = \
 	$(libpurpleinclude_HEADERS) \
-	$(addprefix ciphers/, $(purple_cipherheaders)) \
 	$(addprefix media/, $(purple_mediaheaders))
 
 Purple-$(PURPLE_MAJOR_VERSION).$(PURPLE_MINOR_VERSION).gir: $(builddir)/libpurple.la
@@ -519,8 +492,6 @@ Purple_3_0_gir_CFLAGS = \
 	$(IDN_CFLAGS) \
 	$(NETWORKMANAGER_CFLAGS) \
 	$(JSON_CFLAGS) \
-	$(GNUTLS_CFLAGS) \
-	$(NSS_CFLAGS) \
 	$(ZLIB_CFLAGS) \
 	$(INTROSPECTION_CFLAGS)
 
