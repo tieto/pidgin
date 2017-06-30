@@ -38,7 +38,6 @@
       <xi:include href="xml/pounce.xml" />
       <xi:include href="xml/chat.xml" />
       <xi:include href="xml/circularbuffer.xml" />
-      <xi:include href="xml/cipher.xml" />
       <xi:include href="xml/contact.xml" />
       <xi:include href="xml/connection.xml" />
       <xi:include href="xml/conversation.xml" />
