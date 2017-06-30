@@ -2274,7 +2274,7 @@ fi
 if test "x$enable_i18n" = "xno" ; then
 	echo
 	echo Warning: You have disabled the building and installation of translation
-	echo data.  This will prevent building pidgin.desktop and the GConf schemas.
+	echo data.  This will prevent building pidgin.desktop.
 	echo Be sure you know what you are doing.
 fi
 echo

@@ -419,7 +419,7 @@ enable_gcr = get_option('gcr')
 # Check Pidgin dependencies
 # #######################################################################
 if get_option('gtkui')
-	gtk = dependency('gtk+-3.0', version : '>= 3.0.0')
+	gtk = dependency('gtk+-3.0', version : '>= 3.4.2')
 	# We only really need Pango >= 1.4 for decent RTL support
 	pango = dependency('pango', version : '>= 1.4.0')
 	conf.set('HAVE_PANGO14', pango.found())
@@ -858,9 +858,9 @@ if enable_libgadu
 			message('''
 libgadu is not compatible with the GPL when compiled with OpenSSL support.
 
-To link against libgadu, please recompile libgadu using:
+To link against libgadu, please recompile it using:
 ./configure --with-openssl=no
-Then rerun this ./configure
+Then rerun this Meson build
 			''')
 		endif
 	endif
@@ -1561,7 +1561,7 @@ endif
 if not INSTALL_I18N
 	message('')
 	message('Warning: You have disabled the building and installation of translation')
-	message('data.  This will prevent building pidgin.desktop and the GConf schemas.')
+	message('data.  This will prevent building pidgin.desktop.')
 	message('Be sure you know what you are doing.')
 endif
 message('')
