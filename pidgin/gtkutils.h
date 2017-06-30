@@ -258,9 +258,6 @@ GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
  *                   or %NULL for no icon.
  * @cb:         A function to call when the menu item is activated.
  * @data:       Data to pass to the signal function.
- * @accel_key:  Something.
- * @accel_mods: Something.
- * @mod:        Something.
  *
  * Creates a menu item.
  *
