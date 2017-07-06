@@ -121,8 +121,11 @@ pkg_conf.set('sysconfdir', join_paths('${prefix}', get_option('sysconfdir')))
 
 sedpath = find_program('sed')
 
-# Storing configure arguments
-# conf.set('CONFIG_ARGS', ac_configure_args)
+# Storing build arguments
+if meson.version().version_compare('>=0.40.0')
+	meson.add_postconf_script('mkmesonconf.py')
+	conf.set('HAVE_MESON_CONFIG', true)
+endif
 
 # Checks for programs.
 compiler = meson.get_compiler('c')
