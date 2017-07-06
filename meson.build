@@ -73,9 +73,9 @@ man_conf = configuration_data()
 pkg_conf = configuration_data()
 version_conf = configuration_data()
 
-conf.set('PACKAGE', '"@0@"'.format(meson.project_name()))
-conf.set('PACKAGE_NAME', '"@0@"'.format(meson.project_name()))
-conf.set('VERSION', '"@0@"'.format(purple_display_version))
+conf.set_quoted('PACKAGE', meson.project_name())
+conf.set_quoted('PACKAGE_NAME', meson.project_name())
+conf.set_quoted('VERSION', purple_display_version)
 
 version_conf.set('PURPLE_MAJOR_VERSION', purple_major_version)
 version_conf.set('PURPLE_MINOR_VERSION', purple_minor_version)
@@ -186,43 +186,46 @@ if IS_WIN32
 			conf.set('WIN32_FHS_@0@DIR'.format(dir.to_upper()), path)
 		endforeach
 
-		purple_libdir = 'wpurple_lib_dir("purple-@0@")'.format(purple_major_version)
-		pidgin_libdir = 'wpurple_lib_dir("pidgin-@0@")'.format(purple_major_version)
-		finch_libdir = 'wpurple_lib_dir("finch-@0@")'.format(purple_major_version)
+		conf.set('PURPLE_LIBDIR',
+		         'wpurple_lib_dir("purple-@0@")'.format(purple_major_version))
+		conf.set('PIDGIN_LIBDIR',
+		         'wpurple_lib_dir("pidgin-@0@")'.format(purple_major_version))
+		conf.set('FINCH_LIBDIR',
+		         'wpurple_lib_dir("finch-@0@")'.format(purple_major_version))
 	else
-		purple_libdir = 'wpurple_lib_dir(NULL)'
-		pidgin_libdir = 'wpurple_lib_dir(NULL)'
-		finch_libdir = 'wpurple_lib_dir(NULL)'
+		conf.set('PURPLE_LIBDIR', 'wpurple_lib_dir(NULL)')
+		conf.set('PIDGIN_LIBDIR', 'wpurple_lib_dir(NULL)')
+		conf.set('FINCH_LIBDIR', 'wpurple_lib_dir(NULL)')
 	endif
 
-	purple_datadir = 'wpurple_data_dir()'
-	purple_sysconfdir = 'wpurple_sysconf_dir()'
-	purple_localedir = 'wpurple_locale_dir()'
+	conf.set('PURPLE_DATADIR', 'wpurple_data_dir()')
+	conf.set('PURPLE_SYSCONFDIR', 'wpurple_sysconf_dir()')
+	conf.set('PURPLE_LOCALEDIR', 'wpurple_locale_dir()')
 else
 	foreach dir : ['data', 'sysconf', 'locale']
 		path = join_paths(get_option('prefix'), get_option(dir + 'dir'))
-		set_variable('purple_@0@dir'.format(dir), '"@0@"'.format(path))
+		conf.set_quoted('PURPLE_@0@DIR'.format(dir.to_upper()), path)
 	endforeach
 
 	common_libdir = join_paths(get_option('prefix'), get_option('libdir'))
-	purple_libdir = '"@0@/purple-@1@"'.format(common_libdir, purple_major_version)
-	pidgin_libdir = '"@0@/pidgin-@1@"'.format(common_libdir, purple_major_version)
-	finch_libdir = '"@0@/finch-@1@"'.format(common_libdir, purple_major_version)
+	conf.set_quoted('PURPLE_LIBDIR',
+	                join_paths(common_libdir,
+	                           'purple-@0@'.format(purple_major_version)))
+	conf.set_quoted('PIDGIN_LIBDIR',
+	                join_paths(common_libdir,
+	                           'pidgin-@0@'.format(purple_major_version)))
+	conf.set_quoted('FINCH_LIBDIR',
+	                join_paths(common_libdir,
+	                           'finch-@0@'.format(purple_major_version)))
 endif
-conf.set('PURPLE_DATADIR', purple_datadir)
-conf.set('PURPLE_LIBDIR', purple_libdir)
-conf.set('PIDGIN_LIBDIR', pidgin_libdir)
-conf.set('FINCH_LIBDIR', finch_libdir)
-conf.set('PURPLE_SYSCONFDIR', purple_sysconfdir)
-conf.set('PURPLE_LOCALEDIR', purple_localedir)
 
 abslibdir = join_paths(get_option('prefix'), get_option('libdir'))
 PURPLE_PLUGINDIR = join_paths(abslibdir, 'purple-@0@'.format(purple_major_version))
-conf.set('PURPLE_PLUGINDIR', '"@0@"'.format(PURPLE_PLUGINDIR))
+conf.set_quoted('PURPLE_PLUGINDIR', PURPLE_PLUGINDIR)
 PIDGIN_PLUGINDIR = join_paths(abslibdir, 'pidgin-@0@'.format(purple_major_version))
-conf.set('PIDGIN_PLUGINDIR', '"@0@"'.format(PIDGIN_PLUGINDIR))
+conf.set_quoted('PIDGIN_PLUGINDIR', PIDGIN_PLUGINDIR)
 FINCH_PLUGINDIR = join_paths(abslibdir, 'finch-@0@'.format(purple_major_version))
-conf.set('FINCH_PLUGINDIR', '"@0@"'.format(FINCH_PLUGINDIR))
+conf.set_quoted('FINCH_PLUGINDIR', FINCH_PLUGINDIR)
 
 # Checks for library functions.
 foreach func : ['strdup']
@@ -397,7 +400,7 @@ if get_option('extraversion') != ''
 else
 	DISPLAY_VERSION = meson.project_version()
 endif
-conf.set('DISPLAY_VERSION', '"@0@"'.format(DISPLAY_VERSION))
+conf.set_quoted('DISPLAY_VERSION', DISPLAY_VERSION)
 
 force_deps = not get_option('missing-dependencies')
 
@@ -1223,8 +1226,7 @@ if ssl_certificates_dir != ''
 	SSL_CERTIFICATES_DIR = ssl_certificates_dir
 endif
 if SSL_CERTIFICATES_DIR != ''
-	conf.set('SSL_CERTIFICATES_DIR',
-	    '"@0@"'.format(SSL_CERTIFICATES_DIR))
+	conf.set_quoted('SSL_CERTIFICATES_DIR',	SSL_CERTIFICATES_DIR)
 endif
 INSTALL_SSL_CERTIFICATES = SSL_CERTIFICATES_DIR == ''
 
