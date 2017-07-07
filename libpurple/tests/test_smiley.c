@@ -86,7 +86,8 @@ _test_smiley(PurpleSmiley *smiley,
 	);
 	g_assert_cmpstr(purple_smiley_get_shortcut(smiley), ==, shortcut);
 
-	g_assert_cmpstr(purple_image_get_path(PURPLE_IMAGE(smiley)), ==, path);
+	if(path)
+		g_assert_cmpstr(purple_image_get_path(PURPLE_IMAGE(smiley)), ==, path);
 
 	g_object_unref(G_OBJECT(smiley));
 }
@@ -104,7 +105,7 @@ test_smiley_new_from_data(void) {
 
 	_test_smiley(
 		smiley,
-		purple_image_generate_filename(PURPLE_IMAGE(smiley)),
+		NULL,
 		test_image_data,
 		test_image_data_len,
 		"png",
