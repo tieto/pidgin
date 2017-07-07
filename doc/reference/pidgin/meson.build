@@ -8,7 +8,8 @@ ignore_hfiles = [
     'win32',
     'getopt.h',
     'gtk3compat.h',
-    'gtkinternal.h'
+    'gtkinternal.h',
+    'pidgin.gresource.h'
 ]
 
 # Extra options to supply to gtkdoc-scan.
