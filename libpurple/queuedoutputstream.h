@@ -29,9 +29,9 @@
  * @short_description: GOutputStream for queuing data to output
  * @title: GOutputStream class
  *
- * A #GQueuedOutputStream is a #GOutputStream which allows data to be queued
- * for outputting. It differs from a #GBufferedOutputStream in that it allows
- * for data to be queued while other operations are in progress.
+ * A #PurpleQueuedOutputStream is a #GOutputStream which allows data to be
+ * queued for outputting. It differs from a #GBufferedOutputStream in that
+ * it allows for data to be queued while other operations are in progress.
  */
 
 #include <gio/gio.h>
