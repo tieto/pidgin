@@ -25,6 +25,11 @@ scan_args = [
     '--ignore-headers=' + ' '.join(ignore_hfiles),
 ]
 
+# Extra options to supply to gtkdoc-mkdb.
+mkdb_args = [
+    '--ignore-files=' + ' '.join(ignore_hfiles),
+]
+
 libpurple_version_xml = configure_file(
     input : 'version.xml.in',
     output : 'version.xml',
@@ -60,5 +65,6 @@ gnome.gtkdoc(DOC_MODULE,
     dependencies : libpurple_dep,
     install : true,
     scan_args : scan_args,
+    mkdb_args : mkdb_args,
     gobject_typesfile : DOC_MODULE + '.types',
     content_files : content_files)

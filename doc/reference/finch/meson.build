@@ -4,7 +4,7 @@ DOC_MODULE = 'finch'
 ignore_hfiles = [
     'plugins',
     'test',
-    'wms',
+    'libgnt/wms',
     'getopt.h',
     'gntinternal.h',
     'gnt-skel.h'
@@ -18,6 +18,11 @@ scan_args = [
     '--ignore-headers=' + ' '.join(ignore_hfiles),
 ]
 
+# Extra options to supply to gtkdoc-mkdb.
+mkdb_args = [
+    '--ignore-files=' + ' '.join(ignore_hfiles),
+]
+
 configure_file(
     input : 'version.xml.in',
     output : 'version.xml',
@@ -29,4 +34,5 @@ gnome.gtkdoc(DOC_MODULE,
     dependencies : libfinch_dep,
     install : true,
     scan_args : scan_args,
+    mkdb_args : mkdb_args,
     gobject_typesfile : DOC_MODULE + '.types')
