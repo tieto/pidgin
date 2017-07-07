@@ -1,7 +1,4 @@
-/**
- * @file gtkwin32dep.h UI Win32 Specific Functionality
- * @ingroup win32
- *
+/*
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution
@@ -22,6 +19,12 @@
  */
 #ifndef _GTKWIN32DEP_H_
 #define _GTKWIN32DEP_H_
+/**
+ * SECTION:gtkwin32dep
+ * @section_id: pidgin-gtkwin32dep
+ * @short_description: <filename>gtkwin32dep.h</filename>
+ * @title: UI Win32 Specific Functionality
+ */
 
 #include <config.h>
 
