@@ -120,24 +120,27 @@ typedef enum {
 } PurpleCmdFlag;
 
 /**
+ * PurpleCommandsUiOps:
+ * @register_command: If implemented, the UI is responsible for handling
+ *		commands. See @purple_cmd_register for the argument values.
+ * @unregister_command: Should be implemented if register_command is
+ *		implemented. @name and @prpl_id will have the same value
+ *		that were used for the register_command call.
+ *
  * Command UI operations;  UIs should implement this if they want to handle
  * commands themselves, rather than relying on the core.
  *
- * @see @ref ui-ops
+ * See <link linkend="chapter-ui-ops">List of <literal>UiOps</literal>
+ * Structures</link>
  */
 typedef struct {
-	/** If implemented, the UI is responsible for handling commands. */
-	/* @see purple_cmd_register for the argument values. */
 	void (*register_command)(const gchar *name, PurpleCmdPriority priority,
 				 PurpleCmdFlag flags, const gchar *prpl_id,
 				 const gchar *help, PurpleCmdId id);
 
-	/** Should be implemented if register_command is implemented.
-	 *  name and prpl_id will have the same value that were used
-	 *  for the register_command call.
-	 */
 	void (*unregister_command)(const gchar *name, const gchar *prpl_id);
 
+	/*< private >*/
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -245,18 +248,20 @@ PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmd
                                   const gchar *markup, gchar **errormsg);
 
 /**
+ * purple_cmd_execute:
+ * @id: The command to execute.
+ * @conv: The conversation the command was typed in.
+ * @cmdline: The command the user typed (only the arguments).
+ *            The caller should remove the prefix and the command name.
+ *            It should not contain any formatting, and should be
+ *            in plain text (no HTML entities).
+ *
  * Execute a specific command.
  *
  * The UI calls this to execute a command, after parsing the
  * command name.
  *
- * @param c The command to execute.
- * @param conv The conversation the command was typed in.
- * @param cmdline The command the user typed (only the arguments).
- *            The caller should remove the prefix and the command name.
- *            It should not contain any formatting, and should be
- *            in plain text (no HTML entities).
- * @return TRUE if the command handled the @a cmdline, FALSE otherwise.
+ * Returns: %TRUE if the command handled the @cmdline, %FALSE otherwise.
  */
 gboolean purple_cmd_execute(PurpleCmdId id, PurpleConversation *conv,
 			    const gchar *cmdline);
@@ -304,19 +309,22 @@ GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd);
 gpointer purple_cmds_get_handle(void);
 
 /**
+ * purple_cmds_set_ui_ops:
+ * @ops: The UI operations structure.
+ *
  * Sets the UI operations structure to be used when registering and
  * unregistering commands.  The UI operations need only be set if the
  * UI wants to handle the commands itself; otherwise, leave it as NULL.
- *
- * @param ops The UI operations structure.
  */
 void purple_cmds_set_ui_ops(PurpleCommandsUiOps *ops);
 
 /**
+ * purple_cmds_get_ui_ops:
+ *
  * Returns the UI operations structure to be used when registering and
  * unregistering commands.
  *
- * @return The UI operations structure.
+ * Returns: (transfer none): The UI operations structure.
  */
 PurpleCommandsUiOps *purple_cmds_get_ui_ops(void);
 
