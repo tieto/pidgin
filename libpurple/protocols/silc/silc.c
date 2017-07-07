@@ -221,7 +221,7 @@ silcpurple_scheduler(SilcSchedule schedule,
 	    /* Add timeout */
 	    ptask = silc_calloc(1, sizeof(*ptask));
 	    ptask->sg = sg;
-	    ptask->tag = purple_timeout_add((seconds * 1000) +
+	    ptask->tag = g_timeout_add((seconds * 1000) +
 					    (useconds / 1000),
 					    silcpurple_scheduler_timeout,
 					    ptask);
@@ -646,7 +646,7 @@ silcpurple_login(PurpleAccount *account)
 
 #if __SILC_TOOLKIT_VERSION < SILC_VERSION(1,1,1)
 	/* Schedule SILC using Glib's event loop */
-	sg->scheduler = purple_timeout_add(300, (GSourceFunc)silcpurple_scheduler, client);
+	sg->scheduler = g_timeout_add(300, (GSourceFunc)silcpurple_scheduler, client);
 #else
 	/* Run SILC scheduler */
 	sg->tasks = silc_dlist_init();
@@ -723,10 +723,10 @@ silcpurple_close(PurpleConnection *gc)
 #endif /* __SILC_TOOLKIT_VERSION */
 
 	if (sg->scheduler)
-		purple_timeout_remove(sg->scheduler);
+		g_source_remove(sg->scheduler);
 
 	purple_debug_info("silc", "Scheduling destruction of SilcPurple %p\n", sg);
-	purple_timeout_add(1, (GSourceFunc)silcpurple_close_final, sg);
+	g_timeout_add(1, (GSourceFunc)silcpurple_close_final, sg);
 }
 
 

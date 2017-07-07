@@ -564,7 +564,7 @@ _win32_name_lookup_thread(gpointer data) {
 			fullname = g_utf16_to_utf8(username, -1, NULL, NULL, NULL);
 	}
 
-	purple_timeout_add(0, _set_default_name_cb, fullname);
+	g_timeout_add(0, _set_default_name_cb, fullname);
 
 	return NULL;
 }

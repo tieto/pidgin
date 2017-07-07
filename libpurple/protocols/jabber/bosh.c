@@ -150,7 +150,7 @@ jabber_bosh_connection_destroy(PurpleJabberBOSHConnection *conn)
 	conn->payload_reqs = NULL;
 
 	if (conn->send_timer)
-		purple_timeout_remove(conn->send_timer);
+		g_source_remove(conn->send_timer);
 
 	purple_http_conn_cancel(conn->sc_req);
 	conn->sc_req = NULL;
@@ -270,7 +270,7 @@ jabber_bosh_connection_send_now(PurpleJabberBOSHConnection *conn)
 	g_return_if_fail(conn != NULL);
 
 	if (conn->send_timer != 0) {
-		purple_timeout_remove(conn->send_timer);
+		g_source_remove(conn->send_timer);
 		conn->send_timer = 0;
 	}
 
@@ -340,7 +340,7 @@ jabber_bosh_connection_send(PurpleJabberBOSHConnection *conn,
 		g_string_append(conn->send_buff, data);
 
 	if (conn->send_timer == 0) {
-		conn->send_timer = purple_timeout_add(
+		conn->send_timer = g_timeout_add(
 			JABBER_BOSH_SEND_DELAY,
 			jabber_bosh_connection_send_delayed, conn);
 	}

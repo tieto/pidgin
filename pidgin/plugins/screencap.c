@@ -666,7 +666,7 @@ scrncap_do_screenshot(GtkAction *action, PidginWebView *webview)
 		return;
 	is_shooting = TRUE;
 
-	shooting_timeout = purple_timeout_add(SCRNCAP_SHOOTING_TIMEOUT,
+	shooting_timeout = g_timeout_add(SCRNCAP_SHOOTING_TIMEOUT,
 		scrncap_do_screenshot_cb, webview);
 }
 
@@ -979,7 +979,7 @@ plugin_unload(PurplePlugin *plugin, GError **error)
 	GList *it;
 
 	if (shooting_timeout > 0)
-		purple_timeout_remove(shooting_timeout);
+		g_source_remove(shooting_timeout);
 	if (current_window != NULL)
 		gtk_widget_destroy(GTK_WIDGET(current_window));
 

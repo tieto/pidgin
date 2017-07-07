@@ -338,7 +338,7 @@ reset_blist_node_ui_data(PurpleBlistNode *node)
 	if (fnode == NULL)
 		return;
 	if (fnode->signed_timer)
-		purple_timeout_remove(fnode->signed_timer);
+		g_source_remove(fnode->signed_timer);
 	g_free(fnode);
 	purple_blist_node_set_ui_data(node, NULL);
 }
@@ -816,8 +816,8 @@ add_group_cb(gpointer null, const char *group)
 	 * to turn on 'show empty groups' setting */
 	ggblist->new_group = g_list_prepend(ggblist->new_group, grp);
 	if (ggblist->new_group_timeout)
-		purple_timeout_remove(ggblist->new_group_timeout);
-	ggblist->new_group_timeout = purple_timeout_add_seconds(SHOW_EMPTY_GROUP_TIMEOUT,
+		g_source_remove(ggblist->new_group_timeout);
+	ggblist->new_group_timeout = g_timeout_add_seconds(SHOW_EMPTY_GROUP_TIMEOUT,
 			remove_new_empty_group, NULL);
 
 	/* Select the group */
@@ -1970,13 +1970,13 @@ reset_blist_window(GntWidget *window, gpointer null)
 	}
 
 	if (ggblist->typing)
-		purple_timeout_remove(ggblist->typing);
+		g_source_remove(ggblist->typing);
 	remove_peripherals(ggblist);
 	if (ggblist->tagged)
 		g_list_free(ggblist->tagged);
 
 	if (ggblist->new_group_timeout)
-		purple_timeout_remove(ggblist->new_group_timeout);
+		g_source_remove(ggblist->new_group_timeout);
 	if (ggblist->new_group)
 		g_list_free(ggblist->new_group);
 
@@ -2209,7 +2209,7 @@ remove_typing_cb(gpointer null)
 end:
 	g_free(escnewmessage);
 	if (ggblist->typing)
-		purple_timeout_remove(ggblist->typing);
+		g_source_remove(ggblist->typing);
 	ggblist->typing = 0;
 	return FALSE;
 }
@@ -2228,7 +2228,7 @@ status_selection_changed(GntComboBox *box, StatusBoxItem *old, StatusBoxItem *no
 		/* Move the focus to the entry box */
 		/* XXX: Make sure the selected status can have a message */
 		gnt_box_move_focus(GNT_BOX(ggblist->window), 1);
-		ggblist->typing = purple_timeout_add_seconds(TYPING_TIMEOUT_S, (GSourceFunc)remove_typing_cb, NULL);
+		ggblist->typing = g_timeout_add_seconds(TYPING_TIMEOUT_S, (GSourceFunc)remove_typing_cb, NULL);
 	}
 	else if (now->type == STATUS_SAVED_ALL)
 	{
@@ -2254,7 +2254,7 @@ status_text_changed(GntEntry *entry, const char *text, gpointer null)
 		return FALSE;
 
 	if (ggblist->typing)
-		purple_timeout_remove(ggblist->typing);
+		g_source_remove(ggblist->typing);
 	ggblist->typing = 0;
 
 	if (text[0] == '\r' && text[1] == 0)
@@ -2264,7 +2264,7 @@ status_text_changed(GntEntry *entry, const char *text, gpointer null)
 		return TRUE;
 	}
 
-	ggblist->typing = purple_timeout_add_seconds(TYPING_TIMEOUT_S, (GSourceFunc)remove_typing_cb, NULL);
+	ggblist->typing = g_timeout_add_seconds(TYPING_TIMEOUT_S, (GSourceFunc)remove_typing_cb, NULL);
 	return FALSE;
 }
 
@@ -2506,7 +2506,7 @@ buddy_recent_signed_on_off(gpointer data)
 	PurpleBlistNode *node = data;
 	FinchBlistNode *fnode = purple_blist_node_get_ui_data(node);
 
-	purple_timeout_remove(fnode->signed_timer);
+	g_source_remove(fnode->signed_timer);
 	fnode->signed_timer = 0;
 
 	if (!ggblist->manager->can_add_node(node)) {
@@ -2530,10 +2530,10 @@ buddy_signed_on_off_cb(gpointer data)
 		return FALSE;
 
 	if (fnode->signed_timer)
-		purple_timeout_remove(fnode->signed_timer);
+		g_source_remove(fnode->signed_timer);
 
 	g_object_ref(node);
-	fnode->signed_timer = purple_timeout_add_seconds(6, (GSourceFunc)buddy_recent_signed_on_off, data);
+	fnode->signed_timer = g_timeout_add_seconds(6, (GSourceFunc)buddy_recent_signed_on_off, data);
 	update_node_display(node, ggblist);
 	if (purple_blist_node_get_parent(node) && PURPLE_IS_CONTACT(purple_blist_node_get_parent(node)))
 		update_node_display(purple_blist_node_get_parent(node), ggblist);

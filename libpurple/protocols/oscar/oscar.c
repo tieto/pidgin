@@ -449,8 +449,8 @@ flap_connection_established_bos(OscarData *od, FlapConnection *conn)
 	aim_ssi_reqrights(od);
 	aim_ssi_reqdata(od);
 	if (od->getblisttimer > 0)
-		purple_timeout_remove(od->getblisttimer);
-	od->getblisttimer = purple_timeout_add_seconds(30, purple_ssi_rerequestdata, od);
+		g_source_remove(od->getblisttimer);
+	od->getblisttimer = g_timeout_add_seconds(30, purple_ssi_rerequestdata, od);
 
 	aim_locate_reqrights(od);
 	aim_buddylist_reqrights(od, conn);
@@ -3683,7 +3683,7 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 	if (reason == 0x0005) {
 		if (od->getblisttimer > 0)
-			purple_timeout_remove(od->getblisttimer);
+			g_source_remove(od->getblisttimer);
 		else
 			/* We only show this error the first time it happens */
 			purple_notify_error(gc, NULL,
@@ -3692,7 +3692,7 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 					"your buddy list.  Your buddy list is not lost, and "
 					"will probably become available in a few minutes."),
 					purple_request_cpar_from_connection(gc));
-		od->getblisttimer = purple_timeout_add_seconds(30, purple_ssi_rerequestdata, od);
+		od->getblisttimer = g_timeout_add_seconds(30, purple_ssi_rerequestdata, od);
 		return 1;
 	}
 
@@ -3755,7 +3755,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	/* Don't attempt to re-request our buddy list later */
 	if (od->getblisttimer != 0) {
-		purple_timeout_remove(od->getblisttimer);
+		g_source_remove(od->getblisttimer);
 		od->getblisttimer = 0;
 	}
 

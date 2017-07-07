@@ -261,7 +261,7 @@ schedule_prefs_save(void)
 	PURPLE_PREFS_UI_OP_CALL(schedule_save);
 
 	if (save_timer == 0)
-		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
+		save_timer = g_timeout_add_seconds(5, save_cb, NULL);
 }
 
 
@@ -1743,7 +1743,7 @@ purple_prefs_uninit()
 {
 	if (save_timer != 0)
 	{
-		purple_timeout_remove(save_timer);
+		g_source_remove(save_timer);
 		save_cb(NULL);
 	}
 

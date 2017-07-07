@@ -130,7 +130,7 @@ static void destroy_stats(gpointer data) {
 	/* g_free(stats->hourly_usage); */
 	/* g_free(stats->daily_usage); */
 	if (stats->timeout_source_id != 0)
-		purple_timeout_remove(stats->timeout_source_id);
+		g_source_remove(stats->timeout_source_id);
 	g_free(stats);
 }
 
@@ -359,9 +359,9 @@ static void sent_im_msg(PurpleAccount *account, PurpleMessage *msg, gpointer _un
 	stats->last_message = time(NULL);
 	stats->last_message_status_id = purple_status_get_id(get_status_for(buddy));
 	if(stats->timeout_source_id != 0)
-		purple_timeout_remove(stats->timeout_source_id);
+		g_source_remove(stats->timeout_source_id);
 
-	stats->timeout_source_id = purple_timeout_add_seconds(interval, max_message_difference_cb, stats);
+	stats->timeout_source_id = g_timeout_add_seconds(interval, max_message_difference_cb, stats);
 }
 
 /* received-im-msg */
@@ -387,7 +387,7 @@ received_im_msg(PurpleAccount *account, char *sender, char *message, PurpleConve
 	 * then cancel the timeout callback. */
 	if(stats->timeout_source_id != 0) {
 		purple_debug_info("cap", "Cancelling timeout callback\n");
-		purple_timeout_remove(stats->timeout_source_id);
+		g_source_remove(stats->timeout_source_id);
 		stats->timeout_source_id = 0;
 	}
 
@@ -678,7 +678,7 @@ static void add_plugin_functionality(PurplePlugin *plugin) {
 static void cancel_conversation_timeouts(gpointer key, gpointer value, gpointer user_data) {
 	CapStatistics *stats = value;
 	if(stats->timeout_source_id != 0) {
-		purple_timeout_remove(stats->timeout_source_id);
+		g_source_remove(stats->timeout_source_id);
 		stats->timeout_source_id = 0;
 	}
 }

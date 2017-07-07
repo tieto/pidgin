@@ -468,7 +468,7 @@ purple_network_do_listen(unsigned short port, int socket_family, int socket_type
 	{
 		purple_debug_info("network", "Skipping external port mapping.\n");
 		/* The pmp_map_cb does what we want to do */
-		listen_data->timer = purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
+		listen_data->timer = g_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}
 	/* Attempt a NAT-PMP Mapping, which will return immediately */
 	else if (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
@@ -476,7 +476,7 @@ purple_network_do_listen(unsigned short port, int socket_family, int socket_type
 	{
 		purple_debug_info("network", "Created NAT-PMP mapping on port %i\n", actual_port);
 		/* We want to return listen_data now, and on the next run loop trigger the cb and destroy listen_data */
-		listen_data->timer = purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
+		listen_data->timer = g_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}
 	else
 	{
@@ -532,7 +532,7 @@ void purple_network_listen_cancel(PurpleNetworkListenData *listen_data)
 		purple_upnp_cancel_port_mapping(listen_data->mapping_data);
 
 	if (listen_data->timer > 0)
-		purple_timeout_remove(listen_data->timer);
+		g_source_remove(listen_data->timer);
 
 	g_free(listen_data);
 }

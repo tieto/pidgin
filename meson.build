@@ -413,7 +413,6 @@ with_x = get_option('x') and not IS_WIN32
 # # Check for GTK+ 2.18 and other things used by the GTK UI
 # #######################################################################
 enable_screensaver = get_option('screensaver')
-enable_startup_notification = get_option('startup-notification')
 enable_enchant = get_option('enchant')
 enable_gevolution = get_option('gevolution')
 enable_cap = get_option('cap')
@@ -564,7 +563,6 @@ else	# GTK
 	enable_gcr = false
 	enable_gevolution = false
 	enable_screensaver = false
-	enable_startup_notification = false
 	use_enchant = false
 endif	# GTK
 
@@ -1432,7 +1430,6 @@ message('Install translations.......... : ' + INSTALL_I18N.to_string())
 message('Has you....................... : yes')
 message('')
 message('Use XScreenSaver Extension.... : ' + enable_screensaver.to_string())
-message('Use startup notification...... : ' + enable_startup_notification.to_string())
 message('Build with Enchant support.... : ' + use_enchant.to_string())
 message('Build with GCR widgets........ : ' + enable_gcr.to_string())
 message('Build Unity integration plugin.: ' + enable_unity.to_string())

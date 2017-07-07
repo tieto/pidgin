@@ -109,13 +109,13 @@ void purple_core_quit(void);
  * purple_core_quit_cb:
  *
  * Calls purple_core_quit().  This can be used as the function
- * passed to purple_timeout_add() when you want to shutdown Purple
+ * passed to g_timeout_add() when you want to shutdown Purple
  * in a specified amount of time.  When shutting down Purple
  * from a plugin, you must use this instead of purple_core_quit();
  * for an immediate exit, use a timeout value of 0:
  *
  * <programlisting>
- * purple_timeout_add(0, purple_core_quitcb, NULL)
+ * g_timeout_add(0, purple_core_quitcb, NULL)
  * </programlisting>
  *
  * This is ensures that code from your plugin is not being

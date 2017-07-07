@@ -30,24 +30,6 @@ typedef struct _PurpleIOClosure {
 	gpointer data;
 } PurpleIOClosure;
 
-guint
-purple_timeout_add(guint interval, GSourceFunc function, gpointer data)
-{
-	return g_timeout_add(interval, function, data);
-}
-
-guint
-purple_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data)
-{
-	return g_timeout_add_seconds(interval, function, data);
-}
-
-gboolean
-purple_timeout_remove(guint tag)
-{
-	return g_source_remove(tag);
-}
-
 static gboolean
 purple_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
 {

@@ -224,7 +224,7 @@ check_idleness_timer(void)
 	{
 		/* +1 for the boundary,
 		 * +1 more for g_timeout_add_seconds rounding. */
-		idle_timer = purple_timeout_add_seconds(time_until_next_idle_event + 2, (GSourceFunc)check_idleness_timer, NULL);
+		idle_timer = g_timeout_add_seconds(time_until_next_idle_event + 2, (GSourceFunc)check_idleness_timer, NULL);
 	}
 	return FALSE;
 }
@@ -256,7 +256,7 @@ static void
 idle_reporting_cb(const char *name, PurplePrefType type, gconstpointer val, gpointer data)
 {
 	if (idle_timer)
-		purple_timeout_remove(idle_timer);
+		g_source_remove(idle_timer);
 	idle_timer = 0;
 	check_idleness_timer();
 }
@@ -268,7 +268,7 @@ purple_idle_touch()
 	if (!no_away)
 	{
 		if (idle_timer)
-			purple_timeout_remove(idle_timer);
+			g_source_remove(idle_timer);
 		idle_timer = 0;
 		check_idleness_timer();
 	}
@@ -332,7 +332,7 @@ static gboolean _do_purple_idle_touch_cb(gpointer data)
 	int idle_poll_minutes = purple_prefs_get_int("/purple/away/mins_before_away");
 
 	 /* +1 more for g_timeout_add_seconds rounding. */
-	idle_timer = purple_timeout_add_seconds((idle_poll_minutes * 60) + 2, (GSourceFunc)check_idleness_timer, NULL);
+	idle_timer = g_timeout_add_seconds((idle_poll_minutes * 60) + 2, (GSourceFunc)check_idleness_timer, NULL);
 
 	purple_idle_touch();
 
@@ -358,7 +358,7 @@ purple_idle_init()
 
 	/* Initialize the idleness asynchronously so it doesn't check idleness,
 	 * and potentially try to change the status before the UI is initialized */
-	purple_timeout_add(0, _do_purple_idle_touch_cb, NULL);
+	g_timeout_add(0, _do_purple_idle_touch_cb, NULL);
 
 }
 
@@ -370,6 +370,6 @@ purple_idle_uninit()
 
 	/* Remove the idle timer */
 	if (idle_timer > 0)
-		purple_timeout_remove(idle_timer);
+		g_source_remove(idle_timer);
 	idle_timer = 0;
 }

@@ -64,7 +64,6 @@
       <xi:include href="xml/gtkwebview.xml" />
       <xi:include href="xml/gtkwebviewtoolbar.xml" />
       <xi:include href="xml/gtkwhiteboard.xml" />
-      <xi:include href="xml/gtksession.xml" />
       <xi:include href="xml/pidgin.xml" />
   </part>
 

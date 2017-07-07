@@ -79,7 +79,7 @@ peer_oft_checksum_destroy(ChecksumData *checksum_data)
 	checksum_data->conn->checksum_data = NULL;
 	fclose(checksum_data->file);
 	if (checksum_data->timer > 0)
-		purple_timeout_remove(checksum_data->timer);
+		g_source_remove(checksum_data->timer);
 	g_free(checksum_data);
 }
 
@@ -218,7 +218,7 @@ peer_oft_checksum_file(PeerConnection *conn, PurpleXfer *xfer, GSourceFunc callb
 	}
 	else
 	{
-		checksum_data->timer = purple_timeout_add(10,
+		checksum_data->timer = g_timeout_add(10,
 				peer_oft_checksum_file_piece, checksum_data);
 		conn->checksum_data = checksum_data;
 	}
@@ -251,7 +251,7 @@ peer_oft_close(PeerConnection *conn)
 
 	if (conn->sending_data_timer != 0)
 	{
-		purple_timeout_remove(conn->sending_data_timer);
+		g_source_remove(conn->sending_data_timer);
 		conn->sending_data_timer = 0;
 	}
 }
@@ -411,7 +411,7 @@ peer_oft_recv_frame_prompt(PeerConnection *conn, OftFrame *frame)
 	/* Remove our watchers and use the file transfer watchers in the core */
 	purple_input_remove(conn->watcher_incoming);
 	conn->watcher_incoming = 0;
-	conn->sending_data_timer = purple_timeout_add(100,
+	conn->sending_data_timer = g_timeout_add(100,
 			start_transfer_when_done_sending_data, conn);
 }
 
@@ -433,7 +433,7 @@ peer_oft_recv_frame_ack(PeerConnection *conn, OftFrame *frame)
 	/* Remove our watchers and use the file transfer watchers in the core */
 	purple_input_remove(conn->watcher_incoming);
 	conn->watcher_incoming = 0;
-	conn->sending_data_timer = purple_timeout_add(100,
+	conn->sending_data_timer = g_timeout_add(100,
 			start_transfer_when_done_sending_data, conn);
 }
 
@@ -607,7 +607,7 @@ peer_oft_recvcb_end(PurpleXfer *xfer)
 	peer_oft_send_done(conn);
 
 	conn->disconnect_reason = OSCAR_DISCONNECT_DONE;
-	conn->sending_data_timer = purple_timeout_add(100,
+	conn->sending_data_timer = g_timeout_add(100,
 			destroy_connection_when_done_sending_data, conn);
 }
 

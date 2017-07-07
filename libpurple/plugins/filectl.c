@@ -242,7 +242,7 @@ static gboolean
 plugin_load(PurplePlugin *plugin, GError **error)
 {
 	init_file();
-	check = purple_timeout_add_seconds(5, (GSourceFunc)check_file, NULL);
+	check = g_timeout_add_seconds(5, (GSourceFunc)check_file, NULL);
 
 	return TRUE;
 }
@@ -250,7 +250,7 @@ plugin_load(PurplePlugin *plugin, GError **error)
 static gboolean
 plugin_unload(PurplePlugin *plugin, GError **error)
 {
-	purple_timeout_remove(check);
+	g_source_remove(check);
 
 	return TRUE;
 }

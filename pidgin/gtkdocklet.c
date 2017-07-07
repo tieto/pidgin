@@ -358,7 +358,7 @@ docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
 		purple_debug(PURPLE_DEBUG_INFO, "docklet", "menu leave-notify-event\n");
 		/* Add some slop so that the menu doesn't annoyingly disappear when mousing around */
 		if (hide_docklet_timer == 0) {
-			hide_docklet_timer = purple_timeout_add(500,
+			hide_docklet_timer = g_timeout_add(500,
 					hide_docklet_menu, menu);
 		}
 	} else if (event->type == GDK_ENTER_NOTIFY && event->detail == GDK_NOTIFY_ANCESTOR) {
@@ -366,7 +366,7 @@ docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
 		if (hide_docklet_timer != 0) {
 			/* Cancel the hiding if we reenter */
 
-			purple_timeout_remove(hide_docklet_timer);
+			g_source_remove(hide_docklet_timer);
 			hide_docklet_timer = 0;
 		}
 	}
@@ -840,7 +840,7 @@ static gboolean
 docklet_gtk_embedded_cb(GtkWidget *widget, gpointer data)
 {
 	if (embed_timeout) {
-		purple_timeout_remove(embed_timeout);
+		g_source_remove(embed_timeout);
 		embed_timeout = 0;
 	}
 
@@ -885,7 +885,7 @@ docklet_gtk_status_destroy(void)
 	pidgin_docklet_remove();
 
 	if (embed_timeout) {
-		purple_timeout_remove(embed_timeout);
+		g_source_remove(embed_timeout);
 		embed_timeout = 0;
 	}
 
@@ -933,9 +933,9 @@ docklet_gtk_status_create(gboolean recreate)
 		pidgin_docklet_embedded();
 #ifndef _WIN32
 		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/gtk/embedded")) {
-			embed_timeout = purple_timeout_add_seconds(LONG_EMBED_TIMEOUT, docklet_gtk_embed_timeout_cb, NULL);
+			embed_timeout = g_timeout_add_seconds(LONG_EMBED_TIMEOUT, docklet_gtk_embed_timeout_cb, NULL);
 		} else {
-			embed_timeout = purple_timeout_add_seconds(SHORT_EMBED_TIMEOUT, docklet_gtk_embed_timeout_cb, NULL);
+			embed_timeout = g_timeout_add_seconds(SHORT_EMBED_TIMEOUT, docklet_gtk_embed_timeout_cb, NULL);
 		}
 #endif
 	}

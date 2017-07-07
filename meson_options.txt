@@ -23,9 +23,6 @@ option('doc', type : 'boolean', value : false,
 option('screensaver', type : 'boolean', value : true,
        description : 'compile with X screensaver extension (used to detect idleness)')
 
-option('startup-notification', type : 'boolean', value : true,
-       description : 'compile with startup notification support')
-
 option('enchant', type : 'boolean', value : true,
        description : 'compile with Enchange spell checking support')
 

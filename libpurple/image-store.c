@@ -124,7 +124,7 @@ remove_temporary(gpointer _image)
 static void
 cancel_temporary(gpointer key, gpointer value, gpointer _unused)
 {
-	purple_timeout_remove(GPOINTER_TO_INT(key));
+	g_source_remove(GPOINTER_TO_INT(key));
 }
 
 guint
@@ -143,7 +143,7 @@ purple_image_store_add_temporary(PurpleImage *image)
 	id = image_set_id(image);
 
 	g_object_ref(image);
-	handle = purple_timeout_add_seconds(TEMP_IMAGE_TIMEOUT,
+	handle = g_timeout_add_seconds(TEMP_IMAGE_TIMEOUT,
 		remove_temporary, image);
 	g_object_set_data(G_OBJECT(image), "purple-image-store-handle",
 		GINT_TO_POINTER(handle));

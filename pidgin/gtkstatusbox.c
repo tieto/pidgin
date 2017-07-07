@@ -1094,7 +1094,7 @@ webview_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStatusBox *status_b
 	/* Reset the status if Escape was pressed */
 	if (event->keyval == GDK_KEY_Escape)
 	{
-		purple_timeout_remove(status_box->typing);
+		g_source_remove(status_box->typing);
 		status_box->typing = 0;
 #if 0
 	/* TODO WebKit: Doesn't do this? */
@@ -1112,8 +1112,8 @@ webview_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStatusBox *status_b
 	}
 
 	pidgin_status_box_pulse_typing(status_box);
-	purple_timeout_remove(status_box->typing);
-	status_box->typing = purple_timeout_add_seconds(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
+	g_source_remove(status_box->typing);
+	status_box->typing = g_timeout_add_seconds(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 
 	return FALSE;
 }
@@ -2562,7 +2562,7 @@ static void remove_typing_cb(PidginStatusBox *status_box)
 		PIDGIN_WEBVIEW(status_box->webview), TRUE);
 #endif
 
-	purple_timeout_remove(status_box->typing);
+	g_source_remove(status_box->typing);
 	status_box->typing = 0;
 
 	activate_currently_selected_status(status_box);
@@ -2591,7 +2591,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 			   DATA_COLUMN, &data,
 			   -1);
 	if ((wastyping = (status_box->typing != 0)))
-		purple_timeout_remove(status_box->typing);
+		g_source_remove(status_box->typing);
 	status_box->typing = 0;
 
 	if (gtk_widget_get_sensitive(GTK_WIDGET(status_box)))
@@ -2661,7 +2661,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 		if (status_box->webview_visible)
 		{
 			gtk_widget_show_all(status_box->vbox);
-			status_box->typing = purple_timeout_add_seconds(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
+			status_box->typing = g_timeout_add_seconds(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 			gtk_widget_grab_focus(status_box->webview);
 #if 0
 			/* TODO WebKit: Doesn't do this? */
@@ -2718,9 +2718,9 @@ webview_changed_cb(PidginWebView *webview, void *data)
 	{
 		if (status_box->typing != 0) {
 			pidgin_status_box_pulse_typing(status_box);
-			purple_timeout_remove(status_box->typing);
+			g_source_remove(status_box->typing);
 		}
-		status_box->typing = purple_timeout_add_seconds(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
+		status_box->typing = g_timeout_add_seconds(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 	}
 	pidgin_status_box_refresh(status_box);
 }
