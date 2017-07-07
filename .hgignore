@@ -75,7 +75,8 @@ libpurple/example/nullclient
 libpurple/data/purple-url-handler.desktop$
 libpurple/data/purple-url-handler.desktop.in$
 libpurple/plugins/dbus-example-bindings.c
-libpurple/purple-client-bindings.[ch]
+libpurple/purple-client-bindings.ch
+libpurple/purple-client-bindings.h
 libpurple/purple-client-example
 libpurple/purple.h$
 libpurple/tests/core

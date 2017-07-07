@@ -23,6 +23,9 @@
 #include "internal.h"
 #include "pidgin.h"
 #include "package_revision.h"
+#ifdef HAVE_MESON_CONFIG
+#include "meson-config.h"
+#endif
 
 #include "debug.h"
 #include "notify.h"
@@ -604,6 +607,9 @@ void pidgin_dialogs_buildinfo(void)
 
 #ifdef CONFIG_ARGS /* win32 build doesn't use configure */
 	g_string_append(str, "<dt>Arguments to <em>./configure</em>:</dt><dd>" CONFIG_ARGS "</dd>");
+#endif
+#ifdef MESON_ARGS
+	g_string_append(str, "<dt>Arguments to <em>meson</em>:</dt><dd>" MESON_ARGS "</dd>");
 #endif
 
 #ifndef _WIN32

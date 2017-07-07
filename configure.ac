@@ -261,7 +261,6 @@ if test "x$is_win32" != "xyes" ; then
 	AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, ,
 		[AC_MSG_ERROR([inet_aton not found])])])
 fi
-AC_CHECK_LIB(resolv, __res_query)
 AC_CHECK_LIB(nsl, gethostent)
 if test "x$is_win32" = "xyes" ; then
 	AC_DEFINE(HAVE_GETADDRINFO, 1, [Define to 1 if you have the getaddrinfo function.])
@@ -407,8 +406,6 @@ int main()
 # before gettexting, in case iconv matters
 case "$host_os" in
 darwin*)
-	AC_CHECK_LIB(resolv, res_query)
-
 	AC_CHECK_HEADER(CoreFoundation/CoreFoundation.h, [
 		AC_CHECK_HEADER(IOKit/IOKitLib.h, [
 			AC_DEFINE(HAVE_IOKIT, 1, [Define if we have IOKit])
@@ -1179,8 +1176,6 @@ AC_SUBST(LIBGADU_LIBS)
 AC_SUBST(LIBGADU_CFLAGS)
 
 
-AC_ARG_ENABLE(distrib,,,enable_distrib=no)
-AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 DYNAMIC_PRPLS=all
 AC_ARG_WITH(static-prpls, [AS_HELP_STRING([--with-static-prpls], [Link to certain protocols statically])], [STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`], [STATIC_PRPLS=""])
 if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
@@ -1451,6 +1446,7 @@ fi
 
 dnl #######################################################################
 dnl # Check for Unity and Messaging Menu
+dnl # Remove when Ubuntu 16.04 is EOL
 dnl #######################################################################
 AC_ARG_ENABLE(unity, [AC_HELP_STRING([--enable-unity],
 	[compile with support for unity integration plugin])], enable_unity="$enableval", enable_unity="no")
@@ -2163,7 +2159,7 @@ fi
 if test "x$enable_i18n" = "xno" ; then
 	echo
 	echo Warning: You have disabled the building and installation of translation
-	echo data.  This will prevent building pidgin.desktop and the GConf schemas.
+	echo data.  This will prevent building pidgin.desktop.
 	echo Be sure you know what you are doing.
 fi
 echo

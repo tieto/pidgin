@@ -61,7 +61,7 @@
  * #dbus-analyze-types.py script.
  */
 
-#include "dbus-types.c"
+#include "dbus-types.ch"
 
 /*
  * The following three hashtables map are used to translate between
@@ -411,8 +411,8 @@ purple_dbus_get_connection(void)
 	return purple_dbus_connection;
 }
 
-#include "dbus-bindings.c"
-#include "dbus-signals.c"
+#include "dbus-bindings.ch"
+#include "dbus-signals.ch"
 
 static gboolean
 purple_dbus_dispatch_cb(DBusConnection *connection,

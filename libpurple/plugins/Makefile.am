@@ -86,7 +86,7 @@ statenotify_la_LIBADD        = @PURPLE_LIBS@
 
 if ENABLE_DBUS
 
-CLEANFILES              = dbus-example-bindings.c
+CLEANFILES              = dbus-example-bindings.ch
 dbus_example_la_SOURCES = dbus-example.c
 
 dbus_example_la_LIBADD       = @PURPLE_LIBS@ $(DBUS_LIBS)
@@ -96,11 +96,11 @@ dbus_example_la_LIBADD       = @PURPLE_LIBS@ $(DBUS_LIBS)
 $(top_builddir)/libpurple/dbus-types.h: always
 	$(AM_V_GEN)cd $(@D) && $(MAKE) $(AM_MAKEFLAGS) $(@F)
 
-dbus-example-bindings.c: $(top_srcdir)/libpurple/dbus-analyze-functions.py $(dbus_example_la_SOURCES)
+dbus-example-bindings.ch: $(top_srcdir)/libpurple/dbus-analyze-functions.py $(dbus_example_la_SOURCES)
 	$(AM_V_GEN)cat $(srcdir)/$(dbus_example_la_SOURCES) | \
 	$(PYTHON) $(top_srcdir)/libpurple/dbus-analyze-functions.py --export-only > $@
 
-$(dbus_example_la_OBJECTS) dbus-example.so: dbus-example-bindings.c $(top_builddir)/libpurple/dbus-types.h
+$(dbus_example_la_OBJECTS) dbus-example.so: dbus-example-bindings.ch $(top_builddir)/libpurple/dbus-types.h
 
 
 endif # ENABLE_DBUS
