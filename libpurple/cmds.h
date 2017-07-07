@@ -125,8 +125,7 @@ typedef enum {
  *
  * @see @ref ui-ops
  */
-typedef struct
-{
+typedef struct {
 	/** If implemented, the UI is responsible for handling commands. */
 	/* @see purple_cmd_register for the argument values. */
 	void (*register_command)(const gchar *name, PurpleCmdPriority priority,
