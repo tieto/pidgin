@@ -957,7 +957,7 @@ static PurpleRoomlist *null_roomlist_get_list(PurpleConnection *gc) {
   }
 
   g_list_free(seen_ids);
-  purple_timeout_add(1 /* ms */, null_finish_get_roomlist, g_object_ref(roomlist));
+  g_timeout_add(1 /* ms */, null_finish_get_roomlist, g_object_ref(roomlist));
   return roomlist;
 }
 

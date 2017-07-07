@@ -232,9 +232,9 @@ static void
 account_signon_cb(PurpleConnection *gc, gpointer data)
 {
 	if (mute_login_sounds_timeout != 0)
-		purple_timeout_remove(mute_login_sounds_timeout);
+		g_source_remove(mute_login_sounds_timeout);
 	mute_login_sounds = TRUE;
-	mute_login_sounds_timeout = purple_timeout_add_seconds(10, unmute_login_sounds_cb, NULL);
+	mute_login_sounds_timeout = g_timeout_add_seconds(10, unmute_login_sounds_cb, NULL);
 }
 
 const char *
@@ -507,7 +507,7 @@ pidgin_sound_play_file(const char *filename)
 							   error->message);
 			g_error_free(error);
 		} else {
-			purple_timeout_add_seconds(15, expire_old_child, GINT_TO_POINTER(pid));
+			g_timeout_add_seconds(15, expire_old_child, GINT_TO_POINTER(pid));
 		}
 
 		g_strfreev(argv);

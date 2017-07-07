@@ -90,14 +90,14 @@ void ggp_avatar_setup(PurpleConnection *gc)
 	avdata->current_update = NULL;
 	avdata->own_data = g_new0(ggp_avatar_own_data, 1);
 
-	avdata->timer = purple_timeout_add_seconds(1, ggp_avatar_timer_cb, gc);
+	avdata->timer = g_timeout_add_seconds(1, ggp_avatar_timer_cb, gc);
 }
 
 void ggp_avatar_cleanup(PurpleConnection *gc)
 {
 	ggp_avatar_session_data *avdata = ggp_avatar_get_avdata(gc);
 
-	purple_timeout_remove(avdata->timer);
+	g_source_remove(avdata->timer);
 
 	if (avdata->current_update != NULL) {
 		ggp_avatar_buddy_update_req *current_update =

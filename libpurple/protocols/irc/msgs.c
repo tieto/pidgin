@@ -123,7 +123,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 
 	irc_blist_timeout(irc);
 	if (!irc->timer)
-		irc->timer = purple_timeout_add_seconds(45, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
+		irc->timer = g_timeout_add_seconds(45, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
 }
 
 /* This function is ugly, but it's really an error handler. */

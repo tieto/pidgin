@@ -463,7 +463,7 @@ static void irc_close(PurpleConnection *gc)
 	g_clear_object(&irc->conn);
 
 	if (irc->timer)
-		purple_timeout_remove(irc->timer);
+		g_source_remove(irc->timer);
 	g_hash_table_destroy(irc->cmds);
 	g_hash_table_destroy(irc->msgs);
 	g_hash_table_destroy(irc->buddies);

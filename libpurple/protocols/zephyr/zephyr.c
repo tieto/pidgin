@@ -1876,11 +1876,11 @@ static void zephyr_login(PurpleAccount * account)
 		process_zsubs(zephyr);
 
 	if (use_zeph02(zephyr)) {
-		zephyr->nottimer = purple_timeout_add(100, check_notify_zeph02, gc);
+		zephyr->nottimer = g_timeout_add(100, check_notify_zeph02, gc);
 	} else if (use_tzc(zephyr)) {
-		zephyr->nottimer = purple_timeout_add(100, check_notify_tzc, gc);
+		zephyr->nottimer = g_timeout_add(100, check_notify_tzc, gc);
 	}
-	zephyr->loctimer = purple_timeout_add_seconds(20, check_loc, gc);
+	zephyr->loctimer = g_timeout_add_seconds(20, check_loc, gc);
 
 }
 
@@ -2007,10 +2007,10 @@ static void zephyr_close(PurpleConnection * gc)
 	g_slist_free(zephyr->subscrips);
 
 	if (zephyr->nottimer)
-		purple_timeout_remove(zephyr->nottimer);
+		g_source_remove(zephyr->nottimer);
 	zephyr->nottimer = 0;
 	if (zephyr->loctimer)
-		purple_timeout_remove(zephyr->loctimer);
+		g_source_remove(zephyr->loctimer);
 	zephyr->loctimer = 0;
 	gc = NULL;
 	if (use_zeph02(zephyr)) {

@@ -146,12 +146,12 @@ update_keepalive(PurpleConnection *gc, gboolean on)
 	if (on && !priv->keepalive)
 	{
 		purple_debug_info("connection", "Activating keepalive.\n");
-		priv->keepalive = purple_timeout_add_seconds(KEEPALIVE_INTERVAL, send_keepalive, gc);
+		priv->keepalive = g_timeout_add_seconds(KEEPALIVE_INTERVAL, send_keepalive, gc);
 	}
 	else if (!on && priv->keepalive > 0)
 	{
 		purple_debug_info("connection", "Deactivating keepalive.\n");
-		purple_timeout_remove(priv->keepalive);
+		g_source_remove(priv->keepalive);
 		priv->keepalive = 0;
 	}
 }
@@ -504,7 +504,7 @@ purple_connection_error (PurpleConnection *gc,
 	purple_signal_emit(purple_connections_get_handle(), "connection-error",
 		gc, reason, description);
 
-	priv->disconnect_timeout = purple_timeout_add(0, purple_connection_disconnect_cb,
+	priv->disconnect_timeout = g_timeout_add(0, purple_connection_disconnect_cb,
 			purple_connection_get_account(gc));
 }
 
@@ -868,7 +868,7 @@ purple_connection_finalize(GObject *object)
 		purple_connection_error_info_free(priv->error_info);
 
 	if (priv->disconnect_timeout > 0)
-		purple_timeout_remove(priv->disconnect_timeout);
+		g_source_remove(priv->disconnect_timeout);
 
 	purple_str_wipe(priv->password);
 	g_free(priv->display_name);

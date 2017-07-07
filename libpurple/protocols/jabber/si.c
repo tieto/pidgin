@@ -128,7 +128,7 @@ jabber_si_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_
 	jsx->connect_data = NULL;
 
 	if (jsx->connect_timeout > 0)
-		purple_timeout_remove(jsx->connect_timeout);
+		g_source_remove(jsx->connect_timeout);
 	jsx->connect_timeout = 0;
 
 	if(source < 0) {
@@ -194,7 +194,7 @@ static void
 jabber_si_bytestreams_ibb_timeout_remove(JabberSIXfer *jsx)
 {
 	if (jsx->ibb_timeout_handle) {
-		purple_timeout_remove(jsx->ibb_timeout_handle);
+		g_source_remove(jsx->ibb_timeout_handle);
 		jsx->ibb_timeout_handle = 0;
 	}
 }
@@ -252,7 +252,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 				jabber_si_xfer_ibb_send_init(jsx->js, xfer);
 			} else {
 				/* setup a timeout to cancel waiting for IBB open */
-				jsx->ibb_timeout_handle = purple_timeout_add_seconds(30,
+				jsx->ibb_timeout_handle = g_timeout_add_seconds(30,
 					jabber_si_bytestreams_ibb_timeout_cb, xfer);
 			}
 			/* if we are the receiver, just wait for IBB open, callback is
@@ -273,7 +273,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 		purple_proxy_connect_cancel(jsx->connect_data);
 		jsx->connect_data = NULL;
 		if (jsx->connect_timeout > 0)
-			purple_timeout_remove(jsx->connect_timeout);
+			g_source_remove(jsx->connect_timeout);
 		jsx->connect_timeout = 0;
 	}
 	if (jsx->gpi != NULL)
@@ -313,7 +313,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 
 		/* When selecting a streamhost, timeout after STREAMHOST_CONNECT_TIMEOUT seconds, otherwise it takes forever */
 		if (purple_xfer_get_xfer_type(xfer) != PURPLE_XFER_TYPE_SEND && jsx->connect_data != NULL)
-			jsx->connect_timeout = purple_timeout_add_seconds(
+			jsx->connect_timeout = g_timeout_add_seconds(
 				STREAMHOST_CONNECT_TIMEOUT, connect_timeout_cb, xfer);
 
 		jabber_id_free(dstjid);
@@ -734,7 +734,7 @@ jabber_si_connect_proxy_cb(JabberStream *js, const char *from,
 				&& !jsx->ibb_session) {
 				jabber_si_xfer_ibb_send_init(js, xfer);
 			} else {
-				jsx->ibb_timeout_handle = purple_timeout_add_seconds(30,
+				jsx->ibb_timeout_handle = g_timeout_add_seconds(30,
 					jabber_si_bytestreams_ibb_timeout_cb, xfer);
 			}
 			/* if we are receiver, just wait for IBB open stanza, callback
@@ -775,7 +775,7 @@ jabber_si_connect_proxy_cb(JabberStream *js, const char *from,
 				if (purple_xfer_get_xfer_type(xfer) == PURPLE_XFER_TYPE_SEND) {
 					jabber_si_xfer_ibb_send_init(jsx->js, xfer);
 				} else {
-					jsx->ibb_timeout_handle = purple_timeout_add_seconds(30,
+					jsx->ibb_timeout_handle = g_timeout_add_seconds(30,
 						jabber_si_bytestreams_ibb_timeout_cb, xfer);
 				}
 				/* if we are the receiver, we are already set up...*/
@@ -926,7 +926,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 				/* if we are the sender, init the IBB session... */
 				jabber_si_xfer_ibb_send_init(jsx->js, xfer);
 			} else {
-				jsx->ibb_timeout_handle = purple_timeout_add_seconds(30,
+				jsx->ibb_timeout_handle = g_timeout_add_seconds(30,
 					jabber_si_bytestreams_ibb_timeout_cb, xfer);
 			}
 			/* if we are the receiver, we should just wait... the IBB open
@@ -1314,9 +1314,9 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 			purple_network_remove_port_mapping(purple_xfer_get_fd(xfer));
 		}
 		if (jsx->connect_timeout > 0)
-			purple_timeout_remove(jsx->connect_timeout);
+			g_source_remove(jsx->connect_timeout);
 		if (jsx->ibb_timeout_handle > 0)
-			purple_timeout_remove(jsx->ibb_timeout_handle);
+			g_source_remove(jsx->ibb_timeout_handle);
 
 		if (jsx->streamhosts) {
 			g_list_foreach(jsx->streamhosts, jabber_si_free_streamhost, NULL);

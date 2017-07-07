@@ -35,7 +35,7 @@ static void jabber_keepalive_pong_cb(JabberStream *js, const char *from,
                                      PurpleXmlNode *packet, gpointer data)
 {
 	if (js->keepalive_timeout != 0) {
-		purple_timeout_remove(js->keepalive_timeout);
+		g_source_remove(js->keepalive_timeout);
 		js->keepalive_timeout = 0;
 	}
 }

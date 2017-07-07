@@ -484,6 +484,7 @@ version 3.0.0 (??/??/????):
 		* purple_status_type_set_primary_attr
 		* purple_strlcat
 		* purple_strlcpy
+		* purple_timeout_*. Use g_timeout_* or g_idle_* instead.
 		* purple_txt_cancel
 		* purple_txt_resolve_account
 		* PurpleType, use GType instead.

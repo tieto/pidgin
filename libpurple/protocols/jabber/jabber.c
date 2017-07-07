@@ -640,7 +640,7 @@ void jabber_keepalive(PurpleConnection *gc)
 		js->last_ping = now;
 
 		jabber_keepalive_ping(js);
-		js->keepalive_timeout = purple_timeout_add_seconds(120,
+		js->keepalive_timeout = g_timeout_add_seconds(120,
 				(GSourceFunc)(jabber_keepalive_timeout), gc);
 	}
 }
@@ -1165,7 +1165,7 @@ conn_close_cb(gpointer data)
 static void
 jabber_connection_schedule_close(JabberStream *js)
 {
-	js->conn_close_timeout = purple_timeout_add(0, conn_close_cb, js);
+	js->conn_close_timeout = g_timeout_add(0, conn_close_cb, js);
 }
 
 static void
@@ -1725,14 +1725,14 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->old_track);
 
 	if (js->vcard_timer != 0)
-		purple_timeout_remove(js->vcard_timer);
+		g_source_remove(js->vcard_timer);
 
 	if (js->keepalive_timeout != 0)
-		purple_timeout_remove(js->keepalive_timeout);
+		g_source_remove(js->keepalive_timeout);
 	if (js->inactivity_timer != 0)
-		purple_timeout_remove(js->inactivity_timer);
+		g_source_remove(js->inactivity_timer);
 	if (js->conn_close_timeout != 0)
-		purple_timeout_remove(js->conn_close_timeout);
+		g_source_remove(js->conn_close_timeout);
 
 	g_cancellable_cancel(js->cancellable);
 	g_object_unref(G_OBJECT(js->cancellable));
@@ -2123,14 +2123,14 @@ inactivity_cb(gpointer data)
 void jabber_stream_restart_inactivity_timer(JabberStream *js)
 {
 	if (js->inactivity_timer != 0) {
-		purple_timeout_remove(js->inactivity_timer);
+		g_source_remove(js->inactivity_timer);
 		js->inactivity_timer = 0;
 	}
 
 	g_return_if_fail(js->max_inactivity > 0);
 
 	js->inactivity_timer =
-		purple_timeout_add_seconds(js->max_inactivity,
+		g_timeout_add_seconds(js->max_inactivity,
 		                           inactivity_cb, js);
 }
 

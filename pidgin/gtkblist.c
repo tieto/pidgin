@@ -4981,7 +4981,7 @@ static gboolean pidgin_blist_select_notebook_page_cb(gpointer user_data)
 static void pidgin_blist_select_notebook_page(PidginBuddyList *gtkblist)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
-	priv->select_notebook_page_timeout = purple_timeout_add(0,
+	priv->select_notebook_page_timeout = g_timeout_add(0,
 		pidgin_blist_select_notebook_page_cb, gtkblist);
 }
 
@@ -6042,7 +6042,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	purple_blist_set_visible(purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/list_visible"));
 
 	/* start the refresh timer */
-	gtkblist->refresh_timer = purple_timeout_add_seconds(30, (GSourceFunc)pidgin_blist_refresh_timer, list);
+	gtkblist->refresh_timer = g_timeout_add_seconds(30, (GSourceFunc)pidgin_blist_refresh_timer, list);
 
 	handle = pidgin_blist_get_handle();
 
@@ -6165,7 +6165,7 @@ pidgin_blist_update_refresh_timeout()
 	blist = purple_blist_get_buddy_list();
 	gtkblist = PIDGIN_BLIST(purple_blist_get_buddy_list());
 
-	gtkblist->refresh_timer = purple_timeout_add_seconds(30,(GSourceFunc)pidgin_blist_refresh_timer, blist);
+	gtkblist->refresh_timer = g_timeout_add_seconds(30,(GSourceFunc)pidgin_blist_refresh_timer, blist);
 }
 
 static gboolean get_iter_from_node(PurpleBlistNode *node, GtkTreeIter *iter) {
@@ -6218,7 +6218,7 @@ static void pidgin_blist_remove(PurpleBuddyList *list, PurpleBlistNode *node)
 
 	if(gtknode) {
 		if(gtknode->recent_signonoff_timer > 0)
-			purple_timeout_remove(gtknode->recent_signonoff_timer);
+			g_source_remove(gtknode->recent_signonoff_timer);
 
 		purple_signals_disconnect_by_handle(gtknode);
 		g_free(gtknode);
@@ -6882,7 +6882,7 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	pidgin_blist_tooltip_destroy();
 
 	if (gtkblist->refresh_timer)
-		purple_timeout_remove(gtkblist->refresh_timer);
+		g_source_remove(gtkblist->refresh_timer);
 	if (gtkblist->timeout)
 		g_source_remove(gtkblist->timeout);
 	if (gtkblist->drag_timeout)
@@ -6902,7 +6902,7 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	if (priv->current_theme)
 		g_object_unref(priv->current_theme);
 	if (priv->select_notebook_page_timeout)
-		purple_timeout_remove(priv->select_notebook_page_timeout);
+		g_source_remove(priv->select_notebook_page_timeout);
 	g_free(priv);
 
 	g_free(gtkblist);
@@ -7494,10 +7494,10 @@ static void buddy_signonoff_cb(PurpleBuddy *buddy)
 	gtknode->recent_signonoff = TRUE;
 
 	if(gtknode->recent_signonoff_timer > 0)
-		purple_timeout_remove(gtknode->recent_signonoff_timer);
+		g_source_remove(gtknode->recent_signonoff_timer);
 	
 	g_object_ref(buddy);
-	gtknode->recent_signonoff_timer = purple_timeout_add_seconds(10,
+	gtknode->recent_signonoff_timer = g_timeout_add_seconds(10,
 			(GSourceFunc)buddy_signonoff_timeout_cb, buddy);
 }
 

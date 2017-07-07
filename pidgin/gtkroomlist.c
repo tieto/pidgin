@@ -84,7 +84,7 @@ static gint delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 		purple_roomlist_cancel_get_list(dialog->roomlist);
 
 	if (dialog->pg_update_to > 0)
-		purple_timeout_remove(dialog->pg_update_to);
+		g_source_remove(dialog->pg_update_to);
 
 	if (dialog->roomlist) {
 		PidginRoomlist *rl = purple_roomlist_get_ui_data(dialog->roomlist);

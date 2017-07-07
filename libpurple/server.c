@@ -90,7 +90,7 @@ get_last_auto_response(PurpleConnection *gc, const char *name)
 
 	/* because we're modifying or creating a lar, schedule the
 	 * function to expire them as the pref dictates */
-	purple_timeout_add_seconds((SECS_BEFORE_RESENDING_AUTORESPONSE + 1), expire_last_auto_responses, NULL);
+	g_timeout_add_seconds((SECS_BEFORE_RESENDING_AUTORESPONSE + 1), expire_last_auto_responses, NULL);
 
 	tmp = last_auto_responses;
 

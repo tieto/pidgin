@@ -155,7 +155,7 @@ peer_connection_close(PeerConnection *conn)
 
 	if (conn->connect_timeout_timer != 0)
 	{
-		purple_timeout_remove(conn->connect_timeout_timer);
+		g_source_remove(conn->connect_timeout_timer);
 		conn->connect_timeout_timer = 0;
 	}
 
@@ -243,7 +243,7 @@ void
 peer_connection_destroy(PeerConnection *conn, OscarDisconnectReason reason, const gchar *error_message)
 {
 	if (conn->destroy_timeout != 0)
-		purple_timeout_remove(conn->destroy_timeout);
+		g_source_remove(conn->destroy_timeout);
 	conn->disconnect_reason = reason;
 	g_free(conn->error_message);
 	conn->error_message = g_strdup(error_message);
@@ -261,7 +261,7 @@ peer_connection_schedule_destroy(PeerConnection *conn, OscarDisconnectReason rea
 	conn->disconnect_reason = reason;
 	g_free(conn->error_message);
 	conn->error_message = g_strdup(error_message);
-	conn->destroy_timeout = purple_timeout_add(0, peer_connection_destroy_cb, conn);
+	conn->destroy_timeout = g_timeout_add(0, peer_connection_destroy_cb, conn);
 }
 
 /*******************************************************************/
@@ -554,7 +554,7 @@ peer_connection_common_established_cb(gpointer data, gint source, const gchar *e
 		return;
 	}
 
-	purple_timeout_remove(conn->connect_timeout_timer);
+	g_source_remove(conn->connect_timeout_timer);
 	conn->connect_timeout_timer = 0;
 
 	if (conn->client_connect_data != NULL)
@@ -854,7 +854,7 @@ peer_connection_trynext(PeerConnection *conn)
 			(conn->client_connect_data != NULL))
 		{
 			/* Connecting... */
-			conn->connect_timeout_timer = purple_timeout_add_seconds(5,
+			conn->connect_timeout_timer = g_timeout_add_seconds(5,
 					peer_connection_tooktoolong, conn);
 			return;
 		}
