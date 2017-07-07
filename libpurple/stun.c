@@ -100,7 +100,7 @@ static void close_stun_conn(struct stun_conn *sc) {
 		purple_input_remove(sc->incb);
 
 	if (sc->timeout)
-		purple_timeout_remove(sc->timeout);
+		g_source_remove(sc->timeout);
 
 	if (sc->fd)
 		close(sc->fd);
@@ -167,7 +167,7 @@ static void do_test2(struct stun_conn *sc) {
 	sc->retry = 0;
 	sc->test = 2;
 	sendto(sc->fd, sc->packet, sc->packetsize, 0, (struct sockaddr *)&(sc->addr), sizeof(struct sockaddr_in));
-	sc->timeout = purple_timeout_add(500, (GSourceFunc) timeoutfunc, sc);
+	sc->timeout = g_timeout_add(500, (GSourceFunc) timeoutfunc, sc);
 }
 #endif	/* 0 */
 
@@ -275,7 +275,7 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 		close_stun_conn(sc);
 		do_callbacks();
 #else
-		purple_timeout_remove(sc->timeout);
+		g_source_remove(sc->timeout);
 		sc->timeout = 0;
 
 		do_test2(sc);
@@ -341,7 +341,7 @@ hbn_listen_cb(int fd, gpointer data) {
 	sc->test = 1;
 	sc->packet = &hdr_data;
 	sc->packetsize = sizeof(struct stun_header);
-	sc->timeout = purple_timeout_add(500, (GSourceFunc) timeoutfunc, sc);
+	sc->timeout = g_timeout_add(500, (GSourceFunc) timeoutfunc, sc);
 }
 
 static void
@@ -442,7 +442,7 @@ PurpleStunNatDiscovery *purple_stun_discover(PurpleStunCallback cb) {
 
 		if (use_cached_result) {
 			if(cb)
-				purple_timeout_add(10, call_callback, cb);
+				g_timeout_add(10, call_callback, cb);
 			return &nattype;
 		}
 	}
@@ -451,7 +451,7 @@ PurpleStunNatDiscovery *purple_stun_discover(PurpleStunCallback cb) {
 		nattype.status = PURPLE_STUN_STATUS_UNKNOWN;
 		nattype.lookup_time = time(NULL);
 		if(cb)
-			purple_timeout_add(10, call_callback, cb);
+			g_timeout_add(10, call_callback, cb);
 		return &nattype;
 	}
 

@@ -217,7 +217,7 @@ purple_account_register_completed(PurpleAccount *account, gboolean succeeded)
 	closure->account = g_object_ref(account);
 	closure->succeeded = succeeded;
 
-	purple_timeout_add(0, purple_account_register_completed_cb, closure);
+	g_timeout_add(0, purple_account_register_completed_cb, closure);
 }
 
 void
@@ -1066,7 +1066,7 @@ purple_account_set_public_alias(PurpleAccount *account,
 				g_new0(struct public_alias_closure, 1);
 		closure->account = g_object_ref(account);
 		closure->failure_cb = failure_cb;
-		purple_timeout_add(0, set_public_alias_unsupported, closure);
+		g_timeout_add(0, set_public_alias_unsupported, closure);
 	}
 }
 
@@ -1106,7 +1106,7 @@ purple_account_get_public_alias(PurpleAccount *account,
 				g_new0(struct public_alias_closure, 1);
 		closure->account = g_object_ref(account);
 		closure->failure_cb = failure_cb;
-		purple_timeout_add(0, get_public_alias_unsupported, closure);
+		g_timeout_add(0, get_public_alias_unsupported, closure);
 	}
 }
 

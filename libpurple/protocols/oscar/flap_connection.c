@@ -271,7 +271,7 @@ flap_connection_send_snac_with_priority(OscarData *od, FlapConnection *conn, gui
 		}
 
 		if (conn->queued_timeout == 0)
-			conn->queued_timeout = purple_timeout_add(500, flap_connection_send_queued, conn);
+			conn->queued_timeout = g_timeout_add(500, flap_connection_send_queued, conn);
 
 		return;
 	}
@@ -531,7 +531,7 @@ flap_connection_destroy_cb(gpointer data)
 	}
 
 	if (conn->queued_timeout > 0)
-		purple_timeout_remove(conn->queued_timeout);
+		g_source_remove(conn->queued_timeout);
 
 	g_free(conn);
 
@@ -546,7 +546,7 @@ void
 flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason, const gchar *error_message)
 {
 	if (conn->destroy_timeout != 0)
-		purple_timeout_remove(conn->destroy_timeout);
+		g_source_remove(conn->destroy_timeout);
 	conn->disconnect_reason = reason;
 	g_free(conn->error_message);
 	conn->error_message = g_strdup(error_message);
@@ -580,7 +580,7 @@ flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason rea
 	conn->disconnect_reason = reason;
 	g_free(conn->error_message);
 	conn->error_message = g_strdup(error_message);
-	conn->destroy_timeout = purple_timeout_add(0, flap_connection_destroy_cb, conn);
+	conn->destroy_timeout = g_timeout_add(0, flap_connection_destroy_cb, conn);
 }
 
 /**

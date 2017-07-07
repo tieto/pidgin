@@ -523,14 +523,6 @@ AC_ARG_ENABLE(screensaver,
 	[AS_HELP_STRING([--disable-screensaver],
 		[compile without X screensaver extension (used to detect idleness)])],
 	enable_screensaver="$enableval", enable_screensaver="yes")
-AC_ARG_ENABLE(sm,
-	[AS_HELP_STRING([--disable-sm],
-		[compile without X session management support])],
-	enable_sm="$enableval", enable_sm="yes")
-AC_ARG_ENABLE(startup-notification,
-	[AS_HELP_STRING([--disable-startup-notification],
-		[compile without startup notification support])],
-	enable_startup_notification="$enableval", enable_startup_notification="yes")
 AC_ARG_ENABLE(enchant,
 	[AS_HELP_STRING([--disable-enchant],
 		[compile without Enchant spell checking support])],
@@ -645,7 +637,6 @@ Use --without-x if you do not need X11 support.
 		AC_SUBST(X11_CFLAGS)
 	else
 		enable_screensaver=no
-		enable_sm=no
 		enable_gestures=no
 	fi
 
@@ -687,36 +678,6 @@ this is required for detecting idle time by mouse and keyboard usage.
 			fi
 		else
 			AC_MSG_ERROR([X support is required to build with XScreenSaver extensions])
-		fi
-	fi
-
-	dnl #######################################################################
-	dnl # Check for X session management libs
-	dnl #######################################################################
-	if test "x$enable_sm" = "xyes"; then
-		if test "x$with_x" = "xyes" ; then
-			enable_sm=no
-			AC_CHECK_LIB(SM, SmcSaveYourselfDone, found_sm_lib=true, , [$x_libpath_add -lICE])
-			if test "x$found_sm_lib" = "xtrue"; then
-				oldCPPFLAGS="$CPPFLAGS"
-				CPPFLAGS="$CPPFLAGS $x_incpath_add"
-				AC_CHECK_HEADERS(X11/SM/SMlib.h, SM_LIBS="$x_libpath_add -lSM -lICE" enable_sm=yes)
-				CPPFLAGS="$oldCPPFLAGS"
-			fi
-
-			if test "x$enable_sm" = "xyes"; then
-				AC_DEFINE(USE_SM, 1, [Define if we're using X Session Management.])
-				AC_SUBST(SM_LIBS)
-			else
-				if test "x$force_deps" = "xyes" ; then
-					AC_MSG_ERROR([
-X session management development headers not found.
-Use --disable-sm if you do not need session management support.
-])
-				fi
-			fi
-		else
-			AC_MSG_ERROR([X support is required to build with X session management support])
 		fi
 	fi
 
@@ -788,8 +749,6 @@ else # GTK
 	enable_cap=no
 	enable_gevolution=no
 	enable_screensaver=no
-	enable_sm=no
-	enable_startup_notification=no
 fi	# GTK
 
 AM_CONDITIONAL(ENABLE_GTK, test "x$enable_gtkui" = "xyes")
@@ -2172,8 +2131,6 @@ echo Install translations.......... : $enable_i18n
 echo Has you....................... : yes
 echo
 echo Use XScreenSaver Extension.... : $enable_screensaver
-echo Use X Session Management...... : $enable_sm
-echo Use startup notification...... : $enable_startup_notification
 echo Build with Enchant support.... : $use_enchant
 echo Build with GCR widgets........ : $enable_gcr
 echo Build Unity integration plugin.: $enable_unity

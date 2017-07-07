@@ -88,7 +88,7 @@ PurpleStringref *purple_stringref_new_noref(const char *value)
 	newref->ref = 0x80000000;
 
 	if (gclist == NULL)
-		purple_timeout_add(0, gs_idle_cb, NULL);
+		g_timeout_add(0, gs_idle_cb, NULL);
 	gclist = g_list_prepend(gclist, newref);
 
 	return newref;

@@ -485,7 +485,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	}
 
 	if (js->vcard_timer) {
-		purple_timeout_remove(js->vcard_timer);
+		g_source_remove(js->vcard_timer);
 		js->vcard_timer = 0;
 	}
 
@@ -709,7 +709,7 @@ static void jabber_buddy_info_destroy(JabberBuddyInfo *jbi)
 {
 	/* Remove the timeout, which would otherwise trigger jabber_buddy_get_info_timeout() */
 	if (jbi->timeout_handle > 0)
-		purple_timeout_remove(jbi->timeout_handle);
+		g_source_remove(jbi->timeout_handle);
 
 	g_free(jbi->jid);
 	g_hash_table_destroy(jbi->resources);
@@ -977,7 +977,7 @@ static void jabber_vcard_save_mine(JabberStream *js, const char *from,
 		 * <error code="500" type="wait"><internal-server-error/></error>.
 		 */
 		if (js->googletalk)
-			js->vcard_timer = purple_timeout_add_seconds(10, set_own_vcard_cb,
+			js->vcard_timer = g_timeout_add_seconds(10, set_own_vcard_cb,
 			                                             js);
 		else
 			jabber_set_info(js->gc, purple_account_get_user_info(account));
@@ -1644,7 +1644,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 	}
 
 	js->pending_buddy_info_requests = g_slist_prepend(js->pending_buddy_info_requests, jbi);
-	jbi->timeout_handle = purple_timeout_add_seconds(30, jabber_buddy_get_info_timeout, jbi);
+	jbi->timeout_handle = g_timeout_add_seconds(30, jabber_buddy_get_info_timeout, jbi);
 }
 
 void jabber_buddy_get_info(PurpleConnection *gc, const char *who)

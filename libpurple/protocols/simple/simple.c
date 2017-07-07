@@ -1766,7 +1766,7 @@ static void login_cb(gpointer data, gint source, const gchar *error_message) {
 
 	conn = connection_create(sip, source);
 
-	sip->registertimeout = purple_timeout_add(g_random_int_range(10000, 100000), (GSourceFunc)subscribe_timeout, sip);
+	sip->registertimeout = g_timeout_add(g_random_int_range(10000, 100000), (GSourceFunc)subscribe_timeout, sip);
 
 	do_register(sip);
 
@@ -1808,8 +1808,8 @@ static void simple_udp_host_resolved_listen_cb(int listenfd, gpointer data) {
 
 	sip->listenpa = purple_input_add(sip->fd, PURPLE_INPUT_READ, simple_udp_process, sip->gc);
 
-	sip->resendtimeout = purple_timeout_add(2500, (GSourceFunc) resend_timeout, sip);
-	sip->registertimeout = purple_timeout_add(g_random_int_range(10000, 100000), (GSourceFunc)subscribe_timeout, sip);
+	sip->resendtimeout = g_timeout_add(2500, (GSourceFunc) resend_timeout, sip);
+	sip->registertimeout = g_timeout_add(g_random_int_range(10000, 100000), (GSourceFunc)subscribe_timeout, sip);
 	do_register(sip);
 }
 
@@ -2051,9 +2051,9 @@ static void simple_close(PurpleConnection *gc)
 	if (sip->tx_handler)
 		purple_input_remove(sip->tx_handler);
 	if (sip->resendtimeout)
-		purple_timeout_remove(sip->resendtimeout);
+		g_source_remove(sip->resendtimeout);
 	if (sip->registertimeout)
-		purple_timeout_remove(sip->registertimeout);
+		g_source_remove(sip->registertimeout);
 
 	g_cancellable_cancel(sip->cancellable);
 	g_object_unref(G_OBJECT(sip->cancellable));

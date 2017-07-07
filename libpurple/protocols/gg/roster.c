@@ -237,7 +237,7 @@ void ggp_roster_setup(PurpleConnection *gc)
 	rdata->is_updating = FALSE;
 
 	if (ggp_roster_enabled())
-		rdata->timer = purple_timeout_add_seconds(2,
+		rdata->timer = g_timeout_add_seconds(2,
 			ggp_roster_timer_cb, gc);
 }
 
@@ -246,7 +246,7 @@ void ggp_roster_cleanup(PurpleConnection *gc)
 	ggp_roster_session_data *rdata = ggp_roster_get_rdata(gc);
 
 	if (rdata->timer)
-		purple_timeout_remove(rdata->timer);
+		g_source_remove(rdata->timer);
 	ggp_roster_content_free(rdata->content);
 	g_list_free_full(rdata->sent_updates, ggp_roster_change_free);
 	g_list_free_full(rdata->pending_updates, ggp_roster_change_free);

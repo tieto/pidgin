@@ -86,7 +86,7 @@ void
 purple_accounts_schedule_save(void)
 {
 	if (save_timer == 0)
-		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
+		save_timer = g_timeout_add_seconds(5, save_cb, NULL);
 }
 
 static void
@@ -998,7 +998,7 @@ purple_accounts_uninit(void)
 	gpointer handle = purple_accounts_get_handle();
 	if (save_timer != 0)
 	{
-		purple_timeout_remove(save_timer);
+		g_source_remove(save_timer);
 		save_timer = 0;
 		sync_accounts();
 	}

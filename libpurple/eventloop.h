@@ -62,54 +62,6 @@ G_BEGIN_DECLS
 /**************************************************************************/
 
 /**
- * purple_timeout_add:
- * @interval: The time between calls of the function, in milliseconds.
- * @function: (scope call): The function to call.
- * @data:     data to pass to @function.
- *
- * Creates a callback timer.
- *
- * The timer will repeat until the function returns %FALSE. The
- * first call will be at the end of the first interval.
- *
- * If the timer is in a multiple of seconds, use purple_timeout_add_seconds()
- * instead as it allows UIs to group timers for power efficiency.
- *
- * Returns: A handle to the timer which can be passed to
- *         purple_timeout_remove() to remove the timer.
- */
-guint purple_timeout_add(guint interval, GSourceFunc function, gpointer data);
-
-/**
- * purple_timeout_add_seconds:
- * @interval: The time between calls of the function, in seconds.
- * @function: (scope call): The function to call.
- * @data:     data to pass to @function.
- *
- * Creates a callback timer.
- *
- * The timer will repeat until the function returns %FALSE. The
- * first call will be at the end of the first interval.
- *
- * This function allows UIs to group timers for better power efficiency.  For
- * this reason, @interval may be rounded by up to a second.
- *
- * Returns: A handle to the timer which can be passed to
- *         purple_timeout_remove() to remove the timer.
- */
-guint purple_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data);
-
-/**
- * purple_timeout_remove:
- * @handle: The handle, as returned by purple_timeout_add().
- *
- * Removes a timeout handler.
- *
- * Returns: %TRUE if the handler was successfully removed.
- */
-gboolean purple_timeout_remove(guint handle);
-
-/**
  * purple_input_add:
  * @fd:        The input file descriptor.
  * @cond:      The condition type.
