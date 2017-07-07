@@ -426,7 +426,7 @@ gchar *pidgin_webview_get_selected_text(PidginWebView *webview);
  *
  * Checks, if the @webview is empty.
  *
- * Returns %TRUES, if the @webview is empty, %FALSE otherwise.
+ * Returns %TRUE, if the @webview is empty, %FALSE otherwise.
  */
 gboolean
 pidgin_webview_is_empty(PidginWebView *webview);
