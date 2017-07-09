@@ -53,7 +53,6 @@ static const PidginDBusScreenSaverInfo screensavers[] = {
 		"/org/kde/ScreenSaver",
 		"org.kde.ScreenSaver"
 	},
-	{ NULL, NULL, NULL}
 };
 #endif /* !HAVE_IOKIT && !_WIN32 */
 
@@ -100,7 +99,7 @@ pidgin_get_time_idle(void)
 	/* Query Windows */
 	return (GetTickCount() - winpidgin_get_lastactive()) / 1000;
 #  else
-	static const PidginDBusScreenSaverInfo *info = screensavers;
+	static guint idx = 0;
 	GApplication *app;
 	GDBusConnection *conn;
 	GVariant *reply = NULL;
@@ -124,7 +123,9 @@ pidgin_get_time_idle(void)
 		return 0;
 	}
 
-	while (reply == NULL && info->bus_name != NULL) {
+	for (; idx < G_N_ELEMENTS(screensavers); ++idx) {
+		const PidginDBusScreenSaverInfo *info = &screensavers[idx];
+
 		reply = g_dbus_connection_call_sync(conn,
 				info->bus_name, info->object_path,
 				info->iface_name, "GetActiveTime",
@@ -156,7 +157,6 @@ pidgin_get_time_idle(void)
 		}
 
 		g_clear_error(&error);
-		++info;
 	}
 
 	if (reply == NULL) {
