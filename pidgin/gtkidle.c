@@ -26,7 +26,7 @@
 #ifdef HAVE_IOKIT
 # include <CoreFoundation/CoreFoundation.h>
 # include <IOKit/IOKitLib.h>
-#elif defined _WIN32
+#elif defined (_WIN32)
 # include "gtkwin32dep.h"
 #endif
 
