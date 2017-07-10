@@ -464,13 +464,13 @@ fi #enable_i18n
 AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 
 dnl #######################################################################
-dnl # Check for GLib 2.36 (required)
+dnl # Check for GLib 2.40 (required)
 dnl #######################################################################
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.36.0 gio-2.0 gobject-2.0 gthread-2.0], , [
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.40.0 gio-2.0 gobject-2.0 gthread-2.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
-You must have GLib 2.36.0 or newer development headers installed to build.
+You must have GLib 2.40.0 or newer development headers installed to build.
 
 If you have these installed already you may need to install pkg-config so
 I can find them.

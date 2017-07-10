@@ -388,9 +388,9 @@ if INSTALL_I18N
 endif
 
 # #######################################################################
-# # Check for GLib 2.36 (required)
+# # Check for GLib 2.40 (required)
 # #######################################################################
-glib = dependency('glib-2.0', version : '>= 2.36.0')
+glib = dependency('glib-2.0', version : '>= 2.40.0')
 gio = dependency('gio-2.0')
 gmodule = dependency('gmodule-2.0')
 gobject = dependency('gobject-2.0')
