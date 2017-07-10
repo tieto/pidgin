@@ -376,28 +376,36 @@ purple_image_get_mimetype(PurpleImage *image) {
 
 const gchar *
 purple_image_generate_filename(PurpleImage *image) {
-	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+	PurpleImagePrivate *priv = NULL;
+	GString *str = NULL;
 	gconstpointer data;
 	gsize len;
-	const gchar *ext;
+	const gchar *ext = NULL;
 	gchar *checksum;
 
-	g_return_val_if_fail(priv != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_IMAGE(image), NULL);
+
+	priv = PURPLE_IMAGE_GET_PRIVATE(image);
 
 	if (priv->gen_filename)
 		return priv->gen_filename;
 
-	ext = purple_image_get_extension(image);
+	/* grab the image's data and size of that data */
 	data = purple_image_get_data(image);
 	len = purple_image_get_data_size(image);
 
-	g_return_val_if_fail(ext != NULL, NULL);
-	g_return_val_if_fail(data != NULL, NULL);
-	g_return_val_if_fail(len > 0, NULL);
-
+	/* create a checksum of it and use it as the start of our filename */
 	checksum = g_compute_checksum_for_data(G_CHECKSUM_SHA1, data, len);
-	priv->gen_filename = g_strdup_printf("%s.%s", checksum, ext);
+	str = g_string_new(checksum);
 	g_free(checksum);
+
+	/* if the image has a known format, set the extension appropriately */
+	ext = purple_image_get_extension(image);
+	if(ext != NULL)
+		g_string_append_printf(str, ".%s", ext);
+
+	/* free the string but store the result */
+	priv->gen_filename = g_string_free(str, FALSE);
 
 	return priv->gen_filename;
 }
