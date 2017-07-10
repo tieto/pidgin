@@ -1014,7 +1014,7 @@ if SUNCC
 	add_project_arguments('-features=extensions', language : 'c')
 endif
 
-pidginpath = find_program('pidgin')
+pidginpath = find_program('pidgin', required : false)
 
 if get_option('glib-errors-trace')
 	if compiler.get_id() == 'clang'
