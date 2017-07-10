@@ -22,7 +22,7 @@
 #ifndef PURPLE_CONTACT_H
 #define PURPLE_CONTACT_H
 /**
- * SECTION:contact.h
+ * SECTION:contact
  * @section_id: libpurple-contact
  * @short_description: <filename>contact.h</filename>
  * @title: Contact Object

@@ -69,7 +69,6 @@ typedef struct _PurpleMood {
 
 /**
  * PurpleStatusPrimitive:
- *
  * @PURPLE_STATUS_UNSET: The status is not set
  * @PURPLE_STATUS_OFFLINE: The status is offline
  * @PURPLE_STATUS_AVAILABLE: The status is available
@@ -80,6 +79,7 @@ typedef struct _PurpleMood {
  * @PURPLE_STATUS_MOBILE: The status is mobile
  * @PURPLE_STATUS_TUNE: The status includes a song title
  * @PURPLE_STATUS_MOOD: The status includes a mood
+ *
  * A primitive defining the basic structure of a status type.
  */
 /*

@@ -35,7 +35,7 @@ SCAN_OPTIONS=\
 
 # Extra options to supply to gtkdoc-mkdb.
 # e.g. MKDB_OPTIONS=--xml-mode --output-format=xml
-MKDB_OPTIONS=--xml-mode --output-format=xml
+MKDB_OPTIONS=--xml-mode --output-format=xml --ignore-files="$(IGNORE_HFILES)"
 
 # Extra options to supply to gtkdoc-mktmpl
 # e.g. MKTMPL_OPTIONS=--only-section-tmpl
@@ -63,10 +63,9 @@ EXTRA_HFILES=
 IGNORE_HFILES=\
 	plugins \
 	test \
-	wms \
+	libgnt/wms \
 	getopt.h \
 	gntinternal.h \
-	gntmarshal.h \
 	gnt-skel.h
 
 # Images to copy into HTML directory.

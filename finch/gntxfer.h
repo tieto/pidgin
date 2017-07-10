@@ -39,8 +39,6 @@
  * finch_xfer_dialog_new:
  *
  * Creates a new file transfer dialog.
- *
- * Returns: The new dialog.
  */
 void finch_xfer_dialog_new(void);
 

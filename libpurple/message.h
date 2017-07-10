@@ -103,7 +103,7 @@ purple_message_new_outgoing(const gchar *who, const gchar *contents,
  * @who: Message's author.
  * @contents: The contents of a message.
  * @flags: The message flags.
- * @timestamp: The time of transmitting a message. May be %0 for a current time.
+ * @timestamp: The time of transmitting a message. May be 0 for a current time.
  *
  * Creates new incoming message (the user is the recipient).
  *

@@ -1,7 +1,4 @@
-/**
- * @file gtkwin32dep.c UI Win32 Specific Functionality
- * @ingroup win32
- *
+/*
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.

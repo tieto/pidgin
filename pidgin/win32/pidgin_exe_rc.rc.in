@@ -30,4 +30,4 @@ VS_VERSION_INFO VERSIONINFO
     END
   END
 
-PIDGIN_ICON			ICON "pixmaps/pidgin.ico"
+PIDGIN_ICON			ICON "../pixmaps/pidgin.ico"

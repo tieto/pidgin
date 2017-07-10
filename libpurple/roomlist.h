@@ -181,6 +181,7 @@ PurpleRoomlist *purple_roomlist_new(PurpleAccount *account);
 
 /**
  * purple_roomlist_get_account:
+ * @list: The room list.
  *
  * Retrieve the PurpleAccount that was given when the room list was
  * created.

@@ -138,7 +138,7 @@ purple_smiley_list_class_init(PurpleSmileyListClass *klass) {
 	obj_class->finalize = purple_smiley_list_finalize;
 
 	properties[PROP_DROP_FAILED_REMOTES] = g_param_spec_boolean(
-		"drop-failed-remotes", "Drop failed PurpleRemoteSmileys",
+		"drop-failed-remotes", "Drop failed remote PurpleSmileys",
 		"Watch added remote smileys and remove them from the list, "
 		"if they change their state to failed", FALSE,
 		G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);

@@ -35,7 +35,7 @@ SCAN_OPTIONS=\
 
 # Extra options to supply to gtkdoc-mkdb.
 # e.g. MKDB_OPTIONS=--xml-mode --output-format=xml
-MKDB_OPTIONS=--xml-mode --output-format=xml
+MKDB_OPTIONS=--xml-mode --output-format=xml --ignore-files="$(IGNORE_HFILES)"
 
 # Extra options to supply to gtkdoc-mktmpl
 # e.g. MKTMPL_OPTIONS=--only-section-tmpl
@@ -76,7 +76,6 @@ IGNORE_HFILES=\
 	dbus-types.h \
 	glibcompat.h \
 	internal.h \
-	marshallers.h \
 	purple-client.h \
 	purple-client-bindings.h \
 	valgrind.h

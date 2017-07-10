@@ -1,0 +1,119 @@
+option('win32-dirs', type : 'combo', choices : ['classic', 'fhs'], value : 'classic',
+       description : 'use win32 "classic" (Program Files-like) or "fhs" (unix-like) directory structure (default: "classic")')
+
+option('nls', type : 'boolean', value : true,
+       description : 'enable installation of translation files')
+
+option('extraversion', type : 'string',
+	   description : 'extra version number to be displayed in Help->About and --help (for packagers)')
+
+option('missing-dependencies', type : 'boolean', value : false,
+       description : 'skip missing dependencies instead of aborting configuration')
+
+option('x', type : 'boolean', value : true)
+
+option('gtkui', type : 'boolean', value : true,
+       description : 'compile with GTK+ user interface')
+option('consoleui', type : 'boolean', value : true,
+       description : 'compile with console user interface')
+
+option('doc', type : 'boolean', value : false,
+       description : 'build documentation with gtk-doc')
+
+option('screensaver', type : 'boolean', value : true,
+       description : 'compile with X screensaver extension (used to detect idleness)')
+
+option('enchant', type : 'boolean', value : true,
+       description : 'compile with Enchange spell checking support')
+
+option('gevolution', type : 'boolean', value : false,
+       description : 'compile with the Evolution plugin')
+
+option('cap', type : 'boolean', value : false,
+       description : 'compile with Contact Availability Prediction plugin')
+
+option('gestures', type : 'boolean', value : true,
+       description : 'compile with the gestures plugin')
+
+option('gcr', type : 'boolean', value : false,
+       description : 'compile with GCR certificate widgets')
+
+option('gstreamer', type : 'boolean', value : true,
+       description : 'compile with GStreamer audio support')
+
+option('gstreamer-video', type : 'boolean', value : true,
+       description : 'compile with GStreamer 1.0 Video Overlay support')
+
+option('farstream', type : 'boolean', value : true,
+       description : 'compile with farstream support')
+
+option('vv', type : 'boolean', value : true,
+       description : 'compile with voice and video support')
+
+option('idn', type : 'boolean', value : true,
+       description : 'compile with IDN support')
+
+option('meanwhile', type : 'boolean', value : true,
+       description : 'compile with meanwhile')
+
+option('avahi', type : 'boolean', value : true,
+       description : 'compile with avahi (required for Bonjour support)')
+
+option('libgadu', type : 'boolean', value : true,
+       description : 'compile with libgadu (required for GaduGadu support)')
+
+option('silc', type : 'boolean', value : true,
+       description : 'compile with SILC plugin')
+
+option('static-prpls', type : 'string',
+       description : 'Link to certain protocols statically')
+
+option('dynamic-prpls', type : 'string', value: 'all',
+       description : 'specify which protocols to build dynamically')
+
+option('plugins', type : 'boolean', value : true,
+       description : 'compile with plugin support')
+
+option('krb4', type : 'boolean', value : false,
+       description : 'compile Zephyr plugin with Kerberos 4 support')
+
+option('zephyr', type : 'boolean', value : false,
+       description : 'compile Zephyr plugin against external libzephyr')
+
+option('fortify', type : 'boolean', value : true,
+       description : 'compile with FORTIFY_SOURCE support')
+
+option('glib-errors-trace', type : 'boolean', value : false,
+       description : 'print backtraces for glib errors')
+
+option('dbus', type : 'boolean', value : true,
+       description : 'enable D-Bus support')
+
+option('unity-integration', type : 'boolean', value : false,
+       description : 'compile with support for unity integration plugin')
+
+option('secret-service', type : 'boolean', value : true,
+       description : 'enable Secret Service support')
+
+option('gnome-keyring', type : 'boolean', value : true,
+       description : 'enable GNOME Keyring support')
+
+option('kwallet', type : 'boolean', value : true,
+       description : 'enable KWallet support')
+
+option('system-ssl-certs', type : 'string',
+       description : 'directory containing system-wide SSL CA certificates')
+option('nettle', type : 'boolean', value : true,
+       description : 'enable Nettle support')
+
+option('cyrus-sasl', type : 'boolean', value : false,
+       description : 'enable Cyrus SASL support for XMPP/IRC')
+
+option('pixmaps-install', type : 'boolean', value : true,
+       description : 'enable installation of pixmap files - Pidgin still needs them!')
+
+option('trayicon-compat', type : 'boolean', value : false,
+       description : 'install tray icons in location compatible with older releases of hicolor-icon-theme')
+
+option('debug', type : 'boolean', value : false,
+       description : 'compile with debugging support')

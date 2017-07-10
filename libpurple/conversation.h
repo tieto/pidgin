@@ -212,16 +212,16 @@ struct _PurpleConversationClass {
  * @destroy_conversation: Called just before @conv is freed.
  * @write_chat: Write a message to a chat. If this field is %NULL, libpurple
  *              will fall back to using @write_conv.
- *              See purple_conversation_write().
+ *              See purple_conversation_write_message().
  * @write_im: Write a message to an IM conversation. If this field is %NULL,
  *            libpurple will fall back to using @write_conv.
- *            See purple_conversation_write().
+ *            See purple_conversation_write_message().
  * @write_conv: Write a message to a conversation. This is used rather than the
  *              chat- or im-specific ops for errors, system messages (such as "x
  *              is now know as y"), and as the fallback if @write_im and
  *              @write_chat are not implemented. It should be implemented, or
  *              the UI will miss conversation error messages and your users will
- *              hate you. See purple_conversation_write().
+ *              hate you. See purple_conversation_write_message().
  * @chat_add_users: Add @cbuddies to a chat.
  *                  <sbr/>@cbuddies:     A GList of #PurpleChatUser structs.
  *                  <sbr/>@new_arrivals: Whether join notices should be shown.

@@ -88,6 +88,7 @@ G_BEGIN_DECLS
  * @level:    The debug level.
  * @category: The category (or %NULL).
  * @format:   The format string.
+ * @...:  The parameters to insert into the format string.
  *
  * Outputs debug information.
  */
@@ -98,6 +99,7 @@ void purple_debug(PurpleDebugLevel level, const char *category,
  * purple_debug_misc:
  * @category: The category (or %NULL).
  * @format:   The format string.
+ * @...:  The parameters to insert into the format string.
  *
  * Outputs misc. level debug information.
  *
@@ -112,6 +114,7 @@ void purple_debug_misc(const char *category, const char *format, ...) G_GNUC_PRI
  * purple_debug_info:
  * @category: The category (or %NULL).
  * @format:   The format string.
+ * @...:  The parameters to insert into the format string.
  *
  * Outputs info level debug information.
  *
@@ -126,6 +129,7 @@ void purple_debug_info(const char *category, const char *format, ...) G_GNUC_PRI
  * purple_debug_warning:
  * @category: The category (or %NULL).
  * @format:   The format string.
+ * @...:  The parameters to insert into the format string.
  *
  * Outputs warning level debug information.
  *
@@ -140,6 +144,7 @@ void purple_debug_warning(const char *category, const char *format, ...) G_GNUC_
  * purple_debug_error:
  * @category: The category (or %NULL).
  * @format:   The format string.
+ * @...:  The parameters to insert into the format string.
  *
  * Outputs error level debug information.
  *
@@ -154,6 +159,7 @@ void purple_debug_error(const char *category, const char *format, ...) G_GNUC_PR
  * purple_debug_fatal:
  * @category: The category (or %NULL).
  * @format:   The format string.
+ * @...:  The parameters to insert into the format string.
  *
  * Outputs fatal error level debug information.
  *

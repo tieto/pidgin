@@ -24,14 +24,14 @@
 #ifndef _PURPLE_QUEUED_OUTPUT_STREAM_H
 #define _PURPLE_QUEUED_OUTPUT_STREAM_H
 /**
- * SECTION:queued-output-stream
- * @section_id: libpurple-queued-output-stream
+ * SECTION:queuedoutputstream
+ * @section_id: libpurple-queuedoutputstream
  * @short_description: GOutputStream for queuing data to output
  * @title: GOutputStream class
  *
- * A #GQueuedOutputStream is a #GOutputStream which allows data to be queued
- * for outputting. It differs from a #GBufferedOutputStream in that it allows
- * for data to be queued while other operations are in progress.
+ * A #PurpleQueuedOutputStream is a #GOutputStream which allows data to be
+ * queued for outputting. It differs from a #GBufferedOutputStream in that
+ * it allows for data to be queued while other operations are in progress.
  */
 
 #include <gio/gio.h>
@@ -40,10 +40,10 @@ G_BEGIN_DECLS
 
 #define PURPLE_TYPE_QUEUED_OUTPUT_STREAM		(purple_queued_output_stream_get_type())
 #define PURPLE_QUEUED_OUTPUT_STREAM(o)			(G_TYPE_CHECK_INSTANCE_CAST((o), PURPLE_TYPE_QUEUED_OUTPUT_STREAM, PurpleQueuedOutputStream))
-#define PURPLE_QUEUED_OUTPUT_STREAM_CLASS(k)		(G_TYPE_CHECK_CLASS_CAST((k), PURPLE_TYPE_QUEUED_OUTPUT_STREAM, GQueuedOutputStreamClass))
-#define PURPLE_IS_QUEUED_OUTPUT_STREAM(o)		(G_TYPE_CHECK_INSTANCE_TYPE((o), PURPLE_TYPE_QUEUED_OUTPUT_STREAM)
+#define PURPLE_QUEUED_OUTPUT_STREAM_CLASS(k)		(G_TYPE_CHECK_CLASS_CAST((k), PURPLE_TYPE_QUEUED_OUTPUT_STREAM, PurpleQueuedOutputStreamClass))
+#define PURPLE_IS_QUEUED_OUTPUT_STREAM(o)		(G_TYPE_CHECK_INSTANCE_TYPE((o), PURPLE_TYPE_QUEUED_OUTPUT_STREAM))
 #define PURPLE_IS_QUEUED_OUTPUT_STREAM_CLASS(k)		(G_TYPE_CHECK_CLASS_TYPE((k), PURPLE_TYPE_QUEUED_OUTPUT_STREAM))
-#define PURPLE_IS_QUEUED_OUTPUT_STREAM_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS((o), PURPLE_TYPE_UEUED_OUTPUT_STREAM, GQueuedOutputStreamClass))
+#define PURPLE_IS_QUEUED_OUTPUT_STREAM_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS((o), PURPLE_TYPE_QUEUED_OUTPUT_STREAM, PurpleQueuedOutputStreamClass))
 
 /**
  * PurpleQueuedOutputStream:

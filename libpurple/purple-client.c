@@ -58,7 +58,7 @@ static GSList *garray_int_to_gslist(GArray *array)
 	return list;
 }
 
-#include "purple-client-bindings.c"
+#include "purple-client-bindings.ch"
 
 static void lose(const char *fmt, ...) G_GNUC_NORETURN G_GNUC_PRINTF (1, 2);
 static void lose_gerror(const char *prefix, GError *error) G_GNUC_NORETURN;

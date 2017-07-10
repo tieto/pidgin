@@ -75,9 +75,11 @@ typedef void (*PurplePrefCallback) (const char *name, PurplePrefType type,
 		gconstpointer val, gpointer data);
 
 /**
+ * PurplePrefCallbackData:
+ *
  * Opaque type to carry callback information
  *
- * @since 2.11.0
+ * Since: 2.11.0
  */
 typedef struct _PurplePrefCallbackData PurplePrefCallbackData;
 
@@ -85,6 +87,8 @@ typedef struct _PurplePrefCallbackData PurplePrefCallbackData;
 typedef struct _PurplePrefsUiOps PurplePrefsUiOps;
 
 /**
+ * PurplePrefsUiOps:
+ *
  * Prefs UI operations. This allows overriding the prefs.xml storage with
  * anything else. 
  *
@@ -92,7 +96,7 @@ typedef struct _PurplePrefsUiOps PurplePrefsUiOps;
  * corresponding purple_prefs_* method, and disables the prefs.xml code for it.
  * This means that to do anything useful, all the methods must be implemented.
  *
- * @since 2.11.0
+ * Since: 2.11.0
  */
 struct _PurplePrefsUiOps
 {
@@ -159,18 +163,23 @@ G_BEGIN_DECLS
  *****************************************************************************/
 
 /**
+ * purple_prefs_set_ui_ops:
+ * @ops: The UI operations structure.
+ *
  * Sets the UI operations structure to be used for preferences.
  *
- * @param ops The UI operations structure.
- * @since 2.11.0
+ * Since: 2.11.0
  */
 void purple_prefs_set_ui_ops(PurplePrefsUiOps *ops);
 
 /**
+ * purple_prefs_get_ui_ops:
+ *
  * Returns the UI operations structure used for preferences.
  *
- * @return The UI operations structure in use.
- * @since 2.11.0
+ * Returns: (transfer none): The UI operations structure in use.
+ *
+ * Since: 2.11.0
  */
 PurplePrefsUiOps *purple_prefs_get_ui_ops(void);
 
@@ -492,10 +501,12 @@ void purple_prefs_disconnect_by_handle(void *handle);
 void purple_prefs_trigger_callback(const char *name);
 
 /**
+ * purple_prefs_trigger_callback_object:
+ *
  * Trigger callbacks as if the pref changed, taking a #PurplePrefCallbackData
  * instead of a name
  *
- * @since 2.11.0
+ * Since: 2.11.0
  */
 void purple_prefs_trigger_callback_object(PurplePrefCallbackData *data);
 

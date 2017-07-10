@@ -154,6 +154,7 @@ typedef void (*PurpleKeyringClose)(void);
  * @account: The account.
  * @mode:    A keyring specific option that was stored. Can be NULL.
  * @data:    Data that was stored. Can be NULL.
+ * @error:   Error that may have occurred.
  *
  * Import serialized (and maybe encrypted) password.
  *
@@ -292,6 +293,7 @@ purple_keyring_get_options(void);
  * @keyring_id: The plugin ID that was stored in the xml file. Can be NULL.
  * @mode:       A keyring specific option that was stored. Can be NULL.
  * @data:       Data that was stored, can be NULL.
+ * @error:      Error that may have occurred.
  *
  * Import serialized (and maybe encrypted) password into current keyring.
  *
