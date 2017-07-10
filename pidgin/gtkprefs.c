@@ -3269,9 +3269,7 @@ away_page(void)
 		PURPLE_PREF_STRING, "/purple/away/idle_reporting",
 		_("Never"), "none",
 		_("From last sent message"), "purple",
-#if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
 		_("Based on keyboard or mouse use"), "system",
-#endif
 		NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gtk_widget_set_halign(dd, GTK_ALIGN_START);

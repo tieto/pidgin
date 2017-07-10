@@ -702,12 +702,6 @@ void pidgin_dialogs_buildinfo(void)
 #endif
 
 #ifndef _WIN32
-#ifdef USE_SCREENSAVER
-	g_string_append(str, "<dt>XScreenSaver:</dt><dd>Enabled</dd>");
-#else
-	g_string_append(str, "<dt>XScreenSaver:</dt><dd>Disabled</dd>");
-#endif
-
 #ifdef LIBZEPHYR_EXT
 	g_string_append(str, "<dt>Zephyr library (libzephyr):</dt><dd>External</dd>");
 #else

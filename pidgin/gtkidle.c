@@ -26,50 +26,48 @@
 #ifdef HAVE_IOKIT
 # include <CoreFoundation/CoreFoundation.h>
 # include <IOKit/IOKitLib.h>
-#else
-# ifdef USE_SCREENSAVER
-#  ifdef _WIN32
-#   include "gtkwin32dep.h"
-#  else
-    /* We're on X11 and not MacOS X with IOKit. */
-#   include <X11/Xlib.h>
-#   include <X11/Xutil.h>
-#   include <X11/extensions/scrnsaver.h>
-#   include <gdk/gdkx.h>
-#  endif /* !_WIN32 */
-# endif /* USE_SCREENSAVER */
-#endif /* !HAVE_IOKIT */
+#elif defined (_WIN32)
+# include "gtkwin32dep.h"
+#endif
 
 #include "idle.h"
+
+#if !defined(HAVE_IOKIT) && !defined(_WIN32)
+typedef struct {
+	gchar *bus_name;
+	gchar *object_path;
+	gchar *iface_name;
+} PidginDBusScreenSaverInfo;
+
+static const PidginDBusScreenSaverInfo screensavers[] = {
+	{
+		"org.freedesktop.ScreenSaver",
+		"/org/freedesktop/ScreenSaver",
+		"org.freedesktop.ScreenSaver"
+	}, {
+		"org.gnome.ScreenSaver",
+		"/org/gnome/ScreenSaver",
+		"org.gnome.ScreenSaver"
+	}, {
+		"org.kde.ScreenSaver",
+		"/org/kde/ScreenSaver",
+		"org.kde.ScreenSaver"
+	},
+};
+#endif /* !HAVE_IOKIT && !_WIN32 */
 
 /*
  * pidgin_get_time_idle:
  *
  * Get the number of seconds the user has been idle.  In Unix-world
- * this is based on the X Windows usage.  In MS Windows this is
- * based on keyboard/mouse usage information obtained from the OS.
+ * this is based on the DBus ScreenSaver interfaces.  In MS Windows this
+ * is based on keyboard/mouse usage information obtained from the OS.
  * In MacOS X, this is based on keyboard/mouse usage information
  * obtained from the OS, if configure detected IOKit.  Otherwise,
- * MacOS X is handled as a case of X Windows.
- *
- * In Debian bug #271639, jwz says:
- *
- * Purple should simply ask xscreensaver how long the user has been idle:
- *   % xscreensaver-command -time
- *   XScreenSaver 4.18: screen blanked since Tue Sep 14 14:10:45 2004
- *
- * Or you can monitor the _SCREENSAVER_STATUS property on root window #0.
- * Element 0 is the status (0, BLANK, LOCK), element 1 is the time_t since
- * the last state change, and subsequent elements are which hack is running
- * on the various screens:
- *   % xprop -f _SCREENSAVER_STATUS 32ac -root _SCREENSAVER_STATUS
- *   _SCREENSAVER_STATUS(INTEGER) = BLANK, 1095196626, 10, 237
- *
- * See watch() in xscreensaver/driver/xscreensaver-command.c.
+ * MacOS X is handled as a case of Unix.
  *
  * Returns: The number of seconds the user has been idle.
  */
-#if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
 static time_t
 pidgin_get_time_idle(void)
 {
@@ -101,40 +99,84 @@ pidgin_get_time_idle(void)
 	/* Query Windows */
 	return (GetTickCount() - winpidgin_get_lastactive()) / 1000;
 #  else
-	/* We're on X11 and not MacOS X with IOKit. */
+	static guint idx = 0;
+	GApplication *app;
+	GDBusConnection *conn;
+	GVariant *reply = NULL;
+	guint32 active_time = 0;
+	GError *error = NULL;
 
-	/* Query xscreensaver */
-	static XScreenSaverInfo *mit_info = NULL;
-	static int has_extension = -1;
-	int event_base, error_base;
+	app = g_application_get_default();
 
-	if (has_extension == -1)
-		has_extension = XScreenSaverQueryExtension(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()),
-		                                           &event_base, &error_base);
-
-	if (has_extension)
-	{
-		if (mit_info == NULL)
-			mit_info = XScreenSaverAllocInfo();
-
-		XScreenSaverQueryInfo(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()),
-		                      GDK_ROOT_WINDOW(), mit_info);
-		return (mit_info->idle) / 1000;
-	}
-	else
+	if (app == NULL) {
+		purple_debug_error("gtkidle",
+				"Unable to retrieve GApplication");
 		return 0;
+	}
+
+	conn = g_application_get_dbus_connection(app);
+
+	if (conn == NULL) {
+		purple_debug_misc("gtkidle",
+				"GApplication lacking DBus connection. "
+				"Skip checking ScreenSaver interface");
+		return 0;
+	}
+
+	for (; idx < G_N_ELEMENTS(screensavers); ++idx) {
+		const PidginDBusScreenSaverInfo *info = &screensavers[idx];
+
+		reply = g_dbus_connection_call_sync(conn,
+				info->bus_name, info->object_path,
+				info->iface_name, "GetActiveTime",
+				NULL, G_VARIANT_TYPE("(u)"),
+				G_DBUS_CALL_FLAGS_NO_AUTO_START, 1000,
+				NULL, &error);
+
+		if (reply != NULL) {
+			break;
+		}
+
+		if (g_error_matches(error, G_DBUS_ERROR,
+				G_DBUS_ERROR_NOT_SUPPORTED)) {
+			purple_debug_info("gtkidle",
+					"Querying idle time on '%s' "
+					"unsupported. Trying the next one",
+					info->bus_name);
+		} else if (g_error_matches(error, G_DBUS_ERROR,
+				G_DBUS_ERROR_NAME_HAS_NO_OWNER)) {
+			purple_debug_info("gtkidle",
+					"Querying idle time on '%s' "
+					"not found. Trying the next one",
+					info->bus_name);
+		} else {
+			purple_debug_error("gtkidle",
+					"Querying idle time on '%s' "
+					"error: %s", info->bus_name,
+					error->message);
+		}
+
+		g_clear_error(&error);
+	}
+
+	if (reply == NULL) {
+		purple_debug_warning("gtkidle",
+				"Failed to query ScreenSaver active time: "
+				"No working ScreenSaver interfaces");
+		return 0;
+	}
+
+	g_variant_get(reply, "(u)", &active_time);
+	g_variant_unref(reply);
+
+	return active_time;
 #  endif /* !_WIN32 */
 # endif /* !HAVE_IOKIT */
 }
-#endif /* USE_SCREENSAVER || HAVE_IOKIT */
 
 static PurpleIdleUiOps ui_ops =
 {
-#if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
 	pidgin_get_time_idle,
-#else
-	NULL,
-#endif /* USE_SCREENSAVER || HAVE_IOKIT */
 	NULL,
 	NULL,
 	NULL,

@@ -412,7 +412,6 @@ with_x = get_option('x') and not IS_WIN32
 # #######################################################################
 # # Check for GTK+ 2.18 and other things used by the GTK UI
 # #######################################################################
-enable_screensaver = get_option('screensaver')
 enable_enchant = get_option('enchant')
 enable_gevolution = get_option('gevolution')
 enable_cap = get_option('cap')
@@ -463,53 +462,9 @@ Use -Dx=false if you do not need X11 support.
 		endif
 	endif
 	if not with_x
-		if enable_screensaver
-			msg = 'X support is required to build with XScreenSaver extensions'
-			if force_deps
-				error(msg)
-			else
-				message(msg)
-			endif
-		endif
-		enable_screensaver = false
 		enable_gestures = false
 		x11 = []
 	endif
-
-	#######################################################################
-	# Check for XScreenSaver
-	#######################################################################
-	xss_libs = []
-	if enable_screensaver
-		if compiler.has_function('XScreenSaverRegister',
-		    args : ['-lXext', '-lX11', '-lXext', '-lm'])
-			xss_libs = ['-lXext', '-lX11', '-lXext', '-lm']
-		elif compiler.has_function('XScreenSaverRegister',
-		    args : ['-lXss', '-lX11', '-lXext', '-lm'])
-			xss_libs = ['-lXss', '-lX11', '-lXext', '-lm']
-		endif
-		if xss_libs != []
-			if not compiler.has_header('X11/extensions/scrnsaver.h',
-			    prefix : '#include <X11/Xlib.h>')
-				enable_screensaver = false
-				xss_libs = []
-			endif
-		else
-			enable_screensaver = false
-		endif
-
-		if not enable_screensaver and force_deps
-			error('''
-XScreenSaver extension development headers (libXScrnSaver-devel or libxss-dev) not found.
-Use -Dscreensaver=false if you do not need XScreenSaver extension support,
-this is required for detecting idle time by mouse and keyboard usage.
-''')
-		endif
-	endif
-	conf.set('USE_SCREENSAVER', enable_screensaver)
-	xss = declare_dependency(
-	    link_args : xss_libs
-	)
 
 	#######################################################################
 	# Check for stuff needed by the Evolution integration plugin.
@@ -562,7 +517,6 @@ else	# GTK
 	enable_cap = false
 	enable_gcr = false
 	enable_gevolution = false
-	enable_screensaver = false
 	use_enchant = false
 endif	# GTK
 
@@ -1429,7 +1383,6 @@ message('Old tray icon compatibility... : ' + ENABLE_TRAYCOMPAT.to_string())
 message('Install translations.......... : ' + INSTALL_I18N.to_string())
 message('Has you....................... : yes')
 message('')
-message('Use XScreenSaver Extension.... : ' + enable_screensaver.to_string())
 message('Build with Enchant support.... : ' + use_enchant.to_string())
 message('Build with GCR widgets........ : ' + enable_gcr.to_string())
 message('Build Unity integration plugin.: ' + enable_unity.to_string())

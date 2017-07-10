@@ -354,9 +354,6 @@
 /* Define if python headers are available. */
 /* #undef USE_PYTHON */
 
-/* Define if we're using XScreenSaver. */
-#define USE_SCREENSAVER 1
-
 /* Use voice and video */
 /* #define USE_VV 1 */
 
