@@ -72,12 +72,12 @@ typedef enum
 
 struct _PidginMediaClass
 {
-	GtkWindowClass parent_class;
+	GtkApplicationWindowClass parent_class;
 };
 
 struct _PidginMedia
 {
-	GtkWindow parent;
+	GtkApplicationWindow parent;
 	PidginMediaPrivate *priv;
 };
 
@@ -155,7 +155,8 @@ pidgin_media_get_type(void)
 			(GInstanceInitFunc) pidgin_media_init,
 			NULL
 		};
-		type = g_type_register_static(GTK_TYPE_WINDOW, "PidginMedia", &info, 0);
+		type = g_type_register_static(GTK_TYPE_APPLICATION_WINDOW,
+				"PidginMedia", &info, 0);
 	}
 	return type;
 }
@@ -857,7 +858,7 @@ pidgin_media_add_dtmf_widget(PidginMedia *gtkmedia,
 	GtkWidget *grid = gtk_grid_new();
 	GtkWidget *button;
 	gint index = 0;
-	GtkWindow *win = &gtkmedia->parent;
+	GtkApplicationWindow *win = &gtkmedia->parent;
 
 	gtk_grid_set_row_homogeneous(GTK_GRID(grid), TRUE);
 	gtk_grid_set_column_homogeneous(GTK_GRID(grid), TRUE);
