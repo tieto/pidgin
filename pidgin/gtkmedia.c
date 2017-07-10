@@ -232,8 +232,8 @@ pidgin_media_delete_event_cb(GtkWidget *widget,
 		GdkEvent *event, PidginMedia *media)
 {
 	if (media->priv->media)
-		purple_media_stream_info(media->priv->media,
-				PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);
+		g_action_group_activate_action(G_ACTION_GROUP(media),
+				"Hangup", NULL);
 	return FALSE;
 }
 
