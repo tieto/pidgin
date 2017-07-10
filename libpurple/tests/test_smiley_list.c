@@ -87,6 +87,10 @@ gint
 main(gint argc, gchar **argv) {
 	g_test_init(&argc, &argv, NULL);
 
+	#if GLIB_CHECK_VERSION(2, 38, 0)
+	g_test_set_nonfatal_assertions();
+	#endif /* GLIB_CHECK_VERSION(2, 38, 0) */
+
 	g_test_add_func("/smiley_list/new", test_smiley_list_new);
 	g_test_add_func("/smiley_list/add-remove", test_smiley_list_add_remove);
 
