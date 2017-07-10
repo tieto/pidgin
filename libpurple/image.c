@@ -41,6 +41,7 @@ typedef struct {
 
 enum {
 	PROP_0,
+	PROP_PATH,
 	PROP_CONTENTS,
 	PROP_SIZE,
 	PROP_LAST
@@ -51,6 +52,15 @@ static GParamSpec *properties[PROP_LAST];
 /******************************************************************************
  * Helpers
  ******************************************************************************/
+static void
+_purple_image_set_path(PurpleImage *image, const gchar *path) {
+	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+
+	g_free(priv->path);
+
+	priv->path = g_strdup(path);
+}
+
 static void
 _purple_image_set_contents(PurpleImage *image, GBytes *bytes) {
 	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
@@ -91,6 +101,9 @@ purple_image_set_property(GObject *obj, guint param_id,
 	PurpleImage *image = PURPLE_IMAGE(obj);
 
 	switch (param_id) {
+		case PROP_PATH:
+			_purple_image_set_path(image, g_value_get_string(value));
+			break;
 		case PROP_CONTENTS:
 			_purple_image_set_contents(image, g_value_get_boxed(value));
 			break;
@@ -107,6 +120,9 @@ purple_image_get_property(GObject *obj, guint param_id, GValue *value,
 	PurpleImage *image = PURPLE_IMAGE(obj);
 
 	switch (param_id) {
+		case PROP_PATH:
+			g_value_set_string(value, purple_image_get_path(image));
+			break;
 		case PROP_CONTENTS:
 			g_value_set_boxed(value, purple_image_get_contents(image));
 			break;
@@ -126,6 +142,14 @@ purple_image_class_init(PurpleImageClass *klass) {
 	gobj_class->finalize = purple_image_finalize;
 	gobj_class->get_property = purple_image_get_property;
 	gobj_class->set_property = purple_image_set_property;
+
+	properties[PROP_PATH] = g_param_spec_string(
+		"path",
+		"path",
+		"The filepath for the image if one was provided",
+		NULL,
+		G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS
+	);
 
 	properties[PROP_CONTENTS] = g_param_spec_boxed(
 		"contents",
@@ -173,7 +197,12 @@ purple_image_new_from_file(const gchar *path, GError **error) {
 
 	bytes = g_bytes_new_take(contents, length);
 
-	image = purple_image_new_from_bytes(bytes);
+	image = g_object_new(
+		PURPLE_TYPE_IMAGE,
+		"contents", bytes,
+		"path", path,
+		NULL
+	);
 
 	g_bytes_unref(bytes);
 
@@ -252,7 +281,7 @@ purple_image_get_path(PurpleImage *image) {
 
 	g_return_val_if_fail(priv != NULL, NULL);
 
-	return priv->path;
+	return priv->path ? priv->path : purple_image_generate_filename(image);
 }
 
 gsize
@@ -347,28 +376,34 @@ purple_image_get_mimetype(PurpleImage *image) {
 
 const gchar *
 purple_image_generate_filename(PurpleImage *image) {
-	PurpleImagePrivate *priv = PURPLE_IMAGE_GET_PRIVATE(image);
+	PurpleImagePrivate *priv = NULL;
 	gconstpointer data;
 	gsize len;
-	const gchar *ext;
+	const gchar *ext = NULL;
 	gchar *checksum;
 
-	g_return_val_if_fail(priv != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_IMAGE(image), NULL);
+
+	priv = PURPLE_IMAGE_GET_PRIVATE(image);
 
 	if (priv->gen_filename)
 		return priv->gen_filename;
 
-	ext = purple_image_get_extension(image);
+	/* grab the image's data and size of that data */
 	data = purple_image_get_data(image);
 	len = purple_image_get_data_size(image);
 
-	g_return_val_if_fail(ext != NULL, NULL);
-	g_return_val_if_fail(data != NULL, NULL);
-	g_return_val_if_fail(len > 0, NULL);
-
+	/* create a checksum of it and use it as the start of our filename */
 	checksum = g_compute_checksum_for_data(G_CHECKSUM_SHA1, data, len);
-	priv->gen_filename = g_strdup_printf("%s.%s", checksum, ext);
-	g_free(checksum);
+
+	/* if the image has a known format, set the extension appropriately */
+	ext = purple_image_get_extension(image);
+	if(ext != NULL) {
+		priv->gen_filename = g_strdup_printf("%s.%s", checksum, ext);
+		g_free(checksum);
+	} else {
+		priv->gen_filename = checksum;
+	}
 
 	return priv->gen_filename;
 }

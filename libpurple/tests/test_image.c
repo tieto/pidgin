@@ -58,6 +58,7 @@ static void
 _test_image(PurpleImage *image,
             const guint8 *edata,
             gsize elen,
+            const gchar *path,
             const gchar *ext,
             const gchar *mimetype)
 {
@@ -72,11 +73,44 @@ _test_image(PurpleImage *image,
 	g_assert_cmpmem(adata, alen, edata, elen);
 	g_bytes_unref(bytes);
 
+	/* if the caller provided a path, check it, otherwise just make sure we
+	 * have something.
+	 */
+	if(path != NULL) {
+		g_assert_cmpstr(purple_image_get_path(image), ==, path);
+	} else {
+		const gchar *apath = purple_image_get_path(image);
+
+		g_assert(apath);
+		g_assert_cmpstr(apath, !=, "");
+	}
+
 	g_assert_cmpstr(purple_image_get_extension(image), ==, ext);
 	g_assert_cmpstr(purple_image_get_mimetype(image), ==, mimetype);
 
 	g_object_unref(G_OBJECT(image));
 }
+
+/******************************************************************************
+ * Tests
+ *****************************************************************************/
+static void
+test_image_new_from_bytes(void) {
+	GBytes *bytes = g_bytes_new(test_image_data, test_image_data_len);
+	PurpleImage *image = purple_image_new_from_bytes(bytes);
+
+	_test_image(
+		image,
+		g_bytes_get_data(bytes, NULL),
+		g_bytes_get_size(bytes),
+		NULL,
+		"png",
+		"image/png"
+	);
+
+	g_bytes_unref(bytes);
+}
+
 
 static void
 test_image_new_from_data(void) {
@@ -89,6 +123,7 @@ test_image_new_from_data(void) {
 		image,
 		test_image_data,
 		test_image_data_len,
+		NULL,
 		"png",
 		"image/png"
 	);
@@ -107,16 +142,18 @@ test_image_new_from_file(void) {
 	g_assert_no_error(error);
 
 	g_file_get_contents(path, &edata, &elen, &error);
-	g_free(path);
 	g_assert_no_error(error);
 
 	_test_image(
 		image,
 		(guint8 *)edata,
 		elen,
+		path,
 		"png",
 		"image/png"
 	);
+
+	g_free(path);
 }
 
 /******************************************************************************
@@ -126,6 +163,11 @@ gint
 main(gint argc, gchar **argv) {
 	g_test_init(&argc, &argv, NULL);
 
+	#if GLIB_CHECK_VERSION(2, 38, 0)
+	g_test_set_nonfatal_assertions();
+	#endif /* GLIB_CHECK_VERSION(2, 38, 0) */
+
+	g_test_add_func("/image/new-from-bytes", test_image_new_from_bytes);
 	g_test_add_func("/image/new-from-data", test_image_new_from_data);
 	g_test_add_func("/image/new-from-file", test_image_new_from_file);
 

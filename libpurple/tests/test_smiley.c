@@ -56,6 +56,7 @@ static const guint8 test_image_data[] = {
  *****************************************************************************/
 static void
 _test_smiley(PurpleSmiley *smiley,
+             const gchar *path,
              const guint8 *edata,
              gsize elen,
              const gchar *ext,
@@ -85,9 +86,15 @@ _test_smiley(PurpleSmiley *smiley,
 	);
 	g_assert_cmpstr(purple_smiley_get_shortcut(smiley), ==, shortcut);
 
+	if(path)
+		g_assert_cmpstr(purple_image_get_path(PURPLE_IMAGE(smiley)), ==, path);
+
 	g_object_unref(G_OBJECT(smiley));
 }
 
+/******************************************************************************
+ * Tests
+ *****************************************************************************/
 static void
 test_smiley_new_from_data(void) {
 	PurpleSmiley *smiley = purple_smiley_new_from_data(
@@ -98,6 +105,7 @@ test_smiley_new_from_data(void) {
 
 	_test_smiley(
 		smiley,
+		NULL,
 		test_image_data,
 		test_image_data_len,
 		"png",
@@ -119,17 +127,19 @@ test_smiley_new_from_file(void) {
 	g_assert_no_error(error);
 
 	g_file_get_contents(path, &edata, &elen, &error);
-	g_free(path);
 	g_assert_no_error(error);
 
 	_test_smiley(
 		smiley,
+		path,
 		(guint8 *)edata,
 		elen,
 		"png",
 		"image/png",
 		"^_^"
 	);
+
+	g_free(path);
 }
 
 /******************************************************************************
@@ -138,6 +148,10 @@ test_smiley_new_from_file(void) {
 gint
 main(gint argc, gchar **argv) {
 	g_test_init(&argc, &argv, NULL);
+
+	#if GLIB_CHECK_VERSION(2, 38, 0)
+	g_test_set_nonfatal_assertions();
+	#endif /* GLIB_CHECK_VERSION(2, 38, 0) */
 
 	g_test_add_func("/smiley/new-from-data", test_smiley_new_from_data);
 	g_test_add_func("/smiley/new-from-file", test_smiley_new_from_file);
