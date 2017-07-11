@@ -888,6 +888,139 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 	return retval;
 }
 
+GDateTime *
+purple_str_to_date_time(const char *timestamp, gboolean utc)
+{
+	const gchar *str;
+	gint year = 0;
+	gint month = 0;
+	gint day = 0;
+	gint hour = 0;
+	gint minute = 0;
+	gint seconds = 0;
+	gint microseconds = 0;
+	GTimeZone *tz = NULL;
+	GDateTime *retval;
+
+	g_return_val_if_fail(timestamp != NULL, NULL);
+
+	str = timestamp;
+
+	/* Strip leading whitespace */
+	while (g_ascii_isspace(*str))
+		str++;
+
+	if (*str == '\0') {
+		return NULL;
+	}
+
+	if (!g_ascii_isdigit(*str) && *str != '-' && *str != '+') {
+		return NULL;
+	}
+
+	/* 4 digit year */
+	if (sscanf(str, "%04d", &year) && year > 0) {
+		str += 4;
+
+		if (*str == '-' || *str == '/')
+			str++;
+	}
+
+	/* 2 digit month */
+	if (!sscanf(str, "%02d", &month)) {
+		return NULL;
+	}
+
+	str += 2;
+
+	if (*str == '-' || *str == '/')
+		str++;
+
+	/* 2 digit day */
+	if (!sscanf(str, "%02d", &day)) {
+		return NULL;
+	}
+
+	str += 2;
+
+	/* Grab the year off the end if there's still stuff */
+	if (*str == '/' || *str == '-') {
+		/* But make sure we don't read the year twice */
+		if (year > 0) {
+			return NULL;
+		}
+
+		str++;
+
+		if (!sscanf(str, "%04d", &year)) {
+			return NULL;
+		}
+	} else if (*str == 'T' || *str == '.') {
+		str++;
+
+		/* Continue grabbing the hours/minutes/seconds */
+		if ((sscanf(str, "%02d:%02d:%02d", &hour, &minute, &seconds) == 3 &&
+				(str += 8)) ||
+		    (sscanf(str, "%02d%02d%02d", &hour, &minute, &seconds) == 3 &&
+				(str += 6)))
+		{
+			if (*str == '.') {
+				int chars = 0;
+				str++;
+				if (sscanf(str, "%d%n", &microseconds, &chars) == 2) {
+					str += chars;
+					chars -= 6;
+					if (chars < 0) {
+						while (chars++) {
+							microseconds *= 10;
+						}
+					} else {
+						while (chars--) {
+							microseconds /= 10;
+						}
+					}
+				}
+			}
+
+			if (*str) {
+				const gchar *end = str;
+				if (*end == '+' || *end == '-') {
+					end++;
+				}
+
+				while (isdigit(*end) || *end == ':') {
+					end++;
+				}
+
+				if (str != end) {
+					/* Trim anything trailing a purely numeric time zone. */
+					gchar *tzstr = g_strndup(str, end - str);
+					tz = g_time_zone_new(tzstr);
+					g_free(tzstr);
+				} else {
+					/* Just try whatever is there. */
+					tz = g_time_zone_new(str);
+				}
+			}
+		}
+	}
+
+	if (!tz) {
+		/* No timezone specified. */
+		if (utc) {
+			tz = g_time_zone_new_utc();
+		} else {
+			tz = g_time_zone_new_local();
+		}
+	}
+
+	retval = g_date_time_new(tz, year, month, day, hour, minute,
+	                         seconds + microseconds / 1e6);
+	g_time_zone_unref(tz);
+
+	return retval;
+}
+
 char *
 purple_uts35_to_str(const char *format, size_t len, struct tm *tm)
 {

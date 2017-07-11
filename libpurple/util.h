@@ -482,6 +482,18 @@ time_t purple_str_to_time(const char *timestamp, gboolean utc,
                         struct tm *tm, long *tz_off, const char **rest);
 
 /**
+ * purple_str_to_date_time:
+ * @timestamp: The timestamp
+ * @utc:       Assume UTC if no timezone specified
+ *
+ * Parses a timestamp in jabber, ISO8601, or MM/DD/YYYY format and returns
+ * a GDateTime.
+ *
+ * Returns: (transfer full): A GDateTime.
+ */
+GDateTime *purple_str_to_date_time(const char *timestamp, gboolean utc);
+
+/**
  * purple_uts35_to_str:
  * @format: The formatting string, according to UTS \#35
  *               See http://unicode.org/reports/tr35/
