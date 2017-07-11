@@ -1277,6 +1277,7 @@ if test "x$GCC" = "xyes"; then
 			"-Wendif-labels" \
 			"-Werror-implicit-function-declaration" \
 			"-Wextra -Wno-unused-parameter" \
+				"-Wno-missing-field-initializers" \
 			"-Wformat-security" \
 				"-Werror=format-security" \
 			"-Winit-self" \
