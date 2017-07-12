@@ -505,7 +505,7 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 {
 	if (purple_prefs_get_bool("/purple/logging/log_system"))
 	{
-		time_t current_time = time(NULL);
+		GDateTime *current_time = g_date_time_new_now_utc();
 		const char *buddy_alias = purple_buddy_get_alias(buddy);
 		char *tmp, *logtmp;
 		PurpleLog *log;
@@ -545,6 +545,7 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 			               current_time, logtmp);
 		}
 
+		g_date_time_unref(current_time);
 		g_free(tmp);
 		g_free(logtmp);
 	}

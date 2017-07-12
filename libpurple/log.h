@@ -101,7 +101,7 @@ struct _PurpleLogLogger {
 	gsize (*write)(PurpleLog *log,
 		     PurpleMessageFlags type,
 		     const char *from,
-		     time_t time,
+		     GDateTime *time,
 		     const char *message);
 
 	void (*finalize)(PurpleLog *log);
@@ -250,7 +250,7 @@ void purple_log_free(PurpleLog *log);
 void purple_log_write(PurpleLog *log,
 		    PurpleMessageFlags type,
 		    const char *from,
-		    time_t time,
+		    GDateTime *time,
 		    const char *message);
 
 /**

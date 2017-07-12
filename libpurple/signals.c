@@ -1107,6 +1107,22 @@ purple_marshal_POINTER__POINTER_INT64_BOOLEAN(
 }
 
 void
+purple_marshal_POINTER__POINTER_POINTER_BOOLEAN(
+                                    PurpleCallback cb, va_list args, void *data,
+                                    void **return_val)
+{
+	gpointer ret_val;
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+	gboolean arg3 = va_arg(args, gboolean);
+
+	ret_val = ((gpointer(*)(void *, void *, gboolean, void *))cb)(arg1, arg2, arg3, data);
+
+	if (return_val != NULL)
+		*return_val = ret_val;
+}
+
+void
 purple_marshal_POINTER__POINTER_POINTER(PurpleCallback cb, va_list args, void *data,
                                       void **return_val)
 {

@@ -396,6 +396,8 @@ void purple_marshal_POINTER__POINTER_INT_BOOLEAN(
 		PurpleCallback cb, va_list args, void *data, void **return_val);
 void purple_marshal_POINTER__POINTER_INT64_BOOLEAN(
 		PurpleCallback cb, va_list args, void *data, void **return_val);
+void purple_marshal_POINTER__POINTER_POINTER_BOOLEAN(
+		PurpleCallback cb, va_list args, void *data, void **return_val);
 void purple_marshal_POINTER__POINTER_POINTER(
 		PurpleCallback cb, va_list args, void *data, void **return_val);
 

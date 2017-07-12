@@ -572,17 +572,22 @@ purple_account_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 		if (log != NULL)
 		{
 			char *msg, *tmp;
+			GDateTime *dt;
 
-			if (idle)
+			if (idle) {
 				tmp = g_strdup_printf(_("+++ %s became idle"), purple_account_get_username(account));
-			else
+				dt = g_date_time_new_from_unix_local(idle_time);
+			} else {
 				tmp = g_strdup_printf(_("+++ %s became unidle"), purple_account_get_username(account));
+				dt = g_date_time_new_now_utc();
+			}
 
 			msg = g_markup_escape_text(tmp, -1);
 			g_free(tmp);
 			purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
 			                 purple_account_get_username(account),
-			                 (idle ? idle_time : current_time), msg);
+			                 dt, msg);
+			g_date_time_unref(dt);
 			g_free(msg);
 		}
 	}
@@ -806,7 +811,7 @@ static void
 purple_buddy_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 {
 	PurpleBuddy *buddy = purple_buddy_presence_get_buddy(PURPLE_BUDDY_PRESENCE(presence));
-	time_t current_time = time(NULL);
+	GDateTime *current_time = g_date_time_new_now_utc();
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleAccount *account = purple_buddy_get_account(buddy);
 	gboolean idle = purple_presence_is_idle(presence);
@@ -826,7 +831,8 @@ purple_buddy_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 				g_free(tmp);
 
 				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
-				purple_buddy_get_alias(buddy), current_time, tmp2);
+				                 purple_buddy_get_alias(buddy),
+				                 current_time, tmp2);
 				g_free(tmp2);
 			}
 		}
@@ -846,7 +852,8 @@ purple_buddy_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 				g_free(tmp);
 
 				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
-				purple_buddy_get_alias(buddy), current_time, tmp2);
+				                 purple_buddy_get_alias(buddy),
+				                 current_time, tmp2);
 				g_free(tmp2);
 			}
 		}
@@ -864,6 +871,8 @@ purple_buddy_presence_update_idle(PurplePresence *presence, gboolean old_idle)
 
 	if (ops != NULL && ops->update != NULL)
 		ops->update(purple_blist_get_buddy_list(), (PurpleBlistNode *)buddy);
+
+	g_date_time_unref(current_time);
 }
 
 PurpleBuddy *

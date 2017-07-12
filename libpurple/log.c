@@ -47,7 +47,7 @@ static GHashTable *logsize_users_decayed = NULL;
 static void log_get_log_sets_common(GHashTable *sets);
 
 static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
-							  const char *from, time_t time, const char *message);
+                               const char *from, GDateTime *time, const char *message);
 static void html_logger_finalize(PurpleLog *log);
 static GList *html_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account);
 static GList *html_logger_list_syslog(PurpleAccount *account);
@@ -61,9 +61,8 @@ static int old_logger_size (PurpleLog *log);
 static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets);
 static void old_logger_finalize(PurpleLog *log);
 
-static gsize txt_logger_write(PurpleLog *log,
-							 PurpleMessageFlags type,
-							 const char *from, time_t time, const char *message);
+static gsize txt_logger_write(PurpleLog *log, PurpleMessageFlags type,
+                              const char *from, GDateTime *time, const char *message);
 static void txt_logger_finalize(PurpleLog *log);
 static GList *txt_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account);
 static GList *txt_logger_list_syslog(PurpleAccount *account);
@@ -112,7 +111,7 @@ void purple_log_free(PurpleLog *log)
 }
 
 void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
-		    const char *from, time_t time, const char *message)
+                      const char *from, GDateTime *time, const char *message)
 {
 	struct _purple_logsize_user *lu;
 	gsize written, total = 0;
@@ -366,7 +365,7 @@ PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int fun
 {
 #if 0
 				void(*create)(PurpleLog *),
-				gsize(*write)(PurpleLog *, PurpleMessageFlags, const char *, time_t, const char *),
+				gsize(*write)(PurpleLog *, PurpleMessageFlags, const char *, GDateTime *, const char *),
 				void(*finalize)(PurpleLog *),
 				GList*(*list)(PurpleLogType type, const char*, PurpleAccount*),
 				char*(*read)(PurpleLog*, PurpleLogReadFlags*),
@@ -665,22 +664,10 @@ void purple_log_init(void)
 	purple_log_logger_add(old_logger);
 
 	purple_signal_register(handle, "log-timestamp",
-#if SIZEOF_TIME_T == 4
-	                     purple_marshal_POINTER__POINTER_INT_BOOLEAN,
-#elif SIZEOF_TIME_T == 8
-			     purple_marshal_POINTER__POINTER_INT64_BOOLEAN,
-#else
-#error Unknown size of time_t
-#endif
+			     purple_marshal_POINTER__POINTER_POINTER_BOOLEAN,
 	                     G_TYPE_STRING, 3,
 	                     PURPLE_TYPE_LOG,
-#if SIZEOF_TIME_T == 4
-	                     G_TYPE_INT,
-#elif SIZEOF_TIME_T == 8
-	                     G_TYPE_INT64,
-#else
-# error Unknown size of time_t
-#endif
+	                     G_TYPE_OBJECT,
 	                     G_TYPE_BOOLEAN);
 
 	purple_prefs_connect_callback(NULL, "/purple/logging/format",
@@ -747,13 +734,15 @@ purple_log_get_type(void)
  * LOGGERS ******************************************************************
  ****************************************************************************/
 
-static char *log_get_timestamp(PurpleLog *log, time_t when)
+static char *log_get_timestamp(PurpleLog *log, GDateTime *when)
 {
 	gboolean show_date;
 	char *date;
-	struct tm *tm;
+	GDateTime *dt;
 
-	show_date = (log->type == PURPLE_LOG_SYSTEM) || (time(NULL) > when + 20*60);
+	dt = g_date_time_new_now_utc();
+	show_date = (log->type == PURPLE_LOG_SYSTEM) || (g_date_time_difference(dt, when) > 20L * G_TIME_SPAN_MINUTE);
+	g_date_time_unref(dt);
 
 	date = purple_signal_emit_return_1(purple_log_get_handle(),
 	                          "log-timestamp",
@@ -761,11 +750,14 @@ static char *log_get_timestamp(PurpleLog *log, time_t when)
 	if (date != NULL)
 		return date;
 
-	tm = localtime(&when);
+	dt = g_date_time_to_local(when);
 	if (show_date)
-		return g_strdup(purple_date_format_long(tm));
+		date = g_date_time_format(dt, _("%x %X"));
 	else
-		return g_strdup(purple_time_format(tm));
+		date = g_date_time_format(dt, "%X");
+	g_date_time_unref(dt);
+
+	return date;
 }
 
 /* NOTE: This can return msg (which you may or may not want to g_free())
@@ -1240,7 +1232,7 @@ static char *process_txt_log(char *txt, char *to_free)
  ****************************/
 
 static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
-							  const char *from, time_t time, const char *message)
+                               const char *from, GDateTime *time, const char *message)
 {
 	char *msg_fixed;
 	char *image_corrected_msg;
@@ -1399,9 +1391,8 @@ static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAc
  ** PLAIN TEXT LOGGER *******
  ****************************/
 
-static gsize txt_logger_write(PurpleLog *log,
-							 PurpleMessageFlags type,
-							 const char *from, time_t time, const char *message)
+static gsize txt_logger_write(PurpleLog *log, PurpleMessageFlags type,
+                              const char *from, GDateTime *time, const char *message)
 {
 	char *date;
 	PurpleProtocol *protocol =
