@@ -96,12 +96,14 @@ static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
 	return ret;
 }
 
-static const char *log_get_date(PurpleLog *log)
+static gchar *log_get_date(PurpleLog *log)
 {
-	if (log->tm)
-		return purple_date_format_full(log->tm);
-	else
-		return purple_date_format_full(localtime(&log->time));
+	GDateTime *dt;
+	gchar *ret;
+	dt = g_date_time_to_local(log->time);
+	ret = g_date_time_format(dt, "%c");
+	g_date_time_unref(dt);
+	return ret;
 }
 
 static void search_cb(GntWidget *button, FinchLogViewer *lv)
@@ -132,11 +134,13 @@ static void search_cb(GntWidget *button, FinchLogViewer *lv)
 		char *read = purple_log_read((PurpleLog*)logs->data, NULL);
 		if (read && *read && purple_strcasestr(read, search_term)) {
 			PurpleLog *log = logs->data;
+			gchar *log_date = log_get_date(log);
 
 			gnt_tree_add_row_last(GNT_TREE(lv->tree),
 									log,
-									gnt_tree_create_row(GNT_TREE(lv->tree), log_get_date(log)),
+									gnt_tree_create_row(GNT_TREE(lv->tree), log_date),
 									NULL);
+			g_free(log_date);
 		}
 		g_free(read);
 	}
@@ -183,15 +187,17 @@ static void log_select_cb(GntWidget *w, gpointer old, gpointer new, FinchLogView
 		return;
 
 	if (log->type != PURPLE_LOG_SYSTEM) {
+		gchar *log_date = log_get_date(log);
 		char *title;
 		if (log->type == PURPLE_LOG_CHAT)
 			title = g_strdup_printf(_("Conversation in %s on %s"),
-									log->name, log_get_date(log));
+			                        log->name, log_date);
 		else
 			title = g_strdup_printf(_("Conversation with %s on %s"),
-									log->name, log_get_date(log));
+			                        log->name, log_date);
 
 		gnt_label_set_text(GNT_LABEL(viewer->label), title);
+		g_free(log_date);
 		g_free(title);
 	}
 
@@ -223,16 +229,18 @@ static void populate_log_tree(FinchLogViewer *lv)
      /* Logs are made from trees in real life.
         This is a tree made from logs */
 {
-	const char *pmonth;
-	char *month = NULL;
+	gchar *pmonth;
+	gchar *month = NULL;
 	char prev_top_month[30] = "";
 	GList *logs = lv->logs;
 
 	while (logs != NULL) {
 		PurpleLog *log = logs->data;
+		GDateTime *dt;
+		gchar *log_date;
 
-		pmonth = purple_utf8_strftime(_("%B %Y"),
-		                           log->tm ? log->tm : localtime(&log->time));
+		dt = g_date_time_to_local(log->time);
+		pmonth = g_date_time_format(dt, _("%B %Y"));
 
 		if (!purple_strequal(pmonth, prev_top_month)) {
 			month = g_strdup(pmonth);
@@ -247,11 +255,15 @@ static void populate_log_tree(FinchLogViewer *lv)
 		}
 
 		/* sub */
+		log_date = g_date_time_format(dt, "%c");
 		gnt_tree_add_row_last(GNT_TREE(lv->tree),
 								log,
-								gnt_tree_create_row(GNT_TREE(lv->tree), log_get_date(log)),
+								gnt_tree_create_row(GNT_TREE(lv->tree), log_date),
 								month);
 
+		g_free(log_date);
+		g_free(pmonth);
+		g_date_time_unref(dt);
 		logs = logs->next;
 	}
 }

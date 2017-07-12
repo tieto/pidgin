@@ -197,12 +197,15 @@ static void
 open_log(PurpleConversation *conv)
 {
 	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+	GDateTime *dt;
 
 	g_return_if_fail(priv != NULL);
 
+	dt = g_date_time_new_now_local();
 	priv->logs = g_list_append(NULL, purple_log_new(PURPLE_IS_CHAT_CONVERSATION(conv) ? PURPLE_LOG_CHAT :
 							   PURPLE_LOG_IM, priv->name, priv->account,
-							   conv, time(NULL), NULL));
+							   conv, dt));
+	g_date_time_unref(dt);
 }
 
 /* Functions that deal with PurpleMessage history */

@@ -108,12 +108,14 @@ static void select_first_log(PidginLogViewer *lv)
 	gtk_tree_path_free(path);
 }
 
-static const char *log_get_date(PurpleLog *log)
+static gchar *log_get_date(PurpleLog *log)
 {
-	if (log->tm)
-		return purple_date_format_full(log->tm);
-	else
-		return purple_date_format_full(localtime(&log->time));
+	GDateTime *dt;
+	gchar *ret;
+	dt = g_date_time_to_local(log->time);
+	ret = g_date_time_format(dt, "%c");
+	g_date_time_unref(dt);
+	return ret;
 }
 
 static void search_cb(GtkWidget *button, PidginLogViewer *lv)
@@ -152,11 +154,13 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 		if (read && *read && purple_strcasestr(read, search_term)) {
 			GtkTreeIter iter;
 			PurpleLog *log = logs->data;
+			gchar *log_date = log_get_date(log);
 
 			gtk_tree_store_append (lv->treestore, &iter, NULL);
 			gtk_tree_store_set(lv->treestore, &iter,
-					   0, log_get_date(log),
+					   0, log_date,
 					   1, log, -1);
+			g_free(log_date);
 		}
 		g_free(read);
 	}
@@ -270,7 +274,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 {
 	PidginLogViewer *lv = data[0];
 	PurpleLog *log = data[1];
-	const char *time = log_get_date(log);
+	gchar *time = log_get_date(log);
 	const char *name;
 	char *tmp;
 	gpointer *data2;
@@ -302,8 +306,10 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 		tmp = g_strdup_printf(_("Are you sure you want to permanently delete the system log "
 		                        "which started at %s?"), time);
 	}
-	else
+	else {
+		g_free(time);
 		g_return_if_reached();
+	}
 
 	/* The only way to free data in all cases is to tie it to the menuitem with
 	 * g_object_set_data_full().  But, since we need to get some data down to
@@ -319,6 +325,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 						data2, 2,
 						_("Delete"), delete_log_cb,
 						_("Cancel"), delete_log_cleanup_cb);
+	g_free(time);
 	g_free(tmp);
 }
 
@@ -444,15 +451,17 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 	pidgin_set_cursor(viewer->window, GDK_WATCH);
 
 	if (log->type != PURPLE_LOG_SYSTEM) {
+		gchar *log_date = log_get_date(log);
 		char *title;
 		if (log->type == PURPLE_LOG_CHAT)
 			title = g_strdup_printf(_("<span size='larger' weight='bold'>Conversation in %s on %s</span>"),
-									log->name, log_get_date(log));
+									log->name, log_date);
 		else
 			title = g_strdup_printf(_("<span size='larger' weight='bold'>Conversation with %s on %s</span>"),
-									log->name, log_get_date(log));
+									log->name, log_date);
 
 		gtk_label_set_markup(viewer->label, title);
+		g_free(log_date);
 		g_free(title);
 	}
 
@@ -492,19 +501,20 @@ static void populate_log_tree(PidginLogViewer *lv)
      /* Logs are made from trees in real life.
         This is a tree made from logs */
 {
-	const char *month;
+	gchar *month;
 	char prev_top_month[30] = "";
 	GtkTreeIter toplevel, child;
 	GList *logs = lv->logs;
 
 	while (logs != NULL) {
 		PurpleLog *log = logs->data;
+		GDateTime *dt;
+		gchar *log_date;
 
-		month = purple_utf8_strftime(_("%B %Y"),
-		                           log->tm ? log->tm : localtime(&log->time));
+		dt = g_date_time_to_local(log->time);
+		month = g_date_time_format(dt, _("%B %Y"));
 
-		if (!purple_strequal(month, prev_top_month))
-		{
+		if (!purple_strequal(month, prev_top_month)) {
 			/* top level */
 			gtk_tree_store_append(lv->treestore, &toplevel, NULL);
 			gtk_tree_store_set(lv->treestore, &toplevel, 0, month, 1, NULL, -1);
@@ -513,12 +523,16 @@ static void populate_log_tree(PidginLogViewer *lv)
 		}
 
 		/* sub */
+		log_date = g_date_time_format(dt, "%c");
 		gtk_tree_store_append(lv->treestore, &child, &toplevel);
 		gtk_tree_store_set(lv->treestore, &child,
-						   0, log_get_date(log),
+						   0, log_date,
 						   1, log,
 						   -1);
 
+		g_free(log_date);
+		g_free(month);
+		g_date_time_unref(dt);
 		logs = logs->next;
 	}
 }

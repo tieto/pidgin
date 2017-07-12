@@ -75,7 +75,7 @@ static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAcc
  **************************************************************************/
 
 PurpleLog *purple_log_new(PurpleLogType type, const char *name, PurpleAccount *account,
-                      PurpleConversation *conv, time_t time, const struct tm *tm)
+                      PurpleConversation *conv, GDateTime *time)
 {
 	PurpleLog *log;
 
@@ -87,32 +87,12 @@ PurpleLog *purple_log_new(PurpleLogType type, const char *name, PurpleAccount *a
 	log->name = g_strdup(purple_normalize(account, name));
 	log->account = account;
 	log->conv = conv;
-	log->time = time;
+	if (time)
+		log->time = g_date_time_ref(time);
+	else
+		log->time = NULL;
 	log->logger = purple_log_logger_get();
 	log->logger_data = NULL;
-
-	if (tm == NULL)
-		log->tm = NULL;
-	else
-	{
-		/* There's no need to zero this as we immediately do a direct copy. */
-		log->tm = g_slice_new(struct tm);
-
-		*(log->tm) = *tm;
-
-#ifdef HAVE_STRUCT_TM_TM_ZONE
-		/* XXX: This is so wrong... */
-		if (log->tm->tm_zone != NULL)
-		{
-			char *tmp = g_locale_from_utf8(log->tm->tm_zone, -1, NULL, NULL, NULL);
-			if (tmp != NULL)
-				log->tm->tm_zone = tmp;
-			else
-				/* Just shove the UTF-8 bytes in and hope... */
-				log->tm->tm_zone = g_strdup(log->tm->tm_zone);
-		}
-#endif
-	}
 
 	if (log->logger && log->logger->create)
 		log->logger->create(log);
@@ -125,15 +105,7 @@ void purple_log_free(PurpleLog *log)
 	if (log->logger && log->logger->finalize)
 		log->logger->finalize(log);
 	g_free(log->name);
-
-	if (log->tm != NULL)
-	{
-#ifdef HAVE_STRUCT_TM_TM_ZONE
-		/* XXX: This is so wrong... */
-		g_free((char *)log->tm->tm_zone);
-#endif
-		g_slice_free(struct tm, log->tm);
-	}
+	g_date_time_unref(log->time);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(log);
 	g_slice_free(PurpleLog, log);
@@ -266,8 +238,6 @@ gint purple_log_get_activity_score(PurpleLogType type, const char *name, PurpleA
 	int score;
 	GSList *n;
 	struct _purple_logsize_user *lu;
-	time_t now;
-	time(&now);
 
 	lu = g_new(struct _purple_logsize_user, 1);
 	lu->name = g_strdup(purple_normalize(account, name));
@@ -278,6 +248,7 @@ gint purple_log_get_activity_score(PurpleLogType type, const char *name, PurpleA
 		g_free(lu->name);
 		g_free(lu);
 	} else {
+		GDateTime *now = g_date_time_new_now_utc();
 		double score_double = 0.0;
 		for (n = loggers; n; n = n->next) {
 			PurpleLogLogger *logger = n->data;
@@ -294,12 +265,13 @@ gint purple_log_get_activity_score(PurpleLogType type, const char *name, PurpleA
 					/* Activity score counts bytes in the log, exponentially
 					   decayed with a half-life of 14 days. */
 					score_double += purple_log_get_size(log) *
-						pow(0.5, difftime(now, log->time)/1209600.0);
+						pow(0.5, g_date_time_difference(now, log->time)/(14LL*G_TIME_SPAN_DAY));
 					purple_log_free(log);
 					logs = g_list_delete_link(logs, logs);
 				}
 			}
 		}
+		g_date_time_unref(now);
 
 		score = (gint) ceil(score_double);
 		g_hash_table_replace(logsize_users_decayed, lu, GINT_TO_POINTER(score));
@@ -508,7 +480,7 @@ gint purple_log_compare(gconstpointer y, gconstpointer z)
 	const PurpleLog *a = y;
 	const PurpleLog *b = z;
 
-	return b->time - a->time;
+	return g_date_time_compare(b->time, a->time); // TODO: swap?
 }
 
 GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *account)
@@ -910,9 +882,9 @@ void purple_log_common_writer(PurpleLog *log, const char *ext)
 	{
 		/* This log is new */
 		char *dir;
-		struct tm *tm;
+		GDateTime *dt;
 		const char *tz;
-		const char *date;
+		gchar *date;
 		char *filename;
 		char *path;
 
@@ -922,14 +894,16 @@ void purple_log_common_writer(PurpleLog *log, const char *ext)
 
 		purple_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
-		tm = localtime(&log->time);
-		tz = purple_escape_filename(purple_utf8_strftime("%Z", tm));
-		date = purple_utf8_strftime("%Y-%m-%d.%H%M%S%z", tm);
+		dt = g_date_time_to_local(log->time);
+		tz = purple_escape_filename(g_date_time_get_timezone_abbreviation(dt));
+		date = g_date_time_format(dt, "%Y-%m-%d.%H%M%S%z");
+		g_date_time_unref(dt);
 
 		filename = g_strdup_printf("%s%s%s", date, tz, ext ? ext : "");
 
 		path = g_build_filename(dir, filename, NULL);
 		g_free(dir);
+		g_free(date);
 		g_free(filename);
 
 		log->logger_data = data = g_slice_new0(PurpleLogCommonLoggerData);
@@ -979,39 +953,16 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name, PurpleAcco
 		{
 			PurpleLog *log;
 			PurpleLogCommonLoggerData *data;
-			struct tm tm;
-#if defined (HAVE_TM_GMTOFF) && defined (HAVE_STRUCT_TM_TM_ZONE)
-			long tz_off;
-			const char *rest, *end;
-			time_t stamp = purple_str_to_time(purple_unescape_filename(filename), FALSE, &tm, &tz_off, &rest);
+			GDateTime *stamp = purple_str_to_date_time(purple_unescape_filename(filename), FALSE);
 
-			/* As zero is a valid offset, PURPLE_NO_TZ_OFF means no offset was
-			 * provided. See util.h. Yes, it's kinda ugly. */
-			if (tz_off != PURPLE_NO_TZ_OFF)
-				tm.tm_gmtoff = tz_off - tm.tm_gmtoff;
-
-			if (stamp == 0 || rest == NULL || (end = strchr(rest, '.')) == NULL || strchr(rest, ' ') != NULL)
-			{
-				log = purple_log_new(type, name, account, NULL, stamp, NULL);
-			}
-			else
-			{
-				char *tmp = g_strndup(rest, end - rest);
-				tm.tm_zone = tmp;
-				log = purple_log_new(type, name, account, NULL, stamp, &tm);
-				g_free(tmp);
-			}
-#else
-			time_t stamp = purple_str_to_time(filename, FALSE, &tm, NULL, NULL);
-
-			log = purple_log_new(type, name, account, NULL, stamp, (stamp != 0) ?  &tm : NULL);
-#endif
-
+			log = purple_log_new(type, name, account, NULL, stamp);
 			log->logger = logger;
 			log->logger_data = data = g_slice_new0(PurpleLogCommonLoggerData);
 
 			data->path = g_build_filename(path, filename, NULL);
 			list = g_list_prepend(list, log);
+
+			g_date_time_unref(stamp);
 		}
 	}
 	g_dir_close(dir);
@@ -1303,7 +1254,8 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 
 	if(!data) {
 		const char *proto = purple_protocol_class_list_icon(protocol, log->account, NULL);
-		const char *date;
+		GDateTime *dt;
+		gchar *date;
 		purple_log_common_writer(log, ".html");
 
 		data = log->logger_data;
@@ -1312,7 +1264,9 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 		if(!data->file)
 			return 0;
 
-		date = purple_date_format_full(localtime(&log->time));
+		dt = g_date_time_to_local(log->time);
+		date = g_date_time_format(dt, "%c");
+		g_date_time_unref(dt);
 
 		written += fprintf(data->file, "<html><head>");
 		written += fprintf(data->file, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
@@ -1327,6 +1281,7 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 		written += fprintf(data->file, "%s", header);
 		written += fprintf(data->file, "</title></head><body>");
 		written += fprintf(data->file, "<h3>%s</h3>\n", header);
+		g_free(date);
 		g_free(header);
 	}
 
@@ -1462,6 +1417,8 @@ static gsize txt_logger_write(PurpleLog *log,
 		 * that you open a convo with someone, but don't say anything.
 		 */
 		const char *proto = purple_protocol_class_list_icon(protocol, log->account, NULL);
+		GDateTime *dt;
+		gchar *date;
 		purple_log_common_writer(log, ".txt");
 
 		data = log->logger_data;
@@ -1470,14 +1427,18 @@ static gsize txt_logger_write(PurpleLog *log,
 		if(!data || !data->file)
 			return 0;
 
+		dt = g_date_time_to_local(log->time);
+		date = g_date_time_format(dt, "%c");
 		if (log->type == PURPLE_LOG_SYSTEM)
 			written += fprintf(data->file, "System log for account %s (%s) connected at %s\n",
 				purple_account_get_username(log->account), proto,
-				purple_date_format_full(localtime(&log->time)));
+				date);
 		else
 			written += fprintf(data->file, "Conversation with %s at %s on %s (%s)\n",
-				log->name, purple_date_format_full(localtime(&log->time)),
+				log->name, date,
 				purple_account_get_username(log->account), proto);
+		g_free(date);
+		g_date_time_unref(dt);
 	}
 
 	/* if we can't write to the file, give up before we hurt ourselves */
@@ -1594,13 +1555,13 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	int file_fd, index_fd;
 	char *index_tmp;
 	char buf[BUF_LONG];
-	struct tm tm;
-	char month[4];
+	gint year, month, day, hour, minute, second;
+	char month_str[4];
 	struct old_logger_data *data = NULL;
 	int logfound = 0;
 	int lastoff = 0;
 	int newlen;
-	time_t lasttime = 0;
+	GDateTime *lasttime = NULL;
 
 	PurpleLog *log = NULL;
 	GList *list = NULL;
@@ -1657,9 +1618,9 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 					unsigned long idx_time;
 					if (sscanf(buf, "%d\t%d\t%lu", &lastoff, &newlen, &idx_time) == 3)
 					{
-						log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, -1, NULL);
+						log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, NULL);
 						log->logger = old_logger;
-						log->time = (time_t)idx_time;
+						log->time = g_date_time_new_from_unix_local(idx_time);
 
 						/* IMPORTANT: Always set all members of struct old_logger_data */
 						data = g_slice_new(struct old_logger_data);
@@ -1734,9 +1695,9 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 					newlen--;
 
 				if (newlen != 0) {
-					log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, -1, NULL);
+					log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, NULL);
 					log->logger = old_logger;
-					log->time = lasttime;
+					log->time = g_date_time_ref(lasttime);
 
 					/* IMPORTANT: Always set all members of struct old_logger_data */
 					data = g_slice_new(struct old_logger_data);
@@ -1757,49 +1718,48 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			lastoff = offset;
 
 			g_snprintf(convostart, length, "%s", temp);
-			memset(&tm, 0, sizeof(tm));
-			if (sscanf(convostart, "%*s %3s %d %d:%d:%d %d", month,
-				&tm.tm_mday, &tm.tm_hour, &tm.tm_min,
-				&tm.tm_sec, &tm.tm_year) != 6)
+			year = month = day = hour = minute = second = 0;
+			if (sscanf(convostart, "%*s %3s %d %d:%d:%d %d", month_str,
+				&day, &hour, &minute, &second, &year) != 6)
 			{
 				purple_debug_warning("log", "invalid date format\n");
 			}
 			/* Ugly hack, in case current locale is not English */
-			if (purple_strequal(month, "Jan")) {
-				tm.tm_mon= 0;
-			} else if (purple_strequal(month, "Feb")) {
-				tm.tm_mon = 1;
-			} else if (purple_strequal(month, "Mar")) {
-				tm.tm_mon = 2;
-			} else if (purple_strequal(month, "Apr")) {
-				tm.tm_mon = 3;
-			} else if (purple_strequal(month, "May")) {
-				tm.tm_mon = 4;
-			} else if (purple_strequal(month, "Jun")) {
-				tm.tm_mon = 5;
-			} else if (purple_strequal(month, "Jul")) {
-				tm.tm_mon = 6;
-			} else if (purple_strequal(month, "Aug")) {
-				tm.tm_mon = 7;
-			} else if (purple_strequal(month, "Sep")) {
-				tm.tm_mon = 8;
-			} else if (purple_strequal(month, "Oct")) {
-				tm.tm_mon = 9;
-			} else if (purple_strequal(month, "Nov")) {
-				tm.tm_mon = 10;
-			} else if (purple_strequal(month, "Dec")) {
-				tm.tm_mon = 11;
+			if (purple_strequal(month_str, "Jan")) {
+				month = 1;
+			} else if (purple_strequal(month_str, "Feb")) {
+				month = 2;
+			} else if (purple_strequal(month_str, "Mar")) {
+				month = 3;
+			} else if (purple_strequal(month_str, "Apr")) {
+				month = 4;
+			} else if (purple_strequal(month_str, "May")) {
+				month = 5;
+			} else if (purple_strequal(month_str, "Jun")) {
+				month = 6;
+			} else if (purple_strequal(month_str, "Jul")) {
+				month = 7;
+			} else if (purple_strequal(month_str, "Aug")) {
+				month = 8;
+			} else if (purple_strequal(month_str, "Sep")) {
+				month = 9;
+			} else if (purple_strequal(month_str, "Oct")) {
+				month = 10;
+			} else if (purple_strequal(month_str, "Nov")) {
+				month = 11;
+			} else if (purple_strequal(month_str, "Dec")) {
+				month = 12;
 			}
-			tm.tm_year -= 1900;
-			lasttime = mktime(&tm);
+			lasttime = g_date_time_new_local(year, month, day,
+			                                 hour, minute, second);
 		}
 	}
 
 	if (logfound) {
 		if ((newlen = ftell(file) - lastoff) != 0) {
-			log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, -1, NULL);
+			log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, NULL);
 			log->logger = old_logger;
-			log->time = lasttime;
+			log->time = g_date_time_ref(lasttime);
 
 			/* IMPORTANT: Always set all members of struct old_logger_data */
 			data = g_slice_new(struct old_logger_data);
