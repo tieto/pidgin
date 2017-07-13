@@ -32,19 +32,15 @@
 
 G_BEGIN_DECLS
 
+#define PIDGIN_TYPE_DEBUG_UI (pidgin_debug_ui_get_type())
+G_DECLARE_FINAL_TYPE(PidginDebugUi, pidgin_debug_ui, PIDGIN, DEBUG_UI, GObject)
+
 /**
- * pidgin_debug_init:
+ * pidgin_debug_ui_new:
  *
  * Initializes the GTK+ debug system.
  */
-void pidgin_debug_init(void);
-
-/**
- * pidgin_debug_uninit:
- *
- * Uninitialized the GTK+ debug system.
- */
-void pidgin_debug_uninit(void);
+PidginDebugUi *pidgin_debug_ui_new(void);
 
 /**
  * pidgin_debug_get_handle:
@@ -68,15 +64,6 @@ void pidgin_debug_window_show(void);
  * Hides the debug window.
  */
 void pidgin_debug_window_hide(void);
-
-/**
- * pidgin_debug_get_ui_ops:
- *
- * Returns the UI operations structure for GTK+ debug output.
- *
- * Returns: The GTK+ UI debug operations structure.
- */
-PurpleDebugUiOps *pidgin_debug_get_ui_ops(void);
 
 G_END_DECLS
 
