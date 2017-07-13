@@ -30,32 +30,21 @@
 
 #include "debug.h"
 
+G_BEGIN_DECLS
+
 /**********************************************************************
  * GNT Debug API
  **********************************************************************/
 
-/**
- * finch_debug_get_ui_ops:
- *
- * Get the ui-functions.
- *
- * Returns: The PurpleDebugUiOps structure populated with the appropriate functions.
- */
-PurpleDebugUiOps *finch_debug_get_ui_ops(void);
+#define FINCH_TYPE_DEBUG_UI (finch_debug_ui_get_type())
+G_DECLARE_FINAL_TYPE(FinchDebugUi, finch_debug_ui, FINCH, DEBUG_UI, GObject)
 
 /**
- * finch_debug_init:
+ * finch_debug_ui_new:
  *
  * Perform necessary initializations.
  */
-void finch_debug_init(void);
-
-/**
- * finch_debug_uninit:
- *
- * Perform necessary uninitializations.
- */
-void finch_debug_uninit(void);
+FinchDebugUi *finch_debug_ui_new(void);
 
 /**
  * finch_debug_window_show:
@@ -63,5 +52,7 @@ void finch_debug_uninit(void);
  * Show the debug window.
  */
 void finch_debug_window_show(void);
+
+G_END_DECLS
 
 #endif
