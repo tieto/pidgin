@@ -1064,7 +1064,6 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	/* Setup the treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
 	g_object_unref(G_OBJECT(model));
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
 	gtk_widget_set_size_request(treeview, 500, 400);
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)),
 								GTK_SELECTION_SINGLE);
@@ -1619,8 +1618,6 @@ pidgin_create_notification_dialog(PidginNotifyType type)
 	spec_dialog->treemodel = model;
 	spec_dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
 	g_object_unref(G_OBJECT(model));
-
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(spec_dialog->treeview), TRUE);
 
 	if (type == PIDGIN_NOTIFY_MAIL) {
 		gtk_window_set_title(GTK_WINDOW(dialog), _("New Mail"));

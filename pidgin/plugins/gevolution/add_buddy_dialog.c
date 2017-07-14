@@ -508,7 +508,6 @@ gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 	/* Now for the treeview */
 	dialog->treeview =
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(dialog->treeview), TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox),
 		pidgin_make_scrollable(dialog->treeview, GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS, GTK_SHADOW_IN, -1, -1),
 		TRUE, TRUE, 0);

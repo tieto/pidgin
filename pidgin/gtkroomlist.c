@@ -728,7 +728,6 @@ static void pidgin_roomlist_set_fields(PurpleRoomlist *list, GList *fields)
 	g_free(types);
 
 	tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tree), TRUE);
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));
 	g_signal_connect(G_OBJECT(selection), "changed",

@@ -2313,7 +2313,6 @@ create_accounts_list(AccountsWindow *dialog)
 	/* And now the actual treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
 	dialog->treeview = treeview;
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
 	g_object_unref(G_OBJECT(dialog->model));
 
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));

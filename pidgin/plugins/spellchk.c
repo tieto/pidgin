@@ -2136,7 +2136,6 @@ get_config_frame(PurplePlugin *plugin)
 	gtk_widget_show(vbox);
 
 	tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tree), TRUE);
 	gtk_widget_set_size_request(tree, -1, 200);
 
 	renderer = gtk_cell_renderer_text_new();

@@ -1911,8 +1911,6 @@ create_datasheet_field(PurpleRequestField *field, GtkSizeGroup *buttons_sg)
 			i + 1, NULL);
 	}
 
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(view), TRUE);
-
 	gtk_widget_set_size_request(GTK_WIDGET(view), 400, 250);
 
 	scrollable = pidgin_make_scrollable(GTK_WIDGET(view),

@@ -641,7 +641,6 @@ manager_list_create(SmileyManager *manager)
 	manager->tree = tree = GTK_TREE_VIEW(gtk_tree_view_new_with_model(
 		GTK_TREE_MODEL(manager->model)));
 
-	gtk_tree_view_set_rules_hint(tree, TRUE);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(manager->model),
 		SMILEY_LIST_MODEL_SHORTCUT, GTK_SORT_ASCENDING);
 
