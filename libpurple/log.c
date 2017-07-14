@@ -104,7 +104,8 @@ void purple_log_free(PurpleLog *log)
 	if (log->logger && log->logger->finalize)
 		log->logger->finalize(log);
 	g_free(log->name);
-	g_date_time_unref(log->time);
+	if (log->time)
+		g_date_time_unref(log->time);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(log);
 	g_slice_free(PurpleLog, log);
@@ -1686,9 +1687,8 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 					newlen--;
 
 				if (newlen != 0) {
-					log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, NULL);
+					log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, lasttime);
 					log->logger = old_logger;
-					log->time = g_date_time_ref(lasttime);
 
 					/* IMPORTANT: Always set all members of struct old_logger_data */
 					data = g_slice_new(struct old_logger_data);
@@ -1741,6 +1741,8 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			} else if (purple_strequal(month_str, "Dec")) {
 				month = 12;
 			}
+			if (lasttime)
+				g_date_time_unref(lasttime);
 			lasttime = g_date_time_new_local(year, month, day,
 			                                 hour, minute, second);
 		}
@@ -1748,9 +1750,8 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 	if (logfound) {
 		if ((newlen = ftell(file) - lastoff) != 0) {
-			log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, NULL);
+			log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, lasttime);
 			log->logger = old_logger;
-			log->time = g_date_time_ref(lasttime);
 
 			/* IMPORTANT: Always set all members of struct old_logger_data */
 			data = g_slice_new(struct old_logger_data);
@@ -1767,6 +1768,8 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		}
 	}
 
+	if (lasttime)
+		g_date_time_unref(lasttime);
 	purple_stringref_unref(pathref);
 	fclose(file);
 	if (index != NULL)
