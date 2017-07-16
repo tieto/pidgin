@@ -64,7 +64,6 @@ IGNORE_HFILES=\
 	plugins \
 	test \
 	libgnt/wms \
-	getopt.h \
 	gntinternal.h \
 	gnt-skel.h
 

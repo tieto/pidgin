@@ -90,9 +90,6 @@
 /* Define to 1 if you have the `getifaddrs' function. */
 /* #undef HAVE_GETIFADDRS */
 
-/* Define to 1 if you have the `getopt_long' function. */
-/* #define HAVE_GETOPT_LONG 1 */
-
 /* Define if the GNU gettext() function is already present or preinstalled. */
 /* #define HAVE_GETTEXT 1 */
 

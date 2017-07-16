@@ -249,12 +249,6 @@ AC_SUBST([FINCH_PLUGINDIR])
 
 dnl Checks for library functions.
 AC_CHECK_FUNCS(strdup)
-dnl Checks for getopt in standard library
-AC_CHECK_FUNCS(getopt_long,,
-[
-	AC_LIBOBJ(getopt)
-	AC_LIBOBJ(getopt1)
-])
 
 dnl Check for inet_aton
 if test "x$is_win32" != "xyes" ; then

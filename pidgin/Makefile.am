@@ -1,7 +1,4 @@
 EXTRA_DIST = \
-		getopt.c \
-		getopt.h \
-		getopt1.c \
 		gtk3compat.h \
 		gtkdebug.html \
 		pidgin.gresource.xml \

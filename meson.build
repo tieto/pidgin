@@ -235,12 +235,6 @@ foreach func : ['strdup']
 	conf.set('HAVE_' + func.to_upper(),
 	    compiler.has_function(func))
 endforeach
-# Checks for getopt in standard library
-if compiler.has_function('getopt_long')
-	getopt_files = []
-else
-	getopt_files = ['getopt.c', 'getopt1.c']
-endif
 
 # Check for inet_aton
 if not IS_WIN32
