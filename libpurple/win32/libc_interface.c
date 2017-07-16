@@ -34,6 +34,7 @@
 #include "debug.h"
 #include "libc_internal.h"
 #include <glib/gstdio.h>
+#include "util.h"
 
 /** This is redefined here because we can't include internal.h */
 #ifdef ENABLE_NLS
