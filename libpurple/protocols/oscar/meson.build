@@ -50,10 +50,10 @@ OSCARSOURCES = [
 if STATIC_OSCAR
 	oscar_prpl = static_library('oscar', OSCARSOURCES,
 	    c_args : '-DPURPLE_STATIC_PRPL',
-	    dependencies : [libpurple_dep, glib])
+	    dependencies : [libpurple_dep, glib, ws2_32])
 elif DYNAMIC_OSCAR
 	oscar_prpl = shared_library('oscar', OSCARSOURCES,
-	    dependencies : [libpurple_dep, glib],
+	    dependencies : [libpurple_dep, glib, ws2_32],
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 endif
 

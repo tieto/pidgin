@@ -27,10 +27,10 @@ if STATIC_BONJOUR
 	bonjour_prpl = static_library('bonjour', BONJOURSOURCES,
 	    c_args : '-DPURPLE_STATIC_PRPL',
 	    link_args : bonjour_link_args,
-	    dependencies : [libxml, avahi, libpurple_dep, glib])
+	    dependencies : [libxml, avahi, libpurple_dep, glib, ws2_32])
 elif DYNAMIC_BONJOUR
 	bonjour_prpl = shared_library('bonjour', BONJOURSOURCES,
 	    link_args : bonjour_link_args,
-	    dependencies : [libxml, avahi, libpurple_dep, glib],
+	    dependencies : [libxml, avahi, libpurple_dep, glib, ws2_32],
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 endif
