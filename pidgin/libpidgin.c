@@ -427,7 +427,6 @@ int pidgin_start(int argc, char *argv[])
 	gboolean opt_si = TRUE;     /* Check for single instance? */
 	char *opt_config_dir_arg = NULL;
 	char *opt_login_arg = NULL;
-	char *opt_session_arg = NULL;
 	char *search_path;
 	GtkCssProvider *provider;
 	GdkScreen *screen;
@@ -459,7 +458,6 @@ int pidgin_start(int argc, char *argv[])
 		{"login",        optional_argument, NULL, 'l'},
 		{"multiple",     no_argument,       NULL, 'm'},
 		{"nologin",      no_argument,       NULL, 'n'},
-		{"session",      required_argument, NULL, 's'},
 		{"version",      no_argument,       NULL, 'v'},
 		{"display",      required_argument, NULL, 'D'},
 		{"sync",         no_argument,       NULL, 'S'},
@@ -589,11 +587,7 @@ int pidgin_start(int argc, char *argv[])
 	/* scan command-line options */
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
-#ifndef _WIN32
-				  "c:dfhmnl::s:v",
-#else
 				  "c:dfhmnl::v",
-#endif
 				  long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'c':	/* config dir */
@@ -619,10 +613,6 @@ int pidgin_start(int argc, char *argv[])
 			g_free(opt_login_arg);
 			if (optarg != NULL)
 				opt_login_arg = g_strdup(optarg);
-			break;
-		case 's':	/* use existing session ID */
-			g_free(opt_session_arg);
-			opt_session_arg = g_strdup(optarg);
 			break;
 		case 'v':	/* version */
 			opt_version = TRUE;
@@ -791,8 +781,6 @@ int pidgin_start(int argc, char *argv[])
 
 	ui_main();
 
-	g_free(opt_session_arg);
-	opt_session_arg = NULL;
 	g_free(opt_config_dir_arg);
 	opt_config_dir_arg = NULL;
 
