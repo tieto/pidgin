@@ -32,7 +32,6 @@ int main(int argc, char *argv[])
 	signal(SIGPIPE, SIG_IGN);
 #endif
 
-	g_set_prgname("Finch");
 	g_set_application_name(_("Finch"));
 
 	if (finch_start(&argc, &argv)) {
