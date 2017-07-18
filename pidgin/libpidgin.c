@@ -591,7 +591,7 @@ int pidgin_start(int argc, char *argv[])
 	g_free(summary);
 
 	g_option_context_add_main_entries(context, option_entries, PACKAGE);
-	g_option_context_add_group(context, gtk_get_option_group(FALSE));
+	g_option_context_add_group(context, gtk_get_option_group(TRUE));
 
 #ifdef G_OS_WIN32
 	/* Handle Unicode filenames on Windows. See GOptionContext docs. */
@@ -647,23 +647,6 @@ int pidgin_start(int argc, char *argv[])
 		debug_colored = TRUE;
 	purple_debug_set_enabled(debug_enabled);
 	purple_debug_set_colored(debug_colored);
-
-	/* Call this here as GtkApplication calls gtk_init() in
-	 * g_application_register() and we don't necessarily want to exit().
-	 */
-	gui_check = gtk_init_check(&argc, &argv);
-	if (!gui_check) {
-		const char *display = gdk_display_get_name(gdk_display_get_default());
-
-		printf("%s %s\n", PIDGIN_NAME, DISPLAY_VERSION);
-
-		g_warning("cannot open display: %s", display ? display : "unset");
-#ifndef _WIN32
-		g_free(segfault_message);
-#endif
-
-		return 1;
-	}
 
 	app = G_APPLICATION(gtk_application_new("im.pidgin.Pidgin",
 				G_APPLICATION_NON_UNIQUE));
