@@ -829,17 +829,6 @@ AC_SUBST(JSON_CFLAGS)
 AC_SUBST(JSON_LIBS)
 
 dnl #######################################################################
-dnl # Check for zlib (required)
-dnl #######################################################################
-
-PKG_CHECK_MODULES(ZLIB, [zlib >= 1.2.0], , [
-	AC_SEARCH_LIBS([deflate], [z], [], AC_MSG_ERROR([You must have zlib >= 1.2.0 development headers installed to build.]), [])
-])
-
-AC_SUBST(ZLIB_CFLAGS)
-AC_SUBST(ZLIB_LIBS)
-
-dnl #######################################################################
 dnl # Check for GStreamer
 dnl #######################################################################
 AC_ARG_ENABLE(gstreamer,
