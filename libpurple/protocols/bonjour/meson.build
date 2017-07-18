@@ -17,17 +17,20 @@ BONJOURSOURCES = [
 
 if IS_WIN32
 	BONJOURSOURCES += ['dns_sd_proxy.c', 'mdns_dns_sd.c']
-#	FIXME: libbonjour_la_LIBADD += -lnetapi32
+	bonjour_link_args = ['-lnetapi32']
 else
 	BONJOURSOURCES += ['mdns_avahi.c']
+	bonjour_link_args = []
 endif
 
 if STATIC_BONJOUR
 	bonjour_prpl = static_library('bonjour', BONJOURSOURCES,
 	    c_args : '-DPURPLE_STATIC_PRPL',
+	    link_args : bonjour_link_args,
 	    dependencies : [libxml, avahi, libpurple_dep, glib])
 elif DYNAMIC_BONJOUR
 	bonjour_prpl = shared_library('bonjour', BONJOURSOURCES,
+	    link_args : bonjour_link_args,
 	    dependencies : [libxml, avahi, libpurple_dep, glib],
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 endif
