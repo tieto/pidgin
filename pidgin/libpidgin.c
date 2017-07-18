@@ -71,8 +71,6 @@
 #include <signal.h>
 #endif
 
-#include <getopt.h>
-
 #ifndef _WIN32
 
 /*
@@ -373,60 +371,44 @@ pidgin_activate_cb(GApplication *application, gpointer user_data)
 	purple_blist_set_visible(TRUE);
 }
 
-static void
-show_usage(const char *name, gboolean terse)
-{
-	char *text;
+static gboolean debug_colored = FALSE;
+static gboolean debug_enabled = FALSE;
+static gboolean opt_login = FALSE;
+static gchar *opt_login_arg = NULL;
 
-	if (terse) {
-		text = g_strdup_printf(_("%s %s. Try `%s -h' for more information.\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
-	} else {
-		GString *str = g_string_new(NULL);
-		g_string_append_printf(str, "%s %s\n", PIDGIN_NAME, DISPLAY_VERSION);
-		g_string_append_printf(str, _("Usage: %s [OPTION]...\n\n"), name);
-		g_string_append_printf(str, "  -c, --config=%s    %s\n",
-				_("DIR"), _("use DIR for config files"));
-		g_string_append_printf(str, "  -d, --debug[=colored] %s\n",
-				_("print debugging messages to stdout"));
-		g_string_append_printf(str, "  -f, --force-online  %s\n",
-				_("force online, regardless of network status"));
-		g_string_append_printf(str, "  -h, --help          %s\n",
-				_("display this help and exit"));
-		g_string_append_printf(str, "  -m, --multiple      %s\n",
-				_("allow multiple instances"));
-		g_string_append_printf(str, "  -n, --nologin       %s\n",
-				_("don't automatically login"));
-		g_string_append_printf(str, "  -l, --login[=%s]  %s\n",
-				_("NAME"),
-				_("enable specified account(s) (optional argument NAME\n"
-				  "                      "
-				  "specifies account(s) to use, separated by commas.\n"
-				  "                      "
-				  "Without this only the first account will be enabled)."));
-#ifndef WIN32
-		g_string_append_printf(str, "  --display=DISPLAY   %s\n",
-				_("X display to use"));
-#endif /* !WIN32 */
-		g_string_append_printf(str, "  -v, --version       %s\n",
-				_("display the current version and exit"));
-		text = g_string_free(str, FALSE);
+static gboolean
+debug_opt_arg_func(const gchar *option_name, const gchar *value,
+		gpointer data, GError **error)
+{
+	debug_enabled = TRUE;
+
+	if (purple_strequal(value, "colored")) {
+		debug_colored = TRUE;
 	}
 
-	purple_print_utf8_to_console(stdout, text);
-	g_free(text);
+	return TRUE;
+}
+
+static gboolean
+login_opt_arg_func(const gchar *option_name, const gchar *value,
+		gpointer data, GError **error)
+{
+	opt_login = TRUE;
+
+	g_free(opt_login_arg);
+	opt_login_arg = g_strdup(value);
+
+	return TRUE;
 }
 
 int pidgin_start(int argc, char *argv[])
 {
 	GApplication *app;
 	gboolean opt_force_online = FALSE;
-	gboolean opt_help = FALSE;
-	gboolean opt_login = FALSE;
 	gboolean opt_nologin = FALSE;
 	gboolean opt_version = FALSE;
 	gboolean opt_si = TRUE;     /* Check for single instance? */
 	char *opt_config_dir_arg = NULL;
-	char *opt_login_arg = NULL;
 	char *search_path;
 	GtkCssProvider *provider;
 	GdkScreen *screen;
@@ -442,26 +424,44 @@ int pidgin_start(int argc, char *argv[])
 	char *segfault_message_tmp;
 #endif /* DEBUG */
 #endif /* !_WIN32 */
-	int opt;
+	GOptionContext *context;
+	gchar *summary;
+	gchar **args;
 	gboolean gui_check;
-	gboolean debug_enabled, debug_colored;
 	GList *active_accounts;
 	GStatBuf st;
 	GError *error;
 	int ret;
 
-	struct option long_options[] = {
-		{"config",       required_argument, NULL, 'c'},
-		{"debug",        optional_argument, NULL, 'd'},
-		{"force-online", no_argument,       NULL, 'f'},
-		{"help",         no_argument,       NULL, 'h'},
-		{"login",        optional_argument, NULL, 'l'},
-		{"multiple",     no_argument,       NULL, 'm'},
-		{"nologin",      no_argument,       NULL, 'n'},
-		{"version",      no_argument,       NULL, 'v'},
-		{"display",      required_argument, NULL, 'D'},
-		{"sync",         no_argument,       NULL, 'S'},
-		{0, 0, 0, 0}
+	GOptionEntry option_entries[] = {
+		{"config", 'c', 0,
+			G_OPTION_ARG_FILENAME, &opt_config_dir_arg,
+			_("use DIR for config files"), _("DIR")},
+		{"debug", 'd', G_OPTION_FLAG_OPTIONAL_ARG,
+			G_OPTION_ARG_CALLBACK, &debug_opt_arg_func,
+			_("print debugging messages to stdout"),
+			_("[colored]")},
+		{"force-online", 'f', 0,
+			G_OPTION_ARG_NONE, &opt_force_online,
+			_("force online, regardless of network status"), NULL},
+		{"login", 'l', G_OPTION_FLAG_OPTIONAL_ARG,
+			G_OPTION_ARG_CALLBACK, &login_opt_arg_func,
+			_("enable specified account(s) (optional argument NAME\n"
+			  "                            "
+			  "specifies account(s) to use, separated by commas.\n"
+			  "                            "
+			  "Without this only the first account will be enabled)"),
+			_("[NAME]")},
+		{"multiple", 'm', G_OPTION_FLAG_REVERSE,
+			G_OPTION_ARG_NONE,  &opt_si,
+			_("allow multiple instances"), NULL},
+		{"nologin", 'n', 0,
+			G_OPTION_ARG_NONE, &opt_nologin,
+			_("don't automatically login"), NULL},
+		{"version", 'v', 0,
+			G_OPTION_ARG_NONE, &opt_version,
+			_("display the current version and exit"), NULL},
+		{NULL}
 	};
 
 	debug_colored = FALSE;
@@ -584,65 +584,36 @@ int pidgin_start(int argc, char *argv[])
 	}
 #endif /* !_WIN32 */
 
-	/* scan command-line options */
-	opterr = 1;
-	while ((opt = getopt_long(argc, argv,
-				  "c:dfhmnl::v",
-				  long_options, NULL)) != -1) {
-		switch (opt) {
-		case 'c':	/* config dir */
-			g_free(opt_config_dir_arg);
-			opt_config_dir_arg = g_strdup(optarg);
-			break;
-		case 'd':	/* debug */
-			debug_enabled = TRUE;
-			if (g_strcmp0(optarg, "colored") == 0)
-				debug_colored = TRUE;
-			break;
-		case 'f':	/* force-online */
-			opt_force_online = TRUE;
-			break;
-		case 'h':	/* help */
-			opt_help = TRUE;
-			break;
-		case 'n':	/* no autologin */
-			opt_nologin = TRUE;
-			break;
-		case 'l':	/* login, option username */
-			opt_login = TRUE;
-			g_free(opt_login_arg);
-			if (optarg != NULL)
-				opt_login_arg = g_strdup(optarg);
-			break;
-		case 'v':	/* version */
-			opt_version = TRUE;
-			break;
-		case 'm':   /* do not ensure single instance. */
-			opt_si = FALSE;
-			break;
-		case 'D':   /* --display */
-		case 'S':   /* --sync */
-			/* handled by gtk_init_check below */
-			break;
-		case '?':	/* show terse help */
-		default:
-			show_usage(argv[0], TRUE);
-#ifndef _WIN32
-			g_free(segfault_message);
-#endif
-			return 0;
-			break;
-		}
-	}
+	context = g_option_context_new(NULL);
 
-	/* show help message */
-	if (opt_help) {
-		show_usage(argv[0], FALSE);
+	summary = g_strdup_printf("%s %s", PIDGIN_NAME, DISPLAY_VERSION);
+	g_option_context_set_summary(context, summary);
+	g_free(summary);
+
+	g_option_context_add_main_entries(context, option_entries, PACKAGE);
+	g_option_context_add_group(context, gtk_get_option_group(FALSE));
+
+#ifdef G_OS_WIN32
+	/* Handle Unicode filenames on Windows. See GOptionContext docs. */
+	args = g_win32_get_command_line();
+#else
+	args = g_strdupv(argv);
+#endif
+
+	if (!g_option_context_parse_strv(context, &args, &error)) {
+		g_strfreev(args);
+		g_printerr(_("%s %s: %s\nTry `%s -h' for more information.\n"),
+				PIDGIN_NAME, DISPLAY_VERSION, error->message,
+				argv[0]);
+		g_clear_error(&error);
 #ifndef _WIN32
 		g_free(segfault_message);
 #endif
-		return 0;
+		return 1;
 	}
+
+	g_strfreev(args);
+
 	/* show version message */
 	if (opt_version) {
 		printf("%s %s (libpurple %s)\n", PIDGIN_NAME, DISPLAY_VERSION,
