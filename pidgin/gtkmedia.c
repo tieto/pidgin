@@ -72,12 +72,12 @@ typedef enum
 
 struct _PidginMediaClass
 {
-	GtkWindowClass parent_class;
+	GtkApplicationWindowClass parent_class;
 };
 
 struct _PidginMedia
 {
-	GtkWindow parent;
+	GtkApplicationWindow parent;
 	PidginMediaPrivate *priv;
 };
 
@@ -87,7 +87,7 @@ struct _PidginMediaPrivate
 	gchar *screenname;
 	gulong level_handler_id;
 
-	GtkUIManager *ui;
+	GtkBuilder *ui;
 	GtkWidget *menubar;
 	GtkWidget *statusbar;
 
@@ -155,7 +155,8 @@ pidgin_media_get_type(void)
 			(GInstanceInitFunc) pidgin_media_init,
 			NULL
 		};
-		type = g_type_register_static(GTK_TYPE_WINDOW, "PidginMedia", &info, 0);
+		type = g_type_register_static(GTK_TYPE_APPLICATION_WINDOW,
+				"PidginMedia", &info, 0);
 	}
 	return type;
 }
@@ -190,30 +191,55 @@ pidgin_media_class_init (PidginMediaClass *klass)
 }
 
 static void
-pidgin_media_hold_toggled(GtkToggleButton *toggle, PidginMedia *media)
+pidgin_media_hangup_activate_cb(GSimpleAction *action, GVariant *parameter,
+		gpointer user_data)
 {
+	PidginMedia *media = PIDGIN_MEDIA(user_data);
+
 	purple_media_stream_info(media->priv->media,
-			gtk_toggle_button_get_active(toggle) ?
+			PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);
+}
+
+static void
+pidgin_media_hold_change_state_cb(GSimpleAction *action, GVariant *value,
+		gpointer user_data)
+{
+	PidginMedia *media = PIDGIN_MEDIA(user_data);
+
+	purple_media_stream_info(media->priv->media,
+			g_variant_get_boolean(value) ?
 			PURPLE_MEDIA_INFO_HOLD : PURPLE_MEDIA_INFO_UNHOLD,
 			NULL, NULL, TRUE);
+
+	g_simple_action_set_state(action, value);
 }
 
 static void
-pidgin_media_mute_toggled(GtkToggleButton *toggle, PidginMedia *media)
+pidgin_media_mute_change_state_cb(GSimpleAction *action, GVariant *value,
+		gpointer user_data)
 {
+	PidginMedia *media = PIDGIN_MEDIA(user_data);
+
 	purple_media_stream_info(media->priv->media,
-			gtk_toggle_button_get_active(toggle) ?
+			g_variant_get_boolean(value) ?
 			PURPLE_MEDIA_INFO_MUTE : PURPLE_MEDIA_INFO_UNMUTE,
 			NULL, NULL, TRUE);
+
+	g_simple_action_set_state(action, value);
 }
 
 static void
-pidgin_media_pause_toggled(GtkToggleButton *toggle, PidginMedia *media)
+pidgin_media_pause_change_state_cb(GSimpleAction *action, GVariant *value,
+		gpointer user_data)
 {
+	PidginMedia *media = PIDGIN_MEDIA(user_data);
+
 	purple_media_stream_info(media->priv->media,
-			gtk_toggle_button_get_active(toggle) ?
+			g_variant_get_boolean(value) ?
 			PURPLE_MEDIA_INFO_PAUSE : PURPLE_MEDIA_INFO_UNPAUSE,
 			NULL, NULL, TRUE);
+
+	g_simple_action_set_state(action, value);
 }
 
 static gboolean
@@ -221,8 +247,8 @@ pidgin_media_delete_event_cb(GtkWidget *widget,
 		GdkEvent *event, PidginMedia *media)
 {
 	if (media->priv->media)
-		purple_media_stream_info(media->priv->media,
-				PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);
+		g_action_group_activate_action(G_ACTION_GROUP(media),
+				"Hangup", NULL);
 	return FALSE;
 }
 
@@ -262,61 +288,52 @@ pidgin_x_error_handler(Display *display, XErrorEvent *event)
 }
 #endif
 
-static void
-menu_hangup(GtkAction *action, gpointer data)
-{
-	PidginMedia *gtkmedia = PIDGIN_MEDIA(data);
-	purple_media_stream_info(gtkmedia->priv->media,
-			PURPLE_MEDIA_INFO_HANGUP, NULL, NULL, TRUE);
-}
-
-static const GtkActionEntry menu_entries[] = {
-	{ "MediaMenu", NULL, N_("_Media"), NULL, NULL, NULL },
-	{ "Hangup", NULL, N_("_Hangup"), NULL, NULL, G_CALLBACK(menu_hangup) },
+static const GActionEntry media_action_entries[] = {
+	{ "Hangup", pidgin_media_hangup_activate_cb },
+	{ "Hold", NULL, NULL, "false", pidgin_media_hold_change_state_cb },
+	{ "Mute", NULL, NULL, "false", pidgin_media_mute_change_state_cb },
+	{ "Pause", NULL, NULL, "false", pidgin_media_pause_change_state_cb },
 };
 
-static const char *media_menu =
-"<ui>"
-	"<menubar name='Media'>"
-		"<menu action='MediaMenu'>"
-			"<menuitem action='Hangup'/>"
-		"</menu>"
-	"</menubar>"
-"</ui>";
+static const gchar *media_menu = 
+"<interface>"
+	"<menu id='MediaMenu'>"
+		"<submenu>"
+			"<attribute name='label' translatable='yes'>_Media</attribute>"
+			"<section>"
+				"<item>"
+					"<attribute name='label' translatable='yes'>_Hangup</attribute>"
+					"<attribute name='action'>win.Hangup</attribute>"
+				"</item>"
+			"</section>"
+		"</submenu>"
+	"</menu>"
+"</interface>";
 
 static GtkWidget *
 setup_menubar(PidginMedia *window)
 {
-	GtkActionGroup *action_group;
 	GError *error;
-	GtkAccelGroup *accel_group;
 	GtkWidget *menu;
 
-	action_group = gtk_action_group_new("MediaActions");
+	window->priv->ui = gtk_builder_new();
+
 #ifdef ENABLE_NLS
-	gtk_action_group_set_translation_domain(action_group,
-	                                        PACKAGE);
+	gtk_builder_set_translation_domain(window->priv->ui, PACKAGE);
 #endif
-	gtk_action_group_add_actions(action_group,
-	                             menu_entries,
-	                             G_N_ELEMENTS(menu_entries),
-	                             GTK_WINDOW(window));
-
-	window->priv->ui = gtk_ui_manager_new();
-	gtk_ui_manager_insert_action_group(window->priv->ui, action_group, 0);
-
-	accel_group = gtk_ui_manager_get_accel_group(window->priv->ui);
-	gtk_window_add_accel_group(GTK_WINDOW(window), accel_group);
 
 	error = NULL;
-	if (!gtk_ui_manager_add_ui_from_string(window->priv->ui, media_menu, -1, &error))
+	if (!gtk_builder_add_from_string(window->priv->ui, media_menu, -1,
+			&error))
 	{
 		g_message("building menus failed: %s", error->message);
 		g_error_free(error);
 		exit(EXIT_FAILURE);
 	}
 
-	menu = gtk_ui_manager_get_widget(window->priv->ui, "/Media");
+	menu = gtk_menu_bar_new_from_model(G_MENU_MODEL(
+			gtk_builder_get_object(window->priv->ui,
+				"MediaMenu")));
 
 	gtk_widget_show(menu);
 	return menu;
@@ -331,6 +348,10 @@ pidgin_media_init (PidginMedia *media)
 #ifdef HAVE_X11
 	XSetErrorHandler(pidgin_x_error_handler);
 #endif
+
+	g_action_map_add_action_entries(G_ACTION_MAP(media),
+			media_action_entries,
+			G_N_ELEMENTS(media_action_entries), media);
 
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_add(GTK_CONTAINER(media), vbox);
@@ -857,7 +878,7 @@ pidgin_media_add_dtmf_widget(PidginMedia *gtkmedia,
 	GtkWidget *grid = gtk_grid_new();
 	GtkWidget *button;
 	gint index = 0;
-	GtkWindow *win = &gtkmedia->parent;
+	GtkApplicationWindow *win = &gtkmedia->parent;
 
 	gtk_grid_set_row_homogeneous(GTK_GRID(grid), TRUE);
 	gtk_grid_set_column_homogeneous(GTK_GRID(grid), TRUE);
@@ -922,9 +943,9 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->hold,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->hold);
-		g_signal_connect(gtkmedia->priv->hold, "toggled",
-				G_CALLBACK(pidgin_media_hold_toggled),
-				gtkmedia);
+		gtk_actionable_set_action_name(
+				GTK_ACTIONABLE(gtkmedia->priv->hold),
+				"win.Hold");
 	} else {
 		send_widget = gtkmedia->priv->send_widget;
 		button_widget = gtkmedia->priv->button_widget;
@@ -989,9 +1010,9 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->pause,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->pause);
-		g_signal_connect(gtkmedia->priv->pause, "toggled",
-				G_CALLBACK(pidgin_media_pause_toggled),
-				gtkmedia);
+		gtk_actionable_set_action_name(
+				GTK_ACTIONABLE(gtkmedia->priv->pause),
+				"win.Pause");
 
 		gtkmedia->priv->local_video = local_video;
 	}
@@ -1007,9 +1028,9 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia, const gchar *si
 		gtk_box_pack_end(GTK_BOX(button_widget), gtkmedia->priv->mute,
 				FALSE, FALSE, 0);
 		gtk_widget_show(gtkmedia->priv->mute);
-		g_signal_connect(gtkmedia->priv->mute, "toggled",
-				G_CALLBACK(pidgin_media_mute_toggled),
-				gtkmedia);
+		gtk_actionable_set_action_name(
+				GTK_ACTIONABLE(gtkmedia->priv->mute),
+				"win.Mute");
 
 		gtk_box_pack_end(GTK_BOX(recv_widget),
 				pidgin_media_add_audio_widget(gtkmedia,
