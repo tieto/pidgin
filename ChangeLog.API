@@ -259,6 +259,9 @@ version 3.0.0 (??/??/????):
 		* PurpleIconScaleRules renamed to PurpleBuddyIconScaleFlags
 		* purple_imgstore_add renamed to purple_imgstore_new
 		* purple_imgstore_add_with_id renamed to purple_imgstore_new_with_id
+		* PurpleLog, purple_log_new, purple_log_write and
+		  PurpleLogLogger->write take a GDateTime instead of a time_t
+		  and struct tm
 		* purple_network_listen now takes the protocol family as the second
 		  parameter
 		* purple_network_listen now takes a boolean indicating external port
