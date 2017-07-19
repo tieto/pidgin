@@ -29,7 +29,7 @@
 #include "theme-manager.h"
 
 static PurpleSoundUiOps *sound_ui_ops = NULL;
-static time_t last_played[PURPLE_NUM_SOUNDS];
+static gint64 last_played[PURPLE_NUM_SOUNDS];
 
 static gboolean
 purple_sound_play_required(const PurpleAccount *account)
@@ -79,9 +79,9 @@ purple_sound_play_event(PurpleSoundEventID event, const PurpleAccount *account)
 
 	g_return_if_fail(event < PURPLE_NUM_SOUNDS);
 
-	if (time(NULL) - last_played[event] < 2)
+	if (g_get_monotonic_time() - last_played[event] < 2 * G_USEC_PER_SEC)
 		return;
-	last_played[event] = time(NULL);
+	last_played[event] = g_get_monotonic_time();
 
 	if(sound_ui_ops && sound_ui_ops->play_event) {
 		int plugin_return;

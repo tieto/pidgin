@@ -183,7 +183,6 @@ typedef struct _pidgin_blist_node {
 	gint recent_signonoff_timer;
 	struct {
 		PurpleConversation *conv;
-		time_t last_message;          /* timestamp for last displayed message */
 		PidginBlistNodeFlags flags;
 	} conv;
 } PidginBlistNode;
@@ -4732,7 +4731,6 @@ conversation_deleted_update_ui_cb(PurpleConversation *conv, struct _pidgin_blist
 		return;
 	ui->conv.conv = NULL;
 	ui->conv.flags = 0;
-	ui->conv.last_message = 0;
 }
 
 static void
@@ -4753,7 +4751,6 @@ written_msg_update_ui_cb(PurpleConversation *conv, PurpleMessage *msg, PurpleBli
 	if (PURPLE_IS_CHAT_CONVERSATION(conv) && (purple_message_get_flags(msg) & PURPLE_MESSAGE_NICK))
 		ui->conv.flags |= PIDGIN_BLIST_CHAT_HAS_PENDING_MESSAGE_WITH_NICK;
 
-	ui->conv.last_message = time(NULL);    /* XXX: for lack of better data */
 	pidgin_blist_update(purple_blist_get_buddy_list(), node);
 }
 
@@ -4783,7 +4780,6 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 				continue;
 			ui->conv.conv = conv;
 			ui->conv.flags = 0;
-			ui->conv.last_message = 0;
 			purple_signal_connect(purple_conversations_get_handle(), "deleting-conversation",
 					ui, PURPLE_CALLBACK(conversation_deleted_update_ui_cb), ui);
 			purple_signal_connect(purple_conversations_get_handle(), "wrote-im-msg",
@@ -4801,7 +4797,6 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 			return;
 		ui->conv.conv = conv;
 		ui->conv.flags = 0;
-		ui->conv.last_message = 0;
 		purple_signal_connect(purple_conversations_get_handle(), "deleting-conversation",
 				ui, PURPLE_CALLBACK(conversation_deleted_update_ui_cb), ui);
 		purple_signal_connect(purple_conversations_get_handle(), "wrote-chat-msg",

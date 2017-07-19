@@ -84,7 +84,7 @@ struct _PidginXferDialog
 typedef struct
 {
 	GtkTreeIter iter;
-	time_t last_updated_time;
+	gint64 last_updated_time;
 	gboolean in_list;
 
 	char *name;
@@ -1008,7 +1008,7 @@ pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 {
 	PidginXferUiData *data;
 	char *size_str, *remaining_str;
-	time_t current_time;
+	gint64 current_time;
 	GtkTreeIter iter;
 	gboolean valid;
 
@@ -1021,8 +1021,8 @@ pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 	if (data->in_list == FALSE)
 		return;
 
-	current_time = time(NULL);
-	if (((current_time - data->last_updated_time) == 0) &&
+	current_time = g_get_monotonic_time();
+	if (((current_time - data->last_updated_time) < G_USEC_PER_SEC) &&
 		(!purple_xfer_is_completed(xfer)))
 	{
 		/* Don't update the window more than once per second */
