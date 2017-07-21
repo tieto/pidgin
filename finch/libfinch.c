@@ -44,9 +44,6 @@
 #include "gntui.h"
 #include "gntidle.h"
 
-#define _GNU_SOURCE
-#include <getopt.h>
-
 #include "config.h"
 #include "package_revision.h"
 
@@ -133,46 +130,32 @@ gnt_core_get_ui_ops(void)
 	return &core_ops;
 }
 
-/* This is mostly copied from gtkpurple's source tree */
-static void
-show_usage(const char *name, gboolean terse)
-{
-	char *text;
-
-	if (terse) {
-		text = g_strdup_printf(_("%s. Try `%s -h' for more information.\n"), DISPLAY_VERSION, name);
-	} else {
-		text = g_strdup_printf(_("%s\n"
-		       "Usage: %s [OPTION]...\n\n"
-		       "  -c, --config=DIR    use DIR for config files\n"
-		       "  -d, --debug         print debugging messages to stderr\n"
-		       "  -h, --help          display this help and exit\n"
-		       "  -n, --nologin       don't automatically login\n"
-		       "  -v, --version       display the current version and exit\n"), DISPLAY_VERSION, name);
-	}
-
-	purple_print_utf8_to_console(stdout, text);
-	g_free(text);
-}
-
 static int
 init_libpurple(int argc, char **argv)
 {
 	char *path;
-	int opt;
-	gboolean opt_help = FALSE;
 	gboolean opt_nologin = FALSE;
 	gboolean opt_version = FALSE;
 	char *opt_config_dir_arg = NULL;
 	gboolean debug_enabled = FALSE;
+	GOptionContext *context;
+	gchar **args;
+	GError *error = NULL;
 
-	struct option long_options[] = {
-		{"config",   required_argument, NULL, 'c'},
-		{"debug",    no_argument,       NULL, 'd'},
-		{"help",     no_argument,       NULL, 'h'},
-		{"nologin",  no_argument,       NULL, 'n'},
-		{"version",  no_argument,       NULL, 'v'},
-		{0, 0, 0, 0}
+	GOptionEntry option_entries[] = {
+		{"config", 'c', 0,
+			G_OPTION_ARG_FILENAME, &opt_config_dir_arg,
+			_("use DIR for config files"), _("DIR")},
+		{"debug", 'd', 0,
+			G_OPTION_ARG_NONE, &debug_enabled,
+			_("print debugging messages to stderr"), NULL},
+		{"nologin", 'n', 0,
+			G_OPTION_ARG_NONE, &opt_nologin,
+			_("don't automatically login"), NULL},
+		{"version", 'v', 0,
+			G_OPTION_ARG_NONE, &opt_version,
+			_("display the current version and exit"), NULL},
+		{NULL}
 	};
 
 #ifdef ENABLE_NLS
@@ -183,40 +166,27 @@ init_libpurple(int argc, char **argv)
 
 	setlocale(LC_ALL, "");
 
-	/* scan command-line options */
-	opterr = 1;
-	while ((opt = getopt_long(argc, argv, "c:dhn::v",
-				  long_options, NULL)) != -1) {
-		switch (opt) {
-		case 'c':	/* config dir */
-			g_free(opt_config_dir_arg);
-			opt_config_dir_arg = g_strdup(optarg);
-			break;
-		case 'd':	/* debug */
-			debug_enabled = TRUE;
-			break;
-		case 'h':	/* help */
-			opt_help = TRUE;
-			break;
-		case 'n':	/* no autologin */
-			opt_nologin = TRUE;
-			break;
-		case 'v':	/* version */
-			opt_version = TRUE;
-			break;
-		case '?':	/* show terse help */
-		default:
-			show_usage(argv[0], TRUE);
-			return 0;
-			break;
-		}
+	context = g_option_context_new(NULL);
+	g_option_context_set_summary(context, DISPLAY_VERSION);
+	g_option_context_add_main_entries(context, option_entries, PACKAGE);
+
+#ifdef G_OS_WIN32
+	/* Handle Unicode filenames on Windows. See GOptionContext docs. */
+	args = g_win32_get_command_line();
+#else
+	args = g_strdupv(argv);
+#endif
+
+	if (!g_option_context_parse_strv(context, &args, &error)) {
+		g_strfreev(args);
+		g_printerr(_("%s: %s\nTry `%s -h' for more information.\n"),
+				DISPLAY_VERSION, error->message, argv[0]);
+		g_clear_error(&error);
+		return 1;
 	}
 
-	/* show help message */
-	if (opt_help) {
-		show_usage(argv[0], FALSE);
-		return 0;
-	}
+	g_strfreev(args);
+
 	/* show version message */
 	if (opt_version) {
 		/* Translators may want to transliterate the name.

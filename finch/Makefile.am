@@ -1,7 +1,4 @@
 EXTRA_DIST = \
-		getopt.c \
-		getopt.h \
-		getopt1.c \
 		finch.pc.in
 
 pkgconfigdir = $(libdir)/pkgconfig

@@ -5,7 +5,6 @@ ignore_hfiles = [
     'plugins',
     'test',
     'libgnt/wms',
-    'getopt.h',
     'gntinternal.h',
     'gnt-skel.h'
 ]

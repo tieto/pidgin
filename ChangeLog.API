@@ -468,6 +468,7 @@ version 3.0.0 (??/??/????):
 		* purple_presence_new
 		* purple_presence_new_for_account
 		* purple_presence_new_for_buddy
+		* purple_print_utf8_to_console
 		* PurplePluginProtocolInfo
 		* purple_proxy_connect_socks5
 		* purple_request_field_list_add

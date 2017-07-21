@@ -1401,17 +1401,6 @@ int purple_utf8_strcasecmp(const char *a, const char *b);
 gboolean purple_utf8_has_word(const char *haystack, const char *needle);
 
 /**
- * purple_print_utf8_to_console:
- * @filestream: The file stream (e.g. STDOUT or STDERR)
- * @message:    The message to print.
- *
- * Prints a UTF-8 message to the given file stream. The function
- * tries to convert the UTF-8 message to user's locale. If this
- * is not possible, the original UTF-8 text will be printed.
- */
-void purple_print_utf8_to_console(FILE *filestream, char *message);
-
-/**
  * purple_message_meify:
  * @message: The message to check
  * @len:     The message length, or -1
