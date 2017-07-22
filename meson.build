@@ -1130,7 +1130,8 @@ if get_option('plugins')
 	gplugin = dependency('gplugin', version : '>= 0.0.17')
 	# GPLUGIN_REQ sets pkg-config requirements in the .pc file
 	pkg_conf.set('GPLUGIN_REQ', ', gplugin')
-	enable_introspection = true
+	enable_introspection = dependency('gobject-introspection-1.0',
+	    version : '>= 1.30.0', required : false).found()
 else
 	gplugin = []
 	enable_introspection = false
