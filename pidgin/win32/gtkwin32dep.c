@@ -36,7 +36,6 @@
 #include "network.h"
 
 #include "resource.h"
-#include "zlib.h"
 #include "untar.h"
 
 #include "gtkwin32dep.h"
@@ -73,36 +72,59 @@ HINSTANCE winpidgin_dll_hinstance(void) {
 }
 
 int winpidgin_gz_decompress(const char* in, const char* out) {
-	gzFile fin;
-	FILE *fout;
-	char buf[1024];
-	int ret;
+	GFile *fin;
+	GFile *fout;
+	GInputStream *input;
+	GOutputStream *output;
+	GOutputStream *conv_out;
+	GZlibDecompressor *decompressor;
+	gssize size;
+	GError *error = NULL;
 
-	if((fin = gzopen(in, "rb"))) {
-		if(!(fout = g_fopen(out, "wb"))) {
-			purple_debug_error("winpidgin_gz_decompress", "Error opening file: %s\n", out);
-			gzclose(fin);
-			return 0;
-		}
-	}
-	else {
-		purple_debug_error("winpidgin_gz_decompress", "gzopen failed to open: %s\n", in);
+	fin = g_file_new_for_path(in);
+	input = G_INPUT_STREAM(g_file_read(fin, NULL, &error));
+	g_object_unref(fin);
+
+	if (input == NULL) {
+		purple_debug_error("winpidgin_gz_decompress",
+				"Failed to open: %s: %s\n",
+				in, error->message);
+		g_clear_error(&error);
 		return 0;
 	}
 
-	while((ret = gzread(fin, buf, 1024))) {
-		if ((int)fwrite(buf, 1, ret, fout) < ret) {
-			purple_debug_error("wpurple_gz_decompress", "Error writing %d bytes to file\n", ret);
-			gzclose(fin);
-			fclose(fout);
-			return 0;
-		}
-	}
-	fclose(fout);
-	gzclose(fin);
+	fout = g_file_new_for_path(out);
+	output = G_OUTPUT_STREAM(g_file_replace(fout, NULL, FALSE,
+			G_FILE_CREATE_NONE, NULL, &error));
+	g_object_unref(fout);
 
-	if(ret < 0) {
-		purple_debug_error("winpidgin_gz_decompress", "gzread failed while reading: %s\n", in);
+	if (output == NULL) {
+		purple_debug_error("winpidgin_gz_decompress",
+				"Error opening file: %s: %s\n",
+				out, error->message);
+		g_clear_error(&error);
+		g_object_unref(input);
+		return 0;
+	}
+
+	decompressor = g_zlib_decompressor_new(G_ZLIB_COMPRESSOR_FORMAT_GZIP);
+	conv_out = g_converter_output_stream_new(output,
+			G_CONVERTER(decompressor));
+	g_object_unref(decompressor);
+	g_object_unref(output);
+
+	size = g_output_stream_splice(conv_out, input,
+			G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE |
+			G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET, NULL, &error);
+
+	g_object_unref(input);
+	g_object_unref(conv_out);
+
+	if (size < 0) {
+		purple_debug_error("wpurple_gz_decompress",
+				"Error writing to file: %s\n",
+				error->message);
+		g_clear_error(&error);
 		return 0;
 	}
 
