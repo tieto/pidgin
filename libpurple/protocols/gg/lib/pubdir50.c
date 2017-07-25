@@ -88,7 +88,7 @@ static int gg_pubdir50_add_n(gg_pubdir50_t req, int num, const char *field, cons
 	}
 
 	for (i = 0; i < req->entries_count; i++) {
-		if (req->entries[i].num != num || !purple_strequal(req->entries[i].field, field))
+		if (req->entries[i].num != num || strcmp(req->entries[i].field, field))
 			continue;
 
 		free(req->entries[i].value);

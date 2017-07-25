@@ -3204,7 +3204,7 @@ protobuf_c_enum_descriptor_get_value_by_name(const ProtobufCEnumDescriptor *desc
 	}
 	if (count == 0)
 		return NULL;
-	if (purple_strequal(desc->values_by_name[start].name, name))
+	if (strcmp(desc->values_by_name[start].name, name) == 0)
 		return desc->values + desc->values_by_name[start].index;
 	return NULL;
 }
@@ -3243,7 +3243,7 @@ protobuf_c_message_descriptor_get_field_by_name(const ProtobufCMessageDescriptor
 	if (count == 0)
 		return NULL;
 	field = desc->fields + desc->fields_sorted_by_name[start];
-	if (purple_strequal(field->name, name))
+	if (strcmp(field->name, name) == 0)
 		return field;
 	return NULL;
 }
@@ -3282,7 +3282,7 @@ protobuf_c_service_descriptor_get_method_by_name(const ProtobufCServiceDescripto
 	}
 	if (count == 0)
 		return NULL;
-	if (purple_strequal(desc->methods[desc->method_indices_by_name[start]].name, name))
+	if (strcmp(desc->methods[desc->method_indices_by_name[start]].name, name) == 0)
 		return desc->methods + desc->method_indices_by_name[start];
 	return NULL;
 }

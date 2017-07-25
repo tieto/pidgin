@@ -161,7 +161,7 @@ char *gg_get_line(char **ptr)
 {
 	char *foo, *res;
 
-	if (!ptr || !*ptr)
+	if (!ptr || !*ptr || !strcmp(*ptr, ""))
 		return NULL;
 
 	res = *ptr;
