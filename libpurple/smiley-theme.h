@@ -126,7 +126,7 @@ purple_smiley_theme_set_current(PurpleSmileyTheme *theme);
  *
  * Returns the currently used smiley theme.
  *
- * Returns: the #PurpleSmileyTheme or %NULL, if none is set.
+ * Returns: (transfer none): the #PurpleSmileyTheme or %NULL, if none is set.
  */
 PurpleSmileyTheme *
 purple_smiley_theme_get_current(void);

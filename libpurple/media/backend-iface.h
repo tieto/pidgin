@@ -132,7 +132,7 @@ gboolean purple_media_backend_add_stream(PurpleMediaBackend *self,
  * @self: The backend the stream is in.
  * @sess_id: The session id associated with the stream.
  * @participant: The participant associated with the stream.
- * @remote_candidates: The list of remote candidates to add.
+ * @remote_candidates: (element-type PurpleMediaCandidate): The list of remote candidates to add.
  *
  * Add remote candidates to a stream.
  */
@@ -165,7 +165,7 @@ gboolean purple_media_backend_codecs_ready(PurpleMediaBackend *self,
  * The intersection list consists of all codecs that are compatible
  * between the local and remote software.
  *
- * Returns: The codec intersection list.
+ * Returns: (transfer full) (element-type PurpleMediaCodec): The codec intersection list.
  */
 GList *purple_media_backend_get_codecs(PurpleMediaBackend *self,
 		const gchar *sess_id);
@@ -178,7 +178,7 @@ GList *purple_media_backend_get_codecs(PurpleMediaBackend *self,
  *
  * Gets the list of local candidates for a stream.
  *
- * Returns: The list of local candidates.
+ * Return Value: (transfer full) (element-type PurpleMediaCandidate): The list of local candidates.
  */
 GList *purple_media_backend_get_local_candidates(PurpleMediaBackend *self,
 		const gchar *sess_id, const gchar *participant);
@@ -188,7 +188,7 @@ GList *purple_media_backend_get_local_candidates(PurpleMediaBackend *self,
  * @self: The media backend the stream is in.
  * @sess_id: The session id the stream is associated with.
  * @participant: The participant the stream is associated with.
- * @codecs: The list of remote codecs to set.
+ * @codecs: (element-type PurpleMediaCodec) The list of remote codecs to set.
  *
  * Sets the remote codecs on a stream.
  *
@@ -264,7 +264,7 @@ void purple_media_backend_set_params(PurpleMediaBackend *self,
  * Gets the list of optional parameters supported by the media backend.
  * The list should NOT be freed.
  *
- * Returns: NULL-terminated array of names of supported parameters.
+ * Return Value: (transfer none): NULL-terminated array of names of supported parameters.
  */
 const gchar **purple_media_backend_get_available_params(PurpleMediaBackend *self);
 
