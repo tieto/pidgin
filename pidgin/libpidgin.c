@@ -430,7 +430,7 @@ int pidgin_start(int argc, char *argv[])
 	gboolean gui_check;
 	GList *active_accounts;
 	GStatBuf st;
-	GError *error;
+	GError *error = NULL;
 	int ret;
 
 	GOptionEntry option_entries[] = {
@@ -501,7 +501,6 @@ int pidgin_start(int argc, char *argv[])
 		/* we have to convert the message (UTF-8 to console
 		   charset) early because after a segmentation fault
 		   it's not a good practice to allocate memory */
-		error = NULL;
 		segfault_message = g_locale_from_utf8(segfault_message_tmp,
 						      -1, NULL, NULL, &error);
 		if (segfault_message != NULL) {
@@ -510,7 +509,7 @@ int pidgin_start(int argc, char *argv[])
 		else {
 			/* use 'segfault_message_tmp' (UTF-8) as a fallback */
 			g_warning("%s\n", error->message);
-			g_error_free(error);
+			g_clear_error(&error);
 			segfault_message = segfault_message_tmp;
 		}
 #else
@@ -539,11 +538,11 @@ int pidgin_start(int argc, char *argv[])
 	 * Set the channel encoding to raw binary instead of the default of
 	 * UTF-8, because we'll be sending integers across instead of strings.
 	 */
-	error = NULL;
 	signal_status = g_io_channel_set_encoding(signal_channel, NULL, &error);
 	if (signal_status != G_IO_STATUS_NORMAL) {
 		fprintf(stderr, "Failed to set the signal channel to raw "
 				"binary: %s", error->message);
+		g_clear_error(&error);
 		exit(1);
 	}
 	signal_channel_watcher = g_io_add_watch(signal_channel, G_IO_IN, mainloop_sighandler, NULL);
@@ -670,7 +669,6 @@ int pidgin_start(int argc, char *argv[])
 
 	search_path = g_build_filename(purple_user_dir(), "gtk-3.0.css", NULL);
 
-	error = NULL;
 	provider = gtk_css_provider_new();
 	gui_check = gtk_css_provider_load_from_path(provider, search_path, &error);
 
@@ -682,6 +680,7 @@ int pidgin_start(int argc, char *argv[])
 	} else {
 		purple_debug_error("gtk", "Unable to load custom gtk-3.0.css: %s\n",
 		                   error ? error->message : "(unknown error)");
+		g_clear_error(&error);
 	}
 
 	g_free(search_path);

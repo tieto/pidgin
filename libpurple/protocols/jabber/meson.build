@@ -95,13 +95,21 @@ if enable_cyrus_sasl
 	JABBERSOURCES += ['auth_cyrus.c']
 endif
 
+if IS_WIN32
+	jabber_link_args = ['-Wl,--export-all-symbols']
+else
+	jabber_link_args = []
+endif
+
 if STATIC_JABBER
 	jabber_prpl = static_library('jabber', JABBERSOURCES,
 	    c_args : '-DPURPLE_STATIC_PRPL',
-	    dependencies : [gstreamer, idn, libxml, sasl, libpurple_dep, glib, gio, math])
+	    link_args : jabber_link_args,
+	    dependencies : [gstreamer, idn, libxml, sasl, libpurple_dep, glib, gio, math, ws2_32])
 elif DYNAMIC_JABBER
 	jabber_prpl = shared_library('jabber', JABBERSOURCES,
-	    dependencies : [gstreamer, idn, libxml, sasl, libpurple_dep, glib, gio, math],
+	    link_args : jabber_link_args,
+	    dependencies : [gstreamer, idn, libxml, sasl, libpurple_dep, glib, gio, math, ws2_32],
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 endif
 

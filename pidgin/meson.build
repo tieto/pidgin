@@ -160,6 +160,7 @@ if ENABLE_GTK
 	    pidgin_SOURCES,
 	    link_args : '-export-dynamic',
 	    dependencies : [libpurple_dep, libpidgin_dep],
+	    gui_app : true,
 	    install : true)
 
 	if IS_WIN32

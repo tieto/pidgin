@@ -47,13 +47,21 @@ OSCARSOURCES = [
 	'visibility.h'
 ]
 
+if IS_WIN32
+	oscar_link_args = ['-Wl,--export-all-symbols']
+else
+	oscar_link_args = []
+endif
+
 if STATIC_OSCAR
 	oscar_prpl = static_library('oscar', OSCARSOURCES,
 	    c_args : '-DPURPLE_STATIC_PRPL',
-	    dependencies : [libpurple_dep, glib])
+	    link_args : oscar_link_args,
+	    dependencies : [libpurple_dep, glib, ws2_32])
 elif DYNAMIC_OSCAR
 	oscar_prpl = shared_library('oscar', OSCARSOURCES,
-	    dependencies : [libpurple_dep, glib],
+	    link_args : oscar_link_args,
+	    dependencies : [libpurple_dep, glib, ws2_32],
 	    install : true, install_dir : PURPLE_PLUGINDIR)
 endif
 

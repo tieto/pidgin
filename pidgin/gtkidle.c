@@ -27,7 +27,7 @@
 # include <CoreFoundation/CoreFoundation.h>
 # include <IOKit/IOKitLib.h>
 #elif defined (_WIN32)
-# include "gtkwin32dep.h"
+# include "win32/gtkwin32dep.h"
 #endif
 
 #include "idle.h"
