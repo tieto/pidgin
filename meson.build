@@ -1411,7 +1411,7 @@ endif
 if not INSTALL_I18N
 	message('')
 	message('Warning: You have disabled the building and installation of translation')
-	message('data.  This will prevent building pidgin.desktop.')
+	message('data.  This will prevent building Pidgin desktop files.')
 	message('Be sure you know what you are doing.')
 endif
 message('')

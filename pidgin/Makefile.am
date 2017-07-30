@@ -3,8 +3,8 @@ EXTRA_DIST = \
 		gtkdebug.html \
 		pidgin.gresource.xml \
 		Makefile.mingw \
-		data/pidgin.appdata.xml.in \
-		data/pidgin.desktop.in \
+		data/im.pidgin.Pidgin.appdata.xml.in \
+		data/im.pidgin.Pidgin.desktop.in \
 		data/pidgin-3.pc.in \
 		data/pidgin-3-uninstalled.pc.in \
 		win32/MinimizeToTray.h \
@@ -238,19 +238,19 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = data/pidgin-3.pc
 
 if INSTALL_I18N
-DESKTOP_FILE=data/pidgin.desktop
+DESKTOP_FILE=data/im.pidgin.Pidgin.desktop
 
 appsdir = $(datadir)/applications
-apps_in_files = data/pidgin.desktop.in
+apps_in_files = data/im.pidgin.Pidgin.desktop.in
 apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 
 # silenced INTLTOOL_DESKTOP_RULE
 %.desktop: %.desktop.in $(INTLTOOL_MERGE) $(wildcard $(top_srcdir)/po/*.po)
 	$(AM_V_GEN) LC_ALL=C $(INTLTOOL_MERGE) -d -u -c $(top_builddir)/po/.intltool-merge-cache $(top_srcdir)/po $< $@ > /dev/null
 
-appdatadir = $(datarootdir)/appdata
+appdatadir = $(datarootdir)/metainfo
 appdata_DATA = $(appdata_in_files:.xml.in=.xml)
-appdata_in_files = data/pidgin.appdata.xml.in
+appdata_in_files = data/im.pidgin.Pidgin.appdata.xml.in
 
 @INTLTOOL_XML_RULE@
 

@@ -175,7 +175,7 @@ if ENABLE_GTK
 	               install_dir : get_option('libdir') + '/pkgconfig')
 
 	if INSTALL_I18N
-		DESKTOP_FILE = 'pidgin.desktop'
+		DESKTOP_FILE = 'im.pidgin.Pidgin.desktop'
 		desktop_file_in = configure_file(
 		    input : 'data/' + DESKTOP_FILE + '.in.in',
 		    output : DESKTOP_FILE + '.in',
@@ -189,14 +189,14 @@ if ENABLE_GTK
 		    install : true,
 		    install_dir : get_option('datadir') + '/applications')
 
-		appdata = custom_target('pidgin.appdata.xml',
-		    input : 'data/pidgin.appdata.xml.in',
-		    output : 'pidgin.appdata.xml',
+		appdata = custom_target('im.pidgin.Pidgin.appdata.xml',
+		    input : 'data/im.pidgin.Pidgin.appdata.xml.in',
+		    output : 'im.pidgin.Pidgin.appdata.xml',
 			command : [intltool_merge, '--xml-style', '-u',
 		               '-c', '@BUILD_DIR@/po/.intltool-merge-cache',
 		               meson.source_root() + '/po', '@INPUT@', '@OUTPUT@'],
 		    install : true,
-		    install_dir : get_option('datadir') + '/appdata')
+		    install_dir : get_option('datadir') + '/metainfo')
 	endif  # INSTALL_I18N
 
 	if enable_introspection
