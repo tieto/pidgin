@@ -179,7 +179,7 @@ GList *purple_media_manager_enumerate_elements(PurpleMediaManager *manager,
  * @manager: The #PurpleMediaManager instance
  * @name: The name of the element to get.
  *
- * Returns: (transfer none): The #PurpleMediaElementInfo for @name or NULL.
+ * Returns: (transfer full): The #PurpleMediaElementInfo for @name or NULL.
  */
 PurpleMediaElementInfo *purple_media_manager_get_element_info(
 		PurpleMediaManager *manager, const gchar *name);
