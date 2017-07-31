@@ -119,7 +119,7 @@ GType purple_media_manager_get_type(void);
  *
  * Gets the "global" media manager object. It's created if it doesn't already exist.
  *
- * Returns: (transfer full): The "global" instance of the media manager object.
+ * Returns: (transfer none): The "global" instance of the media manager object.
  */
 PurpleMediaManager *purple_media_manager_get(void);
 
