@@ -145,7 +145,7 @@ GstElement *purple_media_get_tee(PurpleMedia *media,
  *
  * Gets the pipeline from the media manager.
  *
- * Returns: (transfer none) :The pipeline.
+ * Returns: (transfer none): The pipeline.
  */
 GstElement *purple_media_manager_get_pipeline(PurpleMediaManager *manager);
 
