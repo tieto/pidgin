@@ -1179,7 +1179,7 @@ void purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy, const 
 /**
  * purple_account_add_buddies:
  * @account: The account.
- * @buddies: (element-type PurpleBuddy) The list of PurpleBlistNodes representing the buddies to add.
+ * @buddies: (element-type PurpleBuddy): The list of PurpleBlistNodes representing the buddies to add.
  * @message: The invite message.  This may be ignored by a protocol.
  *
  * Adds a list of buddies to the server-side buddy list.
