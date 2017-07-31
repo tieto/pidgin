@@ -476,7 +476,7 @@ void purple_account_set_status(PurpleAccount *account, const char *status_id,
  * @status_id: The ID of the status.
  * @active:    Whether @a status_id is to be activated (%TRUE) or
  *             deactivated (%FALSE).
- * @attrs:     (element-type PurpleStatusAttribute): A list of <type>const char *</type> attribute names followed by
+ * @attrs:     (element-type utf8): A list of <type>const char *</type> attribute names followed by
  *             <type>const char *</type> attribute values for the status.
  *             (For example, one pair might be <literal>"message"</literal>
  *             followed by <literal>"hello, talk to me!"</literal>.)
