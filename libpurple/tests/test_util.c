@@ -211,9 +211,10 @@ test_util_str_to_date_time(void)
 	g_assert_cmpint(0, ==, g_date_time_get_utc_offset(dt));
 	g_date_time_unref(dt);
 
-	dt = purple_str_to_date_time("20070407T04:14:21", TRUE);
+	dt = purple_str_to_date_time("20070407T04:14:21.1234", TRUE);
 	g_assert_cmpint(1175919261, ==, g_date_time_to_unix(dt));
 	g_assert_cmpint(0, ==, g_date_time_get_utc_offset(dt));
+	g_assert_cmpint(123400, ==, g_date_time_get_microsecond(dt));
 	g_date_time_unref(dt);
 
 	dt = purple_str_to_date_time("2010-08-27.204202", TRUE);
@@ -221,8 +222,19 @@ test_util_str_to_date_time(void)
 	g_assert_cmpint(0, ==, g_date_time_get_utc_offset(dt));
 	g_date_time_unref(dt);
 
+	dt = purple_str_to_date_time("2010-08-27.204202.123456", TRUE);
+	g_assert_cmpint(1282941722, ==, g_date_time_to_unix(dt));
+	g_assert_cmpint(0, ==, g_date_time_get_utc_offset(dt));
+	g_assert_cmpint(123456, ==, g_date_time_get_microsecond(dt));
+	g_date_time_unref(dt);
+
 	dt = purple_str_to_date_time("2010-08-27.134202-0700PDT", FALSE);
 	g_assert_cmpint(1282941722, ==, g_date_time_to_unix(dt));
+	g_assert_cmpint((-7LL * 60 * 60 * G_USEC_PER_SEC), ==, g_date_time_get_utc_offset(dt));
+
+	dt = purple_str_to_date_time("2010-08-27.134202.1234-0700PDT", FALSE);
+	g_assert_cmpint(1282941722, ==, g_date_time_to_unix(dt));
+	g_assert_cmpint(123400, ==, g_date_time_get_microsecond(dt));
 	g_assert_cmpint((-7LL * 60 * 60 * G_USEC_PER_SEC), ==, g_date_time_get_utc_offset(dt));
 }
 

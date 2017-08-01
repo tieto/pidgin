@@ -899,6 +899,7 @@ purple_str_to_date_time(const char *timestamp, gboolean utc)
 	gint minute = 0;
 	gint seconds = 0;
 	gint microseconds = 0;
+	int chars = 0;
 	GTimeZone *tz = NULL;
 	GDateTime *retval;
 
@@ -965,20 +966,9 @@ purple_str_to_date_time(const char *timestamp, gboolean utc)
 				(str += 6)))
 		{
 			if (*str == '.') {
-				int chars = 0;
 				str++;
-				if (sscanf(str, "%d%n", &microseconds, &chars) == 2) {
+				if (sscanf(str, "%d%n", &microseconds, &chars) == 1) {
 					str += chars;
-					chars -= 6;
-					if (chars < 0) {
-						while (chars++) {
-							microseconds *= 10;
-						}
-					} else {
-						while (chars--) {
-							microseconds /= 10;
-						}
-					}
 				}
 			}
 
@@ -1015,7 +1005,7 @@ purple_str_to_date_time(const char *timestamp, gboolean utc)
 	}
 
 	retval = g_date_time_new(tz, year, month, day, hour, minute,
-	                         seconds + microseconds / 1e6);
+	                         seconds + microseconds * pow(10, -chars));
 	g_time_zone_unref(tz);
 
 	return retval;
