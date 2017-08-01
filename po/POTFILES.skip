@@ -1,3 +1,6 @@
 libpurple/data/purple-url-handler.desktop.in
 libpurple/protocols/null/nullprpl.c
 pidgin/data/im.pidgin.Pidgin.desktop.in
+sub/libpurple/data/purple-url-handler.desktop.in
+sub/libpurple/protocols/null/nullprpl.c
+sub/pidgin/data/im.pidgin.Pidgin.desktop.in
