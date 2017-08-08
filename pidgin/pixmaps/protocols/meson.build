@@ -4,7 +4,7 @@ foreach dir : ['16', '22', '48', 'scalable']
 		    install_dir : join_paths(pidginpixmapdir, 'protocols'))
 	else
 		install_subdir(dir,
-		    exclude : 'scalable',
+		    exclude_directories : 'scalable',
 		    install_dir : join_paths(pidginpixmapdir, 'protocols'))
 	endif
 endforeach
