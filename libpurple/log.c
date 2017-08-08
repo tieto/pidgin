@@ -480,7 +480,8 @@ gint purple_log_compare(gconstpointer y, gconstpointer z)
 	const PurpleLog *a = y;
 	const PurpleLog *b = z;
 
-	return g_date_time_compare(b->time, a->time); // TODO: swap?
+	/* Sort in reverse order. */
+	return g_date_time_compare(b->time, a->time);
 }
 
 GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *account)
