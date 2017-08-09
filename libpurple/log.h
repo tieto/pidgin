@@ -101,7 +101,7 @@ struct _PurpleLogLogger {
 	gsize (*write)(PurpleLog *log,
 		     PurpleMessageFlags type,
 		     const char *from,
-		     time_t time,
+		     GDateTime *time,
 		     const char *message);
 
 	void (*finalize)(PurpleLog *log);
@@ -139,10 +139,6 @@ struct _PurpleLogLogger {
  *               timezone
  * @logger:      The logging mechanism this log is to use
  * @logger_data: Data used by the log logger
- * @tm:          The time this conversation started, saved with original
- *               timezone data, if available and if struct tm has the BSD
- *               timezone fields, else %NULL. Do NOT modify anything in this
- *               struct.
  *
  * A log.  Not the wooden type.
  */
@@ -151,11 +147,10 @@ struct _PurpleLog {
 	char *name;
 	PurpleAccount *account;
 	PurpleConversation *conv;
-	time_t time;
+	GDateTime *time;
 
 	PurpleLogLogger *logger;
 	void *logger_data;
-	struct tm *tm;
 
 	/* IMPORTANT: Some code in log.c allocates these without zeroing them.
 	 * IMPORTANT: Update that code if you add members here. */
@@ -225,15 +220,13 @@ GType purple_log_get_type(void);
  * @account:     The account the conversation is occurring on
  * @conv:        The conversation being logged
  * @time:        The time this conversation started
- * @tm:          The time this conversation started, with timezone data,
- *                    if available and if struct tm has the BSD timezone fields.
  *
  * Creates a new log
  *
  * Returns:            The new log
  */
 PurpleLog *purple_log_new(PurpleLogType type, const char *name, PurpleAccount *account,
-                      PurpleConversation *conv, time_t time, const struct tm *tm);
+                      PurpleConversation *conv, GDateTime *time);
 
 /**
  * purple_log_free:
@@ -257,7 +250,7 @@ void purple_log_free(PurpleLog *log);
 void purple_log_write(PurpleLog *log,
 		    PurpleMessageFlags type,
 		    const char *from,
-		    time_t time,
+		    GDateTime *time,
 		    const char *message);
 
 /**

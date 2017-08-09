@@ -197,12 +197,15 @@ static void
 open_log(PurpleConversation *conv)
 {
 	PurpleConversationPrivate *priv = PURPLE_CONVERSATION_GET_PRIVATE(conv);
+	GDateTime *dt;
 
 	g_return_if_fail(priv != NULL);
 
+	dt = g_date_time_new_now_local();
 	priv->logs = g_list_append(NULL, purple_log_new(PURPLE_IS_CHAT_CONVERSATION(conv) ? PURPLE_LOG_CHAT :
 							   PURPLE_LOG_IM, priv->name, priv->account,
-							   conv, time(NULL), NULL));
+							   conv, dt));
+	g_date_time_unref(dt);
 }
 
 /* Functions that deal with PurpleMessage history */
@@ -611,16 +614,19 @@ _purple_conversation_write_common(PurpleConversation *conv, PurpleMessage *pmsg)
 
 	if (!(purple_message_get_flags(pmsg) & PURPLE_MESSAGE_NO_LOG) && purple_conversation_is_logging(conv)) {
 		GList *log;
+		GDateTime *dt;
 
+		dt = g_date_time_new_from_unix_local(purple_message_get_time(pmsg));
 		log = priv->logs;
 		while (log != NULL) {
 			purple_log_write((PurpleLog *)log->data,
 				purple_message_get_flags(pmsg),
 				purple_message_get_author_alias(pmsg),
-				purple_message_get_time(pmsg),
+				dt,
 				purple_message_get_contents(pmsg));
 			log = log->next;
 		}
+		g_date_time_unref(dt);
 	}
 
 	if (ops) {

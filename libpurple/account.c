@@ -2218,13 +2218,20 @@ purple_account_get_log(PurpleAccount *account, gboolean create)
 	if(!priv->system_log && create){
 		PurplePresence *presence;
 		int login_time;
+		GDateTime *dt;
 
 		presence = purple_account_get_presence(account);
 		login_time = purple_presence_get_login_time(presence);
+		if (login_time != 0) {
+			dt = g_date_time_new_from_unix_local(login_time);
+		} else {
+			dt = g_date_time_new_now_local();
+		}
 
-		priv->system_log	 = purple_log_new(PURPLE_LOG_SYSTEM,
-				purple_account_get_username(account), account, NULL,
-				(login_time != 0) ? login_time : time(NULL), NULL);
+		priv->system_log = purple_log_new(PURPLE_LOG_SYSTEM,
+		                                  purple_account_get_username(account),
+		                                  account, NULL, dt);
+		g_date_time_unref(dt);
 	}
 
 	return priv->system_log;

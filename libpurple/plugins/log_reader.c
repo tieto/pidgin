@@ -95,12 +95,12 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 			if (!purple_str_has_prefix(file, sn))
 				continue;
 			if (purple_str_has_suffix(file, ".html") || purple_str_has_suffix(file, ".AdiumHTMLLog")) {
-				struct tm tm;
+				GDateTime *dt;
+				gint year, month, day, hour, minute, second;
 				const char *date = file;
 
 				date += strlen(sn) + 2;
-				if (sscanf(date, "%u|%u|%u",
-						&tm.tm_year, &tm.tm_mon, &tm.tm_mday) != 3) {
+				if (sscanf(date, "%u|%u|%u", &year, &month, &day) != 3) {
 
 					purple_debug_error("Adium log parse",
 					                   "Filename timestamp parsing error\n");
@@ -134,7 +134,7 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 						contents2++;
 
 					if (sscanf(contents2, "%u.%u.%u",
-							&tm.tm_hour, &tm.tm_min, &tm.tm_sec) != 3) {
+							&hour, &minute, &second) != 3) {
 
 						purple_debug_error("Adium log parse",
 						                   "Contents timestamp parsing error\n");
@@ -146,23 +146,24 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 					data->path = filename;
 					data->type = ADIUM_HTML;
 
-					tm.tm_year -= 1900;
-					tm.tm_mon  -= 1;
+					/* XXX: Look into this later... Should we figure out a timezone? */
+					dt = g_date_time_new_local(year, month, day, hour, minute, second);
 
-					/* XXX: Look into this later... Should we pass in a struct tm? */
-					log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
+					log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, dt);
 					log->logger = adium_logger;
 					log->logger_data = data;
+
+					g_date_time_unref(dt);
 
 					list = g_list_prepend(list, log);
 				}
 			} else if (purple_str_has_suffix(file, ".adiumLog")) {
-				struct tm tm;
+				GDateTime *dt;
+				gint year, month, day, hour, minute, second;
 				const char *date = file;
 
 				date += strlen(sn) + 2;
-				if (sscanf(date, "%u|%u|%u",
-						&tm.tm_year, &tm.tm_mon, &tm.tm_mday) != 3) {
+				if (sscanf(date, "%u|%u|%u", &year, &month, &day) != 3) {
 
 					purple_debug_error("Adium log parse",
 					                   "Filename timestamp parsing error\n");
@@ -190,8 +191,7 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 					if (*contents2)
 						contents2++;
 
-					if (sscanf(contents2, "%u.%u.%u",
-							&tm.tm_hour, &tm.tm_min, &tm.tm_sec) != 3) {
+					if (sscanf(contents2, "%u.%u.%u", &hour, &minute, &second) != 3) {
 
 						purple_debug_error("Adium log parse",
 						                   "Contents timestamp parsing error\n");
@@ -199,17 +199,18 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 						continue;
 					}
 
-					tm.tm_year -= 1900;
-					tm.tm_mon  -= 1;
-
 					data = g_new0(struct adium_logger_data, 1);
 					data->path = filename;
 					data->type = ADIUM_TEXT;
 
-					/* XXX: Look into this later... Should we pass in a struct tm? */
-					log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
+					/* XXX: Look into this later... Should we figure out a timezone? */
+					dt = g_date_time_new_local(year, month, day, hour, minute, second);
+
+					log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, dt);
 					log->logger = adium_logger;
 					log->logger_data = data;
+
+					g_date_time_unref(dt);
 
 					list = g_list_prepend(list, log);
 				}
@@ -337,11 +338,11 @@ struct msn_logger_data {
 /* This function is really confusing.  It makes baby rlaager cry...
    In other news: "You lost a lot of blood but we found most of it."
  */
-static time_t msn_logger_parse_timestamp(PurpleXmlNode *message, struct tm **tm_out)
+static GDateTime *
+msn_logger_parse_timestamp(PurpleXmlNode *message)
 {
 	const char *datetime;
-	static struct tm tm2;
-	time_t stamp;
+	GDateTime *stamp;
 	const char *date;
 	const char *time;
 	int month;
@@ -352,47 +353,26 @@ static time_t msn_logger_parse_timestamp(PurpleXmlNode *message, struct tm **tm_
 	int sec;
 	char am_pm;
 	char *str;
-	static struct tm tm;
-	time_t t;
-	time_t diff;
+	GDateTime *t;
+	GTimeSpan diff;
 
-#ifndef G_DISABLE_CHECKS
-	if (message != NULL)
-	{
-		*tm_out = NULL;
-
-		/* Trigger the usual warning. */
-		g_return_val_if_fail(message != NULL, (time_t)0);
-	}
-#endif
+	g_return_val_if_fail(message != NULL, NULL);
 
 	datetime = purple_xmlnode_get_attrib(message, "DateTime");
 	if (!(datetime && *datetime))
 	{
 		purple_debug_error("MSN log timestamp parse",
 		                   "Attribute missing: %s\n", "DateTime");
-		return (time_t)0;
+		return NULL;
 	}
 
-	stamp = purple_str_to_time(datetime, TRUE, &tm2, NULL, NULL);
-#ifdef HAVE_TM_GMTOFF
-	tm2.tm_gmtoff = 0;
-#endif
-#ifdef HAVE_STRUCT_TM_TM_ZONE
-	/* This is used in the place of a timezone abbreviation if the
-	 * offset is way off.  The user should never really see it, but
-	 * it's here just in case.  The parens are to make it clear it's
-	 * not a real timezone. */
-	tm2.tm_zone = _("(UTC)");
-#endif
-
+	stamp = purple_str_to_date_time(datetime, TRUE);
 
 	date = purple_xmlnode_get_attrib(message, "Date");
 	if (!(date && *date))
 	{
 		purple_debug_error("MSN log timestamp parse",
 		                   "Attribute missing: %s\n", "Date");
-		*tm_out = &tm2;
 		return stamp;
 	}
 
@@ -401,7 +381,6 @@ static time_t msn_logger_parse_timestamp(PurpleXmlNode *message, struct tm **tm_
 	{
 		purple_debug_error("MSN log timestamp parse",
 		                   "Attribute missing: %s\n", "Time");
-		*tm_out = &tm2;
 		return stamp;
 	}
 
@@ -409,7 +388,6 @@ static time_t msn_logger_parse_timestamp(PurpleXmlNode *message, struct tm **tm_
 	{
 		purple_debug_error("MSN log timestamp parse",
 		                   "%s parsing error\n", "Date");
-		*tm_out = &tm2;
 		return stamp;
 	}
 	else
@@ -426,7 +404,6 @@ static time_t msn_logger_parse_timestamp(PurpleXmlNode *message, struct tm **tm_
 	{
 		purple_debug_error("MSN log timestamp parse",
 		                   "%s parsing error\n", "Time");
-		*tm_out = &tm2;
 		return stamp;
 	}
 
@@ -438,34 +415,30 @@ static time_t msn_logger_parse_timestamp(PurpleXmlNode *message, struct tm **tm_
         }
 
 	str = g_strdup_printf("%04i-%02i-%02iT%02i:%02i:%02i", year, month, day, hour, min, sec);
-	t = purple_str_to_time(str, TRUE, &tm, NULL, NULL);
+	t = purple_str_to_date_time(str, TRUE);
 
-
-	if (stamp > t)
-		diff = stamp - t;
+	if (g_date_time_compare(stamp, t) > 0)
+		diff = g_date_time_difference(stamp, t);
 	else
-		diff = t - stamp;
+		diff = g_date_time_difference(t, stamp);
 
-	if (diff > (14 * 60 * 60))
-	{
+	if (diff > (14LL * G_TIME_SPAN_HOUR)) {
 		if (day <= 12)
 		{
 			/* Swap day & month variables, to see if it's a non-US date. */
 			g_free(str);
 			str = g_strdup_printf("%04i-%02i-%02iT%02i:%02i:%02i", year, month, day, hour, min, sec);
-			t = purple_str_to_time(str, TRUE, &tm, NULL, NULL);
+			t = purple_str_to_date_time(str, TRUE);
 
-			if (stamp > t)
-				diff = stamp - t;
+			if (g_date_time_compare(stamp, t) > 0)
+				diff = g_date_time_difference(stamp, t);
 			else
-				diff = t - stamp;
+				diff = g_date_time_difference(t, stamp);
 
-			if (diff > (14 * 60 * 60))
-			{
+			if (diff > (14LL * G_TIME_SPAN_HOUR)) {
 				/* We got a time, it's not impossible, but
 				 * the diff is too large.  Display the UTC time. */
 				g_free(str);
-				*tm_out = &tm2;
 				return stamp;
 			}
 			else
@@ -479,26 +452,19 @@ static time_t msn_logger_parse_timestamp(PurpleXmlNode *message, struct tm **tm_
 			/* We got a time, it's not impossible, but
 			 * the diff is too large.  Display the UTC time. */
 			g_free(str);
-			*tm_out = &tm2;
 			return stamp;
 		}
 	}
 
 	/* If we got here, the time is legal with a reasonable offset.
 	 * Let's find out if it's in our TZ. */
-	if (purple_str_to_time(str, FALSE, &tm, NULL, NULL) == stamp)
+	if (purple_str_to_date_time(str, FALSE) == stamp)
 	{
 		g_free(str);
-		*tm_out = &tm;
 		return stamp;
 	}
 	g_free(str);
 
-	/* The time isn't in our TZ, but it's reasonable. */
-#ifdef HAVE_STRUCT_TM_TM_ZONE
-	tm.tm_zone = "   ";
-#endif
-	*tm_out = &tm;
 	return stamp;
 }
 
@@ -737,8 +703,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			 * The session ID differs from the last message.
 			 * Thus, this is the start of a new conversation.
 			 */
-			struct tm *tm;
-			time_t stamp;
+			GDateTime *stamp;
 			PurpleLog *log;
 
 			data = g_new0(struct msn_logger_data, 1);
@@ -748,11 +713,13 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			data->text = NULL;
 			data->last_log = FALSE;
 
-			stamp = msn_logger_parse_timestamp(message, &tm);
+			stamp = msn_logger_parse_timestamp(message);
 
-			log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, stamp, tm);
+			log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, stamp);
 			log->logger = msn_logger;
 			log->logger_data = data;
+
+			g_date_time_unref(stamp);
 
 			list = g_list_prepend(list, log);
 		}
@@ -808,7 +775,7 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		PurpleXmlNode *to;
 		enum name_guesses name_guessed = NAME_GUESS_UNKNOWN;
 		const char *their_name;
-		struct tm *tm = NULL;
+		GDateTime *dt = NULL;
 		char *timestamp;
 		char *tmp;
 		const char *style;
@@ -987,12 +954,13 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			text = g_string_append(text, ";\">");
 		}
 
-		if (msn_logger_parse_timestamp(message, &tm)) {
-			timestamp = g_strdup_printf(
-				"<font size=\"2\">(%02u:%02u:%02u)</font> ",
-				tm->tm_hour, tm->tm_min, tm->tm_sec);
+		if ((dt = msn_logger_parse_timestamp(message)) != NULL) {
+			timestamp = g_date_time_format(
+				dt,
+				"<font size=\"2\">(%H:%M:%s)</font> ");
 			text = g_string_append(text, timestamp);
 			g_free(timestamp);
+			g_date_time_unref(dt);
 		} else {
 			text = g_string_append(text,
 				"<font size=\"2\">(00:00:00)</font> ");
@@ -1208,8 +1176,9 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 					timestamp++;
 
 				if (*timestamp == ')') {
-					char *month;
-					struct tm tm;
+					char *month_str;
+					gint year, month, day, hour, minute, second;
+					GDateTime *dt;
 
 					*timestamp = '\0';
 					if (line[0] && line[1] && line[2])
@@ -1224,7 +1193,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 					timestamp++;
 
 					/* Parse out the month. */
-					month = timestamp;
+					month_str = timestamp;
 					while (*timestamp &&  (*timestamp != ' '))
 						timestamp++;
 					*timestamp = '\0';
@@ -1232,22 +1201,16 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 
 					/* Parse the day, time, and year. */
 					if (sscanf(timestamp, "%u %u:%u:%u %u",
-							&tm.tm_mday, &tm.tm_hour,
-							&tm.tm_min, &tm.tm_sec,
-							&tm.tm_year) != 5) {
+							&day, &hour,
+							&minute, &second,
+							&year) != 5) {
 
 						purple_debug_error("Trillian log timestamp parse",
 						                   "Session Start parsing error\n");
 					} else {
 						PurpleLog *log;
 
-						tm.tm_year -= 1900;
-
-						/* Let the C library deal with
-						 * daylight savings time.
-						 */
-						tm.tm_isdst = -1;
-						tm.tm_mon = get_month(month);
+						month = get_month(month_str);
 
 						data = g_new0(
 							struct trillian_logger_data, 1);
@@ -1257,11 +1220,15 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 						data->their_nickname =
 							g_strdup(their_nickname);
 
-						/* XXX: Look into this later... Should we pass in a struct tm? */
+						/* XXX: Look into this later... Should we figure out a timezone? */
+						dt = g_date_time_new_local(year, month, day, hour, minute, second);
+
 						log = purple_log_new(PURPLE_LOG_IM,
-							sn, account, NULL, mktime(&tm), NULL);
+							sn, account, NULL, dt);
 						log->logger = trillian_logger;
 						log->logger_data = data;
+
+						g_date_time_unref(dt);
 
 						list = g_list_prepend(list, log);
 					}
@@ -1634,7 +1601,7 @@ static void trillian_logger_finalize(PurpleLog *log)
 #define QIP_LOG_OUT_MESSAGE (QIP_LOG_DELIMITER ">-")
 #define QIP_LOG_IN_MESSAGE_ESC (QIP_LOG_DELIMITER "&lt;-")
 #define QIP_LOG_OUT_MESSAGE_ESC (QIP_LOG_DELIMITER "&gt;-")
-#define QIP_LOG_TIMEOUT (60*60)
+#define QIP_LOG_TIMEOUT (G_TIME_SPAN_HOUR)
 
 static PurpleLogLogger *qip_logger;
 
@@ -1655,9 +1622,9 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	char *path;
 	char *contents;
 	struct qip_logger_data *data = NULL;
-	struct tm prev_tm;
-	struct tm tm;
-	gboolean prev_tm_init = FALSE;
+	GDateTime *prev_dt = NULL;
+	GDateTime *dt = NULL;
+	gint year, month, day, hour, minute, second;
 	gboolean main_cycle = TRUE;
 	char *c;
 	char *start_log;
@@ -1667,8 +1634,6 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 	g_return_val_if_fail(sn != NULL, NULL);
 	g_return_val_if_fail(account != NULL, NULL);
-
-	memset(&tm, 0, sizeof(tm));
 
 	/* QIP only supports ICQ. */
 	if (!purple_strequal(purple_account_get_protocol_id(account), "prpl-icq"))
@@ -1740,24 +1705,18 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 					/*  Parse the time, day, month and year  */
 					if (sscanf(timestamp, "%u:%u:%u %u/%u/%u",
-						&tm.tm_hour, &tm.tm_min, &tm.tm_sec,
-						&tm.tm_mday, &tm.tm_mon, &tm.tm_year) != 6) {
+						&hour, &minute, &second,
+						&day, &month, &year) != 6) {
 
 						purple_debug_error("QIP logger list",
 							"Parsing timestamp error\n");
 					} else {
-						tm.tm_mon -= 1;
-						tm.tm_year -= 1900;
-
-						/* Let the C library deal with
-						 * daylight savings time. */
-						tm.tm_isdst = -1;
-
-						if (!prev_tm_init) {
-							prev_tm = tm;
-							prev_tm_init = TRUE;
+						g_date_time_unref(dt);
+						dt = g_date_time_new_local(year, month, day, hour, minute, second);
+						if (!prev_dt) {
+							prev_dt = dt;
 						} else {
-							add_new_log = difftime(mktime(&tm), mktime(&prev_tm)) > QIP_LOG_TIMEOUT;
+							add_new_log = g_date_time_difference(dt, prev_dt) > QIP_LOG_TIMEOUT;
 						}
 					}
 				}
@@ -1769,7 +1728,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		}
 
 		/* adding  log */
-		if (add_new_log && prev_tm_init) {
+		if (add_new_log && prev_dt) {
 			PurpleLog *log;
 
 			/* filling data */
@@ -1782,16 +1741,18 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 				"Creating log: path = (%s); length = (%d); offset = (%d)\n",
 				data->path, data->length, data->offset);
 
-			/* XXX: Look into this later... Should we pass in a struct tm? */
+			/* XXX: Look into this later... Should we figure out a timezone? */
+			dt = g_date_time_new_local(year, month, day, hour, minute, second);
 			log = purple_log_new(PURPLE_LOG_IM, sn, account,
-				NULL, mktime(&prev_tm), NULL);
+				NULL, prev_dt);
 
 			log->logger = qip_logger;
 			log->logger_data = data;
 
 			list = g_list_prepend(list, log);
 
-			prev_tm = tm;
+			g_date_time_unref(prev_dt);
+			prev_dt = dt;
 			start_log = new_line;
 		}
 
@@ -2042,26 +2003,21 @@ static GList *amsn_logger_parse_file(char *filename, const char *sn, PurpleAccou
 		gboolean found_start = FALSE;
 		char *start_log = c;
 		int offset = 0;
-		struct tm tm;
+		gint year, month, day, hour, minute, second;
+		GDateTime *dt;
 		while (c && *c) {
 			if (purple_str_has_prefix(c, AMSN_LOG_CONV_START)) {
-				char month[4];
+				char month_str[4];
 				if (sscanf(c + strlen(AMSN_LOG_CONV_START),
 				           "%u %3s %u %u:%u:%u",
-				           &tm.tm_mday, (char*)&month, &tm.tm_year,
-				           &tm.tm_hour, &tm.tm_min, &tm.tm_sec) != 6) {
+				           &day, (char*)&month_str, &year,
+				           &hour, &minute, &second) != 6) {
 					found_start = FALSE;
 					purple_debug_error("aMSN logger",
 					                   "Error parsing start date for %s\n",
 					                   filename);
 				} else {
-					tm.tm_year -= 1900;
-
-					/* Let the C library deal with
-					 * daylight savings time.
-					 */
-					tm.tm_isdst = -1;
-					tm.tm_mon = get_month(month);
+					month = get_month(month_str);
 
 					found_start = TRUE;
 					offset = c - contents;
@@ -2074,11 +2030,13 @@ static GList *amsn_logger_parse_file(char *filename, const char *sn, PurpleAccou
 				data->length = c - start_log
 					             + strlen(AMSN_LOG_CONV_END)
 					             + strlen(AMSN_LOG_CONV_EXTRA);
-				log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
+				dt = g_date_time_new_local(year, month, day, hour, minute, second);
+				log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, dt);
 				log->logger = amsn_logger;
 				log->logger_data = data;
 				list = g_list_prepend(list, log);
 				found_start = FALSE;
+				g_date_time_unref(dt);
 
 				purple_debug_info("aMSN logger",
 				                  "Found log for %s:"
@@ -2100,10 +2058,12 @@ static GList *amsn_logger_parse_file(char *filename, const char *sn, PurpleAccou
 			data->length = c - start_log
 				             + strlen(AMSN_LOG_CONV_END)
 				             + strlen(AMSN_LOG_CONV_EXTRA);
-			log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
+			dt = g_date_time_new_local(year, month, day, hour, minute, second);
+			log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, dt);
 			log->logger = amsn_logger;
 			log->logger_data = data;
 			list = g_list_prepend(list, log);
+			g_date_time_unref(dt);
 
 			purple_debug_info("aMSN logger",
 			                  "Found log for %s:"
@@ -2522,7 +2482,7 @@ static void log_reader_init_prefs(void) {
 			g_free(path);
 			path = NULL;
 		}
-		
+
 		if (path && !g_file_get_contents(path, &contents, NULL, &error)) {
 			purple_debug_error("Trillian talk.ini read",
 					   "Error reading talk.ini: %s\n",

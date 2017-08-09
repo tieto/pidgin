@@ -48,7 +48,8 @@ static void historize(PurpleConversation *c)
 	char *protocol;
 #endif
 	char *escaped_alias;
-	const char *header_date;
+	GDateTime *dt;
+	gchar *header_date;
 
 	gtkconv = PIDGIN_CONVERSATION(c);
 	g_return_if_fail(gtkconv != NULL);
@@ -141,13 +142,13 @@ static void historize(PurpleConversation *c)
 
 	escaped_alias = g_markup_escape_text(alias, -1);
 
-	if (((PurpleLog *)logs->data)->tm)
-		header_date = purple_date_format_full(((PurpleLog *)logs->data)->tm);
-	else
-		header_date = purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time));
+	dt = g_date_time_to_local(((PurpleLog *)logs->data)->time);
+	header_date = g_date_time_format(dt, "%c");
+	g_date_time_unref(dt);
 
 	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), escaped_alias, header_date);
 	pidgin_webview_append_html(PIDGIN_WEBVIEW(gtkconv->webview), header);
+	g_free(header_date);
 	g_free(header);
 	g_free(escaped_alias);
 
