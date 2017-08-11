@@ -2,6 +2,14 @@
 <!-- Generated with glade 3.20.0 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
+  <object class="GtkTreeStore" id="build_info_store">
+    <columns>
+      <!-- column-name title -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkTreeStore" id="credits_store">
     <columns>
       <!-- column-name markup -->
@@ -39,7 +47,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToggleButton">
+              <object class="GtkToggleButton" id="build_info_button">
                 <property name="label" translatable="yes">Build Information</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -219,11 +227,14 @@ See the &lt;a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;GN
                   <object class="GtkScrolledWindow" id="build_info_page">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="hscrollbar_policy">never</property>
                     <property name="shadow_type">in</property>
                     <child>
-                      <object class="GtkTreeView">
+                      <object class="GtkTreeView" id="build_info_treeview">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="model">build_info_store</property>
+                        <property name="headers_visible">False</property>
                         <child internal-child="selection">
                           <object class="GtkTreeSelection"/>
                         </child>
@@ -233,7 +244,7 @@ See the &lt;a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;GN
                             <child>
                               <object class="GtkCellRendererText"/>
                               <attributes>
-                                <attribute name="markup">1</attribute>
+                                <attribute name="markup">0</attribute>
                               </attributes>
                             </child>
                           </object>
@@ -254,8 +265,8 @@ See the &lt;a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;GN
                     </child>
                   </object>
                   <packing>
-                    <property name="name">buildinfo</property>
-                    <property name="title" translatable="yes">buildinfo</property>
+                    <property name="name">build-info</property>
+                    <property name="title" translatable="yes">build-info</property>
                     <property name="position">2</property>
                   </packing>
                 </child>
