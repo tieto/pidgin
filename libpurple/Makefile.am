@@ -434,7 +434,6 @@ libpurple_la_LIBADD = \
 	$(GSTINTERFACES_LIBS) \
 	$(IDN_LIBS) \
 	$(JSON_LIBS) \
-	$(ZLIB_LIBS) \
 	$(INTROSPECTION_LIBS) \
 	-lm
 
@@ -452,7 +451,6 @@ AM_CPPFLAGS = \
 	$(IDN_CFLAGS) \
 	$(NETWORKMANAGER_CFLAGS) \
 	$(JSON_CFLAGS) \
-	$(ZLIB_CFLAGS) \
 	$(INTROSPECTION_CFLAGS)
 
 -include $(INTROSPECTION_MAKEFILE)
@@ -492,7 +490,6 @@ Purple_3_0_gir_CFLAGS = \
 	$(IDN_CFLAGS) \
 	$(NETWORKMANAGER_CFLAGS) \
 	$(JSON_CFLAGS) \
-	$(ZLIB_CFLAGS) \
 	$(INTROSPECTION_CFLAGS)
 
 Purple_3_0_gir_LIBS = $(builddir)/libpurple.la

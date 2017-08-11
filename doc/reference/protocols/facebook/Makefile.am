@@ -88,7 +88,6 @@ GTKDOC_CFLAGS = \
 	$(GPLUGIN_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(JSON_CFLAGS) \
-	$(ZLIB_CFLAGS) \
 	$(INTROSPECTION_CFLAGS)
 
 GTKDOC_LIBS = \
@@ -98,7 +97,6 @@ GTKDOC_LIBS = \
 	$(GPLUGIN_LIBS) \
 	$(INTLLIBS) \
 	$(JSON_LIBS) \
-	$(ZLIB_LIBS) \
 	$(INTROSPECTION_LIBS)
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
