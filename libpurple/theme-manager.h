@@ -102,7 +102,7 @@ void purple_theme_manager_refresh(void);
  *
  * Finds the PurpleTheme object stored by the theme manager.
  *
- * Returns: The PurpleTheme, or NULL if it wasn't found.
+ * Returns: (transfer none): The PurpleTheme, or NULL if it wasn't found.
  */
 PurpleTheme *purple_theme_manager_find_theme(const gchar *name, const gchar *type);
 
@@ -141,7 +141,7 @@ void purple_theme_manager_unregister_type(PurpleThemeLoader *loader);
 
 /**
  * purple_theme_manager_for_each_theme:
- * @func: The PurpleThemeFunc to be applied to each theme.
+ * @func: (scope call): The PurpleThemeFunc to be applied to each theme.
  *
  * Calls the given function on each purple theme.
  */
@@ -153,6 +153,8 @@ void purple_theme_manager_for_each_theme(PurpleThemeFunc func);
  * @type:		the type of theme to load
  *
  * Loads a theme of the given type without adding it to the manager
+ *
+ * Returns: (transfer full): The newly loaded theme.
  */
 PurpleTheme *purple_theme_manager_load_theme(const gchar *theme_dir, const gchar *type);
 

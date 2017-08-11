@@ -119,7 +119,7 @@ GType purple_media_manager_get_type(void);
  *
  * Gets the "global" media manager object. It's created if it doesn't already exist.
  *
- * Returns: The "global" instance of the media manager object.
+ * Returns: (transfer none): The "global" instance of the media manager object.
  */
 PurpleMediaManager *purple_media_manager_get(void);
 
@@ -133,7 +133,7 @@ PurpleMediaManager *purple_media_manager_get(void);
  *
  * Creates a media session.
  *
- * Returns: A newly created media session.
+ * Returns: (transfer full): A newly created media session.
  */
 PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
 						PurpleAccount *account,
@@ -147,7 +147,7 @@ PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
  *
  * Gets all of the media sessions.
  *
- * Returns: A list of all the media sessions.
+ * Returns: (transfer none) (element-type PurpleMedia): A list of all the media sessions.
  */
 GList *purple_media_manager_get_media(PurpleMediaManager *manager);
 
@@ -158,7 +158,7 @@ GList *purple_media_manager_get_media(PurpleMediaManager *manager);
  *
  * Gets all of the media sessions for a given account.
  *
- * Returns: A list of the media sessions on the given account.
+ * Returns: (transfer container) (element-type PurpleMedia): A list of the media sessions on the given account.
  */
 GList *purple_media_manager_get_media_by_account(
 		PurpleMediaManager *manager, PurpleAccount *account);
@@ -188,7 +188,7 @@ purple_media_manager_remove_media(PurpleMediaManager *manager,
  * get notified about. It is useful especially for sessions with a type of
  * PURPLE_MEDIA_APPLICATION which the front-end wouldn't know how to handle.
  *
- * Returns: A newly created media session.
+ * Returns: (transfer full): A newly created media session.
  */
 PurpleMedia *purple_media_manager_create_private_media(
                                                 PurpleMediaManager *manager,
@@ -203,7 +203,7 @@ PurpleMedia *purple_media_manager_create_private_media(
  *
  * Gets all of the private media sessions.
  *
- * Returns: A list of all the private media sessions.
+ * Returns: (transfer none) (element-type PurpleMedia): A list of all the private media sessions.
  */
 GList *purple_media_manager_get_private_media(PurpleMediaManager *manager);
 
@@ -214,7 +214,7 @@ GList *purple_media_manager_get_private_media(PurpleMediaManager *manager);
  *
  * Gets all of the private media sessions for a given account.
  *
- * Returns: A list of the private media sessions on the given account.
+ * Returns: (transfer container) (element-type PurpleMedia): A list of the private media sessions on the given account.
  */
 GList *purple_media_manager_get_private_media_by_account(
 		PurpleMediaManager *manager, PurpleAccount *account);

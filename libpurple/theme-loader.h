@@ -97,7 +97,7 @@ const gchar *purple_theme_loader_get_type_string(PurpleThemeLoader *self);
  *
  * Creates a new PurpleTheme
  *
- * Returns: A PurpleTheme containing the information from the directory
+ * Returns: (transfer full): A PurpleTheme containing the information from the directory
  */
 PurpleTheme *purple_theme_loader_build(PurpleThemeLoader *loader, const gchar *dir);
 

@@ -446,7 +446,7 @@ void purple_account_set_privacy_type(PurpleAccount *account, PurpleAccountPrivac
 /**
  * purple_account_set_status_types:
  * @account:      The account.
- * @status_types: The list of status types.
+ * @status_types: (element-type PurpleStatusType): The list of status types.
  *
  * Sets the account's status types.
  */
@@ -476,7 +476,7 @@ void purple_account_set_status(PurpleAccount *account, const char *status_id,
  * @status_id: The ID of the status.
  * @active:    Whether @a status_id is to be activated (%TRUE) or
  *             deactivated (%FALSE).
- * @attrs:     A list of <type>const char *</type> attribute names followed by
+ * @attrs:     (element-type utf8): A list of <type>const char *</type> attribute names followed by
  *             <type>const char *</type> attribute values for the status.
  *             (For example, one pair might be <literal>"message"</literal>
  *             followed by <literal>"hello, talk to me!"</literal>.)
@@ -946,7 +946,7 @@ void purple_account_privacy_deny(PurpleAccount *account, const char *who);
  *
  * Returns the account's permit list.
  *
- * Returns: (transfer none):     A list of the permitted users
+ * Returns: (transfer none) (element-type utf8): A list of the permitted users
  */
 GSList *purple_account_privacy_get_permitted(PurpleAccount *account);
 
@@ -956,7 +956,7 @@ GSList *purple_account_privacy_get_permitted(PurpleAccount *account);
  *
  * Returns the account's deny list.
  *
- * Returns: (transfer none):     A list of the denied users
+ * Returns: (transfer none) (element-type utf8): A list of the denied users
  */
 GSList *purple_account_privacy_get_denied(PurpleAccount *account);
 
@@ -982,7 +982,7 @@ gboolean purple_account_privacy_check(PurpleAccount *account, const char *who);
  * PurpleStatus that has its active flag set to "TRUE."  There can be
  * only one active PurpleStatus in a PurplePresence.
  *
- * Returns: The active status.
+ * Returns: (transfer none): The active status.
  */
 PurpleStatus *purple_account_get_active_status(const PurpleAccount *account);
 
@@ -993,7 +993,7 @@ PurpleStatus *purple_account_get_active_status(const PurpleAccount *account);
  *
  * Returns the account status with the specified ID.
  *
- * Returns: The status, or %NULL if it was never registered.
+ * Returns: (transfer none): The status, or %NULL if it was never registered.
  */
 PurpleStatus *purple_account_get_status(const PurpleAccount *account,
 									const char *status_id);
@@ -1032,7 +1032,7 @@ PurpleStatusType *purple_account_get_status_type_with_primitive(
  *
  * Returns the account's presence.
  *
- * Returns: The account's presence.
+ * Returns: (transfer none): The account's presence.
  */
 PurplePresence *purple_account_get_presence(const PurpleAccount *account);
 
@@ -1054,7 +1054,7 @@ gboolean purple_account_is_status_active(const PurpleAccount *account,
  *
  * Returns the account's status types.
  *
- * Returns: (transfer none): The account's status types.
+ * Returns: (transfer none) (element-type PurpleStatusType): The account's status types.
  */
 GList *purple_account_get_status_types(const PurpleAccount *account);
 
@@ -1179,7 +1179,7 @@ void purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy, const 
 /**
  * purple_account_add_buddies:
  * @account: The account.
- * @buddies: The list of PurpleBlistNodes representing the buddies to add.
+ * @buddies: (element-type PurpleBuddy): The list of PurpleBlistNodes representing the buddies to add.
  * @message: The invite message.  This may be ignored by a protocol.
  *
  * Adds a list of buddies to the server-side buddy list.
@@ -1200,8 +1200,8 @@ void purple_account_remove_buddy(PurpleAccount *account, PurpleBuddy *buddy,
 /**
  * purple_account_remove_buddies:
  * @account: The account.
- * @buddies: The list of buddies to remove.
- * @groups: The list of groups to remove buddies from.  Each node of this
+ * @buddies: (element-type PurpleBuddy): The list of buddies to remove.
+ * @groups: (element-type PurpleGroup): The list of groups to remove buddies from.  Each node of this
  *               list should match the corresponding node of buddies.
  *
  * Removes a list of buddies from the server-side buddy list.

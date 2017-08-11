@@ -1318,9 +1318,9 @@ ENABLE_TRAYCOMPAT = get_option('trayicon-compat')
 # check for gtk-doc
 ENABLE_DOC = get_option('doc')
 if ENABLE_DOC
-	if meson.version().version_compare('<0.42.0')
+	if meson.version().version_compare('<0.41.2')
 		if force_deps
-			error('Meson 0.42.0 or newer is required to build documentation.')
+			error('Meson 0.41.2 or newer is required to build documentation.')
 		endif
 		ENABLE_DOC = false
 	endif

@@ -451,6 +451,9 @@ if enable_introspection
 	if enable_dbus
 		Purple_gir_includes += ['DBus-1.0', 'DBusGLib-1.0']
 	endif
+	if enable_gst
+		Purple_gir_includes += ['Gst-1.0']
+	endif
 
 	libpurple_gir = gnome.generate_gir(libpurple,
 	    sources : introspection_sources,

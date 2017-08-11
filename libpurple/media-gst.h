@@ -145,7 +145,7 @@ GstElement *purple_media_get_tee(PurpleMedia *media,
  *
  * Gets the pipeline from the media manager.
  *
- * Returns: The pipeline.
+ * Returns: (transfer none): The pipeline.
  */
 GstElement *purple_media_manager_get_pipeline(PurpleMediaManager *manager);
 
@@ -157,7 +157,7 @@ GstElement *purple_media_manager_get_pipeline(PurpleMediaManager *manager);
  * @session_id: The id of the session this element is requested for or NULL.
  * @participant: The remote user this element is requested for or NULL.
  *
- * Returns: A GStreamer source or sink for audio or video.
+ * Returns: (transfer full): A GStreamer source or sink for audio or video.
  */
 GstElement *purple_media_manager_get_element(PurpleMediaManager *manager,
 		PurpleMediaSessionType type, PurpleMedia *media,
@@ -168,20 +168,36 @@ GstElement *purple_media_manager_get_element(PurpleMediaManager *manager,
  * @manager: The media manager to use to obtain the element infos.
  * @type: The type of element infos to get.
  *
- * Returns: A #GList of registered #PurpleMediaElementInfo instances that match
+ * Returns: (transfer container) (element-type PurpleMediaElementInfo): A #GList of registered #PurpleMediaElementInfo instances that match
  * @type.
  */
 GList *purple_media_manager_enumerate_elements(PurpleMediaManager *manager,
 		PurpleMediaElementType type);
 
+/**
+ * purple_media_manager_get_element_info:
+ * @manager: The #PurpleMediaManager instance
+ * @name: The name of the element to get.
+ *
+ * Returns: (transfer full): The #PurpleMediaElementInfo for @name or NULL.
+ */
 PurpleMediaElementInfo *purple_media_manager_get_element_info(
 		PurpleMediaManager *manager, const gchar *name);
+
 gboolean purple_media_manager_register_element(PurpleMediaManager *manager,
 		PurpleMediaElementInfo *info);
 gboolean purple_media_manager_unregister_element(PurpleMediaManager *manager,
 		const gchar *name);
 gboolean purple_media_manager_set_active_element(PurpleMediaManager *manager,
 		PurpleMediaElementInfo *info);
+
+/**
+ * purple_media_manager_get_active_element:
+ * @manager: The #PurpleMediaManager instance
+ * @type: The #PurpleMediaElementType who's info to get
+ *
+ * Returns: (transfer none): The #PurpleMediaElementInfo for @type.
+ */
 PurpleMediaElementInfo *purple_media_manager_get_active_element(
 		PurpleMediaManager *manager, PurpleMediaElementType type);
 
@@ -212,6 +228,16 @@ gchar *purple_media_element_info_get_id(PurpleMediaElementInfo *info);
 gchar *purple_media_element_info_get_name(PurpleMediaElementInfo *info);
 PurpleMediaElementType purple_media_element_info_get_element_type(
 		PurpleMediaElementInfo *info);
+
+/**
+ * purple_media_element_info_call_create:
+ * @info: The #PurpleMediaElementInfo to create the element from
+ * @media:
+ * @session_id:
+ * @participant:
+ *
+ * Returns: (transfer full): The new GstElement.
+ */
 GstElement *purple_media_element_info_call_create(
 		PurpleMediaElementInfo *info, PurpleMedia *media,
 		const gchar *session_id, const gchar *participant);
