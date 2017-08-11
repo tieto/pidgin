@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
+  <gresource prefix="/im/pidgin/Pidgin/">
+    <file compressed="true">logo.png</file>
+  </gresource>
   <gresource prefix="/im/pidgin/Pidgin/Debug">
     <file compressed="true">gtkdebug.html</file>
+  </gresource>
+  <gresource prefix="/im/pidgin/Pidgin/About">
+    <file compressed="true">about.ui</file>
+    <file compressed="true">contributors.json</file>
   </gresource>
 </gresources>

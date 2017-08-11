@@ -42,7 +42,8 @@ libpidgin_SOURCES = [
 	'gtkxfer.c',
 	'libpidgin.c',
 	'minidialog.c',
-	'pidgintooltip.c'
+	'pidginabout.c',
+	'pidgintooltip.c',
 ]
 
 libpidgin_headers = [
@@ -90,15 +91,16 @@ libpidgin_headers = [
 	'gtkwhiteboard.h',
 	'gtkxfer.h',
 	'minidialog.h',
+	'pidginabout.h',
 	'pidgintooltip.h',
-	'pidgin.h'
+	'pidgin.h',
 ]
 
 pidgin_SOURCES = [
 	'pidgin.c'
 ]
 
-pidgin_resource = gnome.compile_resources('pidgin.gresource', 'pidgin.gresource.xml',
+pidgin_resource = gnome.compile_resources('pidginresources', 'pidgin.gresource.xml',
   c_name : 'pidgin')
 libpidgin_SOURCES += pidgin_resource
 
@@ -149,7 +151,20 @@ if ENABLE_GTK
 	    libpidgin_SOURCES,
 	    include_directories : [toplevel_inc],
 	    version : PURPLE_LIB_VERSION,
-	    dependencies : [gtk, gstreamer_video, webkit, enchant, dbus, x11, GCR, IOKIT, libpurple_dep, glib, math],
+	    dependencies : [
+	    	dbus,
+	    	enchant,
+	    	GCR,
+	    	glib,
+	    	gstreamer_video,
+	    	gtk,
+	    	IOKIT,
+	    	json,
+	    	math,
+	    	webkit,
+	    	x11,
+	    	libpurple_dep,
+	    ],
 	    install : true)
 	libpidgin_dep = declare_dependency(
 	    include_directories : [toplevel_inc, libpidgin_inc],

@@ -40,7 +40,7 @@
 
 #include "gtk3compat.h"
 
-#include "pidgin.gresource.h"
+#include "pidginresources.h"
 
 typedef struct
 {

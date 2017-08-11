@@ -59,6 +59,7 @@
 #include "gtkblist-theme-loader.h"
 #include "gtkutils.h"
 #include "pidgin/minidialog.h"
+#include "pidgin/pidginabout.h"
 #include "pidgin/pidgintooltip.h"
 
 #include <gdk/gdkkeysyms.h>
@@ -3604,6 +3605,12 @@ set_mood_show(void)
 /***************************************************
  *            Crap                                 *
  ***************************************************/
+static void
+_pidgin_about_cb(void) {
+	GtkWidget *about = pidgin_about_dialog_new();
+	gtk_widget_show_all(about);
+}
+
 /* TODO: fill out tooltips... */
 static const GtkActionEntry blist_menu_entries[] = {
 /* NOTE: Do not set any accelerator to Control+O. It is mapped by
@@ -3647,6 +3654,7 @@ static const GtkActionEntry blist_menu_entries[] = {
 	{ "PluginInformation", NULL, N_("_Plugin Information"), NULL, NULL, pidgin_dialogs_plugins_info },
 	{ "TranslatorInformation", NULL, N_("_Translator Information"), NULL, NULL, pidgin_dialogs_translators },
 	{ "About", GTK_STOCK_ABOUT, N_("_About"), NULL, NULL, pidgin_dialogs_about },
+	{ "About2", GTK_STOCK_ABOUT, N_("_About (*)"), NULL, NULL, _pidgin_about_cb },
 };
 
 /* Toggle items */
@@ -3715,6 +3723,7 @@ static const char *blist_menu =
 			"<menuitem action='TranslatorInformation'/>"
 			"<separator/>"
 			"<menuitem action='About'/>"
+			"<menuitem action='About2'/>"
 		"</menu>"
 	"</menubar>"
 "</ui>";
