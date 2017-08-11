@@ -38,7 +38,7 @@ VERSION$
 aclocal.m4
 autogen.args
 autom4te.*\.cache
-^build\/
+^build(.+)?\/
 compile
 config.cache
 config.guess
