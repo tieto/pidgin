@@ -36,7 +36,30 @@
 G_BEGIN_DECLS
 
 #define PURPLE_TYPE_DEBUG_UI (purple_debug_ui_get_type())
+#if GLIB_CHECK_VERSION(2,44,0)
 G_DECLARE_INTERFACE(PurpleDebugUi, purple_debug_ui, PURPLE, DEBUG_UI, GObject)
+#else
+GType purple_debug_ui_get_type(void);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+typedef struct _PurpleDebugUi PurpleDebugUi;
+typedef struct _PurpleDebugUiInterface PurpleDebugUiInterface;
+static inline PurpleDebugUi *
+PURPLE_DEBUG_UI(gpointer ptr)
+{
+	return G_TYPE_CHECK_INSTANCE_CAST(ptr, purple_debug_ui_get_type(), PurpleDebugUi);
+}
+static inline gboolean
+PURPLE_IS_DEBUG_UI(gpointer ptr)
+{
+	return G_TYPE_CHECK_INSTANCE_TYPE(ptr, purple_debug_ui_get_type());
+}
+static inline PurpleDebugUiInterface *
+PURPLE_DEBUG_UI_GET_IFACE(gpointer ptr)
+{
+	return G_TYPE_INSTANCE_GET_INTERFACE(ptr, purple_debug_ui_get_type(), PurpleDebugUiInterface);
+}
+G_GNUC_END_IGNORE_DEPRECATIONS
+#endif
 
 /**
  * PurpleDebugLevel:
