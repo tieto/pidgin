@@ -592,7 +592,7 @@ debug_window_new(void)
 	resource = pidgin_get_resource();
 	error = NULL;
 	resource_bytes = g_resource_lookup_data(resource,
-	                                        "/im/pidgin/Pidgin/gtkdebug.html",
+	                                        "/im/pidgin/Pidgin/Debug/gtkdebug.html",
 	                                        G_RESOURCE_LOOKUP_FLAGS_NONE,
 	                                        &error);
 	if (G_UNLIKELY(resource_bytes == NULL || error != NULL)) {

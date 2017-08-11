@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/im/pidgin/Pidgin">
+  <gresource prefix="/im/pidgin/Pidgin/Debug">
     <file compressed="true">gtkdebug.html</file>
   </gresource>
 </gresources>
