@@ -3,6 +3,7 @@
 
 #include "pidginabout.h"
 #include "pidginresources.h"
+#include "internal.h"
 
 #include <stdio.h>
 
@@ -24,7 +25,7 @@ struct _PidginAboutDialogPrivate {
 	GtkWidget *build_info_button;
 	GtkWidget *build_info_page;
 	GtkWidget *build_info_treeview;
-	GtkWidget *build_info_store;
+	GtkTreeStore *build_info_store;
 
 	gboolean switching_pages;
 };
@@ -138,33 +139,32 @@ _pidgin_about_dialog_load_contributors(PidginAboutDialog *about) {
 }
 
 static void
-_pidgin_about_dialog_add_config_args(PidginAboutDialog *about) {
-#ifdef CONFIG_ARGS
-#endif /* CONFIG_ARGS */
-}
-
-static void
-_pidgin_about_dialog_add_meson_args(PidginAboutDialog *about) {
-#ifdef MESON_ARGS
-	GtkTreeIter meson, value;
+_pidgin_about_dialog_add_build_args(
+	PidginAboutDialog *about,
+	const gchar *title,
+	const gchar *build_args
+) {
+	GtkTreeIter section, value;
 	gchar **splits = NULL;
-	gchar *split = NULL;
+	gchar *markup = NULL;
 	gint idx = 0;
 
-	gtk_tree_store_append(about->priv->build_info_store, &meson, NULL);
+	markup = g_strdup_printf("<span font-weight=\"bold\">%s</span>", title);
+	gtk_tree_store_append(about->priv->build_info_store, &section, NULL);
 	gtk_tree_store_set(
 		about->priv->build_info_store,
-		&meson,
-		0, "<span font-weight=\"bold\">Meson Arguments</span>",
+		&section,
+		0, markup,
 		-1
 	);
+	g_free(markup);
 
 	/* now walk through the arguments and add them */
-	splits = g_strsplit(MESON_ARGS, " ", -1);
+	splits = g_strsplit(build_args, " ", -1);
 	for(idx = 0; splits[idx]; idx++) {
 		gchar **value_split = g_strsplit(splits[idx], "=", 2);
 
-		gtk_tree_store_append(about->priv->build_info_store, &value, &meson);
+		gtk_tree_store_append(about->priv->build_info_store, &value, &section);
 		gtk_tree_store_set(
 			about->priv->build_info_store,
 			&value,
@@ -177,13 +177,141 @@ _pidgin_about_dialog_add_meson_args(PidginAboutDialog *about) {
 	}
 
 	g_strfreev(splits);
-#endif /* MESON_ARGS */
+}
+
+static void
+_pidgin_about_dialog_build_info_add_version(
+	GtkTreeStore *store,
+	GtkTreeIter *section,
+	const gchar *title,
+	guint major,
+	guint minor,
+	guint micro
+) {
+	GtkTreeIter item;
+	gchar *version = g_strdup_printf("%u.%u.%u", major, minor, micro);
+
+	gtk_tree_store_append(store, &item, section);
+	gtk_tree_store_set(
+		store, &item,
+		0, title,
+		1, version,
+		-1
+	);
+	g_free(version);
 }
 
 static void
 _pidgin_about_dialog_load_build_info(PidginAboutDialog *about) {
-	_pidgin_about_dialog_add_config_args(about);
-	_pidgin_about_dialog_add_meson_args(about);
+	GtkTreeIter section;
+	gchar *markup = NULL;
+
+	/* create the section */
+	markup = g_strdup_printf(
+		"<span font-weight=\"bold\">%s</span>",
+		_("Build Information")
+	);
+	gtk_tree_store_append(about->priv->build_info_store, &section, NULL);
+	gtk_tree_store_set(
+		about->priv->build_info_store,
+		&section,
+		0, markup,
+		-1
+	);
+	g_free(markup);
+
+	/* add the purple version */
+	_pidgin_about_dialog_build_info_add_version(
+		about->priv->build_info_store,
+		&section,
+		_("Purple Version"),
+		PURPLE_MAJOR_VERSION,
+		PURPLE_MINOR_VERSION,
+		PURPLE_MICRO_VERSION
+	);
+
+	/* add the glib version */
+	_pidgin_about_dialog_build_info_add_version(
+		about->priv->build_info_store,
+		&section,
+		_("GLib Version"),
+		GLIB_MAJOR_VERSION,
+		GLIB_MINOR_VERSION,
+		GLIB_MICRO_VERSION
+	);
+
+	/* add the gtk version */
+	_pidgin_about_dialog_build_info_add_version(
+		about->priv->build_info_store,
+		&section,
+		_("Gtk+ Version"),
+		GTK_MAJOR_VERSION,
+		GTK_MINOR_VERSION,
+		GTK_MICRO_VERSION
+	);
+}
+
+static void
+_pidgin_about_dialog_load_runtime_info(PidginAboutDialog *about) {
+	GtkTreeIter section;
+	gchar *markup = NULL;
+
+	/* create the section */
+	markup = g_strdup_printf(
+		"<span font-weight=\"bold\">%s</span>",
+		_("Runtime Information")
+	);
+	gtk_tree_store_append(about->priv->build_info_store, &section, NULL);
+	gtk_tree_store_set(
+		about->priv->build_info_store,
+		&section,
+		0, markup,
+		-1
+	);
+	g_free(markup);
+
+	/* add the purple version */
+	_pidgin_about_dialog_build_info_add_version(
+		about->priv->build_info_store,
+		&section,
+		_("Purple Version"),
+		purple_major_version,
+		purple_minor_version,
+		purple_micro_version
+	);
+
+	/* add the glib version */
+	_pidgin_about_dialog_build_info_add_version(
+		about->priv->build_info_store,
+		&section,
+		_("GLib Version"),
+		glib_major_version,
+		glib_minor_version,
+		glib_micro_version
+	);
+
+	/* add the gtk version */
+	_pidgin_about_dialog_build_info_add_version(
+		about->priv->build_info_store,
+		&section,
+		_("Gtk+ Version"),
+		gtk_major_version,
+		gtk_minor_version,
+		gtk_micro_version
+	);
+}
+
+static void
+_pidgin_about_dialog_load_build_configuration(PidginAboutDialog *about) {
+#ifdef MESON_ARGS
+	_pidgin_about_dialog_add_build_args(about, "Meson Arguments", MESON_ARGS);
+#endif /* MESON_ARGS */
+#ifdef CONFIG_ARGS
+	_pidgin_about_dialog_add_build_args(about, "Configure Arguments", CONFIG_ARGS);
+#endif /* CONFIG_ARGS */
+
+	_pidgin_about_dialog_load_build_info(about);
+	_pidgin_about_dialog_load_runtime_info(about);
 }
 
 /******************************************************************************
@@ -269,7 +397,7 @@ pidgin_about_dialog_init(PidginAboutDialog *about) {
 		about
 	);
 
-	_pidgin_about_dialog_load_build_info(about);
+	_pidgin_about_dialog_load_build_configuration(about);
 	gtk_tree_view_expand_all(GTK_TREE_VIEW(about->priv->build_info_treeview));
 }
 
