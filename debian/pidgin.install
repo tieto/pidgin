@@ -1,7 +1,7 @@
 debian/tmp/usr/bin/pidgin
 debian/tmp/usr/lib/libpidgin.so.*
 debian/tmp/usr/lib/pidgin-3
-debian/tmp/usr/share/appdata
+debian/tmp/usr/share/metainfo
 debian/tmp/usr/share/applications
 debian/tmp/usr/share/man/*/pidgin.*
 debian/lintian-override/pidgin usr/share/lintian/overrides
