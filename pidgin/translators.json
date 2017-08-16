@@ -1,0 +1,475 @@
+{
+	"languages": [{
+		"title": "Afrikaans (af)",
+		"people": [
+			"Samuel Murray",
+			"Friedel Wolff"
+		]
+	}, {
+		"title": "Arabic (ar)",
+		"people": [
+			"Khaled Hosny"
+		]
+	}, {
+		"title": "Assamese (as)",
+		"people": [
+			"Amitakhya Phukan"
+		]
+	}, {
+		"title": "Asturian (ast)",
+		"people": [
+			"Llumex03"
+		]
+	}, {
+		"title": "Belarusian Latin (be@latin)",
+		"people": [
+			"Ihar Hrachyshka"
+		]
+	}, {
+		"title": "Bulgarian (bg)",
+		"people": [
+			"Vladimira Girginova",
+			"Vladimir (Kaladan) Petkov"
+		]
+	}, {
+		"title": "Bengali (bn)",
+		"people": [
+			"Jamil Ahmed",
+			"Israt Jahan",
+			"Samia Nimatullah"
+		]
+	}, {
+		"title": "Bengali-India (bn_IN)",
+		"people": [
+			"Runa Bhattacharjee"
+		]
+	}, {
+		"title": "Breton (br)",
+		"people": [
+			"Gwenn Meynier"
+		]
+	}, {
+		"title": "Bodo (brx)",
+		"people": [
+			"Chandrakant Dhutadmal"
+		]
+	}, {
+		"title": "Bosnian (bs)",
+		"people": [
+			"Lejla Hadzialic"
+		]
+	}, {
+		"title": "Catalan (ca)",
+		"people": [
+			"Josep Puigdemont"
+		]
+	}, {
+		"title": "Valencian-Catalan (ca@valencia)",
+		"people": [
+			"Toni Hermoso",
+			"Josep Puigdemont"
+		]
+	}, {
+		"title": "Czech (cs)",
+		"people": [
+			"David Vachulka"
+		]
+	}, {
+		"title": "Danish (da)",
+		"people": [
+			"Nicky Thomassen"
+		]
+	}, {
+		"title": "German (de)",
+		"people": [
+			"Björn Voigt"
+		]
+	}, {
+		"title": "Dzongkha (dz)",
+		"people": [
+			"Norbu",
+			"Jurmey Rabgay",
+			"Wangmo Sherpa"
+		]
+	}, {
+		"title": "Greek (el)",
+		"people": [
+			"Katsaloulis Panayotis",
+			"Panos Bouklis"
+		]
+	}, {
+		"title": "Australian English (en_AU)",
+		"people": [
+			"Michael Findlay"
+		]
+	}, {
+		"title": "British English (en_GB)",
+		"people": [
+			"Phil Hannent"
+		]
+	}, {
+		"title": "Canadian English (en_CA)",
+		"people": [
+			"Adam Weinberger"
+		]
+	}, {
+		"title": "Esperanto (eo)",
+		"people": [
+			"Stéphane Fillod"
+		]
+	}, {
+		"title": "Spanish (es)",
+		"people": [
+			"Javier Fernández-Sanguino Peña"
+		]
+	}, {
+		"title": "Argentine Spanish (es_AR)",
+		"people": [
+			"KNTRO"
+		]
+	}, {
+		"title": "Estonian (et)",
+		"people": [
+			"Ivar Smolin"
+		]
+	}, {
+		"title": "Basque (eu)",
+		"people": [
+			"Mikel Pascual Aldabaldetreku"
+		]
+	}, {
+		"title": "Persian (fa)",
+		"people": [
+			"Elnaz Sarbar",
+			"Roozbeh Pournader",
+			"Meelad Zakaria"
+		]
+	}, {
+		"title": "Finnish (fi)",
+		"people": [
+			"Timo Jyrinki"
+		]
+	}, {
+		"title": "Irish (ga)",
+		"people": [
+			"Aaron Kearns",
+			"Kevin Scannell"
+		]
+	}, {
+		"title": "Galician (gl)",
+		"people": [
+			"Mar Castro",
+			"Frco. Javier Rial"
+		]
+	}, {
+		"title": "Gujarati (gu)",
+		"people": [
+			"Ankit Patel",
+			"Gujarati Language Team"
+		]
+	}, {
+		"title": "Hebrew (he)",
+		"people": [
+			"Shalom Craimer"
+		]
+	}, {
+		"title": "Hindi (hi)",
+		"people": [
+			"Sangeeta Kumari",
+			"Rajesh Ranjan"
+		]
+	}, {
+		"title": "Croatian (hr)",
+		"people": [
+			"Sabina Drempetić"
+		]
+	}, {
+		"title": "Hungarian (hu)",
+		"people": [
+			"Kelemen Gábor"
+		]
+	}, {
+		"title": "Indonesian (id)",
+		"people": [
+			"Rai S. Regawa"
+		]
+	}, {
+		"title": "Italian (it)",
+		"people": [
+			"Claudio Satriano"
+		]
+	}, {
+		"title": "Japanese (ja)",
+		"people": [
+			"Takayuki Kusano"
+		]
+	}, {
+		"title": "Georgian (ka)",
+		"people": [
+			"Ubuntu Georgian Translators"
+		]
+	}, {
+		"title": "Kazakh (kk)",
+		"people": [
+			"Baurzhan Muftakhidinov"
+		]
+	}, {
+		"title": "Khmer (km)",
+		"people": [
+			"Khoem Sokhem"
+		]
+	}, {
+		"title": "Kannada (kn)",
+		"people": [
+			"Kannada Translation team"
+		]
+	}, {
+		"title": "Korean (ko)",
+		"people": [
+			"Sushizang"
+		]
+	}, {
+		"title": "Kashmiri (kas)",
+		"people": [
+			"Chandrakant Dhutadmal"
+		]
+	}, {
+		"title": "Kurdish (ku)",
+		"people": [
+			"Amed Ç. Jiyan",
+			"Erdal Ronahi",
+			"Rizoyê Xerzî"
+		]
+	}, {
+		"title": "Kurdish (Sorani) (ku_IQ)",
+		"people": [
+			"Haval A. Ahmed"
+		]
+	}, {
+		"title": "Lithuanian (lt)",
+		"people": [
+			"Algimantas Margevičius"
+		]
+	}, {
+		"title": "Latvian (lv)",
+		"people": [
+			"Rudolfs Mazurs",
+			"Ingmārs Dīriņš"
+		]
+	}, {
+		"title": "Maithili (mai)",
+		"people": [
+			"Sangeeta Kumari",
+			"Rajesh Ranjan"
+		]
+	}, {
+		"title": "Meadow Mari (mhr)",
+		"people": [
+			"David Preece"
+		]
+	}, {
+		"title": "Macedonian (mk)",
+		"people": [
+			"Arangel Angov",
+			"Ivana Kirkovska",
+			"Jovan Naumovski"
+		]
+	}, {
+		"title": "Malayalam (ml)",
+		"people": [
+			"Ani Peter"
+		]
+	}, {
+		"title": "Mongolian (mn)",
+		"people": [
+			"gooyo"
+		]
+	}, {
+		"title": "Marathi (mr)",
+		"people": [
+			"Sandeep Shedmake"
+		]
+	}, {
+		"title": "Malay (ms_MY)",
+		"people": [
+			"abuyop"
+		]
+	}, {
+		"title": "Burmese (my_MM)",
+		"people": [
+			"Thura Hlaing"
+		]
+	}, {
+		"title": "Bokmål Norwegian (nb)",
+		"people": [
+			"Allan Nordhøy"
+		]
+	}, {
+		"title": "Nepali (ne)",
+		"people": [
+			"Saroj Dhakal"
+		]
+	}, {
+		"title": "Dutch, Flemish (nl)",
+		"people": [
+			"Gideon van Melle"
+		]
+	}, {
+		"title": "Norwegian Nynorsk (nn)",
+		"people": [
+			"Yngve Spjeld Landro"
+		]
+	}, {
+		"title": "Occitan (oc)",
+		"people": [
+			"Cédric Valmary"
+		]
+	}, {
+		"title": "Oriya (or)",
+		"people": [
+			"Manoj Kumar Giri"
+		]
+	}, {
+		"title": "Punjabi (pa)",
+		"people": [
+			"Amanpreet Singh Alam"
+		]
+	}, {
+		"title": "Polish (pl)",
+		"people": [
+			"Piotr Drąg"
+		]
+	}, {
+		"title": "Portuguese (pt)",
+		"people": [
+			"Paulo Ribeiro"
+		]
+	}, {
+		"title": "Portuguese-Brazil (pt_BR)",
+		"people": [
+			"Renato Silva"
+		]
+	}, {
+		"title": "Pashto (ps)",
+		"people": [
+			"Kashif Masood"
+		]
+	}, {
+		"title": "Romanian (ro)",
+		"people": [
+			"Mișu Moldovan",
+			"Andrei Popescu"
+		]
+	}, {
+		"title": "Russian (ru)",
+		"people": [
+			"Антон Самохвалов"
+		]
+	}, {
+		"title": "Sindhi (sd)",
+		"people": [
+			"Chandrakant Dhutadmal"
+		]
+	}, {
+		"title": "Slovak (sk)",
+		"people": [
+			"Jozef Káčer",
+			"loptosko"
+		]
+	}, {
+		"title": "Slovenian (sl)",
+		"people": [
+			"Martin Srebotnjak"
+		]
+	}, {
+		"title": "Albanian (sq)",
+		"people": [
+			"Besnik Bleta"
+		]
+	}, {
+		"title": "Serbian (sr)",
+		"people": [
+			"Miloš Popović"
+		]
+	}, {
+		"title": "Serbian Latin (sr@latin)",
+		"people": [
+			"Miloš Popović"
+		]
+	}, {
+		"title": "Sinhala (si)",
+		"people": [
+			"Yajith Ajantha Dayarathna",
+			"Danishka Navin"
+		]
+	}, {
+		"title": "Swedish (sv)",
+		"people": [
+			"Josef Andersson"
+		]
+	}, {
+		"title": "Swahili (sw)",
+		"people": [
+			"Paul Msegeya"
+		]
+	}, {
+		"title": "Tamil (ta)",
+		"people": [
+			"I. Felix",
+			"Viveka Nathan K"
+		]
+	}, {
+		"title": "Telugu (te)",
+		"people": [
+			"Krishnababu Krottapalli"
+		]
+	}, {
+		"title": "Thai (th)",
+		"people": [
+			"Isriya Paireepairit"
+		]
+	}, {
+		"title": "Tatar (tt)",
+		"people": [
+			"ILDAR Valeev"
+		]
+	}, {
+		"title": "Ukranian (uk)",
+		"people": [
+			"Oleksandr Kovalenko"
+		]
+	}, {
+		"title": "Urdu (ur)",
+		"people": [
+			"RKVS Raman"
+		]
+	}, {
+		"title": "Uzbek (uz)",
+		"people": [
+			"Akmal Khushvakov"
+		]
+	}, {
+		"title": "Vietnamese (vi)",
+		"people": [
+			"Nguyễn Vũ Hưng"
+		]
+	}, {
+		"title": "Simplified Chinese (zh_CN)",
+		"people": [
+			"Aron Xu"
+		]
+	}, {
+		"title": "Hong Kong Chinese (zh_HK)",
+		"people": [
+			"Abel Cheung",
+			"Ambrose C. Li",
+			"Paladin R. Liu"
+		]
+	}, {
+		"title": "Traditional Chinese (zh_TW)",
+		"people": [
+			"Ambrose C. Li",
+			"Paladin R. Liu"
+		]
+	}]
+}

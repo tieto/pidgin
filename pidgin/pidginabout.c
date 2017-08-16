@@ -17,10 +17,15 @@
 struct _PidginAboutDialogPrivate {
 	GtkWidget *stack;
 
-	GtkWidget *credits_button;
-	GtkWidget *credits_page;
-	GtkWidget *credits_treeview;
-	GtkTreeStore *credits_store;
+	GtkWidget *developers_button;
+	GtkWidget *developers_page;
+	GtkWidget *developers_treeview;
+	GtkTreeStore *developers_store;
+
+	GtkWidget *translators_button;
+	GtkWidget *translators_page;
+	GtkWidget *translators_treeview;
+	GtkTreeStore *translators_store;
 
 	GtkWidget *build_info_button;
 	GtkWidget *build_info_page;
@@ -39,10 +44,16 @@ _pidgin_about_dialog_switch_page(PidginAboutDialog *about, const gchar *name) {
 
 	gtk_stack_set_visible_child_name(GTK_STACK(about->priv->stack), name);
 
-	/* now figure out if credits button is active */
+	/* now figure out if developers button is active */
 	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(about->priv->credits_button),
-		g_str_equal("credits", name)
+		GTK_TOGGLE_BUTTON(about->priv->developers_button),
+		g_str_equal("developers", name)
+	);
+
+	/* is the translators button active? */
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(about->priv->translators_button),
+		g_str_equal("translators", name)
 	);
 
 	/* is the build info button active? */
@@ -55,19 +66,19 @@ _pidgin_about_dialog_switch_page(PidginAboutDialog *about, const gchar *name) {
 }
 
 static void
-_pidgin_about_dialog_load_contributors(PidginAboutDialog *about) {
+_pidgin_about_dialog_load_developers(PidginAboutDialog *about) {
 	GInputStream *istream = NULL;
 	GList *l = NULL, *sections = NULL;
 	GError *error = NULL;
 	JsonParser *parser = NULL;
 	JsonNode *root_node = NULL;
 	JsonObject *root_object = NULL;
-	JsonArray *credits = NULL;
+	JsonArray *developers = NULL;
 
-	/* get a stream to the credits resource */
+	/* get a stream to the developers resource */
 	istream = g_resource_open_stream(
 		pidgin_get_resource(),
-		"/im/pidgin/Pidgin/About/contributors.json",
+		"/im/pidgin/Pidgin/About/developers.json",
 		G_RESOURCE_LOOKUP_FLAGS_NONE,
 		NULL
 	);
@@ -82,8 +93,8 @@ _pidgin_about_dialog_load_contributors(PidginAboutDialog *about) {
 	root_node = json_parser_get_root(parser);
 	root_object = json_node_get_object(root_node);
 
-	credits = json_object_get_array_member(root_object, "credits");
-	sections = json_array_get_elements(credits);
+	developers = json_object_get_array_member(root_object, "developers");
+	sections = json_array_get_elements(developers);
 
 	for(l = sections; l; l = l->next) {
 		GtkTreeIter section_iter;
@@ -97,9 +108,9 @@ _pidgin_about_dialog_load_contributors(PidginAboutDialog *about) {
 			json_object_get_string_member(section, "title")
 		);
 
-		gtk_tree_store_append(about->priv->credits_store, &section_iter, NULL);
+		gtk_tree_store_append(about->priv->developers_store, &section_iter, NULL);
 		gtk_tree_store_set(
-			about->priv->credits_store,
+			about->priv->developers_store,
 			&section_iter,
 			0, markup,
 			1, 0.5f,
@@ -115,9 +126,93 @@ _pidgin_about_dialog_load_contributors(PidginAboutDialog *about) {
 			GtkTreeIter person_iter;
 			gchar *markup = g_strdup(json_node_get_string(ll->data));
 
-			gtk_tree_store_append(about->priv->credits_store, &person_iter, &section_iter);
+			gtk_tree_store_append(about->priv->developers_store, &person_iter, &section_iter);
 			gtk_tree_store_set(
-				about->priv->credits_store,
+				about->priv->developers_store,
+				&person_iter,
+				0, markup,
+				1, 0.5f,
+				-1
+			);
+
+			g_free(markup);
+		}
+
+		g_list_free(people);
+	}
+
+	g_list_free(sections);
+
+	/* clean up */
+	g_object_unref(G_OBJECT(parser));
+
+	g_input_stream_close(istream, NULL, NULL);
+}
+
+static void
+_pidgin_about_dialog_load_translators(PidginAboutDialog *about) {
+	GInputStream *istream = NULL;
+	GList *l = NULL, *sections = NULL;
+	GError *error = NULL;
+	JsonParser *parser = NULL;
+	JsonNode *root_node = NULL;
+	JsonObject *root_object = NULL;
+	JsonArray *languages = NULL;
+
+	/* get a stream to the developers resource */
+	istream = g_resource_open_stream(
+		pidgin_get_resource(),
+		"/im/pidgin/Pidgin/About/translators.json",
+		G_RESOURCE_LOOKUP_FLAGS_NONE,
+		NULL
+	);
+
+	/* create our parser */
+	parser = json_parser_new();
+
+	if(!json_parser_load_from_stream(parser, istream, NULL, &error)) {
+		g_critical("%s", error->message);
+	}
+
+	root_node = json_parser_get_root(parser);
+	root_object = json_node_get_object(root_node);
+
+	languages = json_object_get_array_member(root_object, "languages");
+	sections = json_array_get_elements(languages);
+
+	for(l = sections; l; l = l->next) {
+		GtkTreeIter section_iter;
+		GList *ll = NULL, *people = NULL;
+		JsonObject *section = json_node_get_object(l->data);
+		JsonArray *people_array = NULL;
+		gchar *markup = NULL;
+
+		markup = g_strdup_printf(
+			"<span font_weight=\"bold\" font_size=\"large\">%s</span>",
+			json_object_get_string_member(section, "title")
+		);
+
+		gtk_tree_store_append(about->priv->translators_store, &section_iter, NULL);
+		gtk_tree_store_set(
+			about->priv->translators_store,
+			&section_iter,
+			0, markup,
+			1, 0.5f,
+			-1
+		);
+
+		g_free(markup);
+
+		people_array = json_object_get_array_member(section, "people");
+		people = json_array_get_elements(people_array);
+
+		for(ll = people; ll; ll = ll->next) {
+			GtkTreeIter person_iter;
+			gchar *markup = g_strdup(json_node_get_string(ll->data));
+
+			gtk_tree_store_append(about->priv->translators_store, &person_iter, &section_iter);
+			gtk_tree_store_set(
+				about->priv->translators_store,
 				&person_iter,
 				0, markup,
 				1, 0.5f,
@@ -318,7 +413,7 @@ _pidgin_about_dialog_load_build_configuration(PidginAboutDialog *about) {
  * Callbacks
  *****************************************************************************/
 static void
-_pidgin_about_dialog_toggle_credits(GtkToggleButton *b, gpointer d) {
+_pidgin_about_dialog_toggle_developers(GtkToggleButton *b, gpointer d) {
 	PidginAboutDialog *about = d;
 	gboolean show = FALSE;
 
@@ -327,7 +422,20 @@ _pidgin_about_dialog_toggle_credits(GtkToggleButton *b, gpointer d) {
 
 	show = gtk_toggle_button_get_active(b);
 
-	_pidgin_about_dialog_switch_page(d, show ? "credits" : "main");
+	_pidgin_about_dialog_switch_page(d, show ? "developers" : "main");
+}
+
+static void
+_pidgin_about_dialog_toggle_translators(GtkToggleButton *b, gpointer d) {
+	PidginAboutDialog *about = d;
+	gboolean show = FALSE;
+
+	if(about->priv->switching_pages)
+		return;
+
+	show = gtk_toggle_button_get_active(b);
+
+	_pidgin_about_dialog_switch_page(d, show ? "translators" : "main");
 }
 
 static void
@@ -359,10 +467,15 @@ pidgin_about_dialog_class_init(PidginAboutDialogClass *klass) {
 
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, stack);
 
-	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, credits_button);
-	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, credits_page);
-	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, credits_store);
-	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, credits_treeview);
+	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, developers_button);
+	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, developers_page);
+	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, developers_store);
+	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, developers_treeview);
+
+	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, translators_button);
+	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, translators_page);
+	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, translators_store);
+	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, translators_treeview);
 
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, build_info_button);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, build_info_page);
@@ -378,16 +491,27 @@ pidgin_about_dialog_init(PidginAboutDialog *about) {
 
 	gtk_widget_init_template(GTK_WIDGET(about));
 
-	/* setup the credits stuff */
+	/* setup the developers stuff */
 	g_signal_connect(
-		about->priv->credits_button,
+		about->priv->developers_button,
 		"toggled",
-		G_CALLBACK(_pidgin_about_dialog_toggle_credits),
+		G_CALLBACK(_pidgin_about_dialog_toggle_developers),
 		about
 	);
 
-	_pidgin_about_dialog_load_contributors(about);
-	gtk_tree_view_expand_all(GTK_TREE_VIEW(about->priv->credits_treeview));
+	_pidgin_about_dialog_load_developers(about);
+	gtk_tree_view_expand_all(GTK_TREE_VIEW(about->priv->developers_treeview));
+
+	/* setup the translators stuff */
+	g_signal_connect(
+		about->priv->translators_button,
+		"toggled",
+		G_CALLBACK(_pidgin_about_dialog_toggle_translators),
+		about
+	);
+
+	_pidgin_about_dialog_load_translators(about);
+	gtk_tree_view_expand_all(GTK_TREE_VIEW(about->priv->translators_treeview));
 
 	/* setup the build info page */
 	g_signal_connect(

@@ -8,6 +8,7 @@
   </gresource>
   <gresource prefix="/im/pidgin/Pidgin/About">
     <file compressed="true">about.ui</file>
-    <file compressed="true">contributors.json</file>
+    <file compressed="true">developers.json</file>
+    <file compressed="true">translators.json</file>
   </gresource>
 </gresources>

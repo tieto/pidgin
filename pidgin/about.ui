@@ -10,7 +10,15 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkTreeStore" id="credits_store">
+  <object class="GtkTreeStore" id="developers_store">
+    <columns>
+      <!-- column-name markup -->
+      <column type="gchararray"/>
+      <!-- column-name align -->
+      <column type="gfloat"/>
+    </columns>
+  </object>
+  <object class="GtkTreeStore" id="translators_store">
     <columns>
       <!-- column-name markup -->
       <column type="gchararray"/>
@@ -34,8 +42,21 @@
             <property name="can_focus">False</property>
             <property name="layout_style">spread</property>
             <child>
-              <object class="GtkToggleButton" id="credits_button">
-                <property name="label" translatable="yes">Credits</property>
+              <object class="GtkToggleButton" id="developers_button">
+                <property name="label" translatable="yes">Developers</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="translators_button">
+                <property name="label" translatable="yes">Translators</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -185,28 +206,28 @@ See the &lt;a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;GN
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkScrolledWindow" id="credits_page">
+                  <object class="GtkScrolledWindow" id="developers_page">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hscrollbar_policy">never</property>
                     <property name="shadow_type">in</property>
                     <child>
-                      <object class="GtkTreeView" id="credits_treeview">
+                      <object class="GtkTreeView" id="developers_treeview">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="model">credits_store</property>
+                        <property name="model">developers_store</property>
                         <property name="headers_visible">False</property>
                         <property name="show_expanders">False</property>
                         <child internal-child="selection">
                           <object class="GtkTreeSelection"/>
                         </child>
                         <child>
-                          <object class="GtkTreeViewColumn" id="credits_column">
+                          <object class="GtkTreeViewColumn" id="developers_column">
                             <property name="resizable">True</property>
                             <property name="sizing">autosize</property>
                             <property name="title" translatable="yes">Contributor</property>
                             <child>
-                              <object class="GtkCellRendererText" id="credits_cell_renderer"/>
+                              <object class="GtkCellRendererText" id="developers_cell_renderer"/>
                               <attributes>
                                 <attribute name="xalign">1</attribute>
                                 <attribute name="markup">0</attribute>
@@ -218,9 +239,45 @@ See the &lt;a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;GN
                     </child>
                   </object>
                   <packing>
-                    <property name="name">credits</property>
-                    <property name="title" translatable="yes">credits</property>
+                    <property name="name">developers</property>
+                    <property name="title" translatable="yes">developers</property>
                     <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="translators_page">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkTreeView" id="translators_treeview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="model">translators_store</property>
+                        <property name="headers_visible">False</property>
+                        <property name="show_expanders">False</property>
+                        <child internal-child="selection">
+                          <object class="GtkTreeSelection"/>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="translators_column">
+                            <property name="title" translatable="yes">Markup</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="translators_cell_renderer"/>
+                              <attributes>
+                                <attribute name="xalign">1</attribute>
+                                <attribute name="markup">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="name">translators</property>
+                    <property name="title" translatable="yes">translators</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -268,7 +325,7 @@ See the &lt;a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;GN
                   <packing>
                     <property name="name">build-info</property>
                     <property name="title" translatable="yes">build-info</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>
