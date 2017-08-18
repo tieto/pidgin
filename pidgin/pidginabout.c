@@ -4,6 +4,8 @@
 #include "pidginabout.h"
 #include "pidginresources.h"
 #include "internal.h"
+#include "gtkutils.h"
+#include "gtkwebview.h"
 
 #include <stdio.h>
 
@@ -15,7 +17,10 @@
 #endif
 
 struct _PidginAboutDialogPrivate {
+	GtkWidget *application_name;
 	GtkWidget *stack;
+
+	GtkWidget *main_scrolled_window;
 
 	GtkWidget *developers_button;
 	GtkWidget *developers_page;
@@ -63,6 +68,42 @@ _pidgin_about_dialog_switch_page(PidginAboutDialog *about, const gchar *name) {
 	);
 
 	about->priv->switching_pages = FALSE;
+}
+
+static void
+_pidgin_about_dialog_load_main_page(PidginAboutDialog *about) {
+	GtkWidget *webview = NULL;
+	GInputStream *istream = NULL;
+	GString *str = NULL;
+	gchar buffer[8192];
+	gssize read = 0;
+
+	/* create our webview */
+	webview = pidgin_webview_new(FALSE);
+	pidgin_setup_webview(webview);
+	pidgin_webview_set_format_functions(PIDGIN_WEBVIEW(webview), PIDGIN_WEBVIEW_ALL ^ PIDGIN_WEBVIEW_SMILEY);
+
+	gtk_container_add(GTK_CONTAINER(about->priv->main_scrolled_window), webview);
+
+	/* now load the html */
+	istream = g_resource_open_stream(
+		pidgin_get_resource(),
+		"/im/pidgin/Pidgin/About/about.html",
+		G_RESOURCE_LOOKUP_FLAGS_NONE,
+		NULL
+	);
+
+	str = g_string_new("");
+
+	while((read = g_input_stream_read(istream, buffer, sizeof(buffer), NULL, NULL)) > 0) {
+		g_string_append_len(str, (gchar *)buffer, read);
+	}
+
+	pidgin_webview_append_html(PIDGIN_WEBVIEW(webview), str->str);
+
+	g_string_free(str, TRUE);
+
+	g_input_stream_close(istream, NULL, NULL);
 }
 
 static void
@@ -465,7 +506,10 @@ pidgin_about_dialog_class_init(PidginAboutDialogClass *klass) {
 		"/im/pidgin/Pidgin/About/about.ui"
 	);
 
+	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, application_name);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, stack);
+
+	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, main_scrolled_window);
 
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, developers_button);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, developers_page);
@@ -490,6 +534,9 @@ pidgin_about_dialog_init(PidginAboutDialog *about) {
 	about->priv->switching_pages = FALSE;
 
 	gtk_widget_init_template(GTK_WIDGET(about));
+
+	/* setup the main page */
+	_pidgin_about_dialog_load_main_page(about);
 
 	/* setup the developers stuff */
 	g_signal_connect(

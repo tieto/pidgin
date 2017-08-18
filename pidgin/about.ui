@@ -128,7 +128,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="application-name">
+              <object class="GtkLabel" id="application_name">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Pidgin</property>
@@ -153,56 +153,22 @@
                 <property name="margin_bottom">2</property>
                 <property name="transition_type">slide-up</property>
                 <child>
-                  <object class="GtkBox" id="about_page">
+                  <placeholder/>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="main_scrolled_window">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
+                    <property name="can_focus">True</property>
+                    <property name="hscrollbar_policy">never</property>
+                    <property name="shadow_type">in</property>
                     <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">3.0.0devel</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">&lt;a href="https://pidgin.im/"&gt;pidgin.im&lt;/a&gt;</property>
-                        <property name="use_markup">True</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">This program comes with absolutely no warranty.
-See the &lt;a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;GNU General Public License, version 2 or later&lt;/a&gt; for details.</property>
-                        <property name="use_markup">True</property>
-                        <property name="justify">center</property>
-                        <property name="track_visited_links">False</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="pack_type">end</property>
-                        <property name="position">2</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
                     <property name="name">main</property>
                     <property name="title" translatable="yes">main</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
@@ -241,7 +207,7 @@ See the &lt;a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;GN
                   <packing>
                     <property name="name">developers</property>
                     <property name="title" translatable="yes">developers</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -277,7 +243,7 @@ See the &lt;a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;GN
                   <packing>
                     <property name="name">translators</property>
                     <property name="title" translatable="yes">translators</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
                 <child>
@@ -325,7 +291,7 @@ See the &lt;a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;GN
                   <packing>
                     <property name="name">build-info</property>
                     <property name="title" translatable="yes">build-info</property>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
               </object>
