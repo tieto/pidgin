@@ -11,10 +11,9 @@
 #include <stdio.h>
 
 #include "config.h"
+
 #ifdef HAVE_MESON_CONFIG
 #include "meson-config.h"
-#else
-#error HAVE_MESON_CONFIG is not defined
 #endif
 
 struct _PidginAboutDialogPrivate {
@@ -315,12 +314,16 @@ _pidgin_about_dialog_add_build_args(
 	for(idx = 0; splits[idx]; idx++) {
 		gchar **value_split = g_strsplit(splits[idx], "=", 2);
 
+		if(value_split[0] == NULL || g_utf8_strlen(value_split[0], -1) == 0) {
+			continue;
+		}
+
 		gtk_tree_store_append(about->priv->build_info_store, &value, &section);
 		gtk_tree_store_set(
 			about->priv->build_info_store,
 			&value,
-			0, value_split[0],
-			1, value_split[1],
+			0, value_split[0] ? value_split[0] : "",
+			1, value_split[1] ? value_split[1] : "",
 			-1
 		);
 

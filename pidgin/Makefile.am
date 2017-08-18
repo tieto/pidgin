@@ -81,7 +81,8 @@ libpidgin_la_SOURCES = \
 	gtkxfer.c \
 	libpidgin.c \
 	minidialog.c \
-	pidgin.gresource.c \
+	pidginabout.c \
+	pidginresources.c \
 	pidgintooltip.c
 
 libpidgin_la_headers = \
@@ -129,6 +130,7 @@ libpidgin_la_headers = \
 	gtkwhiteboard.h \
 	gtkxfer.h \
 	minidialog.h \
+	pidginabout.h \
 	pidgintooltip.h \
 	pidgin.h
 
@@ -167,22 +169,22 @@ libpidginincludedir=$(includedir)/pidgin
 libpidgininclude_HEADERS = \
 	$(libpidgin_la_headers)
 
-libpidgin_la_builtheaders = pidgin.gresource.h
-libpidgin_la_builtsources = pidgin.gresource.c
+libpidgin_la_builtheaders = pidginresources.h
+libpidgin_la_builtsources = pidginresources.c
 
 BUILT_SOURCES = $(libpidgin_la_builtheaders) $(libpidgin_la_builtsources)
 
-CLEANFILES = pidgin.gresource.h pidgin.gresource.c
+CLEANFILES = pidginresources.h pidginresources.c
 
-%.gresource.h: %.gresource.xml
+%resources.h: %.gresource.xml
 	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --generate-header --target $@ --c-name $* --sourcedir $(srcdir) $<
 
-%.gresource.c: %.gresource.xml
+%resources.c: %.gresource.xml
 	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --generate-source --target $@ --c-name $* --sourcedir $(srcdir) $<
 
-pidgin.gresource.c: gtkdebug.html
-pidgin.gresource.h: gtkdebug.html
-gtkdebug.c: pidgin.gresource.h
+pidginresources.c: gtkdebug.html
+pidginresources.h: gtkdebug.html
+gtkdebug.c: pidginresources.h
 
 libpidgin_la_DEPENDENCIES = @LIBOBJS@ $(LIBPIDGIN_WIN32RES)
 libpidgin_la_LDFLAGS = -export-dynamic -no-undefined \
@@ -198,6 +200,7 @@ libpidgin_la_LIBADD = \
 	$(GSTVIDEO_LIBS) \
 	$(GSTINTERFACES_LIBS) \
 	$(INTLLIBS) \
+	$(JSON_LIBS) \
 	$(LIBXML_LIBS) \
 	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
@@ -228,6 +231,7 @@ AM_CPPFLAGS = \
 	$(GSTINTERFACES_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(JSON_CFLAGS) \
 	$(X11_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
