@@ -168,9 +168,15 @@
 			"Friedel Wolff"
 		]
 	}, {
+		"title": "Amharic (am)",
+		"people": [
+			"Daniel Yacob (Retired)"
+		]
+	}, {
 		"title": "Arabic (ar)",
 		"people": [
-			"Khaled Hosny"
+			"Khaled Hosny",
+			"Mohamed Magdy (Retired)"
 		]
 	}, {
 		"title": "Assamese (as)",
@@ -191,14 +197,17 @@
 		"title": "Bulgarian (bg)",
 		"people": [
 			"Vladimira Girginova",
-			"Vladimir (Kaladan) Petkov"
+			"Vladimir (Kaladan) Petkov",
+			"Hristo Todorov (Retired)"
 		]
 	}, {
 		"title": "Bengali (bn)",
 		"people": [
 			"Jamil Ahmed",
 			"Israt Jahan",
-			"Samia Nimatullah"
+			"Samia Nimatullah",
+			"Indranil Das Gupta (Retired)",
+			"Tisa Nafisa (Retired)"
 		]
 	}, {
 		"title": "Bengali-India (bn_IN)",
@@ -223,7 +232,9 @@
 	}, {
 		"title": "Catalan (ca)",
 		"people": [
-			"Josep Puigdemont"
+			"Josep Puigdemont",
+			"JM Pérez Cáncer (Retired)",
+			"Robert Millan (Retired)"
 		]
 	}, {
 		"title": "Valencian-Catalan (ca@valencia)",
@@ -234,17 +245,24 @@
 	}, {
 		"title": "Czech (cs)",
 		"people": [
-			"David Vachulka"
+			"David Vachulka",
+			"Honza Král (Retired)",
+			"Miloslav Trmac (Retired)"
 		]
 	}, {
 		"title": "Danish (da)",
 		"people": [
-			"Nicky Thomassen"
+			"Nicky Thomassen",
+			"Peter Bach (Retired)",
+			"Morten Brix Pedersen (Retired)"
 		]
 	}, {
 		"title": "German (de)",
 		"people": [
-			"Björn Voigt"
+			"Björn Voigt",
+			"Daniel Seifert (Retired)",
+			"Karsten Weiss (Retired)",
+			"Jochen Kemnade (Retired)"
 		]
 	}, {
 		"title": "Dzongkha (dz)",
@@ -262,12 +280,14 @@
 	}, {
 		"title": "Australian English (en_AU)",
 		"people": [
-			"Michael Findlay"
+			"Michael Findlay",
+			"Peter Lawler (Retired)"
 		]
 	}, {
 		"title": "British English (en_GB)",
 		"people": [
-			"Phil Hannent"
+			"Phil Hannent",
+			"Luke Ross (Retired)"
 		]
 	}, {
 		"title": "Canadian English (en_CA)",
@@ -282,7 +302,11 @@
 	}, {
 		"title": "Spanish (es)",
 		"people": [
-			"Javier Fernández-Sanguino Peña"
+			"Javier Fernández-Sanguino Peña",
+			"JM Pérez Cáncer (Retired)",
+			"Nicolás Lichtmaier (Retired)",
+			"Amaya Rodrigo (Retired)",
+			"Alejandro G Villar (Retired)"
 		]
 	}, {
 		"title": "Argentine Spanish (es_AR)",
@@ -297,7 +321,9 @@
 	}, {
 		"title": "Basque (eu)",
 		"people": [
-			"Mikel Pascual Aldabaldetreku"
+			"Mikel Pascual Aldabaldetreku",
+			"Iñaki Larrañaga Murgoitio (Retired)",
+			"Hizkuntza Politikarako Sailburuordetza (Retired)"
 		]
 	}, {
 		"title": "Persian (fa)",
@@ -309,7 +335,18 @@
 	}, {
 		"title": "Finnish (fi)",
 		"people": [
-			"Timo Jyrinki"
+			"Timo Jyrinki",
+			"Arto Alakulju (Retired)",
+			"Tero Kuusela (Retired)"
+		]
+	}, {
+		"title": "French (fr)",
+		"people": [
+			"Sébastien François (Retired)",
+			"Loïc Jeannin (Retired)",
+			"Stéphane Pontier (Retired)",
+			"Stéphane Wirtel (Retired)",
+			"Éric Boumaour (Retired)"
 		]
 	}, {
 		"title": "Irish (ga)",
@@ -321,7 +358,8 @@
 		"title": "Galician (gl)",
 		"people": [
 			"Mar Castro",
-			"Frco. Javier Rial"
+			"Frco. Javier Rial",
+			"Ignacio Casal Quinteiro (Retired)"
 		]
 	}, {
 		"title": "Gujarati (gu)",
@@ -332,13 +370,15 @@
 	}, {
 		"title": "Hebrew (he)",
 		"people": [
-			"Shalom Craimer"
+			"Shalom Craimer",
+			"Pavel Bibergal (Retired)"
 		]
 	}, {
 		"title": "Hindi (hi)",
 		"people": [
 			"Sangeeta Kumari",
-			"Rajesh Ranjan"
+			"Rajesh Ranjan",
+			"Ravishankar Shrivastava (Retired)"
 		]
 	}, {
 		"title": "Croatian (hr)",
@@ -348,7 +388,13 @@
 	}, {
 		"title": "Hungarian (hu)",
 		"people": [
-			"Kelemen Gábor"
+			"Kelemen Gábor",
+			"Zoltan Sutto (Retired)"
+		]
+	}, {
+		"title": "Armenian (hy)",
+		"people": [
+			"David Avsharyan (Retired)"
 		]
 	}, {
 		"title": "Indonesian (id)",
@@ -358,17 +404,23 @@
 	}, {
 		"title": "Italian (it)",
 		"people": [
-			"Claudio Satriano"
+			"Claudio Satriano",
+			"Salvatore di Maggio (Retired)"
 		]
 	}, {
 		"title": "Japanese (ja)",
 		"people": [
-			"Takayuki Kusano"
+			"Takayuki Kusano",
+			"Takashi Aihana (Retired)",
+			"Ryosuke Kutsuna (Retired)",
+			"Junichi Uekawa (Retired)",
+			"Taku Yasui (Retired)"
 		]
 	}, {
 		"title": "Georgian (ka)",
 		"people": [
-			"Ubuntu Georgian Translators"
+			"Ubuntu Georgian Translators",
+			"Temuri Doghonadze (Retired)"
 		]
 	}, {
 		"title": "Kazakh (kk)",
@@ -388,7 +440,10 @@
 	}, {
 		"title": "Korean (ko)",
 		"people": [
-			"Sushizang"
+			"Sushizang",
+			"Sang-hyun S (Retired)",
+			"A Ho-seok Lee (Retired)",
+			"Kyeong-uk Son (Retired)"
 		]
 	}, {
 		"title": "Kashmiri (kas)",
@@ -408,9 +463,17 @@
 			"Haval A. Ahmed"
 		]
 	}, {
+		"title": "Laotian (lo)",
+		"people": [
+			"Anousak Souphavah (Retired)"
+		]
+	}, {
 		"title": "Lithuanian (lt)",
 		"people": [
-			"Algimantas Margevičius"
+			"Algimantas Margevičius",
+			"Laurynas Biveinis (Retired)",
+			"Gediminas Čičinskas (Retired)",
+			"Andrius Štikonas (Retired)"
 		]
 	}, {
 		"title": "Latvian (lv)",
@@ -434,7 +497,8 @@
 		"people": [
 			"Arangel Angov",
 			"Ivana Kirkovska",
-			"Jovan Naumovski"
+			"Jovan Naumovski",
+			"Tomislav Markovski (Retired)"
 		]
 	}, {
 		"title": "Malayalam (ml)",
@@ -454,7 +518,8 @@
 	}, {
 		"title": "Malay (ms_MY)",
 		"people": [
-			"abuyop"
+			"abuyop",
+			"Muhammad Najmi bin Ahmad Zabidi (Retired)"
 		]
 	}, {
 		"title": "Burmese (my_MM)",
@@ -464,17 +529,23 @@
 	}, {
 		"title": "Bokmål Norwegian (nb)",
 		"people": [
-			"Allan Nordhøy"
+			"Allan Nordhøy",
+			"Hans Fredrik Nordhaug (Retired)",
+			"Hallvard Glad (Retired)",
+			"Petter Johan Olsen (Retired)",
+			"Espen Stefansen (Retired)"
 		]
 	}, {
 		"title": "Nepali (ne)",
 		"people": [
-			"Saroj Dhakal"
+			"Saroj Dhakal",
+			"Shyam Krishna Bal (Retired)"
 		]
 	}, {
 		"title": "Dutch, Flemish (nl)",
 		"people": [
-			"Gideon van Melle"
+			"Gideon van Melle",
+			"Vincent van Adrighem (Retired)"
 		]
 	}, {
 		"title": "Norwegian Nynorsk (nn)",
@@ -484,7 +555,8 @@
 	}, {
 		"title": "Occitan (oc)",
 		"people": [
-			"Cédric Valmary"
+			"Cédric Valmary",
+			"Yannig Marchegay (Retired)"
 		]
 	}, {
 		"title": "Oriya (or)",
@@ -499,17 +571,25 @@
 	}, {
 		"title": "Polish (pl)",
 		"people": [
-			"Piotr Drąg"
+			"Piotr Drąg",
+			"Krzysztof Foltman (Retired)",
+			"Paweł Godlewski (Retired)",
+			"Piotr Makowski (Retired)",
+			"Emil Nowak (Retired)",
+			"Przemysław Sułek (Retired)"
 		]
 	}, {
 		"title": "Portuguese (pt)",
 		"people": [
-			"Paulo Ribeiro"
+			"Paulo Ribeiro",
+			"Duarte Henriques (Retired)"
 		]
 	}, {
 		"title": "Portuguese-Brazil (pt_BR)",
 		"people": [
-			"Renato Silva"
+			"Renato Silva",
+			"Maurício de Lemos Rodrigues Collares Neto (Retired)",
+			"Rodrigo Luiz Marques Flores (Retired)"
 		]
 	}, {
 		"title": "Pashto (ps)",
@@ -525,7 +605,10 @@
 	}, {
 		"title": "Russian (ru)",
 		"people": [
-			"Антон Самохвалов"
+			"Антон Самохвалов",
+			"Dmitry Beloglazov (Retired)",
+			"Alexandre Prokoudine (Retired)",
+			"Sergey Volozhanin (Retired)"
 		]
 	}, {
 		"title": "Sindhi (sd)",
@@ -536,12 +619,16 @@
 		"title": "Slovak (sk)",
 		"people": [
 			"Jozef Káčer",
-			"loptosko"
+			"loptosko",
+			"Daniel Režný (Retired)",
+			"Richard Golier (Retired)",
+			"helix84 (Retired)"
 		]
 	}, {
 		"title": "Slovenian (sl)",
 		"people": [
-			"Martin Srebotnjak"
+			"Martin Srebotnjak",
+			"Matjaz Horvat (Retired)"
 		]
 	}, {
 		"title": "Albanian (sq)",
@@ -551,7 +638,9 @@
 	}, {
 		"title": "Serbian (sr)",
 		"people": [
-			"Miloš Popović"
+			"Miloš Popović",
+			"Danilo Šegan (Retired)",
+			"Aleksandar Urosevic (Retired)"
 		]
 	}, {
 		"title": "Serbian Latin (sr@latin)",
@@ -567,7 +656,10 @@
 	}, {
 		"title": "Swedish (sv)",
 		"people": [
-			"Josef Andersson"
+			"Josef Andersson",
+			"Peter Hjalmarsson (Retired)",
+			"Tore Lundqvist (Retired)",
+			"Christian Rose (Retired)"
 		]
 	}, {
 		"title": "Swahili (sw)",
@@ -583,12 +675,19 @@
 	}, {
 		"title": "Telugu (te)",
 		"people": [
-			"Krishnababu Krottapalli"
+			"Krishnababu Krottapalli",
+			"Mr. Subbaramaih (Retired)"
 		]
 	}, {
 		"title": "Thai (th)",
 		"people": [
 			"Isriya Paireepairit"
+		]
+	}, {
+		"title": "Turkish (tr)",
+		"people": [
+			"Serdar Soytetir (Retired)",
+			"Ahmet Alp Balkan (Retired)"
 		]
 	}, {
 		"title": "Tatar (tt)",
@@ -613,12 +712,16 @@
 	}, {
 		"title": "Vietnamese (vi)",
 		"people": [
-			"Nguyễn Vũ Hưng"
+			"Nguyễn Vũ Hưng",
+			"T.M.Thanh and the Gnome-Vi Team (Retired)"
 		]
 	}, {
 		"title": "Simplified Chinese (zh_CN)",
 		"people": [
-			"Aron Xu"
+			"Aron Xu",
+			"Hashao (Retired)",
+			"Rocky S. Lee (Retired)",
+			"Funda Wang (Retired)"
 		]
 	}, {
 		"title": "Hong Kong Chinese (zh_HK)",
@@ -631,7 +734,9 @@
 		"title": "Traditional Chinese (zh_TW)",
 		"people": [
 			"Ambrose C. Li",
-			"Paladin R. Liu"
+			"Paladin R. Liu",
+			"Hashao (Retired)",
+			"Rocky S. Lee (Retired)"
 		]
 	}]
 }

@@ -37,10 +37,6 @@ G_BEGIN_DECLS
 
 /* Functions in gtkdialogs.c (these should actually stay in this file) */
 void pidgin_dialogs_destroy_all(void);
-void pidgin_dialogs_about(void);
-void pidgin_dialogs_buildinfo(void);
-void pidgin_dialogs_developers(void);
-void pidgin_dialogs_translators(void);
 void pidgin_dialogs_plugins_info(void);
 void pidgin_dialogs_im(void);
 void pidgin_dialogs_im_with_user(PurpleAccount *, const char *);
