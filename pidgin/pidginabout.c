@@ -18,6 +18,7 @@
 #endif
 
 struct _PidginAboutDialogPrivate {
+	GtkWidget *close_button;
 	GtkWidget *application_name;
 	GtkWidget *stack;
 
@@ -478,6 +479,11 @@ _pidgin_about_dialog_load_build_configuration(PidginAboutDialog *about) {
  * Callbacks
  *****************************************************************************/
 static void
+_pidgin_about_dialog_close(GtkWidget *b, gpointer data) {
+	gtk_widget_destroy(GTK_WIDGET(data));
+}
+
+static void
 _pidgin_about_dialog_toggle_developers(GtkToggleButton *b, gpointer d) {
 	PidginAboutDialog *about = d;
 	gboolean show = FALSE;
@@ -530,6 +536,7 @@ pidgin_about_dialog_class_init(PidginAboutDialogClass *klass) {
 		"/im/pidgin/Pidgin/About/about.ui"
 	);
 
+	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, close_button);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, application_name);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, stack);
 
@@ -558,6 +565,14 @@ pidgin_about_dialog_init(PidginAboutDialog *about) {
 	about->priv->switching_pages = FALSE;
 
 	gtk_widget_init_template(GTK_WIDGET(about));
+
+	/* wire up the close button */
+	g_signal_connect(
+		about->priv->close_button,
+		"clicked",
+		G_CALLBACK(_pidgin_about_dialog_close),
+		about
+	);
 
 	/* setup the application name label */
 	_pidgin_about_dialog_load_application_name(about);
