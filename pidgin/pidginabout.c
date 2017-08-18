@@ -78,7 +78,7 @@ _pidgin_about_dialog_load_developers(PidginAboutDialog *about) {
 	/* get a stream to the developers resource */
 	istream = g_resource_open_stream(
 		pidgin_get_resource(),
-		"/im/pidgin/Pidgin/About/developers.json",
+		"/im/pidgin/Pidgin/About/credits.json",
 		G_RESOURCE_LOOKUP_FLAGS_NONE,
 		NULL
 	);
@@ -162,7 +162,7 @@ _pidgin_about_dialog_load_translators(PidginAboutDialog *about) {
 	/* get a stream to the developers resource */
 	istream = g_resource_open_stream(
 		pidgin_get_resource(),
-		"/im/pidgin/Pidgin/About/translators.json",
+		"/im/pidgin/Pidgin/About/credits.json",
 		G_RESOURCE_LOOKUP_FLAGS_NONE,
 		NULL
 	);
