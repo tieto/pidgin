@@ -1,6 +1,7 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <json-glib/json-glib.h>
 
+#include "package_revision.h"
 #include "pidginabout.h"
 #include "pidginresources.h"
 #include "internal.h"
@@ -68,6 +69,19 @@ _pidgin_about_dialog_switch_page(PidginAboutDialog *about, const gchar *name) {
 	);
 
 	about->priv->switching_pages = FALSE;
+}
+
+static void
+_pidgin_about_dialog_load_application_name(PidginAboutDialog *about) {
+	gchar *label = g_strdup_printf(
+		"%s %s",
+		PIDGIN_NAME,
+		VERSION
+	);
+
+	gtk_label_set_text(GTK_LABEL(about->priv->application_name), label);
+
+	g_free(label);
 }
 
 static void
@@ -339,7 +353,7 @@ _pidgin_about_dialog_build_info_add_version(
 
 static void
 _pidgin_about_dialog_load_build_info(PidginAboutDialog *about) {
-	GtkTreeIter section;
+	GtkTreeIter section, item;
 	gchar *markup = NULL;
 
 	/* create the section */
@@ -355,6 +369,16 @@ _pidgin_about_dialog_load_build_info(PidginAboutDialog *about) {
 		-1
 	);
 	g_free(markup);
+
+	/* add the commit hash */
+	gtk_tree_store_append(about->priv->build_info_store, &item, &section);
+	gtk_tree_store_set(
+		about->priv->build_info_store,
+		&item,
+		0, "Commit Hash",
+		1, REVISION,
+		-1
+	);
 
 	/* add the purple version */
 	_pidgin_about_dialog_build_info_add_version(
@@ -534,6 +558,9 @@ pidgin_about_dialog_init(PidginAboutDialog *about) {
 	about->priv->switching_pages = FALSE;
 
 	gtk_widget_init_template(GTK_WIDGET(about));
+
+	/* setup the application name label */
+	_pidgin_about_dialog_load_application_name(about);
 
 	/* setup the main page */
 	_pidgin_about_dialog_load_main_page(about);
