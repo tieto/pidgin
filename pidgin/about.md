@@ -15,6 +15,6 @@ Pidgin is a messaging client based on libpurple which is capable of connecting t
 
 This is a **public** mailing list with a **public** [archive](https://pidgin.im/pipermail/support/).
 
-We can't help with third-party protocols or plugins!
+We can't help with third-party protocols or plugins, but you may be able to find support via the [ThirdPartyPlugins WIKI Page](https://developer.pidgin.im/wiki/ThirdPartyPlugins).
 
 The list's primary language is English.  You are welcome to post in another language, but the responses may be less helpful.
