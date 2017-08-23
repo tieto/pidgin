@@ -1,3 +1,21 @@
+/* Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <json-glib/json-glib.h>
 
@@ -9,8 +27,6 @@
 #include "gtkwebview.h"
 
 #include <stdio.h>
-
-#include "config.h"
 
 #ifdef HAVE_MESON_CONFIG
 #include "meson-config.h"
@@ -153,10 +169,10 @@ _pidgin_about_dialog_load_developers(PidginAboutDialog *about) {
 
 	for(l = sections; l; l = l->next) {
 		GtkTreeIter section_iter;
-		GList *ll = NULL, *people = NULL;
 		JsonObject *section = json_node_get_object(l->data);
-		JsonArray *people_array = NULL;
+		JsonArray *people = NULL;
 		gchar *markup = NULL;
+		guint idx = 0, n_people = 0;
 
 		markup = g_strdup_printf(
 			"<span font_weight=\"bold\" font_size=\"large\">%s</span>",
@@ -174,26 +190,21 @@ _pidgin_about_dialog_load_developers(PidginAboutDialog *about) {
 
 		g_free(markup);
 
-		people_array = json_object_get_array_member(section, "people");
-		people = json_array_get_elements(people_array);
+		people = json_object_get_array_member(section, "people");
+		n_people = json_array_get_length(people);
 
-		for(ll = people; ll; ll = ll->next) {
+		for(idx = 0; idx < n_people; idx++) {
 			GtkTreeIter person_iter;
-			gchar *markup = g_strdup(json_node_get_string(ll->data));
 
 			gtk_tree_store_append(about->priv->developers_store, &person_iter, &section_iter);
 			gtk_tree_store_set(
 				about->priv->developers_store,
 				&person_iter,
-				0, markup,
+				0, json_array_get_string_element(people, idx),
 				1, 0.5f,
 				-1
 			);
-
-			g_free(markup);
 		}
-
-		g_list_free(people);
 	}
 
 	g_list_free(sections);
@@ -237,10 +248,10 @@ _pidgin_about_dialog_load_translators(PidginAboutDialog *about) {
 
 	for(l = sections; l; l = l->next) {
 		GtkTreeIter section_iter;
-		GList *ll = NULL, *people = NULL;
 		JsonObject *section = json_node_get_object(l->data);
-		JsonArray *people_array = NULL;
+		JsonArray *people = NULL;
 		gchar *markup = NULL;
+		guint idx = 0, n_people = 0;
 
 		markup = g_strdup_printf(
 			"<span font_weight=\"bold\" font_size=\"large\">%s</span>",
@@ -258,26 +269,21 @@ _pidgin_about_dialog_load_translators(PidginAboutDialog *about) {
 
 		g_free(markup);
 
-		people_array = json_object_get_array_member(section, "people");
-		people = json_array_get_elements(people_array);
+		people = json_object_get_array_member(section, "people");
+		n_people = json_array_get_length(people);
 
-		for(ll = people; ll; ll = ll->next) {
+		for(idx = 0; idx < n_people; idx++) {
 			GtkTreeIter person_iter;
-			gchar *markup = g_strdup(json_node_get_string(ll->data));
 
 			gtk_tree_store_append(about->priv->translators_store, &person_iter, &section_iter);
 			gtk_tree_store_set(
 				about->priv->translators_store,
 				&person_iter,
-				0, markup,
+				0, json_array_get_string_element(people, idx),
 				1, 0.5f,
 				-1
 			);
-
-			g_free(markup);
 		}
-
-		g_list_free(people);
 	}
 
 	g_list_free(sections);
@@ -314,7 +320,7 @@ _pidgin_about_dialog_add_build_args(
 	for(idx = 0; splits[idx]; idx++) {
 		gchar **value_split = g_strsplit(splits[idx], "=", 2);
 
-		if(value_split[0] == NULL || g_utf8_strlen(value_split[0], -1) == 0) {
+		if(value_split[0] == NULL || value_split[0][0] == '\0') {
 			continue;
 		}
 
