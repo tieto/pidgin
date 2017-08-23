@@ -160,7 +160,6 @@
                           <object class="GtkTreeViewColumn" id="developers_column">
                             <property name="resizable">True</property>
                             <property name="sizing">autosize</property>
-                            <property name="title" translatable="yes">Contributor</property>
                             <child>
                               <object class="GtkCellRendererText" id="developers_cell_renderer"/>
                               <attributes>
@@ -196,7 +195,6 @@
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn" id="translators_column">
-                            <property name="title" translatable="yes">Markup</property>
                             <child>
                               <object class="GtkCellRendererText" id="translators_cell_renderer"/>
                               <attributes>
@@ -233,7 +231,6 @@
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn">
-                            <property name="title" translatable="yes">Name</property>
                             <child>
                               <object class="GtkCellRendererText"/>
                               <attributes>
@@ -244,7 +241,6 @@
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn">
-                            <property name="title" translatable="yes">Value</property>
                             <child>
                               <object class="GtkCellRendererText"/>
                               <attributes>
