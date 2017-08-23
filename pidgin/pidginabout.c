@@ -39,54 +39,22 @@ struct _PidginAboutDialogPrivate {
 
 	GtkWidget *main_scrolled_window;
 
-	GtkWidget *developers_button;
 	GtkWidget *developers_page;
 	GtkWidget *developers_treeview;
 	GtkTreeStore *developers_store;
 
-	GtkWidget *translators_button;
 	GtkWidget *translators_page;
 	GtkWidget *translators_treeview;
 	GtkTreeStore *translators_store;
 
-	GtkWidget *build_info_button;
 	GtkWidget *build_info_page;
 	GtkWidget *build_info_treeview;
 	GtkTreeStore *build_info_store;
-
-	gboolean switching_pages;
 };
 
 /******************************************************************************
  * Helpers
  *****************************************************************************/
-static void
-_pidgin_about_dialog_switch_page(PidginAboutDialog *about, const gchar *name) {
-	about->priv->switching_pages = TRUE;
-
-	gtk_stack_set_visible_child_name(GTK_STACK(about->priv->stack), name);
-
-	/* now figure out if developers button is active */
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(about->priv->developers_button),
-		g_str_equal("developers", name)
-	);
-
-	/* is the translators button active? */
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(about->priv->translators_button),
-		g_str_equal("translators", name)
-	);
-
-	/* is the build info button active? */
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(about->priv->build_info_button),
-		g_str_equal("build-info", name)
-	);
-
-	about->priv->switching_pages = FALSE;
-}
-
 static void
 _pidgin_about_dialog_load_application_name(PidginAboutDialog *about) {
 	gchar *label = g_strdup_printf(
@@ -492,45 +460,6 @@ _pidgin_about_dialog_close(GtkWidget *b, gpointer data) {
 	gtk_widget_destroy(GTK_WIDGET(data));
 }
 
-static void
-_pidgin_about_dialog_toggle_developers(GtkToggleButton *b, gpointer d) {
-	PidginAboutDialog *about = d;
-	gboolean show = FALSE;
-
-	if(about->priv->switching_pages)
-		return;
-
-	show = gtk_toggle_button_get_active(b);
-
-	_pidgin_about_dialog_switch_page(d, show ? "developers" : "main");
-}
-
-static void
-_pidgin_about_dialog_toggle_translators(GtkToggleButton *b, gpointer d) {
-	PidginAboutDialog *about = d;
-	gboolean show = FALSE;
-
-	if(about->priv->switching_pages)
-		return;
-
-	show = gtk_toggle_button_get_active(b);
-
-	_pidgin_about_dialog_switch_page(d, show ? "translators" : "main");
-}
-
-static void
-_pidgin_about_dialog_toggle_build_info(GtkToggleButton *b, gpointer d) {
-	PidginAboutDialog *about = d;
-	gboolean show = FALSE;
-
-	if(about->priv->switching_pages)
-		return;
-
-	show = gtk_toggle_button_get_active(b);
-
-	_pidgin_about_dialog_switch_page(d, show ? "build-info" : "main");
-}
-
 /******************************************************************************
  * GObject Stuff
  *****************************************************************************/
@@ -551,17 +480,14 @@ pidgin_about_dialog_class_init(PidginAboutDialogClass *klass) {
 
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, main_scrolled_window);
 
-	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, developers_button);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, developers_page);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, developers_store);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, developers_treeview);
 
-	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, translators_button);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, translators_page);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, translators_store);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, translators_treeview);
 
-	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, build_info_button);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, build_info_page);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, build_info_store);
 	gtk_widget_class_bind_template_child_private(widget_class, PidginAboutDialog, build_info_treeview);
@@ -570,8 +496,6 @@ pidgin_about_dialog_class_init(PidginAboutDialogClass *klass) {
 static void
 pidgin_about_dialog_init(PidginAboutDialog *about) {
 	about->priv = pidgin_about_dialog_get_instance_private(about);
-
-	about->priv->switching_pages = FALSE;
 
 	gtk_widget_init_template(GTK_WIDGET(about));
 
@@ -590,35 +514,14 @@ pidgin_about_dialog_init(PidginAboutDialog *about) {
 	_pidgin_about_dialog_load_main_page(about);
 
 	/* setup the developers stuff */
-	g_signal_connect(
-		about->priv->developers_button,
-		"toggled",
-		G_CALLBACK(_pidgin_about_dialog_toggle_developers),
-		about
-	);
-
 	_pidgin_about_dialog_load_developers(about);
 	gtk_tree_view_expand_all(GTK_TREE_VIEW(about->priv->developers_treeview));
 
 	/* setup the translators stuff */
-	g_signal_connect(
-		about->priv->translators_button,
-		"toggled",
-		G_CALLBACK(_pidgin_about_dialog_toggle_translators),
-		about
-	);
-
 	_pidgin_about_dialog_load_translators(about);
 	gtk_tree_view_expand_all(GTK_TREE_VIEW(about->priv->translators_treeview));
 
 	/* setup the build info page */
-	g_signal_connect(
-		about->priv->build_info_button,
-		"toggled",
-		G_CALLBACK(_pidgin_about_dialog_toggle_build_info),
-		about
-	);
-
 	_pidgin_about_dialog_load_build_configuration(about);
 	gtk_tree_view_expand_all(GTK_TREE_VIEW(about->priv->build_info_treeview));
 }
