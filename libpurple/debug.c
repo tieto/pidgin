@@ -23,7 +23,7 @@
 #include "prefs.h"
 #include "util.h"
 
-static PurpleDebugUiOps *debug_ui_ops = NULL;
+static PurpleDebugUi *debug_ui = NULL;
 
 /*
  * This determines whether debug info should be written to the
@@ -51,16 +51,22 @@ static void
 purple_debug_vargs(PurpleDebugLevel level, const char *category,
 				 const char *format, va_list args)
 {
-	PurpleDebugUiOps *ops;
+	PurpleDebugUi *ops;
+	PurpleDebugUiInterface *iface;
 	char *arg_s = NULL;
 
 	g_return_if_fail(level != PURPLE_DEBUG_ALL);
 	g_return_if_fail(format != NULL);
 
-	ops = purple_debug_get_ui_ops();
+	ops = purple_debug_get_ui();
+	if (!ops)
+		return;
+	iface = PURPLE_DEBUG_UI_GET_IFACE(ops);
+	if (!iface)
+		return;
 
-	if (!debug_enabled && ((ops == NULL) || (ops->print == NULL) ||
-			(ops->is_enabled && !ops->is_enabled(level, category))))
+	if (!debug_enabled && ((iface == NULL) || (iface->print == NULL) ||
+			(iface->is_enabled && !iface->is_enabled(ops, level, category))))
 		return;
 
 	arg_s = g_strdup_vprintf(format, args);
@@ -102,8 +108,8 @@ purple_debug_vargs(PurpleDebugLevel level, const char *category,
 		g_free(ts_s);
 	}
 
-	if (ops != NULL && ops->print != NULL)
-		ops->print(level, category, arg_s);
+	if (iface != NULL && iface->print != NULL)
+		iface->print(ops, level, category, arg_s);
 
 	g_free(arg_s);
 }
@@ -194,37 +200,10 @@ purple_debug_is_enabled()
 	return debug_enabled;
 }
 
-static PurpleDebugUiOps *
-purple_debug_ui_ops_copy(PurpleDebugUiOps *ops)
-{
-	PurpleDebugUiOps *ops_new;
-
-	g_return_val_if_fail(ops != NULL, NULL);
-
-	ops_new = g_new(PurpleDebugUiOps, 1);
-	*ops_new = *ops;
-
-	return ops_new;
-}
-
-GType
-purple_debug_ui_ops_get_type(void)
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		type = g_boxed_type_register_static("PurpleDebugUiOps",
-				(GBoxedCopyFunc)purple_debug_ui_ops_copy,
-				(GBoxedFreeFunc)g_free);
-	}
-
-	return type;
-}
-
 void
-purple_debug_set_ui_ops(PurpleDebugUiOps *ops)
+purple_debug_set_ui(PurpleDebugUi *ops)
 {
-	debug_ui_ops = ops;
+	g_set_object(&debug_ui, ops);
 }
 
 gboolean
@@ -257,10 +236,18 @@ purple_debug_set_colored(gboolean colored)
 	debug_colored = colored;
 }
 
-PurpleDebugUiOps *
-purple_debug_get_ui_ops(void)
+PurpleDebugUi *
+purple_debug_get_ui(void)
 {
-	return debug_ui_ops;
+	return debug_ui;
+}
+
+G_DEFINE_INTERFACE(PurpleDebugUi, purple_debug_ui, G_TYPE_OBJECT);
+
+static void
+purple_debug_ui_default_init(PurpleDebugUiInterface *iface)
+{
+    /* add properties and signals to the interface here */
 }
 
 void

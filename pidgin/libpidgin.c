@@ -244,8 +244,8 @@ ui_main(void)
 static void
 debug_init(void)
 {
-	purple_debug_set_ui_ops(pidgin_debug_get_ui_ops());
-	pidgin_debug_init();
+	PidginDebugUi *ui = pidgin_debug_ui_new();
+	purple_debug_set_ui(PURPLE_DEBUG_UI(ui));
 }
 
 static void
@@ -288,6 +288,8 @@ static void
 pidgin_quit(void)
 {
 	/* Uninit */
+	PurpleDebugUi *ui;
+
 	pidgin_utils_uninit();
 	pidgin_notify_uninit();
 	_pidgin_smiley_theme_uninit();
@@ -299,7 +301,9 @@ pidgin_quit(void)
 	pidgin_connection_uninit();
 	pidgin_accounts_uninit();
 	pidgin_xfers_uninit();
-	pidgin_debug_uninit();
+	ui = purple_debug_get_ui();
+	purple_debug_set_ui(NULL);
+	g_object_unref(ui);
 
 	if(NULL != ui_info)
 		g_hash_table_destroy(ui_info);

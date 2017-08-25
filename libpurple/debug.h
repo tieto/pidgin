@@ -33,9 +33,33 @@
 
 #include <stdarg.h>
 
-#define PURPLE_TYPE_DEBUG_UI_OPS (purple_debug_ui_ops_get_type())
+G_BEGIN_DECLS
 
-typedef struct _PurpleDebugUiOps PurpleDebugUiOps;
+#define PURPLE_TYPE_DEBUG_UI (purple_debug_ui_get_type())
+#if GLIB_CHECK_VERSION(2,44,0)
+G_DECLARE_INTERFACE(PurpleDebugUi, purple_debug_ui, PURPLE, DEBUG_UI, GObject)
+#else
+GType purple_debug_ui_get_type(void);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+typedef struct _PurpleDebugUi PurpleDebugUi;
+typedef struct _PurpleDebugUiInterface PurpleDebugUiInterface;
+static inline PurpleDebugUi *
+PURPLE_DEBUG_UI(gpointer ptr)
+{
+	return G_TYPE_CHECK_INSTANCE_CAST(ptr, purple_debug_ui_get_type(), PurpleDebugUi);
+}
+static inline gboolean
+PURPLE_IS_DEBUG_UI(gpointer ptr)
+{
+	return G_TYPE_CHECK_INSTANCE_TYPE(ptr, purple_debug_ui_get_type());
+}
+static inline PurpleDebugUiInterface *
+PURPLE_DEBUG_UI_GET_IFACE(gpointer ptr)
+{
+	return G_TYPE_INSTANCE_GET_INTERFACE(ptr, purple_debug_ui_get_type(), PurpleDebugUiInterface);
+}
+G_GNUC_END_IGNORE_DEPRECATIONS
+#endif
 
 /**
  * PurpleDebugLevel:
@@ -60,25 +84,27 @@ typedef enum
 } PurpleDebugLevel;
 
 /**
- * PurpleDebugUiOps:
+ * PurpleDebugUiInterface:
  *
  * Debug UI operations.
  */
-struct _PurpleDebugUiOps
+struct _PurpleDebugUiInterface
 {
-	void (*print)(PurpleDebugLevel level, const char *category,
-				  const char *arg_s);
-	gboolean (*is_enabled)(PurpleDebugLevel level,
-			const char *category);
+	GTypeInterface parent_iface;
+
+	void (*print)(PurpleDebugUi *self,
+	              PurpleDebugLevel level, const char *category,
+	              const char *arg_s);
+	gboolean (*is_enabled)(PurpleDebugUi *self,
+	                       PurpleDebugLevel level,
+	                       const char *category);
 
 	/*< private >*/
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
+	void (*_purple_reserved1)(PurpleDebugUi *self);
+	void (*_purple_reserved2)(PurpleDebugUi *self);
+	void (*_purple_reserved3)(PurpleDebugUi *self);
+	void (*_purple_reserved4)(PurpleDebugUi *self);
 };
-
-G_BEGIN_DECLS
 
 /**************************************************************************/
 /* Debug API                                                              */
@@ -242,30 +268,23 @@ void purple_debug_set_colored(gboolean colored);
 /**************************************************************************/
 
 /**
- * purple_debug_ui_ops_get_type:
- *
- * Returns: The #GType for the #PurpleDebugUiOps boxed structure.
- */
-GType purple_debug_ui_ops_get_type(void);
-
-/**
- * purple_debug_set_ui_ops:
+ * purple_debug_set_ui:
  * @ops: The UI operations structure.
  *
  * Sets the UI operations structure to be used when outputting debug
  * information.
  */
-void purple_debug_set_ui_ops(PurpleDebugUiOps *ops);
+void purple_debug_set_ui(PurpleDebugUi *ops);
 
 /**
- * purple_debug_get_ui_ops:
+ * purple_debug_get_ui:
  *
  * Returns the UI operations structure used when outputting debug
  * information.
  *
  * Returns: The UI operations structure in use.
  */
-PurpleDebugUiOps *purple_debug_get_ui_ops(void);
+PurpleDebugUi *purple_debug_get_ui(void);
 
 /**************************************************************************/
 /* Debug Subsystem                                                        */

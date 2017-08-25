@@ -50,8 +50,8 @@
 static void
 debug_init(void)
 {
-	finch_debug_init();
-	purple_debug_set_ui_ops(finch_debug_get_ui_ops());
+	FinchDebugUi *ui = finch_debug_ui_new();
+	purple_debug_set_ui(PURPLE_DEBUG_UI(ui));
 }
 
 static GHashTable *ui_info = NULL;

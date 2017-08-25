@@ -30,32 +30,39 @@
 
 #include "debug.h"
 
+G_BEGIN_DECLS
+
 /**********************************************************************
  * GNT Debug API
  **********************************************************************/
 
-/**
- * finch_debug_get_ui_ops:
- *
- * Get the ui-functions.
- *
- * Returns: The PurpleDebugUiOps structure populated with the appropriate functions.
- */
-PurpleDebugUiOps *finch_debug_get_ui_ops(void);
+#define FINCH_TYPE_DEBUG_UI (finch_debug_ui_get_type())
+#if GLIB_CHECK_VERSION(2,44,0)
+G_DECLARE_FINAL_TYPE(FinchDebugUi, finch_debug_ui, FINCH, DEBUG_UI, GObject)
+#else
+GType finch_debug_ui_get_type(void);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+typedef struct _FinchDebugUi FinchDebugUi;
+typedef struct { GObjectClass parent_class; } FinchDebugUiClass;
+static inline FinchDebugUi *
+FINCH_DEBUG_UI(gpointer ptr)
+{
+	return G_TYPE_CHECK_INSTANCE_CAST(ptr, finch_debug_ui_get_type(), FinchDebugUi);
+}
+static inline gboolean
+FINCH_IS_DEBUG_UI(gpointer ptr)
+{
+	return G_TYPE_CHECK_INSTANCE_TYPE(ptr, finch_debug_ui_get_type());
+}
+G_GNUC_END_IGNORE_DEPRECATIONS
+#endif
 
 /**
- * finch_debug_init:
+ * finch_debug_ui_new:
  *
  * Perform necessary initializations.
  */
-void finch_debug_init(void);
-
-/**
- * finch_debug_uninit:
- *
- * Perform necessary uninitializations.
- */
-void finch_debug_uninit(void);
+FinchDebugUi *finch_debug_ui_new(void);
 
 /**
  * finch_debug_window_show:
@@ -63,5 +70,7 @@ void finch_debug_uninit(void);
  * Show the debug window.
  */
 void finch_debug_window_show(void);
+
+G_END_DECLS
 
 #endif
