@@ -974,6 +974,26 @@ void gtk_imhtml_set_return_inserts_newline(GtkIMHtml *imhtml);
  */
 void gtk_imhtml_set_populate_primary_clipboard(GtkIMHtml *imhtml, gboolean populate);
 
+/**
+ * Returns TRUE if dark mode is enabled and foreground colours should be invertred
+ *
+ * @param style The GtkStyle in use, or NULL to use a cached version.
+ *
+ * @return @c TRUE if dark mode, @c FALSE otherwise
+ */
+
+gboolean gtk_is_dark_mode(GtkStyle *style);
+
+/**
+ * Lighten a color if dark mode is enabled.
+ *
+ * @param style The GtkStyle in use.
+ *
+ * @param color Color to be lightened. Transformed color will be written here.
+ */
+
+void gtk_adjust_color_dark_mode(GtkStyle *style, GdkColor *color);
+
 /*@}*/
 
 #ifdef __cplusplus
