@@ -63,6 +63,7 @@
 #include "gtkpounce.h"
 #include "gtkprefs.h"
 #include "gtkprivacy.h"
+#include "gtkstyle.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
@@ -8213,7 +8214,7 @@ pidgin_conversations_set_tab_colors(void)
 				(parent && now && parent->rc_style == now->rc_style)) {
 			GdkColor color;
 			gdk_color_parse(styles[iter].color, &color);
-			gtk_adjust_color_dark_mode(gtk_widget_get_default_style(), &color);
+			pidgin_style_adjust_contrast(gtk_widget_get_default_style(), &color);
 
 			g_string_append_printf(str, "style \"%s\" {\n"
 					"fg[ACTIVE] = \"%s\"\n"
@@ -10271,8 +10272,8 @@ generate_nick_colors(guint *color_count, GdkColor background)
 	gdk_color_parse(DEFAULT_HIGHLIGHT_COLOR, &nick_highlight);
 	gdk_color_parse(DEFAULT_SEND_COLOR, &send_color);
 
-	gtk_adjust_color_dark_mode(NULL, &nick_highlight);
-	gtk_adjust_color_dark_mode(NULL, &send_color);
+	pidgin_style_adjust_contrast(NULL, &nick_highlight);
+	pidgin_style_adjust_contrast(NULL, &send_color);
 
 	srand(background.red + background.green + background.blue + 1);
 

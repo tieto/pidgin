@@ -44,6 +44,7 @@
 #include "gtksourceiter.h"
 #include "gtksourceundomanager.h"
 #include "gtksourceview-marshal.h"
+#include "gtkstyle.h"
 #include <gtk/gtk.h>
 #include <glib.h>
 #include <gdk/gdkkeysyms.h>
@@ -426,49 +427,6 @@ static void gtk_imhtml_size_allocate(GtkWidget *widget, GtkAllocation *alloc)
 		gtk_imhtml_scroll_to_end(imhtml, FALSE);
 }
 
-/* Assume light mode */
-static gboolean dark_mode_cache = FALSE;
-
-gboolean
-gtk_is_dark_mode(GtkStyle *style) {
-	GdkColor bg;
-
-	if (!style) {
-		return dark_mode_cache;
-	}
-
-	bg = style->base[GTK_STATE_NORMAL];
-
-	if (bg.red != 0xFFFF || bg.green != 0xFFFF || bg.blue != 0xFFFF) {
-		dark_mode_cache =  ((int) bg.red + (int) bg.green + (int) bg.blue) < (65536 * 3 / 2);
-	}
-
-	return dark_mode_cache;
-}
-
-void
-gtk_adjust_color_dark_mode(GtkStyle *style, GdkColor *color) {
-	if (gtk_is_dark_mode(style)) {
-		gdouble r, g, b, h, s, v;
-
-		r = ((gdouble) color->red) / 65535.0;
-		g = ((gdouble) color->green) / 65535.0;
-		b = ((gdouble) color->blue) / 65535.0;
-
-		gtk_rgb_to_hsv(r, g, b, &h, &s, &v);
-
-		v += 0.3;
-		v = v > 1.0 ? 1.0 : v;
-		s = 0.7;
-
-		gtk_hsv_to_rgb(h, s, v, &r, &g, &b);
-
-		color->red = (guint16) (r * 65535.0);
-		color->green = (guint16) (g * 65535.0);
-		color->blue = (guint16) (b * 65535.0);
-	}
-}
-
 #define DEFAULT_SEND_COLOR "#204a87"
 #define DEFAULT_RECV_COLOR "#cc0000"
 #define DEFAULT_HIGHLIGHT_COLOR "#AF7F00"
@@ -512,7 +470,7 @@ gtk_imhtml_style_set(GtkWidget *widget, GtkStyle *prev_style)
 		} else {
 			GdkColor defcolor;
 			gdk_color_parse(styles[i].def, &defcolor);
-			gtk_adjust_color_dark_mode(gtk_widget_get_style(widget), &defcolor);
+			pidgin_style_adjust_contrast(gtk_widget_get_style(widget), &defcolor);
 			g_object_set(tag, "foreground-gdk", &defcolor, NULL);
 		}
 	}
