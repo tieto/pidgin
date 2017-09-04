@@ -46,6 +46,8 @@ static void historize(PurpleConversation *c)
 	GList *logs = NULL;
 	const char *alias = name;
 	PurpleLogReadFlags flags;
+	GDateTime *dt;
+	char *date;
 	char *history;
 	char *header;
 	PurpleMessageFlags mflag;
@@ -113,9 +115,11 @@ static void historize(PurpleConversation *c)
 	mflag = PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_DELAYED;
 	history = purple_log_read((PurpleLog*)logs->data, &flags);
 
-	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), alias,
-			purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
+	dt = g_date_time_to_local(((PurpleLog *)logs->data)->time);
+	date = g_date_time_format(dt, "%c");
+	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), alias, date);
 	purple_conversation_write_system_message(c, header, mflag);
+	g_free(date);
 	g_free(header);
 
 	if (flags & PURPLE_LOG_READ_NO_NEWLINE)
