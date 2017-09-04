@@ -1183,7 +1183,6 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 							gpointer data)
 {
 	GtkWidget *widget;
-	GtkStyleContext *context;
 	GtkRequisition requisition;
 	GdkScreen *screen;
 	GdkRectangle monitor;
