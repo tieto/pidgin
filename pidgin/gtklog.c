@@ -349,8 +349,7 @@ static void log_show_popup_menu(GtkWidget *treeview, GdkEventButton *event, gpoi
 
 static gboolean log_button_press_cb(GtkWidget *treeview, GdkEventButton *event, PidginLogViewer *lv)
 {
-	if (event->type == GDK_BUTTON_PRESS && event->button == 3)
-	{
+	if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
 		GtkTreePath *path;
 		GtkTreeIter *iter;
 		GValue val;

@@ -1245,7 +1245,7 @@ pidgin_webviewtoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event,
 	GtkWidget *item;
 	gboolean wide;
 
-	if (event->button != 3)
+	if (!gdk_event_triggers_context_menu((GdkEvent *)event))
 		return FALSE;
 
 	wide = gtk_widget_get_visible(priv->wide_view);

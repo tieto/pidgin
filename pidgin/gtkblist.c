@@ -1941,7 +1941,7 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 	gtknode = purple_blist_node_get_ui_data(node);
 
 	/* Right click draws a context menu */
-	if ((event->button == 3) && (event->type == GDK_BUTTON_PRESS)) {
+	if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
 		handled = pidgin_blist_show_context_menu(node, NULL, tv, 3, event->time);
 
 	/* CTRL+middle click expands or collapse a contact */
@@ -4627,21 +4627,20 @@ menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 {
 	GList *convs;
 
-	switch (event->button) {
-		case 1:
-			convs = pidgin_conversations_get_unseen_ims(PIDGIN_UNSEEN_TEXT, FALSE, 1);
+	if (event->button == 1) {
+		convs = pidgin_conversations_get_unseen_ims(PIDGIN_UNSEEN_TEXT, FALSE, 1);
 
-			if(!convs)
-				convs = pidgin_conversations_get_unseen_chats(PIDGIN_UNSEEN_NICK, FALSE, 1);
-			if (convs) {
-				pidgin_conv_present_conversation((PurpleConversation*)convs->data);
-				g_list_free(convs);
-			}
-			break;
-		case 3:
-			unseen_conv_menu();
-			break;
+		if(!convs)
+			convs = pidgin_conversations_get_unseen_chats(PIDGIN_UNSEEN_NICK, FALSE, 1);
+		if (convs) {
+			pidgin_conv_present_conversation((PurpleConversation*)convs->data);
+			g_list_free(convs);
+		}
+
+	} else if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
+		unseen_conv_menu();
 	}
+
 	return TRUE;
 }
 

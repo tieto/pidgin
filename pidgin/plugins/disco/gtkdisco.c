@@ -282,7 +282,7 @@ service_click_cb(GtkTreeView *tree, GdkEventButton *event, gpointer user_data)
 	GtkTreeIter iter;
 	GValue val;
 
-	if (event->button != 3 || event->type != GDK_BUTTON_PRESS)
+	if (!gdk_event_triggers_context_menu((GdkEvent *)event))
 		return FALSE;
 
 	pdl = user_data;

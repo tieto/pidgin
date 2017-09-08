@@ -1859,7 +1859,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 		if (node != NULL)
 			webkit_dom_element_scroll_into_view(WEBKIT_DOM_ELEMENT(node), TRUE);
 
-	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
+	} else if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
 		GtkWidget *menu = create_chat_menu (PURPLE_CHAT_CONVERSATION(conv), who, gc);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 					   event->button, event->time);
@@ -2967,7 +2967,7 @@ icon_menu(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
 		return TRUE;
 	}
 
-	if (e->button != 3 || e->type != GDK_BUTTON_PRESS) {
+	if (!gdk_event_triggers_context_menu((GdkEvent *)e)) {
 		return FALSE;
 	}
 
@@ -6256,7 +6256,7 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 			g_free(name);
 
 			return TRUE;
-		} else if (btn_event->button == 3 && event->type == GDK_BUTTON_PRESS) {
+		} else if (gdk_event_triggers_context_menu(event)) {
 			GtkTextIter start, end;
 
 			/* we shouldn't display the popup
@@ -9391,7 +9391,7 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 		return FALSE;
 	}
 
-	if (e->button == 3) {
+	if (gdk_event_triggers_context_menu((GdkEvent *)e)) {
 		/* Right click was pressed. Popup the context menu. */
 		GtkWidget *menu = gtk_menu_new(), *sub;
 		gboolean populated = populate_menu_with_options(menu, gtkconv, TRUE);
@@ -9804,7 +9804,7 @@ notebook_right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event,
 	GtkWidget *menu;
 	PidginConversation *gtkconv;
 
-	if (event->type != GDK_BUTTON_PRESS || event->button != 3)
+	if (!gdk_event_triggers_context_menu((GdkEvent *)event))
 		return FALSE;
 
 	gtkconv = pidgin_conv_window_get_gtkconv_at_index(win,

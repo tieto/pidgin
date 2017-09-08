@@ -301,7 +301,7 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus, Purpl
 static gboolean
 icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box)
 {
-	if (event->button == 3) {
+	if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
 		GtkWidget *menu_item;
 		const char *path;
 

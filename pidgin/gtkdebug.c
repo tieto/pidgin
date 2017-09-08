@@ -396,7 +396,7 @@ toolbar_context(GtkWidget *toolbar, GdkEventButton *event, gpointer null)
 	GtkToolbarStyle value[3];
 	int i;
 
-	if (!(event->button == 3 && event->type == GDK_BUTTON_PRESS))
+	if (!gdk_event_triggers_context_menu((GdkEvent *)event))
 		return FALSE;
 
 	text[0] = _("_Icon Only");          value[0] = GTK_TOOLBAR_ICONS;

@@ -298,7 +298,7 @@ static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, PurpleRoomli
 	GtkWidget *menu;
 	static struct _menu_cb_info info; /* XXX? */
 
-	if (event->button != 3 || event->type != GDK_BUTTON_PRESS)
+	if (!gdk_event_triggers_context_menu((GdkEvent *)event))
 		return FALSE;
 
 	/* Here we figure out which room was clicked */

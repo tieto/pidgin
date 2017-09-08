@@ -969,7 +969,7 @@ webview_popup_menu(WebKitWebView *webview)
 static gboolean
 webview_button_pressed(WebKitWebView *webview, GdkEventButton *event)
 {
-	if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+	if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
 		WebKitHitTestResult *hit;
 		int context;
 		WebKitDOMNode *node;
