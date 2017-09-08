@@ -14,22 +14,6 @@ typedef struct _PidginAboutDialog        PidginAboutDialog;
 typedef struct _PidginAboutDialogClass   PidginAboutDialogClass;
 typedef struct _PidginAboutDialogPrivate PidginAboutDialogPrivate;
 
-struct _PidginAboutDialog {
-	GtkDialog parent;
-
-	/*< private >*/
-	PidginAboutDialogPrivate *priv;
-};
-
-struct _PidginAboutDialogClass {
-	GtkDialogClass parent;
-
-	void (*_pidgin_reserved1)(void);
-	void (*_pidgin_reserved2)(void);
-	void (*_pidgin_reserved3)(void);
-	void (*_pidgin_reserved4)(void);
-};
-
 G_BEGIN_DECLS
 
 GType pidgin_about_dialog_get_type(void);

@@ -32,6 +32,22 @@
 #include "meson-config.h"
 #endif
 
+struct _PidginAboutDialog {
+	GtkDialog parent;
+
+	/*< private >*/
+	PidginAboutDialogPrivate *priv;
+};
+
+struct _PidginAboutDialogClass {
+	GtkDialogClass parent;
+
+	void (*_pidgin_reserved1)(void);
+	void (*_pidgin_reserved2)(void);
+	void (*_pidgin_reserved3)(void);
+	void (*_pidgin_reserved4)(void);
+};
+
 struct _PidginAboutDialogPrivate {
 	GtkWidget *close_button;
 	GtkWidget *application_name;
