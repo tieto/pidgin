@@ -105,16 +105,16 @@ _pidgin_about_dialog_load_main_page(PidginAboutDialog *about) {
 }
 
 static void
-_pidgin_about_dialog_load_developers(PidginAboutDialog *about) {
+_pidgin_about_dialog_load_json(GtkTreeStore *store, const gchar *json_section) {
 	GInputStream *istream = NULL;
 	GList *l = NULL, *sections = NULL;
 	GError *error = NULL;
 	JsonParser *parser = NULL;
 	JsonNode *root_node = NULL;
 	JsonObject *root_object = NULL;
-	JsonArray *developers = NULL;
+	JsonArray *sections_array = NULL;
 
-	/* get a stream to the developers resource */
+	/* get a stream to the credits resource */
 	istream = g_resource_open_stream(
 		pidgin_get_resource(),
 		"/im/pidgin/Pidgin/About/credits.json",
@@ -132,8 +132,8 @@ _pidgin_about_dialog_load_developers(PidginAboutDialog *about) {
 	root_node = json_parser_get_root(parser);
 	root_object = json_node_get_object(root_node);
 
-	developers = json_object_get_array_member(root_object, "developers");
-	sections = json_array_get_elements(developers);
+	sections_array = json_object_get_array_member(root_object, json_section);
+	sections = json_array_get_elements(sections_array);
 
 	for(l = sections; l; l = l->next) {
 		GtkTreeIter section_iter;
@@ -147,9 +147,9 @@ _pidgin_about_dialog_load_developers(PidginAboutDialog *about) {
 			json_object_get_string_member(section, "title")
 		);
 
-		gtk_tree_store_append(about->priv->developers_store, &section_iter, NULL);
+		gtk_tree_store_append(store, &section_iter, NULL);
 		gtk_tree_store_set(
-			about->priv->developers_store,
+			store,
 			&section_iter,
 			0, markup,
 			1, 0.5f,
@@ -164,9 +164,9 @@ _pidgin_about_dialog_load_developers(PidginAboutDialog *about) {
 		for(idx = 0; idx < n_people; idx++) {
 			GtkTreeIter person_iter;
 
-			gtk_tree_store_append(about->priv->developers_store, &person_iter, &section_iter);
+			gtk_tree_store_append(store, &person_iter, &section_iter);
 			gtk_tree_store_set(
-				about->priv->developers_store,
+				store,
 				&person_iter,
 				0, json_array_get_string_element(people, idx),
 				1, 0.5f,
@@ -184,82 +184,13 @@ _pidgin_about_dialog_load_developers(PidginAboutDialog *about) {
 }
 
 static void
+_pidgin_about_dialog_load_developers(PidginAboutDialog *about) {
+	_pidgin_about_dialog_load_json(about->priv->developers_store, "developers");
+}
+
+static void
 _pidgin_about_dialog_load_translators(PidginAboutDialog *about) {
-	GInputStream *istream = NULL;
-	GList *l = NULL, *sections = NULL;
-	GError *error = NULL;
-	JsonParser *parser = NULL;
-	JsonNode *root_node = NULL;
-	JsonObject *root_object = NULL;
-	JsonArray *languages = NULL;
-
-	/* get a stream to the translators resource */
-	istream = g_resource_open_stream(
-		pidgin_get_resource(),
-		"/im/pidgin/Pidgin/About/credits.json",
-		G_RESOURCE_LOOKUP_FLAGS_NONE,
-		NULL
-	);
-
-	/* create our parser */
-	parser = json_parser_new();
-
-	if(!json_parser_load_from_stream(parser, istream, NULL, &error)) {
-		g_critical("%s", error->message);
-	}
-
-	root_node = json_parser_get_root(parser);
-	root_object = json_node_get_object(root_node);
-
-	languages = json_object_get_array_member(root_object, "languages");
-	sections = json_array_get_elements(languages);
-
-	for(l = sections; l; l = l->next) {
-		GtkTreeIter section_iter;
-		JsonObject *section = json_node_get_object(l->data);
-		JsonArray *people = NULL;
-		gchar *markup = NULL;
-		guint idx = 0, n_people = 0;
-
-		markup = g_strdup_printf(
-			"<span font_weight=\"bold\" font_size=\"large\">%s</span>",
-			json_object_get_string_member(section, "title")
-		);
-
-		gtk_tree_store_append(about->priv->translators_store, &section_iter, NULL);
-		gtk_tree_store_set(
-			about->priv->translators_store,
-			&section_iter,
-			0, markup,
-			1, 0.5f,
-			-1
-		);
-
-		g_free(markup);
-
-		people = json_object_get_array_member(section, "people");
-		n_people = json_array_get_length(people);
-
-		for(idx = 0; idx < n_people; idx++) {
-			GtkTreeIter person_iter;
-
-			gtk_tree_store_append(about->priv->translators_store, &person_iter, &section_iter);
-			gtk_tree_store_set(
-				about->priv->translators_store,
-				&person_iter,
-				0, json_array_get_string_element(people, idx),
-				1, 0.5f,
-				-1
-			);
-		}
-	}
-
-	g_list_free(sections);
-
-	/* clean up */
-	g_object_unref(G_OBJECT(parser));
-
-	g_input_stream_close(istream, NULL, NULL);
+	_pidgin_about_dialog_load_json(about->priv->translators_store, "languages");
 }
 
 static void
