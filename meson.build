@@ -1002,6 +1002,8 @@ if enable_unity
 		dependency('messaging-menu', version : '>= 12.10')
 	]
 	conf.set('USES_MM_CHAT_SECTION', 'X-MessagingMenu-UsesChatSection=true')
+else
+	conf.set('USES_MM_CHAT_SECTION', '')
 endif
 
 #######################################################################
