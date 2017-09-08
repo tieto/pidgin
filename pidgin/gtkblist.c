@@ -3606,11 +3606,10 @@ set_mood_show(void)
  *            Crap                                 *
  ***************************************************/
 static void
-_pidgin_about_cb(void) {
-	PidginBuddyList *blist = pidgin_blist_get_default_gtk_blist();
+_pidgin_about_cb(GtkWidget *window) {
 	GtkWidget *about = pidgin_about_dialog_new();
 
-	gtk_window_set_transient_for(GTK_WINDOW(about), GTK_WINDOW(blist->window));
+	gtk_window_set_transient_for(GTK_WINDOW(about), window);
 
 	gtk_widget_show_all(about);
 }
