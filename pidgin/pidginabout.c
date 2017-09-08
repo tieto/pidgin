@@ -193,7 +193,7 @@ _pidgin_about_dialog_load_translators(PidginAboutDialog *about) {
 	JsonObject *root_object = NULL;
 	JsonArray *languages = NULL;
 
-	/* get a stream to the developers resource */
+	/* get a stream to the translators resource */
 	istream = g_resource_open_stream(
 		pidgin_get_resource(),
 		"/im/pidgin/Pidgin/About/credits.json",
