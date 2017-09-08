@@ -3606,10 +3606,10 @@ set_mood_show(void)
  *            Crap                                 *
  ***************************************************/
 static void
-_pidgin_about_cb(GtkWidget *window) {
+_pidgin_about_cb(GtkAction *action, GtkWidget *window) {
 	GtkWidget *about = pidgin_about_dialog_new();
 
-	gtk_window_set_transient_for(GTK_WINDOW(about), window);
+	gtk_window_set_transient_for(GTK_WINDOW(about), GTK_WINDOW(window));
 
 	gtk_widget_show_all(about);
 }
