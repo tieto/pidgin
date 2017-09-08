@@ -382,7 +382,7 @@ _pidgin_about_dialog_load_build_info(PidginAboutDialog *about) {
 	_pidgin_about_dialog_build_info_add_version(
 		about->priv->build_info_store,
 		&section,
-		_("Gtk+ Version"),
+		_("GTK+ Version"),
 		GTK_MAJOR_VERSION,
 		GTK_MINOR_VERSION,
 		GTK_MICRO_VERSION
@@ -432,7 +432,7 @@ _pidgin_about_dialog_load_runtime_info(PidginAboutDialog *about) {
 	_pidgin_about_dialog_build_info_add_version(
 		about->priv->build_info_store,
 		&section,
-		_("Gtk+ Version"),
+		_("GTK+ Version"),
 		gtk_major_version,
 		gtk_minor_version,
 		gtk_micro_version
