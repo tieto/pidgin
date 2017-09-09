@@ -382,8 +382,7 @@ static gboolean log_button_press_cb(GtkWidget *treeview, GdkEventButton *event, 
 
 		menu = log_create_popup_menu(treeview, lv, iter);
 		if (menu) {
-			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
-			               event->button, gdk_event_get_time((GdkEvent *)event));
+			gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent *)event);
 			return TRUE;
 		} else {
 			return FALSE;

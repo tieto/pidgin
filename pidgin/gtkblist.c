@@ -1868,11 +1868,7 @@ create_buddy_menu(PurpleBlistNode *node, PurpleBuddy *b)
 }
 
 static gboolean
-pidgin_blist_show_context_menu(PurpleBlistNode *node,
-								 GtkMenuPositionFunc func,
-								 GtkWidget *tv,
-								 guint button,
-								 guint32 time)
+pidgin_blist_show_context_menu(PurpleBlistNode *node, GdkEvent *event)
 {
 	struct _pidgin_blist_node *gtknode = purple_blist_node_get_ui_data(node);
 	GtkWidget *menu = NULL;
@@ -1915,7 +1911,7 @@ pidgin_blist_show_context_menu(PurpleBlistNode *node,
 	/* Now display the menu */
 	if (menu != NULL) {
 		gtk_widget_show_all(menu);
-		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, func, tv, button, time);
+		gtk_menu_popup_at_pointer(GTK_MENU(menu), event);
 		handled = TRUE;
 	}
 
@@ -1942,7 +1938,7 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 
 	/* Right click draws a context menu */
 	if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
-		handled = pidgin_blist_show_context_menu(node, NULL, tv, 3, event->time);
+		handled = pidgin_blist_show_context_menu(node, (GdkEvent *)event);
 
 	/* CTRL+middle click expands or collapse a contact */
 	} else if ((event->button == 2) && (event->type == GDK_BUTTON_PRESS) &&
@@ -2005,7 +2001,7 @@ pidgin_blist_popup_menu_cb(GtkWidget *tv, void *user_data)
 	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 	/* Shift+F10 draws a context menu */
-	handled = pidgin_blist_show_context_menu(node, pidgin_treeview_popup_menu_position_func, tv, 0, GDK_CURRENT_TIME);
+	handled = pidgin_blist_show_context_menu(node, NULL);
 
 	return handled;
 }
@@ -4587,7 +4583,7 @@ plugin_changed_cb(PurplePlugin *p, gpointer data)
 }
 
 static void
-unseen_conv_menu(void)
+unseen_conv_menu(GdkEvent *event)
 {
 	static GtkWidget *menu = NULL;
 	GList *convs = NULL;
@@ -4618,8 +4614,7 @@ unseen_conv_menu(void)
 	pidgin_conversations_fill_menu(menu, convs);
 	g_list_free(convs);
 	gtk_widget_show_all(menu);
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3,
-			gtk_get_current_event_time());
+	gtk_menu_popup_at_pointer(GTK_MENU(menu), event);
 }
 
 static gboolean
@@ -4638,7 +4633,7 @@ menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 		}
 
 	} else if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
-		unseen_conv_menu();
+		unseen_conv_menu((GdkEvent *)event);
 	}
 
 	return TRUE;

@@ -1861,8 +1861,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 
 	} else if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
 		GtkWidget *menu = create_chat_menu (PURPLE_CHAT_CONVERSATION(conv), who, gc);
-		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
-					   event->button, event->time);
+		gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent *)event);
 	}
 
 handled:
@@ -3015,7 +3014,7 @@ icon_menu(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
 		}
 	}
 
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
+	gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent *)e);
 
 	return TRUE;
 }
@@ -6268,12 +6267,8 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 				PurpleConnection *gc =
 					purple_conversation_get_connection(conv);
 
-
 				menu = create_chat_menu(conv, buddyname, gc);
-				gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
-						NULL, GTK_WIDGET(imhtml),
-						btn_event->button,
-						btn_event->time);
+				gtk_menu_popup_at_pointer(GTK_MENU(menu), event);
 
 				g_free(name);
 
@@ -9411,7 +9406,7 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 		}
 
 		gtk_widget_show_all(menu);
-		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
+		gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent *)e);
 		return TRUE;
 	}
 	return FALSE;
@@ -9814,7 +9809,7 @@ notebook_right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event,
 
 	menu = win->notebook_menu;
 
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3, event->time);
+	gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent *)event);
 
 	return TRUE;
 }

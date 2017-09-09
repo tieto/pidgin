@@ -1256,8 +1256,7 @@ pidgin_webviewtoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event,
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	gtk_widget_show(item);
 
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, pidgin_menu_position_func_helper,
-	               widget, event->button, event->time);
+	gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent *)event);
 
 	return TRUE;
 }

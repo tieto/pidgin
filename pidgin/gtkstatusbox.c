@@ -320,8 +320,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 				|| !*path)
 			gtk_widget_set_sensitive(menu_item, FALSE);
 
-		gtk_menu_popup(GTK_MENU(box->icon_box_menu), NULL, NULL, NULL, NULL,
-			       event->button, event->time);
+		gtk_menu_popup_at_pointer(GTK_MENU(box->icon_box_menu), (GdkEvent *)event);
 
 	} else {
 		choose_buddy_icon_cb(widget, box);

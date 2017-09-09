@@ -416,7 +416,7 @@ toolbar_context(GtkWidget *toolbar, GdkEventButton *event, gpointer null)
 
 	gtk_widget_show_all(menu);
 
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3, event->time);
+	gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent *)event);
 	return FALSE;
 }
 
