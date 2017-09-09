@@ -1187,6 +1187,19 @@ mark_set_cb(PidginWebView *webview, PidginWebViewToolbar *toolbar)
 	update_buttons(toolbar);
 }
 
+#if GTK_CHECK_VERSION(3,22,0)
+
+static void
+pidgin_menu_clicked(GtkWidget *button, GtkMenu *menu)
+{
+	if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(button))) {
+		gtk_widget_show_all(GTK_WIDGET(menu));
+		gtk_menu_popup_at_widget(menu, button, GDK_GRAVITY_SOUTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL);
+	}
+}
+
+#else /* GTK+ 3.22.0 */
+
 /* This comes from gtkmenutoolbutton.c from gtk+
  * Copyright (C) 2003 Ricardo Fernandez Pascual
  * Copyright (C) 2004 Paolo Borelli
@@ -1222,6 +1235,8 @@ pidgin_menu_clicked(GtkWidget *button, GtkMenu *menu)
 		gtk_menu_popup(menu, NULL, NULL, menu_position_func, button, 0, gtk_get_current_event_time());
 	}
 }
+
+#endif /* GTK+ 3.22.0 */
 
 static void
 pidgin_menu_deactivate(GtkWidget *menu, GtkToggleButton *button)

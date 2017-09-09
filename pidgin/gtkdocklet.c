@@ -764,9 +764,15 @@ docklet_menu(void)
 	pos_func = NULL;
 #endif
 	gtk_widget_show_all(menu);
+#if GTK_CHECK_VERSION(3,22,0)
+	gtk_menu_popup_at_widget(GTK_MENU(menu), docklet,
+	                         GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_SOUTH_WEST,
+	                         NULL);
+#else
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
 		       pos_func,
 		       docklet, 0, gtk_get_current_event_time());
+#endif
 }
 
 static void
