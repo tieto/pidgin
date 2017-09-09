@@ -1868,7 +1868,7 @@ create_buddy_menu(PurpleBlistNode *node, PurpleBuddy *b)
 }
 
 static gboolean
-pidgin_blist_show_context_menu(PurpleBlistNode *node, GdkEvent *event)
+pidgin_blist_show_context_menu(GtkWidget *tv, PurpleBlistNode *node, GdkEvent *event)
 {
 	struct _pidgin_blist_node *gtknode = purple_blist_node_get_ui_data(node);
 	GtkWidget *menu = NULL;
@@ -1911,7 +1911,13 @@ pidgin_blist_show_context_menu(PurpleBlistNode *node, GdkEvent *event)
 	/* Now display the menu */
 	if (menu != NULL) {
 		gtk_widget_show_all(menu);
-		gtk_menu_popup_at_pointer(GTK_MENU(menu), event);
+		if (event != NULL) {
+			/* Pointer event */
+			gtk_menu_popup_at_pointer(GTK_MENU(menu), event);
+		} else {
+			/* Keyboard event */
+			pidgin_menu_popup_at_treeview_selection(menu, tv);
+		}
 		handled = TRUE;
 	}
 
@@ -1938,7 +1944,7 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 
 	/* Right click draws a context menu */
 	if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
-		handled = pidgin_blist_show_context_menu(node, (GdkEvent *)event);
+		handled = pidgin_blist_show_context_menu(tv, node, (GdkEvent *)event);
 
 	/* CTRL+middle click expands or collapse a contact */
 	} else if ((event->button == 2) && (event->type == GDK_BUTTON_PRESS) &&
@@ -2001,7 +2007,7 @@ pidgin_blist_popup_menu_cb(GtkWidget *tv, void *user_data)
 	gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 
 	/* Shift+F10 draws a context menu */
-	handled = pidgin_blist_show_context_menu(node, NULL);
+	handled = pidgin_blist_show_context_menu(tv, node, NULL);
 
 	return handled;
 }
@@ -7484,7 +7490,7 @@ static void buddy_signonoff_cb(PurpleBuddy *buddy)
 
 	if(gtknode->recent_signonoff_timer > 0)
 		g_source_remove(gtknode->recent_signonoff_timer);
-	
+
 	g_object_ref(buddy);
 	gtknode->recent_signonoff_timer = g_timeout_add_seconds(10,
 			(GSourceFunc)buddy_signonoff_timeout_cb, buddy);
