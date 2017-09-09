@@ -1796,9 +1796,7 @@ gtkconv_chat_popup_menu_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
 	menu = create_chat_menu (PURPLE_CHAT_CONVERSATION(conv), who, gc);
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
-				   pidgin_treeview_popup_menu_position_func, widget,
-				   0, GDK_CURRENT_TIME);
+	pidgin_menu_popup_at_treeview_selection(menu, widget);
 	g_free(who);
 
 	return TRUE;

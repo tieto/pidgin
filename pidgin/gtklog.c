@@ -407,9 +407,7 @@ static gboolean log_popup_menu_cb(GtkWidget *treeview, PidginLogViewer *lv)
 
 	menu = log_create_popup_menu(treeview, lv, iter);
 	if (menu) {
-		gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
-		               pidgin_treeview_popup_menu_position_func, treeview,
-		               0, GDK_CURRENT_TIME);
+		pidgin_menu_popup_at_treeview_selection(menu, treeview);
 		return TRUE;
 	} else {
 		return FALSE;

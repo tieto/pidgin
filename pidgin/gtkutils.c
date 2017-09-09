@@ -1308,7 +1308,8 @@ pidgin_menu_position_func_helper(GtkMenu *menu,
 }
 
 
-void
+#if !GTK_CHECK_VERSION(3,22,0)
+static void
 pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
 										   gint *x,
 										   gint *y,
@@ -1329,6 +1330,36 @@ pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
 	*y += rect.y + rect.height;
 	pidgin_menu_position_func_helper(menu, x, y, push_in, data);
 }
+#endif
+
+
+void
+pidgin_menu_popup_at_treeview_selection(GtkWidget *menu, GtkWidget *treeview)
+{
+#if GTK_CHECK_VERSION(3,22,0)
+	GtkTreePath *path;
+	GtkTreeViewColumn *column;
+	GdkWindow *bin_window;
+	GdkRectangle rect;
+
+	gtk_tree_view_get_cursor(GTK_TREE_VIEW(treeview), &path, &column);
+	g_return_if_fail(path != NULL);
+	if (column == NULL)
+		column = gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), 0);
+	bin_window = gtk_tree_view_get_bin_window(GTK_TREE_VIEW(treeview));
+	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(treeview), path, column, &rect);
+	gtk_menu_popup_at_rect(GTK_MENU(menu), bin_window, &rect,
+	                       GDK_GRAVITY_SOUTH_WEST, GDK_GRAVITY_NORTH_WEST,
+	                       NULL);
+
+	gtk_tree_path_free(path);
+#else
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
+	               pidgin_treeview_popup_menu_position_func, treeview,
+	               0, GDK_CURRENT_TIME);
+#endif
+}
+
 
 static void dnd_image_ok_callback(_DndData *data, int choice)
 {
