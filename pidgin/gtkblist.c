@@ -4630,9 +4630,9 @@ menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 
 	if (event->button == GDK_BUTTON_PRIMARY) {
 		convs = pidgin_conversations_get_unseen_ims(PIDGIN_UNSEEN_TEXT, FALSE, 1);
-
 		if(!convs)
 			convs = pidgin_conversations_get_unseen_chats(PIDGIN_UNSEEN_NICK, FALSE, 1);
+
 		if (convs) {
 			pidgin_conv_present_conversation((PurpleConversation*)convs->data);
 			g_list_free(convs);
