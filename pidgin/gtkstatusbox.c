@@ -1208,7 +1208,7 @@ spellcheck_prefs_cb(const char *name, PurplePrefType type,
 static gboolean button_released_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box)
 {
 
-	if (event->button != 1)
+	if (event->button != GDK_BUTTOM_PRIMARY)
 		return FALSE;
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), FALSE);
 	if (!box->webview_visible)
@@ -1218,7 +1218,7 @@ static gboolean button_released_cb(GtkWidget *widget, GdkEventButton *event, Pid
 
 static gboolean button_pressed_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box)
 {
-	if (event->button != 1)
+	if (event->button != GDK_BUTTOM_PRIMARY)
 		return FALSE;
 	gtk_combo_box_popup(GTK_COMBO_BOX(box));
 	/* Disabled until button_released_cb works */

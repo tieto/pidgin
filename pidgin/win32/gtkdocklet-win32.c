@@ -85,11 +85,11 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 
 		/* We'll use Double Click - Single click over on linux */
 		if(lparam == WM_LBUTTONDBLCLK)
-			type = 1;
+			type = GDK_BUTTOM_PRIMARY;
 		else if(lparam == WM_MBUTTONUP)
-			type = 2;
+			type = GDK_BUTTON_MIDDLE;
 		else if(lparam == WM_RBUTTONUP)
-			type = 3;
+			type = GDK_BUTTON_SECONDARY;
 		else
 			break;
 

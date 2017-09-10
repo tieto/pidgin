@@ -1947,7 +1947,7 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 		handled = pidgin_blist_show_context_menu(tv, node, (GdkEvent *)event);
 
 	/* CTRL+middle click expands or collapse a contact */
-	} else if ((event->button == 2) && (event->type == GDK_BUTTON_PRESS) &&
+	} else if ((event->button == GDK_BUTTON_MIDDLE) && (event->type == GDK_BUTTON_PRESS) &&
 			   (event->state & GDK_CONTROL_MASK) && (PURPLE_IS_CONTACT(node))) {
 		if (gtknode->contact_expanded)
 			pidgin_blist_collapse_contact_cb(NULL, node);
@@ -1956,7 +1956,7 @@ gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, gpointer user_da
 		handled = TRUE;
 
 	/* Double middle click gets info */
-	} else if ((event->button == 2) && (event->type == GDK_2BUTTON_PRESS) &&
+	} else if ((event->button == GDK_BUTTON_MIDDLE) && (event->type == GDK_2BUTTON_PRESS) &&
 			   ((PURPLE_IS_CONTACT(node)) || (PURPLE_IS_BUDDY(node)))) {
 		PurpleBuddy *b;
 		if(PURPLE_IS_CONTACT(node))
@@ -4628,7 +4628,7 @@ menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 {
 	GList *convs;
 
-	if (event->button == 1) {
+	if (event->button == GDK_BUTTON_PRIMARY) {
 		convs = pidgin_conversations_get_unseen_ims(PIDGIN_UNSEEN_TEXT, FALSE, 1);
 
 		if(!convs)

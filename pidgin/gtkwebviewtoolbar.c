@@ -667,7 +667,7 @@ smiley_dialog_input_cb(GtkWidget *dialog, GdkEvent *event,
                        PidginWebViewToolbar *toolbar)
 {
 	if ((event->type == GDK_KEY_PRESS && event->key.keyval == GDK_KEY_Escape) ||
-	    (event->type == GDK_BUTTON_PRESS && event->button.button == 1))
+	    (event->type == GDK_BUTTON_PRESS && event->button.button == GDK_BUTTON_PRIMARY))
 	{
 		close_smiley_dialog(toolbar);
 		return TRUE;

@@ -1848,9 +1848,9 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 			goto handled;
 	}
 
-	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
+	if (event->button == GDK_BUTTON_PRIMARY && event->type == GDK_2BUTTON_PRESS) {
 		chat_do_im(gtkconv, who);
-	} else if (event->button == 2 && event->type == GDK_BUTTON_PRESS) {
+	} else if (event->button == GDK_BUTTON_MIDDLE && event->type == GDK_BUTTON_PRESS) {
 		/* Move to user's anchor */
 		WebKitDOMNode *node = get_mark_for_user(gtkconv, who);
 
@@ -2286,7 +2286,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 static gboolean
 entry_stop_rclick_cb(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
-	if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
+	if (event->button == GDK_BUTTON_SECONDARY && event->type == GDK_BUTTON_PRESS) {
 		/* Right single click */
 		g_signal_stop_emission_by_name(G_OBJECT(widget), "button_press_event");
 
@@ -2959,7 +2959,7 @@ icon_menu(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
 	PurpleConversation *conv;
 	PurpleBuddy *buddy;
 
-	if (e->button == 1 && e->type == GDK_BUTTON_PRESS) {
+	if (e->button == GDK_BUTTON_PRIMARY && e->type == GDK_BUTTON_PRESS) {
 		change_size_cb(NULL, gtkconv);
 		return TRUE;
 	}
@@ -5880,7 +5880,7 @@ ignore_middle_click(GtkWidget *widget, GdkEventButton *e, gpointer null)
 	 * So if Stu accidentally aims high and middle clicks on the pane-handle,
 	 * it causes a conversation tab to close. Let's stop that from happening.
 	 */
-	if (e->button == 2 && e->type == GDK_BUTTON_PRESS)
+	if (e->button == GDK_BUTTON_MIDDLE && e->type == GDK_BUTTON_PRESS)
 		return TRUE;
 	return FALSE;
 }
@@ -6243,12 +6243,12 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 			}
 		}
 
-		if (btn_event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
+		if (btn_event->button == GDK_BUTTON_PRIMARY && event->type == GDK_2BUTTON_PRESS) {
 			chat_do_im(PIDGIN_CONVERSATION(conv), buddyname);
 			g_free(name);
 
 			return TRUE;
-		} else if (btn_event->button == 2 && event->type == GDK_2BUTTON_PRESS) {
+		} else if (btn_event->button == GDK_BUTTON_MIDDLE && event->type == GDK_2BUTTON_PRESS) {
 			chat_do_info(PIDGIN_CONVERSATION(conv), buddyname);
 			g_free(name);
 
@@ -9350,7 +9350,7 @@ notebook_leave_cb(GtkWidget *widget, GdkEventCrossing *e, PidginConvWindow *win)
 static gboolean
 infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
 {
-	if (e->type == GDK_2BUTTON_PRESS && e->button == 1) {
+	if (e->type == GDK_2BUTTON_PRESS && e->button == GDK_BUTTON_PRIMARY) {
 		if (infopane_entry_activate(gtkconv))
 			return TRUE;
 	}
@@ -9358,7 +9358,7 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 	if (e->type != GDK_BUTTON_PRESS)
 		return FALSE;
 
-	if (e->button == 1) {
+	if (e->button == GDK_BUTTON_PRIMARY) {
 		int nb_x, nb_y;
 		GtkAllocation allocation;
 
@@ -9419,7 +9419,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConvWindow *win)
 	GtkWidget *tab;
 	GtkAllocation allocation;
 
-	if (e->button == 2 && e->type == GDK_BUTTON_PRESS) {
+	if (e->button == GDK_BUTTON_MIDDLE && e->type == GDK_BUTTON_PRESS) {
 		PidginConversation *gtkconv;
 		tab_clicked = pidgin_conv_get_tab_at_xy(win, e->x_root, e->y_root, NULL);
 
@@ -9432,7 +9432,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConvWindow *win)
 	}
 
 
-	if (e->button != 1 || e->type != GDK_BUTTON_PRESS)
+	if (e->button != GDK_BUTTON_PRIMARY || e->type != GDK_BUTTON_PRESS)
 		return FALSE;
 
 
@@ -9515,7 +9515,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginConvWindow *win)
 	* widget's, because we may be getting an event passed on from the
 	* close button.
 	*/
-	if (e->button != 1 && e->type != GDK_BUTTON_RELEASE)
+	if (e->button != GDK_BUTTON_PRIMARY && e->type != GDK_BUTTON_RELEASE)
 		return FALSE;
 
 	device = gdk_event_get_device((GdkEvent *)e);
