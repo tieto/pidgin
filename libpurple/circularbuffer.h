@@ -78,18 +78,18 @@ PurpleCircularBuffer *purple_circular_buffer_new(gsize growsize);
 
 /**
  * purple_circular_buffer_append:
- * @buf: The PurpleCircularBuffer to which to append the data
+ * @buffer: The PurpleCircularBuffer to which to append the data
  * @src: pointer to the data to copy into the buffer
  * @len: number of bytes to copy into the buffer
  *
  * Append data to the PurpleCircularBuffer.  This will grow the internal
  * buffer to fit the added data, if needed.
  */
-void purple_circular_buffer_append(PurpleCircularBuffer *buf, gconstpointer src, gsize len);
+void purple_circular_buffer_append(PurpleCircularBuffer *buffer, gconstpointer src, gsize len);
 
 /**
  * purple_circular_buffer_get_max_read:
- * @buf: the PurpleCircularBuffer for which to determine the maximum
+ * @buffer: the PurpleCircularBuffer for which to determine the maximum
  *            contiguous bytes that can be read.
  *
  * Determine the maximum number of contiguous bytes that can be read from the
@@ -100,11 +100,11 @@ void purple_circular_buffer_append(PurpleCircularBuffer *buf, gconstpointer src,
  *
  * Returns: the number of bytes that can be read from the PurpleCircularBuffer
  */
-gsize purple_circular_buffer_get_max_read(const PurpleCircularBuffer *buf);
+gsize purple_circular_buffer_get_max_read(const PurpleCircularBuffer *buffer);
 
 /**
  * purple_circular_buffer_mark_read:
- * @buf: The PurpleCircularBuffer to mark bytes read from
+ * @buffer: The PurpleCircularBuffer to mark bytes read from
  * @len: The number of bytes to mark as read
  *
  * Mark the number of bytes that have been read from the buffer.
@@ -112,7 +112,7 @@ gsize purple_circular_buffer_get_max_read(const PurpleCircularBuffer *buf);
  * Returns: TRUE if we successfully marked the bytes as having been read, FALSE
  *         otherwise.
  */
-gboolean purple_circular_buffer_mark_read(PurpleCircularBuffer *buf, gsize len);
+gboolean purple_circular_buffer_mark_read(PurpleCircularBuffer *buffer, gsize len);
 
 /**
  * purple_circular_buffer_grow:
