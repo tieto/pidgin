@@ -30,6 +30,7 @@ directory.
 import html
 import json
 import os
+import shlex
 import subprocess
 import sys
 
@@ -40,6 +41,8 @@ except KeyError:
     print('Meson is too old; '
           'it does not set MESONINTROSPECT for postconf scripts.')
     sys.exit(1)
+else:
+    introspect = shlex.split(introspect)
 
 try:
     build_root = os.environ['MESON_BUILD_ROOT']
@@ -56,7 +59,7 @@ def tostr(obj):
         return repr(obj)
 
 
-conf = subprocess.check_output([introspect, '--buildoptions', build_root],
+conf = subprocess.check_output(introspect + ['--buildoptions', build_root],
                                universal_newlines=True)
 conf = json.loads(conf)
 
