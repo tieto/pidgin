@@ -420,7 +420,7 @@ purple_http_gz_put(PurpleHttpGzStream *gzs, const gchar *buf, gsize len)
 		compressed_buff += bytes_read;
 		compressed_len -= bytes_read;
 
-		if (gzres == G_CONVERTER_CONVERTED || G_CONVERTER_FINISHED) {
+		if (gzres == G_CONVERTER_CONVERTED || gzres == G_CONVERTER_FINISHED) {
 			if (decompressed_len == 0)
 				break;
 			if (gzs->decompressed + decompressed_len >=
