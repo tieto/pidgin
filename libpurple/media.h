@@ -100,7 +100,7 @@ GType purple_media_get_type(void);
  *
  * Gets a list of session IDs.
  *
- * Returns: GList of session IDs. The caller must free the list.
+ * Returns: (element-type utf8) (transfer container): List of session IDs.
  */
 GList *purple_media_get_session_ids(PurpleMedia *media);
 
@@ -262,7 +262,7 @@ struct _PurpleMediaManager *purple_media_get_manager(PurpleMedia *media);
  *
  * Gets the codecs from a session.
  *
- * Returns: The retreieved codecs.
+ * Returns: (element-type PurpleMediaCodec): The retrieved codecs.
  */
 GList *purple_media_get_codecs(PurpleMedia *media, const gchar *sess_id);
 
@@ -271,7 +271,8 @@ GList *purple_media_get_codecs(PurpleMedia *media, const gchar *sess_id);
  * @media: The media object to find the session in.
  * @sess_id: The session id of the session find the stream in.
  * @participant: The name of the remote user to add the candidates for.
- * @remote_candidates: The remote candidates to add.
+ * @remote_candidates: (element-type PurpleMediaCandidate) (transfer none): The
+ *                     remote candidates to add.
  *
  * Adds remote candidates to the stream.
  */
@@ -287,6 +288,8 @@ void purple_media_add_remote_candidates(PurpleMedia *media,
  * @participant: The name of the remote user to get the candidates from.
  *
  * Gets the local candidates from a stream.
+ *
+ * Returns: (element-type PurpleMediaCandidate): The local candidates.
  */
 GList *purple_media_get_local_candidates(PurpleMedia *media,
 					 const gchar *sess_id,
@@ -301,7 +304,8 @@ GList *purple_media_get_local_candidates(PurpleMedia *media,
  *
  * Gets the active local candidates for the stream.
  *
- * Returns: The active candidates retrieved.
+ * Returns: (element-type PurpleMediaCandidate): The active
+ *          candidates retrieved.
  */
 GList *purple_media_get_active_local_candidates(PurpleMedia *media,
 		const gchar *sess_id, const gchar *participant);
@@ -315,7 +319,8 @@ GList *purple_media_get_active_local_candidates(PurpleMedia *media,
  *
  * Gets the active remote candidates for the stream.
  *
- * Returns: The remote candidates retrieved.
+ * Returns: (element-type PurpleMediaCandidate): The remote
+ *          candidates retrieved.
  */
 GList *purple_media_get_active_remote_candidates(PurpleMedia *media,
 		const gchar *sess_id, const gchar *participant);
@@ -325,7 +330,8 @@ GList *purple_media_get_active_remote_candidates(PurpleMedia *media,
  * @media: The media object to find the session in.
  * @sess_id: The session id of the session find the stream in.
  * @participant: The name of the remote user to set the codecs for.
- * @codecs: The list of remote codecs to set.
+ * @codecs: (element-type PurpleMediaCodec) (transfer none): The list of remote
+ *          codecs to set.
  *
  * Sets remote codecs from the stream.
  *

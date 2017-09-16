@@ -195,8 +195,8 @@ PurpleBlistNode *purple_blist_get_root(void);
  *
  * See purple_blist_find_buddies().
  *
- * Returns: A list of every buddy in the list. Caller is responsible for
- *          freeing the list.
+ * Returns: (element-type PurpleBlistNode) (transfer container): A list of every
+ *          buddy in the list.
  */
 GSList *purple_blist_get_buddies(void);
 
@@ -380,10 +380,8 @@ PurpleBuddy *purple_blist_find_buddy_in_group(PurpleAccount *account, const char
  *
  * Finds all PurpleBuddy structs given a name and an account
  *
- * Returns:        NULL if the buddy doesn't exist, or a GSList of
- *                PurpleBuddy structs.  You must free the GSList using
- *                g_slist_free.  Do not free the PurpleBuddy structs that
- *                the list points to.
+ * Returns: (element-type PurpleBuddy) (transfer container): %NULL if the buddy
+ *          doesn't exist, or a GSList of PurpleBuddy structs.
  */
 GSList *purple_blist_find_buddies(PurpleAccount *account, const char *name);
 

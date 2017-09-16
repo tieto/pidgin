@@ -100,7 +100,7 @@ void purple_plugin_pref_frame_add(PurplePluginPrefFrame *frame, PurplePluginPref
  *
  * Get the plugin preferences from a plugin preference frame
  *
- * Returns: (transfer none): a GList of plugin preferences
+ * Returns: (element-type PurplePluginPref) (transfer none): a list of plugin preferences
  */
 GList *purple_plugin_pref_frame_get_prefs(PurplePluginPrefFrame *frame);
 

@@ -119,7 +119,7 @@ PurpleAccountOption *purple_account_option_string_new(const char *text,
  * purple_account_option_list_new:
  * @text:      The text of the option.
  * @pref_name: The account preference name for the option.
- * @list:      The key, value list.
+ * @list: (element-type PurpleKeyValuePair) (transfer full): The key, value list.
  *
  * Creates a new list account option.
  *
@@ -189,7 +189,7 @@ purple_account_option_string_set_masked(PurpleAccountOption *option, gboolean ma
 /**
  * purple_account_option_string_set_hints:
  * @option: The account option.
- * @hints: The list of hints, stored as strings.
+ * @hints: (element-type utf8) (transfer full): The list of hints, stored as strings.
  *
  * Sets the hint list for an account option.
  *
@@ -202,7 +202,8 @@ void purple_account_option_string_set_hints(PurpleAccountOption *option,
 /**
  * purple_account_option_set_list:
  * @option: The account option.
- * @values: The default list value.
+ * @values: (element-type PurpleKeyValuePair) (transfer full): The default list
+ *          value.
  *
  * Sets the list values for an account option.
  *
@@ -318,7 +319,7 @@ purple_account_option_string_get_masked(const PurpleAccountOption *option);
  *
  * Returns the list of hints for an account option.
  *
- * Returns: (transfer none): A list of hints, stored as strings.
+ * Returns: (element-type utf8) (transfer none): A list of hints.
  */
 const GSList * purple_account_option_string_get_hints(const PurpleAccountOption *option);
 
@@ -328,10 +329,10 @@ const GSList * purple_account_option_string_get_hints(const PurpleAccountOption 
  *
  * Returns the list values for an account option.
  *
- * Returns: (transfer none): A list of #PurpleKeyValuePair, mapping the human-readable
- *              description of the value to the <type>(const char *)</type> that
- *              should be passed to purple_account_set_string() to set the
- *              option.
+ * Returns: (element-type PurpleKeyValuePair) (transfer none): A list of
+ *          #PurpleKeyValuePair, mapping the human-readable description of the
+ *          value to the <type>(const char *)</type> that should be passed to
+ *          purple_account_set_string() to set the option.
  */
 GList *purple_account_option_get_list(const PurpleAccountOption *option);
 

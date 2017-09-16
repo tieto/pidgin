@@ -466,7 +466,7 @@ void purple_protocol_change_account_status(PurpleAccount *account,
  *
  * Retrieves the list of stock status types from a protocol.
  *
- * Returns: List of statuses
+ * Returns: (element-type PurpleStatus): List of statuses
  */
 GList *purple_protocol_get_statuses(PurpleAccount *account,
                                     PurplePresence *presence);
@@ -608,8 +608,8 @@ gboolean purple_protocols_remove(PurpleProtocol *protocol, GError **error);
  *
  * Returns a list of all loaded protocols.
  *
- * Returns: A list of all loaded protocols. The list is owned by the caller, and
- *         must be g_list_free()d to avoid leaking the nodes.
+ * Returns: (element-type PurpleProtocol) (transfer container): A list of all
+ *          loaded protocols.
  */
 GList *purple_protocols_get_all(void);
 

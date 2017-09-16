@@ -146,7 +146,7 @@ void purple_accounts_reorder(PurpleAccount *account, guint new_index);
  *
  * Returns a list of all accounts.
  *
- * Returns: (transfer none): A list of all accounts.
+ * Returns: (element-type PurpleAccount) (transfer none): A list of all accounts.
  */
 GList *purple_accounts_get_all(void);
 
@@ -155,9 +155,8 @@ GList *purple_accounts_get_all(void);
  *
  * Returns a list of all enabled accounts
  *
- * Returns: A list of all enabled accounts. The list is owned
- *         by the caller, and must be g_list_free()d to avoid
- *         leaking the nodes.
+ * Returns: (element-type PurpleAccount) (transfer container): A list of all
+ *          enabled accounts.
  */
 GList *purple_accounts_get_all_active(void);
 

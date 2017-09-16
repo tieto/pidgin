@@ -278,7 +278,7 @@ purple_keyring_unregister(PurpleKeyring *keyring);
  * Returns a GList containing the IDs and names of the registered
  * keyrings.
  *
- * Returns: The list of IDs and names.
+ * Returns: (element-type utf8) (transfer container): The list of IDs and names.
  */
 GList *
 purple_keyring_get_options(void);

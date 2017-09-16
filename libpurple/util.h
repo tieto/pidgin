@@ -78,8 +78,8 @@ G_BEGIN_DECLS
  * @callback: The function to be called when the action is used on
  *                 the selected item.
  * @data:     Additional data to be passed to the callback.
- * @children: A GList of PurpleMenuActions to be added as a submenu
- *                 of the action.
+ * @children: (element-type PurpleMenuAction) (transfer full): Menu actions to
+ *            be added as a submenu of this action.
  *
  * Creates a new PurpleMenuAction.
  *
@@ -132,7 +132,7 @@ gpointer purple_menu_action_get_data(const PurpleMenuAction *act);
  *
  * Returns the children of the PurpleMenuAction.
  *
- * Returns: The  GList of children.
+ * Returns: (element-type PurpleMenuAction) (transfer none): The menu children.
  */
 GList* purple_menu_action_get_children(const PurpleMenuAction *act);
 
@@ -166,7 +166,7 @@ void purple_menu_action_set_data(PurpleMenuAction *act, gpointer data);
 /**
  * purple_menu_action_set_children:
  * @act:       The menu action.
- * @children:  The PurpleMenuAtion children
+ * @children: (element-type PurpleMenuAction) (transfer full): The menu children
  *
  * Set the children of the PurpleMenuAction.
  */
@@ -1309,8 +1309,8 @@ gboolean purple_ipv6_address_is_valid(const char *ip);
  * This function extracts a list of URIs from the a "text/uri-list"
  * string.  It was "borrowed" from gnome_uri_list_extract_uris
  *
- * Returns: A GList containing strings allocated with g_malloc
- *         that have been splitted from uri-list.
+ * Returns: (element-type utf8): A GList containing strings allocated with
+ *          g_malloc that have been split from uri-list.
  */
 GList *purple_uri_list_extract_uris(const gchar *uri_list);
 
@@ -1322,10 +1322,10 @@ GList *purple_uri_list_extract_uris(const gchar *uri_list);
  * "text/uri-list" string.  It was "borrowed" from
  * gnome_uri_list_extract_filenames
  *
- * Returns: A GList containing strings allocated with g_malloc that
- *         contain the filenames in the uri-list. Note that unlike
- *         purple_uri_list_extract_uris() function, this will discard
- *         any non-file uri from the result value.
+ * Returns: (element-type utf8): A GList containing strings allocated with
+ *          g_malloc that contain the filenames in the uri-list. Note that
+ *          unlike the purple_uri_list_extract_uris() function, this will
+ *          discard any non-file uri from the result value.
  */
 GList *purple_uri_list_extract_filenames(const gchar *uri_list);
 

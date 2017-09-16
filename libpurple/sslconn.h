@@ -238,8 +238,9 @@ size_t purple_ssl_write(PurpleSslConnection *gsc, const void *buffer, size_t len
  *
  * Obtains the peer's presented certificates
  *
- * Returns: The peer certificate chain, in the order of certificate, issuer,
- *         issuer's issuer, etc. %NULL if no certificates have been provided,
+ * Returns: (element-type GTlsCertificate): The peer certificate chain, in the
+ *          order of certificate, issuer, issuer's issuer, etc. %NULL if no
+ *          certificates have been provided.
  */
 GList * purple_ssl_get_peer_certificates(PurpleSslConnection *gsc);
 
