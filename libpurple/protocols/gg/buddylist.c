@@ -123,7 +123,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 
 		g = g_strdup("Gadu-Gadu");
 
-		if ('\0' != data_tbl[F_GROUP]) {
+		if ('\0' != *(data_tbl[F_GROUP])) {
 			/* XXX: Probably buddy should be added to all the groups. */
 			/* Hard limit to at most 50 groups */
 			gchar **group_tbl = g_strsplit(data_tbl[F_GROUP], ",", 50);
