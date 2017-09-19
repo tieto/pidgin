@@ -31,6 +31,7 @@
 #include "config.h"
 #include "debug.h"
 #include "libc_internal.h"
+#include "util.h"
 #include <glib/gstdio.h>
 
 /** This is redefined here because we can't include internal.h */
