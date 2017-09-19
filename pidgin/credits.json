@@ -1,0 +1,736 @@
+{
+	"developers": [{
+		"title": "Developers",
+		"people": [
+			"Daniel 'datallah' Atallah",
+			"Ethan 'Paco-Paco' Blanton",
+			"Gary 'grim' Kramlich",
+			"Richard 'rlaager' Laager",
+			"Etan 'deryni' Reisner",
+			"Michael 'Maiku' Ruprecht",
+			"Elliott 'QuLogic' Sales de Andrade",
+			"Kevin 'SimGuy' Stange",
+			"Tomasz Wasilczyk",
+
+			"Paul 'darkrain42' Aurich (Retired)",
+			"John 'rekkanoryo' Bailey (Retired)",
+			"Herman Bloggs (Retired)",
+			"Thomas Butter (Retired)",
+			"Ka-Hing Cheung (Retired)",
+			"Sadrul Habib Chowdhury (Retired)",
+			"Mark 'KingAnt' Doliner (Retired)",
+			"Jim Duchek (Retired)",
+			"Sean Egan (Retired)",
+			"Rob Flynn (Retired)",
+			"Adam Fritzler (Retired)",
+			"Christian 'ChipX86' Hammond (Retired)",
+			"Casey Harkins (Retired)",
+			"Ivan Komarov (Retired)",
+			"Syd Logan (Retired)",
+			"Marcus 'malu' Lundblad (Retired)",
+			"Sulabh 'sulabh_m' Mahajan (Retired)",
+			"Richard 'wabs' Nelson (Retired)",
+			"Christopher 'siege' O'Brien (Retired)",
+			"Bartosz Oler (Retired)",
+			"Tim 'marv' Rigenbach (Retired)",
+			"Luke 'LSchiere' Schierer (Retired)",
+			"Megan 'Cae' Schneider (Retired)",
+			"Evan Schoenberg (Retired)",
+			"Jim Seymour (Retired)",
+			"Mark Spencer (Retired)",
+			"Will 'resiak' Thompson (Retired)",
+			"Stu 'nosnilmot' Tomlinson (Retired)",
+			"Jorge 'Masca' Villaseñor (Retired)",
+			"Nathan 'faceprint' Walp (Retired)",
+			"Eric Warmenhoven (Retired)"
+		]
+	}, {
+		"title": "Crazy Patch Writers",
+		"people": [
+			"Jakub 'haakon' Adam",
+			"Eion Robb",
+
+			"Felipe 'shx' Contreras (Retired)",
+			"Decklin Foster (Retired)",
+			"Krzysztof Klinikowski (Retired)",
+			"Peter 'Bleeter' Lawler (Retired)",
+			"Robert 'Robot101' McQueen (Retired)",
+			"Benjamin Miller (Retired)",
+			"Dennis 'EvilDennisR' Ristuccia (Retired)",
+			"Peter 'Fmoo' Ruibal (Retired)",
+			"Gabriel 'Nix' Schulhof (Retired)",
+			"Ankit Vani (Retired)"
+		]
+	}, {
+		"title": "Artists",
+		"people": [
+			"Hylke Bons"
+		]
+	}, {
+		"title": "Google Summer of Code 2015",
+		"people": [
+			"Abel Serrano Juste",
+			"Igor Gajowiak",
+			"James Geboski",
+			"Koosha Khajehmoogahi",
+			"Michael McConville",
+			"Nakul Gulati"
+		]
+	}, {
+		"title": "Google Summer of Code 2013",
+		"people": [
+			"Ashish Gupta",
+			"Bhaskar Kandiyal",
+			"Phil Hannent",
+			"Ankit Vani"
+		]
+	}, {
+		"title": "Google Summer of Code 2012",
+		"people": [
+			"Michael Zangl",
+			"Nikhil Bafna",
+			"Sanket Agarwal",
+			"Tomasz Wasilczyk"
+		]
+	}, {
+		"title": "Google Summer of Code 2010",
+		"people": [
+			"Ivan Komarov",
+			"Adam Fowler",
+			"Gilles Bedel",
+			"Jorge Villaseñor Salinas"
+		]
+	}, {
+		"title": "Google Summer of Code 2009",
+		"people": [
+			"Felix Kerekes",
+			"Wade Fagen",
+			"Sulabh Mahajan",
+			"Eric Polino",
+			"Gregor Dick",
+			"Jan Kaluza",
+			"Arnold Noronha"
+		]
+	}, {
+		"title": "Google Summer of Code 2008",
+		"people": [
+			"Mark Schneider",
+			"Justin Rodriguez",
+			"Vivien Bernet-Rollande",
+			"Sulabh Mahajan",
+			"Mike Ruprecht",
+			"Tobias Markmann"
+		]
+	}, {
+		"title": "Google Summer of Code 2007",
+		"people": [
+			"Eion Coffey",
+			"Jeffery Connelly",
+			"Michael Shkutkov",
+			"William Ehlhardt",
+			"Eric Polino",
+			"Prekshu Ajmera",
+			"Carlos Silva",
+			"Will Thompson"
+		]
+	}, {
+		"title": "Google Summer of Code 2006",
+		"people": [
+			"Sadrul Habib Chowdhury",
+			"Ma Yuan",
+			"Geoffrey Foster",
+			"Brian Chu",
+			"Mark Huetsch",
+			"Aaron Sheldon"
+		]
+	}, {
+		"title": "Google Summer of Code 2005",
+		"people": [
+			"Adam Warrington",
+			"Bartosz Oler",
+			"Christian Muise",
+			"Jonathan Clark",
+			"Juanjo Molinero Horno",
+			"Piotr Zielinski",
+			"Thomas Butter"
+		]
+	}],
+	"languages": [{
+		"title": "Afrikaans (af)",
+		"people": [
+			"Samuel Murray",
+			"Friedel Wolff"
+		]
+	}, {
+		"title": "Amharic (am)",
+		"people": [
+			"Daniel Yacob (Retired)"
+		]
+	}, {
+		"title": "Arabic (ar)",
+		"people": [
+			"Khaled Hosny",
+			"Mohamed Magdy (Retired)"
+		]
+	}, {
+		"title": "Assamese (as)",
+		"people": [
+			"Amitakhya Phukan"
+		]
+	}, {
+		"title": "Asturian (ast)",
+		"people": [
+			"Llumex03"
+		]
+	}, {
+		"title": "Belarusian Latin (be@latin)",
+		"people": [
+			"Ihar Hrachyshka"
+		]
+	}, {
+		"title": "Bulgarian (bg)",
+		"people": [
+			"Vladimira Girginova",
+			"Vladimir (Kaladan) Petkov",
+			"Hristo Todorov (Retired)"
+		]
+	}, {
+		"title": "Bengali (bn)",
+		"people": [
+			"Jamil Ahmed",
+			"Israt Jahan",
+			"Samia Nimatullah",
+			"Indranil Das Gupta (Retired)",
+			"Tisa Nafisa (Retired)"
+		]
+	}, {
+		"title": "Bengali-India (bn_IN)",
+		"people": [
+			"Runa Bhattacharjee"
+		]
+	}, {
+		"title": "Breton (br)",
+		"people": [
+			"Gwenn Meynier"
+		]
+	}, {
+		"title": "Bodo (brx)",
+		"people": [
+			"Chandrakant Dhutadmal"
+		]
+	}, {
+		"title": "Bosnian (bs)",
+		"people": [
+			"Lejla Hadzialic"
+		]
+	}, {
+		"title": "Catalan (ca)",
+		"people": [
+			"Josep Puigdemont",
+			"JM Pérez Cáncer (Retired)",
+			"Robert Millan (Retired)"
+		]
+	}, {
+		"title": "Valencian-Catalan (ca@valencia)",
+		"people": [
+			"Toni Hermoso",
+			"Josep Puigdemont"
+		]
+	}, {
+		"title": "Czech (cs)",
+		"people": [
+			"David Vachulka",
+			"Honza Král (Retired)",
+			"Miloslav Trmac (Retired)"
+		]
+	}, {
+		"title": "Danish (da)",
+		"people": [
+			"Nicky Thomassen",
+			"Peter Bach (Retired)",
+			"Morten Brix Pedersen (Retired)"
+		]
+	}, {
+		"title": "German (de)",
+		"people": [
+			"Björn Voigt",
+			"Daniel Seifert (Retired)",
+			"Karsten Weiss (Retired)",
+			"Jochen Kemnade (Retired)"
+		]
+	}, {
+		"title": "Dzongkha (dz)",
+		"people": [
+			"Norbu",
+			"Jurmey Rabgay",
+			"Wangmo Sherpa"
+		]
+	}, {
+		"title": "Greek (el)",
+		"people": [
+			"Katsaloulis Panayotis",
+			"Panos Bouklis"
+		]
+	}, {
+		"title": "Australian English (en_AU)",
+		"people": [
+			"Michael Findlay",
+			"Peter Lawler (Retired)"
+		]
+	}, {
+		"title": "British English (en_GB)",
+		"people": [
+			"Phil Hannent",
+			"Luke Ross (Retired)"
+		]
+	}, {
+		"title": "Canadian English (en_CA)",
+		"people": [
+			"Adam Weinberger"
+		]
+	}, {
+		"title": "Esperanto (eo)",
+		"people": [
+			"Stéphane Fillod"
+		]
+	}, {
+		"title": "Spanish (es)",
+		"people": [
+			"Javier Fernández-Sanguino Peña",
+			"JM Pérez Cáncer (Retired)",
+			"Nicolás Lichtmaier (Retired)",
+			"Amaya Rodrigo (Retired)",
+			"Alejandro G Villar (Retired)"
+		]
+	}, {
+		"title": "Argentine Spanish (es_AR)",
+		"people": [
+			"KNTRO"
+		]
+	}, {
+		"title": "Estonian (et)",
+		"people": [
+			"Ivar Smolin"
+		]
+	}, {
+		"title": "Basque (eu)",
+		"people": [
+			"Mikel Pascual Aldabaldetreku",
+			"Iñaki Larrañaga Murgoitio (Retired)",
+			"Hizkuntza Politikarako Sailburuordetza (Retired)"
+		]
+	}, {
+		"title": "Persian (fa)",
+		"people": [
+			"Elnaz Sarbar",
+			"Roozbeh Pournader",
+			"Meelad Zakaria"
+		]
+	}, {
+		"title": "Finnish (fi)",
+		"people": [
+			"Timo Jyrinki",
+			"Arto Alakulju (Retired)",
+			"Tero Kuusela (Retired)"
+		]
+	}, {
+		"title": "French (fr)",
+		"people": [
+			"Sébastien François (Retired)",
+			"Loïc Jeannin (Retired)",
+			"Stéphane Pontier (Retired)",
+			"Stéphane Wirtel (Retired)",
+			"Éric Boumaour (Retired)"
+		]
+	}, {
+		"title": "Irish (ga)",
+		"people": [
+			"Aaron Kearns",
+			"Kevin Scannell"
+		]
+	}, {
+		"title": "Galician (gl)",
+		"people": [
+			"Mar Castro",
+			"Frco. Javier Rial",
+			"Ignacio Casal Quinteiro (Retired)"
+		]
+	}, {
+		"title": "Gujarati (gu)",
+		"people": [
+			"Ankit Patel",
+			"Gujarati Language Team"
+		]
+	}, {
+		"title": "Hebrew (he)",
+		"people": [
+			"Shalom Craimer",
+			"Pavel Bibergal (Retired)"
+		]
+	}, {
+		"title": "Hindi (hi)",
+		"people": [
+			"Sangeeta Kumari",
+			"Rajesh Ranjan",
+			"Ravishankar Shrivastava (Retired)"
+		]
+	}, {
+		"title": "Croatian (hr)",
+		"people": [
+			"Sabina Drempetić"
+		]
+	}, {
+		"title": "Hungarian (hu)",
+		"people": [
+			"Kelemen Gábor",
+			"Zoltan Sutto (Retired)"
+		]
+	}, {
+		"title": "Armenian (hy)",
+		"people": [
+			"David Avsharyan (Retired)"
+		]
+	}, {
+		"title": "Indonesian (id)",
+		"people": [
+			"Rai S. Regawa"
+		]
+	}, {
+		"title": "Italian (it)",
+		"people": [
+			"Claudio Satriano",
+			"Salvatore di Maggio (Retired)"
+		]
+	}, {
+		"title": "Japanese (ja)",
+		"people": [
+			"Takayuki Kusano",
+			"Takashi Aihana (Retired)",
+			"Ryosuke Kutsuna (Retired)",
+			"Junichi Uekawa (Retired)",
+			"Taku Yasui (Retired)"
+		]
+	}, {
+		"title": "Georgian (ka)",
+		"people": [
+			"Ubuntu Georgian Translators",
+			"Temuri Doghonadze (Retired)"
+		]
+	}, {
+		"title": "Kazakh (kk)",
+		"people": [
+			"Baurzhan Muftakhidinov"
+		]
+	}, {
+		"title": "Khmer (km)",
+		"people": [
+			"Khoem Sokhem"
+		]
+	}, {
+		"title": "Kannada (kn)",
+		"people": [
+			"Kannada Translation team"
+		]
+	}, {
+		"title": "Korean (ko)",
+		"people": [
+			"Sushizang",
+			"Sang-hyun S (Retired)",
+			"A Ho-seok Lee (Retired)",
+			"Kyeong-uk Son (Retired)"
+		]
+	}, {
+		"title": "Kashmiri (kas)",
+		"people": [
+			"Chandrakant Dhutadmal"
+		]
+	}, {
+		"title": "Kurdish (ku)",
+		"people": [
+			"Amed Ç. Jiyan",
+			"Erdal Ronahi",
+			"Rizoyê Xerzî"
+		]
+	}, {
+		"title": "Kurdish (Sorani) (ku_IQ)",
+		"people": [
+			"Haval A. Ahmed"
+		]
+	}, {
+		"title": "Laotian (lo)",
+		"people": [
+			"Anousak Souphavah (Retired)"
+		]
+	}, {
+		"title": "Lithuanian (lt)",
+		"people": [
+			"Algimantas Margevičius",
+			"Laurynas Biveinis (Retired)",
+			"Gediminas Čičinskas (Retired)",
+			"Andrius Štikonas (Retired)"
+		]
+	}, {
+		"title": "Latvian (lv)",
+		"people": [
+			"Rudolfs Mazurs",
+			"Ingmārs Dīriņš"
+		]
+	}, {
+		"title": "Maithili (mai)",
+		"people": [
+			"Sangeeta Kumari",
+			"Rajesh Ranjan"
+		]
+	}, {
+		"title": "Meadow Mari (mhr)",
+		"people": [
+			"David Preece"
+		]
+	}, {
+		"title": "Macedonian (mk)",
+		"people": [
+			"Arangel Angov",
+			"Ivana Kirkovska",
+			"Jovan Naumovski",
+			"Tomislav Markovski (Retired)"
+		]
+	}, {
+		"title": "Malayalam (ml)",
+		"people": [
+			"Ani Peter"
+		]
+	}, {
+		"title": "Mongolian (mn)",
+		"people": [
+			"gooyo"
+		]
+	}, {
+		"title": "Marathi (mr)",
+		"people": [
+			"Sandeep Shedmake"
+		]
+	}, {
+		"title": "Malay (ms_MY)",
+		"people": [
+			"abuyop",
+			"Muhammad Najmi bin Ahmad Zabidi (Retired)"
+		]
+	}, {
+		"title": "Burmese (my_MM)",
+		"people": [
+			"Thura Hlaing"
+		]
+	}, {
+		"title": "Bokmål Norwegian (nb)",
+		"people": [
+			"Allan Nordhøy",
+			"Hans Fredrik Nordhaug (Retired)",
+			"Hallvard Glad (Retired)",
+			"Petter Johan Olsen (Retired)",
+			"Espen Stefansen (Retired)"
+		]
+	}, {
+		"title": "Nepali (ne)",
+		"people": [
+			"Saroj Dhakal",
+			"Shyam Krishna Bal (Retired)"
+		]
+	}, {
+		"title": "Dutch, Flemish (nl)",
+		"people": [
+			"Gideon van Melle",
+			"Vincent van Adrighem (Retired)"
+		]
+	}, {
+		"title": "Norwegian Nynorsk (nn)",
+		"people": [
+			"Yngve Spjeld Landro"
+		]
+	}, {
+		"title": "Occitan (oc)",
+		"people": [
+			"Cédric Valmary",
+			"Yannig Marchegay (Retired)"
+		]
+	}, {
+		"title": "Oriya (or)",
+		"people": [
+			"Manoj Kumar Giri"
+		]
+	}, {
+		"title": "Punjabi (pa)",
+		"people": [
+			"Amanpreet Singh Alam"
+		]
+	}, {
+		"title": "Polish (pl)",
+		"people": [
+			"Piotr Drąg",
+			"Krzysztof Foltman (Retired)",
+			"Paweł Godlewski (Retired)",
+			"Piotr Makowski (Retired)",
+			"Emil Nowak (Retired)",
+			"Przemysław Sułek (Retired)"
+		]
+	}, {
+		"title": "Portuguese (pt)",
+		"people": [
+			"Paulo Ribeiro",
+			"Duarte Henriques (Retired)"
+		]
+	}, {
+		"title": "Portuguese-Brazil (pt_BR)",
+		"people": [
+			"Renato Silva",
+			"Maurício de Lemos Rodrigues Collares Neto (Retired)",
+			"Rodrigo Luiz Marques Flores (Retired)"
+		]
+	}, {
+		"title": "Pashto (ps)",
+		"people": [
+			"Kashif Masood"
+		]
+	}, {
+		"title": "Romanian (ro)",
+		"people": [
+			"Mișu Moldovan",
+			"Andrei Popescu"
+		]
+	}, {
+		"title": "Russian (ru)",
+		"people": [
+			"Антон Самохвалов",
+			"Dmitry Beloglazov (Retired)",
+			"Alexandre Prokoudine (Retired)",
+			"Sergey Volozhanin (Retired)"
+		]
+	}, {
+		"title": "Sindhi (sd)",
+		"people": [
+			"Chandrakant Dhutadmal"
+		]
+	}, {
+		"title": "Slovak (sk)",
+		"people": [
+			"Jozef Káčer",
+			"loptosko",
+			"Daniel Režný (Retired)",
+			"Richard Golier (Retired)",
+			"helix84 (Retired)"
+		]
+	}, {
+		"title": "Slovenian (sl)",
+		"people": [
+			"Martin Srebotnjak",
+			"Matjaz Horvat (Retired)"
+		]
+	}, {
+		"title": "Albanian (sq)",
+		"people": [
+			"Besnik Bleta"
+		]
+	}, {
+		"title": "Serbian (sr)",
+		"people": [
+			"Miloš Popović",
+			"Danilo Šegan (Retired)",
+			"Aleksandar Urosevic (Retired)"
+		]
+	}, {
+		"title": "Serbian Latin (sr@latin)",
+		"people": [
+			"Miloš Popović"
+		]
+	}, {
+		"title": "Sinhala (si)",
+		"people": [
+			"Yajith Ajantha Dayarathna",
+			"Danishka Navin"
+		]
+	}, {
+		"title": "Swedish (sv)",
+		"people": [
+			"Josef Andersson",
+			"Peter Hjalmarsson (Retired)",
+			"Tore Lundqvist (Retired)",
+			"Christian Rose (Retired)"
+		]
+	}, {
+		"title": "Swahili (sw)",
+		"people": [
+			"Paul Msegeya"
+		]
+	}, {
+		"title": "Tamil (ta)",
+		"people": [
+			"I. Felix",
+			"Viveka Nathan K"
+		]
+	}, {
+		"title": "Telugu (te)",
+		"people": [
+			"Krishnababu Krottapalli",
+			"Mr. Subbaramaih (Retired)"
+		]
+	}, {
+		"title": "Thai (th)",
+		"people": [
+			"Isriya Paireepairit"
+		]
+	}, {
+		"title": "Turkish (tr)",
+		"people": [
+			"Serdar Soytetir (Retired)",
+			"Ahmet Alp Balkan (Retired)"
+		]
+	}, {
+		"title": "Tatar (tt)",
+		"people": [
+			"ILDAR Valeev"
+		]
+	}, {
+		"title": "Ukranian (uk)",
+		"people": [
+			"Oleksandr Kovalenko"
+		]
+	}, {
+		"title": "Urdu (ur)",
+		"people": [
+			"RKVS Raman"
+		]
+	}, {
+		"title": "Uzbek (uz)",
+		"people": [
+			"Akmal Khushvakov"
+		]
+	}, {
+		"title": "Vietnamese (vi)",
+		"people": [
+			"Nguyễn Vũ Hưng",
+			"T.M.Thanh and the Gnome-Vi Team (Retired)"
+		]
+	}, {
+		"title": "Simplified Chinese (zh_CN)",
+		"people": [
+			"Aron Xu",
+			"Hashao (Retired)",
+			"Rocky S. Lee (Retired)",
+			"Funda Wang (Retired)"
+		]
+	}, {
+		"title": "Hong Kong Chinese (zh_HK)",
+		"people": [
+			"Abel Cheung",
+			"Ambrose C. Li",
+			"Paladin R. Liu"
+		]
+	}, {
+		"title": "Traditional Chinese (zh_TW)",
+		"people": [
+			"Ambrose C. Li",
+			"Paladin R. Liu",
+			"Hashao (Retired)",
+			"Rocky S. Lee (Retired)"
+		]
+	}]
+}

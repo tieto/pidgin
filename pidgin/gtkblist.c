@@ -59,6 +59,7 @@
 #include "gtkblist-theme-loader.h"
 #include "gtkutils.h"
 #include "pidgin/minidialog.h"
+#include "pidgin/pidginabout.h"
 #include "pidgin/pidgintooltip.h"
 
 #include <gdk/gdkkeysyms.h>
@@ -3604,6 +3605,15 @@ set_mood_show(void)
 /***************************************************
  *            Crap                                 *
  ***************************************************/
+static void
+_pidgin_about_cb(GtkAction *action, GtkWidget *window) {
+	GtkWidget *about = pidgin_about_dialog_new();
+
+	gtk_window_set_transient_for(GTK_WINDOW(about), GTK_WINDOW(window));
+
+	gtk_widget_show_all(about);
+}
+
 /* TODO: fill out tooltips... */
 static const GtkActionEntry blist_menu_entries[] = {
 /* NOTE: Do not set any accelerator to Control+O. It is mapped by
@@ -3641,12 +3651,9 @@ static const GtkActionEntry blist_menu_entries[] = {
 	/* Help */
 	{ "HelpMenu", NULL, N_("_Help"), NULL, NULL, NULL },
 	{ "OnlineHelp", GTK_STOCK_HELP, N_("Online _Help"), "F1", NULL, gtk_blist_show_onlinehelp_cb },
-	{ "BuildInformation", NULL, N_("_Build Information"), NULL, NULL, pidgin_dialogs_buildinfo },
 	{ "DebugWindow", NULL, N_("_Debug Window"), NULL, NULL, toggle_debug },
-	{ "DeveloperInformation", NULL, N_("De_veloper Information"), NULL, NULL, pidgin_dialogs_developers },
 	{ "PluginInformation", NULL, N_("_Plugin Information"), NULL, NULL, pidgin_dialogs_plugins_info },
-	{ "TranslatorInformation", NULL, N_("_Translator Information"), NULL, NULL, pidgin_dialogs_translators },
-	{ "About", GTK_STOCK_ABOUT, N_("_About"), NULL, NULL, pidgin_dialogs_about },
+	{ "About", GTK_STOCK_ABOUT, N_("_About"), NULL, NULL, _pidgin_about_cb },
 };
 
 /* Toggle items */
@@ -3708,11 +3715,8 @@ static const char *blist_menu =
 		"<menu action='HelpMenu'>"
 			"<menuitem action='OnlineHelp'/>"
 			"<separator/>"
-			"<menuitem action='BuildInformation'/>"
 			"<menuitem action='DebugWindow'/>"
-			"<menuitem action='DeveloperInformation'/>"
 			"<menuitem action='PluginInformation'/>"
-			"<menuitem action='TranslatorInformation'/>"
 			"<separator/>"
 			"<menuitem action='About'/>"
 		"</menu>"
