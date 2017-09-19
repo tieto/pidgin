@@ -1171,6 +1171,11 @@ create_chat_menu(GntMenu *menu, PurpleChat *chat)
 	g_signal_connect_swapped(G_OBJECT(menu), "destroy",
 			G_CALLBACK(purple_menu_action_free), action);
 
+	/* Protocol actions */
+	append_proto_menu(menu,
+			purple_account_get_connection(purple_chat_get_account(chat)),
+			(PurpleBlistNode*)chat);
+
 	add_custom_action(menu, _("Edit Settings"), (PurpleCallback)chat_components_edit, chat);
 }
 
