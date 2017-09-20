@@ -201,6 +201,7 @@ pidgin/gtkwhiteboard.c
 pidgin/gtkxfer.c
 pidgin/libpidgin.c
 pidgin/pidgin.h
+pidgin/pidginabout.c
 pidgin/pidginstock.c
 pidgin/pidgintooltip.c
 pidgin/pixmaps/emotes/default/24/default.theme.in

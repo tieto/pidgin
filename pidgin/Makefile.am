@@ -1,6 +1,11 @@
 EXTRA_DIST = \
+		about.ui \
+		about.html \
+		about.md \
+		credits.json \
 		gtk3compat.h \
 		gtkdebug.html \
+		logo.png \
 		pidgin.gresource.xml \
 		Makefile.mingw \
 		data/im.pidgin.Pidgin.appdata.xml.in \
