@@ -63,6 +63,7 @@
 #include "gtkpounce.h"
 #include "gtkprefs.h"
 #include "gtkprivacy.h"
+#include "gtkstyle.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
@@ -8176,41 +8177,57 @@ pidgin_conversations_init(void)
 	purple_signal_connect(purple_conversations_get_handle(), "wrote-chat-msg", handle,
 			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
 
-	{
-		/* Set default tab colors */
-		GString *str = g_string_new(NULL);
-		GtkSettings *settings = gtk_settings_get_default();
-		GtkStyle *parent = gtk_rc_get_style_by_paths(settings, "tab-container.tab-label*", NULL, G_TYPE_NONE), *now;
-		struct {
-			const char *stylename;
-			const char *labelname;
-			const char *color;
-		} styles[] = {
-			{"pidgin_tab_label_typing_default", "tab-label-typing", "#4e9a06"},
-			{"pidgin_tab_label_typed_default", "tab-label-typed", "#c4a000"},
-			{"pidgin_tab_label_attention_default", "tab-label-attention", "#006aff"},
-			{"pidgin_tab_label_unreadchat_default", "tab-label-unreadchat", "#cc0000"},
-			{"pidgin_tab_label_event_default", "tab-label-event", "#888a85"},
-			{NULL, NULL, NULL}
-		};
-		int iter;
-		for (iter = 0; styles[iter].stylename; iter++) {
-			now = gtk_rc_get_style_by_paths(settings, styles[iter].labelname, NULL, G_TYPE_NONE);
-			if (parent == now ||
-					(parent && now && parent->rc_style == now->rc_style)) {
-				g_string_append_printf(str, "style \"%s\" {\n"
-						"fg[ACTIVE] = \"%s\"\n"
-						"}\n"
-						"widget \"*%s\" style \"%s\"\n",
-						styles[iter].stylename,
-						styles[iter].color,
-						styles[iter].labelname, styles[iter].stylename);
-			}
-		}
-		gtk_rc_parse_string(str->str);
-		g_string_free(str, TRUE);
-		gtk_rc_reset_styles(settings);
+}
+
+/* Invalidate the first tab color set */
+static gboolean tab_color_fuse = TRUE;
+
+static void
+pidgin_conversations_set_tab_colors(void)
+{
+	/* Set default tab colors */
+	GString *str = g_string_new(NULL);
+	GtkSettings *settings = gtk_settings_get_default();
+	GtkStyle *parent = gtk_rc_get_style_by_paths(settings, "tab-container.tab-label*", NULL, G_TYPE_NONE), *now;
+	struct {
+		const char *stylename;
+		const char *labelname;
+		const char *color;
+	} styles[] = {
+		{"pidgin_tab_label_typing_default", "tab-label-typing", "#4e9a06"},
+		{"pidgin_tab_label_typed_default", "tab-label-typed", "#c4a000"},
+		{"pidgin_tab_label_attention_default", "tab-label-attention", "#006aff"},
+		{"pidgin_tab_label_unreadchat_default", "tab-label-unreadchat", "#cc0000"},
+		{"pidgin_tab_label_event_default", "tab-label-event", "#888a85"},
+		{NULL, NULL, NULL}
+	};
+	int iter;
+
+	if(tab_color_fuse) {
+		tab_color_fuse = FALSE;
+		return;
 	}
+
+	for (iter = 0; styles[iter].stylename; iter++) {
+		now = gtk_rc_get_style_by_paths(settings, styles[iter].labelname, NULL, G_TYPE_NONE);
+		if (parent == now ||
+				(parent && now && parent->rc_style == now->rc_style)) {
+			GdkColor color;
+			gdk_color_parse(styles[iter].color, &color);
+			pidgin_style_adjust_contrast(gtk_widget_get_default_style(), &color);
+
+			g_string_append_printf(str, "style \"%s\" {\n"
+					"fg[ACTIVE] = \"%s\"\n"
+					"}\n"
+					"widget \"*%s\" style \"%s\"\n",
+					styles[iter].stylename,
+					gdk_color_to_string(&color),
+					styles[iter].labelname, styles[iter].stylename);
+		}
+	}
+	gtk_rc_parse_string(str->str);
+	g_string_free(str, TRUE);
+	gtk_rc_reset_styles(settings);
 }
 
 void
@@ -9385,6 +9402,9 @@ pidgin_conv_window_new()
 		gtk_window_iconify(GTK_WINDOW(win->window));
 #endif
 
+	/* Fix colours */
+	pidgin_conversations_set_tab_colors();
+
 	return win;
 }
 
@@ -10251,6 +10271,9 @@ generate_nick_colors(guint *color_count, GdkColor background)
 
 	gdk_color_parse(DEFAULT_HIGHLIGHT_COLOR, &nick_highlight);
 	gdk_color_parse(DEFAULT_SEND_COLOR, &send_color);
+
+	pidgin_style_adjust_contrast(NULL, &nick_highlight);
+	pidgin_style_adjust_contrast(NULL, &send_color);
 
 	srand(background.red + background.green + background.blue + 1);
 

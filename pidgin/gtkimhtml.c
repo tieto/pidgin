@@ -44,6 +44,7 @@
 #include "gtksourceiter.h"
 #include "gtksourceundomanager.h"
 #include "gtksourceview-marshal.h"
+#include "gtkstyle.h"
 #include <gtk/gtk.h>
 #include <glib.h>
 #include <gdk/gdkkeysyms.h>
@@ -469,6 +470,7 @@ gtk_imhtml_style_set(GtkWidget *widget, GtkStyle *prev_style)
 		} else {
 			GdkColor defcolor;
 			gdk_color_parse(styles[i].def, &defcolor);
+			pidgin_style_adjust_contrast(gtk_widget_get_style(widget), &defcolor);
 			g_object_set(tag, "foreground-gdk", &defcolor, NULL);
 		}
 	}

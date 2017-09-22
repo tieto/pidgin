@@ -60,6 +60,7 @@
 #include "gtkstatusbox.h"
 #include "gtkscrollbook.h"
 #include "gtksmiley.h"
+#include "gtkstyle.h"
 #include "gtkblist-theme.h"
 #include "gtkblist-theme-loader.h"
 #include "gtkutils.h"
@@ -4178,7 +4179,7 @@ theme_font_get_face_default(PidginThemeFont *font, const char *def)
 gchar *
 pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased)
 {
-	const char *name, *name_color, *name_font, *status_color, *status_font;
+	const char *name, *name_color, *name_font, *status_color, *status_font, *dim_grey;
 	char *text = NULL;
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info = NULL;
@@ -4281,13 +4282,15 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	theme = pidgin_blist_get_theme();
 	name_color = NULL;
 
+	dim_grey = pidgin_style_is_dark(NULL) ? "light slate grey" : "dim grey";
+
 	if (theme) {
 		if (purple_presence_is_idle(presence)) {
 			namefont = statusfont = pidgin_blist_theme_get_idle_text_info(theme);
-			name_color = "dim grey";
+			name_color = dim_grey;
 		} else if (!purple_presence_is_online(presence)) {
 			namefont = pidgin_blist_theme_get_offline_text_info(theme);
-			name_color = "dim grey";
+			name_color = dim_grey;
 			statusfont = pidgin_blist_theme_get_status_text_info(theme);
 		} else if (purple_presence_is_available(presence)) {
 			namefont = pidgin_blist_theme_get_online_text_info(theme);
@@ -4301,14 +4304,14 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 				&& (purple_presence_is_idle(presence)
 							|| !purple_presence_is_online(presence)))
 		{
-			name_color = "dim grey";
+			name_color = dim_grey;
 		}
 	}
 
 	name_color = theme_font_get_color_default(namefont, name_color);
 	name_font = theme_font_get_face_default(namefont, "");
 
-	status_color = theme_font_get_color_default(statusfont, "dim grey");
+	status_color = theme_font_get_color_default(statusfont, dim_grey);
 	status_font = theme_font_get_face_default(statusfont, "");
 
 	if (aliased && selected) {
@@ -6535,7 +6538,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 				textcolor = pidgin_theme_font_get_color_describe(pair);
 			else
 				/* If no theme them default to making idle buddy names grey */
-				textcolor = "dim grey";
+				textcolor = pidgin_style_is_dark(NULL) ? "light slate grey" : "dim grey";
 
 			if (textcolor) {
 				idle = g_strdup_printf("<span color='%s' font_desc='%s'>%d:%02d</span>",
