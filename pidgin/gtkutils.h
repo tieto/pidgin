@@ -490,26 +490,15 @@ void pidgin_menu_position_func_helper(GtkMenu *menu, gint *x, gint *y,
 										gboolean *push_in, gpointer data);
 
 /**
- * pidgin_treeview_popup_menu_position_func:
- * @menu: The menu we are positioning.
- * @x: Address of the gint representing the horizontal position
- *        where the menu shall be drawn. This is an output parameter.
- * @y: Address of the gint representing the vertical position
- *        where the menu shall be drawn. This is an output parameter.
- * @push_in: This is an output parameter?
- * @user_data: Not used by this particular position function.
+ * pidgin_menu_popup_at_treeview_selection:
+ * @menu: The menu to show.
+ * @treeview: The treeview to use for positioning.
  *
- * A valid GtkMenuPositionFunc.  This is used to determine where
- * to draw context menus when the menu is activated with the
- * keyboard (shift+F10).  If the menu is activated with the mouse,
- * then you should just use GTK's built-in position function,
- * because it does a better job of positioning the menu.
+ * Open a menu popup at the position determined by the selection of a given
+ * treeview. This function is similar to @gtk_menu_popup_at_pointer, but should
+ * be used when the menu is activated via a keyboard shortcut.
  */
-void pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
-												gint *x,
-												gint *y,
-												gboolean *push_in,
-												gpointer user_data);
+void pidgin_menu_popup_at_treeview_selection(GtkWidget *menu, GtkWidget *treeview);
 
 /**
  * pidgin_dnd_file_manage:

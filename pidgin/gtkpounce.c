@@ -1187,7 +1187,7 @@ pounce_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, gpointer us
 	gtk_tree_path_free(path);
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter, POUNCES_MANAGER_COLUMN_POUNCE, &pounce, -1);
 
-	if ((pounce != NULL) && (event->button == 1) &&
+	if ((pounce != NULL) && (event->button == GDK_BUTTON_PRIMARY) &&
 		(event->type == GDK_2BUTTON_PRESS))
 	{
 		pidgin_pounce_editor_show(NULL, NULL, pounce);

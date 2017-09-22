@@ -681,7 +681,6 @@ docklet_menu(void)
 {
 	static GtkWidget *menu = NULL;
 	GtkWidget *menuitem;
-	GtkMenuPositionFunc pos_func = gtk_status_icon_position_menu;
 
 	if (menu) {
 		gtk_widget_destroy(menu);
@@ -761,12 +760,9 @@ docklet_menu(void)
 #ifdef _WIN32
 	g_signal_connect(menu, "leave-notify-event", G_CALLBACK(docklet_menu_leave_enter), NULL);
 	g_signal_connect(menu, "enter-notify-event", G_CALLBACK(docklet_menu_leave_enter), NULL);
-	pos_func = NULL;
 #endif
 	gtk_widget_show_all(menu);
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
-		       pos_func,
-		       docklet, 0, gtk_get_current_event_time());
+	gtk_menu_popup_at_pointer(GTK_MENU(menu), NULL);
 }
 
 static void

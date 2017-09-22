@@ -745,7 +745,7 @@ webview_image_add_smiley(GtkWidget *item, WebKitDOMHTMLImageElement *image_node)
 }
 
 static void
-do_popup_menu(WebKitWebView *webview, int button, int time, int context,
+do_popup_menu(WebKitWebView *webview, GdkEvent *event, int context,
               WebKitDOMNode *node, const char *uri)
 {
 	GtkWidget *menu;
@@ -929,7 +929,7 @@ do_popup_menu(WebKitWebView *webview, int button, int time, int context,
 	g_signal_emit_by_name(G_OBJECT(webview), "populate-popup", menu);
 
 	gtk_menu_attach_to_widget(GTK_MENU(menu), GTK_WIDGET(webview), NULL);
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, button, time);
+	gtk_menu_popup_at_pointer(GTK_MENU(menu), event);
 }
 
 static gboolean
@@ -958,8 +958,7 @@ webview_popup_menu(WebKitWebView *webview)
 		}
 	}
 
-	do_popup_menu(webview, 0, gtk_get_current_event_time(),
-		context, node, uri);
+	do_popup_menu(webview, NULL, context, node, uri);
 
 	g_free(uri);
 
@@ -969,7 +968,7 @@ webview_popup_menu(WebKitWebView *webview)
 static gboolean
 webview_button_pressed(WebKitWebView *webview, GdkEventButton *event)
 {
-	if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+	if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
 		WebKitHitTestResult *hit;
 		int context;
 		WebKitDOMNode *node;
@@ -982,7 +981,7 @@ webview_button_pressed(WebKitWebView *webview, GdkEventButton *event)
 		             "link-uri", &uri,
 		             NULL);
 
-		do_popup_menu(webview, event->button, event->time, context,
+		do_popup_menu(webview, (GdkEvent *)event, context,
 		              node, uri);
 
 		g_free(uri);

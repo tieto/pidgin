@@ -282,7 +282,7 @@ service_click_cb(GtkTreeView *tree, GdkEventButton *event, gpointer user_data)
 	GtkTreeIter iter;
 	GValue val;
 
-	if (event->button != 3 || event->type != GDK_BUTTON_PRESS)
+	if (!gdk_event_triggers_context_menu((GdkEvent *)event))
 		return FALSE;
 
 	pdl = user_data;
@@ -315,8 +315,7 @@ service_click_cb(GtkTreeView *tree, GdkEventButton *event, gpointer user_data)
 	}
 
 	gtk_widget_show_all(menu);
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button,
-	               event->time);
+	gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent *)event);
 	return FALSE;
 }
 

@@ -423,7 +423,7 @@ static gboolean pidgin_whiteboard_brush_down(GtkWidget *widget, GdkEventButton *
 
 	brush_state = PIDGIN_WHITEBOARD_BRUSH_DOWN;
 
-	if(event->button == 1 && gtkwb->priv->cr != NULL)
+	if(event->button == GDK_BUTTON_PRIMARY && gtkwb->priv->cr != NULL)
 	{
 		/* Check if draw_list has contents; if so, clear it */
 		if(draw_list)
@@ -561,7 +561,7 @@ static gboolean pidgin_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *ev
 	}
 	brush_state = PIDGIN_WHITEBOARD_BRUSH_UP;
 
-	if(event->button == 1 && gtkwb->priv->cr != NULL)
+	if(event->button == GDK_BUTTON_PRIMARY && gtkwb->priv->cr != NULL)
 	{
 		/* If the brush was never moved, express two sets of two deltas That's a
 		 * 'point,' but not for Yahoo!

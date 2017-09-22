@@ -274,6 +274,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 {
 	PidginLogViewer *lv = data[0];
 	PurpleLog *log = data[1];
+	GtkTreeIter *iter = data[2];
 	gchar *time = log_get_date(log);
 	const char *name;
 	char *tmp;
@@ -308,6 +309,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 	}
 	else {
 		g_free(time);
+		g_free(iter);
 		g_return_if_reached();
 	}
 
@@ -318,7 +320,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 	 * either way. */
 	data2 = g_new(gpointer, 3);
 	data2[0] = lv->treestore;
-	data2[1] = data[3]; /* iter */
+	data2[1] = iter;
 	data2[2] = log;
 	purple_request_action(lv, NULL, _("Delete Log?"), tmp, 0,
 						NULL,
@@ -329,58 +331,62 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 	g_free(tmp);
 }
 
-static void log_show_popup_menu(GtkWidget *treeview, GdkEventButton *event, gpointer *data)
+static GtkWidget *
+log_create_popup_menu(GtkWidget *treeview, PidginLogViewer *lv, GtkTreeIter *iter)
 {
-	GtkWidget *menu = gtk_menu_new();
-	GtkWidget *menuitem = gtk_menu_item_new_with_label(_("Delete Log..."));
+	GValue val;
+	PurpleLog *log;
+	GtkWidget *menu;
+	GtkWidget *menuitem;
 
-	if (!purple_log_is_deletable((PurpleLog *)data[1]))
+	val.g_type = 0;
+	gtk_tree_model_get_value(GTK_TREE_MODEL(lv->treestore), iter, 1, &val);
+	log = g_value_get_pointer(&val);
+	if (log == NULL) {
+		g_free(iter);
+		return NULL;
+	}
+
+	menu = gtk_menu_new();
+	menuitem = gtk_menu_item_new_with_label(_("Delete Log..."));
+
+	if (purple_log_is_deletable(log)) {
+		gpointer *data = g_new(gpointer, 3);
+		data[0] = lv;
+		data[1] = log;
+		data[2] = iter;
+
+		g_signal_connect(menuitem, "activate", G_CALLBACK(log_delete_log_cb), data);
+		g_object_set_data_full(G_OBJECT(menuitem), "log-viewer-data", data, g_free);
+	} else {
 		gtk_widget_set_sensitive(menuitem, FALSE);
-
-	g_signal_connect(menuitem, "activate", G_CALLBACK(log_delete_log_cb), data);
-	g_object_set_data_full(G_OBJECT(menuitem), "log-viewer-data", data, g_free);
+	}
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	gtk_widget_show_all(menu);
 
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, (GtkMenuPositionFunc)data[2], NULL,
-	               (event != NULL) ? event->button : 0,
-	               gdk_event_get_time((GdkEvent *)event));
+	return menu;
 }
 
 static gboolean log_button_press_cb(GtkWidget *treeview, GdkEventButton *event, PidginLogViewer *lv)
 {
-	if (event->type == GDK_BUTTON_PRESS && event->button == 3)
-	{
+	if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
 		GtkTreePath *path;
 		GtkTreeIter *iter;
-		GValue val;
-		PurpleLog *log;
-		gpointer *data;
+		GtkWidget *menu;
 
 		if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), event->x, event->y, &path, NULL, NULL, NULL))
 			return FALSE;
 		iter = g_new(GtkTreeIter, 1);
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(lv->treestore), iter, path);
-		val.g_type = 0;
-		gtk_tree_model_get_value(GTK_TREE_MODEL(lv->treestore), iter, 1, &val);
 		gtk_tree_path_free(path);
 
-		log = g_value_get_pointer(&val);
-
-		if (log == NULL)
-		{
-			g_free(iter);
+		menu = log_create_popup_menu(treeview, lv, iter);
+		if (menu) {
+			gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent *)event);
+			return TRUE;
+		} else {
 			return FALSE;
 		}
-
-		data = g_new(gpointer, 4);
-		data[0] = lv;
-		data[1] = log;
-		data[2] = NULL;
-		data[3] = iter;
-
-		log_show_popup_menu(treeview, event, data);
-		return TRUE;
 	}
 
 	return FALSE;
@@ -390,34 +396,22 @@ static gboolean log_popup_menu_cb(GtkWidget *treeview, PidginLogViewer *lv)
 {
 	GtkTreeSelection *sel;
 	GtkTreeIter *iter;
-	GValue val;
-	PurpleLog *log;
-	gpointer *data;
+	GtkWidget *menu;
 
 	iter = g_new(GtkTreeIter, 1);
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(lv->treeview));
-	if (!gtk_tree_selection_get_selected(sel, NULL, iter))
-	{
+	if (!gtk_tree_selection_get_selected(sel, NULL, iter)) {
+		g_free(iter);
 		return FALSE;
 	}
 
-	val.g_type = 0;
-	gtk_tree_model_get_value(GTK_TREE_MODEL(lv->treestore),
-	                         iter, NODE_COLUMN, &val);
-
-	log = g_value_get_pointer(&val);
-
-	if (log == NULL)
+	menu = log_create_popup_menu(treeview, lv, iter);
+	if (menu) {
+		pidgin_menu_popup_at_treeview_selection(menu, treeview);
+		return TRUE;
+	} else {
 		return FALSE;
-
-	data = g_new(gpointer, 4);
-	data[0] = lv;
-	data[1] = log;
-	data[2] = pidgin_treeview_popup_menu_position_func;
-	data[3] = iter;
-
-	log_show_popup_menu(treeview, NULL, data);
-	return TRUE;
+	}
 }
 
 static gboolean search_find_cb(gpointer data)

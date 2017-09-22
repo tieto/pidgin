@@ -667,7 +667,7 @@ smiley_dialog_input_cb(GtkWidget *dialog, GdkEvent *event,
                        PidginWebViewToolbar *toolbar)
 {
 	if ((event->type == GDK_KEY_PRESS && event->key.keyval == GDK_KEY_Escape) ||
-	    (event->type == GDK_BUTTON_PRESS && event->button.button == 1))
+	    (event->type == GDK_BUTTON_PRESS && event->button.button == GDK_BUTTON_PRIMARY))
 	{
 		close_smiley_dialog(toolbar);
 		return TRUE;
@@ -1187,6 +1187,19 @@ mark_set_cb(PidginWebView *webview, PidginWebViewToolbar *toolbar)
 	update_buttons(toolbar);
 }
 
+#if GTK_CHECK_VERSION(3,22,0)
+
+static void
+pidgin_menu_clicked(GtkWidget *button, GtkMenu *menu)
+{
+	if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(button))) {
+		gtk_widget_show_all(GTK_WIDGET(menu));
+		gtk_menu_popup_at_widget(menu, button, GDK_GRAVITY_SOUTH_WEST, GDK_GRAVITY_NORTH_WEST, NULL);
+	}
+}
+
+#else /* GTK+ 3.22.0 */
+
 /* This comes from gtkmenutoolbutton.c from gtk+
  * Copyright (C) 2003 Ricardo Fernandez Pascual
  * Copyright (C) 2004 Paolo Borelli
@@ -1223,6 +1236,8 @@ pidgin_menu_clicked(GtkWidget *button, GtkMenu *menu)
 	}
 }
 
+#endif /* GTK+ 3.22.0 */
+
 static void
 pidgin_menu_deactivate(GtkWidget *menu, GtkToggleButton *button)
 {
@@ -1245,7 +1260,7 @@ pidgin_webviewtoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event,
 	GtkWidget *item;
 	gboolean wide;
 
-	if (event->button != 3)
+	if (!gdk_event_triggers_context_menu((GdkEvent *)event))
 		return FALSE;
 
 	wide = gtk_widget_get_visible(priv->wide_view);
@@ -1256,8 +1271,7 @@ pidgin_webviewtoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event,
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	gtk_widget_show(item);
 
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, pidgin_menu_position_func_helper,
-	               widget, event->button, event->time);
+	gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent *)event);
 
 	return TRUE;
 }

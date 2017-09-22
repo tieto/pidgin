@@ -33,6 +33,16 @@
 
 #include <gtk/gtk.h>
 
+#if !GTK_CHECK_VERSION(3,22,0)
+
+static inline void
+gtk_menu_popup_at_pointer(GtkMenu *menu, const GdkEvent *trigger_event)
+{
+	const GdkEventButton *event = (const GdkEventButton *)trigger_event;
+	gtk_menu_popup(menu, NULL, NULL, NULL, NULL,
+	               event ? event->button : 0, gdk_event_get_time(event));
+}
+
 #if !GTK_CHECK_VERSION(3,16,0)
 
 static inline void
@@ -48,6 +58,8 @@ gtk_label_set_yalign(GtkLabel *label, gfloat yalign)
 }
 
 #endif /* 3.16.0 */
+
+#endif /* 3.22.0 */
 
 #endif /* _PIDGINGTK3COMPAT_H_ */
 

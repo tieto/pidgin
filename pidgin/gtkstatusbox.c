@@ -301,7 +301,7 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus, Purpl
 static gboolean
 icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box)
 {
-	if (event->button == 3) {
+	if (gdk_event_triggers_context_menu((GdkEvent *)event)) {
 		GtkWidget *menu_item;
 		const char *path;
 
@@ -320,8 +320,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 				|| !*path)
 			gtk_widget_set_sensitive(menu_item, FALSE);
 
-		gtk_menu_popup(GTK_MENU(box->icon_box_menu), NULL, NULL, NULL, NULL,
-			       event->button, event->time);
+		gtk_menu_popup_at_pointer(GTK_MENU(box->icon_box_menu), (GdkEvent *)event);
 
 	} else {
 		choose_buddy_icon_cb(widget, box);
@@ -1209,7 +1208,7 @@ spellcheck_prefs_cb(const char *name, PurplePrefType type,
 static gboolean button_released_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box)
 {
 
-	if (event->button != 1)
+	if (event->button != GDK_BUTTOM_PRIMARY)
 		return FALSE;
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), FALSE);
 	if (!box->webview_visible)
@@ -1219,7 +1218,7 @@ static gboolean button_released_cb(GtkWidget *widget, GdkEventButton *event, Pid
 
 static gboolean button_pressed_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box)
 {
-	if (event->button != 1)
+	if (event->button != GDK_BUTTOM_PRIMARY)
 		return FALSE;
 	gtk_combo_box_popup(GTK_COMBO_BOX(box));
 	/* Disabled until button_released_cb works */
