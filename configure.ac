@@ -748,7 +748,7 @@ AC_ARG_WITH(gstreamer, [AS_HELP_STRING([--with-gstreamer=<version>],
 		[compile with GStreamer 0.10 or 1.0 interface (default: auto)])],
 	with_gstreamer="$withval", with_gstreamer="auto")
 if test "x$enable_gst" != "xno"; then
-	if test "x$with_gstreamer" == "xauto"; then
+	if test "x$with_gstreamer" = "xauto"; then
 		PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0], [
 			AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
 			with_gstreamer="1.0"
@@ -772,7 +772,7 @@ Use --disable-gstreamer if you do not need GStreamer (sound) support.
 				fi
 			])
 		])
-	elif test "x$with_gstreamer" == "x1.0"; then
+	elif test "x$with_gstreamer" = "x1.0"; then
 		PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0], [
 			AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer 1.0 for playing sounds])
 			AC_SUBST(GSTREAMER_CFLAGS)
@@ -787,7 +787,7 @@ Use --disable-gstreamer if you do not need GStreamer (sound) support.
 ])
 			fi
 		])
-	elif test "x$with_gstreamer" == "x0.10"; then
+	elif test "x$with_gstreamer" = "x0.10"; then
 		PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], [
 			AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer 0.10 for playing sounds])
 			AC_SUBST(GSTREAMER_CFLAGS)
@@ -807,14 +807,14 @@ Use --disable-gstreamer if you do not need GStreamer (sound) support.
 	fi
 fi
 
-if test "x$with_gtk" == "x3" -a "x$with_gstreamer" == "x0.10"; then
+if test "x$with_gtk" = "x3" -a "x$with_gstreamer" = "x0.10"; then
 	AC_MSG_ERROR([WebKitGTK+ 3.0 cannot be mixed with GStreamer 0.10.
 Please switch to WebKitGTK+ 2.0 or GStreamer 1.0.])
-elif test "x$with_gtk" == "x2" -a "x$with_gstreamer" == "x1.0"; then
+elif test "x$with_gtk" = "x2" -a "x$with_gstreamer" = "x1.0"; then
 	AC_MSG_ERROR([WebKitGTK+ 2.0 cannot be mixed with GStreamer 1.0.
 Please switch to WebKitGTK+ 3.0 or GStreamer 0.10.])
 fi
-if test "x$with_gstreamer" == "x0.10" -o "x$with_gstreamer" == "x1.0"; then
+if test "x$with_gstreamer" = "x0.10" -o "x$with_gstreamer" = "x1.0"; then
 	AC_SUBST(GSTREAMER_VER, [$with_gstreamer])
 else
 	AC_SUBST(GSTREAMER_VER, "")
@@ -823,7 +823,7 @@ fi
 dnl #######################################################################
 dnl # Check for GStreamer Video
 dnl #######################################################################
-if test "x$enable_gst" != "xno" -a "x$with_gstreamer" == "x1.0"; then
+if test "x$enable_gst" != "xno" -a "x$with_gstreamer" = "x1.0"; then
 	AC_ARG_ENABLE(gstreamer-video,
 		[AS_HELP_STRING([--disable-gstreamer-video], [compile without GStreamer 1.0 Video Overlay support])],
 			enable_gstvideo="$enableval", enable_gstvideo="yes")
@@ -843,7 +843,7 @@ fi
 dnl #######################################################################
 dnl # Check for GStreamer Interfaces
 dnl #######################################################################
-if test "x$enable_gst" != "xno" -a "x$with_gstreamer" == "x0.10"; then
+if test "x$enable_gst" != "xno" -a "x$with_gstreamer" = "x0.10"; then
 	AC_ARG_ENABLE(gstreamer-interfaces,
 		[AS_HELP_STRING([--disable-gstreamer-interfaces], [compile without GStreamer 0.10 interface support])],
 			enable_gstinterfaces="$enableval", enable_gstinterfaces="yes")
@@ -867,7 +867,7 @@ AC_ARG_ENABLE(farstream,
 	[AS_HELP_STRING([--disable-farstream], [compile without farstream support])],
 	enable_farstream="$enableval", enable_farstream="yes")
 if test "x$enable_farstream" != "xno"; then
-	if test "x$with_gstreamer" == "x1.0"; then
+	if test "x$with_gstreamer" = "x1.0"; then
 		PKG_CHECK_MODULES(FARSTREAM, [farstream-0.2 >= 0.2.7], [
 			AC_SUBST(FARSTREAM_CFLAGS)
 			AC_SUBST(FARSTREAM_LIBS)
@@ -898,9 +898,9 @@ AC_ARG_ENABLE(vv,
 	[AS_HELP_STRING([--disable-vv], [compile without voice and video support])],
 	enable_vv="$enableval", enable_vv="yes")
 if test "x$enable_vv" != "xno"; then
-	if test "x$enable_gst" != "xno" -a "x$with_gstreamer" == "x1.0" -a "x$enable_gstvideo" != "xno" -a "x$enable_farstream" != "xno"; then
+	if test "x$enable_gst" != "xno" -a "x$with_gstreamer" = "x1.0" -a "x$enable_gstvideo" != "xno" -a "x$enable_farstream" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
-	elif test "x$enable_gst" != "xno" -a "x$with_gstreamer" == "x0.10" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno"; then
+	elif test "x$enable_gst" != "xno" -a "x$with_gstreamer" = "x0.10" -a "x$enable_gstinterfaces" != "xno" -a "x$enable_farstream" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])
 	else
 		enable_vv="no"
@@ -918,7 +918,7 @@ AM_CONDITIONAL(USE_VV, test "x$enable_vv" != "xno")
 dnl #######################################################################
 dnl # Check for Raw data streams support in Farstream 
 dnl #######################################################################
-if test "x$enable_vv" != "xno" -a "x$with_gstreamer" == "x1.0"; then
+if test "x$enable_vv" != "xno" -a "x$with_gstreamer" = "x1.0"; then
 	AC_MSG_CHECKING(for raw data support in Farstream)
 	PKG_CHECK_MODULES(GSTAPP, [gstreamer-app-1.0], [
 		AC_DEFINE(USE_GSTAPP, 1, [Use GStreamer Video Overlay support])
