@@ -9,6 +9,7 @@ version 2.12.1 (??/??/????):
 
 	XMPP:
 	* Show XEP-0066 OOB URLs in any message, not just headlines
+	* Fix a user after free (#17200 debarshiray) (PR #266 Ethan Blanton)
 
 	IRC:
 	* Fix "Registration timeout" on SASL auth with InspIRCd servers
