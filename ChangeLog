@@ -4,6 +4,10 @@ version 2.12.1 (??/??/????):
 	libpurple:
 	* Unified string comparison. (PR #186) (Arkadiy Illarionov)
 
+	libgnt:
+	* Fixed build against curses 6.0 with opaque structs set.  (#16764 dimstar)
+	  (PR #268 Daniel Kamil Kozar)
+
 	General:
 	* Fixed bashism in autotools. (#16836 lameventanas) (PR #267 Daniel Kamil Kozar)
 
