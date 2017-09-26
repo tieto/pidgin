@@ -908,8 +908,8 @@ const gchar * purple_http_response_get_data(PurpleHttpResponse *response, size_t
  *
  * Gets all headers got with response.
  *
- * Returns:         GList of PurpleKeyValuePair, which keys are header field
- *                 names (gchar*) and values are its contents (gchar*).
+ * Returns: (element-type PurpleKeyValuePair) (transfer none): Keys are header
+ *          field names (gchar*) and values are its contents (gchar*).
  */
 const GList * purple_http_response_get_all_headers(PurpleHttpResponse *response);
 
@@ -920,7 +920,7 @@ const GList * purple_http_response_get_all_headers(PurpleHttpResponse *response)
  *
  * Gets all headers with specified name got with response.
  *
- * Returns:         GList of header field records contents (gchar*).
+ * Returns: (element-type gchar*) (transfer none): Header field record contents.
  */
 const GList * purple_http_response_get_headers_by_name(
 	PurpleHttpResponse *response, const gchar *name);

@@ -129,7 +129,7 @@ purple_request_datasheet_get_column_title(PurpleRequestDatasheet *sheet,
  *
  * You shouldn't modify datasheet's data while iterating through it.
  *
- * Returns: (transfer none): The list of records.
+ * Returns: (element-type PurpleRequestDatasheetRecord) (transfer none): The list of records.
  */
 const GList *
 purple_request_datasheet_get_records(PurpleRequestDatasheet *sheet);
@@ -153,7 +153,7 @@ purple_request_datasheet_add_action(PurpleRequestDatasheet *sheet,
  *
  * Returns the list of actions in a datasheet.
  *
- * Returns: (transfer none): The list of actions.
+ * Returns: (element-type PurpleRequestDatasheetAction) (transfer none): The list of actions.
  */
 const GList *
 purple_request_datasheet_get_actions(PurpleRequestDatasheet *sheet);

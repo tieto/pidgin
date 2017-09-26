@@ -543,7 +543,7 @@ void purple_request_fields_add_group(PurpleRequestFields *fields,
  *
  * Returns a list of all groups in a field list.
  *
- * Returns: (transfer none): A list of groups.
+ * Returns: (element-type PurpleRequestFieldGroup) (transfer none): A list of groups.
  */
 GList *purple_request_fields_get_groups(const PurpleRequestFields *fields);
 
@@ -588,7 +588,7 @@ gboolean purple_request_fields_exists(const PurpleRequestFields *fields,
  *
  * Returns a list of all required fields.
  *
- * Returns: (transfer none): The list of required fields.
+ * Returns: (element-type PurpleRequestField) (transfer none): The list of required fields.
  */
 const GList *purple_request_fields_get_required(
 	const PurpleRequestFields *fields);
@@ -599,7 +599,7 @@ const GList *purple_request_fields_get_required(
  *
  * Returns a list of all validated fields.
  *
- * Returns: (transfer none): The list of validated fields.
+ * Returns: (element-type PurpleRequestField) (transfer none): The list of validated fields.
  */
 const GList *purple_request_fields_get_validatable(
 	const PurpleRequestFields *fields);
@@ -610,8 +610,8 @@ const GList *purple_request_fields_get_validatable(
  *
  * Returns a list of all fields with sensitivity callback added.
  *
- * Returns: (transfer none): The list of fields with automatic sensitivity
- *          callback.
+ * Returns: (element-type PurpleRequestField) (transfer none): The list of
+ *          fields with automatic sensitivity callback.
  */
 const GList *
 purple_request_fields_get_autosensitive(const PurpleRequestFields *fields);
@@ -816,7 +816,7 @@ const char *purple_request_field_group_get_title(
  *
  * Returns a list of all fields in a group.
  *
- * Returns: (transfer none): The list of fields in the group.
+ * Returns: (element-type PurpleRequestField) (transfer none): The list of fields in the group.
  */
 GList *purple_request_field_group_get_fields(
 		const PurpleRequestFieldGroup *group);
@@ -1521,7 +1521,7 @@ void purple_request_field_list_clear_selected(PurpleRequestField *field);
 /**
  * purple_request_field_list_set_selected:
  * @field: The field.
- * @items: The list of selected items, which is not modified or freed.
+ * @items: (element-type utf8) (transfer none): The list of selected items.
  *
  * Sets a list of selected items in a list field.
  */
@@ -1549,7 +1549,7 @@ gboolean purple_request_field_list_is_selected(const PurpleRequestField *field,
  * To retrieve the data for each item, use
  * purple_request_field_list_get_data().
  *
- * Returns: (transfer none): The list of selected items.
+ * Returns: (element-type utf8) (transfer none): The list of selected items.
  */
 GList *purple_request_field_list_get_selected(
 	const PurpleRequestField *field);
@@ -1560,7 +1560,7 @@ GList *purple_request_field_list_get_selected(
  *
  * Returns a list of items in a list field.
  *
- * Returns: (transfer none): The list of items.
+ * Returns: (element-type utf8) (transfer none): The list of items.
  */
 GList *purple_request_field_list_get_items(const PurpleRequestField *field);
 
@@ -1572,7 +1572,7 @@ GList *purple_request_field_list_get_items(const PurpleRequestField *field);
  *
  * The icons will correspond with the items, in order.
  *
- * Returns: (transfer none): The list of icons or %NULL (i.e. the empty #GList)
+ * Returns: (element-type utf8) (transfer none): The list of icons or %NULL (i.e. the empty #GList)
  *          if no items have icons.
  */
 GList *purple_request_field_list_get_icons(const PurpleRequestField *field);

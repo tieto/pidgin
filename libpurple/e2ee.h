@@ -245,10 +245,8 @@ purple_e2ee_provider_get_conv_menu_cb(PurpleE2eeProvider *provider);
  * @provider: The E2EE provider.
  * @conv: The conversation.
  *
- * Returns the list of actions for an E2EE menu.
- *
- * Returns: (transfer full): the #GList of #PurpleMenuAction's. Should be
- *          #g_list_free or #g_list_free_full'd when done using it.
+ * Returns: (element-type PurpleMenuAction) (transfer full): The list of
+ *          actions for an E2EE menu.
  */
 GList *
 purple_e2ee_provider_get_conv_menu_actions(PurpleE2eeProvider *provider,

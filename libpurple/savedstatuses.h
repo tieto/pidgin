@@ -184,7 +184,7 @@ void purple_savedstatus_delete_by_status(PurpleSavedStatus *saved_status);
  *
  * Returns all saved statuses.
  *
- * Returns: (transfer none): A list of saved statuses.
+ * Returns: (element-type PurpleSavedStatus) (transfer none): A list of saved statuses.
  */
 GList *purple_savedstatuses_get_all(void);
 
@@ -199,10 +199,8 @@ GList *purple_savedstatuses_get_all(void);
  * how many times it has been used. Transient statuses without
  * messages are not included in the list.
  *
- * Returns: A linked list containing at most how_many
- *         PurpleSavedStatuses.  This list should be
- *         g_list_free'd by the caller (but the
- *         PurpleSavedStatuses must not be free'd).
+ * Returns: (element-type PurpleSavedStatus) (transfer container): A list containing
+ *         at most how_many saved statuses.
  */
 GList *purple_savedstatuses_get_popular(unsigned int how_many);
 

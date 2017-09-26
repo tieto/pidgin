@@ -112,8 +112,7 @@ purple_smiley_parser_replace(PurpleSmileyList *smileys,
  * text. However, distinct smileys may share common image file (thus, their
  * paths will be the same).
  *
- * Returns: (transfer container): the #GList of found smileys. Use #g_list_free
- *          when no longer need it.
+ * Returns: (element-type PurpleSmiley) (transfer container): the list of found smileys.
  */
 GList *
 purple_smiley_parser_find(PurpleSmileyList *smileys, const gchar *message,

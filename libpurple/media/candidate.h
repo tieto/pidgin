@@ -90,17 +90,19 @@ PurpleMediaCandidate *purple_media_candidate_copy(
 
 /**
  * purple_media_candidate_list_copy:
- * @candidates: The list of candidates to be copied.
+ * @candidates: (element-type PurpleMediaCandidate) (transfer none): The list
+ *              of candidates to be copied.
  *
  * Copies a GList of PurpleMediaCandidate and its contents.
  *
- * Returns: The copy of the GList.
+ * Returns: (element-type PurpleMediaCandidate): The copy of the GList.
  */
 GList *purple_media_candidate_list_copy(GList *candidates);
 
 /**
  * purple_media_candidate_list_free:
- * @candidates: The list of candidates to be freed.
+ * @candidates: (element-type PurpleMediaCandidate) (transfer full): The list
+ *              of candidates to be freed.
  *
  * Frees a GList of PurpleMediaCandidate and its contents.
  */

@@ -371,7 +371,7 @@ void purple_notify_searchresults_column_add(PurpleNotifySearchResults *results,
 /**
  * purple_notify_searchresults_row_add:
  * @results: The search results object.
- * @row:     The row of the results.
+ * @row: (element-type utf8) (transfer full): The row of the results.
  *
  * Adds a new row of the results to the search results object.
  */

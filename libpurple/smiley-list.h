@@ -156,8 +156,7 @@ PurpleTrie *purple_smiley_list_get_trie(PurpleSmileyList *list);
  *
  * Returns the list of smileys with unique image file paths.
  *
- * Returns: (transfer container): the #GList of unique smileys. Use #g_list_free
- *          when done using it.
+ * Returns: (element-type PurpleSmiley) (transfer container): the list of unique smileys.
  */
 GList *purple_smiley_list_get_unique(PurpleSmileyList *list_);
 
@@ -167,8 +166,7 @@ GList *purple_smiley_list_get_unique(PurpleSmileyList *list_);
  *
  * Returns the list of all smileys added to the @list_.
  *
- * Returns: (transfer container): the #GList of smileys. Use #g_list_free
- *          when done using it.
+ * Returns: (element-type PurpleSmiley) (transfer container): the list of smileys.
  */
 GList *purple_smiley_list_get_all(PurpleSmileyList *list_);
 

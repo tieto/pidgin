@@ -358,7 +358,7 @@ void purple_pounces_unregister_handler(const char *ui);
  *
  * Returns a list of all registered buddy pounces.
  *
- * Returns: (transfer none): The list of buddy pounces.
+ * Returns: (element-type PurplePounce) (transfer none): The list of buddy pounces.
  */
 GList *purple_pounces_get_all(void);
 
@@ -368,8 +368,7 @@ GList *purple_pounces_get_all(void);
  *
  * Returns a list of registered buddy pounces for the ui-type.
  *
- * Returns: The list of buddy pounces. The list should be freed by
- *         the caller when it's no longer used.
+ * Returns: (element-type PurplePounce) (transfer container): The list of buddy pounces.
  */
 GList *purple_pounces_get_all_for_ui(const char *ui);
 

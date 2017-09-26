@@ -250,7 +250,7 @@ void purple_prefs_add_string(const char *name, const char *value);
 /**
  * purple_prefs_add_string_list:
  * @name:  The name of the pref
- * @value: The initial value to set
+ * @value: (element-type utf8) (transfer none): The initial value to set
  *
  * Add a new string list pref.
  *
@@ -272,7 +272,7 @@ void purple_prefs_add_path(const char *name, const char *value);
 /**
  * purple_prefs_add_path_list:
  * @name:  The name of the pref
- * @value: The initial value to set
+ * @value: (element-type utf8) (transfer none): The initial value to set
  *
  * Add a new path list pref.
  *
@@ -346,7 +346,7 @@ void purple_prefs_set_string(const char *name, const char *value);
 /**
  * purple_prefs_set_string_list:
  * @name:  The name of the pref
- * @value: The value to set
+ * @value: (element-type utf8) (transfer none): The value to set
  *
  * Set string list pref value
  */
@@ -364,7 +364,7 @@ void purple_prefs_set_path(const char *name, const char *value);
 /**
  * purple_prefs_set_path_list:
  * @name:  The name of the pref
- * @value: The value to set
+ * @value: (element-type utf8) (transfer none): The value to set
  *
  * Set path list pref value
  */
@@ -427,7 +427,7 @@ const char *purple_prefs_get_string(const char *name);
  *
  * Get string list pref value
  *
- * Returns: The value of the pref
+ * Returns: (element-type utf8): The value of the pref
  */
 GList *purple_prefs_get_string_list(const char *name);
 
@@ -447,7 +447,7 @@ const char *purple_prefs_get_path(const char *name);
  *
  * Get path list pref value
  *
- * Returns: The value of the pref
+ * Returns: (element-type utf8): The value of the pref
  */
 GList *purple_prefs_get_path_list(const char *name);
 
@@ -457,9 +457,9 @@ GList *purple_prefs_get_path_list(const char *name);
  *
  * Returns a list of children for a pref
  *
- * Returns: A list of newly allocated strings denoting the names of the children.
- *         Returns %NULL if there are no children or if pref doesn't exist.
- *         The caller must free all the strings and the list.
+ * Returns: (element-type utf8): A list of newly allocated strings denoting the
+ *          names of the children. Returns %NULL if there are no children or if
+ *          pref doesn't exist. The caller must free all the strings and the list.
  */
 GList *purple_prefs_get_children_names(const char *name);
 

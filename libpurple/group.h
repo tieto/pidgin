@@ -105,8 +105,8 @@ PurpleGroup *purple_group_new(const char *name);
  *
  * Returns a list of accounts that have buddies in this group
  *
- * Returns: A GSList of accounts (which must be freed), or NULL if the group
- *         has no accounts.
+ * Returns: (element-type PurpleAccount) (transfer container): A list of
+ *          accounts, or %NULL if the group has no accounts.
  */
 GSList *purple_group_get_accounts(PurpleGroup *g);
 

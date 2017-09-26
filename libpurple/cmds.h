@@ -272,14 +272,11 @@ gboolean purple_cmd_execute(PurpleCmdId id, PurpleConversation *conv,
  *
  * List registered commands.
  *
- * Returns a #GList (which must be freed by the caller) of all commands
+ * Returns: (element-type utf8) (transfer container): All commands
  * that are valid in the context of @conv, or all commands, if @conv is
  * %NULL.  Don't keep this list around past the main loop, or anything else that
  * might unregister a command, as the <type>const char *</type>'s used get freed
  * then.
- *
- * Returns: A #GList of <type>const char *</type>, which must be freed with
- *          g_list_free().
  */
 GList *purple_cmd_list(PurpleConversation *conv);
 
@@ -291,11 +288,8 @@ GList *purple_cmd_list(PurpleConversation *conv);
  *
  * Get the help string for a command.
  *
- * Returns the help strings for a given command in the form of a GList,
- * one node for each matching command.
- *
- * Returns: A #GList of <type>const char *</type>s, which is the help string
- *         for that command.
+ * Returns: (element-type utf8) (transfer container): the help strings for a
+ *          given command, one node for each matching command.
  */
 GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd);
 

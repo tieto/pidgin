@@ -302,7 +302,7 @@ void purple_presence_set_login_time(PurplePresence *presence, time_t login_time)
  *
  * Returns all the statuses in a presence.
  *
- * Returns: (transfer none): The statuses.
+ * Returns: (element-type PurpleStatus) (transfer none): The statuses.
  */
 GList *purple_presence_get_statuses(const PurplePresence *presence);
 

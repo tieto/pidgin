@@ -120,10 +120,8 @@ guint purple_media_codec_get_channels(PurpleMediaCodec *codec);
  *
  * Gets a list of the optional parameters.
  *
- * The list consists of PurpleKeyValuePair's.
- *
- * Returns: The list of optional parameters. The list is owned by the codec and
- *         should not be freed.
+ * Returns: (element-type PurpleKeyValuePair) (transfer none): The list of
+ *          optional parameters.
  */
 GList *purple_media_codec_get_optional_parameters(PurpleMediaCodec *codec);
 
@@ -174,17 +172,19 @@ PurpleMediaCodec *purple_media_codec_copy(PurpleMediaCodec *codec);
 
 /**
  * purple_media_codec_list_copy:
- * @codecs: The list of codecs to be copied.
+ * @codecs: (element-type PurpleMediaCodec) (transfer none): The list of codecs
+ *          to be copied.
  *
  * Copies a GList of PurpleMediaCodec and its contents.
  *
- * Returns: The copy of the GList.
+ * Returns: (element-type PurpleMediaCodec): The copy of the GList.
  */
 GList *purple_media_codec_list_copy(GList *codecs);
 
 /**
  * purple_media_codec_list_free:
- * @codecs: The list of codecs to be freed.
+ * @codecs: (element-type PurpleMediaCodec) (transfer full): The list of codecs
+ *          to be freed.
  *
  * Frees a GList of PurpleMediaCodec and its contents.
  */

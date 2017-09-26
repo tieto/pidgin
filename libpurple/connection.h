@@ -435,7 +435,8 @@ const char *purple_connection_get_password(const PurpleConnection *gc);
  *
  * Returns a list of active chat conversations on a connection.
  *
- * Returns: The active chats on the connection.
+ * Returns: (element-type PurpleChatConversation) (transfer none): The active
+ *          chats on the connection.
  */
 GSList *purple_connection_get_active_chats(const PurpleConnection *gc);
 
@@ -598,7 +599,8 @@ void purple_connections_disconnect_all(void);
  * Returns a list of all active connections.  This does not
  * include connections that are in the process of connecting.
  *
- * Returns: (transfer none): A list of all active connections.
+ * Returns: (element-type PurpleConnection) (transfer none): A list of all
+ *          active connections.
  */
 GList *purple_connections_get_all(void);
 
@@ -607,7 +609,8 @@ GList *purple_connections_get_all(void);
  *
  * Returns a list of all connections in the process of connecting.
  *
- * Returns: (transfer none): A list of connecting connections.
+ * Returns: (element-type PurpleConnection) (transfer none): A list of
+ *          connecting connections.
  */
 GList *purple_connections_get_connecting(void);
 
