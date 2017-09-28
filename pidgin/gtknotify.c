@@ -1291,7 +1291,6 @@ pidgin_notify_uri(const char *uri)
 	   obviously a bug on his system, but it's pretty easy for us to protect
 	   against it. */
 	uri_escaped = g_uri_escape_string(uri, "[]:;/%#,+?=&@", FALSE);
-	purple_debug_info("gtknotify", "Escaped URI: \"%s\" -> %s\n", uri, uri_escaped);
 
 	web_browser = purple_prefs_get_string(PIDGIN_PREFS_ROOT
 		"/browsers/browser");
