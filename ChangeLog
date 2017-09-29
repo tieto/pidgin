@@ -23,6 +23,7 @@ version 2.12.1 (??/??/????):
 
 	Pidgin:
 	* Better support for dark themes. (#12572 Alyssa Rosenzweig and Gary Kramlich)
+	* Fixed IPv6 links by not escaping []'s.  (#16391 cyisfor) (PR #270 Daniel Kamil Kozar)
 
 version 2.12.0 (03/09/2017):
 	libpurple:
