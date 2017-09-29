@@ -1290,7 +1290,7 @@ pidgin_notify_uri(const char *uri)
 	   containing $(xterm) was causing xterm to start on his system. This is
 	   obviously a bug on his system, but it's pretty easy for us to protect
 	   against it. */
-	uri_escaped = g_uri_escape_string(uri, ":;/%#,+?=&@", FALSE);
+	uri_escaped = g_uri_escape_string(uri, "[]:;/%#,+?=&@", FALSE);
 
 	web_browser = purple_prefs_get_string(PIDGIN_PREFS_ROOT
 		"/browsers/browser");
